@@ -47,6 +47,7 @@ internal class BeforeResolveHighlightingVisitor(holder: AnnotationHolder) : High
                 }
             }
             elementType == KtTokens.SAFE_ACCESS -> KotlinHighlightingColors.SAFE_ACCESS
+            elementType == KtTokens.EXCLEXCL -> KotlinHighlightingColors.EXCLEXCL
             else -> return
         }
 

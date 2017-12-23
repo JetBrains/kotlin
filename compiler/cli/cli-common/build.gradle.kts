@@ -8,6 +8,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:frontend.script"))
+    compileOnly(project(":kotlin-reflect-api"))
     compile(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
 }
 
@@ -15,4 +16,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-

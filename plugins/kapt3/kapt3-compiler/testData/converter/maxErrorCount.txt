@@ -1,0 +1,35 @@
+import kotlin.reflect.KClass;
+
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public final class Test {
+
+    @kapt.internal.KaptSignature(value = "a(Lerror/NonExistentClass;Lerror/NonExistentClass;)V")
+    public final void a(@org.jetbrains.annotations.NotNull()
+    ABC a, @org.jetbrains.annotations.NotNull()
+    BCD b) {
+    }
+
+    @kapt.internal.KaptSignature(value = "<init>()V")
+    public Test() {
+        super();
+    }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
+}

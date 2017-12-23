@@ -164,7 +164,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
                         plugin("kotlin")
                     }
                     dependencies {
-                        compile(kotlinModule("stdlib-jdk8", kotlin_version))
+                        compile(kotlinModule("stdlib-jre8", kotlin_version))
                     }
                     repositories {
                         mavenCentral()

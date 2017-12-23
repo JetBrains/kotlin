@@ -1,10 +1,12 @@
 
+
 import org.gradle.jvm.tasks.Jar
 
 apply { plugin("kotlin") }
 
 dependencies {
     compile(project(":kotlin-stdlib"))
+    compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
     compile(project(":compiler:backend"))
@@ -58,7 +60,7 @@ dependencies {
     testRuntime(ideaSdkDeps("*.jar"))
 
     testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
-    testRuntime(ideaPluginDeps("resources_en", plugin = "properties"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "properties"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "coverage"))
@@ -67,6 +69,7 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "testng"))
 
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-preloader"))
 
     // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req

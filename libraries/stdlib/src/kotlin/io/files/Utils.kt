@@ -52,7 +52,7 @@ public val File.extension: String
     get() = name.substringAfterLast('.', "")
 
 /**
- * Returns [path] of this File using the invariant separator '/' to
+ * Returns [path][File.path] of this File using the invariant separator '/' to
  * separate the names in the name sequence.
  */
 public val File.invariantSeparatorsPath: String
@@ -171,7 +171,7 @@ private fun File.toRelativeStringOrNull(base: File): String? {
  * @param bufferSize the buffer size to use when copying.
  * @return the [target] file.
  * @throws NoSuchFileException if the source file doesn't exist.
- * @throws FileAlreadyExistsException if the destination file already exists and 'rewrite' argument is set to `false`.
+ * @throws FileAlreadyExistsException if the destination file already exists and [overwrite] argument is set to `false`.
  * @throws IOException if any errors occur while copying.
  */
 public fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): File {

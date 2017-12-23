@@ -1,0 +1,5 @@
+class Test {
+    companion object
+}
+
+fun Test.Companion.foo() {}

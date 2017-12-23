@@ -4,4 +4,12 @@ fun test() {
 
     val (c, d)
             = Pair(true, false)
+
+    val (
+            distributor,
+            items,
+            shippingMethods,
+            addresses,
+            preferredAddressId
+    ) = argument
 }

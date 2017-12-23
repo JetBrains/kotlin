@@ -36,14 +36,13 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
-private var KtElement.newFqName: FqName? by CopyableUserDataProperty(Key.create("NEW_FQ_NAME"))
-private var KtElement.replaceWithTargetThis: Boolean? by CopyableUserDataProperty(Key.create("REPLACE_WITH_TARGET_THIS"))
-private var KtElement.newTypeText: ((TypeSubstitutor) -> String?)? by CopyableUserDataProperty(Key.create("NEW_TYPE_TEXT"))
+private var KtElement.newFqName: FqName? by CopyablePsiUserDataProperty(Key.create("NEW_FQ_NAME"))
+private var KtElement.replaceWithTargetThis: Boolean? by CopyablePsiUserDataProperty(Key.create("REPLACE_WITH_TARGET_THIS"))
+private var KtElement.newTypeText: ((TypeSubstitutor) -> String?)? by CopyablePsiUserDataProperty(Key.create("NEW_TYPE_TEXT"))
 
 fun markElements(
         declaration: KtNamedDeclaration,

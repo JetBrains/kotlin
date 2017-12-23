@@ -338,6 +338,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("legacySmartCastsAfterTry.args")
+        public void testLegacySmartCastsAfterTry() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/legacySmartCastsAfterTry.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
@@ -389,12 +395,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("pluginSimple.args")
         public void testPluginSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/pluginSimple.args");
-            doJvmTest(fileName);
-        }
-
-        @TestMetadata("pluginSimpleUsage.args")
-        public void testPluginSimpleUsage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/pluginSimpleUsage.args");
             doJvmTest(fileName);
         }
 
@@ -794,12 +794,6 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsDceTest(fileName);
         }
 
-        @TestMetadata("overrideOutputName.args")
-        public void testOverrideOutputName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/overrideOutputName.args");
-            doJsDceTest(fileName);
-        }
-
         @TestMetadata("parseError.args")
         public void testParseError() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/parseError.args");
@@ -822,6 +816,21 @@ public class CliTestGenerated extends AbstractCliTest {
         public void testWithSourceMap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/withSourceMap.args");
             doJsDceTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/cli/metadata")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Metadata extends AbstractCliTest {
+        public void testAllFilesPresentInMetadata() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/metadata"), Pattern.compile("^(.+)\\.args$"), TargetBackend.ANY, false);
+        }
+
+        @TestMetadata("moduleName.args")
+        public void testModuleName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/metadata/moduleName.args");
+            doMetadataTest(fileName);
         }
     }
 }

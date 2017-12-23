@@ -331,7 +331,7 @@ class GenericCandidateResolver(
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context)
         if (!dataFlowValue.isStable) return type
 
-        val possibleTypes = context.dataFlowInfo.getCollectedTypes(dataFlowValue)
+        val possibleTypes = context.dataFlowInfo.getCollectedTypes(dataFlowValue, context.languageVersionSettings)
         if (possibleTypes.isEmpty()) return type
 
         return TypeIntersector.intersectTypes(possibleTypes + type)

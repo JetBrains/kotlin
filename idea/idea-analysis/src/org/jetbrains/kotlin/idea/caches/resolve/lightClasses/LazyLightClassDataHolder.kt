@@ -16,11 +16,15 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -37,53 +41,64 @@ typealias DummyLightClassContextProvider = (() -> LightClassConstructionContext?
 
 sealed class LazyLightClassDataHolder(
         builder: LightClassBuilder,
+        project: Project,
         exactContextProvider: ExactLightClassContextProvider,
-        dummyContextProvider: DummyLightClassContextProvider
+        dummyContextProvider: DummyLightClassContextProvider,
+        isLocal: Boolean = false
 ) : LightClassDataHolder {
 
-    private val exactResultLazyValue = lazyPub { builder(exactContextProvider()) }
+    private val exactResultCachedValue =
+        CachedValuesManager.getManager(project).createCachedValue({
+            CachedValueProvider.Result.create(
+                    builder(exactContextProvider()),
+                    if (isLocal)
+                        PsiModificationTracker.MODIFICATION_COUNT
+                    else
+                        PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+        }, false)
 
-    private val exactResult: LightClassBuilderResult by exactResultLazyValue
-
-    private val lazyInexactResult by lazyPub {
-        dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context) } }
+    private val lazyInexactStub by lazyPub {
+        dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context).stub } }
     }
 
-    private val inexactResult: LightClassBuilderResult?
-        get() = if (exactResultLazyValue.isInitialized()) null else lazyInexactResult
+    private val inexactStub: PsiJavaFileStub?
+        get() = if (exactResultCachedValue.hasUpToDateValue()) null else lazyInexactStub
 
-    override val javaFileStub get() = exactResult.stub
-    override val extraDiagnostics get() = exactResult.diagnostics
+    override val javaFileStub get() = exactResultCachedValue.value.stub
+    override val extraDiagnostics get() = exactResultCachedValue.value.diagnostics
 
     // for facade or defaultImpls
     override fun findData(findDelegate: (PsiJavaFileStub) -> PsiClass): LightClassData =
-            LazyLightClassData { lightClassBuilderResult ->
-                findDelegate(lightClassBuilderResult.stub)
+            LazyLightClassData { stub ->
+                findDelegate(stub)
             }
 
     class ForClass(
-            builder: LightClassBuilder, exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
-    ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForClass {
+            builder: LightClassBuilder, project: Project, isLocal: Boolean,
+            exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
+    ) : LazyLightClassDataHolder(builder, project, exactContextProvider, dummyContextProvider, isLocal), LightClassDataHolder.ForClass {
         override fun findDataForClassOrObject(classOrObject: KtClassOrObject): LightClassData =
-                LazyLightClassData { lightClassBuilderResult ->
-                    lightClassBuilderResult.stub.findDelegate(classOrObject)
+                LazyLightClassData { stub ->
+                    stub.findDelegate(classOrObject)
                 }
     }
 
     class ForFacade(
-            builder: LightClassBuilder, exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
-    ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForFacade
+            builder: LightClassBuilder, project: Project,
+            exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
+    ) : LazyLightClassDataHolder(builder, project, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForFacade
 
     class ForScript(
-            builder: LightClassBuilder, exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
-    ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForScript
+            builder: LightClassBuilder, project: Project,
+            exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
+    ) : LazyLightClassDataHolder(builder, project, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForScript
 
     private inner class LazyLightClassData(
-            findDelegate: (LightClassBuilderResult) -> PsiClass
+            findDelegate: (PsiJavaFileStub) -> PsiClass
     ) : LightClassData {
-        override val clsDelegate: PsiClass by lazyPub { findDelegate(exactResult) }
+        override val clsDelegate: PsiClass by lazyPub { findDelegate(javaFileStub) }
 
-        private val dummyDelegate: PsiClass? by lazyPub { inexactResult?.let(findDelegate) }
+        private val dummyDelegate: PsiClass? by lazyPub { inexactStub?.let(findDelegate) }
 
         override fun getOwnFields(containingClass: KtLightClass): List<KtLightField> {
             if (dummyDelegate == null) return KtLightFieldImpl.fromClsFields(clsDelegate, containingClass)

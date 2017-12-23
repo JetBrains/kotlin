@@ -27,7 +27,6 @@ import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
-import com.intellij.openapi.util.text.StringUtil.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -129,7 +128,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             addVariant(sourceSet)
         }
 
-        return pluginOptions
+        return wrapPluginOptions(pluginOptions, "configuration")
     }
 
     private fun getLayoutDirectories(resDirectories: Collection<File>): List<File> {
@@ -199,7 +198,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             addSourceSetAsVariant(variantName)
         }
 
-        return pluginOptions
+        return wrapPluginOptions(pluginOptions, "configuration")
     }
 
     // Android25ProjectHandler.KaptVariant actually contains BaseVariant, not BaseVariantData

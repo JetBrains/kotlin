@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class OldAndNew {
@@ -28,7 +29,7 @@ fun test() {
     oldAndNew %= 1
 
     val onlyOld = OnlyOld()
-    onlyOld <!DEPRECATED_BINARY_MOD_AS_REM!>%=<!> 1
+    onlyOld <!OI;DEPRECATED_BINARY_MOD_AS_REM!>%=<!> 1
 
     val onlyNew = OnlyNew()
     onlyNew %= 1

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: A.java
@@ -19,5 +20,5 @@ class In<in F> {
 
 fun test() {
     A.foo().x() checkType { _<Any?>() }
-    A.bar().<!MEMBER_PROJECTED_OUT!>y<!>(null)
+    A.bar().<!OI;MEMBER_PROJECTED_OUT!>y<!>(<!NI;NULL_FOR_NONNULL_TYPE!>null<!>)
 }

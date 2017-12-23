@@ -25,7 +25,7 @@ public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creato
         LABEL (L4)
     }
 
-    public final Test[] newArray(int p0)
+    public final java.lang.Object[] newArray(int p0)
 }
 
 public final class Test : java/lang/Object, android/os/Parcelable {
@@ -115,7 +115,7 @@ public final class TestF$Creator : java/lang/Object, android/os/Parcelable$Creat
         LABEL (L4)
     }
 
-    public final TestF[] newArray(int p0)
+    public final java.lang.Object[] newArray(int p0)
 }
 
 public final class TestF : java/lang/Object, android/os/Parcelable {

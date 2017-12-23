@@ -33,7 +33,9 @@ class ClassUsageReplacementStrategy(
     private val typeReplacement = typeReplacement?.takeIf { it.referenceExpression != null }
     private val typeReplacementQualifierAsExpression = typeReplacement?.qualifier?.let { factory.createExpression(it.text) }
 
-    private val constructorReplacementStrategy = constructorReplacement?.let(::CallableUsageReplacementStrategy)
+    private val constructorReplacementStrategy = constructorReplacement?.let {
+        CallableUsageReplacementStrategy(it, inlineSetter = false)
+    }
 
     override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)? {
         if (usage !is KtNameReferenceExpression) return null

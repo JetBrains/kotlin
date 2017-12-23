@@ -74,6 +74,8 @@ enum class LanguageFeature(
     ProhibitDataClassesOverridingCopy(KOTLIN_1_3),
     RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes(KOTLIN_1_3),
     ProhibitInnerClassesOfGenericClassExtendingThrowable(KOTLIN_1_3),
+    ProperVisibilityForCompanionObjectInstanceField(KOTLIN_1_3),
+    ProperForInArrayLoopRangeVariableAssignmentSemantic(KOTLIN_1_3),
 
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
 

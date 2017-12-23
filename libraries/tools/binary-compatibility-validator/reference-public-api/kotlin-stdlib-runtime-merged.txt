@@ -2079,6 +2079,11 @@ public final class kotlin/internal/PlatformImplementationsKt {
 	public static final fun apiVersionIsAtLeast (III)Z
 }
 
+public final class kotlin/internal/ProgressionUtilKt {
+	public static final fun getProgressionLastElement (III)I
+	public static final fun getProgressionLastElement (JJJ)J
+}
+
 public final class kotlin/io/AccessDeniedException : kotlin/io/FileSystemException {
 	public fun <init> (Ljava/io/File;Ljava/io/File;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/io/File;Ljava/io/File;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V

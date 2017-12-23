@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -70,7 +72,12 @@ class FoldInitializerAndIfToElvisIntention : SelfTargetingRangeIntention<KtIfExp
         val commentSaver = CommentSaver(childRangeBefore)
         val childRangeAfter = childRangeBefore.withoutLastStatement()
 
-        val elvis = factory.createExpressionByPattern("$0 ?: $1", initializer, ifNullExpr) as KtBinaryExpression
+        val pattern = if (element.then?.hasComments() == true)
+            "$0\n?: $1"
+        else
+            "$0 ?: $1"
+
+        val elvis = factory.createExpressionByPattern(pattern, initializer, ifNullExpr) as KtBinaryExpression
         if (typeReference != null) {
             elvis.left!!.replace(factory.createExpressionByPattern("$0 as? $1", initializer, typeReference))
         }
@@ -84,6 +91,16 @@ class FoldInitializerAndIfToElvisIntention : SelfTargetingRangeIntention<KtIfExp
         commentSaver.restore(childRangeAfter)
 
         editor?.caretModel?.moveToOffset(newElvis.right!!.textOffset)
+    }
+
+    private fun PsiElement.hasComments(): Boolean {
+        var result = false
+        accept(object : KtTreeVisitorVoid() {
+            override fun visitComment(comment: PsiComment?) {
+                result = true
+            }
+        })
+        return result
     }
 
     private data class Data(

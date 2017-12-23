@@ -84,6 +84,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("copySamOnInline.kt")
+    public void testCopySamOnInline() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/copySamOnInline.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("coroutinesBinary.kt")
     public void testCoroutinesBinary() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt");
@@ -93,6 +99,18 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("defaultConstructor.kt")
     public void testDefaultConstructor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/defaultConstructor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("defaultLambdaRegeneration.kt")
+    public void testDefaultLambdaRegeneration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/defaultLambdaRegeneration.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("defaultLambdaRegeneration2.kt")
+    public void testDefaultLambdaRegeneration2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/defaultLambdaRegeneration2.kt");
         doTest(fileName);
     }
 

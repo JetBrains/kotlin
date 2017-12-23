@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -52,8 +51,8 @@ class RemoveModifierFix(
 
     override fun getText() = text
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
-            = super.isAvailable(project, editor, file) && (element?.hasModifier(modifier) ?: false)
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile) =
+            (element?.hasModifier(modifier) ?: false)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         invoke()

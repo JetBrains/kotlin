@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMet
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -164,7 +165,9 @@ class MethodInliner(
                     result.merge(transformResult)
                     result.addChangedType(oldClassName, newClassName)
 
-                    if (inliningContext.isInliningLambda && transformationInfo!!.canRemoveAfterTransformation()) {
+                    if (inliningContext.isInliningLambda &&
+                        inliningContext.lambdaInfo !is DefaultLambda && //never delete default lambda classes
+                        transformationInfo!!.canRemoveAfterTransformation()) {
                         // this class is transformed and original not used so we should remove original one after inlining
                         result.addClassToRemove(oldClassName)
                     }
@@ -180,7 +183,7 @@ class MethodInliner(
             }
 
             override fun anew(type: Type) {
-                if (isAnonymousClass(type.internalName)) {
+                if (isSamWrapper(type.internalName) || isAnonymousClass(type.internalName)) {
                     handleAnonymousObjectRegeneration()
                 }
 
@@ -220,15 +223,20 @@ class MethodInliner(
                     setLambdaInlining(true)
                     val lambdaSMAP = info.node.classSMAP
 
-                    val sourceMapper = if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
-                        NestedSourceMapper(sourceMapper, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
-                    else
-                        InlineLambdaSourceMapper(sourceMapper.parent!!, info.node)
+                    val childSourceMapper =
+                            if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
+                                NestedSourceMapper(sourceMapper, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
+                            else if (info is DefaultLambda) {
+                                NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
+                            }
+                            else InlineLambdaSourceMapper(sourceMapper.parent!!, info.node)
+
                     val inliner = MethodInliner(
                             info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
-                            newCapturedRemapper, true /*cause all calls in same module as lambda*/,
+                            newCapturedRemapper,
+                            if (info is DefaultLambda) isSameModule else true /*cause all nested objects in same module as lambda*/,
                             "Lambda inlining " + info.lambdaClassType.internalName,
-                            sourceMapper, inlineCallSiteInfo, null
+                            childSourceMapper, inlineCallSiteInfo, null
                     )
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
@@ -242,7 +250,7 @@ class MethodInliner(
                     StackValue.onStack(info.invokeMethod.returnType).put(bridge.returnType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
-                    sourceMapper.endMapping()
+                    childSourceMapper.endMapping()
                     inlineOnlySmapSkipper?.markCallSiteLineNumber(remappingMethodAdapter)
                 }
                 else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
@@ -410,81 +418,110 @@ class MethodInliner(
             val frame = sources[instructions.indexOf(cur)]
 
             if (frame != null) {
-                if (ReifiedTypeInliner.isNeedClassReificationMarker(cur)) {
-                    awaitClassReification = true
-                }
-                else if (cur is MethodInsnNode) {
-                    if (isFinallyStart(cur)) {
-                        //TODO deep index calc could be more precise
-                        currentFinallyDeep = getConstant(cur.previous)
-                    }
+                when {
+                    ReifiedTypeInliner.isNeedClassReificationMarker(cur) -> awaitClassReification = true
 
-                    val owner = cur.owner
-                    val name = cur.name
-                    //TODO check closure
-                    val argTypes = Type.getArgumentTypes(cur.desc)
-                    val paramCount = argTypes.size + 1//non static
-                    val firstParameterIndex = frame.stackSize - paramCount
-                    if (isInvokeOnLambda(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
-                        val sourceValue = frame.getStack(firstParameterIndex)
-                        val lambdaInfo = getLambdaIfExistsAndMarkInstructions(sourceValue, true, instructions, sources, toDelete)
-                        invokeCalls.add(InvokeCall(lambdaInfo, currentFinallyDeep))
-                    }
-                    else if (isAnonymousConstructorCall(owner, name)) {
-                        val lambdaMapping = HashMap<Int, LambdaInfo>()
-
-                        var offset = 0
-                        var capturesAnonymousObjectThatMustBeRegenerated = false
-                        for (i in 0..paramCount - 1) {
-                            val sourceValue = frame.getStack(firstParameterIndex + i)
-                            val lambdaInfo = getLambdaIfExistsAndMarkInstructions(sourceValue, false, instructions, sources, toDelete
-                            )
-                            if (lambdaInfo != null) {
-                                lambdaMapping.put(offset, lambdaInfo)
-                            }
-                            else if (i < argTypes.size && isAnonymousClassThatMustBeRegenerated(argTypes[i])) {
-                                capturesAnonymousObjectThatMustBeRegenerated = true
-                            }
-
-                            offset += if (i == 0) 1 else argTypes[i - 1].size
+                    cur is MethodInsnNode -> {
+                        if (isFinallyStart(cur)) {
+                            //TODO deep index calc could be more precise
+                            currentFinallyDeep = getConstant(cur.previous)
                         }
 
-                        transformations.add(
-                                buildConstructorInvocation(
-                                        owner, cur.desc, lambdaMapping, awaitClassReification, capturesAnonymousObjectThatMustBeRegenerated
+                        val owner = cur.owner
+                        val name = cur.name
+                        //TODO check closure
+                        val argTypes = Type.getArgumentTypes(cur.desc)
+                        val paramCount = argTypes.size + 1//non static
+                        val firstParameterIndex = frame.stackSize - paramCount
+                        if (isInvokeOnLambda(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
+                            val sourceValue = frame.getStack(firstParameterIndex)
+                            val lambdaInfo = getLambdaIfExistsAndMarkInstructions(sourceValue, true, instructions, sources, toDelete)
+                            invokeCalls.add(InvokeCall(lambdaInfo, currentFinallyDeep))
+                        }
+                        else if (isSamWrapperConstructorCall(owner, name)) {
+                            transformations.add(SamWrapperTransformationInfo(owner, inliningContext, isAlreadyRegenerated(owner)))
+                        }
+                        else if (isAnonymousConstructorCall(owner, name)) {
+                            val lambdaMapping = HashMap<Int, LambdaInfo>()
+
+                            var offset = 0
+                            var capturesAnonymousObjectThatMustBeRegenerated = false
+                            for (i in 0 until paramCount) {
+                                val sourceValue = frame.getStack(firstParameterIndex + i)
+                                val lambdaInfo = getLambdaIfExistsAndMarkInstructions(sourceValue, false, instructions, sources, toDelete
                                 )
-                        )
-                        awaitClassReification = false
+                                if (lambdaInfo != null) {
+                                    lambdaMapping.put(offset, lambdaInfo)
+                                }
+                                else if (i < argTypes.size && isAnonymousClassThatMustBeRegenerated(argTypes[i])) {
+                                    capturesAnonymousObjectThatMustBeRegenerated = true
+                                }
+
+                                offset += if (i == 0) 1 else argTypes[i - 1].size
+                            }
+
+                            transformations.add(
+                                    buildConstructorInvocation(
+                                            owner, cur.desc, lambdaMapping, awaitClassReification, capturesAnonymousObjectThatMustBeRegenerated
+                                    )
+                            )
+                            awaitClassReification = false
+                        }
+                        else if (inliningContext.isInliningLambda && ReifiedTypeInliner.isOperationReifiedMarker(cur)) {
+                            val reificationArgument = cur.reificationArgument
+                            val parameterName = reificationArgument!!.parameterName
+                            result.reifiedTypeParametersUsages.addUsedReifiedParameter(parameterName)
+                        }
                     }
-                    else if (inliningContext.isInliningLambda && ReifiedTypeInliner.isOperationReifiedMarker(cur)) {
-                        val reificationArgument = cur.reificationArgument
-                        val parameterName = reificationArgument!!.parameterName
-                        result.reifiedTypeParametersUsages.addUsedReifiedParameter(parameterName)
+
+                    cur.opcode == Opcodes.GETSTATIC -> {
+                        val fieldInsnNode = cur as FieldInsnNode?
+                        val className = fieldInsnNode!!.owner
+                        if (isAnonymousSingletonLoad(className, fieldInsnNode.name)) {
+                            transformations.add(
+                                    AnonymousObjectTransformationInfo(
+                                            className, awaitClassReification, isAlreadyRegenerated(className), true,
+                                            inliningContext.nameGenerator
+                                    )
+                            )
+                            awaitClassReification = false
+                        }
+                        else if (isWhenMappingAccess(className, fieldInsnNode.name)) {
+                            transformations.add(
+                                    WhenMappingTransformationInfo(
+                                            className, inliningContext.nameGenerator, isAlreadyRegenerated(className), fieldInsnNode
+                                    )
+                            )
+                        }
                     }
-                }
-                else if (cur.opcode == Opcodes.GETSTATIC) {
-                    val fieldInsnNode = cur as FieldInsnNode?
-                    val className = fieldInsnNode!!.owner
-                    if (isAnonymousSingletonLoad(className, fieldInsnNode.name)) {
-                        transformations.add(
-                                AnonymousObjectTransformationInfo(
-                                        className, awaitClassReification, isAlreadyRegenerated(className), true,
-                                        inliningContext.nameGenerator
-                                )
-                        )
-                        awaitClassReification = false
-                    }
-                    else if (isWhenMappingAccess(className, fieldInsnNode.name)) {
-                        transformations.add(
-                                WhenMappingTransformationInfo(
-                                        className, inliningContext.nameGenerator, isAlreadyRegenerated(className), fieldInsnNode
-                                )
-                        )
-                    }
-                }
-                else if (cur.opcode == Opcodes.POP) {
-                    getLambdaIfExistsAndMarkInstructions(frame.top()!!, true, instructions, sources, toDelete)?.let {
+
+                    cur.opcode == Opcodes.POP -> getLambdaIfExistsAndMarkInstructions(frame.top()!!, true, instructions, sources, toDelete)?.let {
                         toDelete.add(cur)
+                    }
+
+                    cur.opcode == Opcodes.PUTFIELD -> {
+                        //Recognize next contract's pattern in inline lambda
+                        //  ALOAD 0
+                        //  SOME_VALUE
+                        //  PUTFIELD $capturedField
+                        // and transform it to
+                        //  SOME_VALUE
+                        //  PUTSTATIC $$$$capturedField
+                        val fieldInsn = cur as FieldInsnNode
+                        if (isCapturedFieldName(fieldInsn.name) &&
+                            nodeRemapper is InlinedLambdaRemapper &&
+                            nodeRemapper.originalLambdaInternalName == fieldInsn.owner) {
+                            val stackTransformations = mutableSetOf<AbstractInsnNode>()
+                            val lambdaInfo = getLambdaIfExistsAndMarkInstructions(frame.peek(1)!!, false, instructions, sources, stackTransformations)
+                            if (lambdaInfo != null && stackTransformations.all { it is VarInsnNode }) {
+                                assert(lambdaInfo.lambdaClassType.internalName == nodeRemapper.originalLambdaInternalName) {
+                                    "Wrong bytecode template for contract template: ${lambdaInfo.lambdaClassType.internalName} != ${nodeRemapper.originalLambdaInternalName}"
+                                }
+                                fieldInsn.name = FieldRemapper.foldName(fieldInsn.name)
+                                fieldInsn.opcode = Opcodes.PUTSTATIC
+                                toDelete.addAll(stackTransformations)
+                            }
+                        }
                     }
                 }
             }

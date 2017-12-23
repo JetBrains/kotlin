@@ -16,19 +16,13 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
-import com.intellij.formatting.Block
-import com.intellij.formatting.Alignment
-import com.intellij.formatting.Indent
-import com.intellij.formatting.Wrap
-import com.intellij.openapi.util.TextRange
-import com.intellij.formatting.ChildAttributes
-import com.intellij.formatting.Spacing
+import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
-import com.intellij.formatting.ASTBlock
+import com.intellij.openapi.util.TextRange
 
 class SyntheticKotlinBlock(
         private val node: ASTNode,
-        private val subBlocks: MutableList<Block>,
+        private val subBlocks: List<ASTBlock>,
         private val alignment: Alignment?,
         private val indent: Indent?,
         private val wrap: Wrap?,
@@ -62,9 +56,7 @@ class SyntheticKotlinBlock(
         while (treeNode == null) when (child) {
             is SyntheticKotlinBlock -> child = child.getSubBlocks().first()
 
-            is ASTBlock -> treeNode = child.node
-
-            else -> break@loop
+            else -> treeNode = child.node
         }
 
         val textRange = getTextRange()

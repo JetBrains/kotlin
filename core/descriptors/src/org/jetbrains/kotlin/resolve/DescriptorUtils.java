@@ -284,6 +284,12 @@ public class DescriptorUtils {
         return isClass(descriptor) && descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED);
     }
 
+    @SuppressWarnings("unused")
+    public static boolean isAnonymousFunction(@NotNull DeclarationDescriptor descriptor) {
+        return descriptor instanceof SimpleFunctionDescriptor &&
+               descriptor.getName().equals(SpecialNames.ANONYMOUS_FUNCTION);
+    }
+
     public static boolean isNonCompanionObject(@NotNull DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isCompanionObject();
     }

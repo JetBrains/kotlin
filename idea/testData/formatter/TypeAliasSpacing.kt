@@ -26,3 +26,5 @@ typealias K = Int
 //
 object OO
 typealias L = Int
+
+internal typealias M = Int

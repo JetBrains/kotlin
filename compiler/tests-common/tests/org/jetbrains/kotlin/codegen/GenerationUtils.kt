@@ -59,11 +59,12 @@ object GenerationUtils {
         val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files.first().project, files, configuration, packagePartProvider)
         analysisResult.throwIfError()
 
-        val state = GenerationState(
+        val state = GenerationState.Builder(
                 files.first().project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
-                files, configuration,
-                codegenFactory = if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory
-        )
+                files, configuration
+        ).codegenFactory(
+                if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory
+        ).build()
         if (analysisResult.shouldGenerateCode) {
             KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
         }

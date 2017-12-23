@@ -294,6 +294,12 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("equalsOnNonNull.kt")
+                public void testEqualsOnNonNull() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault/equalsOnNonNull.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("fieldsAreNullable.kt")
                 public void testFieldsAreNullable() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault/fieldsAreNullable.kt");

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 class CombinedPackageMemberDeclarationProvider(
@@ -26,6 +27,8 @@ class CombinedPackageMemberDeclarationProvider(
     override fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean) = providers.flatMap { it.getAllDeclaredSubPackages(nameFilter) }
 
     override fun getPackageFiles() = providers.flatMap { it.getPackageFiles() }
+
+    override fun containsFile(file: KtFile) = providers.any { it.containsFile(file) }
 
     override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = providers.flatMap { it.getDeclarations(kindFilter, nameFilter) }

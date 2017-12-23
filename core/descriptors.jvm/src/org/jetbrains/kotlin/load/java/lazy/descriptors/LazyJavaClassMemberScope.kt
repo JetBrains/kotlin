@@ -639,6 +639,7 @@ class LazyJavaClassMemberScope(
         else {
             c.components.finder.findClass(ownerDescriptor.classId!!.createNestedClassId(name))?.let {
                 LazyJavaClassDescriptor(c, ownerDescriptor, it)
+                        .also(c.components.javaClassesTracker::reportClass)
             }
         }
     }

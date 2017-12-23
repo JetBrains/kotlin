@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.LHSResult
-import org.jetbrains.kotlin.resolve.calls.model.SubKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -57,11 +54,11 @@ fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(lowerType: Unwrappe
         }
 
 
-fun PostponedArgumentsAnalyzer.Context.addSubsystemForArgument(argument: KotlinCallArgument?) {
+fun PostponedArgumentsAnalyzer.Context.addSubsystemFromArgument(argument: KotlinCallArgument?) {
     when (argument) {
         is SubKotlinCallArgument -> addOtherSystem(argument.callResult.constraintSystem)
         is CallableReferenceKotlinCallArgument -> {
-            addSubsystemForArgument(argument.lhsResult.safeAs<LHSResult.Expression>()?.lshCallArgument)
+            addSubsystemFromArgument(argument.lhsResult.safeAs<LHSResult.Expression>()?.lshCallArgument)
         }
     }
 }

@@ -72,6 +72,12 @@ public class JvmLookupTrackerTestGenerated extends AbstractJvmLookupTrackerTest 
         doTest(fileName);
     }
 
+    @TestMetadata("SAM")
+    public void testSAM() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/jvm/SAM/");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/jvm/simple/");

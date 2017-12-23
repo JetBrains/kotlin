@@ -122,12 +122,6 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
             doTest(fileName);
         }
 
-        @TestMetadata("classRedeclaration")
-        public void testClassRedeclaration() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/classRedeclaration/");
-            doTest(fileName);
-        }
-
         @TestMetadata("classSignatureChanged")
         public void testClassSignatureChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/classSignatureChanged/");
@@ -963,6 +957,30 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
         public void testVarianceChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/varianceChanged/");
             doTest(fileName);
+        }
+    }
+
+    @TestMetadata("jps-plugin/testData/incremental/js")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Js extends AbstractIncrementalJsCompilerRunnerTest {
+        public void testAllFilesPresentInJs() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/js"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/js/friendsModuleDisabled")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FriendsModuleDisabled extends AbstractIncrementalJsCompilerRunnerTest {
+            public void testAllFilesPresentInFriendsModuleDisabled() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/js/friendsModuleDisabled"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("internalInlineFunctionIsChanged")
+            public void testInternalInlineFunctionIsChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/js/friendsModuleDisabled/internalInlineFunctionIsChanged/");
+                doTest(fileName);
+            }
         }
     }
 }

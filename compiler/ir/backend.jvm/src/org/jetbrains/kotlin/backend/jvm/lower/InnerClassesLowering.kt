@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
@@ -124,6 +125,12 @@ class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
         private fun lowerOuterThisReferences() {
             irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+
+
+                override fun visitClass(declaration: IrClass): IrStatement =
+                        //TODO: maybe add another transformer that skips specified elements
+                        declaration
+
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid(this)
 

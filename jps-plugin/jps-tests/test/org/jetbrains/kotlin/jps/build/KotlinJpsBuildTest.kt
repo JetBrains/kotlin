@@ -26,6 +26,7 @@ import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
+import junit.framework.TestCase
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.BuildResult
@@ -51,15 +52,19 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.Usage
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.withIC
+import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.LibraryDependency.*
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
@@ -76,6 +81,7 @@ import java.net.URLClassLoader
 import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
+import kotlin.reflect.KMutableProperty1
 
 class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
     var isICEnabledBackup: Boolean = false
@@ -135,6 +141,40 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
                   arrayOf(klass("kotlinProject", "foo.Bar"),
                           packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
                           module("kotlinProject")))
+    }
+
+    @WorkingDir("LanguageOrApiVersionChanged")
+    fun testLanguageVersionChanged() {
+        languageOrApiVersionChanged(CommonCompilerArguments::languageVersion)
+    }
+
+    @WorkingDir("LanguageOrApiVersionChanged")
+    fun testApiVersionChanged() {
+        languageOrApiVersionChanged(CommonCompilerArguments::apiVersion)
+    }
+
+    private fun languageOrApiVersionChanged(versionProperty: KMutableProperty1<CommonCompilerArguments, String?>) {
+        initProject(JVM_MOCK_RUNTIME)
+
+        assertEquals(1, myProject.modules.size)
+        val module = myProject.modules.first()
+        val args = JpsKotlinCompilerSettings.getCommonCompilerArguments(module)
+
+        fun setVersion(newVersion: String) {
+            versionProperty.set(args, newVersion)
+            JpsKotlinCompilerSettings.setCommonCompilerArguments(myProject, args)
+        }
+
+        assertNull(args.apiVersion)
+        buildAllModules().assertSuccessful()
+
+        setVersion(LanguageVersion.LATEST_STABLE.versionString)
+        buildAllModules().assertSuccessful()
+        assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME)
+
+        setVersion(LanguageVersion.KOTLIN_1_0.versionString)
+        buildAllModules().assertSuccessful()
+        assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
     }
 }
 
@@ -293,7 +333,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     override fun doGetProjectDir(): File = workDir
 
-    private fun initProject(libraryDependency: LibraryDependency = NONE) {
+    protected fun initProject(libraryDependency: LibraryDependency = NONE) {
         addJdk(JDK_NAME)
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
 
@@ -597,6 +637,19 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesNotExistInOutput(myProject.modules.get(0), "_DefaultPackage.class")
     }
 
+    fun testDefaultLanguageVersionCustomApiVersion() {
+        initProject(JVM_FULL_RUNTIME)
+        buildAllModules().assertFailed()
+
+        assertEquals(1, myProject.modules.size)
+        val module = myProject.modules.first()
+        val args = JpsKotlinCompilerSettings.getCommonCompilerArguments(module)
+        args.apiVersion = "1.2"
+        JpsKotlinCompilerSettings.setCommonCompilerArguments(myProject, args)
+
+        buildAllModules().assertSuccessful()
+    }
+
     fun testKotlinJavaProject() {
         doTestWithRuntime()
     }
@@ -787,29 +840,46 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         buildAllModules().assertSuccessful()
     }
 
-    fun testCancelLongKotlinCompilation() {
-        generateLongKotlinFile("Foo.kt", "foo", "Foo")
+    fun testCheckIsCancelledIsCalledOftenEnough() {
+        val classCount = 30
+        val methodCount = 30
+
+        fun generateFiles() {
+            val srcDir = File(workDir, "src")
+            srcDir.mkdirs()
+
+            for (i in 0..classCount) {
+                val code = buildString {
+                    appendln("package foo")
+                    appendln("class Foo$i {")
+                    for (j in 0..methodCount) {
+                        appendln("  fun get${j*j}(): Int = square($j)")
+                    }
+                    appendln("}")
+
+                }
+                File(srcDir, "Foo$i.kt").writeText(code)
+            }
+        }
+
+        generateFiles()
         initProject(JVM_MOCK_RUNTIME)
 
-        val INITIAL_DELAY = 2000
-
-        val start = System.currentTimeMillis()
-        val canceledStatus = CanceledStatus() { System.currentTimeMillis() - start > INITIAL_DELAY }
+        var checkCancelledCalledCount = 0
+        val countingCancelledStatus = CanceledStatus {
+            checkCancelledCalledCount++
+            false
+        }
 
         val logger = TestProjectBuilderLogger()
         val buildResult = BuildResult()
-        buildCustom(canceledStatus, logger, buildResult)
-        val interval = System.currentTimeMillis() - start - INITIAL_DELAY
 
-        assertCanceled(buildResult)
+        buildCustom(countingCancelledStatus, logger, buildResult)
+
         buildResult.assertSuccessful()
-        assert(interval < 8000) { "expected time for canceled compilation < 8000 ms, but $interval" }
-
-        val module = myProject.modules.get(0)
-        assertFilesNotExistInOutput(module, "foo/Foo.class")
-
-        val expectedLog = workDir.absolutePath + File.separator + "expected.log"
-        checkFullLog(logger, File(expectedLog))
+        assert(checkCancelledCalledCount > classCount) {
+            "isCancelled should be called at least once per class. Expected $classCount, but got $checkCancelledCalledCount"
+        }
     }
 
     fun testCancelKotlinCompilation() {
@@ -1067,32 +1137,9 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         }
     }
 
-    private fun checkFullLog(logger: TestProjectBuilderLogger, expectedLogFile: File) {
-        UsefulTestCase.assertSameLinesWithFile(expectedLogFile.absolutePath, logger.getFullLog(orCreateProjectDir, myDataStorageRoot))
-    }
-
     private fun assertCanceled(buildResult: BuildResult) {
         val list = buildResult.getMessages(BuildMessage.Kind.INFO)
         assertTrue("The build has been canceled" == list.last().messageText)
-    }
-
-    private fun generateLongKotlinFile(filePath: String, packagename: String, className: String)  {
-        val file = File(workDir.absolutePath + File.separator + "src" + File.separator + filePath)
-        FileUtilRt.createIfNotExists(file)
-        val writer = BufferedWriter(FileWriter(file))
-        try {
-            writer.write("package $packagename\n\n")
-            writer.write("public class $className {\n")
-
-            for (i in 0..10000) {
-                writer.write("fun f$i():Int = $i\n\n")
-            }
-
-            writer.write("}\n")
-        }
-        finally {
-            writer.close()
-        }
     }
 
     private fun findModule(name: String): JpsModule {

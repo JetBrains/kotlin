@@ -115,8 +115,8 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
 
     override fun getFamilyName() = KotlinBundle.message("import.fix")
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
-            = element != null && super.isAvailable(project, editor, file) && suggestions.isNotEmpty()
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile)
+            = element != null && suggestions.isNotEmpty()
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

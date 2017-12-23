@@ -50,6 +50,12 @@ public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractG
             doTestGradle(fileName);
         }
 
+        @TestMetadata("jreLib")
+        public void testJreLib() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/jreLib/");
+            doTestGradle(fileName);
+        }
+
         @TestMetadata("js")
         public void testJs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/js/");

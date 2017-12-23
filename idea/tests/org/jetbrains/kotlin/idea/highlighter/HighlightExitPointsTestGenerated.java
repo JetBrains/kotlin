@@ -36,6 +36,12 @@ public class HighlightExitPointsTestGenerated extends AbstractHighlightExitPoint
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/exitPoints"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("getter.kt")
+    public void testGetter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/getter.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inline1.kt")
     public void testInline1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/inline1.kt");
@@ -45,6 +51,12 @@ public class HighlightExitPointsTestGenerated extends AbstractHighlightExitPoint
     @TestMetadata("inline2.kt")
     public void testInline2() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/inline2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inline3.kt")
+    public void testInline3() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/inline3.kt");
         doTest(fileName);
     }
 

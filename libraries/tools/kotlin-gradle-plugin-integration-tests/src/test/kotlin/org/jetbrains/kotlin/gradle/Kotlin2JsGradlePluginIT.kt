@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE
-import org.jetbrains.kotlin.gradle.util.allKotlinFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
@@ -213,8 +212,8 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
             assertTrue("Source map should contain reference to main.kt") { map.contains("\"./src/main/kotlin/main.kt\"") }
             assertTrue("Source map should contain reference to foo.kt") { map.contains("\"./src/main/kotlin/foo.kt\"") }
-            assertTrue("Source map should contain source of main.kt") { map.contains("\"fun main(args: Array<String>) {\\n") }
-            assertTrue("Source map should contain source of foo.kt") { map.contains("\"inline fun foo(): String {\\n") }
+            assertTrue("Source map should contain source of main.kt") { map.contains("\"fun main(args: Array<String>) {") }
+            assertTrue("Source map should contain source of foo.kt") { map.contains("\"inline fun foo(): String {") }
         }
     }
 
@@ -223,11 +222,60 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         val project = Project("kotlin2JsDceProject", "2.10", minLogLevel = LogLevel.INFO)
 
         project.build("runRhino") {
-            println(output)
+            assertSuccessful()
+            val pathPrefix = "mainProject/build/kotlin-js-min/main"
+            assertFileExists("$pathPrefix/exampleapp.js.map")
+            assertFileExists("$pathPrefix/examplelib.js.map")
+            assertFileContains("$pathPrefix/exampleapp.js.map", "\"../../../src/main/kotlin/exampleapp/main.kt\"")
+
+            assertFileExists("$pathPrefix/kotlin.js")
+            assertTrue(fileInWorkingDir("$pathPrefix/kotlin.js").length() < 500 * 1000, "Looks like kotlin.js file was not minified by DCE")
+        }
+    }
+
+    @Test
+    fun testDceOutputPath() {
+        val project = Project("kotlin2JsDceProject", "2.10", minLogLevel = LogLevel.INFO)
+
+        project.setupWorkingDir()
+        File(project.projectDir, "mainProject/build.gradle").modify {
+            it + "\n" +
+            "runDceKotlinJs.dceOptions.outputDirectory = \"\${buildDir}/min\"\n" +
+            "runRhino.args = [\"-f\", \"min/kotlin.js\", \"-f\", \"min/examplelib.js\", \"-f\", \"min/exampleapp.js\"," +
+                "\"-f\", \"../check.js\"]\n"
+        }
+
+        project.build("runRhino") {
             assertSuccessful()
             val pathPrefix = "mainProject/build/min"
             assertFileExists("$pathPrefix/exampleapp.js.map")
             assertFileExists("$pathPrefix/examplelib.js.map")
+            assertFileContains("$pathPrefix/exampleapp.js.map", "\"../../src/main/kotlin/exampleapp/main.kt\"")
+
+            assertFileExists("$pathPrefix/kotlin.js")
+            assertTrue(fileInWorkingDir("$pathPrefix/kotlin.js").length() < 500 * 1000, "Looks like kotlin.js file was not minified by DCE")
+        }
+    }
+
+    @Test
+    fun testDceDevMode() {
+        val project = Project("kotlin2JsDceProject", "2.10", minLogLevel = LogLevel.INFO)
+
+        project.setupWorkingDir()
+        File(project.projectDir, "mainProject/build.gradle").modify {
+            it + "\n" +
+            "runDceKotlinJs.dceOptions.devMode = true\n"
+        }
+
+        project.build("runRhino") {
+            assertSuccessful()
+            val pathPrefix = "mainProject/build/kotlin-js-min/main"
+            assertFileExists("$pathPrefix/exampleapp.js.map")
+            assertFileExists("$pathPrefix/examplelib.js.map")
+            assertFileContains("$pathPrefix/exampleapp.js.map", "\"../../../src/main/kotlin/exampleapp/main.kt\"")
+
+            assertFileExists("$pathPrefix/kotlin.js")
+            assertTrue(fileInWorkingDir("$pathPrefix/kotlin.js").length() > 1000 * 1000, "Looks like kotlin.js file was minified by DCE")
         }
     }
 

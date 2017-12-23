@@ -821,9 +821,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("charValParameter.kt")
+        public void testCharValParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/charValParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("classProperty.kt")
         public void testClassProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/classProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultAccessors.kt")
+        public void testDefaultAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/defaultAccessors.kt");
             doTest(fileName);
         }
 
@@ -1217,6 +1229,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inheritViaAnotherInterfaceIndirectly.kt")
+        public void testInheritViaAnotherInterfaceIndirectly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/defaultArguments/inheritViaAnotherInterfaceIndirectly.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("overloadFunWithDefArg.kt")
         public void testOverloadFunWithDefArg() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/defaultArguments/overloadFunWithDefArg.kt");
@@ -1340,6 +1358,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("metadataReferentialEquality.kt")
+        public void testMetadataReferentialEquality() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/metadataReferentialEquality.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("peculiarName.kt")
         public void testPeculiarName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/peculiarName.kt");
@@ -1373,6 +1397,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("topLevelVar.kt")
         public void testTopLevelVar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/topLevelVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unusedPropertyMetadata.kt")
+        public void testUnusedPropertyMetadata() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/unusedPropertyMetadata.kt");
             doTest(fileName);
         }
 
@@ -3358,6 +3388,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("externalEnumSubject.kt")
+            public void testExternalEnumSubject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/when/externalEnumSubject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forWithOneStmWhen.kt")
             public void testForWithOneStmWhen() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/when/forWithOneStmWhen.kt");
@@ -3749,6 +3785,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("enumUsage.kt")
+        public void testEnumUsage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/incremental/enumUsage.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("exportedPackage.kt")
         public void testExportedPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/incremental/exportedPackage.kt");
@@ -3764,6 +3806,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("inline.kt")
         public void testInline() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/incremental/inline.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineLambda.kt")
+        public void testInlineLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/incremental/inlineLambda.kt");
             doTest(fileName);
         }
 

@@ -390,7 +390,7 @@ public expect infix fun Short.until(to: Byte): IntRange
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * If the [to] value is less than or equal to ['\u0000'] the returned range is empty.
+ * If the [to] value is less than or equal to `'\u0000'` the returned range is empty.
  */
 public expect infix fun Char.until(to: Char): CharRange
 

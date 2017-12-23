@@ -172,7 +172,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
 
         return elements.all { e ->
             when {
-                e is KtClass || e is KtObjectDeclaration && !e.isObjectLiteral() || e is KtNamedFunction || e is KtProperty ->
+                e is KtClass || e is KtObjectDeclaration && !e.isObjectLiteral() || e is KtNamedFunction || e is KtProperty || e is KtTypeAlias ->
                     (editorMode || (e as KtNamedDeclaration).canMove()) && e.canRefactor()
                 e is KtFile ->
                     e.declarations.any { it is KtNamedDeclaration } && e.canRefactor()

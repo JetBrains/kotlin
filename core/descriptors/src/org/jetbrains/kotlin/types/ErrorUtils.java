@@ -124,7 +124,7 @@ public class ErrorUtils {
 
             @Override
             public void assertValid() {
-                throw new IllegalStateException("ERROR_MODULE is not a valid module");
+                throw new InvalidModuleException("ERROR_MODULE is not a valid module");
             }
         };
     }

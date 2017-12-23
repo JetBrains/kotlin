@@ -53,7 +53,7 @@ enum class HintType(desc: String, enabled: Boolean) {
 
         override fun isApplicable(elem: PsiElement): Boolean = (elem is KtProperty && elem.getReturnTypeReference() == null && elem.isLocal) ||
                                                                (elem is KtParameter && elem.isLoopParameter && elem.typeReference == null) ||
-                                                               (elem is KtDestructuringDeclarationEntry)
+                                                               (elem is KtDestructuringDeclarationEntry && elem.getReturnTypeReference() == null)
     },
 
     FUNCTION_HINT("Show function return type hints", false) {
@@ -117,7 +117,8 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
 
     override fun getSupportedOptions(): List<Option> = HintType.values().map { it.option }
 
-    override fun getDefaultBlackList(): Set<String> = setOf("*listOf", "*setOf", "*arrayOf", "*ListOf", "*SetOf", "*ArrayOf")
+    override fun getDefaultBlackList(): Set<String> =
+            setOf("*listOf", "*setOf", "*arrayOf", "*ListOf", "*SetOf", "*ArrayOf", "*assert*(*)", "*mapOf", "*MapOf")
 
     override fun getHintInfo(element: PsiElement): HintInfo? {
         val hintType = HintType.resolve(element) ?: return null

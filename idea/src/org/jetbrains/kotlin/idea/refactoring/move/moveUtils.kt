@@ -197,7 +197,7 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
     }
 }
 
-internal var KtSimpleNameExpression.internalUsageInfo: UsageInfo? by CopyableUserDataProperty(Key.create("INTERNAL_USAGE_INFO"))
+internal var KtSimpleNameExpression.internalUsageInfo: UsageInfo? by CopyablePsiUserDataProperty(Key.create("INTERNAL_USAGE_INFO"))
 
 internal fun markInternalUsages(usages: Collection<UsageInfo>) {
     usages.forEach { (it.element as? KtSimpleNameExpression)?.internalUsageInfo = it }

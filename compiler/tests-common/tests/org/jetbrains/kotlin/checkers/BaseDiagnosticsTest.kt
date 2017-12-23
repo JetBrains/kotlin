@@ -225,15 +225,22 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             val withNewInference = newInferenceEnabled && withNewInferenceDirective && !USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI
             val diagnostics = ContainerUtil.filter(
                     CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
-                            bindingContext, implementingModulesBindings, ktFile, markDynamicCalls, dynamicCallDescriptors, withNewInference
+                            bindingContext, implementingModulesBindings, ktFile, markDynamicCalls, dynamicCallDescriptors, newInferenceEnabled
                     ) + jvmSignatureDiagnostics,
                     { whatDiagnosticsToConsider.value(it.diagnostic) }
             )
 
             val uncheckedDiagnostics = mutableListOf<PositionalTextDiagnostic>()
+            val inferenceCompatibilityOfTest = asInferenceCompatibility(withNewInference)
+            val invertedInferenceCompatibilityOfTest = asInferenceCompatibility(!withNewInference)
 
             val diagnosticToExpectedDiagnostic = CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, object : CheckerTestUtil.DiagnosticDiffCallbacks {
                 override fun missingDiagnostic(diagnostic: CheckerTestUtil.TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
+                    if (withNewInferenceDirective && diagnostic.inferenceCompatibility != inferenceCompatibilityOfTest) {
+                        updateUncheckedDiagnostics(diagnostic, expectedStart, expectedEnd)
+                        return
+                    }
+
                     val message = "Missing " + diagnostic.description + DiagnosticUtils.atLocation(ktFile, TextRange(expectedStart, expectedEnd))
                     System.err.println(message)
                     ok[0] = false
@@ -253,18 +260,20 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 }
 
                 override fun unexpectedDiagnostic(diagnostic: CheckerTestUtil.TextDiagnostic, actualStart: Int, actualEnd: Int) {
+                    if (withNewInferenceDirective && diagnostic.inferenceCompatibility != inferenceCompatibilityOfTest) {
+                        updateUncheckedDiagnostics(diagnostic, actualStart, actualEnd)
+                        return
+                    }
+
                     val message = "Unexpected ${diagnostic.description}${DiagnosticUtils.atLocation(ktFile, TextRange(actualStart, actualEnd))}"
                     System.err.println(message)
                     ok[0] = false
                 }
 
-                override fun uncheckedDiagnostic(diagnostic: CheckerTestUtil.TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
-                    uncheckedDiagnostics.add(PositionalTextDiagnostic(diagnostic, expectedStart, expectedEnd))
+                fun updateUncheckedDiagnostics(diagnostic: CheckerTestUtil.TextDiagnostic, start: Int, end: Int) {
+                    diagnostic.enhanceInferenceCompatibility(invertedInferenceCompatibilityOfTest)
+                    uncheckedDiagnostics.add(PositionalTextDiagnostic(diagnostic, start, end))
                 }
-
-                override fun shouldUseDiagnosticsForNI(): Boolean = withNewInference
-
-                override fun isWithNewInferenceDirective(): Boolean = withNewInferenceDirective
             })
 
             actualText.append(CheckerTestUtil.addDiagnosticMarkersToText(
@@ -274,6 +283,13 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             stripExtras(actualText)
 
             return ok[0]
+        }
+
+        private fun asInferenceCompatibility(isNewInference: Boolean): CheckerTestUtil.TextDiagnostic.InferenceCompatibility {
+            return if (isNewInference)
+                CheckerTestUtil.TextDiagnostic.InferenceCompatibility.NEW
+            else
+                CheckerTestUtil.TextDiagnostic.InferenceCompatibility.OLD
         }
 
         private fun computeJvmSignatureDiagnostics(bindingContext: BindingContext): Set<ActualDiagnostic> {

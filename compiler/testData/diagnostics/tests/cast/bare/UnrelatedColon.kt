@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// NI_EXPECTED_FILE
 
 interface Tr
 interface G<T>

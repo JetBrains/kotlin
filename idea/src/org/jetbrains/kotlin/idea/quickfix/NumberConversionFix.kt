@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -43,10 +42,9 @@ class NumberConversionFix(
     }
     private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile)
             = disableIfAvailable?.isAvailable(project, editor, file) != true
               && isConversionAvailable
-              && super.isAvailable(project, editor, file)
 
     override fun getFamilyName() = "Insert number conversion"
     override fun getText() = "Convert expression to '$typePresentation'"

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.*
 import java.io.File
@@ -41,9 +42,7 @@ fun makeJsIncrementally(
 
     withJsIC {
         val compiler = IncrementalJsCompilerRunner(cachesDir, versions, reporter)
-        compiler.compile(allKotlinFiles, args, messageCollector) {
-            it.inputsCache.sourceSnapshotMap.compareAndUpdate(allKotlinFiles)
-        }
+        compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles = null)
     }
 }
 
@@ -99,10 +98,11 @@ class IncrementalJsCompilerRunner(
     override fun makeServices(
             args: K2JSCompilerArguments,
             lookupTracker: LookupTracker,
+            expectActualTracker: ExpectActualTracker,
             caches: IncrementalJsCachesManager,
             compilationMode: CompilationMode
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, caches, compilationMode).apply {
+        super.makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).apply {
             register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
 
             if (compilationMode is CompilationMode.Incremental) {
@@ -121,7 +121,8 @@ class IncrementalJsCompilerRunner(
         val jsCache = caches.platformCache
         jsCache.header = incrementalResults.headerMetadata
 
-        return jsCache.compareAndUpdate(incrementalResults, changesCollector)
+        jsCache.compareAndUpdate(incrementalResults, changesCollector)
+        jsCache.clearCacheForRemovedClasses(changesCollector)
     }
 
     override fun runCompiler(

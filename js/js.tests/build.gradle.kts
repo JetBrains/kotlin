@@ -1,3 +1,14 @@
+import com.moowork.gradle.node.exec.ExecRunner
+import com.moowork.gradle.node.npm.NpmExecRunner
+import com.moowork.gradle.node.npm.NpmTask
+
+plugins {
+    id("com.moowork.node").version("1.2.0")
+}
+
+node {
+    download = true
+}
 
 apply { plugin("kotlin") }
 
@@ -52,3 +63,21 @@ projectTest("quickTest") {
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
+val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
+
+val install by task<NpmTask> {
+    setWorkingDir(testDataDir)
+    setArgs(listOf("install"))
+}
+
+val runMocha by task<NpmTask> {
+    setWorkingDir(testDataDir)
+
+    val target = if (project.hasProperty("teamcity")) "runOnTeamcity" else "test"
+    setArgs(listOf("run", target))
+
+    dependsOn(install, "test")
+
+    val check by tasks
+    check.dependsOn(this)
+}

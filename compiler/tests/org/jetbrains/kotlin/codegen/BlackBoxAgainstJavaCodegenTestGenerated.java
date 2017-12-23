@@ -787,6 +787,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
                 doTest(fileName);
             }
 
+            @TestMetadata("superInSecondaryConstructor.kt")
+            public void testSuperInSecondaryConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/superInSecondaryConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("superconstructor.kt")
             public void testSuperconstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/superconstructor.kt");

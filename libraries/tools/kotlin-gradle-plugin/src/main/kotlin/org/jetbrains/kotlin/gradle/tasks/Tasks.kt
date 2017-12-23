@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Input
@@ -77,12 +76,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val taskBuildDirectory: File
         get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
 
-    private val cacheVersions: List<CacheVersion>
-        get() =
-            listOf(normalCacheVersion(taskBuildDirectory, enabled = incremental),
-                   dataContainerCacheVersion(taskBuildDirectory, enabled = incremental),
-                   gradleCacheVersion(taskBuildDirectory, enabled = incremental))
-
     // indicates that task should compile kotlin incrementally if possible
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
     var incremental: Boolean = false
@@ -90,13 +83,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         set(value) {
             field = value
             logger.kotlinDebug { "Set $this.incremental=$value" }
-        }
-
-    internal val isCacheFormatUpToDate: Boolean
-        get() {
-            if (!incremental) return true
-
-            return cacheVersions.all { it.checkVersion() == CacheVersion.Action.DO_NOTHING }
         }
 
     abstract protected fun createCompilerArgs(): T
@@ -263,6 +249,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     internal var artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null
     internal var artifactFile: File? = null
 
+    @get:Input
+    var usePreciseJavaTracking: Boolean = false
+        set(value) {
+            field = value
+            logger.kotlinDebug { "Set $this.usePreciseJavaTracking=$value" }
+        }
+
     init {
         incremental = true
     }
@@ -327,7 +320,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                         artifactDifferenceRegistryProvider,
                         artifactFile = artifactFile,
                         buildHistoryFile = buildHistoryFile,
-                        friendBuildHistoryFile = friendTask?.buildHistoryFile)
+                        friendBuildHistoryFile = friendTask?.buildHistoryFile,
+                        usePreciseJavaTracking = usePreciseJavaTracking
+                )
             }
         }
 

@@ -3,7 +3,7 @@ public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creato
 
     public final java.lang.Object createFromParcel(android.os.Parcel p0)
 
-    public final Test[] newArray(int p0)
+    public final java.lang.Object[] newArray(int p0)
 }
 
 public final class Test : java/lang/Object {

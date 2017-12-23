@@ -69,6 +69,14 @@
                      hasStaticDescription="true"
                      level="WARNING" />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.DeprecatedMavenDependencyInspection"
+                     displayName="Deprecated library is used in Maven"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     language="XML"
+                     hasStaticDescription="true"
+                     level="WARNING" />
+
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.maven.actions.MavenPluginSourcesMoveToBuild</className>
       <category>Kotlin</category>

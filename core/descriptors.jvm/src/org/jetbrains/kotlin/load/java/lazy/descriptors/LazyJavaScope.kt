@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
@@ -66,6 +66,8 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     )
 
     protected val declaredMemberIndex: NotNullLazyValue<DeclaredMemberIndex> = c.storageManager.createLazyValue { computeMemberIndex() }
+
+    fun wasContentRequested() = declaredMemberIndex.isComputed()
 
     protected abstract fun computeMemberIndex(): DeclaredMemberIndex
 
@@ -298,12 +300,14 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     private fun getPropertyType(field: JavaField): KotlinType {
         // Fields do not have their own generic parameters.
         // Simple static constants should not have flexible types.
-        val isNotNullable = !(field.isFinalStatic && field.hasConstantNotNullInitializer)
         val propertyType = c.typeResolver.transformJavaType(
                 field.type,
                 TypeUsage.COMMON.toAttributes()
         )
-        if (!isNotNullable) {
+        val isNotNullable =
+                (KotlinBuiltIns.isPrimitiveType(propertyType) || KotlinBuiltIns.isString(propertyType)) &&
+                field.isFinalStatic && field.hasConstantNotNullInitializer
+        if (isNotNullable) {
             return TypeUtils.makeNotNullable(propertyType)
         }
 

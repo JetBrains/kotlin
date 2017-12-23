@@ -16,6 +16,7 @@ dependencies {
     testCompile(project(":compiler:cli"))
     testCompile(project(":idea:idea-test-framework"))
     testCompileOnly(ideaSdkDeps("idea_rt"))
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
@@ -25,6 +26,7 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "properties"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":idea:idea-gradle"))
+    testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))

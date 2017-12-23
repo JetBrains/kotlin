@@ -4,7 +4,8 @@ apply { plugin("kotlin") }
 
 dependencies {
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler"))
+    testCompile(projectTests(":generators:test-generator"))
+    testRuntime(projectDist(":kotlin-reflect"))
 }
 
 sourceSets {
@@ -16,8 +17,6 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jdkHome = rootProject.extra["JDK_18"]!!.toString()
     kotlinOptions.jvmTarget = "1.8"
 }
-
-testsJar {}
 
 projectTest {
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"

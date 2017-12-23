@@ -29,11 +29,13 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.isError
@@ -75,7 +77,7 @@ open class ConvertLambdaToReferenceIntention(text: String) :
         // No references to Java synthetic properties
         if (calleeDescriptor is SyntheticJavaPropertyDescriptor) return false
         // No suspend functions
-        if ((calleeDescriptor as? FunctionDescriptor)?.isSuspend ?: false) return false
+        if ((calleeDescriptor as? FunctionDescriptor)?.isSuspend == true) return false
 
         val descriptorHasReceiver = with(calleeDescriptor) {
             // No references to both member / extension
@@ -222,10 +224,13 @@ open class ConvertLambdaToReferenceIntention(text: String) :
                     val calleeReferenceExpression = singleStatement.calleeExpression as? KtNameReferenceExpression ?: return null
                     val context = singleStatement.analyze()
                     val resolvedCall = calleeReferenceExpression.getResolvedCall(context) ?: return null
-                    if (resolvedCall.dispatchReceiver != null || resolvedCall.extensionReceiver != null)
-                        "this::${singleStatement.getCallReferencedName()}"
-                    else
-                        "::${singleStatement.getCallReferencedName()}"
+                    val receiver = resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver
+                    val receiverText = when {
+                        receiver == null -> ""
+                        lambdaExpression.getResolutionScope().getImplicitReceiversHierarchy().size == 1 -> "this"
+                        else -> receiver.type.constructor.declarationDescriptor?.name?.let { "this@$it" } ?: return null
+                    }
+                    "$receiverText::${singleStatement.getCallReferencedName()}"
                 }
                 is KtDotQualifiedExpression -> {
                     val selector = singleStatement.selectorExpression

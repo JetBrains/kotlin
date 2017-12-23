@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.storage.StorageManager;
+import org.jetbrains.kotlin.utils.SmartList;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -124,17 +125,39 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
 
     @NotNull
     @Override
-    protected Collection<KotlinType> getAdditionalNeighboursInSupertypeGraph() {
+    protected Collection<KotlinType> getAdditionalNeighboursInSupertypeGraph(boolean useCompanions) {
+        DeclarationDescriptor containingDeclaration = getDeclarationDescriptor().getContainingDeclaration();
+
+        if (!(containingDeclaration instanceof ClassDescriptor)) {
+            return Collections.emptyList();
+        }
+
+        Collection<KotlinType> additionalNeighbours = new SmartList<KotlinType>();
+
         // We suppose that there is an edge from C to A in graph when disconnecting loops in supertypes,
         // because such cyclic declarations should be prohibited (see p.10.2.1 of Kotlin spec)
         // class A : B {
         //   static class C {}
         // }
         // class B : A.C {}
-        DeclarationDescriptor containingDeclaration = getDeclarationDescriptor().getContainingDeclaration();
-        if (containingDeclaration instanceof ClassDescriptor) {
-            return Collections.<KotlinType>singleton(((ClassDescriptor) containingDeclaration).getDefaultType());
+        ClassDescriptor containingClassDescriptor = (ClassDescriptor) containingDeclaration;
+        additionalNeighbours.add(containingClassDescriptor.getDefaultType());
+
+        // Also we add edge from host-class to companion object. Together with previous edges
+        // (from nesteds to containing class), they can create visibility loops like in the
+        // following example:
+        //
+        // class ContainingClass {
+        //   open class Nested {}  // to create scope for resolving Nested, we have to resolve CO header
+        //   companion object : Nested() {} // to resolve CO header, we have to resolve Nested
+        // }
+        //
+        // Relates to KT-21515
+        ClassDescriptor companion = containingClassDescriptor.getCompanionObjectDescriptor();
+        if (useCompanions && companion != null) {
+            additionalNeighbours.add(companion.getDefaultType());
         }
-        return Collections.emptyList();
+
+        return additionalNeighbours;
     }
 }

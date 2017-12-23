@@ -80,12 +80,44 @@ open class LazyClassMemberScope(
         }
 
         addDataClassMethods(result, location)
+        addSyntheticFunctions(result, location)
         addSyntheticCompanionObject(result, location)
         addSyntheticNestedClasses(result, location)
 
         result.trimToSize()
         return result
     }
+
+    private val _variableNames: MutableSet<Name>
+        by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            mutableSetOf<Name>().apply {
+                addAll(declarationProvider.getDeclarationNames())
+                thisDescriptor.typeConstructor.supertypes.flatMapTo(this) {
+                    it.memberScope.getVariableNames()
+                }
+            }
+        }
+
+    private val _functionNames: MutableSet<Name>
+            by lazy(LazyThreadSafetyMode.PUBLICATION) {
+                mutableSetOf<Name>().apply {
+                    addAll(declarationProvider.getDeclarationNames())
+                    thisDescriptor.typeConstructor.supertypes.flatMapTo(this) {
+                        it.memberScope.getFunctionNames()
+                    }
+
+                    addAll(getDataClassRelatedFunctionNames())
+                }
+            }
+
+    private fun getDataClassRelatedFunctionNames(): Collection<Name> {
+        val declarations = mutableListOf<DeclarationDescriptor>()
+        addDataClassMethods(declarations, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
+        return declarations.map { it.name }
+    }
+
+    override fun getVariableNames() = _variableNames
+    override fun getFunctionNames() = _functionNames
 
     private interface MemberExtractor<out T : CallableMemberDescriptor> {
         fun extract(extractFrom: KotlinType, name: Name): Collection<T>
@@ -218,6 +250,10 @@ open class LazyClassMemberScope(
         val syntheticCompanionName = c.syntheticResolveExtension.getSyntheticCompanionObjectNameIfNeeded(thisDescriptor) ?: return
         val descriptor = getContributedClassifier(syntheticCompanionName, location) ?: return
         result.add(descriptor)
+    }
+
+    private fun addSyntheticFunctions(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
+        result.addAll(c.syntheticResolveExtension.getSyntheticFunctionNames(thisDescriptor).flatMap { getContributedFunctions(it, location) }.toList())
     }
 
     private fun addSyntheticNestedClasses(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {

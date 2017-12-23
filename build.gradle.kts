@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 buildscript {
     extra["defaultSnapshotVersion"] = "1.2-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.0-dev-439", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.20-dev-814", onlySuccessBootstrap = false))
 
     val repos = listOfNotNull(
             bootstrapKotlinRepo,
@@ -20,6 +20,7 @@ buildscript {
     extra["repos"] = repos
 
     extra["versions.shadow"] = "2.0.1"
+    extra["versions.proguard"] = "5.3.3"
 
     repositories {
         for (repo in repos) {
@@ -240,7 +241,7 @@ allprojects {
     configureJvmProject(javaHome!!, jvmTarget!!)
 
     val commonCompilerArgs = listOf("-Xallow-kotlin-package")
-    
+
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         kotlinOptions {
             languageVersion = kotlinLanguageVersion
@@ -342,6 +343,7 @@ tasks {
 
     "jsCompilerTest" {
         dependsOn(":js:js.tests:test")
+        dependsOn(":js:js.tests:runMocha")
     }
 
     "scriptingTest" {
@@ -355,6 +357,7 @@ tasks {
 
         dependsOn("scriptingTest")
         dependsOn(":kotlin-build-common:test")
+        dependsOn(":compiler:incremental-compilation-impl:test")
     }
 
     "examplesTest" {
@@ -407,9 +410,11 @@ tasks {
 
     "plugins-tests" {
         dependsOn("dist")
-        dependsOn(":plugins:plugins-tests:test",
-                  ":kotlin-annotation-processing:test",
+        dependsOn(":kotlin-annotation-processing:test",
                   ":kotlin-source-sections-compiler-plugin:test",
+                  ":kotlin-allopen-compiler-plugin:test",
+                  ":kotlin-noarg-compiler-plugin:test",
+                  ":kotlin-sam-with-receiver-compiler-plugin:test",
                   ":plugins:uast-kotlin:test",
                   ":kotlin-annotation-processing-gradle:test")
     }

@@ -228,6 +228,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("lastExpressionInInlineLambda.kt")
+    public void testLastExpressionInInlineLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/lastExpressionInInlineLambda.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("literals.kt")
     public void testLiterals() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/literals.kt");

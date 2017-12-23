@@ -319,6 +319,7 @@ object KotlinCompilerClient {
                 catch (e: ConnectException) { null to e }
                 catch (e: ConnectIOException) { null to e }
                 catch (e: UnmarshalException) { null to e }
+                catch (e: RuntimeException) { null to e }
 
                 if (res != null) return res
 
@@ -420,9 +421,9 @@ object KotlinCompilerClient {
             if (daemonOptions.runFilesPath.isNotEmpty()) {
                 val succeeded = isEchoRead.tryAcquire(daemonStartupTimeout, TimeUnit.MILLISECONDS)
                 if (!isProcessAlive(daemon))
-                    throw Exception("Daemon terminated unexpectedly with error code: ${daemon.exitValue()}")
+                    throw RuntimeException("Daemon terminated unexpectedly with error code: ${daemon.exitValue()}")
                 if (!succeeded)
-                    throw Exception("Unable to get response from daemon in $daemonStartupTimeout ms")
+                    throw RuntimeException("Unable to get response from daemon in $daemonStartupTimeout ms")
             }
             else
             // without startEcho defined waiting for max timeout

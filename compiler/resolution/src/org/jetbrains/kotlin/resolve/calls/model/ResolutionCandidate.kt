@@ -68,8 +68,8 @@ class KotlinResolutionCandidate(
         val knownTypeParametersResultingSubstitutor: TypeSubstitutor? = null,
         private val resolutionSequence: List<ResolutionPart> = resolvedCall.atom.callKind.resolutionSequence
 ) : Candidate, KotlinDiagnosticsHolder {
+    val diagnosticsFromResolutionParts = arrayListOf<KotlinCallDiagnostic>() // TODO: this is mutable list, take diagnostics only once!
     private var newSystem: NewConstraintSystemImpl? = null
-    private val diagnostics = arrayListOf<KotlinCallDiagnostic>()
     private var currentApplicability = ResolutionCandidateApplicability.RESOLVED
     private var subResolvedAtoms: MutableList<ResolvedAtom> = arrayListOf()
 
@@ -87,7 +87,7 @@ class KotlinResolutionCandidate(
     internal val csBuilder get() = getSystem().getBuilder()
 
     override fun addDiagnostic(diagnostic: KotlinCallDiagnostic) {
-        diagnostics.add(diagnostic)
+        diagnosticsFromResolutionParts.add(diagnostic)
         currentApplicability = maxOf(diagnostic.candidateApplicability, currentApplicability)
     }
 
@@ -121,7 +121,7 @@ class KotlinResolutionCandidate(
             partIndex++
         }
         if (step == stepCount) {
-            resolvedCall.setAnalyzedResults(subResolvedAtoms, diagnostics + getSystem().diagnostics)
+            resolvedCall.setAnalyzedResults(subResolvedAtoms)
         }
     }
 
@@ -145,7 +145,7 @@ class KotlinResolutionCandidate(
     override val isSuccessful: Boolean
         get() {
             processParts(stopOnFirstError = true)
-            return currentApplicability.isSuccess && variableApplicability.isSuccess
+            return currentApplicability.isSuccess && variableApplicability.isSuccess && !getSystem().hasContradiction
         }
 
     override val resultingApplicability: ResolutionCandidateApplicability
@@ -176,8 +176,8 @@ class MutableResolvedCallAtom(
     override lateinit var substitutor: FreshVariableNewTypeSubstitutor
     lateinit var argumentToCandidateParameter: Map<KotlinCallArgument, ValueParameterDescriptor>
 
-    override public fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>, diagnostics: Collection<KotlinCallDiagnostic>) {
-        super.setAnalyzedResults(subResolvedAtoms, diagnostics)
+    override public fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>) {
+        super.setAnalyzedResults(subResolvedAtoms)
     }
 
     override fun toString(): String = "$atom, candidate = $candidateDescriptor"

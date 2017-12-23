@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtConstructor
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
@@ -48,7 +51,9 @@ import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.keysToMap
+import java.io.File
 
 object ExpectedActualDeclarationChecker : DeclarationChecker {
     override fun check(
@@ -56,7 +61,8 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings
+            languageVersionSettings: LanguageVersionSettings,
+            expectActualTracker: ExpectActualTracker
     ) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
 
@@ -64,7 +70,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         if (descriptor !is MemberDescriptor || DescriptorUtils.isEnumEntry(descriptor)) return
 
         if (descriptor.isExpect) {
-            checkExpectedDeclarationHasActual(declaration, descriptor, diagnosticHolder, descriptor.module)
+            checkExpectedDeclarationHasActual(declaration, descriptor, diagnosticHolder, descriptor.module, expectActualTracker)
         }
         else {
             val checkActual = !languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckActual)
@@ -76,7 +82,8 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             reportOn: KtNamedDeclaration,
             descriptor: MemberDescriptor,
             diagnosticHolder: DiagnosticSink,
-            platformModule: ModuleDescriptor
+            platformModule: ModuleDescriptor,
+            expectActualTracker: ExpectActualTracker
     ) {
         // Only look for top level actual members; class members will be handled as a part of that expected class
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
@@ -96,7 +103,31 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
             diagnosticHolder.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, platformModule, incompatibility))
         }
+        else {
+            val actualMembers = compatibility.asSequence()
+                    .filter { (compatibility, _) ->
+                        compatibility is Compatible || (compatibility is Incompatible && compatibility.kind != Compatibility.IncompatibilityKind.STRONG)
+                    }.flatMap { it.value.asSequence() }
+
+            expectActualTracker?.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
+        }
     }
+
+    private fun ExpectActualTracker.reportExpectActual(expected: MemberDescriptor, actualMembers: Sequence<MemberDescriptor>) {
+        if (this is ExpectActualTracker.DoNothing) return
+
+        val expectedFile = sourceFile(expected) ?: return
+        for (actual in actualMembers) {
+            val actualFile = sourceFile(actual) ?: continue
+            report(expectedFile = expectedFile, actualFile = actualFile)
+        }
+    }
+
+    private fun sourceFile(descriptor: MemberDescriptor): File? =
+            descriptor.source
+                    .containingFile
+                    .safeAs<PsiSourceFile>()
+                    ?.run { VfsUtilCore.virtualToIoFile(psiFile.virtualFile) }
 
     fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
             this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }

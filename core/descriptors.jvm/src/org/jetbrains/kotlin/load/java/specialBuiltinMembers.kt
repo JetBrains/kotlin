@@ -343,10 +343,10 @@ fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
     return false
 }
 
-// Util methods
 val CallableMemberDescriptor.isFromJava: Boolean
-    get() = propertyIfAccessor.let { descriptor ->
-        (descriptor as? JavaCallableMemberDescriptor)?.containingDeclaration is JavaClassDescriptor
+    get() {
+        val descriptor = propertyIfAccessor
+        return descriptor.containingDeclaration is JavaClassDescriptor
     }
 
 fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || KotlinBuiltIns.isBuiltIn(this)

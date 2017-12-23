@@ -40,7 +40,7 @@ class MapTransformation(
         get() = "$functionName{}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = generateLambda(inputVariable, indexVariable, mapping)
+        val lambda = generateLambda(inputVariable, indexVariable, mapping, chainedCallGenerator.reformat)
         return chainedCallGenerator.generate("$functionName$0:'{}'", lambda)
     }
 

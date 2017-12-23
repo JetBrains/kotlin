@@ -65,8 +65,9 @@ FILE /delegatedProperties.kt
         $this: VALUE_PARAMETER this@C: C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test3>(): Any'
-            CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Any>: Any' type=kotlin.Any origin=null
+            CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out Any>: Any' type=kotlin.Any origin=null
               <V>: Any
+              <V1 : V>: Any
               $receiver: GET_FIELD '`test3$delegate`: MutableMap<String, Any>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
                 receiver: GET_VAR 'this@C: C' type=C origin=null
               thisRef: GET_VAR 'this@C: C' type=C origin=null
@@ -99,8 +100,9 @@ FILE /delegatedProperties.kt
     FUN DELEGATED_PROPERTY_ACCESSOR public fun <get-test4>(): kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test4>(): Any'
-          CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Any>: Any' type=kotlin.Any origin=null
+          CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out Any>: Any' type=kotlin.Any origin=null
             <V>: Any
+            <V1 : V>: Any
             $receiver: GET_FIELD '`test4$delegate`: HashMap<String, Any> /* = HashMap<String, Any> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Any> /* = java.util.HashMap<kotlin.String, kotlin.Any> */ origin=null
             thisRef: CONST Null type=kotlin.Nothing? value='null'
             property: PROPERTY_REFERENCE 'test4: Any' field=null getter='<get-test4>(): Any' setter='<set-test4>(Any): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE

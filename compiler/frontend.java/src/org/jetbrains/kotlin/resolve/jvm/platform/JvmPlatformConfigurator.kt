@@ -62,7 +62,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 JavaNullabilityChecker(),
                 RuntimeAssertionsTypeChecker,
                 JavaGenericVarianceViolationTypeChecker,
-                JavaTypeAccessibilityChecker()
+                JavaTypeAccessibilityChecker(),
+                JvmArrayVariableInLoopAssignmentChecker
         ),
 
         additionalClassifierUsageCheckers = listOf(

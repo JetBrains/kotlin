@@ -36,10 +36,12 @@ fun Project.classesDirsArtifact(): FileCollection {
     return classesDirs
 }
 
+private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
+
 fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testCompile"])
 
-    return task<Jar>("testsJar") {
+    return task<Jar>(MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME) {
         dependsOn("testClasses")
         pluginManager.withPlugin("java") {
             from(project.the<JavaPluginConvention>().sourceSets.getByName("test").output)
@@ -74,18 +76,19 @@ fun<T: Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
 
 fun Project.runtimeJar(taskName: String = "jar", body: Jar.() -> Unit = {}): Jar = runtimeJar(getOrCreateTask(taskName, body))
 
-fun Project.sourcesJar(body: Jar.() -> Unit = {}): Jar =
+fun Project.sourcesJar(sourceSet: String? = "main", body: Jar.() -> Unit = {}): Jar =
         getOrCreateTask("sourcesJar") {
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             classifier = "sources"
             try {
-                project.pluginManager.withPlugin("java-base") {
-                    from(project.the<JavaPluginConvention>().sourceSets["main"].allSource)
+                if (sourceSet != null) {
+                    project.pluginManager.withPlugin("java-base") {
+                        from(project.the<JavaPluginConvention>().sourceSets[sourceSet].allSource)
+                    }
                 }
             } catch (e: UnknownDomainObjectException) {
                 // skip default sources location
             }
-            tasks.findByName("classes")?.let { dependsOn(it) }
             body()
             project.addArtifact("archives", this, this)
         }

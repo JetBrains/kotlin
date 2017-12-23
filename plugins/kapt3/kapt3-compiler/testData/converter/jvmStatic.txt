@@ -1,0 +1,71 @@
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public final class JvmStaticTest {
+    private final byte three = (byte)3;
+    private final char d = 'D';
+    private static final int one = 1;
+    private static final int two = 2;
+    public static final char c = 'C';
+    public static final JvmStaticTest.Companion Companion = null;
+
+    @kapt.internal.KaptSignature(value = "getThree()B")
+    public final byte getThree() {
+        return 0;
+    }
+
+    @kapt.internal.KaptSignature(value = "getD()C")
+    public final char getD() {
+        return '\u0000';
+    }
+
+    @kapt.internal.KaptSignature(value = "<init>()V")
+    public JvmStaticTest() {
+        super();
+    }
+
+    @kapt.internal.KaptSignature(value = "getOne()I")
+    public static final int getOne() {
+        return 0;
+    }
+
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        @kapt.internal.KaptSignature(value = "one$annotations()V")
+        public static void one$annotations() {
+        }
+
+        @kapt.internal.KaptSignature(value = "getOne()I")
+        public final int getOne() {
+            return 0;
+        }
+
+        @kapt.internal.KaptSignature(value = "getTwo()I")
+        public final int getTwo() {
+            return 0;
+        }
+
+        @kapt.internal.KaptSignature(value = "<init>()V")
+        private Companion() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
+}

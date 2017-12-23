@@ -46,10 +46,8 @@ sealed class ResolvedAtom {
 
     lateinit var subResolvedAtoms: List<ResolvedAtom>
         private set
-    lateinit var diagnostics: Collection<KotlinCallDiagnostic>
-        private set
 
-    protected open fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>, diagnostics: Collection<KotlinCallDiagnostic>) {
+    protected open fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>) {
         assert(!analyzed) {
             "Already analyzed: $this"
         }
@@ -57,7 +55,6 @@ sealed class ResolvedAtom {
         analyzed = true
 
         this.subResolvedAtoms = subResolvedAtoms
-        this.diagnostics = diagnostics
     }
 }
 
@@ -74,7 +71,7 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
 
 class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : ResolvedAtom() {
     init {
-        setAnalyzedResults(listOf(), listOf())
+        setAnalyzedResults(listOf())
     }
 }
 sealed class PostponedResolvedAtom : ResolvedAtom() {
@@ -90,7 +87,7 @@ class LambdaWithTypeVariableAsExpectedTypeAtom(
     override val outputType: UnwrappedType? get() = null
 
     fun setAnalyzed(resolvedLambdaAtom: ResolvedLambdaAtom) {
-        setAnalyzedResults(listOf(resolvedLambdaAtom), listOf())
+        setAnalyzedResults(listOf(resolvedLambdaAtom))
     }
 }
 
@@ -107,11 +104,10 @@ class ResolvedLambdaAtom(
 
     fun setAnalyzedResults(
             resultArguments: List<KotlinCallArgument>,
-            subResolvedAtoms: List<ResolvedAtom>,
-            diagnostics: Collection<KotlinCallDiagnostic>
+            subResolvedAtoms: List<ResolvedAtom>
     ) {
         this.resultArguments = resultArguments
-        setAnalyzedResults(subResolvedAtoms, diagnostics)
+        setAnalyzedResults(subResolvedAtoms)
     }
 
     override val inputTypes: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
@@ -127,11 +123,10 @@ class ResolvedCallableReferenceAtom(
 
     fun setAnalyzedResults(
             candidate: CallableReferenceCandidate?,
-            subResolvedAtoms: List<ResolvedAtom>,
-            diagnostics: Collection<KotlinCallDiagnostic>
+            subResolvedAtoms: List<ResolvedAtom>
     ) {
         this.candidate = candidate
-        setAnalyzedResults(subResolvedAtoms, diagnostics)
+        setAnalyzedResults(subResolvedAtoms)
     }
 
     override val inputTypes: Collection<UnwrappedType>
@@ -154,14 +149,14 @@ class ResolvedCollectionLiteralAtom(
         val expectedType: UnwrappedType?
 ) : ResolvedAtom() {
     init {
-        setAnalyzedResults(listOf(), listOf())
+        setAnalyzedResults(listOf())
     }
 }
 
 class CallResolutionResult(
         val type: Type,
         val resultCallAtom: ResolvedCallAtom?,
-        diagnostics: List<KotlinCallDiagnostic>,
+        val diagnostics: List<KotlinCallDiagnostic>,
         val constraintSystem: ConstraintStorage,
         val allCandidates: Collection<KotlinResolutionCandidate>? = null
 ) : ResolvedAtom() {
@@ -175,7 +170,7 @@ class CallResolutionResult(
     }
 
     init {
-        setAnalyzedResults(listOfNotNull(resultCallAtom), diagnostics)
+        setAnalyzedResults(listOfNotNull(resultCallAtom))
     }
 
     override fun toString() = "$type, resultCallAtom = $resultCallAtom, (${diagnostics.joinToString()})"

@@ -90,6 +90,10 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
 
+    fun testHierarchyWithExpectClassCommonSideNonJavaIds() {
+        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+    }
+
     fun testHierarchyWithExpectClassPlatformSide() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }

@@ -20,10 +20,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.RenameProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
@@ -55,6 +52,7 @@ class CodeInliner<TCallElement : KtElement>(
         private val bindingContext: BindingContext,
         private val resolvedCall: ResolvedCall<out CallableDescriptor>,
         private val callElement: TCallElement,
+        private val inlineSetter: Boolean,
         codeToInline: CodeToInline
 ) {
     private val codeToInline = codeToInline.toMutable()
@@ -69,16 +67,16 @@ class CodeInliner<TCallElement : KtElement>(
         val assignment = (qualifiedElement as? KtExpression)
                 ?.getAssignmentByLHS()
                 ?.takeIf { it.operationToken == KtTokens.EQ }
-        val elementToBeReplaced = assignment ?: qualifiedElement
         val callableForParameters = if (assignment != null && descriptor is PropertyDescriptor)
-            descriptor.setter ?: descriptor
+            descriptor.setter?.takeIf { inlineSetter && it.hasBody() } ?: descriptor
         else
             descriptor
-
+        val elementToBeReplaced = assignment.takeIf { callableForParameters is PropertySetterDescriptor } ?: qualifiedElement
         val commentSaver = CommentSaver(elementToBeReplaced, saveLineBreaks = true)
 
         // if the value to be inlined is not used and has no side effects we may drop it
         if (codeToInline.mainExpression != null
+            && assignment == null
             && elementToBeReplaced is KtExpression
             && !elementToBeReplaced.isUsedAsExpression(bindingContext)
             && !codeToInline.mainExpression.shouldKeepValue(usageCount = 0)

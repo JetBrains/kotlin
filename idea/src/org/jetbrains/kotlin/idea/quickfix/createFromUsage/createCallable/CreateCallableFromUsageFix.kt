@@ -21,7 +21,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -80,6 +79,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
 
     override fun getText(): String {
         val element = element ?: return ""
+        val receiverTypeInfo = callableInfos.first().receiverTypeInfo
         val renderedCallables = callableInfos.map {
             buildString {
                 if (it.isAbstract) {
@@ -97,13 +97,15 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
                 if (it.name.isNotEmpty()) {
                     append(" '")
 
-                    val callableBuilder =
-                            CallableBuilderConfiguration(callableInfos, element, isExtension = isExtension)
-                                    .createBuilder()
-                    val receiverType = callableBuilder
-                            .computeTypeCandidates(callableInfos.first().receiverTypeInfo)
-                            .firstOrNull()
-                            ?.theType
+                    val receiverType = if (!receiverTypeInfo.isOfThis) {
+                        CallableBuilderConfiguration(callableInfos, element, isExtension = isExtension)
+                                .createBuilder()
+                                .computeTypeCandidates(receiverTypeInfo)
+                                .firstOrNull()
+                                ?.theType
+                    }
+                    else null
+
                     if (receiverType != null) {
                         if (isExtension) {
                             val receiverTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)
@@ -125,7 +127,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         return StringBuilder().apply {
             append("Create ")
 
-            val receiverInfo = callableInfos.first().receiverTypeInfo
+            val receiverInfo = receiverTypeInfo
             if (!callableInfos.any { it.isAbstract }) {
                 if (isExtension) {
                     append("extension ")
@@ -139,9 +141,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         }.toString()
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (!super.isAvailable(project, editor, file)) return false
-        if (file !is KtFile) return false
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
 
         val receiverInfo = callableInfos.first().receiverTypeInfo

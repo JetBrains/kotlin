@@ -136,6 +136,7 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
                 Modality.FINAL,
                 Visibilities.PUBLIC
         )
+        functionDescriptor.setHasSynthesizedParameterNames(true)
         return functionDescriptor
     }
 

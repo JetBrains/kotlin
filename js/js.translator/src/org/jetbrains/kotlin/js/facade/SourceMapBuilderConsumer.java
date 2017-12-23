@@ -35,6 +35,9 @@ import java.util.function.Supplier;
 
 public class SourceMapBuilderConsumer implements SourceLocationConsumer {
     @NotNull
+    private final File sourceBaseDir;
+
+    @NotNull
     private final SourceMapMappingConsumer mappingConsumer;
 
     @NotNull
@@ -48,10 +51,12 @@ public class SourceMapBuilderConsumer implements SourceLocationConsumer {
     private final List<Object> sourceStack = new ArrayList<>();
 
     public SourceMapBuilderConsumer(
+            @NotNull File sourceBaseDir,
             @NotNull SourceMapMappingConsumer mappingConsumer,
             @NotNull SourceFilePathResolver pathResolver,
             boolean provideCurrentModuleContent, boolean provideExternalModuleContent
     ) {
+        this.sourceBaseDir = sourceBaseDir;
         this.mappingConsumer = mappingConsumer;
         this.pathResolver = pathResolver;
         this.provideCurrentModuleContent = provideCurrentModuleContent;
@@ -109,7 +114,23 @@ public class SourceMapBuilderConsumer implements SourceLocationConsumer {
         else if (sourceInfo instanceof JsLocationWithSource) {
             JsLocationWithSource location = (JsLocationWithSource) sourceInfo;
             Supplier<Reader> contentSupplier = provideExternalModuleContent ? location.getSourceProvider()::invoke : () -> null;
-            mappingConsumer.addMapping(location.getFile(), location.getIdentityObject(), contentSupplier,
+            String path;
+
+            File absFile = new File(location.getFile()).isAbsolute() ?
+                           new File(location.getFile()) :
+                           new File(sourceBaseDir, location.getFile());
+            if (absFile.isAbsolute()) {
+                try {
+                    path = pathResolver.getPathRelativeToSourceRoots(absFile);
+                }
+                catch (IOException e) {
+                    path = location.getFile();
+                }
+            }
+            else {
+                path = location.getFile();
+            }
+            mappingConsumer.addMapping(path, location.getIdentityObject(), contentSupplier,
                                location.getStartLine(), location.getStartChar());
         }
     }

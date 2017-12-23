@@ -229,8 +229,12 @@ class LazyTopDownAnalyzer(
 
     private fun resolveImportsInAllFiles(c: TopDownAnalysisContext) {
         for (file in c.files + c.scripts.keys.map { it.containingKtFile }) {
-            fileScopeProvider.getImportResolver(file).forceResolveAllImports()
+            resolveImportsInFile(file)
         }
+    }
+
+    fun resolveImportsInFile(file: KtFile) {
+        fileScopeProvider.getImportResolver(file).forceResolveAllImports()
     }
 
     private fun createTypeAliasDescriptors(c: TopDownAnalysisContext, topLevelFqNames: Multimap<FqName, KtElement>, typeAliases: List<KtTypeAlias>) {

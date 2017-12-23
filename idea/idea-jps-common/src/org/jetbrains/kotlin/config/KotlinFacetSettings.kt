@@ -70,6 +70,48 @@ object CoroutineSupport {
     }
 }
 
+sealed class VersionView : DescriptionAware {
+    abstract val version: LanguageVersion
+
+    object LatestStable : VersionView() {
+        override val version: LanguageVersion = LanguageVersion.LATEST_STABLE
+
+        override val description: String
+            get() = "Latest stable (${version.versionString})"
+    }
+
+    class Specific(override val version: LanguageVersion) : VersionView() {
+        override val description: String
+            get() = version.description
+
+        override fun equals(other: Any?) = other is Specific && version == other.version
+
+        override fun hashCode() = version.hashCode()
+    }
+
+    companion object {
+        fun deserialize(value: String?, isAutoAdvance: Boolean): VersionView {
+            if (isAutoAdvance) return VersionView.LatestStable
+            val languageVersion = LanguageVersion.fromVersionString(value)
+            return if (languageVersion != null) VersionView.Specific(languageVersion) else VersionView.LatestStable
+        }
+    }
+}
+
+var CommonCompilerArguments.languageVersionView: VersionView
+    get() = VersionView.deserialize(languageVersion, autoAdvanceLanguageVersion)
+    set(value) {
+        languageVersion = value.version.versionString
+        autoAdvanceLanguageVersion = value == VersionView.LatestStable
+    }
+
+var CommonCompilerArguments.apiVersionView: VersionView
+    get() = VersionView.deserialize(apiVersion, autoAdvanceApiVersion)
+    set(value) {
+        apiVersion = value.version.versionString
+        autoAdvanceApiVersion = value == VersionView.LatestStable
+    }
+
 class KotlinFacetSettings {
     companion object {
         // Increment this when making serialization-incompatible changes to configuration data

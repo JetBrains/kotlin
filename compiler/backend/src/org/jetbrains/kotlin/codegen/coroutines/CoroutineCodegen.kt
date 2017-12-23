@@ -531,6 +531,10 @@ class CoroutineCodegenForNamedFunction private constructor(
 private const val COROUTINE_LAMBDA_PARAMETER_PREFIX = "p$"
 
 private object FailingFunctionGenerationStrategy : FunctionGenerationStrategy() {
+    override fun skipNotNullAssertionsForParameters(): kotlin.Boolean {
+        error("This functions must not be called")
+    }
+
     override fun generateBody(
             mv: MethodVisitor,
             frameMap: FrameMap,

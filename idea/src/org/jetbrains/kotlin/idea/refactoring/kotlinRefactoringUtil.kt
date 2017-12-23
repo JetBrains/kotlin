@@ -761,11 +761,25 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
 
     if (commonCount == 0) return originalList.listReplacer(newList)
 
+    val lastOriginalParameter = oldParameters.last()
+
     if (oldCount > commonCount) {
-        originalList.deleteChildRange(oldParameters[commonCount - 1].nextSibling, oldParameters.last())
+        originalList.deleteChildRange(oldParameters[commonCount - 1].nextSibling, lastOriginalParameter)
     }
     else if (newCount > commonCount) {
-        originalList.addRangeAfter(newParameters[commonCount - 1].nextSibling, newParameters.last(), oldParameters.last())
+        val psiBeforeLastParameter = lastOriginalParameter.prevSibling
+        val withMultiline = (psiBeforeLastParameter is PsiWhiteSpace || psiBeforeLastParameter is PsiComment) && psiBeforeLastParameter.textContains('\n')
+        val extraSpace = if (withMultiline) KtPsiFactory(originalList).createNewLine() else null
+        originalList.addRangeAfter(newParameters[commonCount - 1].nextSibling, newParameters.last(), lastOriginalParameter)
+        if (extraSpace != null) {
+            val addedItems = originalList.itemsFun().subList(commonCount, newCount)
+            for (addedItem in addedItems) {
+                val elementBefore = addedItem.prevSibling
+                if ((elementBefore !is PsiWhiteSpace && elementBefore !is PsiComment) || !elementBefore.textContains('\n')) {
+                    addedItem.parent.addBefore(extraSpace, addedItem)
+                }
+            }
+        }
     }
 
     return originalList

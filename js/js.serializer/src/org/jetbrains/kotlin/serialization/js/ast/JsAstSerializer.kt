@@ -196,6 +196,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
                 switchBuilder.expression = serialize(x.expression)
                 for (case in x.cases) {
                     val entryBuilder = SwitchEntry.newBuilder()
+                    withLocation(case, { entryBuilder.fileId = it }, { entryBuilder.location = it }) {}
                     if (case is JsCase) {
                         entryBuilder.label = serialize(case.caseExpression)
                     }
@@ -263,7 +264,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
             }
         }
 
-        withLocation(statement, { visitor.builder.fileId = it }, {visitor.builder.location = it }) {
+        withLocation(statement, { visitor.builder.fileId = it }, { visitor.builder.location = it }) {
             statement.accept(visitor)
         }
 
@@ -563,6 +564,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         SpecialFunction.COROUTINE_RESULT -> JsAstProtoBuf.SpecialFunction.COROUTINE_RESULT
         SpecialFunction.COROUTINE_CONTROLLER -> JsAstProtoBuf.SpecialFunction.COROUTINE_CONTROLLER
         SpecialFunction.COROUTINE_RECEIVER -> JsAstProtoBuf.SpecialFunction.COROUTINE_RECEIVER
+        SpecialFunction.SET_COROUTINE_RESULT -> JsAstProtoBuf.SpecialFunction.SET_COROUTINE_RESULT
     }
 
     private fun serialize(name: JsName): Int = nameMap.getOrPut(name) {

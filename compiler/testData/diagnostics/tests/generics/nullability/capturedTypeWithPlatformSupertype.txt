@@ -1,0 +1,29 @@
+package
+
+public fun test(/*0*/ s: SubFirst<*>): kotlin.Unit
+
+public open class First</*0*/ T : Sample!> {
+    public constructor First</*0*/ T : Sample!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ D : Sample!> bind(/*0*/ first: First<D!>!): kotlin.Unit
+}
+
+public interface Sample {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class SubFirst</*0*/ D : Sample!> : First<D!> {
+    public constructor SubFirst</*0*/ D : Sample!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open override /*1*/ /*fake_override*/ fun </*0*/ D : Sample!> bind(/*0*/ first: First<D!>!): kotlin.Unit
+}

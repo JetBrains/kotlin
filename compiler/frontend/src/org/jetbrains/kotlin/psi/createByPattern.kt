@@ -22,6 +22,7 @@ import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -94,6 +95,9 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
         PsiChildRangeArgumentType
 )
 
+@TestOnly
+var CREATEBYPATTERN_MAY_NOT_REFORMAT = false
+
 fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, reformat: Boolean = true, factory: (String) -> TElement): TElement {
     val argumentTypes = args.map { arg ->
         SUPPORTED_ARGUMENT_TYPES.firstOrNull { it.klass.isInstance(arg) }
@@ -147,6 +151,9 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, re
     val codeStyleManager = CodeStyleManager.getInstance(project)
 
     if (reformat) {
+        if (CREATEBYPATTERN_MAY_NOT_REFORMAT) {
+            throw java.lang.IllegalArgumentException("Reformatting is not allowed in the current context; please change the invocation to use reformat=false")
+        }
         val stringPlaceholderRanges = allPlaceholders
                 .filter { args[it.key] is String }
                 .flatMap { it.value }
@@ -325,8 +332,8 @@ class BuilderByPattern<TElement> {
     }
 }
 
-fun KtPsiFactory.buildExpression(build: BuilderByPattern<KtExpression>.() -> Unit): KtExpression {
-    return buildByPattern({ pattern, args -> this.createExpressionByPattern(pattern, *args) }, build)
+fun KtPsiFactory.buildExpression(reformat: Boolean = true, build: BuilderByPattern<KtExpression>.() -> Unit): KtExpression {
+    return buildByPattern({ pattern, args -> this.createExpressionByPattern(pattern, *args, reformat = reformat) }, build)
 }
 
 fun KtPsiFactory.buildValueArgumentList(build: BuilderByPattern<KtValueArgumentList>.() -> Unit): KtValueArgumentList {

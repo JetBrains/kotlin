@@ -89,24 +89,6 @@ open class A {
     }
 
     @Test
-    fun testModifyJavaInLib() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
-        project.build("build") {
-            assertSuccessful()
-        }
-
-        val javaClassJava = project.projectDir.getFileByName("JavaClass.java")
-        javaClassJava.modify { it.replace("String getString", "Object getString") }
-
-        project.build("build") {
-            assertSuccessful()
-            val affectedSources = project.projectDir.getFilesByNames("JavaClassChild.kt", "useJavaClass.kt")
-            val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths, weakTesting = false)
-        }
-    }
-
-    @Test
     fun testCleanBuildLib() {
         val project = Project("incrementalMultiproject", GRADLE_VERSION)
         project.build("build") {
@@ -209,6 +191,91 @@ open class A {
             assertSuccessful()
             val affectedSources = project.projectDir.getFilesByNames("libUtil.kt", "MainActivity2.kt")
             assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+        }
+    }
+}
+
+class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = null) {
+    @Test
+    override fun testModifySignatureTrackedJavaInLib() {
+        doTest(trackedJavaClass, changeSignature,
+               expectedAffectedSources = listOf(
+                       "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
+                       "useTrackedJavaClassSameModule.kt"))
+    }
+
+    @Test
+    override fun testModifyBodyTrackedJavaInLib() {
+        doTest(trackedJavaClass, changeBody,
+               expectedAffectedSources = listOf(
+                       "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
+                       "useTrackedJavaClassSameModule.kt"
+               ))
+    }
+}
+
+class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = true) {
+    @Test
+    override fun testModifySignatureTrackedJavaInLib() {
+        doTest(trackedJavaClass, changeSignature, expectedAffectedSources = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt"))
+    }
+
+    @Test
+    override fun testModifyBodyTrackedJavaInLib() {
+        doTest(trackedJavaClass, changeBody, expectedAffectedSources = listOf())
+    }
+}
+
+abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking: Boolean?) : BaseGradleIT() {
+    companion object {
+        protected val GRADLE_VERSION = "2.10"
+    }
+
+    override fun defaultBuildOptions(): BuildOptions =
+            super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
+
+    protected val trackedJavaClass = "TrackedJavaClass.java"
+    private val javaClass = "JavaClass.java"
+    protected val changeBody: (String)->String = { it.replace("Hello, World!", "Hello, World!!!!")  }
+    protected val changeSignature: (String)->String = { it.replace("String getString", "Object getString")  }
+
+    @Test
+    fun testModifySignatureJavaInLib() {
+        doTest(javaClass, changeBody,
+               expectedAffectedSources = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
+        )
+    }
+
+    @Test
+    fun testModifyBodyJavaInLib() {
+        doTest(javaClass, changeBody,
+               expectedAffectedSources = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
+        )
+    }
+
+    abstract fun testModifySignatureTrackedJavaInLib()
+    abstract fun testModifyBodyTrackedJavaInLib()
+
+    protected fun doTest(
+            fileToModify: String,
+            transformFile: (String)->String,
+            expectedAffectedSources: Collection<String>
+    ) {
+        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+
+        val options = defaultBuildOptions().copy(usePreciseJavaTracking = usePreciseJavaTracking)
+        project.build("build", options = options) {
+            assertSuccessful()
+        }
+
+        val javaClassJava = project.projectDir.getFileByName(fileToModify)
+        javaClassJava.modify(transformFile)
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames(*expectedAffectedSources.toTypedArray())
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths, weakTesting = false)
         }
     }
 }

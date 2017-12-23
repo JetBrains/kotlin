@@ -11,8 +11,15 @@ where advanced options include:
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
   -Xjavac-arguments=<option[,]> Java compiler arguments
-  -Xjsr305={ignore|strict|warn}|under-migration:{ignore-strict-warn}|@<fully qualified class name>:{ignore|strict|warn}
-                             Specify behaviors for JSR-305 nullability annotations for: global, annotated with @UnderMigration or custom annotation with specific value: ignore, treat as other supported nullability annotations, or report a warning. Note that strict value is experimental yet
+  -Xjsr305={ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}
+                             Specify behavior for JSR-305 nullability annotations:
+                             -Xjsr305={ignore/strict/warn}                   globally (all non-@UnderMigration annotations)
+                             -Xjsr305=under-migration:{ignore/strict/warn}   all @UnderMigration annotations
+                             -Xjsr305=@<fq.name>:{ignore/strict/warn}        annotation with the given fully qualified class name
+                             Modes:
+                               * ignore
+                               * strict (experimental; treat as other supported nullability annotations)
+                               * warn (report a warning)
   -Xload-builtins-from-dependencies
                              Load definitions of built-in declarations from module dependencies, instead of from the compiler
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types
@@ -33,7 +40,9 @@ where advanced options include:
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
+  -Xeffect-system            Enable experimental language feature: effect system
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
+  -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
   -Xmulti-platform           Enable experimental language support for multi-platform projects
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects

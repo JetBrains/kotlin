@@ -18,7 +18,9 @@ compilerDummyJar(compilerDummyForDependenciesRewriting("compilerDummy") {
     classifier = "dummy"
 })
 
-runtimeJar(embeddableCompiler())
+runtimeJar(embeddableCompiler()) {
+    exclude("com/sun/jna/**")
+}
 
 sourcesJar()
 javadocJar()

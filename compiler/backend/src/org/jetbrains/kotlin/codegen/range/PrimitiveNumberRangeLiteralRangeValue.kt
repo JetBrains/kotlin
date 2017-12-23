@@ -17,34 +17,58 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.range.forLoop.ForInRangeLiteralLoopGenerator
-import org.jetbrains.kotlin.codegen.range.forLoop.ForInUntilConstantRangeLoopGenerator
+import org.jetbrains.kotlin.codegen.generateCallReceiver
+import org.jetbrains.kotlin.codegen.generateCallSingleArgument
+import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class PrimitiveNumberRangeLiteralRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
+class PrimitiveNumberRangeLiteralRangeValue(
+        rangeCall: ResolvedCall<out CallableDescriptor>
+) : PrimitiveNumberRangeIntrinsicRangeValue(rangeCall),
+        ReversableRangeValue {
+
     override fun getBoundedValue(codegen: ExpressionCodegen) =
             SimpleBoundedValue(codegen, rangeCall)
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator =
-            getConstRangeForInRangeLiteralGenerator(codegen, forExpression) ?:
-            ForInRangeLiteralLoopGenerator(codegen, forExpression, rangeCall)
+            createConstBoundedForInRangeLiteralGenerator(codegen, forExpression) ?:
+            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
 
-    private fun getConstRangeForInRangeLiteralGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator? {
-        val rhsExpression = rangeCall.valueArgumentsByIndex?.run { get(0).arguments[0].getArgumentExpression() } ?: return null
-        val constValue = codegen.getCompileTimeConstant(rhsExpression).safeAs<IntegerValueConstant<*>>() ?: return null
-        val untilValue = when (constValue) {
-            is ByteValue -> constValue.value + 1
-            is ShortValue -> constValue.value + 1
-            is IntValue -> constValue.value + 1
-            else -> return null
-        }
-        // Watch out for integer overflow
-        if (untilValue == Int.MIN_VALUE) return null
-        return ForInUntilConstantRangeLoopGenerator(codegen, forExpression, rangeCall, untilValue)
+    override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator =
+            createConstBoundedRangeForInReversedRangeLiteralGenerator(codegen, forExpression) ?:
+            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
+                    codegen, forExpression, getBoundedValue(codegen),
+                    inverseBoundsEvaluationOrder = true
+            )
+
+    private fun createConstBoundedForInRangeLiteralGenerator(
+            codegen: ExpressionCodegen,
+            forExpression: KtForExpression
+    ): ForLoopGenerator? {
+        val endExpression = rangeCall.getFirstArgumentExpression() ?: return null
+        return createConstBoundedForLoopGeneratorOrNull(
+                codegen, forExpression,
+                codegen.generateCallReceiver(rangeCall),
+                endExpression,
+                1
+        )
+    }
+
+    private fun createConstBoundedRangeForInReversedRangeLiteralGenerator(
+            codegen: ExpressionCodegen,
+            forExpression: KtForExpression
+    ): ForLoopGenerator? {
+        val endExpression = rangeCall.getReceiverExpression() ?: return null
+        return createConstBoundedForLoopGeneratorOrNull(
+                codegen, forExpression,
+                codegen.generateCallSingleArgument(rangeCall),
+                endExpression,
+                -1
+        )
     }
 }

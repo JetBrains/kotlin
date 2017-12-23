@@ -16,15 +16,20 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.Method
 
 class IrInlineCodegen(
         codegen: ExpressionCodegen,
@@ -35,13 +40,90 @@ class IrInlineCodegen(
 ) : InlineCodegen<ExpressionCodegen>(codegen, state, function, typeParameterMappings, sourceCompiler), IrCallGenerator {
 
     override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val lambdaInfo = next as IrExpressionLambda
+
+        val argumentTypes = lambdaInfo.loweredMethod.argumentTypes
+        lambdaInfo.reference.getArguments().forEachIndexed { index, (descriptor, ir) ->
+            putCapturedValueOnStack(ir, argumentTypes[index], index)
+        }
     }
 
     override fun genValueAndPut(valueParameterDescriptor: ValueParameterDescriptor?, argumentExpression: IrExpression, parameterType: Type, parameterIndex: Int, codegen: ExpressionCodegen, blockInfo: BlockInfo) {
+        //if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
         if (argumentExpression is IrBlock && argumentExpression.origin == IrStatementOrigin.LAMBDA) {
-            //TODO
+            val irReference: IrFunctionReference = argumentExpression.statements.filterIsInstance<IrFunctionReference>().single()
+            rememberClosure(irReference, parameterType, valueParameterDescriptor!!) as IrExpressionLambda
         }
-        super.genValueAndPut(valueParameterDescriptor, argumentExpression, parameterType, parameterIndex, codegen, blockInfo)
+        else {
+            putValueOnStack(argumentExpression, parameterType, valueParameterDescriptor?.index ?: -1)
+        }
     }
+
+    override fun putValueIfNeeded(parameterType: Type, value: StackValue, kind: ValueKind, parameterIndex: Int, codegen: ExpressionCodegen) {
+        putArgumentOrCapturedToLocalVal(value.type, value, -1, parameterIndex, ValueKind.CAPTURED)
+    }
+
+    fun putCapturedValueOnStack(argumentExpression: IrExpression, valueType: Type, capturedParamindex: Int) {
+        val onStack = codegen.gen(argumentExpression, valueType, BlockInfo.create())
+        putArgumentOrCapturedToLocalVal(onStack.type, onStack, capturedParamindex, capturedParamindex, ValueKind.CAPTURED)
+    }
+
+    fun putValueOnStack(argumentExpression: IrExpression, valueType: Type, paramIndex: Int) {
+        val onStack = codegen.gen(argumentExpression, valueType, BlockInfo.create())
+        putArgumentOrCapturedToLocalVal(onStack.type, onStack, -1, paramIndex, ValueKind.CAPTURED)
+    }
+
+    override fun beforeValueParametersStart() {
+        invocationParamBuilder.markValueParametersStart()
+    }
+
+    override fun genCall(callableMethod: Callable, callDefault: Boolean, codegen: ExpressionCodegen, expression: IrMemberAccessExpression) {
+        val typeArguments = expression.descriptor.typeParameters.keysToMap { expression.getTypeArgumentOrDefault(it) }
+        performInline(typeArguments, callDefault, codegen)
+    }
+
+    private fun rememberClosure(irReference: IrFunctionReference, type: Type, parameter: ValueParameterDescriptor): LambdaInfo {
+        //assert(InlineUtil.isInlinableParameterExpression(ktLambda)) { "Couldn't find inline expression in ${expression.text}" }
+
+        val expression = irReference.symbol.owner as IrFunction
+        return IrExpressionLambda(
+                irReference, expression, typeMapper, parameter.isCrossinline, false/*TODO*/
+        ).also { lambda ->
+            val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
+            closureInfo.lambda = lambda
+            expressionMap.put(closureInfo.index, lambda)
+        }
+    }
+}
+
+class IrExpressionLambda(
+        val reference: IrFunctionReference,
+        val function: IrFunction,
+        typeMapper: KotlinTypeMapper,
+        isCrossInline: Boolean,
+        override val isBoundCallableReference: Boolean
+) : ExpressionLambda(typeMapper, isCrossInline) {
+
+    override fun isMyLabel(name: String): Boolean {
+        //TODO("not implemented")
+        return false
+    }
+
+    override val lambdaClassType: Type
+        get() = Type.getObjectType("test123")
+
+    override val invokeMethod: Method
+        get() = typeMapper.mapAsmMethod(function.descriptor)
+
+    val loweredMethod: Method
+        get() = typeMapper.mapAsmMethod(function.descriptor)
+
+    override val invokeMethodDescriptor: FunctionDescriptor
+        get() = function.descriptor
+
+    override val capturedVars: List<CapturedParamDesc>
+        get() = emptyList() //cause closure conversion
+
+    override val hasDispatchReceiver: Boolean
+        get() = false
 }
