@@ -151,8 +151,9 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             kotlinDebug { "Kotlin compiler args: ${argsArray.joinToString(" ")}" }
         }
 
+        val gradleDaemonUsed = System.getProperty("org.gradle.daemon")?.let(String::toBoolean) ?: true
         val executionStrategy = System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
-        if (executionStrategy == DAEMON_EXECUTION_STRATEGY) {
+        if (executionStrategy == DAEMON_EXECUTION_STRATEGY && gradleDaemonUsed) {
             val daemonExitCode = compileWithDaemon(compilerClassName, compilerArgs, environment)
 
             if (daemonExitCode != null) {
@@ -163,11 +164,9 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             }
         }
 
-        val isGradleDaemonUsed = System.getProperty("org.gradle.daemon")?.let(String::toBoolean)
-        return if (executionStrategy == IN_PROCESS_EXECUTION_STRATEGY || isGradleDaemonUsed == false) {
+        return if (executionStrategy == IN_PROCESS_EXECUTION_STRATEGY) {
             compileInProcess(argsArray, compilerClassName, environment)
-        }
-        else {
+        } else {
             compileOutOfProcess(argsArray, compilerClassName, environment)
         }
     }
