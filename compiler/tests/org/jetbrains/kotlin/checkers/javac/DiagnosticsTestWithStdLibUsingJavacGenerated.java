@@ -1295,6 +1295,12 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             doTest(fileName);
         }
 
+        @TestMetadata("illegalSuspendCallsForDelegated.kt")
+        public void testIllegalSuspendCallsForDelegated() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/illegalSuspendCallsForDelegated.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("irrelevantSuspendDeclarations.kt")
         public void testIrrelevantSuspendDeclarations() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/irrelevantSuspendDeclarations.kt");
@@ -1743,6 +1749,45 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics/kotlinMembersVsJavaNonVisibleStatics.kt");
                 doTest(fileName);
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ForInArrayLoop extends AbstractDiagnosticsTestWithStdLibUsingJavac {
+        public void testAllFilesPresentInForInArrayLoop() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("capturedRangeVariableAssignmentBefore13.kt")
+        public void testCapturedRangeVariableAssignmentBefore13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop/capturedRangeVariableAssignmentBefore13.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forInFieldUpdatedInLoopBodyBefore13.kt")
+        public void testForInFieldUpdatedInLoopBodyBefore13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop/forInFieldUpdatedInLoopBodyBefore13.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rangeLocalDelegatedPropertyAssignmentBefore13.kt")
+        public void testRangeLocalDelegatedPropertyAssignmentBefore13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop/rangeLocalDelegatedPropertyAssignmentBefore13.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rangeVariableAssignment13.kt")
+        public void testRangeVariableAssignment13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop/rangeVariableAssignment13.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rangeVariableAssignmentBefore13.kt")
+        public void testRangeVariableAssignmentBefore13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop/rangeVariableAssignmentBefore13.kt");
+            doTest(fileName);
         }
     }
 

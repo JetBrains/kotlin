@@ -53,6 +53,7 @@ class KotlinTodoSearcher : QueryExecutorBase<IndexPatternOccurrence, IndexPatter
 
         file.accept(object : KtTreeVisitorVoid() {
             override fun visitCallExpression(expression: KtCallExpression) {
+                super.visitCallExpression(expression)
                 if (expression.calleeExpression?.text == "TODO") {
                     consumer.process(KotlinTodoOccurrence(file, expression.textRange, pattern))
                 }

@@ -20,6 +20,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import com.intellij.openapi.util.io.FileUtil
+import org.gradle.api.tasks.InputFiles
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -38,6 +39,9 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     lateinit var stubsDir: File
 
     lateinit var generatedSourcesDir: File
+
+    @get:InputFiles
+    lateinit var kaptClasspath: List<File>
 
     override fun source(vararg sources: Any?): SourceTask? {
         return super.source(sourceRootsContainer.add(sources))

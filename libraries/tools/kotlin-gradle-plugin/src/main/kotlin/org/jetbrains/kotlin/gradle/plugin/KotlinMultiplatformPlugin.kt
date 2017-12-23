@@ -119,7 +119,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         }
     }
 
-    protected fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet) {
+    protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet) {
         val platformTask = platformKotlinTasksBySourceSetName[commonSourceSet.name]
         commonSourceSet.kotlin!!.srcDirs.forEach { platformTask?.source(it) }
     }

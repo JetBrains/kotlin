@@ -64,7 +64,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             configuration.addJvmClasspathRoots(arguments.classpath!!.split(File.pathSeparatorChar).map(::File))
         }
 
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME)
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
         val destination = arguments.destination
         if (destination != null) {

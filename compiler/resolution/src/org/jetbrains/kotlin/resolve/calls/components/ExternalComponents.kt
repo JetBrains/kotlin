@@ -37,7 +37,7 @@ interface KotlinResolutionStatelessCallbacks {
 
 // This components hold state (trace). Work with this carefully.
 interface KotlinResolutionCallbacks {
-    fun analyzeAndGetLambdaResultArguments(
+    fun analyzeAndGetLambdaReturnArguments(
             lambdaArgument: LambdaKotlinCallArgument,
             isSuspend: Boolean,
             receiverType: UnwrappedType?,
@@ -48,4 +48,6 @@ interface KotlinResolutionCallbacks {
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
 
     fun createReceiverWithSmartCastInfo(resolvedAtom: ResolvedCallAtom): ReceiverValueWithSmartCastInfo?
+
+    fun isCompileTimeConstant(resolvedAtom: ResolvedCallAtom, expectedType: UnwrappedType): Boolean
 }

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 
 public class AnonymousFunctionDescriptor extends SimpleFunctionDescriptorImpl {
     private final boolean isSuspend;
@@ -32,7 +32,7 @@ public class AnonymousFunctionDescriptor extends SimpleFunctionDescriptorImpl {
             @NotNull SourceElement source,
             boolean isSuspend
     ) {
-        super(containingDeclaration, null, annotations, Name.special("<anonymous>"), kind, source);
+        super(containingDeclaration, null, annotations, SpecialNames.ANONYMOUS_FUNCTION, kind, source);
         this.isSuspend = isSuspend;
     }
 

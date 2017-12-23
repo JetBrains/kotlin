@@ -36,6 +36,13 @@ class JsCollectionsTest {
         snapshotDoesNotCreateView(arrayOf<Any>("first", "last"), { arrayListOf(*it) })
     }
 
+    @Suppress("USELESS_CAST")
+    @Test fun asListHidesPrimitivenessOfArray() {
+        assertTrue(intArrayOf(1).asList().toTypedArray() as Any is Array<*>, "IntArray primitiveness leaks")
+        assertTrue(longArrayOf(1).asList().toTypedArray() as Any is Array<*>, "LongArray primitiveness leaks")
+        assertTrue(charArrayOf(' ').asList().toTypedArray() as Any is Array<*>, "CharArray primitiveness leaks")
+    }
+
     @Test fun arrayListCapacity() {
         val list = ArrayList<Any>(20)
         list.ensureCapacity(100)

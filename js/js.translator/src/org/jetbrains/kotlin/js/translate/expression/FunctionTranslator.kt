@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.js.translate.expression
 
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.functionDescriptor
@@ -31,7 +33,6 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.requiresStateMachineTransformation
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -76,12 +77,7 @@ fun TranslationContext.translateAndAliasParameters(
     if (continuationDescriptor != null) {
         val jsParameter = JsParameter(getNameForDescriptor(continuationDescriptor))
         targetList += jsParameter
-        aliases[continuationDescriptor] = if (!descriptor.requiresStateMachineTransformation(this)) {
-            JsAstUtils.pureFqn(jsParameter.name, null)
-        }
-        else {
-            JsAstUtils.stateMachineReceiver()
-        }
+        aliases[continuationDescriptor] = JsAstUtils.stateMachineReceiver()
     }
 
     return this.innerContextWithDescriptorsAliased(aliases)
@@ -109,27 +105,12 @@ fun TranslationContext.wrapWithInlineMetadata(
 ): JsExpression {
     val sourceInfo = descriptor.source.getPsi()
     return if (descriptor.isInline) {
+        val incrementalResults = config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]
+        incrementalResults?.reportInlineFunction(descriptor, function, sourceInfo)
+
         if (descriptor.shouldBeExported(config)) {
             val metadata = InlineMetadata.compose(function, descriptor, this)
-            val functionWithMetadata = metadata.functionWithMetadata(outerContext, sourceInfo)
-            config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]?.apply {
-                val psiFile = (descriptor.source.containingFile as? PsiSourceFile)?.psiFile ?: return@apply
-                val file = VfsUtilCore.virtualToIoFile(psiFile.virtualFile)
-
-                val fqName = when (descriptor) {
-                    is PropertyGetterDescriptor -> {
-                        "<get>" + descriptor.correspondingProperty.fqNameSafe.asString()
-                    }
-                    is PropertySetterDescriptor -> {
-                        "<set>" + descriptor.correspondingProperty.fqNameSafe.asString()
-                    }
-                    else -> descriptor.fqNameSafe.asString()
-                }
-
-                processInlineFunction(file, fqName, functionWithMetadata)
-            }
-
-            functionWithMetadata
+            metadata.functionWithMetadata(outerContext, sourceInfo)
         }
         else {
             val block =
@@ -143,4 +124,36 @@ fun TranslationContext.wrapWithInlineMetadata(
     else {
         function
     }
+}
+
+private fun IncrementalResultsConsumer.reportInlineFunction(
+        descriptor: FunctionDescriptor,
+        translatedFunction: JsExpression,
+        sourceInfo: PsiElement?
+) {
+    val psiFile = (descriptor.source.containingFile as? PsiSourceFile)?.psiFile ?: return
+    val file = VfsUtilCore.virtualToIoFile(psiFile.virtualFile)
+
+    if (effectiveVisibility(descriptor.visibility, descriptor, true).privateApi) return
+
+    val fqName = when (descriptor) {
+        is PropertyGetterDescriptor -> {
+            "<get>" + descriptor.correspondingProperty.fqNameSafe.asString()
+        }
+        is PropertySetterDescriptor -> {
+            "<set>" + descriptor.correspondingProperty.fqNameSafe.asString()
+        }
+        else -> descriptor.fqNameSafe.asString()
+    }
+
+    val offset = sourceInfo?.node?.startOffset
+    val document = psiFile.viewProvider.document
+    var sourceLine = -1
+    var sourceColumn = -1
+    if (offset != null && document != null) {
+        sourceLine = document.getLineNumber(offset)
+        sourceColumn = offset - document.getLineStartOffset(sourceLine)
+    }
+
+    processInlineFunction(file, fqName, translatedFunction, sourceLine, sourceColumn)
 }

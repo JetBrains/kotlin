@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 open class Outer<E> {
     inner open class Inner<F> {
@@ -8,7 +9,7 @@ open class Outer<E> {
 }
 
 class DerivedOuter : Outer<String>() {
-    inner class DerivedInner : Inner<Int>() {
+    inner class DerivedInner : <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>Inner<!><Int>() {
         fun foo(): Inner2<Char> = null!!
     }
 }

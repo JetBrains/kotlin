@@ -44,7 +44,10 @@ class ReplaceArrayOfWithLiteralInspection : AbstractKotlinInspection() {
 
                 val parent = expression.parent
                 when (parent) {
-                    is KtValueArgument -> parent.parent.parent as? KtAnnotationEntry ?: return
+                    is KtValueArgument -> {
+                        if (parent.parent.parent !is KtAnnotationEntry) return
+                        if (parent.getSpreadElement() != null && !parent.isNamed()) return
+                    }
                     is KtParameter -> {
                         val constructor = parent.parent.parent as? KtPrimaryConstructor ?: return
                         val containingClass = constructor.getContainingClassOrObject()

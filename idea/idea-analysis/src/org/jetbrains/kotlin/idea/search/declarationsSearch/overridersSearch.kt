@@ -140,7 +140,7 @@ private fun forEachKotlinOverride(
     val baseDescriptors = runReadAction { members.mapNotNull { it.unsafeResolveToDescriptor() as? CallableMemberDescriptor }.filter { it.isOverridable } }
     if (baseDescriptors.isEmpty()) return true
 
-    HierarchySearchRequest(ktClass, scope.restrictToKotlinSources(), true).searchInheritors().forEach {
+    HierarchySearchRequest(ktClass, scope, true).searchInheritors().forEach {
         val inheritor = it.unwrapped as? KtClassOrObject ?: return@forEach
         val inheritorDescriptor = runReadAction { inheritor.unsafeResolveToDescriptor() as ClassDescriptor }
         val substitutor = getTypeSubstitutor(baseClassDescriptor.defaultType, inheritorDescriptor.defaultType) ?: return@forEach
@@ -159,15 +159,15 @@ private fun forEachKotlinOverride(
 
 fun KtNamedDeclaration.forEachOverridingElement(
         scope: SearchScope = runReadAction { useScope },
-        processor: (PsiElement) -> Boolean
+        processor: (PsiElement, PsiElement) -> Boolean
 ): Boolean {
     val ktClass = runReadAction { containingClassOrObject as? KtClass } ?: return true
 
-    toLightMethods().forEach {
-        if (!OverridingMethodsSearch.search(it, scope.excludeKotlinSources(), true).all(processor)) return false
+    toLightMethods().forEach { baseMethod ->
+        if (!OverridingMethodsSearch.search(baseMethod, scope.excludeKotlinSources(), true).all { processor(baseMethod, it) }) return false
     }
 
-    return forEachKotlinOverride(ktClass, listOf(this), scope) { _, overrider -> processor(overrider) }
+    return forEachKotlinOverride(ktClass, listOf(this), scope) { baseElement, overrider -> processor(baseElement, overrider) }
 }
 
 fun PsiMethod.forEachOverridingMethod(

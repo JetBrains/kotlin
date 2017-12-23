@@ -2324,6 +2324,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
 
         if (isSuspendCall) {
+            addReturnsUnitMarkerIfNecessary(v, resolvedCall);
+
             addSuspendMarker(v, false);
             addInlineMarker(v, false);
         }
@@ -2839,14 +2841,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Nullable
     public StackValue generateCallableReferenceReceiver(@NotNull ResolvedCall<?> resolvedCall) {
-        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-        if (descriptor.getExtensionReceiverParameter() == null && descriptor.getDispatchReceiverParameter() == null) return null;
-
-        ReceiverValue dispatchReceiver = resolvedCall.getDispatchReceiver();
-        ReceiverValue extensionReceiver = resolvedCall.getExtensionReceiver();
-        assert dispatchReceiver == null || extensionReceiver == null : "Cannot generate reference with both receivers: " + descriptor;
-        ReceiverValue receiver = dispatchReceiver != null ? dispatchReceiver : extensionReceiver;
-        if (receiver == null || receiver instanceof TransientReceiver) return null;
+        ReceiverValue receiver = getBoundCallableReferenceReceiver(resolvedCall);
+        if (receiver == null) return null;
 
         return StackValue.coercion(generateReceiverValue(receiver, false), asmType(receiver.getType()));
     }
@@ -3395,7 +3391,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private TypeAndNullability calcTypeForIEEE754ArithmeticIfNeeded(@Nullable KtExpression expression) {
-        return CodegenUtilKt.calcTypeForIEEE754ArithmeticIfNeeded(expression, bindingContext, context.getFunctionDescriptor());
+        return CodegenUtilKt.calcTypeForIEEE754ArithmeticIfNeeded(
+                expression, bindingContext, context.getFunctionDescriptor(), state.getLanguageVersionSettings());
     }
 
     private StackValue generateAssignmentExpression(KtBinaryExpression expression) {

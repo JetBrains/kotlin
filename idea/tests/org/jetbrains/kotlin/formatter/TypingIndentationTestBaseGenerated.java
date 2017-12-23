@@ -68,6 +68,12 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("Annotation.after.kt")
+        public void testAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/Annotation.after.kt");
+            doNewlineTest(fileName);
+        }
+
         @TestMetadata("AssignmentAfterEq.after.kt")
         public void testAssignmentAfterEq() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/AssignmentAfterEq.after.kt");

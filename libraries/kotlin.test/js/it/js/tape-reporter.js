@@ -14,7 +14,7 @@ for (var name in full) {
     }
 }
 
-var tester = new Tester(noPending);
+var tester = new Tester(noPending, 'tape');
 
 process.on('exit', function () {
     tester.end();

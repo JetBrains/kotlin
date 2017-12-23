@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getErasedReceiverType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnExpressionWithBothReceivers
-import org.jetbrains.kotlin.resolve.calls.callUtil.isExplicitSafeCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.*
@@ -508,7 +507,7 @@ class CandidateResolver(
         // Here we know that receiver is OK ignoring nullability and check that nullability is OK too
         // Doing it simply as full subtyping check (receiverValueType <: receiverParameterType)
         val call = candidateCall.call
-        val safeAccess = isExplicitReceiver && !implicitInvokeCheck && call.isExplicitSafeCall()
+        val safeAccess = isExplicitReceiver && !implicitInvokeCheck && call.isSemanticallyEquivalentToSafeCall
         val expectedReceiverParameterType = if (safeAccess) TypeUtils.makeNullable(receiverParameter.type) else receiverParameter.type
 
         val smartCastSubtypingResult = smartCastManager.getSmartCastReceiverResult(receiverArgument, expectedReceiverParameterType, this)

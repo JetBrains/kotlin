@@ -21,6 +21,7 @@ import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
@@ -48,6 +49,9 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.processAllExactUsages
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
+import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
+import org.jetbrains.kotlin.idea.references.ReferenceAccess
+import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpression
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -61,6 +65,7 @@ import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 private fun KtDeclaration.processHierarchyDownward(scope: SearchScope, processor: KtDeclaration.() -> Unit) {
@@ -93,17 +98,21 @@ private fun KtFunction.processCalls(scope: SearchScope, processor: (UsageInfo) -
     )
 }
 
+private enum class AccessKind {
+    READ_ONLY, WRITE_ONLY, WRITE_WITH_OPTIONAL_READ, READ_OR_WRITE
+}
+
 private fun KtDeclaration.processVariableAccesses(
         scope: SearchScope,
-        kind: Access,
+        kind: AccessKind,
         processor: (UsageInfo) -> Unit
 ) {
     processAllExactUsages(
             {
                 KotlinPropertyFindUsagesOptions(project).apply {
-                    isReadAccess = kind == Access.Read || kind == Access.ReadWrite
-                    isWriteAccess = kind == Access.Write || kind == Access.ReadWrite
-                    isReadWriteAccess = kind == Access.ReadWrite
+                    isReadAccess = kind == AccessKind.READ_ONLY || kind == AccessKind.READ_OR_WRITE
+                    isWriteAccess = kind == AccessKind.WRITE_ONLY || kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
+                    isReadWriteAccess = kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
                     isSearchForTextOccurrences = false
                     isSkipImportStatements = true
                     searchScope = scope.intersectWith(useScope)
@@ -113,9 +122,7 @@ private fun KtDeclaration.processVariableAccesses(
     )
 }
 
-private fun KtParameter.canProcess(): Boolean {
-    return !(isLoopParameter || isVarArg)
-}
+private fun KtParameter.canProcess() = !isVarArg
 
 abstract class Slicer(
         protected val element: KtExpression,
@@ -157,10 +164,15 @@ class InflowSlicer(
     private fun PsiElement.passToProcessorAsValue(lambdaLevel: Int = parentUsage.lambdaLevel) = passToProcessor(lambdaLevel, true)
 
     private fun KtDeclaration.processAssignments(accessSearchScope: SearchScope) {
-        processVariableAccesses(accessSearchScope, Access.Write) body@ {
+        processVariableAccesses(accessSearchScope, AccessKind.WRITE_WITH_OPTIONAL_READ) body@ {
             val refExpression = it.element as? KtExpression ?: return@body
-            val rhs = KtPsiUtil.safeDeparenthesize(refExpression).getAssignmentByLHS()?.right ?: return@body
-            rhs.passToProcessorAsValue()
+            val (accessKind, accessExpression) = refExpression.readWriteAccessWithFullExpression(true)
+            if (accessKind == ReferenceAccess.WRITE && accessExpression is KtBinaryExpression && accessExpression.operationToken == KtTokens.EQ) {
+                accessExpression.right?.passToProcessorAsValue()
+            }
+            else {
+                accessExpression.passToProcessorAsValue()
+            }
         }
     }
 
@@ -219,6 +231,16 @@ class InflowSlicer(
         if (function is KtPropertyAccessor && function.isSetter) {
             function.property.processPropertyAssignments()
             return
+        }
+
+        if (function is KtNamedFunction
+            && function.name == OperatorNameConventions.SET_VALUE.asString()
+            && function.hasModifier(KtTokens.OPERATOR_KEYWORD)) {
+
+            ReferencesSearch
+                    .search(function, parentUsage.scope.toSearchScope())
+                    .filterIsInstance<KtPropertyDelegationMethodsReference>()
+                    .forEach { (it.element?.parent as? KtProperty)?.processPropertyAssignments() }
         }
 
         val parameterDescriptor = analyze()[BindingContext.VALUE_PARAMETER, this] ?: return
@@ -353,13 +375,14 @@ class OutflowSlicer(
             if (this is KtParameter && !canProcess()) return@processHierarchyUpward
 
             val withDereferences = parentUsage.params.showInstanceDereferences
-            processVariableAccesses(parentUsage.scope.toSearchScope(), if (withDereferences) Access.ReadWrite else Access.Read) body@ {
+            val accessKind = if (withDereferences) AccessKind.READ_OR_WRITE else AccessKind.READ_ONLY
+            processVariableAccesses(parentUsage.scope.toSearchScope(), accessKind) body@ {
                 val refExpression = (it.element as? KtExpression)?.let { KtPsiUtil.safeDeparenthesize(it) } ?: return@body
                 if (withDereferences) {
                     refExpression.processDereferences()
                 }
                 if (!withDereferences || KotlinReadWriteAccessDetector.INSTANCE.getExpressionAccess(refExpression) == Access.Read) {
-                    refExpression.processExpression()
+                    refExpression.passToProcessor()
                 }
             }
         }

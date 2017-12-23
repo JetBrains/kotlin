@@ -17,7 +17,7 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
         LABEL (L1)
     }
 
-    public final test.Foo[] newArray(int p0)
+    public final java.lang.Object[] newArray(int p0)
 }
 
 public final class test/Foo : java/lang/Object, android/os/Parcelable {

@@ -671,6 +671,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
                     iv.areturn(componentType);
                 }
+
+                @Override
+                public boolean skipNotNullAssertionsForParameters() {
+                    return false;
+                }
             });
         }
 
@@ -717,6 +722,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorAsmMethod.getDescriptor(), false);
 
                     iv.areturn(thisDescriptorType);
+                }
+
+                @Override
+                public boolean skipNotNullAssertionsForParameters() {
+                    return false;
                 }
 
                 private void pushCapturedFieldsOnStack(InstructionAdapter iv, MutableClosure closure) {
@@ -839,11 +849,18 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         @Nullable KtObjectDeclaration companionObject = CollectionsKt.firstOrNull(myClass.getCompanionObjects());
 
         int properFieldVisibilityFlag = getVisibilityAccessFlag(companionObjectDescriptor);
+        boolean deprecatedFieldForInvisibleCompanionObject =
+                state.getLanguageVersionSettings().supportsFeature(LanguageFeature.DeprecatedFieldForInvisibleCompanionObject);
+        boolean properVisibilityForCompanionObjectInstanceField =
+                state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField);
         boolean fieldShouldBeDeprecated =
-                state.getLanguageVersionSettings().supportsFeature(LanguageFeature.DeprecatedFieldForInvisibleCompanionObject) &&
+                deprecatedFieldForInvisibleCompanionObject &&
+                !properVisibilityForCompanionObjectInstanceField &&
                 (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
-        // TODO generate field with proper visibility in language version 1.3
         int fieldAccessFlags = ACC_PUBLIC | ACC_STATIC | ACC_FINAL;
+        if (properVisibilityForCompanionObjectInstanceField) {
+            fieldAccessFlags |= properFieldVisibilityFlag;
+        }
         if (fieldShouldBeDeprecated) {
             fieldAccessFlags |= ACC_DEPRECATED;
         }

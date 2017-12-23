@@ -39,11 +39,13 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
         AbstractLightClass(kotlinOrigin.manager, KotlinLanguage.INSTANCE),
         KtLightClass {
-    private val _delegate by lazy { PsiElementFactory.SERVICE.getInstance(kotlinOrigin.project).createClass(kotlinOrigin.name ?: "") }
+    private val _delegate by lazy { PsiElementFactory.SERVICE.getInstance(kotlinOrigin.project).createClass("dummy") }
     private val _containingClass by lazy { kotlinOrigin.containingClassOrObject?.let { KtFakeLightClass(it) } }
 
     override val clsDelegate get() = _delegate
     override val originKind get() = LightClassOriginKind.SOURCE
+
+    override fun getName() = kotlinOrigin.name
 
     override fun getDelegate() = _delegate
     override fun copy() = KtFakeLightClass(kotlinOrigin)
@@ -70,12 +72,14 @@ class KtFakeLightMethod private constructor(
         ktClassOrObject : KtClassOrObject
 ) : LightMethod (
         ktDeclaration.manager,
-        PsiElementFactory.SERVICE.getInstance(ktDeclaration.project).createMethod(ktDeclaration.name ?: "", PsiType.VOID),
+        PsiElementFactory.SERVICE.getInstance(ktDeclaration.project).createMethod("dummy", PsiType.VOID),
         KtFakeLightClass(ktClassOrObject),
         KotlinLanguage.INSTANCE
 ), KtLightElement<KtNamedDeclaration, PsiMethod> {
     override val kotlinOrigin get() = ktDeclaration
     override val clsDelegate get() = myMethod
+
+    override fun getName() = ktDeclaration.name ?: ""
 
     override fun getNavigationElement() = ktDeclaration
     override fun getIcon(flags: Int) = ktDeclaration.getIcon(flags)

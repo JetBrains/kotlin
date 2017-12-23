@@ -54,6 +54,11 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
     if (type.containsError()) return emptyList()
     val name = type.constructor.declarationDescriptor?.name
     if (name == SpecialNames.NO_NAME_PROVIDED) {
+        if (element is KtProperty && element.isLocal) {
+            // for local variables, an anonymous object type is not collapsed to its supertype,
+            // so showing the supertype will be misleading
+            return emptyList()
+        }
         type = type.immediateSupertypes().singleOrNull() ?: return emptyList()
     }
     else if (name?.isSpecial == true) {

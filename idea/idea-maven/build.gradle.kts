@@ -15,6 +15,7 @@ dependencies {
     compile(project(":js:js.frontend"))
 
     compile(project(":idea"))
+    compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-jps-common"))
 
     testCompile(projectTests(":idea"))
@@ -23,6 +24,7 @@ dependencies {
     testCompileOnly(ideaSdkDeps("openapi", "idea", "gson", "idea_rt"))
     testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
 
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":plugins:android-extensions-ide"))

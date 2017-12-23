@@ -24,7 +24,7 @@ class Services private constructor(private val map: Map<Class<*>, Any>) {
         val EMPTY: Services = Builder().build()
     }
 
-    fun <T> get(interfaceClass: Class<T>): T? {
+    operator fun <T> get(interfaceClass: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
         return map[interfaceClass] as T?
     }

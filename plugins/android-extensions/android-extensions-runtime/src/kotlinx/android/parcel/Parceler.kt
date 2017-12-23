@@ -20,6 +20,9 @@ package kotlinx.android.parcel
 import android.os.Parcel
 import android.os.Parcelable
 
+/**
+ * The base interface for custom [Parcelize] serializers.
+ */
 interface Parceler<T> {
     /**
      * Writes the [T] instance state to the [parcel].

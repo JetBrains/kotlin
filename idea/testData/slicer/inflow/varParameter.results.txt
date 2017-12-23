@@ -3,3 +3,4 @@
 23 	val z = A(<bold>2</bold>).n
 24 	A(<bold>3</bold>).n = 2
 16 	n = <bold>1</bold>
+24 	A(3).n = <bold>2</bold>

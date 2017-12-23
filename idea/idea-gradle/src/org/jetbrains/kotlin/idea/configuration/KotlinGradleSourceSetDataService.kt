@@ -212,6 +212,8 @@ private fun configureFacetByGradleModule(
         testOutputPath = getExplicitTestOutputPath(moduleNode, platformKind)
     }
 
+    kotlinFacet.noVersionAutoAdvance()
+
     return kotlinFacet
 }
 

@@ -1,8 +1,9 @@
-// IGNORE_BACKEND: JS
 // WITH_RUNTIME
 // WITH_COROUTINES
 import helpers.*
 // CHECK_BYTECODE_LISTING
+// CHECK_NEW_COUNT: function=suspendHere count=1
+// CHECK_NEW_COUNT: function=mainSuspend count=1
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 

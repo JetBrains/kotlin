@@ -124,6 +124,9 @@ class ExpressionCodegen(
             //for implicit return
             mv.areturn(Type.VOID_TYPE)
         }
+        else if (irFunction.body is IrExpressionBody) {
+            mv.areturn(returnType)
+        }
         writeLocalVariablesInTable(info)
         mv.visitEnd()
     }
@@ -211,63 +214,76 @@ class ExpressionCodegen(
     }
 
     private fun generateCall(expression: IrMemberAccessExpression, superQualifier: ClassDescriptor?, data: BlockInfo): StackValue {
-        val callable = resolveToCallable(expression, superQualifier != null)
-        if (callable is IrIntrinsicFunction) {
-            return callable.invoke(mv, this, data)
+        val isSuperCall = superQualifier != null
+        val callable = resolveToCallable(expression, isSuperCall)
+        return if (callable is IrIntrinsicFunction) {
+            callable.invoke(mv, this, data)
         } else {
-            val callGenerator = getOrCreateCallGenerator(expression, expression.descriptor)
+            generateCall(expression, callable, data, isSuperCall)
+        }
+    }
 
-            val receiver = expression.dispatchReceiver
-            receiver?.apply {
-                //gen(receiver, callable.dispatchReceiverType!!, data)
-                callGenerator.genValueAndPut(null, this, callable.dispatchReceiverType!!, -1, this@ExpressionCodegen, data)
-            }
+    fun generateCall(expression: IrMemberAccessExpression, callable: Callable, data: BlockInfo, isSuperCall: Boolean = false): StackValue {
+        val callGenerator = getOrCreateCallGenerator(expression, expression.descriptor)
 
-            expression.extensionReceiver?.apply {
-                //gen(this, callable.extensionReceiverType!!, data)
-                callGenerator.genValueAndPut(null, this, callable.extensionReceiverType!!, -1, this@ExpressionCodegen, data)
-            }
+        val receiver = expression.dispatchReceiver
+        receiver?.apply {
+            callGenerator.genValueAndPut(
+                    null, this,
+                    if (isSuperCall) receiver.asmType else callable.dispatchReceiverType!!,
+                    -1, this@ExpressionCodegen, data
+            )
+        }
 
-            val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size)
-            expression.descriptor.valueParameters.forEachIndexed { i, parameterDescriptor ->
-                val arg = expression.getValueArgument(i)
-                val parameterType = callable.valueParameterTypes[i]
-                when {
-                    arg != null -> {
-                        callGenerator.genValueAndPut(parameterDescriptor, arg, parameterType, i, this@ExpressionCodegen, data)
-                    }
-                    parameterDescriptor.hasDefaultValue() -> {
-                        callGenerator.putValueIfNeeded(parameterType, StackValue.createDefaultValue(parameterType), ValueKind.DEFAULT_PARAMETER, i, this@ExpressionCodegen)
-                        defaultMask.mark(i)
-                    }
-                    else -> {
-                        assert(parameterDescriptor.varargElementType != null)
-                        //empty vararg
+        expression.extensionReceiver?.apply {
+            callGenerator.genValueAndPut(null, this, callable.extensionReceiverType!!, -1, this@ExpressionCodegen, data)
+        }
 
-                        callGenerator.putValueIfNeeded(
-                                parameterType,
-                                StackValue.operation(parameterType) {
-                                    it.aconst(0)
-                                    it.newarray(correctElementType(parameterType))
-                                },
-                                ValueKind.GENERAL_VARARG, i, this@ExpressionCodegen)
-                    }
+        callGenerator.beforeValueParametersStart()
+        val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size)
+        expression.descriptor.valueParameters.forEachIndexed { i, parameterDescriptor ->
+            val arg = expression.getValueArgument(i)
+            val parameterType = callable.valueParameterTypes[i]
+            when {
+                arg != null -> {
+                    callGenerator.genValueAndPut(parameterDescriptor, arg, parameterType, i, this@ExpressionCodegen, data)
+                }
+                parameterDescriptor.hasDefaultValue() -> {
+                    callGenerator.putValueIfNeeded(parameterType, StackValue.createDefaultValue(parameterType), ValueKind.DEFAULT_PARAMETER, i, this@ExpressionCodegen)
+                    defaultMask.mark(i)
+                }
+                else -> {
+                    assert(parameterDescriptor.varargElementType != null)
+                    //empty vararg
+
+                    callGenerator.putValueIfNeeded(
+                            parameterType,
+                            StackValue.operation(parameterType) {
+                                it.aconst(0)
+                                it.newarray(correctElementType(parameterType))
+                            },
+                            ValueKind.GENERAL_VARARG, i, this@ExpressionCodegen)
                 }
             }
-
-            callGenerator.genCall(
-                    callable,
-                    defaultMask.generateOnStackIfNeeded(callGenerator, expression.descriptor is ConstructorDescriptor, this),
-                    this
-            )
-
-            val returnType = expression.descriptor.returnType
-            if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
-                mv.aconst(null)
-                mv.athrow()
-            }
-            return StackValue.onStack(callable.returnType)
         }
+
+        callGenerator.genCall(
+                callable,
+                defaultMask.generateOnStackIfNeeded(callGenerator, expression.descriptor is ConstructorDescriptor, this),
+                this,
+                expression
+        )
+
+        val returnType = expression.descriptor.returnType
+        if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
+            mv.aconst(null)
+            mv.athrow()
+        } else if (expression.descriptor !is ConstructorDescriptor) {
+            val expectedTypeOnStack = returnType?.let { typeMapper.mapType(it) } ?: callable.returnType
+            StackValue.coerce(callable.returnType, expectedTypeOnStack, mv)
+        }
+
+        return expression.onStack
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: BlockInfo): StackValue {
@@ -365,6 +381,10 @@ class ExpressionCodegen(
         val type = expression.asmType
         StackValue.constant(value, type).put(type, mv)
         return expression.onStack
+    }
+
+    override fun visitExpressionBody(body: IrExpressionBody, data: BlockInfo): StackValue {
+        return body.expression.accept(this, data)
     }
 
     override fun visitElement(element: IrElement, data: BlockInfo): StackValue {
@@ -569,9 +589,9 @@ class ExpressionCodegen(
             }
 
             IrTypeOperator.IMPLICIT_NOTNULL -> {
-                gen(expression.argument, OBJECT_TYPE, data)
+                gen(expression.argument, asmType, data)
                 mv.dup()
-                mv.visitLdcInsn("TODO provide message") /*TODO*/
+                mv.visitLdcInsn("TODO provide message for IMPLICIT_NOTNULL") /*TODO*/
                 mv.invokestatic("kotlin/jvm/internal/Intrinsics", "checkExpressionValueIsNotNull",
                                "(Ljava/lang/Object;Ljava/lang/String;)V", false)
             }
@@ -598,8 +618,21 @@ class ExpressionCodegen(
         val continueLabel = markNewLabel()
         val endLabel = Label()
         val condition = loop.condition
-        gen(condition, data)
-        BranchedValue.condJump(StackValue.onStack(condition.asmType), endLabel, true, mv)
+
+        // Avoid true condition generation for tailrec
+        // ASM and Java verifier assumes that L1 is reachable that cause several verification to fail,
+        // to avoid them trivial jump elumination is required
+        // L0
+        // ICONST_1 //could be eliminated
+        // IFEQ L1 //could be eliminated
+        // .... // no jumps
+        // GOTO L0
+        // L1
+        //TODO: write elimination lower
+        if (!(condition is IrConst<*> && condition.value == true)) {
+            gen(condition, data)
+            BranchedValue.condJump(StackValue.onStack(condition.asmType), endLabel, true, mv)
+        }
 
         with(LoopInfo(loop, continueLabel, endLabel)) {
             data.addInfo(this)
@@ -856,7 +889,8 @@ class ExpressionCodegen(
             data: BlockInfo
     ) {
         if (receiverExpression !is IrClassReference /* && DescriptorUtils.isObjectQualifier(receiverExpression.descriptor)*/) {
-            JavaClassProperty.generateImpl(mv, gen(receiverExpression, data))
+            assert(receiverExpression is IrGetClass)
+            JavaClassProperty.generateImpl(mv, gen((receiverExpression as IrGetClass).argument, data))
         }
         else {
 //                if (TypeUtils.isTypeParameter(type)) {
@@ -937,12 +971,12 @@ class ExpressionCodegen(
             TODO()
         }
         else {
-            IrInlineCodegen(this, state, original, typeParameterMappings!!, IrSourceCompilerForInline(state, element))
+            IrInlineCodegen(this, state, original, typeParameterMappings!!, IrSourceCompilerForInline(state, element, this))
         }
     }
 
     internal fun getOrCreateCallGenerator(memberAccessExpression: IrMemberAccessExpression, descriptor: CallableDescriptor): IrCallGenerator {
-        val typeArguments = descriptor.typeParameters.keysToMap { memberAccessExpression.getTypeArgumentOrDefault(it) }
+        val typeArguments = descriptor.original.typeParameters.keysToMap { memberAccessExpression.getTypeArgumentOrDefault(it) }
 
         val mappings = TypeParameterMappings()
         for (entry in typeArguments.entries) {

@@ -125,6 +125,7 @@ class ClassCodegen private constructor(
 
 
     private fun generateField(field: IrField) {
+        if (field.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
         val fieldType = typeMapper.mapType(field.descriptor)
         val fieldSignature = typeMapper.mapFieldSignature(field.descriptor.type, field.descriptor)
         val fv = visitor.newField(field.OtherOrigin, field.descriptor.calculateCommonFlags(), field.descriptor.name.asString(), fieldType.descriptor,

@@ -36,12 +36,11 @@ import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
@@ -113,11 +112,8 @@ internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: B
 
 private fun KotlinType.containsLocalTypes(): Boolean {
     val typeDeclarationDescriptor = this.constructor.declarationDescriptor
-    if (typeDeclarationDescriptor is ClassDescriptor) {
-        val containerDescriptor = typeDeclarationDescriptor.containingDeclaration
-        if (containerDescriptor is PropertyDescriptor || containerDescriptor is FunctionDescriptor) {
-            return true
-        }
+    if (typeDeclarationDescriptor is ClassDescriptor && DescriptorUtils.isLocal(typeDeclarationDescriptor)) {
+        return true
     }
 
     return arguments.any { !it.isStarProjection && it.type.containsLocalTypes() }

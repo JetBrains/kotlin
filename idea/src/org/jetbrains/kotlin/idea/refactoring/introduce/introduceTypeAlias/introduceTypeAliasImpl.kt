@@ -237,7 +237,7 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
     return rangesWithReplacers.toMap()
 }
 
-private var KtTypeReference.typeParameterInfo : TypeParameter? by CopyableUserDataProperty(Key.create("TYPE_PARAMETER_INFO"))
+private var KtTypeReference.typeParameterInfo : TypeParameter? by CopyablePsiUserDataProperty(Key.create("TYPE_PARAMETER_INFO"))
 
 fun IntroduceTypeAliasDescriptor.generateTypeAlias(previewOnly: Boolean = false): KtTypeAlias {
     val originalElement = originalData.originalTypeElement

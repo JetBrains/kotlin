@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
+import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.JavaResolverComponents
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
@@ -67,7 +68,8 @@ class RuntimeModuleData private constructor(
                     runtimePackagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
                     ReflectionTypes(module, notFoundClasses),
                     annotationTypeQualifierResolver,
-                    SignatureEnhancement(annotationTypeQualifierResolver)
+                    SignatureEnhancement(annotationTypeQualifierResolver),
+                    JavaClassesTracker.Default
             )
 
             val lazyJavaPackageFragmentProvider = LazyJavaPackageFragmentProvider(globalJavaResolverContext)

@@ -168,11 +168,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
 
     override fun getClasses(): Array<PsiClass> {
         val fileClassProvider = ServiceManager.getService(project, KtFileClassProvider::class.java)
-        // TODO We don't currently support finding light classes for scripts
-        return if (fileClassProvider != null && !isScript()) {
-            fileClassProvider.getFileClasses(this)
-        }
-        else PsiClass.EMPTY_ARRAY
+        return fileClassProvider?.getFileClasses(this) ?: PsiClass.EMPTY_ARRAY
     }
 
     override fun setPackageName(packageName: String) {}

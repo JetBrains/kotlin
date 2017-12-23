@@ -27,7 +27,9 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.editor.LogicalPosition
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbService
@@ -38,7 +40,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -54,11 +55,14 @@ class NewKotlinFileAction
         super.postProcess(createdElement, templateName, customProperties)
 
         val module = ModuleUtilCore.findModuleForPsiElement(createdElement!!)
-        if (module != null) {
-            showConfigureKotlinNotificationIfNeeded(module)
-        }
 
         if (createdElement is KtFile) {
+            if (module != null) {
+                for (hook in NewKotlinFileHook.EP_NAME.getExtensions(createdElement.project)) {
+                    hook.postProcess(createdElement, module)
+                }
+            }
+
             val ktClass = createdElement.declarations.singleOrNull() as? KtNamedDeclaration
             if (ktClass != null) {
                 CreateFromTemplateAction.moveCaretAfterNameIdentifier(ktClass)
@@ -167,4 +171,13 @@ class NewKotlinFileAction
             }
         }
     }
+}
+
+abstract class NewKotlinFileHook {
+    companion object {
+        val EP_NAME: ExtensionPointName<NewKotlinFileHook> =
+                ExtensionPointName.create<NewKotlinFileHook>("org.jetbrains.kotlin.newFileHook")
+    }
+
+    abstract fun postProcess(createdElement: KtFile, module: Module)
 }

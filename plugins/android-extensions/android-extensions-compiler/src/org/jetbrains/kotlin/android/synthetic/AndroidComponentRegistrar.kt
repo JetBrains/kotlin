@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.utils.decodePluginOptions
 
 object AndroidConfigurationKeys {
     val VARIANT = CompilerConfigurationKey.create<List<String>>("Android build variant")
@@ -59,8 +60,10 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
     companion object {
         val ANDROID_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.android"
 
-        val VARIANT_OPTION = CliOption("variant", "<name;path>", "Android build variant", allowMultipleOccurrences = true)
-        val PACKAGE_OPTION = CliOption("package", "<fq name>", "Application package")
+        val CONFIGURATION = CliOption("configuration", "<encoded>", "Encoded configuration", required = false)
+
+        val VARIANT_OPTION = CliOption("variant", "<name;path>", "Android build variant", allowMultipleOccurrences = true, required = false)
+        val PACKAGE_OPTION = CliOption("package", "<fq name>", "Application package", required = false)
         val EXPERIMENTAL_OPTION = CliOption("experimental", "true/false", "Enable experimental features", required = false)
         val DEFAULT_CACHE_IMPL_OPTION = CliOption(
                 "defaultCacheImplementation", "hashMap/sparseArray/none", "Default cache implementation for module", required = false)
@@ -72,7 +75,7 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = ANDROID_COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption>
-            = listOf(VARIANT_OPTION, PACKAGE_OPTION, EXPERIMENTAL_OPTION, DEFAULT_CACHE_IMPL_OPTION)
+            = listOf(VARIANT_OPTION, PACKAGE_OPTION, EXPERIMENTAL_OPTION, DEFAULT_CACHE_IMPL_OPTION, CONFIGURATION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
@@ -80,6 +83,7 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
             PACKAGE_OPTION -> configuration.put(AndroidConfigurationKeys.PACKAGE, value)
             EXPERIMENTAL_OPTION -> configuration.put(AndroidConfigurationKeys.EXPERIMENTAL, value)
             DEFAULT_CACHE_IMPL_OPTION -> configuration.put(AndroidConfigurationKeys.DEFAULT_CACHE_IMPL, value)
+            CONFIGURATION -> configuration.applyOptionsFrom(decodePluginOptions(value), pluginOptions)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
@@ -101,8 +105,8 @@ class AndroidComponentRegistrar : ComponentRegistrar {
     }
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        val applicationPackage = configuration.get(AndroidConfigurationKeys.PACKAGE)
-        val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.mapNotNull { parseVariant(it) } ?: emptyList()
+        val applicationPackage = configuration.get(AndroidConfigurationKeys.PACKAGE) ?: return
+        val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.mapNotNull { parseVariant(it) } ?: return
         val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"
         val globalCacheImpl = parseCacheImplementationType(configuration.get(AndroidConfigurationKeys.DEFAULT_CACHE_IMPL))
 

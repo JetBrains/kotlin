@@ -55,15 +55,19 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         return if (classOrObject.isLocal) {
             LazyLightClassDataHolder.ForClass(
                     builder,
+                    classOrObject.project,
                     exactContextProvider = { IDELightClassContexts.contextForLocalClassOrObject(classOrObject) },
-                    dummyContextProvider = null
+                    dummyContextProvider = null,
+                    isLocal = true
             )
         }
         else {
             LazyLightClassDataHolder.ForClass(
                     builder,
+                    classOrObject.project,
                     exactContextProvider = { IDELightClassContexts.contextForNonLocalClassOrObject(classOrObject) },
-                    dummyContextProvider = { IDELightClassContexts.lightContextForClassOrObject(classOrObject) }
+                    dummyContextProvider = { IDELightClassContexts.lightContextForClassOrObject(classOrObject) },
+                    isLocal = false
             )
         }
     }
@@ -76,6 +80,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
         return LazyLightClassDataHolder.ForFacade(
                 builder,
+                files.first().project,
                 exactContextProvider = { IDELightClassContexts.contextForFacade(sortedFiles) },
                 dummyContextProvider = { IDELightClassContexts.lightContextForFacade(sortedFiles) }
         )
@@ -84,6 +89,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     override fun createDataHolderForScript(script: KtScript, builder: LightClassBuilder): LightClassDataHolder.ForScript {
         return LazyLightClassDataHolder.ForScript(
                 builder,
+                script.project,
                 exactContextProvider = { IDELightClassContexts.contextForScript(script) },
                 dummyContextProvider = { IDELightClassContexts.lightContextForScript(script) }
         )
@@ -336,8 +342,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
 class KtFileClassProviderImpl(val lightClassGenerationSupport: LightClassGenerationSupport) : KtFileClassProvider {
     override fun getFileClasses(file: KtFile): Array<PsiClass> {
-        if (file.isCompiled) {
-            return arrayOf()
+        // TODO We don't currently support finding light classes for scripts
+        if (file.isCompiled || file.isScript()) {
+            return PsiClass.EMPTY_ARRAY
         }
 
         val result = arrayListOf<PsiClass>()

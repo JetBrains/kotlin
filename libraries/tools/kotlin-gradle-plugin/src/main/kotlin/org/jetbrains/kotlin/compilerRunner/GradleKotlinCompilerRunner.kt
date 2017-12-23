@@ -31,12 +31,13 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.incremental.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.net.URLClassLoader
+import java.rmi.RemoteException
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
 internal const val DAEMON_EXECUTION_STRATEGY = "daemon"
@@ -212,7 +213,14 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             null
         }
         // todo: can we clear cache on the end of session?
-        daemon.clearJarCache()
+        // often source of the NoSuchObjectException and UnmarshalException, probably caused by the failed/crashed/exited daemon
+        // TODO: implement a proper logic to avoid remote calls in such cases
+        try {
+            daemon.clearJarCache()
+        }
+        catch (e: RemoteException) {
+            log.warn("Unable to clear jar cache after compilation, maybe daemon is already down: $e")
+        }
         logFinish(DAEMON_EXECUTION_STRATEGY)
         return exitCode
     }
@@ -257,7 +265,8 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 compilerMode = CompilerMode.INCREMENTAL_COMPILER,
                 targetPlatform = targetPlatform,
                 resultDifferenceFile = environment.buildHistoryFile,
-                friendDifferenceFile = environment.friendBuildHistoryFile
+                friendDifferenceFile = environment.friendBuildHistoryFile,
+                usePreciseJavaTracking = environment.usePreciseJavaTracking
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")
@@ -298,7 +307,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         val stream = ByteArrayOutputStream()
         val out = PrintStream(stream)
         // todo: cache classloader?
-        val classLoader = ParentLastURLClassLoader(environment.compilerClasspathURLs, this.javaClass.classLoader)
+        val classLoader = URLClassLoader(environment.compilerClasspathURLs.toTypedArray())
         val servicesClass = Class.forName(Services::class.java.canonicalName, true, classLoader)
         val emptyServices = servicesClass.getField("EMPTY").get(servicesClass)
         val compiler = Class.forName(compilerClassName, true, classLoader)

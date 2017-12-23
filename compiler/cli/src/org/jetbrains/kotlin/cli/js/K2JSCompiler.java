@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser;
 import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
@@ -72,7 +73,6 @@ import org.jetbrains.kotlin.utils.StringsKt;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
@@ -167,8 +167,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        ExitCode plugLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration);
-        if (plugLoadResult != ExitCode.OK) return plugLoadResult;
+        ExitCode pluginLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration);
+        if (pluginLoadResult != ExitCode.OK) return pluginLoadResult;
 
         configuration.put(JSConfigurationKeys.LIBRARIES, configureLibraries(arguments, paths, messageCollector));
 
@@ -204,7 +204,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         File outputFile = new File(arguments.getOutputFile());
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, FileUtil.getNameWithoutExtension(outputFile));
-        configuration.put(CommonConfigurationKeys.USE_NEW_INFERENCE, arguments.getNewInference());
 
         JsConfig config = new JsConfig(project, configuration);
         JsConfig.Reporter reporter = new JsConfig.Reporter() {
@@ -418,6 +417,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         LookupTracker lookupTracker = services.get(LookupTracker.class);
         if (lookupTracker != null) {
             configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, lookupTracker);
+        }
+
+        ExpectActualTracker expectActualTracker = services.get(ExpectActualTracker.class);
+        if (expectActualTracker != null) {
+            configuration.put(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, expectActualTracker);
         }
 
         String sourceMapEmbedContentString = arguments.getSourceMapEmbedSources();

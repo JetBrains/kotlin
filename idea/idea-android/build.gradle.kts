@@ -2,12 +2,13 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(projectDist(":kotlin-reflect"))
+    compileOnly(project(":kotlin-reflect-api"))
     compile(project(":compiler:util"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":idea"))
+    compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-gradle"))
@@ -28,8 +29,10 @@ dependencies {
     testCompile(ideaSdkDeps("gson"))
     testCompile(commonDep("junit:junit"))
 
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(project(":plugins:android-extensions-ide"))
+    testRuntime(project(":plugins:kapt3-idea"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))

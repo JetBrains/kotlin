@@ -276,7 +276,7 @@ class KotlinFunctionCallUsage(
     }
 
     private var KtValueArgument.generatedArgumentValue: Boolean
-            by NotNullableCopyableUserDataProperty(Key.create("GENERATED_ARGUMENT_VALUE"), false)
+            by NotNullablePsiCopyableUserDataProperty(Key.create("GENERATED_ARGUMENT_VALUE"), false)
 
     private fun ArgumentInfo.getArgumentByDefaultValue(
             element: KtCallElement,

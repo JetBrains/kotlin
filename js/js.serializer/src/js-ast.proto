@@ -314,6 +314,9 @@ message Switch {
 message SwitchEntry {
     optional Expression label = 1;
     repeated Statement statement = 2;
+
+    optional int32 fileId = 3;
+    optional Location location = 4;
 }
 
 message While {
@@ -440,6 +443,7 @@ enum SpecialFunction {
     COROUTINE_RESULT = 6;
     COROUTINE_CONTROLLER = 7;
     COROUTINE_RECEIVER = 8;
+    SET_COROUTINE_RESULT = 9;
 }
 
 

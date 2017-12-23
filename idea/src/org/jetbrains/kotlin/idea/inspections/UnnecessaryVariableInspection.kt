@@ -27,12 +27,13 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class UnnecessaryVariableInspection : AbstractKotlinInspection() {
 
@@ -67,30 +68,45 @@ class UnnecessaryVariableInspection : AbstractKotlinInspection() {
             val enclosingElement = KtPsiUtil.getEnclosingElementForLocalDeclaration(property) ?: return null
             val initializer = property.initializer ?: return null
 
-            if (!property.isVar && initializer is KtNameReferenceExpression && property.typeReference == null) {
-                val context = property.analyze()
-                val initializerDescriptor = context[REFERENCE_TARGET, initializer]
-                if (initializerDescriptor is VariableDescriptor) {
-                    if (!initializerDescriptor.isVar && initializerDescriptor.containingDeclaration is FunctionDescriptor) {
-                        if (ReferencesSearch.search(property, LocalSearchScope(enclosingElement)).findFirst() != null) {
-                            return Status.EXACT_COPY
-                        }
+            fun isExactCopy(): Boolean {
+                if (!property.isVar && initializer is KtNameReferenceExpression && property.typeReference == null) {
+                    val context = property.analyze()
+                    val initializerDescriptor = context[REFERENCE_TARGET, initializer] as? VariableDescriptor ?: return false
+                    if (initializerDescriptor.isVar) return false
+                    if (initializerDescriptor.containingDeclaration !is FunctionDescriptor) return false
+
+                    val copyName = initializerDescriptor.name.asString()
+                    if (ReferencesSearch.search(property, LocalSearchScope(enclosingElement)).findFirst() == null) return false
+
+                    val containingDeclaration = property.getStrictParentOfType<KtDeclaration>()
+                    if (containingDeclaration != null) {
+                        val validator = NewDeclarationNameValidator(
+                                container = containingDeclaration,
+                                anchor = property,
+                                target = NewDeclarationNameValidator.Target.VARIABLES,
+                                excludedDeclarations = listOfNotNull(
+                                        DescriptorToSourceUtils.descriptorToDeclaration(initializerDescriptor) as? KtDeclaration
+                                )
+                        )
+                        if (!validator(copyName)) return false
                     }
+                    return true
                 }
+                return false
             }
 
-            val nextStatement = property.getNextSiblingIgnoringWhitespaceAndComments()
-            if (nextStatement is KtReturnExpression) {
-                val returned = nextStatement.returnedExpression
-                if (returned is KtNameReferenceExpression) {
-                    val context = nextStatement.analyze()
-                    if (context[REFERENCE_TARGET, returned] == context[DECLARATION_TO_DESCRIPTOR, property]) {
-                        return Status.RETURN_ONLY
-                    }
-                }
+            fun isReturnOnly(): Boolean {
+                val nextStatement = property.getNextSiblingIgnoringWhitespaceAndComments() as? KtReturnExpression ?: return false
+                val returned = nextStatement.returnedExpression as? KtNameReferenceExpression ?: return false
+                val context = nextStatement.analyze()
+                return context[REFERENCE_TARGET, returned] == context[DECLARATION_TO_DESCRIPTOR, property]
             }
 
-            return null
+            return when {
+                isExactCopy() -> Status.EXACT_COPY
+                isReturnOnly() -> Status.RETURN_ONLY
+                else -> null
+            }
         }
 
         fun isActiveFor(property: KtProperty) = statusFor(property) != null

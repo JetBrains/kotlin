@@ -460,6 +460,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.1", compilerArguments!!.languageVersion)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals("1.0", compilerArguments!!.apiVersion)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(true, compilerArguments!!.suppressWarnings)
             Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
@@ -586,6 +588,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.1", compilerArguments!!.languageVersion)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals("1.0", compilerArguments!!.apiVersion)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(true, compilerArguments!!.suppressWarnings)
             Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertTrue(targetPlatformKind is TargetPlatformKind.JavaScript)
@@ -710,6 +714,60 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                             <arg>-Xcoroutines=enable</arg>
                             <arg>-classpath</arg>
                             <arg>c:\program files\jdk1.8</arg>
+                        </args>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+        """)
+
+        assertModules("project")
+        assertImporterStatePresent()
+
+        with (facetSettings) {
+            Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
+            Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
+            Assert.assertEquals("c:/program files/jdk1.8", (compilerArguments as K2JVMCompilerArguments).classpath)
+        }
+    }
+
+    fun testArgsInFacetInSingleElement() {
+        createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
+
+        importProject("""
+        <groupId>test</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.0</version>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>$kotlinVersion</version>
+            </dependency>
+        </dependencies>
+
+        <build>
+            <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <args>
+                            -jvm-target 1.8 -Xcoroutines=enable -classpath "c:\program files\jdk1.8"
                         </args>
                     </configuration>
                 </plugin>
@@ -1411,7 +1469,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional",
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async",
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable",
-                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.boot.test.context.SpringBootTest"),
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.boot.test.context.SpringBootTest",
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.validation.annotation.Validated"),
                     compilerArguments!!.pluginOptions!!.toList()
             )
         }

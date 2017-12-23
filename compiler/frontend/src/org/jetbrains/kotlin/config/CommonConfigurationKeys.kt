@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.config
 
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 
 object CommonConfigurationKeys {
@@ -35,7 +36,7 @@ object CommonConfigurationKeys {
     val LOOKUP_TRACKER = CompilerConfigurationKey.create<LookupTracker>("lookup tracker")
 
     @JvmField
-    val USE_NEW_INFERENCE = CompilerConfigurationKey.create<Boolean>("use new inference")
+    val EXPECT_ACTUAL_TRACKER = CompilerConfigurationKey.create<ExpectActualTracker>("expect actual tracker")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

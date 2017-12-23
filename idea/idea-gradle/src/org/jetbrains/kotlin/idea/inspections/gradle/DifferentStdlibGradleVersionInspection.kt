@@ -101,7 +101,7 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
             return null
         }
 
-        private fun getResolvedKotlinStdlibVersion(file: PsiFile, libraryIds: List<String>): String? {
+        fun getResolvedKotlinStdlibVersion(file: PsiFile, libraryIds: List<String>): String? {
             val projectStructureNode = findGradleProjectStructure(file) ?: return null
             val module = ProjectRootManager.getInstance(file.project).fileIndex.getModuleForFile(file.virtualFile) ?: return null
 

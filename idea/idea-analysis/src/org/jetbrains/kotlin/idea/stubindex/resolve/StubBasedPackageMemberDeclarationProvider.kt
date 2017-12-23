@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.idea.stubindex.resolve
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
+import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.vfilefinder.KotlinPackageSourcesMemberNamesIndex
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -61,9 +63,12 @@ class StubBasedPackageMemberDeclarationProvider(
         return result
     }
 
-    private val declarationNames_ by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        getDeclarations(DescriptorKindFilter.ALL, { true })
-                .mapTo(mutableSetOf()) { ResolveSessionUtils.safeNameForLazyResolve(it as KtNamedDeclaration) }
+    private val declarationNames_: Set<Name> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        FileBasedIndex.getInstance()
+                .getValues(KotlinPackageSourcesMemberNamesIndex.KEY, fqName.asString(), searchScope)
+                .flatMapTo(hashSetOf()) {
+                    it.map { stringName -> ResolveSessionUtils.safeNameForLazyResolve(Name.identifier(stringName)) }
+                }
     }
 
     override fun getDeclarationNames() = declarationNames_
@@ -102,6 +107,10 @@ class StubBasedPackageMemberDeclarationProvider(
 
     override fun getPackageFiles(): Collection<KtFile> {
         return PackageIndexUtil.findFilesWithExactPackage(fqName, searchScope, project)
+    }
+
+    override fun containsFile(file: KtFile): Boolean {
+        return searchScope.contains(file.virtualFile ?: return false)
     }
 
     override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias> {

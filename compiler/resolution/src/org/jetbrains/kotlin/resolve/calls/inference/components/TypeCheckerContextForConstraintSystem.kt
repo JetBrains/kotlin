@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinTypeFactory.flexibleType
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -87,22 +88,73 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
     }
 
     /**
-     * Foo <: T! <=> Foo <: T? <=> Foo & Any <: T
-     * Foo <: T? <=> Foo & Any <: T
      * Foo <: T -- leave as is
+     *
+     * T?
+     *
+     * Foo <: T? -- Foo & Any <: T -- Foo!! <: T
+     * Foo? <: T? -- Foo? & Any <: T -- Foo!! <: T
+     * (Foo..Bar) <: T? -- (Foo..Bar) & Any <: T -- (Foo..Bar)!! <: T
+     *
+     * T!
+     *
+     * Foo <: T! --
+     * assert T! == (T..T?)
+     *  Foo <: T?
+     *  Foo <: T (optional constraint, needs to preserve nullability)
+     * =>
+     *  Foo & Any <: T
+     *  Foo <: T
+     * =>
+     *  (Foo & Any .. Foo) <: T -- (Foo!! .. Foo) <: T
+     *
+     * => Foo <: T! -- (Foo!! .. Foo) <: T
+     *
+     * Foo? <: T! -- (Foo!! .. Foo?) <: T
+     *
+     *
+     * (Foo..Bar) <: T! --
+     * assert T! == (T..T?)
+     *  (Foo..Bar) <: (T..T?)
+     * =>
+     *  Foo <: T?
+     *  Bar <: T (optional constraint, needs to preserve nullability)
+     * =>
+     *  (Foo & Any .. Bar) <: T -- (Foo!! .. Bar) <: T
+     *
+     * => (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
      */
     private fun simplifyLowerConstraint(typeVariable: UnwrappedType, subType: UnwrappedType): Boolean {
-        @Suppress("NAME_SHADOWING")
-        val typeVariable = typeVariable.upperIfFlexible()
+        val lowerConstraint = when (typeVariable) {
+            is SimpleType ->
+                // Foo <: T or
+                // Foo <: T? -- Foo!! <: T
+                if (typeVariable.isMarkedNullable) subType.makeDefinitelyNotNullOrNotNull() else subType
 
-        if (typeVariable.isMarkedNullable) {
-            addLowerConstraint(typeVariable.constructor, intersectTypes(listOf(subType, subType.builtIns.anyType)))
+            is FlexibleType -> {
+                assertFlexibleTypeVariable(typeVariable)
+
+                when (subType) {
+                    is SimpleType ->
+                        // Foo <: T! -- (Foo!! .. Foo) <: T
+                        flexibleType(subType.makeSimpleTypeDefinitelyNotNullOrNotNull(), subType)
+
+                    is FlexibleType ->
+                        // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
+                        flexibleType(subType.lowerBound.makeSimpleTypeDefinitelyNotNullOrNotNull(), subType.upperBound)
+                }
+            }
         }
-        else {
-            addLowerConstraint(typeVariable.constructor, subType)
-        }
+
+        addLowerConstraint(typeVariable.constructor, lowerConstraint)
 
         return true
+    }
+
+    private fun assertFlexibleTypeVariable(typeVariable: FlexibleType) {
+        assert(typeVariable.lowerBound.constructor == typeVariable.upperBound.constructor) {
+            "Flexible type variable ($typeVariable) should have bounds with the same type constructor, i.e. (T..T?)"
+        }
     }
 
     /**
@@ -113,6 +165,9 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
     private fun simplifyUpperConstraint(typeVariable: UnwrappedType, superType: UnwrappedType): Boolean {
         @Suppress("NAME_SHADOWING")
         val typeVariable = typeVariable.lowerIfFlexible()
+
+        @Suppress("NAME_SHADOWING")
+        val superType = if (typeVariable is DefinitelyNotNullType) superType.makeNullableAsSpecified(true) else superType
 
         addUpperConstraint(typeVariable.constructor, superType)
 
@@ -170,8 +225,8 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
             with(NewKotlinTypeChecker) { this@TypeCheckerContextForConstraintSystem.isSubtypeOf(subType, superType) }
 
     private fun assertInputTypes(subType: UnwrappedType, superType: UnwrappedType) {
-        fun correctSubType(subType: SimpleType) = subType.isSingleClassifierType || subType.isIntersectionType || isMyTypeVariable(subType)
-        fun correctSuperType(superType: SimpleType) = superType.isSingleClassifierType || isMyTypeVariable(superType)
+        fun correctSubType(subType: SimpleType) = subType.isSingleClassifierType || subType.isIntersectionType || isMyTypeVariable(subType) || subType.isError
+        fun correctSuperType(superType: SimpleType) = superType.isSingleClassifierType || superType.isIntersectionType || isMyTypeVariable(superType) || superType.isError
 
         assert(subType.bothBounds(::correctSubType)) {
             "Not singleClassifierType and not intersection subType: $subType"

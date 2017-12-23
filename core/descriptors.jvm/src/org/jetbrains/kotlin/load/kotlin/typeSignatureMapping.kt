@@ -47,13 +47,6 @@ private fun <T : Any> JvmTypeFactory<T>.boxTypeIfNeeded(possiblyPrimitiveType: T
         if (needBoxedType) boxType(possiblyPrimitiveType) else possiblyPrimitiveType
 
 interface TypeMappingConfiguration<out T : Any> {
-    private companion object {
-        private val DEFAULT_INNER_CLASS_NAME_FACTORY = fun(outer: String, inner: String) = outer + "$" + inner
-    }
-
-    val innerClassNameFactory: (outer: String, inner: String) -> String
-        get() = DEFAULT_INNER_CLASS_NAME_FACTORY
-
     fun commonSupertype(types: Collection<@JvmSuppressWildcards KotlinType>): KotlinType
     fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): T?
     fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String?
@@ -81,7 +74,7 @@ fun <T : Any> mapType(
         )
     }
 
-    mapBuiltInType(kotlinType, factory, mode, typeMappingConfiguration)?.let { builtInType ->
+    mapBuiltInType(kotlinType, factory, mode)?.let { builtInType ->
         val jvmType = factory.boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing)
         writeGenericType(kotlinType, jvmType, mode)
         return jvmType
@@ -183,12 +176,7 @@ fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
            && descriptor !is PropertyGetterDescriptor
 }
 
-private fun <T : Any> mapBuiltInType(
-        type: KotlinType,
-        typeFactory: JvmTypeFactory<T>,
-        mode: TypeMappingMode,
-        typeMappingConfiguration: TypeMappingConfiguration<T>
-): T? {
+private fun <T : Any> mapBuiltInType(type: KotlinType, typeFactory: JvmTypeFactory<T>, mode: TypeMappingMode): T? {
     val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
     if (descriptor === FAKE_CONTINUATION_CLASS_DESCRIPTOR) {
@@ -214,7 +202,7 @@ private fun <T : Any> mapBuiltInType(
             if (!mode.kotlinCollectionsToJavaCollections &&
                 JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId }) return null
 
-            return typeFactory.createObjectType(JvmClassName.byClassId(classId, typeMappingConfiguration).internalName)
+            return typeFactory.createObjectType(JvmClassName.byClassId(classId).internalName)
         }
     }
 
@@ -233,13 +221,13 @@ fun computeInternalName(
         return if (fqName.isRoot) name else fqName.asString().replace('.', '/') + '/' + name
     }
 
-    val containerClass = container as? ClassDescriptor ?:
-        throw IllegalArgumentException("Unexpected container: $container for $klass")
+    val containerClass = container as? ClassDescriptor
+                         ?: throw IllegalArgumentException("Unexpected container: $container for $klass")
 
     val containerInternalName =
             typeMappingConfiguration.getPredefinedInternalNameForClass(containerClass) ?:
             computeInternalName(containerClass, typeMappingConfiguration)
-    return typeMappingConfiguration.innerClassNameFactory(containerInternalName, name)
+    return containerInternalName + "$" + name
 }
 
 private fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {
@@ -271,8 +259,7 @@ open class JvmDescriptorTypeWriter<T : Any>(private val jvmTypeFactory: JvmTypeF
     open fun writeArrayEnd() {
     }
 
-
-    open public fun writeClass(objectType: T) {
+    open fun writeClass(objectType: T) {
         writeJvmTypeAsIs(objectType)
     }
 

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.expression
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -125,7 +126,9 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
 
         val dataFlow = DataFlowValueFactory.createDataFlowValue(
                 ktSubject, subjectType, bindingContext(), context().declarationDescriptor ?: context().currentModule)
-        val expectedTypes = bindingContext().getDataFlowInfoBefore(ktSubject).getStableTypes(dataFlow) + setOf(subjectType)
+        val languageVersionSettings = context().config.configuration.languageVersionSettings
+        val expectedTypes = bindingContext().getDataFlowInfoBefore(ktSubject).getStableTypes(dataFlow, languageVersionSettings) +
+                            setOf(subjectType)
         val subject = expressionToMatch ?: return null
         var subjectSupplier = { subject }
 
@@ -243,7 +246,7 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
     private fun KotlinType.getEnumClass(): ClassDescriptor? {
         if (isMarkedNullable) return null
         val classDescriptor = (constructor.declarationDescriptor as? ClassDescriptor)
-        return if (classDescriptor?.kind == ClassKind.ENUM_CLASS) classDescriptor else null
+        return if (classDescriptor?.kind == ClassKind.ENUM_CLASS && !classDescriptor.isExternal) classDescriptor else null
     }
 
     private fun translateEntryExpression(

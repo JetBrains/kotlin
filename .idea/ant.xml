@@ -18,6 +18,5 @@
       </properties>
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/TeamCityRelay.xml" />
-    <buildFile url="file://$PROJECT_DIR$/node_utils.xml" />
   </component>
 </project>

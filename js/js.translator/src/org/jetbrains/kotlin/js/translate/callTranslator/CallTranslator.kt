@@ -153,17 +153,12 @@ private fun translateFunctionCall(
     }
 
     if (resolvedCall.resultingDescriptor.isSuspend) {
-        if (context.isInStateMachine) {
-            val statement = callInfo.constructSuspendSafeCallIfNeeded(JsAstUtils.asSyntheticStatement(callExpression.apply {
-                isSuspend = true
-                source = resolvedCall.call.callElement
-            }))
-            context.currentBlock.statements += statement
-            return context.createCoroutineResult(resolvedCall)
-        }
-        else {
-            callExpression.isTailCallSuspend = true
-        }
+        val statement = callInfo.constructSuspendSafeCallIfNeeded(JsAstUtils.asSyntheticStatement(callExpression.apply {
+            isSuspend = true
+            source = resolvedCall.call.callElement
+        }))
+        context.currentBlock.statements += statement
+        return context.createCoroutineResult(resolvedCall)
     }
     else {
         callExpression = callInfo.constructSafeCallIfNeeded(callExpression)
@@ -199,9 +194,6 @@ private val longRangeToFqName = FqName("kotlin.Long.rangeTo")
 private val untilFqName = FqName("kotlin.ranges.until")
 
 fun ResolvedCall<out CallableDescriptor>.getReturnType(): KotlinType = TranslationUtils.getReturnTypeForCoercion(resultingDescriptor)
-
-private val TranslationContext.isInStateMachine
-    get() = (declarationDescriptor as? FunctionDescriptor)?.requiresStateMachineTransformation(this) == true
 
 fun computeExplicitReceiversForInvoke(
         context: TranslationContext,

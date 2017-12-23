@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.lower.DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.backend.jvm.lower.InitializersLowering
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -36,7 +37,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class FunctionCodegen(private val irFunction: IrFunction, private val classCodegen: ClassCodegen) {
+open class FunctionCodegen(private val irFunction: IrFunction, private val classCodegen: ClassCodegen) {
 
     val state = classCodegen.state
 
@@ -53,24 +54,12 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
     private fun doGenerate() {
         val signature = classCodegen.typeMapper.mapSignatureWithGeneric(descriptor, OwnerKind.IMPLEMENTATION)
-        val isStatic = isStaticMethod(OwnerKind.getMemberOwnerKind(classCodegen.descriptor), descriptor) ||
-                       DescriptorUtils.isStaticDeclaration(descriptor)
+        val isStatic = DescriptorUtils.isStaticDeclaration(descriptor)
         val frameMap = createFrameMapWithReceivers(classCodegen.state, descriptor, signature, isStatic)
 
 
-        var flags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, state).or(if (isStatic) Opcodes.ACC_STATIC else 0).xor(
-                if (DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)) Opcodes.ACC_FINAL else 0/*TODO*/
-        ).or(if (descriptor is JvmDescriptorWithExtraFlags) descriptor.extraFlags else 0)
-
-        val interfaceClInit = JvmCodegenUtil.isJvmInterface(classCodegen.descriptor) && InitializersLowering.clinitName == descriptor.name
-        if (interfaceClInit) {
-            //reset abstract flag
-            flags = flags.xor(Opcodes.ACC_ABSTRACT)
-        }
-        val methodVisitor = classCodegen.visitor.newMethod(irFunction.OtherOrigin,
-                                                           flags,
-                                                           signature.asmMethod.name, signature.asmMethod.descriptor,
-                                                           signature.genericsSignature, null/*TODO support exception*/)
+        val flags = calculateMethodFlags(isStatic)
+        val methodVisitor = createMethod(flags, signature)
 
         FunctionCodegen.generateMethodAnnotations(descriptor, signature.asmMethod, methodVisitor, classCodegen, state.typeMapper)
         FunctionCodegen.generateParameterAnnotations(descriptor, methodVisitor, signature, classCodegen, state)
@@ -82,6 +71,30 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         }
 
         ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen).generate()
+    }
+
+    private fun calculateMethodFlags(isStatic: Boolean): Int {
+        var flags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, state).or(if (isStatic) Opcodes.ACC_STATIC else 0).xor(
+                if (DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)) Opcodes.ACC_FINAL else 0/*TODO*/
+        ).or(if (descriptor is JvmDescriptorWithExtraFlags) descriptor.extraFlags else 0)
+
+        if (irFunction.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER) {
+            flags = flags.xor(AsmUtil.getVisibilityAccessFlag(descriptor)).or(Opcodes.ACC_PUBLIC)
+        }
+
+        val interfaceClInit = JvmCodegenUtil.isJvmInterface(classCodegen.descriptor) && InitializersLowering.clinitName == descriptor.name
+        if (interfaceClInit) {
+            //reset abstract flag
+            flags = flags.xor(Opcodes.ACC_ABSTRACT)
+        }
+        return flags
+    }
+
+    open protected fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
+        return classCodegen.visitor.newMethod(irFunction.OtherOrigin,
+                                              flags,
+                                              signature.asmMethod.name, signature.asmMethod.descriptor,
+                                              signature.genericsSignature, null/*TODO support exception*/)
     }
 
     private fun generateAnnotationDefaultValueIfNeeded(methodVisitor: MethodVisitor) {

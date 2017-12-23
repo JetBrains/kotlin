@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ object StrictEqualityTypeChecker {
 
     fun strictEqualTypes(a: SimpleType, b: SimpleType): Boolean {
         if (a.isMarkedNullable != b.isMarkedNullable
+            || a.isDefinitelyNotNullType != b.isDefinitelyNotNullType
             || a.constructor != b.constructor
             || a.arguments.size != b.arguments.size
         ) {
@@ -111,14 +112,19 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             lowerIfFlexible().isMarkedNullable != upperIfFlexible().isMarkedNullable
 
     private fun isCommonDenotableType(type: KotlinType) =
-            type.constructor.isDenotable && !type.isDynamic() && type.lowerIfFlexible().constructor == type.upperIfFlexible().constructor
+            type.constructor.isDenotable &&
+            !type.isDynamic() && !type.isDefinitelyNotNullType &&
+            type.lowerIfFlexible().constructor == type.upperIfFlexible().constructor
 
     fun TypeCheckerContext.isSubtypeOf(subType: UnwrappedType, superType: UnwrappedType): Boolean {
         if (subType === superType) return true
         val newSubType = transformToNewType(subType)
         val newSuperType = transformToNewType(superType)
 
-        checkSubtypeForSpecialCases(newSubType.lowerIfFlexible(), newSuperType.upperIfFlexible())?.let { return it }
+        checkSubtypeForSpecialCases(newSubType.lowerIfFlexible(), newSuperType.upperIfFlexible())?.let {
+            addSubtypeConstraint(newSubType, newSuperType)
+            return it
+        }
 
         // we should add constraints with flexible types, otherwise we never get flexible type as answer in constraint system
         addSubtypeConstraint(newSubType, newSuperType)?.let { return it }
@@ -395,6 +401,9 @@ object NullabilityChecker {
     fun isSubtypeOfAny(type: UnwrappedType): Boolean =
             TypeCheckerContext(false).hasNotNullSupertype(type.lowerIfFlexible(), SupertypesPolicy.LowerIfFlexible)
 
+    fun hasPathByNotMarkedNullableNodes(start: SimpleType, end: TypeConstructor) =
+            TypeCheckerContext(false).hasPathByNotMarkedNullableNodes(start, end)
+
     private fun TypeCheckerContext.runIsPossibleSubtype(subType: SimpleType, superType: SimpleType): Boolean {
         // it makes for case String? & Any <: String
         assert(subType.isIntersectionType || subType.isSingleClassifierType || subType.isAllowedTypeVariable) {
@@ -407,13 +416,19 @@ object NullabilityChecker {
         // superType is actually nullable
         if (superType.isMarkedNullable) return true
 
+        // i.e. subType is definitely not null
+        if (subType.isDefinitelyNotNullType) return true
+
         // i.e. subType is not-nullable
         if (hasNotNullSupertype(subType, SupertypesPolicy.LowerIfFlexible)) return true
+
+        // i.e. subType hasn't not-null supertype and isn't definitely not-null, but superType is definitely not-null
+        if (superType.isDefinitelyNotNullType) return false
 
         // i.e subType hasn't not-null supertype, but superType has
         if (hasNotNullSupertype(superType, SupertypesPolicy.UpperIfFlexible)) return false
 
-        // both superType and subType hasn't not-null supertype.
+        // both superType and subType hasn't not-null supertype and are not definitely not null.
 
         /**
          * If we still don't know, it means, that superType is not classType, for example -- type parameter.
@@ -431,7 +446,7 @@ object NullabilityChecker {
     }
 
     private fun TypeCheckerContext.hasNotNullSupertype(type: SimpleType, supertypesPolicy: SupertypesPolicy) =
-            anySupertype(type, { it.isClassType && !it.isMarkedNullable }) {
+            anySupertype(type, { (it.isClassType && !it.isMarkedNullable) || it.isDefinitelyNotNullType }) {
                 if (it.isMarkedNullable) SupertypesPolicy.None else supertypesPolicy
             }
 
@@ -464,7 +479,7 @@ val SimpleType.isClassType: Boolean get() = constructor.declarationDescriptor is
 val SimpleType.isSingleClassifierType: Boolean
     get() = !isError &&
             constructor.declarationDescriptor !is TypeAliasDescriptor &&
-            (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType)
+            (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType || this is DefinitelyNotNullType)
 
 val SimpleType.isIntersectionType: Boolean
     get() = constructor is IntersectionTypeConstructor

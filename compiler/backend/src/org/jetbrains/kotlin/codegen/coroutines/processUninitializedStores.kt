@@ -75,11 +75,6 @@ class UninitializedStoresProcessor(
         private val methodNode: MethodNode,
         private val shouldPreserveClassInitialization: Boolean
 ) {
-    companion object {
-        val AVOID_UNINITIALIZED_OBJECT_COPYING_CHECK_ANNOTATION_DESCRIPTOR =
-                "Lkotlin/internal/annotations/AvoidUninitializedObjectCopyingCheck;"
-    }
-
     // <init> method is "special", because it will invoke <init> from this class or from a base class for #0
     //
     // <clinit> method is "special", because <clinit> for singleton objects is generated as:
@@ -88,11 +83,7 @@ class UninitializedStoresProcessor(
     // and the newly created value is dropped.
     private val isInSpecialMethod = methodNode.name == "<init>" || methodNode.name == "<clinit>"
 
-    private val shouldCheckUninitializedObjectCopy = !methodNode.invisibleAnnotations.orEmpty()
-            .any { it.desc == AVOID_UNINITIALIZED_OBJECT_COPYING_CHECK_ANNOTATION_DESCRIPTOR }
-
     fun run() {
-        if (!shouldCheckUninitializedObjectCopy) return
         val interpreter = UninitializedNewValueMarkerInterpreter(methodNode.instructions)
 
         val frames = CustomFramesMethodAnalyzer(
@@ -183,7 +174,7 @@ class UninitializedStoresProcessor(
         assert(insn.opcode == Opcodes.INVOKESPECIAL) { "Expected opcode Opcodes.INVOKESPECIAL for <init>, but ${insn.opcode} found" }
         val paramsCountIncludingReceiver = Type.getArgumentTypes((insn as MethodInsnNode).desc).size + 1
         val newValue = peek(paramsCountIncludingReceiver) as? UninitializedNewValue ?:
-                       if (isInSpecialMethod || !shouldCheckUninitializedObjectCopy)
+                       if (isInSpecialMethod)
                            return null
                        else
                            error("Expected value generated with NEW")

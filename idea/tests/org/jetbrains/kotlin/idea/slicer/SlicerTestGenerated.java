@@ -54,6 +54,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inflow/compositeAssignments.kt")
+    public void testInflow_CompositeAssignments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/compositeAssignments.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inflow/defaultGetterFieldInSetter.kt")
     public void testInflow_DefaultGetterFieldInSetter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/defaultGetterFieldInSetter.kt");
@@ -270,6 +276,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inflow/qualifiedAssignmentsForQualifiedRef.kt")
+    public void testInflow_QualifiedAssignmentsForQualifiedRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/qualifiedAssignmentsForQualifiedRef.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/qualifiedAssignmentsForSimpleRef.kt")
+    public void testInflow_QualifiedAssignmentsForSimpleRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/qualifiedAssignmentsForSimpleRef.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inflow/safeCast.kt")
     public void testInflow_SafeCast() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/safeCast.kt");
@@ -285,6 +303,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("inflow/secondaryConstructorParameterWithDefault.kt")
     public void testInflow_SecondaryConstructorParameterWithDefault() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/secondaryConstructorParameterWithDefault.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/settersViaDelegateForQualifiedRef.kt")
+    public void testInflow_SettersViaDelegateForQualifiedRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/settersViaDelegateForQualifiedRef.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/settersViaDelegateForSimpleRef.kt")
+    public void testInflow_SettersViaDelegateForSimpleRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/settersViaDelegateForSimpleRef.kt");
         doTest(fileName);
     }
 
@@ -375,6 +405,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("outflow/extensionIndexingDereferences.kt")
     public void testOutflow_ExtensionIndexingDereferences() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/extensionIndexingDereferences.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/forVariable.kt")
+    public void testOutflow_ForVariable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/forVariable.kt");
         doTest(fileName);
     }
 
@@ -561,6 +597,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("outflow/topLevelPropertyUsages.kt")
     public void testOutflow_TopLevelPropertyUsages() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/topLevelPropertyUsages.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/usagesInLoopRange.kt")
+    public void testOutflow_UsagesInLoopRange() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/usagesInLoopRange.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/usagesInTemplates.kt")
+    public void testOutflow_UsagesInTemplates() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/usagesInTemplates.kt");
         doTest(fileName);
     }
 

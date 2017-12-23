@@ -49,10 +49,8 @@ class KotlinExpandNodeProjectViewProvider : TreeStructureProvider, DumbAware {
             val childValue = child.value?.asKtFile()
 
             if (childValue != null) {
-                val declarations = childValue.declarations
-
-                val mainClass = KotlinIconProvider.getMainClass(childValue)
-                if (mainClass != null && declarations.size == 1) {
+                val mainClass = KotlinIconProvider.getSingleClass(childValue)
+                if (mainClass != null) {
                     result.add(KtClassOrObjectTreeNode(childValue.project, mainClass, settings))
                 }
                 else {

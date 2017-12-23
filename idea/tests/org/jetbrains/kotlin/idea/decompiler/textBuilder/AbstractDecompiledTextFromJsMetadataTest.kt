@@ -21,22 +21,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.ModuleKind
-import org.jetbrains.kotlin.idea.test.configureAs
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import kotlin.test.assertTrue
 
-abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) : AbstractDecompiledTextBaseTest(baseDirectory, true) {
+abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) : AbstractDecompiledTextBaseTest(baseDirectory, true, withRuntime = true) {
     override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, myModule!!)
 
     override fun checkPsiFile(psiFile: PsiFile) =
             assertTrue(psiFile is KtDecompiledFile, "Expecting decompiled kotlin javascript file, was: " + psiFile::class.java)
-
-    override fun setUp() {
-        super.setUp()
-        myModule!!.configureAs(ModuleKind.KOTLIN_JAVASCRIPT)
-    }
 }
 
 abstract class AbstractCommonDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledText")

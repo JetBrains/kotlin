@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
-import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemForArgument
+import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -54,12 +54,12 @@ class SimpleCandidateFactory(
 
     init {
         val baseSystem = NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.builtIns)
-        baseSystem.addSubsystemForArgument(kotlinCall.explicitReceiver)
-        baseSystem.addSubsystemForArgument(kotlinCall.dispatchReceiverForInvokeExtension)
+        baseSystem.addSubsystemFromArgument(kotlinCall.explicitReceiver)
+        baseSystem.addSubsystemFromArgument(kotlinCall.dispatchReceiverForInvokeExtension)
         for (argument in kotlinCall.argumentsInParenthesis) {
-            baseSystem.addSubsystemForArgument(argument)
+            baseSystem.addSubsystemFromArgument(argument)
         }
-        baseSystem.addSubsystemForArgument(kotlinCall.externalArgument)
+        baseSystem.addSubsystemFromArgument(kotlinCall.externalArgument)
 
         this.baseSystem = baseSystem.asReadOnlyStorage()
     }

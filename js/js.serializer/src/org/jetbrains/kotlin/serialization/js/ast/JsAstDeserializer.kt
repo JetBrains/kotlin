@@ -190,11 +190,16 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             JsSwitch(
                     deserialize(switchProto.expression),
                     switchProto.entryList.map { entryProto ->
-                        val member = if (entryProto.hasLabel()) {
-                            JsCase().apply { caseExpression = deserialize(entryProto.label) }
-                        }
-                        else {
-                            JsDefault()
+                        val member = withLocation(
+                                fileId = if (entryProto.hasFileId()) entryProto.fileId else null,
+                                location = if (entryProto.hasLocation()) entryProto.location else null
+                        ) {
+                            if (entryProto.hasLabel()) {
+                                JsCase().apply { caseExpression = deserialize(entryProto.label) }
+                            }
+                            else {
+                                JsDefault()
+                            }
                         }
                         member.statements += entryProto.statementList.map { deserialize(it) }
                         member
@@ -527,6 +532,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         JsAstProtoBuf.SpecialFunction.COROUTINE_RESULT -> SpecialFunction.COROUTINE_RESULT
         JsAstProtoBuf.SpecialFunction.COROUTINE_CONTROLLER -> SpecialFunction.COROUTINE_CONTROLLER
         JsAstProtoBuf.SpecialFunction.COROUTINE_RECEIVER -> SpecialFunction.COROUTINE_RECEIVER
+        JsAstProtoBuf.SpecialFunction.SET_COROUTINE_RESULT -> SpecialFunction.SET_COROUTINE_RESULT
     }
 
     private fun <T : JsNode> withLocation(fileId: Int?, location: Location?, action: () -> T): T {

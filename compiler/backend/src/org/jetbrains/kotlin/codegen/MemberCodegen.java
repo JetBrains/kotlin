@@ -720,6 +720,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                     Synthetic(null, original), accessor,
                     new FunctionGenerationStrategy.CodegenBased(state) {
                         @Override
+                        public boolean skipNotNullAssertionsForParameters() {
+                            return true;
+                        }
+
+                        @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                             markLineNumberForElement(element.getPsiOrParent(), codegen.v);
 
@@ -778,6 +783,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                     }
 
                     iv.areturn(signature.getReturnType());
+                }
+
+                @Override
+                public boolean skipNotNullAssertionsForParameters() {
+                    return true;
                 }
             }
 

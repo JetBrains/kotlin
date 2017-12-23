@@ -79,4 +79,31 @@
         <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
         <description>Unused equals expression</description>
     </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>71</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>75</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>81</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
 </problems>

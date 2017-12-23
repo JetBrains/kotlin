@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.checkers
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -29,7 +30,8 @@ interface DeclarationChecker {
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings
+            languageVersionSettings: LanguageVersionSettings,
+            expectActualTracker: ExpectActualTracker
     )
 }
 
@@ -38,7 +40,9 @@ interface SimpleDeclarationChecker : DeclarationChecker {
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext, languageVersionSettings: LanguageVersionSettings
+            bindingContext: BindingContext,
+            languageVersionSettings: LanguageVersionSettings,
+            expectActualTracker: ExpectActualTracker
     ) = check(declaration, descriptor, diagnosticHolder, bindingContext)
 
     fun check(

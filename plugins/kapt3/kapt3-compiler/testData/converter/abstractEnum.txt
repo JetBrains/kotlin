@@ -1,0 +1,139 @@
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public enum E {
+    /*public static final*/ X /* = new E() */,
+    /*public static final*/ Y /* = new E() */;
+
+    @kapt.internal.KaptSignature(value = "a()V")
+    public abstract void a();
+
+    @kapt.internal.KaptSignature(value = "b()V")
+    public final void b() {
+    }
+
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;I)V")
+    E() {
+    }
+
+    @kotlin.Metadata()
+    public static final class Obj {
+        public static final E.Obj INSTANCE = null;
+
+        @kapt.internal.KaptSignature(value = "<init>()V")
+        private Obj() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class NestedClass {
+
+        @kapt.internal.KaptSignature(value = "<init>()V")
+        public NestedClass() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public enum E2 {
+    /*public static final*/ X /* = new E2() */,
+    /*public static final*/ Y /* = new E2() */;
+
+    @kapt.internal.KaptSignature(value = "a()V")
+    public abstract void a();
+
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;II)V")
+    E2(int n) {
+    }
+
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;ILjava/lang/String;)V")
+    E2(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public enum E3 {
+    /*public static final*/ X /* = new E3() */,
+    /*public static final*/ Y /* = new E3() */;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+
+    @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getA()Ljava/lang/String;")
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;ILjava/lang/String;)V")
+    E3(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public enum E4 {
+    /*public static final*/ X /* = new E4() */;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+    private final int b = 0;
+    private final long c = 0L;
+    private final boolean d = false;
+
+    @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getA()Ljava/lang/String;")
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    @kapt.internal.KaptSignature(value = "getB()I")
+    public final int getB() {
+        return 0;
+    }
+
+    @kapt.internal.KaptSignature(value = "getC()J")
+    public final long getC() {
+        return 0L;
+    }
+
+    @kapt.internal.KaptSignature(value = "getD()Z")
+    public final boolean getD() {
+        return false;
+    }
+
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;ILjava/lang/String;IJZ)V")
+    E4(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, int b, long c, boolean d) {
+    }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,9 @@ package org.jetbrains.kotlin.idea.util
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -33,42 +31,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.nullability
-
-fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
-        receivers: Collection<ReceiverValue>,
-        context: BindingContext,
-        dataFlowInfo: DataFlowInfo,
-        callType: CallType<*>,
-        containingDeclarationOrModule: DeclarationDescriptor
-): Collection<TCallable> {
-    val sequence = receivers.asSequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo, containingDeclarationOrModule).asSequence() }
-    return if (typeParameters.isEmpty()) { // optimization for non-generic callables
-        sequence.firstOrNull()?.let { listOf(it) } ?: listOf()
-    }
-    else {
-        sequence.toList()
-    }
-}
-
-fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallableWithImplicitReceiver(
-        scope: LexicalScope,
-        context: BindingContext,
-        dataFlowInfo: DataFlowInfo
-): Collection<TCallable> {
-    val receiverValues = scope.getImplicitReceiversWithInstance().map { it.value }
-    return substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.DEFAULT, scope.ownerDescriptor)
-}
-
-fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
-        receiver: ReceiverValue,
-        callType: CallType<*>,
-        bindingContext: BindingContext,
-        dataFlowInfo: DataFlowInfo,
-        containingDeclarationOrModule: DeclarationDescriptor
-): Collection<TCallable> {
-    val types = SmartCastManager().getSmartCastVariants(receiver, bindingContext, containingDeclarationOrModule, dataFlowInfo)
-    return substituteExtensionIfCallable(types, callType)
-}
 
 fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         receiverTypes: Collection<KotlinType>,
@@ -106,6 +68,24 @@ fun ReceiverValue?.getThisReceiverOwner(bindingContext: BindingContext): Declara
         is ExpressionReceiver -> {
             val thisRef = (KtPsiUtil.deparenthesize(this.expression) as? KtThisExpression)?.instanceReference ?: return null
             bindingContext[BindingContext.REFERENCE_TARGET, thisRef]
+        }
+
+        is ImplicitReceiver -> this.declarationDescriptor
+
+        else -> null
+    }
+}
+
+fun ReceiverValue?.getReceiverTargetDescriptor(bindingContext: BindingContext): DeclarationDescriptor? {
+    return when (this) {
+        is ExpressionReceiver -> {
+            val expression = KtPsiUtil.deparenthesize(this.expression)
+            val refExpression = when (expression) {
+                                    is KtThisExpression -> expression.instanceReference
+                                    is KtReferenceExpression -> expression
+                                    else -> null
+                                }  ?: return null
+            bindingContext[BindingContext.REFERENCE_TARGET, refExpression]
         }
 
         is ImplicitReceiver -> this.declarationDescriptor

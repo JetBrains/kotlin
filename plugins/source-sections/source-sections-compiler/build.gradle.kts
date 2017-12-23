@@ -19,6 +19,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(ideaSdkDeps("idea", "idea_rt", "openapi"))
     testCompile(commonDep("junit:junit"))
+    testRuntime(projectDist(":kotlin-reflect"))
 }
 
 sourceSets {

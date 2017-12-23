@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -36,7 +36,7 @@ import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.visitor.UastVisitor
 
 class KotlinUFunctionCallExpression(
-        override val psi: KtCallExpression,
+        override val psi: KtCallElement,
         givenParent: UElement?,
         private val _resolvedCall: ResolvedCall<*>?
 ) : KotlinAbstractUExpression(givenParent), UCallExpression, KotlinUElementWithType {
@@ -56,7 +56,7 @@ class KotlinUFunctionCallExpression(
         }
     }
 
-    constructor(psi: KtCallExpression, uastParent: UElement?): this(psi, uastParent, null)
+    constructor(psi: KtCallElement, uastParent: UElement?) : this(psi, uastParent, null)
 
     private val resolvedCall by lz {
         _resolvedCall ?: psi.getResolvedCall(psi.analyze())
@@ -124,4 +124,18 @@ class KotlinUFunctionCallExpression(
         // KtAnnotationEntry -> KtValueArgumentList -> KtValueArgument -> arrayOf call
         return psi.parents.elementAtOrNull(2) is KtAnnotationEntry && CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)
     }
+
+    override fun convertParent(): UElement? = super.convertParent().let { result ->
+        when (result) {
+            is UMethod -> result.uastBody ?: result
+            is UClass ->
+                result.methods
+                        .filterIsInstance<KotlinConstructorUMethod>()
+                        .firstOrNull { it.isPrimary }
+                        ?.uastBody
+                ?: result
+            else -> result
+        }
+    }
+
 }

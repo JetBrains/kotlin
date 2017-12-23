@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.GSK_KOTLIN_VERSION_PROPERTY_NAME
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getCompileDependencySnippet
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getKotlinGradlePluginClassPathSnippet
-import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
-import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
-import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
-import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
+import org.jetbrains.kotlin.idea.versions.*
 import javax.swing.Icon
 
 abstract class GradleKotlinDSLKotlinFrameworkSupportProvider(

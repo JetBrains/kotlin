@@ -491,16 +491,21 @@ class NewResolutionOldInference(
 }
 
 fun ResolutionContext<*>.transformToReceiverWithSmartCastInfo(receiver: ReceiverValue) =
-        transformToReceiverWithSmartCastInfo(scope.ownerDescriptor, trace.bindingContext, dataFlowInfo, receiver)
+        transformToReceiverWithSmartCastInfo(scope.ownerDescriptor, trace.bindingContext, dataFlowInfo, receiver, languageVersionSettings)
 
 fun transformToReceiverWithSmartCastInfo(
         containingDescriptor: DeclarationDescriptor,
         bindingContext: BindingContext,
         dataFlowInfo: DataFlowInfo,
-        receiver: ReceiverValue
+        receiver: ReceiverValue,
+        languageVersionSettings: LanguageVersionSettings
 ): ReceiverValueWithSmartCastInfo {
     val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, bindingContext, containingDescriptor)
-    return ReceiverValueWithSmartCastInfo(receiver, dataFlowInfo.getCollectedTypes(dataFlowValue), dataFlowValue.isStable)
+    return ReceiverValueWithSmartCastInfo(
+            receiver,
+            dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings),
+            dataFlowValue.isStable
+    )
 }
 
 @Deprecated("Temporary error")

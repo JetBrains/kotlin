@@ -30,13 +30,13 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.ObjectOutputStream
-import javax.xml.bind.DatatypeConverter.printBase64Binary
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
+import java.io.ByteArrayOutputStream
+import java.io.ObjectOutputStream
+import java.util.*
 
 // apply plugin: 'kotlin-kapt'
 class Kapt3GradleSubplugin : Plugin<Project> {
@@ -138,6 +138,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val kaptClasspath = arrayListOf<File>()
         val buildDependencies = arrayListOf<TaskDependency>()
+        val kaptConfigurations = arrayListOf<Configuration>()
 
         fun handleSourceSet(sourceSetName: String) {
             val kaptConfiguration = project.findKaptConfiguration(sourceSetName)
@@ -146,6 +147,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             } ?: emptyList()
 
             if (kaptConfiguration != null) {
+                kaptConfigurations += kaptConfiguration
                 buildDependencies += kaptConfiguration.buildDependencies
 
                 if (filteredDependencies.isNotEmpty()) {
@@ -178,6 +180,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val kaptGenerateStubsTask = context.createKaptGenerateStubsTask()
         val kaptTask = context.createKaptKotlinTask()
 
+        kaptGenerateStubsTask.source(*kaptConfigurations.toTypedArray())
+
         kaptGenerateStubsTask.dependsOn(*buildDependencies.toTypedArray())
         kaptGenerateStubsTask.dependsOn(*kotlinCompile.dependsOn.toTypedArray())
 
@@ -202,9 +206,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         pluginOptions += SubpluginOption("aptMode", aptMode)
         disableAnnotationProcessingInJavaTask()
-
-        // Skip annotation processing in kotlinc if no kapt dependencies were provided
-        if (kaptClasspath.isEmpty()) return pluginOptions
 
         kaptClasspath.forEach { pluginOptions += SubpluginOption("apclasspath", it.absolutePath) }
 
@@ -234,9 +235,9 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 androidPlugin
         ) + androidOptions + mapOf("kapt.kotlin.generated" to kotlinSourcesOutputDir.absolutePath)
 
-        pluginOptions += SubpluginOption("apoptions", encodeOptions(apOptions))
+        pluginOptions += SubpluginOption("apoptions", encodeList(apOptions))
 
-        pluginOptions += SubpluginOption("javacArguments", encodeOptions(kaptExtension.getJavacOptions()))
+        pluginOptions += SubpluginOption("javacArguments", encodeList(kaptExtension.getJavacOptions()))
 
         addMiscOptions(pluginOptions)
 
@@ -245,23 +246,23 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private fun Kapt3SubpluginContext.buildAndAddOptionsTo(container: CompilerPluginOptions, aptMode: String) {
         val compilerPluginId = getCompilerPluginId()
-        for (option in buildOptions(aptMode)) {
+        for (option in wrapPluginOptions(buildOptions(aptMode), "configuration")) {
             container.addPluginArgument(compilerPluginId, option.key, option.value)
         }
     }
 
-    fun encodeOptions(options: Map<String, String>): String {
+    private fun encodeList(options: Map<String, String>): String {
         val os = ByteArrayOutputStream()
         val oos = ObjectOutputStream(os)
 
         oos.writeInt(options.size)
-        for ((k, v) in options.entries) {
-            oos.writeUTF(k)
-            oos.writeUTF(v)
+        for ((key, value) in options.entries) {
+            oos.writeUTF(key)
+            oos.writeUTF(value)
         }
 
         oos.flush()
-        return printBase64Binary(os.toByteArray())
+        return Base64.getEncoder().encodeToString(os.toByteArray())
     }
 
     private fun Kapt3SubpluginContext.addMiscOptions(pluginOptions: MutableList<SubpluginOption>) {
@@ -303,7 +304,10 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             registerGeneratedJavaSource(kaptTask, javaCompile)
         }
 
+        kaptTask.kaptClasspath = kaptClasspath
+
         buildAndAddOptionsTo(kaptTask.pluginOptions, aptMode = "apt")
+
         return kaptTask
     }
 
@@ -321,6 +325,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.generatedSourcesDir = sourcesOutputDir
         mapKotlinTaskProperties(project, kaptTask)
 
+        kaptTask.kaptClasspath = kaptClasspath
         buildAndAddOptionsTo(kaptTask.pluginOptions, aptMode = "stubs")
 
         return kaptTask
@@ -371,7 +376,7 @@ internal fun checkAndroidAnnotationProcessorDependencyUsage(project: Project) {
         val artifactsRendered = androidAPDependencies.joinToString { "'${it.group}:${it.name}:${it.version}'" }
         val andApplyKapt = if (isKapt3Enabled) "" else " and apply the kapt plugin: \"apply plugin: 'kotlin-kapt'\""
         project.logger.warn("${project.name}: " +
-                "'androidProcessor' dependencies won't be recognized as kapt annotation processors. " +
+                "'annotationProcessor' dependencies won't be recognized as kapt annotation processors. " +
                 "Please change the configuration name to 'kapt' for these artifacts: $artifactsRendered$andApplyKapt.")
     }
 }

@@ -300,4 +300,28 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertFileExists("build/classes/main/example/TestClassCustomized.class")
         }
     }
+
+    @Test
+    fun testChangesInLocalAnnotationProcessor() {
+        val project = Project("localAnnotationProcessor", GRADLE_VERSION, directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val testAnnotationProcessor = project.projectDir.getFileByName("TestAnnotationProcessor.kt")
+        testAnnotationProcessor.modify { text ->
+            val commentText = "// print warning "
+            assert(text.contains(commentText))
+            text.replace(commentText, "")
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains(":example:kaptKotlin UP-TO-DATE",
+                              ":example:kaptGenerateStubsKotlin UP-TO-DATE")
+
+            assertContains("Additional warning message from AP")
+        }
+    }
 }

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -37,7 +38,8 @@ abstract class KotlinVersionStringAnnotationValueChecker(
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings
+            languageVersionSettings: LanguageVersionSettings,
+            expectActualTracker: ExpectActualTracker
     ) {
         val annotation = descriptor.annotations.findAnnotation(annotationFqName) ?: return
         val version = annotation.allValueArguments.values.singleOrNull()?.value as? String ?: return

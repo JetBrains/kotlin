@@ -74,6 +74,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("AssignmentWrap.after.kt")
+        public void testAssignmentWrap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/AssignmentWrap.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("BinaryExpressionAlignmentSpread.after.kt")
         public void testBinaryExpressionAlignmentSpread() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionAlignmentSpread.after.kt");
@@ -125,6 +131,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("By.after.kt")
         public void testBy() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/By.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("CallChainWrapping.after.kt")
+        public void testCallChainWrapping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallChainWrapping.after.kt");
             doTest(fileName);
         }
 
@@ -218,6 +230,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ContinuationIndentInSupertypeLists.after.kt")
+        public void testContinuationIndentInSupertypeLists() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentInSupertypeLists.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("CurlyBraceStringInterpolation.after.kt")
         public void testCurlyBraceStringInterpolation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CurlyBraceStringInterpolation.after.kt");
@@ -263,6 +281,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("Elvis.after.kt")
         public void testElvis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Elvis.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ElvisIndent.after.kt")
+        public void testElvisIndent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ElvisIndent.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ElvisWrap.after.kt")
+        public void testElvisWrap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ElvisWrap.after.kt");
             doTest(fileName);
         }
 
@@ -329,6 +359,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("EnumWrapping.after.kt")
         public void testEnumWrapping() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EnumWrapping.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpressionBodyWrap.after.kt")
+        public void testExpressionBodyWrap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ExpressionBodyWrap.after.kt");
             doTest(fileName);
         }
 
@@ -428,6 +464,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("IfClosingParen.after.kt")
+        public void testIfClosingParen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfClosingParen.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IfConditionIndent.after.kt")
+        public void testIfConditionIndent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfConditionIndent.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("IfElseRemoveLineBreak.after.kt")
         public void testIfElseRemoveLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfElseRemoveLineBreak.after.kt");
@@ -443,6 +491,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("IfElseWithTrickyComments.after.kt")
         public void testIfElseWithTrickyComments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfElseWithTrickyComments.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IfRParen.after.kt")
+        public void testIfRParen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfRParen.after.kt");
             doTest(fileName);
         }
 
@@ -473,6 +527,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("KDoc.after.kt")
         public void testKDoc() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KDoc.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("KT15099.after.kt")
+        public void testKT15099() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT15099.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("KT20362.after.kt")
+        public void testKT20362() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT20362.after.kt");
             doTest(fileName);
         }
 
@@ -629,6 +695,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("PropertyAnnotationWrap.after.kt")
         public void testPropertyAnnotationWrap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyAnnotationWrap.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("PropertyInitializerLineBreak.after.kt")
+        public void testPropertyInitializerLineBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyInitializerLineBreak.after.kt");
             doTest(fileName);
         }
 
@@ -1078,6 +1150,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ArgumentListWrapLParen.after.kt")
+            public void testArgumentListWrapLParen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListWrapLParen.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KT19727.after.kt")
+            public void testKT19727() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/KT19727.after.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ParameterListChopAsNeeded.after.kt")
             public void testParameterListChopAsNeeded() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParameterListChopAsNeeded.after.kt");
@@ -1133,6 +1217,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("BinaryExpressionsWithoutAlignment.after.inv.kt")
         public void testBinaryExpressionsWithoutAlignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("CallChainWrapping.after.inv.kt")
+        public void testCallChainWrapping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallChainWrapping.after.inv.kt");
             doTestInverted(fileName);
         }
 
@@ -1253,6 +1343,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("FunctionalType.after.inv.kt")
         public void testFunctionalType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionalType.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("IfConditionIndent.after.inv.kt")
+        public void testIfConditionIndent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfConditionIndent.after.inv.kt");
             doTestInverted(fileName);
         }
 

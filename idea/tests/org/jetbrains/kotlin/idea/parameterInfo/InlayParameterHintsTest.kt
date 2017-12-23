@@ -172,4 +172,16 @@ annotation class ManyArgs(val name: String, val surname: String)
             fun <T> T.test(block: (receiver: T, Int) -> Unit) = block(<hint text="receiver:"/>this, 0)
         """)
     }
+
+    fun `test dynamic`() {
+        check("""fun foo(x: dynamic) {
+            x.foo("123")
+        }""")
+    }
+
+    fun `test spread`() {
+        check("""fun foo(vararg x: Int) {
+            intArrayOf(1, 0).apply { foo(<hint text="...x:" />*this) }
+        }""")
+    }
 }

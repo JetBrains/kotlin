@@ -28,7 +28,7 @@ interface IncrementalResultsConsumer {
      * but [Any] is used to avoid classloader conflicts in tests where the compiler is isolated
      * (such as [JsProtoComparisonTestGenerated])
      */
-    fun processInlineFunction(sourceFile: File, fqName: String, inlineFunction: Any)
+    fun processInlineFunction(sourceFile: File, fqName: String, inlineFunction: Any, line: Int, column: Int)
 }
 
 class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
@@ -39,7 +39,8 @@ class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
     val packageParts: Map<File, TranslationResultValue>
         get() = _packageParts
 
-    private val _inlineFuncs = hashMapOf<File, MutableMap<String, Any>>()
+    private class FunctionWithSourceInfo(val expression: Any, val line: Int, val column: Int)
+    private val _inlineFuncs = hashMapOf<File, MutableMap<String, FunctionWithSourceInfo>>()
     val inlineFunctions: Map<File, Map<String, Long>>
         get() {
             val result = HashMap<File, Map<String, Long>>(_inlineFuncs.size)
@@ -47,8 +48,8 @@ class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
             for ((file, inlineFnsFromFile) in _inlineFuncs) {
                 val functionsHashes = HashMap<String, Long>(inlineFnsFromFile.size)
 
-                for ((fqName, expression) in inlineFnsFromFile) {
-                    functionsHashes[fqName] = expression.toString().toByteArray().md5()
+                for ((fqName, fn) in inlineFnsFromFile) {
+                    functionsHashes[fqName] = "(${fn.line}:${fn.column})${fn.expression}".toByteArray().md5()
                 }
 
                 result[file] = functionsHashes
@@ -65,9 +66,9 @@ class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         _packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata, binaryAst))
     }
 
-    override fun processInlineFunction(sourceFile: File, fqName: String, inlineFunction: Any) {
+    override fun processInlineFunction(sourceFile: File, fqName: String, inlineFunction: Any, line: Int, column: Int) {
         val mapForSource = _inlineFuncs.getOrPut(sourceFile) { hashMapOf() }
-        mapForSource[fqName] = inlineFunction
+        mapForSource[fqName] = FunctionWithSourceInfo(inlineFunction, line, column)
     }
 
     private fun ByteArray.md5(): Long {

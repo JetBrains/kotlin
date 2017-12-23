@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
@@ -37,7 +38,8 @@ class DelegationChecker : DeclarationChecker {
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings
+            languageVersionSettings: LanguageVersionSettings,
+            expectActualTracker: ExpectActualTracker
     ) {
         if (descriptor !is ClassDescriptor) return
         if (declaration !is KtClassOrObject) return

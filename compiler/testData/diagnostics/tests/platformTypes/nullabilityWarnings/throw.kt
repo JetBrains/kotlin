@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -17,7 +18,7 @@ fun test() {
 }
 
 fun test1() {
-    throw <!TYPE_MISMATCH!>J.staticN<!>
+    throw <!TYPE_MISMATCH!>J.<!NI;TYPE_MISMATCH!>staticN<!><!>
 }
 
 fun test2() {

@@ -1,5 +1,6 @@
 package org.junit
 
+/** @suppress */
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 @Deprecated("Use 'Test' from kotlin.test package",
             replaceWith = ReplaceWith("kotlin.test.Test", "kotlin.test.Test"),

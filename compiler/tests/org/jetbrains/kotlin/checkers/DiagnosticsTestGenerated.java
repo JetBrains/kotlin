@@ -1858,6 +1858,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("callableReferenceAsLastExpressionInBlock.kt")
+            public void testCallableReferenceAsLastExpressionInBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/callableReferenceAsLastExpressionInBlock.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("classVsPackage.kt")
             public void testClassVsPackage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/classVsPackage.kt");
@@ -4853,6 +4859,57 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             public void testTwoClassesWithNestedCycle() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/twoClassesWithNestedCycle.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class WithCompanion extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInWithCompanion() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("everythingInOneScope.kt")
+                public void testEverythingInOneScope() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/everythingInOneScope.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noMembers.kt")
+                public void testNoMembers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/noMembers.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("onlyInterfaces.kt")
+                public void testOnlyInterfaces() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/onlyInterfaces.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeIsLowEnough.kt")
+                public void testTypeIsLowEnough() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/typeIsLowEnough.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("withIrrelevantInterface.kt")
+                public void testWithIrrelevantInterface() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withIrrelevantInterface.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("withMembers.kt")
+                public void testWithMembers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withMembers.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("withoutTypeReference.kt")
+                public void testWithoutTypeReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withoutTypeReference.kt");
+                    doTest(fileName);
+                }
             }
         }
 
@@ -8371,6 +8428,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("functionExpressionAsLastExpressionInBlock.kt")
+            public void testFunctionExpressionAsLastExpressionInBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/functionExpressionAsLastExpressionInBlock.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("functionLIteralInBlockInIf.kt")
             public void testFunctionLIteralInBlockInIf() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/functionLIteralInBlockInIf.kt");
@@ -9235,6 +9298,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             public static class Nullability extends AbstractDiagnosticsTest {
                 public void testAllFilesPresentInNullability() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/nullability"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("capturedTypeWithPlatformSupertype.kt")
+                public void testCapturedTypeWithPlatformSupertype() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/capturedTypeWithPlatformSupertype.kt");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("declarationsBoundsViolation.kt")
@@ -10755,6 +10824,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("notNullConstraintOnNullableType.kt")
                 public void testNotNullConstraintOnNullableType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/notNullConstraintOnNullableType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("operationsOnIntegerValueTypes.kt")
+                public void testOperationsOnIntegerValueTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/operationsOnIntegerValueTypes.kt");
                     doTest(fileName);
                 }
 

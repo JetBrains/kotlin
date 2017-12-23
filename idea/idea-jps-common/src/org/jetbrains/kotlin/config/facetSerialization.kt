@@ -74,6 +74,8 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
             compilerArguments.apiVersion = apiLevel
         }
 
+        compilerArguments.detectVersionAutoAdvance()
+
         if (useProjectSettings != null) {
             this.useProjectSettings = useProjectSettings
         }
@@ -106,6 +108,7 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
         element.getChild("compilerArguments")?.let {
             compilerArguments = platformKind.createCompilerArguments { freeArgs = ArrayList() }
             XmlSerializer.deserializeInto(compilerArguments!!, it)
+            compilerArguments!!.detectVersionAutoAdvance()
         }
         testOutputPath = element.getChild("testOutputPath")?.let {
             PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
@@ -214,8 +217,8 @@ private fun Element.restoreNormalOrdering(bean: Any) {
             .forEachIndexed { index, element -> elementsToReorder[index] = element.clone() }
 }
 
-private fun buildChildElement(element: Element, tag: String, bean: Any, filter: SerializationFilter) {
-    Element(tag).apply {
+private fun buildChildElement(element: Element, tag: String, bean: Any, filter: SerializationFilter): Element {
+    return Element(tag).apply {
         XmlSerializer.serializeInto(bean, this, filter)
         restoreNormalOrdering(bean)
         element.addContent(this)
@@ -245,7 +248,24 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
     compilerArguments?.let { copyBean(it) }?.let {
         it.convertPathsToSystemIndependent()
-        buildChildElement(element, "compilerArguments", it, filter)
+        val compilerArgumentsXml = buildChildElement(element, "compilerArguments", it, filter)
+        compilerArgumentsXml.dropVersionsIfNecessary(it)
+    }
+}
+
+fun CommonCompilerArguments.detectVersionAutoAdvance() {
+    autoAdvanceLanguageVersion = languageVersion == null
+    autoAdvanceApiVersion = apiVersion == null
+}
+
+fun Element.dropVersionsIfNecessary(settings: CommonCompilerArguments) {
+    // Do not serialize language/api version if they correspond to the default language version
+    if (settings.autoAdvanceLanguageVersion) {
+        getOption("languageVersion")?.detach()
+    }
+
+    if (settings.autoAdvanceApiVersion) {
+        getOption("apiVersion")?.detach()
     }
 }
 

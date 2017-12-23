@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.quickfix.RemoveValVarFromParameterFix
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
 import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -90,7 +91,7 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
                 if (klass.isData()) return
 
                 val useScope = parameter.useScope
-                if (useScope is GlobalSearchScope) {
+                val restrictedScope = if (useScope is GlobalSearchScope) {
                     val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(parameter.project)
                     for (accessorName in parameter.getAccessorNames()) {
                         when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(accessorName, useScope, null, null)) {
@@ -102,9 +103,11 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
                     // TOO_MANY_OCCURRENCES: too expensive
                     // ZERO_OCCURRENCES: unused at all, reported elsewhere
                     if (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(name, useScope, null, null) != FEW_OCCURRENCES) return
+                    KotlinSourceFilterScope.projectSources(useScope, parameter.project)
                 }
+                else useScope
                 // Find all references and check them
-                val references = ReferencesSearch.search(parameter, useScope)
+                val references = ReferencesSearch.search(parameter, restrictedScope)
                 if (references.none()) return
                 if (references.any { it.usedAsPropertyIn(klass) }) return
                 holder.registerProblem(

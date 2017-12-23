@@ -82,7 +82,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         return type == KtNodeTypes.FUNCTION_LITERAL ||
                (type == KtNodeTypes.BLOCK && parentType != KtNodeTypes.FUNCTION_LITERAL) ||
                type == KtNodeTypes.CLASS_BODY || type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC ||
-               type == KtNodeTypes.STRING_TEMPLATE
+               type == KtNodeTypes.STRING_TEMPLATE || type == KtNodeTypes.PRIMARY_CONSTRUCTOR
     }
 
     private fun getRangeToFold(node: ASTNode): TextRange {
@@ -100,16 +100,21 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     override fun getLanguagePlaceholderText(node: ASTNode, range: TextRange): String = when {
         node.elementType == KtTokens.BLOCK_COMMENT -> "/${getFirstLineOfComment(node)}.../"
         node.elementType == KDocTokens.KDOC -> "/**${getFirstLineOfComment(node)}...*/"
-        node.elementType == KtNodeTypes.STRING_TEMPLATE -> "\"\"\"${getFirstLineOfString(node)}...\"\"\""
+        node.elementType == KtNodeTypes.STRING_TEMPLATE -> "\"\"\"${getTrimmedFirstLineOfString(node).addSpaceIfNeeded()}...\"\"\""
+        node.elementType == KtNodeTypes.PRIMARY_CONSTRUCTOR -> "(...)"
         node.psi is KtImportList -> "..."
         else ->  "{...}"
     }
 
-    private fun getFirstLineOfString(node: ASTNode): String {
-        val targetStringLine = node.text.split("\n").asSequence().map {
-            it.replace("\"\"\"", "")
-        }.firstOrNull(String::isNotBlank) ?: return ""
-        return " ${targetStringLine.replace("\"\"\"", "").trim()} "
+    private fun getTrimmedFirstLineOfString(node: ASTNode): String {
+        val lines = node.text.split("\n")
+        val firstLine = lines.asSequence().map { it.replace("\"\"\"", "").trim() }.firstOrNull(String::isNotEmpty)
+        return firstLine ?: ""
+    }
+
+    private fun String.addSpaceIfNeeded(): String {
+        if (isEmpty() || endsWith(" ")) return this
+        return this + " "
     }
 
     private fun getFirstLineOfComment(node: ASTNode): String {

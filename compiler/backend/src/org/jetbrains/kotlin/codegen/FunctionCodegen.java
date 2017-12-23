@@ -223,9 +223,8 @@ public class FunctionCodegen {
 
         generateMethodAnnotations(functionDescriptor, asmMethod, mv);
 
-        JvmMethodSignature signature = typeMapper.mapSignatureSkipGeneric(functionDescriptor);
-        generateParameterAnnotations(functionDescriptor, mv, signature);
-        GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, signature, state, (flags & ACC_SYNTHETIC) != 0);
+        generateParameterAnnotations(functionDescriptor, mv, jvmSignature);
+        GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, jvmSignature, state, (flags & ACC_SYNTHETIC) != 0);
 
         generateBridges(functionDescriptor);
 
@@ -558,7 +557,7 @@ public class FunctionCodegen {
             mv.visitLabel(methodEntry);
             context.setMethodStartLabel(methodEntry);
 
-            if (!KotlinTypeMapper.isAccessor(functionDescriptor)) {
+            if (!strategy.skipNotNullAssertionsForParameters()) {
                 genNotNullAssertionsForParameters(new InstructionAdapter(mv), parentCodegen.state, functionDescriptor, frameMap);
             }
 
@@ -1382,6 +1381,11 @@ public class FunctionCodegen {
                         stackValue.put(delegateMethod.getReturnType(), iv);
 
                         iv.areturn(delegateMethod.getReturnType());
+                    }
+
+                    @Override
+                    public boolean skipNotNullAssertionsForParameters() {
+                        return false;
                     }
                 }
         );

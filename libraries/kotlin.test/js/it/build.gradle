@@ -31,43 +31,27 @@ node {
     download = true
 }
 
-task testJest(type: NpmTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, npmInstall]) {
-    args = ['run', 'test-jest']
-    execOverrides {
-        it.standardOutput = new FileOutputStream("$buildDir/test-jest.log")
-        it.errorOutput = new FileOutputStream("$buildDir/test-jest.err.log")
+def createFrameworkTest(def name) {
+    return tasks.create("test$name", NpmTask) {
+        dependsOn(compileKotlin2Js, populateNodeModules, npmInstall)
+        def lowerName = name.toLowerCase()
+        args = ['run', "test-$lowerName"]
+        group = 'verification'
+        execOverrides {
+            it.ignoreExitValue = true
+            it.standardOutput = new FileOutputStream("$buildDir/test-${lowerName}.log")
+            it.errorOutput = new FileOutputStream("$buildDir/test-${lowerName}.err.log")
+        }
+        doLast {
+            println file("$buildDir/tc-${lowerName}.log").text
+            if (result.exitValue != 0 && !rootProject.ignoreTestFailures) {
+                throw new GradleException("$name integration test failed")
+            }
+
+        }
     }
 }
 
-task testJasmine(type: NpmTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, npmInstall]) {
-    args = ['run', 'test-jasmine']
-    execOverrides {
-        it.standardOutput = new FileOutputStream("$buildDir/test-jasmine.log")
-    }
-}
-
-task testMocha(type: NpmTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, npmInstall]) {
-    args = ['run', 'test-mocha']
-    execOverrides {
-        it.standardOutput = new FileOutputStream("$buildDir/test-mocha.log")
-    }
-}
-
-task testQunit(type: NpmTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, npmInstall]) {
-    args = ['run', 'test-qunit']
-    execOverrides {
-        it.standardOutput = new FileOutputStream("$buildDir/test-qunit.log")
-    }
-}
-
-task testTape(type: NpmTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, npmInstall]) {
-    args = ['run', 'test-tape']
-    execOverrides {
-        it.standardOutput = new FileOutputStream("$buildDir/test-tape.log")
-    }
-}
-
-[testJest, testJasmine, testMocha, testQunit, testTape].each {
-    check.dependsOn it
-    it.group = "verification"
+['Jest', 'Jasmine', 'Mocha', 'Qunit', 'Tape'].each {
+    check.dependsOn createFrameworkTest(it)
 }

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class Data<T>(val x: T, val y: T)
 
 operator fun <T> Data<T>.component1() = x
@@ -8,7 +9,7 @@ fun foo(): Int {
     val d: Data<Int>? = null
     // An error must be here
     val (x, y) = <!COMPONENT_FUNCTION_ON_NULLABLE, COMPONENT_FUNCTION_ON_NULLABLE!>d<!>
-    return x + y
+    return <!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> <!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>y<!>
 }
 
 data class NormalData<T>(val x: T, val y: T)

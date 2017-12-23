@@ -62,6 +62,12 @@ Functions and other APIs specific to the JavaScript platform.
 
 Functions and annotations specific to the Java platform.
 
+# Package kotlin.math
+
+Mathematical functions and constants. 
+
+The functions include trigonometric, hyperbolic, exponentiation and power, logarithmic, rounding, sign and absolute value.
+
 # Package kotlin.properties
 
 Standard implementations of delegates for [delegated properties](/docs/reference/delegated-properties.html)

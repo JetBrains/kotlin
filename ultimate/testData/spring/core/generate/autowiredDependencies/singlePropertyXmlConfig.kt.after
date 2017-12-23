@@ -6,7 +6,8 @@ package a
 import org.springframework.beans.factory.annotation.Autowired
 
 open class FooBean {
-    @Autowired lateinit var barBean<caret>: BarBean
+    @Autowired
+    lateinit var barBean<caret>: BarBean
 
 }
 

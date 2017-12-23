@@ -41,7 +41,7 @@ abstract class AbstractLoopToCallChainIntention(private val lazy: Boolean, text:
         text
 ) {
     override fun applicabilityRange(element: KtForExpression): TextRange? {
-        val match = match(element, lazy)
+        val match = match(element, lazy, false)
         text = if (match != null) "Replace with '${match.transformationMatch.buildPresentation()}'" else defaultText
         return if (match != null) element.forKeyword.textRange else null
     }
@@ -68,7 +68,7 @@ abstract class AbstractLoopToCallChainIntention(private val lazy: Boolean, text:
     }
 
     override fun applyTo(element: KtForExpression, editor: Editor?) {
-        val match = match(element, lazy)!!
+        val match = match(element, lazy, true)!!
         val result = convertLoop(element, match)
 
         val offset = when (result) {

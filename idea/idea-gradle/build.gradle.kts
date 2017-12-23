@@ -22,6 +22,7 @@ dependencies {
     testCompile(ideaPluginDeps("Groovy", plugin = "Groovy"))
     testCompileOnly(ideaSdkDeps("groovy-all", "idea_rt"))
 
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":plugins:kapt3-idea"))

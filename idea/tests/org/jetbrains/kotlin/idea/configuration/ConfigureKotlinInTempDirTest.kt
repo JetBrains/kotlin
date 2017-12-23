@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.impl.ApplicationImpl
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.junit.Assert
@@ -47,20 +49,45 @@ class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
     }
 
     @Throws(IOException::class)
-    fun testKotlincExistsNoSettingsRuntime10() {
+    fun testNoKotlincExistsNoSettingsRuntime10() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
         application.doNotSave(false)
-        Assert.assertEquals(LanguageVersion.KOTLIN_1_0, myProject.getLanguageVersionSettings(null).languageVersion)
         Assert.assertEquals(LanguageVersion.KOTLIN_1_0, module.languageVersionSettings.languageVersion)
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_0, myProject.getLanguageVersionSettings(null).languageVersion)
+        application.saveAll()
+        Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
+    }
+
+    fun testNoKotlincExistsNoSettingsLatestRuntime() {
+        val application = ApplicationManager.getApplication() as ApplicationImpl
+        application.doNotSave(false)
+        Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
+        Assert.assertEquals(LanguageVersion.LATEST_STABLE, myProject.getLanguageVersionSettings(null).languageVersion)
+        application.saveAll()
+        Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
+    }
+
+    fun testKotlincExistsNoSettingsLatestRuntimeNoVersionAutoAdvance() {
+        val application = ApplicationManager.getApplication() as ApplicationImpl
+        application.doNotSave(false)
+        Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
+        Assert.assertEquals(LanguageVersion.LATEST_STABLE, myProject.getLanguageVersionSettings(null).languageVersion)
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
+            autoAdvanceLanguageVersion = false
+            autoAdvanceApiVersion = false
+        }
         application.saveAll()
         Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") != null)
     }
 
-    fun testKotlincExistsNoSettingsLatestRuntime() {
+    fun testDropKotlincOnVersionAutoAdvance() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
         application.doNotSave(false)
-        Assert.assertEquals(LanguageVersion.LATEST_STABLE, myProject.getLanguageVersionSettings(null).languageVersion)
         Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
+            autoAdvanceLanguageVersion = true
+            autoAdvanceApiVersion = true
+        }
         application.saveAll()
         Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
     }
@@ -94,5 +121,11 @@ class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
         application.saveAll()
         val moduleFileContentAfter = String(module.moduleFile!!.contentsToByteArray())
         Assert.assertEquals(moduleFileContentBefore, moduleFileContentAfter)
+    }
+
+    fun testApiVersionWithoutLanguageVersion() {
+        KotlinCommonCompilerArgumentsHolder.getInstance(myProject)
+        val settings = myProject.getLanguageVersionSettings()
+        Assert.assertEquals(ApiVersion.KOTLIN_1_1, settings.apiVersion)
     }
 }

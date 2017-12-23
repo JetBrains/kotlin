@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import kotlin.Pair;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder;
@@ -113,10 +114,11 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
 
     @NotNull
     private ClassFileFactory compileB(@NotNull TestFile testFile, List<TestFile> files) throws IOException {
+        String commonHeader = StringsKt.substringBefore(files.get(0).content, "FILE:", "");
         CompilerConfiguration configurationWithADirInClasspath =
                 createConfiguration(ConfigurationKind.ALL, getJdkKind(files),
                                     Lists.newArrayList(KotlinTestUtils.getAnnotationsJar(), aDir),
-                                    Collections.emptyList(), Collections.singletonList(testFile));
+                                    Collections.emptyList(), Lists.newArrayList(testFile, new TestFile("header", commonHeader)));
 
         Disposable compileDisposable = createDisposable("compileB");
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(

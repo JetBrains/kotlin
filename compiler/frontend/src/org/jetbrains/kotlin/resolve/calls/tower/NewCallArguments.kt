@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -27,12 +28,11 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
-import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.prepareReceiverRegardingCaptureTypes
+import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class SimpleTypeArgumentImpl(
         val typeReference: KtTypeReference,
@@ -59,10 +59,11 @@ val KotlinCallArgument.psiCallArgument: PSIKotlinCallArgument get() {
 }
 
 val KotlinCallArgument.psiExpression: KtExpression? get() {
-    if (this is ReceiverExpressionKotlinCallArgument) {
-        return (receiver.receiverValue as? ExpressionReceiver)?.expression
+    return when (this) {
+        is ReceiverExpressionKotlinCallArgument -> receiver.receiverValue.safeAs<ExpressionReceiver>()?.expression
+        is QualifierReceiverKotlinCallArgument -> receiver.safeAs<Qualifier>()?.expression
+        else -> psiCallArgument.valueArgument.getArgumentExpression()
     }
-    return psiCallArgument.valueArgument.getArgumentExpression()
 }
 
 class ParseErrorKotlinCallArgument(
@@ -70,7 +71,11 @@ class ParseErrorKotlinCallArgument(
         override val dataFlowInfoAfterThisArgument: DataFlowInfo,
         builtIns: KotlinBuiltIns
 ): ExpressionKotlinCallArgument, SimplePSIKotlinCallArgument() {
-    override val receiver = ReceiverValueWithSmartCastInfo(TransientReceiver(builtIns.nothingType), emptySet(), isStable = true)
+    override val receiver = ReceiverValueWithSmartCastInfo(
+            TransientReceiver(ErrorUtils.createErrorType("Error type for ParseError-argument $valueArgument")),
+            possibleTypes = emptySet(),
+            isStable = true
+    )
 
     override val isSafeCall: Boolean get() = false
 
@@ -101,10 +106,11 @@ class LambdaKotlinCallArgumentImpl(
         dataFlowInfoBeforeThisArgument: DataFlowInfo,
         argumentName: Name?,
         val ktLambdaExpression: KtLambdaExpression,
+        val containingBlockForLambda: KtExpression,
         override val parametersTypes: Array<UnwrappedType?>?
 ) : PSIFunctionKotlinCallArgument(outerCallContext, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
     override val ktFunction get() = ktLambdaExpression.functionLiteral
-    override val expression get() = ktLambdaExpression
+    override val expression get() = containingBlockForLambda
 }
 
 class FunctionExpressionImpl(
@@ -112,12 +118,13 @@ class FunctionExpressionImpl(
         valueArgument: ValueArgument,
         dataFlowInfoBeforeThisArgument: DataFlowInfo,
         argumentName: Name?,
+        val containingBlockForFunction: KtExpression,
         override val ktFunction: KtNamedFunction,
         override val receiverType: UnwrappedType?,
         override val parametersTypes: Array<UnwrappedType?>,
         override val returnType: UnwrappedType?
 ) : FunctionExpression, PSIFunctionKotlinCallArgument(outerCallContext, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
-    override val expression get() = ktFunction
+    override val expression get() = containingBlockForFunction
 }
 
 class CallableReferenceKotlinCallArgumentImpl(
@@ -199,7 +206,8 @@ internal fun createSimplePSICallArgument(
         typeInfoForArgument: KotlinTypeInfo
 ) = createSimplePSICallArgument(contextForArgument.trace.bindingContext, contextForArgument.statementFilter,
                                 contextForArgument.scope.ownerDescriptor, valueArgument,
-                                contextForArgument.dataFlowInfo, typeInfoForArgument)
+                                contextForArgument.dataFlowInfo, typeInfoForArgument,
+                                contextForArgument.languageVersionSettings)
 
 internal fun createSimplePSICallArgument(
         bindingContext: BindingContext,
@@ -207,7 +215,8 @@ internal fun createSimplePSICallArgument(
         ownerDescriptor: DeclarationDescriptor,
         valueArgument: ValueArgument,
         dataFlowInfoBeforeThisArgument: DataFlowInfo,
-        typeInfoForArgument: KotlinTypeInfo
+        typeInfoForArgument: KotlinTypeInfo,
+        languageVersionSettings: LanguageVersionSettings
 ): SimplePSIKotlinCallArgument? {
 
     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
@@ -223,7 +232,8 @@ internal fun createSimplePSICallArgument(
     val receiverToCast = transformToReceiverWithSmartCastInfo(
             ownerDescriptor, bindingContext,
             typeInfoForArgument.dataFlowInfo, // dataFlowInfoBeforeThisArgument cannot be used here, because of if() { if (x != null) return; x }
-            ExpressionReceiver.create(ktExpression, baseType, bindingContext)
+            ExpressionReceiver.create(ktExpression, baseType, bindingContext),
+            languageVersionSettings
     ).let {
         if (onlyResolvedCall == null) it.prepareReceiverRegardingCaptureTypes() else it
     }

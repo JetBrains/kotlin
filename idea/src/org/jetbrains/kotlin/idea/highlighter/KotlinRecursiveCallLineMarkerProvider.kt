@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.RecursivePropertyAccessorInspection
-import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
+import org.jetbrains.kotlin.idea.util.getReceiverTargetDescriptor
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -82,7 +82,9 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
         val resolveName = getCallNameFromPsi(element) ?: return false
         val enclosingFunction = getEnclosingFunction(element, false) ?: return false
 
-        if (enclosingFunction.name != resolveName.asString()) return false
+        val enclosingFunctionName = enclosingFunction.name
+        if (enclosingFunctionName != OperatorNameConventions.INVOKE.asString()
+            && enclosingFunctionName != resolveName.asString()) return false
 
         // Check that there were no not-inlined lambdas on the way to enclosing function
         if (enclosingFunction != getEnclosingFunction(element, true)) return false
@@ -98,12 +100,12 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
         fun isDifferentReceiver(receiver: Receiver?): Boolean {
             if (receiver !is ReceiverValue) return false
 
-            val receiverOwner = receiver.getThisReceiverOwner(bindingContext) ?: return true
+            val receiverOwner = receiver.getReceiverTargetDescriptor(bindingContext) ?: return true
 
             return when (receiverOwner) {
                 is SimpleFunctionDescriptor -> receiverOwner != enclosingFunctionDescriptor
                 is ClassDescriptor -> receiverOwner != enclosingFunctionDescriptor.containingDeclaration
-                else -> throw IllegalStateException("Unexpected receiver owner: $receiverOwner")
+                else -> return true
             }
         }
 

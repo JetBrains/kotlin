@@ -28,7 +28,9 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
 import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootMap
 import org.jetbrains.kotlin.idea.configuration.allConfigurators
@@ -87,6 +89,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         with (facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], targetPlatformKind)
             Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("-Xdump-declarations-to=tmp -Xsingle-module",
@@ -95,6 +99,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         with (testFacetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
             Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("-Xdump-declarations-to=tmpTest",
@@ -463,6 +469,8 @@ compileTestKotlin {
         with (facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
             with(compilerArguments as K2JSCompilerArguments) {
                 Assert.assertEquals(true, sourceMap)
@@ -475,6 +483,8 @@ compileTestKotlin {
         with (testFacetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
             with(compilerArguments as K2JSCompilerArguments) {
                 Assert.assertEquals(false, sourceMap)
@@ -1616,6 +1626,121 @@ compileTestKotlin {
         }
 
         assertAllModulesConfigured()
+    }
+
+    @Test
+    fun testIgnoreProjectLanguageAndAPIVersion() {
+        KotlinCommonCompilerArgumentsHolder.getInstance(myProject).update {
+            languageVersion = "1.0"
+            apiVersion = "1.0"
+        }
+
+        createProjectSubFile("build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
+            }
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", apiLevel!!.versionString)
+        }
+
+        assertAllModulesConfigured()
+    }
+
+    @Test
+    fun testCommonArgumentsImport() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0-rc-39")
+                }
+            }
+
+            apply plugin: 'kotlin-platform-common'
+
+            repositories {
+                mavenCentral()
+                maven {
+                    url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
+                }
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.0-rc-39"
+            }
+
+            compileKotlinCommon{
+                kotlinOptions {
+                    languageVersion = 1.1
+                    apiVersion = 1.0
+                    freeCompilerArgs += ["-cp", "my/classpath"]
+                    freeCompilerArgs += ["-d", "my/destination"]
+                }
+            }
+
+            compileTestKotlinCommon{
+                kotlinOptions {
+                    languageVersion = 1.1
+                    apiVersion = 1.0
+                    freeCompilerArgs += ["-cp", "my/test/classpath"]
+                    freeCompilerArgs += ["-d", "my/test/destination"]
+                }
+            }
+
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
+            Assert.assertEquals(TargetPlatformKind.Common, targetPlatformKind)
+            Assert.assertEquals("my/classpath", (compilerArguments as K2MetadataCompilerArguments).classpath)
+            Assert.assertEquals("my/destination", (compilerArguments as K2MetadataCompilerArguments).destination)
+        }
+
+        with (facetSettings("project_test")) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
+            Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
+            Assert.assertEquals(TargetPlatformKind.Common, targetPlatformKind)
+            Assert.assertEquals("my/test/classpath", (compilerArguments as K2MetadataCompilerArguments).classpath)
+            Assert.assertEquals("my/test/destination", (compilerArguments as K2MetadataCompilerArguments).destination)
+        }
+
+        val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
+        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
+        assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
     }
 
     private fun assertAllModulesConfigured() {

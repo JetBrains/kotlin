@@ -236,6 +236,24 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("kt21530_withConstructorParam.kt")
+        public void testKt21530_withConstructorParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/kt21530_withConstructorParam.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("kt21530_withGlobal.kt")
+        public void testKt21530_withGlobal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/kt21530_withGlobal.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("kt21530_withParam.kt")
+        public void testKt21530_withParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/kt21530_withParam.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("LoopRange.kt")
         public void testLoopRange() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/LoopRange.kt");
@@ -3170,6 +3188,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("extractWithParams.kt")
         public void testExtractWithParams() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithParams.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("kt21530.kt")
+        public void testKt21530() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/kt21530.kt");
             doIntroducePropertyTest(fileName);
         }
 

@@ -55,7 +55,8 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
         ProtoPath("js/js.serializer/src/js.proto"),
         ProtoPath("js/js.serializer/src/js-ast.proto"),
         ProtoPath("core/descriptors.jvm/src/jvm_descriptors.proto"),
-        ProtoPath("core/descriptors.jvm/src/jvm_package_table.proto")
+        ProtoPath("core/descriptors.jvm/src/jvm_package_table.proto"),
+        ProtoPath("build-common/src/java_descriptors.proto")
 )
 
 private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/deserialization/src/ext_options.proto")
@@ -69,6 +70,7 @@ fun main(args: Array<String>) {
 
         for (protoPath in PROTO_PATHS) {
             execProtoc(protoPath.file, protoPath.outPath)
+            renamePackages(protoPath.file, protoPath.outPath)
             modifyAndExecProtoc(protoPath)
         }
 
@@ -108,8 +110,6 @@ private fun execProtoc(protoPath: String, outPath: String) {
     if (processOutput.stderr.isNotEmpty()) {
         throw AssertionError(processOutput.stderr)
     }
-
-    renamePackages(protoPath, outPath)
 }
 
 private fun renamePackages(protoPath: String, outPath: String) {
@@ -143,7 +143,9 @@ private fun modifyAndExecProtoc(protoPath: ProtoPath) {
     debugProtoFile.writeText(modifyForDebug(protoPath))
     debugProtoFile.deleteOnExit()
 
-    execProtoc(debugProtoFile.path, "build-common/test")
+    val outPath = "build-common/test"
+    execProtoc(debugProtoFile.path, outPath)
+    renamePackages(debugProtoFile.path, outPath)
 }
 
 private fun modifyForDebug(protoPath: ProtoPath): String {

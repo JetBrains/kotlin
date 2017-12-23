@@ -48,19 +48,21 @@ object ReplaceWithAnnotationAnalyzer {
     fun analyzeCallableReplacement(
             annotation: ReplaceWith,
             symbolDescriptor: CallableDescriptor,
-            resolutionFacade: ResolutionFacade
+            resolutionFacade: ResolutionFacade,
+            reformat: Boolean
     ): CodeToInline? {
         val originalDescriptor = (if (symbolDescriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(symbolDescriptor)
         else
             symbolDescriptor).original
-        return analyzeOriginal(annotation, originalDescriptor, resolutionFacade)
+        return analyzeOriginal(annotation, originalDescriptor, resolutionFacade, reformat)
     }
 
     private fun analyzeOriginal(
             annotation: ReplaceWith,
             symbolDescriptor: CallableDescriptor,
-            resolutionFacade: ResolutionFacade
+            resolutionFacade: ResolutionFacade,
+            reformat: Boolean
     ): CodeToInline? {
         val psiFactory = KtPsiFactory(resolutionFacade.project)
         val expression = try {
@@ -80,7 +82,8 @@ object ReplaceWithAnnotationAnalyzer {
 
         fun analyzeExpression() = expression.analyzeInContext(scope, expressionTypingServices = expressionTypingServices)
 
-        return CodeToInlineBuilder(symbolDescriptor, resolutionFacade).prepareCodeToInline(expression, emptyList(), ::analyzeExpression)
+        return CodeToInlineBuilder(symbolDescriptor, resolutionFacade)
+                .prepareCodeToInline(expression, emptyList(), ::analyzeExpression, reformat)
     }
 
     fun analyzeClassifierReplacement(

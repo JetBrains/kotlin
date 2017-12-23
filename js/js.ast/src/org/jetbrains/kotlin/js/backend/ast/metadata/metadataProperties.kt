@@ -96,8 +96,6 @@ var HasMetadata.sideEffects: SideEffectKind by MetadataProperty(default = SideEf
  */
 var JsExpression.isSuspend: Boolean by MetadataProperty(default = false)
 
-var JsExpression.isTailCallSuspend: Boolean by MetadataProperty(default = false)
-
 /**
  * Denotes a reference to coroutine's `result` field that contains result of
  * last suspended invocation.
@@ -114,6 +112,10 @@ var JsNameRef.coroutineController by MetadataProperty(default = false)
  * function's dispatch receiver and coroutine's state receiver.
  */
 var JsNameRef.coroutineReceiver by MetadataProperty(default = false)
+
+var JsFunction.forceStateMachine by MetadataProperty(default = false)
+
+var JsFunction.isInlineableCoroutineBody by MetadataProperty(default = false)
 
 var JsName.imported by MetadataProperty(default = false)
 
@@ -156,7 +158,8 @@ enum class SpecialFunction(val suggestedName: String) {
     SUSPEND_CALL("suspendCall"),
     COROUTINE_RESULT("coroutineResult"),
     COROUTINE_CONTROLLER("coroutineController"),
-    COROUTINE_RECEIVER("coroutineReceiver")
+    COROUTINE_RECEIVER("coroutineReceiver"),
+    SET_COROUTINE_RESULT("setCoroutineResult")
 }
 
 enum class BoxingKind {

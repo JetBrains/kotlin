@@ -132,26 +132,26 @@ internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
 }
 
 @JsName("BoxedChar")
-internal class BoxedChar(val c: Char) : Comparable<Char> {
+internal class BoxedChar(val c: Int) : Comparable<Int> {
     override fun equals(other: Any?): Boolean {
         return other is BoxedChar && c == other.c
     }
 
     override fun hashCode(): Int {
-        return c.toInt()
+        return c
     }
 
     override fun toString(): String {
-        return c.toString()
+        return js("this.c").unsafeCast<Char>().toString()
     }
 
-    override fun compareTo(other: Char): Int {
-        return c - other
+    override fun compareTo(other: Int): Int {
+        return js("this.c - other").unsafeCast<Int>()
     }
 
     @JsName("valueOf")
     public fun valueOf(): Int {
-        return js("this.c")
+        return c
     }
 }
 

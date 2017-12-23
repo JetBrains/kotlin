@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import com.intellij.util.xmlb.annotations.Transient
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import java.util.*
@@ -32,6 +33,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         const val ENABLE = "enable"
     }
 
+    @get:Transient
+    var autoAdvanceLanguageVersion: Boolean by FreezableVar(true)
+
     @GradleOption(DefaultValues.LanguageVersions::class)
     @Argument(
             value = "-language-version",
@@ -39,6 +43,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             description = "Provide source compatibility with specified language version"
     )
     var languageVersion: String? by FreezableVar(null)
+
+    @get:Transient
+    var autoAdvanceApiVersion: Boolean by FreezableVar(true)
 
     @GradleOption(DefaultValues.LanguageVersions::class)
     @Argument(

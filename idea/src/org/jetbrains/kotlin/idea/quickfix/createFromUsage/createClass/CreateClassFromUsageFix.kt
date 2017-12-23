@@ -23,7 +23,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
@@ -39,6 +42,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import java.util.*
 
 enum class ClassKind(val keyword: String, val description: String) {
@@ -78,8 +82,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
 ): CreateFromUsageFixBase<E>(element) {
     override fun getText() = "Create ${classInfo.kind.description} '${classInfo.name}'"
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (!super.isAvailable(project, editor, file)) return false
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         with(classInfo) {
             if (kind == DEFAULT) return false
             if (applicableParents.isEmpty()) return false
@@ -99,14 +102,19 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (editor == null) return
 
+        val applicableParents = if (classInfo.kind == ClassKind.INTERFACE)
+            classInfo.applicableParents.filter { it != element?.containingClass() }
+        else
+            classInfo.applicableParents
+
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            val targetParent = classInfo.applicableParents.firstOrNull {
+            val targetParent = applicableParents.firstOrNull {
                 it.allChildren.any { it is PsiComment && it.text == "// TARGET_PARENT:" }
             } ?: classInfo.applicableParents.last()
             return doInvoke(targetParent, editor, file)
         }
 
-        chooseContainerElementIfNecessary(classInfo.applicableParents, editor, "Choose class container", true, { it }) {
+        chooseContainerElementIfNecessary(applicableParents, editor, "Choose class container", true, { it }) {
             doInvoke(it, editor, file)
         }
     }

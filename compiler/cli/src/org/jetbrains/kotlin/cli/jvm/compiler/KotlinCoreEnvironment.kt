@@ -172,7 +172,11 @@ class KotlinCoreEnvironment private constructor(
         JsSyntheticTranslateExtension.registerExtensionPoint(project)
 
         for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
-            registrar.registerProjectComponents(project, configuration)
+            try {
+                registrar.registerProjectComponents(project, configuration)
+            } catch (e: AbstractMethodError) {
+                throw IllegalStateException("The provided plugin ${registrar.javaClass.name} is not compatible with this version of compiler", e)
+            }
         }
 
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
@@ -588,10 +592,12 @@ class KotlinCoreEnvironment private constructor(
             }
 
             if (!CoreJrtFileSystem.isModularJdk(javaRoot)) {
-                addJvmClasspathRoots(classesRoots)
                 if (classesRoots.isEmpty()) {
                     val messageCollector = get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                     messageCollector?.report(ERROR, "No class roots are found in the JDK path: $javaRoot")
+                }
+                else {
+                    addJvmSdkRoots(classesRoots)
                 }
             }
         }

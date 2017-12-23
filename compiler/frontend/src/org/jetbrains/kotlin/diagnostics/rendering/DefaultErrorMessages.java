@@ -538,6 +538,8 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_MISMATCH_IN_RANGE, "Type mismatch: incompatible types of range and element checked in it");
         MAP.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type");
         MAP.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds");
+        MAP.put(CYCLIC_SCOPES_WITH_COMPANION, "There's a cycle in scopes for that type. Most probably, there's a companion object that inherits some nested class (see KT-21515).\n" +
+                                              "Such code is currently unstable, and its behavior may change in future releases");
 
         MAP.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list");
         MAP.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Only classes and interfaces may serve as supertypes");

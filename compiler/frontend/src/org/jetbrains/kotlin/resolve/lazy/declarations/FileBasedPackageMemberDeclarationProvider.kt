@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.StorageManager
 
 class FileBasedPackageMemberDeclarationProvider(
@@ -44,6 +44,8 @@ class FileBasedPackageMemberDeclarationProvider(
     override fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean): Collection<FqName> = allDeclaredSubPackages()
 
     override fun getPackageFiles() = packageFiles
+
+    override fun containsFile(file: KtFile) = file in packageFiles
 
     override fun toString() = "Declarations for package $fqName with files ${packageFiles.map { it.name }} " +
                               "with declarations inside ${packageFiles.flatMap { it.declarations }.map { it.name ?: "???"}}"

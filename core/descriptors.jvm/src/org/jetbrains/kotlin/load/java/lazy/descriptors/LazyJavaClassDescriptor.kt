@@ -156,6 +156,11 @@ class LazyJavaClassDescriptor(
         }
     }
 
+    // Checks if any part of compiler has requested scope content
+    // It's necessary for IC to figure out if there is a need to track symbols in the class
+    fun wasScopeContentRequested() =
+            getUnsubstitutedMemberScope().wasContentRequested() || staticScope.wasContentRequested()
+
     override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
 
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"

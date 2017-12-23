@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.frontend.js.di.createTopDownAnalyzerForJs
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -66,6 +67,7 @@ object TopDownAnalyzerFacadeForJS {
             config: JsConfig
     ): JsAnalysisResult {
         val lookupTracker = config.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
+        val expectActualTracker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER) ?: ExpectActualTracker.DoNothing
         val languageVersionSettings = config.configuration.languageVersionSettings
         val packageFragment = config.configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER]?.let {
             val metadata = PackagesWithHeaderMetadata(it.headerMetadata, it.compiledPackageParts.values.map { it.metadata })
@@ -79,6 +81,7 @@ object TopDownAnalyzerFacadeForJS {
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
                 languageVersionSettings,
                 lookupTracker,
+                expectActualTracker,
                 packageFragment
         )
         analyzerForJs.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)

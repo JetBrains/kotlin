@@ -27,9 +27,9 @@ class KotlinUBlockExpression(
 ) : KotlinAbstractUExpression(givenParent), UBlockExpression, KotlinUElementWithType {
     override val expressions by lz { psi.statements.map { KotlinConverter.convertOrEmpty(it, this) } }
 
-    private class KotlinLazyUBlockExpression(
+    class KotlinLazyUBlockExpression(
             override val uastParent: UElement?,
-            expressionProducer: (expressionParent: UElement?) -> List<UExpression>
+            expressionProducer: (expressionParent: UElement) -> List<UExpression>
     ) : UBlockExpression {
         override val psi: PsiElement? = null
         override val annotations: List<UAnnotation> = emptyList()
@@ -43,5 +43,17 @@ class KotlinUBlockExpression(
                 initializers.map { languagePlugin.convertOpt<UExpression>(it.body, expressionParent) ?: UastEmptyExpression }
             }
         }
+    }
+
+    override fun convertParent(): UElement? {
+        val directParent = super.convertParent()
+        if (directParent is UnknownKotlinExpression && directParent.psi is KtAnonymousInitializer) {
+            val containingUClass = directParent.getContainingUClass() ?: return directParent
+            containingUClass.methods
+                    .find { it is KotlinConstructorUMethod && it.isPrimary || it is KotlinSecondaryConstructorWithInitializersUMethod }?.let {
+                return it.uastBody
+            }
+        }
+        return directParent
     }
 }

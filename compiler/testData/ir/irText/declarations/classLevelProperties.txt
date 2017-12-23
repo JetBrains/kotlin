@@ -113,8 +113,9 @@ FILE /classLevelProperties.kt
         $this: VALUE_PARAMETER this@C: C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test8>(): Int'
-            CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Int>: Int' type=kotlin.Int origin=null
+            CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out Int>: Int' type=kotlin.Int origin=null
               <V>: Int
+              <V1 : V>: Int
               $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
                 receiver: GET_VAR 'this@C: C' type=C origin=null
               thisRef: GET_VAR 'this@C: C' type=C origin=null
