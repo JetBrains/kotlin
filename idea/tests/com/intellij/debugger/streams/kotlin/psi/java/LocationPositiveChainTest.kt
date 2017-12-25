@@ -36,4 +36,6 @@ class LocationPositiveChainTest : PositiveJavaStreamTest("location") {
   fun testInString() = doTest()
   fun testInVariableName() = doTest()
   fun testInMethodReference() = doTest()
+
+  fun testAsMethodExpression() = doTest()
 }

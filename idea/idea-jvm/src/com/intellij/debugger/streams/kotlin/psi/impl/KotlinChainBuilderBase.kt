@@ -55,10 +55,15 @@ abstract class KotlinChainBuilderBase(private val transformer: ChainTransformer<
   private fun getLatestElementInScope(element: PsiElement?): PsiElement? {
     var current = element
     while (current != null) {
+      if (current is KtNamedFunction && current.hasInitializer()) {
+        break
+      }
+
       val parent = current.parent
       if (parent is KtBlockExpression || parent is KtLambdaExpression) {
         break
       }
+
 
       current = parent
     }
