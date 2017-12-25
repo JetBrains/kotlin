@@ -105,6 +105,7 @@ private class ClosedFloatRange (
  * Creates a range from this [Comparable] value to the specified [that] value.
  *
  * This value needs to be smaller than [that] value, otherwise the returned range will be empty.
+ * @sample samples.ranges.Ranges.rangeFromComparable
  */
 public operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = ComparableRange(this, that)
 
@@ -112,6 +113,7 @@ public operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = Comp
  * Creates a range from this [Double] value to the specified [that] value.
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
+ * @sample samples.ranges.Ranges.rangeFromDouble
  */
 @SinceKotlin("1.1")
 public operator fun Double.rangeTo(that: Double): ClosedFloatingPointRange<Double> = ClosedDoubleRange(this, that)
@@ -120,6 +122,7 @@ public operator fun Double.rangeTo(that: Double): ClosedFloatingPointRange<Doubl
  * Creates a range from this [Float] value to the specified [that] value.
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
+ * @sample samples.ranges.Ranges.rangeFromFloat
  */
 @JvmVersion
 @SinceKotlin("1.1")
