@@ -1,4 +1,4 @@
-{ y -> 
+{ y ->
   y.method1()
   y.method2()
 }
