@@ -23,4 +23,12 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Leaking 'this' in constructor</problem_class>
         <description>Accessing non-final property x in constructor</description>
     </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>67</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Leaking 'this' in constructor</problem_class>
+        <description>Accessing non-final property y in constructor</description>
+    </problem>
 </problems>
