@@ -54,3 +54,17 @@ class Fourth {
 
     val y = x // null!
 }
+
+annotation class AllOpen
+
+@AllOpen
+class A {
+    private val x = "A" + System.currentTimeMillis()
+    val y = "A" + System.currentTimeMillis()
+
+    init {
+        x.toByteArray()
+        y.toByteArray()
+    }
+
+}
