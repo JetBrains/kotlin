@@ -27,7 +27,7 @@ class Simple {
     @Test
     fun withException() {
         call("withException")
-        exception("some exception")
+        raise("some exception")
         call("never happens")
     }
 }
@@ -47,8 +47,9 @@ fun box() = checkLog {
         test("withException") {
             call("before")
             call("withException")
+            raised("some exception")
             call("after")
-            exception("some exception")
+            caught("some exception")
         }
     }
 }

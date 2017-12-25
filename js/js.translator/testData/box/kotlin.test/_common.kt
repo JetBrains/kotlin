@@ -4,7 +4,10 @@ private val context = TestContext()
 
 fun call(name: String) = context.call(name)
 
-fun exception(name: String): Nothing = throw Exception(name)
+fun raise(name: String): Nothing {
+    context.raised(name)
+    throw Exception(name)
+}
 
 @Suppress("INVISIBLE_MEMBER")
 val underscore = kotlin.test.setAdapter(object : FrameworkAdapter {
@@ -47,8 +50,12 @@ class TestContext {
         record("call(\"$name\")")
     }
 
-    fun exception(msg: String) = indent {
-        record("exception(\"$msg\")")
+    fun raised(msg: String) = indent {
+        record("raised(\"$msg\")")
+    }
+
+    fun caught(msg: String) = indent {
+        record("caught(\"$msg\")")
     }
 
     private fun (TestContext.() -> Unit).runSafely() {
@@ -56,7 +63,7 @@ class TestContext {
             this()
         }
         catch (t: Throwable) {
-            exception(t.message ?: "")
+            caught(t.message ?: "")
         }
     }
 
