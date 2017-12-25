@@ -1,49 +1,37 @@
-package kapt.internal;
-
-public @interface KaptMetadata {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptSignature {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
+/**
+ * @KaptMetadata
+ */
 package test;
 
+import java.lang.System;
+
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class AKt {
 
     public AKt() {
         super();
     }
 
-    @kapt.internal.KaptSignature(value = "foo()V")
     public static final void foo() {
     }
 }
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 package test;
 
+import java.lang.System;
+
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class BKt {
 
     public BKt() {
         super();
     }
 
-    @kapt.internal.KaptSignature(value = "bar()V")
     public static final void bar() {
     }
 }

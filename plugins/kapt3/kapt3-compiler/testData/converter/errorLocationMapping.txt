@@ -1,25 +1,28 @@
+/**
+ * @KaptMetadata
+ */
+
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@kapt.internal.KaptMetadata()
 public abstract @interface Anno {
 
-    @kapt.internal.KaptSignature(value = "a()Ljava/lang/Class;")
     public abstract java.lang.Class<java.lang.Object> a();
 }
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
 @Anno(a = ABC.class)
-@kapt.internal.KaptMetadata()
 public final class ErrorInAnnotation {
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     public ErrorInAnnotation() {
         super();
     }
@@ -27,11 +30,13 @@ public final class ErrorInAnnotation {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class ErrorInConstructorParameter {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
@@ -41,24 +46,20 @@ public final class ErrorInConstructorParameter {
     private final java.util.List<ABC> c = null;
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getA()Ljava/lang/String;")
     public final java.lang.String getA() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getB()Lerror/NonExistentClass;")
     public final ABC getB() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getC()Ljava/util/List;")
     public final java.util.List<ABC> getC() {
         return null;
     }
 
-    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;Lerror/NonExistentClass;Ljava/util/List;)V")
     public ErrorInConstructorParameter(@org.jetbrains.annotations.NotNull()
     java.lang.String a, @org.jetbrains.annotations.NotNull()
     ABC b, @org.jetbrains.annotations.NotNull()
@@ -69,11 +70,13 @@ public final class ErrorInConstructorParameter {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class ErrorInDeclarations {
     @org.jetbrains.annotations.NotNull()
     public java.lang.String p1;
@@ -83,69 +86,56 @@ public final class ErrorInDeclarations {
     public BCD<java.lang.String> p3;
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getP1()Ljava/lang/String;")
     public final java.lang.String getP1() {
         return null;
     }
 
-    @kapt.internal.KaptSignature(value = "setP1(Ljava/lang/String;)V")
     public final void setP1(@org.jetbrains.annotations.NotNull()
     java.lang.String p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getP2()Lerror/NonExistentClass;")
     public final ABC getP2() {
         return null;
     }
 
-    @kapt.internal.KaptSignature(value = "setP2(Lerror/NonExistentClass;)V")
     public final void setP2(@org.jetbrains.annotations.NotNull()
     ABC p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getP3()Lerror/NonExistentClass;")
     public final BCD<java.lang.String> getP3() {
         return null;
     }
 
-    @kapt.internal.KaptSignature(value = "setP3(Lerror/NonExistentClass;)V")
     public final void setP3(@org.jetbrains.annotations.NotNull()
     BCD<java.lang.String> p0) {
     }
 
-    @kapt.internal.KaptSignature(value = "overloads(Ljava/lang/String;)V")
     public final void overloads(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {
     }
 
-    @kapt.internal.KaptSignature(value = "overloads(Lerror/NonExistentClass;)V")
     public final void overloads(@org.jetbrains.annotations.NotNull()
     ABC a) {
     }
 
-    @kapt.internal.KaptSignature(value = "f1(Ljava/lang/String;Lerror/NonExistentClass;)V")
     public final void f1(@org.jetbrains.annotations.NotNull()
     java.lang.String a, @org.jetbrains.annotations.NotNull()
     ABC<java.util.List<java.lang.String>> b) {
     }
 
-    @kapt.internal.KaptSignature(value = "f2()V")
     public final <T extends java.lang.String>void f2() {
     }
 
-    @kapt.internal.KaptSignature(value = "f3()V")
     public final <T extends java.lang.Object>void f3() {
     }
 
     @org.jetbrains.annotations.Nullable()
-    @kapt.internal.KaptSignature(value = "f4()Lerror/NonExistentClass;")
     public final ABC f4() {
         return null;
     }
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     public ErrorInDeclarations() {
         super();
     }
@@ -153,14 +143,15 @@ public final class ErrorInDeclarations {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class ErrorInSupertype {
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     public ErrorInSupertype() {
         super();
     }
@@ -168,33 +159,16 @@ public final class ErrorInSupertype {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class ErrorInSupertype2 {
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     public ErrorInSupertype2() {
         super();
     }
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptMetadata {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptSignature {
-
-    public java.lang.String value();
 }

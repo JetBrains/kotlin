@@ -1,25 +1,11 @@
-package kapt.internal;
-
-public @interface KaptMetadata {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptSignature {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
+/**
+ * @KaptMetadata
+ */
 package test;
 
+import java.lang.System;
+
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class A$B {
     @org.jetbrains.annotations.NotNull()
     public test.A$B.C c;
@@ -38,7 +24,6 @@ public final class A$B {
     @org.jetbrains.annotations.NotNull()
     public test.J$B.D$$$E jdeee;
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     public A$B() {
         super();
     }
@@ -46,7 +31,6 @@ public final class A$B {
     @kotlin.Metadata()
     public static final class C {
 
-        @kapt.internal.KaptSignature(value = "<init>()V")
         public C() {
             super();
         }
@@ -63,7 +47,6 @@ public final class A$B {
         @org.jetbrains.annotations.NotNull()
         public test.J$B.D$E.F$G jfg;
 
-        @kapt.internal.KaptSignature(value = "<init>()V")
         public D$E() {
             super();
         }
@@ -71,7 +54,6 @@ public final class A$B {
         @kotlin.Metadata()
         public static final class F {
 
-            @kapt.internal.KaptSignature(value = "<init>()V")
             public F() {
                 super();
             }
@@ -80,7 +62,6 @@ public final class A$B {
         @kotlin.Metadata()
         public static final class F$G {
 
-            @kapt.internal.KaptSignature(value = "<init>()V")
             public F$G() {
                 super();
             }
@@ -90,7 +71,6 @@ public final class A$B {
     @kotlin.Metadata()
     public static final class D$$E {
 
-        @kapt.internal.KaptSignature(value = "<init>()V")
         public D$$E() {
             super();
         }
@@ -99,7 +79,6 @@ public final class A$B {
     @kotlin.Metadata()
     public static final class D$$$E {
 
-        @kapt.internal.KaptSignature(value = "<init>()V")
         public D$$$E() {
             super();
         }
@@ -108,13 +87,16 @@ public final class A$B {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 package test;
 
+import java.lang.System;
+
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class Experiment {
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     public Experiment() {
         super();
     }
@@ -128,14 +110,12 @@ public final class Experiment {
     @test.Experiment.Type()
     public static final class Group {
 
-        @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;)V")
         public Group(@org.jetbrains.annotations.NotNull()
         java.lang.String s) {
             super();
         }
 
         @org.jetbrains.annotations.NotNull()
-        @kapt.internal.KaptSignature(value = "copy(Ljava/lang/String;)Ltest/Experiment$Group;")
         public final test.Experiment.Group copy(@org.jetbrains.annotations.NotNull()
         java.lang.String s) {
             return null;
@@ -145,13 +125,16 @@ public final class Experiment {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 package test;
 
+import java.lang.System;
+
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class Foo {
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     public Foo() {
         super();
     }
@@ -159,7 +142,6 @@ public final class Foo {
     @kotlin.Metadata()
     public static class Bar {
 
-        @kapt.internal.KaptSignature(value = "<init>()V")
         public Bar() {
             super();
         }
@@ -168,7 +150,6 @@ public final class Foo {
         public static final class Zoo {
             public static final test.Foo.Bar.Zoo INSTANCE = null;
 
-            @kapt.internal.KaptSignature(value = "<init>()V")
             private Zoo() {
                 super();
             }
@@ -178,10 +159,14 @@ public final class Foo {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 package test;
 
+import java.lang.System;
+
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public abstract interface IFoo {
 
     @kotlin.Metadata()
@@ -191,7 +176,6 @@ public abstract interface IFoo {
         @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
         public static abstract @interface Anno {
 
-            @kapt.internal.KaptSignature(value = "value()[Ljava/lang/Class;")
             public abstract java.lang.Class<?>[] value();
         }
 
@@ -282,34 +266,34 @@ class JavaClass {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 package test;
+
+import java.lang.System;
 
 @kotlin.Metadata()
 @test.IFoo.IBar.Anno(value = {test.IFoo.IBar.IZoo.class, test.Foo.Bar.class})
-@kapt.internal.KaptMetadata()
 public final class Test1 extends test.Foo.Bar implements test.IFoo.IBar, test.IFoo.IBar.IZoo {
     @org.jetbrains.annotations.NotNull()
     private final test.Foo.Bar.Zoo zoo = null;
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "a()Ljava/lang/Thread$State;")
     public final java.lang.Thread.State a() {
         return null;
     }
 
-    @kapt.internal.KaptSignature(value = "b(Ltest/JavaClass$Foo;Ltest/JavaClass$Foo$Bar;)V")
     public final void b(@org.jetbrains.annotations.NotNull()
     test.JavaClass.Foo foo, @org.jetbrains.annotations.NotNull()
     test.JavaClass.Foo.Bar bar) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getZoo()Ltest/Foo$Bar$Zoo;")
     public final test.Foo.Bar.Zoo getZoo() {
         return null;
     }
 
-    @kapt.internal.KaptSignature(value = "<init>(Ltest/Foo$Bar$Zoo;)V")
     public Test1(@org.jetbrains.annotations.NotNull()
     test.Foo.Bar.Zoo zoo) {
         super();

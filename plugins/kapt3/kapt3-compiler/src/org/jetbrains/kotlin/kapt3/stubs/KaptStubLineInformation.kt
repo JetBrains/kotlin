@@ -18,19 +18,20 @@ package org.jetbrains.kotlin.kapt3.stubs
 
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeScanner
-import org.jetbrains.kotlin.kapt3.stubs.KaptLineMappingCollector.Companion.KAPT_SIGNATURE_ANNOTATION_FQNAME
+import org.jetbrains.kotlin.kapt3.stubs.KaptLineMappingCollector.FileInfo
 import org.jetbrains.kotlin.kapt3.util.getPackageNameJava9Aware
 
 class KaptStubLineInformation {
-    private val offsets = mutableMapOf<JCTree.JCCompilationUnit, KaptLineMappingCollector.LineInfo>()
+    private val offsets = mutableMapOf<JCTree.JCCompilationUnit, FileInfo>()
     private val declarations = mutableMapOf<JCTree.JCCompilationUnit, List<JCTree>>()
 
     fun getPositionInKotlinFile(file: JCTree.JCCompilationUnit, element: JCTree): KotlinPosition? {
         val declaration = findDeclarationFor(element, file) ?: return null
-        val elementDescriptor = getKaptDescriptor(declaration, file) ?: return null
 
-        val offsets = offsets.getOrPut(file) { KaptLineMappingCollector.parseMetadataAnnotation(file) }
-        return offsets.getPositionFor(elementDescriptor)
+        val fileInfo = offsets.getOrPut(file) { KaptLineMappingCollector.parseFileInfo(file) }
+        val elementDescriptor = getKaptDescriptor(declaration, file, fileInfo) ?: return null
+
+        return fileInfo.getPositionFor(elementDescriptor)
     }
 
     private fun findDeclarationFor(element: JCTree, file: JCTree.JCCompilationUnit): JCTree? {
@@ -38,7 +39,7 @@ class KaptStubLineInformation {
         return fileDeclarations.firstOrNull { element.isLocatedInside(it) }
     }
 
-    private fun getKaptDescriptor(declaration: JCTree, file: JCTree.JCCompilationUnit): String? {
+    private fun getKaptDescriptor(declaration: JCTree, file: JCTree.JCCompilationUnit, fileInfo: FileInfo): String? {
         fun getFqName(declaration: JCTree, parent: JCTree, currentName: String): String? {
             return when (parent) {
                 is JCTree.JCCompilationUnit -> {
@@ -72,7 +73,7 @@ class KaptStubLineInformation {
                 is JCTree.JCMethodDecl -> {
                     // We don't need to process local declarations here as kapt does not support locals entirely.
                     if (declaration === parent) {
-                        val nameAndSignature = getAnnotationValue(KAPT_SIGNATURE_ANNOTATION_FQNAME, parent.mods) ?: return null
+                        val nameAndSignature = fileInfo.getMethodDescriptor(parent) ?: return null
                         return currentName + "#" + nameAndSignature
                     }
 
