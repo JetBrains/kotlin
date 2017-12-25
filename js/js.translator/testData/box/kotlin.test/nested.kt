@@ -32,6 +32,12 @@ class Outer {
         @Test
         fun companionTest() {
         }
+
+        object InnerCompanion {
+            @Test
+            fun innerCompanionTest() {
+            }
+        }
     }
 }
 
@@ -48,6 +54,9 @@ fun box() = checkLog {
         test("test2")
         suite("Companion") {
             test("companionTest")
+            suite("InnerCompanion") {
+                test("innerCompanionTest")
+            }
         }
     }
 }
