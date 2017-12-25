@@ -1,10 +1,7 @@
 @file:kotlin.jvm.JvmVersion
 package test.collections
 
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
+import test.assertStaticAndRuntimeTypeIs
 import kotlin.test.*
 import kotlin.comparisons.*
 import java.util.*
@@ -57,9 +54,7 @@ class CollectionJVMTest {
         assertEquals(1, foo.size)
         assertEquals(listOf("foo"), foo)
 
-        assertTrue {
-            foo is LinkedList<String>
-        }
+        assertStaticAndRuntimeTypeIs<LinkedList<String>>(foo)
     }
 
     @Test fun filterNotIntoLinkedListOf() {
@@ -72,9 +67,7 @@ class CollectionJVMTest {
         assertEquals(1, foo.size)
         assertEquals(listOf("bar"), foo)
 
-        assertTrue {
-            foo is LinkedList<String>
-        }
+        assertStaticAndRuntimeTypeIs<LinkedList<String>>(foo)
     }
 
     @Test fun filterNotNullIntoLinkedListOf() {
@@ -84,9 +77,7 @@ class CollectionJVMTest {
         assertEquals(2, foo.size)
         assertEquals(LinkedList(listOf("foo", "bar")), foo)
 
-        assertTrue {
-            foo is LinkedList<String>
-        }
+        assertStaticAndRuntimeTypeIs<LinkedList<String>>(foo)
     }
 
     @Test fun filterIntoSortedSet() {
@@ -94,9 +85,8 @@ class CollectionJVMTest {
         val sorted = data.filterTo(sortedSetOf<String>()) { it.length == 3 }
         assertEquals(2, sorted.size)
         assertEquals(sortedSetOf("bar", "foo"), sorted)
-        assertTrue {
-            sorted is TreeSet<String>
-        }
+
+        assertStaticAndRuntimeTypeIs<TreeSet<String>>(sorted)
     }
 
     @Test fun first() {
