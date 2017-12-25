@@ -244,7 +244,7 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     @Test
     fun filter() {
         val foo = data.filter { it.startsWith("f") }
-        expect(true) { foo is List<String> }
+        assertStaticAndRuntimeTypeIs<List<String>>(foo)
         expect(true) { foo.all { it.startsWith("f") } }
         expect(1) { foo.size }
         assertEquals(listOf("foo"), foo)
@@ -258,7 +258,7 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     @Test
     fun drop() {
         val foo = data.drop(1)
-        expect(true) { foo is List<String> }
+        assertStaticAndRuntimeTypeIs<List<String>>(foo)
         expect(true) { foo.all { it.startsWith("b") } }
         expect(1) { foo.size }
         assertEquals(listOf("bar"), foo)
@@ -267,7 +267,7 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     @Test
     fun dropWhile() {
         val foo = data.dropWhile { it[0] == 'f' }
-        expect(true) { foo is List<String> }
+        assertStaticAndRuntimeTypeIs<List<String>>(foo)
         expect(true) { foo.all { it.startsWith("b") } }
         expect(1) { foo.size }
         assertEquals(listOf("bar"), foo)
@@ -276,7 +276,7 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     @Test
     fun filterNot() {
         val notFoo = data.filterNot { it.startsWith("f") }
-        expect(true) { notFoo is List<String> }
+        assertStaticAndRuntimeTypeIs<List<String>>(notFoo)
         expect(true) { notFoo.none { it.startsWith("f") } }
         expect(1) { notFoo.size }
         assertEquals(listOf("bar"), notFoo)

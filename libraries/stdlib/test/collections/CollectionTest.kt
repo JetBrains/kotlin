@@ -16,6 +16,7 @@
 
 package test.collections
 
+import test.assertStaticAndRuntimeTypeIs
 import kotlin.test.*
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
@@ -53,9 +54,7 @@ class CollectionTest {
         assertEquals(2, foo.size)
         assertEquals(listOf("foo", "bar"), foo)
 
-        assertTrue {
-            foo is List<String>
-        }
+        assertStaticAndRuntimeTypeIs<List<String>>(foo)
     }
 
     /*
@@ -93,9 +92,7 @@ class CollectionTest {
         assertEquals(1, foo.size)
         assertEquals(hashSetOf("foo"), foo)
 
-        assertTrue {
-            foo is HashSet<String>
-        }
+        assertStaticAndRuntimeTypeIs<HashSet<String>>(foo)
     }
 
     @Test fun filterIsInstanceList() {
