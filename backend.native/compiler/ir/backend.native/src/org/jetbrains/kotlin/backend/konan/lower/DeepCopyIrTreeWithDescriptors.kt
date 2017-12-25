@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.*
@@ -27,9 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -37,11 +36,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
+                                    val parentDescriptor: DeclarationDescriptor,
                                     context: CommonBackendContext) {
 
     private val descriptorSubstituteMap: MutableMap<DeclarationDescriptor, DeclarationDescriptor> = mutableMapOf()
@@ -58,7 +57,7 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
 
     //-------------------------------------------------------------------------//
 
-    inner class DescriptorCollector: IrElementVisitorVoid {
+    inner class DescriptorCollector: IrElementVisitorVoidWithContext() {
 
         override fun visitElement(element: IrElement) {
             element.acceptChildren(this, null)
@@ -66,14 +65,14 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
 
         //---------------------------------------------------------------------//
 
-        override fun visitClass(declaration: IrClass) {
+        override fun visitClassNew(declaration: IrClass) {
 
             val oldDescriptor = declaration.descriptor
             val newDescriptor = copyClassDescriptor(oldDescriptor)
             descriptorSubstituteMap[oldDescriptor] = newDescriptor
             descriptorSubstituteMap[oldDescriptor.thisAsReceiverParameter] = newDescriptor.thisAsReceiverParameter
 
-            super.visitClass(declaration)
+            super.visitClassNew(declaration)
 
             val constructors = oldDescriptor.constructors.map { oldConstructorDescriptor ->
                 descriptorSubstituteMap[oldConstructorDescriptor] as ClassConstructorDescriptor
@@ -96,36 +95,41 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
 
         //---------------------------------------------------------------------//
 
-        override fun visitProperty(declaration: IrProperty) {
+        override fun visitPropertyNew(declaration: IrProperty) {
 
             copyPropertyOrField(declaration.descriptor)
-            super.visitProperty(declaration)
+            super.visitPropertyNew(declaration)
         }
 
         //---------------------------------------------------------------------//
 
-        override fun visitField(declaration: IrField) {
+        override fun visitFieldNew(declaration: IrField) {
 
             val oldDescriptor = declaration.descriptor
             if (descriptorSubstituteMap[oldDescriptor] == null) {
                 copyPropertyOrField(oldDescriptor)                                          // A field without a property or a field of a delegated property.
             }
-            super.visitField(declaration)
+            super.visitFieldNew(declaration)
         }
 
         //---------------------------------------------------------------------//
 
-        override fun visitFunction(declaration: IrFunction) {
+        override fun visitFunctionNew(declaration: IrFunction) {
 
             val oldDescriptor = declaration.descriptor
             if (oldDescriptor !is PropertyAccessorDescriptor) {                             // Property accessors are copied along with their property.
-                val newDescriptor = copyFunctionDescriptor(oldDescriptor)
+                val oldContainingDeclaration =
+                        if (oldDescriptor.visibility == Visibilities.LOCAL)
+                            parentDescriptor
+                        else
+                            oldDescriptor.containingDeclaration
+                val newDescriptor = copyFunctionDescriptor(oldDescriptor, oldContainingDeclaration)
                 descriptorSubstituteMap[oldDescriptor] = newDescriptor
                 oldDescriptor.extensionReceiverParameter?.let{
                     descriptorSubstituteMap[it] = newDescriptor.extensionReceiverParameter!!
                 }
             }
-            super.visitFunction(declaration)
+            super.visitFunctionNew(declaration)
         }
 
         //---------------------------------------------------------------------//
@@ -172,20 +176,19 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
 
         //---------------------------------------------------------------------//
 
-        private fun copyFunctionDescriptor(oldDescriptor: CallableDescriptor): CallableDescriptor {
+        private fun copyFunctionDescriptor(oldDescriptor: CallableDescriptor, oldContainingDeclaration: DeclarationDescriptor): CallableDescriptor {
 
             return when (oldDescriptor) {
                 is ConstructorDescriptor    -> copyConstructorDescriptor(oldDescriptor)
-                is SimpleFunctionDescriptor -> copySimpleFunctionDescriptor(oldDescriptor)
+                is SimpleFunctionDescriptor -> copySimpleFunctionDescriptor(oldDescriptor, oldContainingDeclaration)
                 else -> TODO("Unsupported FunctionDescriptor subtype: $oldDescriptor")
             }
         }
 
         //---------------------------------------------------------------------//
 
-        private fun copySimpleFunctionDescriptor(oldDescriptor: SimpleFunctionDescriptor) : FunctionDescriptor {
+        private fun copySimpleFunctionDescriptor(oldDescriptor: SimpleFunctionDescriptor, oldContainingDeclaration: DeclarationDescriptor) : FunctionDescriptor {
 
-            val oldContainingDeclaration = oldDescriptor.containingDeclaration
             val newContainingDeclaration = descriptorSubstituteMap.getOrDefault(oldContainingDeclaration, oldContainingDeclaration)
             return SimpleFunctionDescriptorImpl.create(
                 /* containingDeclaration = */ newContainingDeclaration,
