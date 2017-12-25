@@ -1,23 +1,31 @@
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
+
 @kotlin.Metadata()
 @java.lang.annotation.Target(value = {})
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
-@kapt.internal.KaptMetadata()
 public abstract @interface Anno {
 }
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
 
 /**
  * Obj.
  */
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class Obj {
     public static final Obj INSTANCE = null;
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     private Obj() {
         super();
     }
@@ -25,12 +33,16 @@ public final class Obj {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
 
 /**
  * Test.
  */
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class Test {
 
     /**
@@ -48,38 +60,32 @@ public final class Test {
     /**
      * method().
      */
-    @kapt.internal.KaptSignature(value = "method()V")
     public final void method() {
     }
 
     /**
      * method(int).
      */
-    @kapt.internal.KaptSignature(value = "method(I)V")
     public final void method(int a) {
     }
 
     /**
      * method(String).
      */
-    @kapt.internal.KaptSignature(value = "method(Ljava/lang/String;)V")
     public final void method(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getProp()Ljava/lang/String;")
     public final java.lang.String getProp() {
         return null;
     }
 
     @Anno()
-    @kapt.internal.KaptSignature(value = "prop2$annotations()V")
     public static void prop2$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getProp2()Ljava/lang/String;")
     public final java.lang.String getProp2() {
         return null;
     }
@@ -88,7 +94,6 @@ public final class Test {
      * get.
      */
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getProp3()Ljava/lang/String;")
     public final java.lang.String getProp3() {
         return null;
     }
@@ -96,12 +101,10 @@ public final class Test {
     /**
      * set.
      */
-    @kapt.internal.KaptSignature(value = "setProp3(Ljava/lang/String;)V")
     public final void setProp3(@org.jetbrains.annotations.NotNull()
     java.lang.String v) {
     }
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     public Test() {
         super();
     }
@@ -109,6 +112,11 @@ public final class Test {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
 
 /**
  * * Test2
@@ -116,18 +124,15 @@ public final class Test {
  * * documentation.
  */
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class Test2 {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getA()Ljava/lang/String;")
     public final java.lang.String getA() {
         return null;
     }
 
-    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;)V")
     public Test2(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {
         super();
@@ -136,23 +141,25 @@ public final class Test2 {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
 
 /**
  * constructor.
  */
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class Test3 {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getA()Ljava/lang/String;")
     public final java.lang.String getA() {
         return null;
     }
 
-    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;)V")
     protected Test3(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {
         super();
@@ -161,35 +168,19 @@ public final class Test3 {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
 
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class Test4 {
 
-    @kapt.internal.KaptSignature(value = "method()V")
     public final void method() {
     }
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     public Test4() {
         super();
     }
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptMetadata {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptSignature {
-
-    public java.lang.String value();
 }

@@ -1,40 +1,29 @@
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
+
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @Anno(color = Color.InvalidFieldName)
-@kapt.internal.KaptMetadata()
 public abstract @interface Anno {
 
-    @kapt.internal.KaptSignature(value = "color()LColor;")
     public abstract Color color();
 }
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
 
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public enum Color {
     /*public static final*/ BLACK /* = new Color() */;
 
-    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;I)V")
     Color() {
     }
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptMetadata {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptSignature {
-
-    public java.lang.String value();
 }

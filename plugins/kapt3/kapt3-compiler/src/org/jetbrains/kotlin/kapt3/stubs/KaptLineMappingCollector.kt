@@ -18,10 +18,11 @@ package org.jetbrains.kotlin.kapt3.stubs
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.kapt3.KaptContext
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.kapt3.util.isJava9OrLater
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -34,39 +35,66 @@ private typealias LineInfoMap = MutableMap<String, KotlinPosition>
 
 class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
     companion object {
-        val KAPT_METADATA_ANNOTATION_FQNAME = FqName("kapt.internal.KaptMetadata")
-        val KAPT_SIGNATURE_ANNOTATION_FQNAME = FqName("kapt.internal.KaptSignature")
+        private val METADATA_COMMENT_PREFIX = "@KaptMetadata "
 
-        fun parseMetadataAnnotation(file: JCTree.JCCompilationUnit): LineInfo {
-            val metadata = file.defs.asSequence()
-                                              .filterIsInstance<JCTree.JCClassDecl>()
-                                              .mapNotNull { getAnnotationValue(KAPT_METADATA_ANNOTATION_FQNAME, it.mods) }
-                                              .firstOrNull() ?: return LineInfo.EMPTY
+        fun parseFileInfo(file: JCTree.JCCompilationUnit): FileInfo {
+            fun getCommentTree(): Tokens.Comment? {
+                if (isJava9OrLater) {
+                    val packageElement = JCTree.JCCompilationUnit::class.java.getDeclaredMethod("getPackage").invoke(file) as JCTree?
+                    if (packageElement != null) {
+                        file.docComments.getComment(packageElement)?.let { return it }
+                    }
+                }
 
-            return LineInfo(deserializeMetadata(metadata))
+                return file.docComments.getComment(file)
+            }
+
+            val comment = getCommentTree()?.text?.trim()
+                ?.takeIf { it.startsWith(METADATA_COMMENT_PREFIX) }
+                ?.drop(METADATA_COMMENT_PREFIX.length)
+                    ?: return FileInfo.EMPTY
+
+            return FileInfo.parse(comment)
         }
 
-        private fun deserializeMetadata(data: String): LineInfoMap {
-            val map: LineInfoMap = mutableMapOf()
+        private fun deserializeMetadata(data: String): Pair<LineInfoMap, Map<String, String>> {
+            val lineInfo: LineInfoMap = mutableMapOf()
+            val signatureInfo = mutableMapOf<String, String>()
 
             val ois = ObjectInputStream(ByteArrayInputStream(Base64.getDecoder().decode(data)))
-            val count = ois.readInt()
 
-            repeat(count) {
+            val lineInfoCount = ois.readInt()
+            repeat(lineInfoCount) {
                 val fqName = ois.readUTF()
                 val path = ois.readUTF()
                 val isRelative = ois.readBoolean()
                 val line = ois.readInt()
                 val column = ois.readInt()
 
-                map[fqName] = KotlinPosition(path, isRelative, line, column)
+                lineInfo[fqName] = KotlinPosition(path, isRelative, line, column)
             }
 
-            return map
+            val signatureCount = ois.readInt()
+            repeat(signatureCount) {
+                val javacSignature = ois.readUTF()
+                val methodDesc = ois.readUTF()
+
+                signatureInfo[javacSignature] = methodDesc
+            }
+
+            return Pair(lineInfo, signatureInfo)
+        }
+
+        private fun getJavacSignature(decl: JCTree.JCMethodDecl): String {
+            val name = decl.name.toString()
+            val params = decl.parameters.joinToString { it.getType().toString() }
+            return "$name($params)"
         }
     }
 
     private val lineInfo: LineInfoMap = mutableMapOf()
+    private val signatureInfo = mutableMapOf<String, String>()
+
     private val filePaths = mutableMapOf<PsiFile, Pair<String, Boolean>>()
 
     fun registerClass(clazz: ClassNode) {
@@ -79,6 +107,10 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
 
     fun registerField(clazz: ClassNode, field: FieldNode) {
         register(field, clazz.name + "#" + field.name)
+    }
+
+    fun registerSignature(decl: JCTree.JCMethodDecl, method: MethodNode) {
+        signatureInfo[getJavacSignature(decl)] = method.name + method.desc
     }
 
     private fun register(asmNode: Any, fqName: String) {
@@ -114,7 +146,7 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
         }
     }
 
-    fun serializeLineInfo(): String {
+    fun getClassMetadataCommentText(): String {
         val os = ByteArrayOutputStream()
         val oos = ObjectOutputStream(os)
 
@@ -127,15 +159,27 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
             oos.writeInt(kotlinPosition.column)
         }
 
-        oos.flush()
-        return Base64.getEncoder().encodeToString(os.toByteArray())
-    }
-
-    class LineInfo(private val map: LineInfoMap) {
-        companion object {
-            val EMPTY = LineInfo(mutableMapOf())
+        oos.writeInt(signatureInfo.size)
+        for ((javacSignature, methodDesc) in signatureInfo) {
+            oos.writeUTF(javacSignature)
+            oos.writeUTF(methodDesc)
         }
 
-        fun getPositionFor(fqName: String) = map[fqName]
+        oos.flush()
+        return METADATA_COMMENT_PREFIX + Base64.getEncoder().encodeToString(os.toByteArray())
+    }
+
+    class FileInfo(private val lineInfo: LineInfoMap, private val signatureInfo: Map<String, String>) {
+        companion object {
+            val EMPTY = FileInfo(mutableMapOf(), emptyMap())
+
+            fun parse(comment: String): FileInfo {
+                val (lineInfo, signatureInfo) = deserializeMetadata(comment)
+                return FileInfo(lineInfo, signatureInfo)
+            }
+        }
+
+        fun getPositionFor(fqName: String) = lineInfo[fqName]
+        fun getMethodDescriptor(decl: JCTree.JCMethodDecl) = signatureInfo[getJavacSignature(decl)]
     }
 }

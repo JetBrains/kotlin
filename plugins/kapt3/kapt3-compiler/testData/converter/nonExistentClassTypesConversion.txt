@@ -1,35 +1,35 @@
+/**
+ * @KaptMetadata
+ */
+
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@kapt.internal.KaptMetadata()
 public abstract @interface Anno {
 
-    @kapt.internal.KaptSignature("a()Ljava/lang/Class;")
     public abstract java.lang.Class<?> a();
 
-    @kapt.internal.KaptSignature("b()[Ljava/lang/Class;")
     public abstract java.lang.Class<?>[] b();
 
-    @kapt.internal.KaptSignature("c()[Ljava/lang/Class;")
     public abstract java.lang.Class<?>[] c();
 
-    @kapt.internal.KaptSignature("d()[Ljava/lang/Class;")
     public abstract java.lang.Class<?>[] d();
 }
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class MyType<T extends java.lang.Object> {
 
-    @kapt.internal.KaptSignature("<init>()V")
     public MyType() {
         super();
     }
@@ -37,25 +37,29 @@ public final class MyType<T extends java.lang.Object> {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_PARAMETER_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", "UNSUPPORTED_FEATURE"})
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class NonExistentClassTypesConversionKt {
 }
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
 @Anno(a = Blah.class, b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, String.class}, d = {Boolean.class, NoBar3.class})
-@kapt.internal.KaptMetadata()
 public final class Test<G extends java.lang.Object> {
     @org.jetbrains.annotations.NotNull()
     public ABC a;
@@ -105,265 +109,218 @@ public final class Test<G extends java.lang.Object> {
     public java.util.Calendar.Builder p;
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getA()Lerror/NonExistentClass;")
     public final ABC getA() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setA(Lerror/NonExistentClass;)V")
     public final void setA(@org.jetbrains.annotations.NotNull()
     ABC p0) {
     }
 
     @org.jetbrains.annotations.Nullable()
-    @kapt.internal.KaptSignature("getB()Lerror/NonExistentClass;")
     public final ABC getB() {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable()
-    @kapt.internal.KaptSignature("getC()Ljava/util/List;")
     public final java.util.List<ABC> getC() {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable()
-    @kapt.internal.KaptSignature("getD()Ljava/util/List;")
     public final java.util.List<java.util.Map<BCD, ABC<java.util.List<BCD>>>> getD() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getE()Ljava/util/List;")
     public final java.util.List<java.util.Map<? extends ABC, BCD>> getE() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setE(Ljava/util/List;)V")
     public final void setE(@org.jetbrains.annotations.NotNull()
     java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getF()Lerror/NonExistentClass;")
     public final ABC<?> getF() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setF(Lerror/NonExistentClass;)V")
     public final void setF(@org.jetbrains.annotations.NotNull()
     ABC<?> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getG()Ljava/util/List;")
     public final java.util.List<?> getG() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setG(Ljava/util/List;)V")
     public final void setG(@org.jetbrains.annotations.NotNull()
     java.util.List<?> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getH()Lerror/NonExistentClass;")
     public final ABC<java.lang.Integer, java.lang.String> getH() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setH(Lerror/NonExistentClass;)V")
     public final void setH(@org.jetbrains.annotations.NotNull()
     ABC<java.lang.Integer, java.lang.String> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getI()Lkotlin/jvm/functions/Function2;")
     public final Function2<ABC, java.util.List<BCD>, CDE> getI() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setI(Lkotlin/jvm/functions/Function2;)V")
     public final void setI(@org.jetbrains.annotations.NotNull()
     Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getJ()Lkotlin/jvm/functions/Function0;")
     public final Function0<CDE> getJ() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setJ(Lkotlin/jvm/functions/Function0;)V")
     public final void setJ(@org.jetbrains.annotations.NotNull()
     Function0<CDE> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getK()Lkotlin/jvm/functions/Function2;")
     public final Function2<ABC, java.util.List<BCD>, CDE> getK() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setK(Lkotlin/jvm/functions/Function2;)V")
     public final void setK(@org.jetbrains.annotations.NotNull()
     Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getL()Lerror/NonExistentClass;")
     public final ABC.BCD.EFG getL() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setL(Lerror/NonExistentClass;)V")
     public final void setL(@org.jetbrains.annotations.NotNull()
     ABC.BCD.EFG p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getCoocoo()Lerror/NonExistentClass;")
     public final ABC getCoocoo() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setCoocoo(Lerror/NonExistentClass;)V")
     public final void setCoocoo(@org.jetbrains.annotations.NotNull()
     ABC p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getCoocoo2()Lerror/NonExistentClass;")
     public final ABC<java.lang.String> getCoocoo2() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setCoocoo2(Lerror/NonExistentClass;)V")
     public final void setCoocoo2(@org.jetbrains.annotations.NotNull()
     ABC<java.lang.String> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getCoocoo21()Lerror/NonExistentClass;")
     public final ABC<ABC> getCoocoo21() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setCoocoo21(Lerror/NonExistentClass;)V")
     public final void setCoocoo21(@org.jetbrains.annotations.NotNull()
     ABC<ABC> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getCoocoo3()Lerror/NonExistentClass;")
     public final ABC<java.lang.String, java.lang.String> getCoocoo3() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setCoocoo3(Lerror/NonExistentClass;)V")
     public final void setCoocoo3(@org.jetbrains.annotations.NotNull()
     ABC<java.lang.String, java.lang.String> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getCoocoo31()Lerror/NonExistentClass;")
     public final ABC<java.lang.String, ABC<ABC>> getCoocoo31() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setCoocoo31(Lerror/NonExistentClass;)V")
     public final void setCoocoo31(@org.jetbrains.annotations.NotNull()
     ABC<java.lang.String, ABC<ABC>> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getNested()Lerror/NonExistentClass;")
     public final ABC getNested() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setNested(Lerror/NonExistentClass;)V")
     public final void setNested(@org.jetbrains.annotations.NotNull()
     ABC p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getM()Lerror/NonExistentClass;")
     public final java.lang.Object getM() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getN()Ljava/lang/String;")
     public final java.lang.String getN() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getO11()Ljava/util/List;")
     public final java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<error.NonExistentClass>>>>>>>>>> getO11() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setO11(Ljava/util/List;)V")
     public final void setO11(@org.jetbrains.annotations.NotNull()
     java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getO10()Ljava/util/List;")
     public final java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> getO10() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setO10(Ljava/util/List;)V")
     public final void setO10(@org.jetbrains.annotations.NotNull()
     java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends ABC>>>>>>>>> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getP()Lerror/NonExistentClass;")
     public final java.util.Calendar.Builder getP() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setP(Lerror/NonExistentClass;)V")
     public final void setP(@org.jetbrains.annotations.NotNull()
     java.util.Calendar.Builder p0) {
     }
 
     @org.jetbrains.annotations.Nullable()
-    @kapt.internal.KaptSignature("f1(Lerror/NonExistentClass;)Lerror/NonExistentClass;")
     public final BCD f1(@org.jetbrains.annotations.NotNull()
     ABC a) {
         return null;
     }
 
-    @kapt.internal.KaptSignature("f2(Lerror/NonExistentClass;)V")
     public final <T extends java.lang.Object>void f2(@org.jetbrains.annotations.NotNull()
     ABC<java.lang.String, java.lang.Integer, Function0<BCD>> a) {
     }
 
-    @kapt.internal.KaptSignature("f3(Lerror/NonExistentClass;I)J")
     public final <T extends java.lang.Object>long f3(@org.jetbrains.annotations.NotNull()
     ABC a, int b) {
         return 0L;
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("f4()Lerror/NonExistentClass;")
     public final java.lang.Object f4() {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable()
-    @kapt.internal.KaptSignature("f5(LMyType;)Ljava/lang/Class;")
     public final <T extends java.lang.Object>java.lang.Class<java.lang.Enum<?>> f5(@org.jetbrains.annotations.NotNull()
     MyType<T> $receiver) {
         return null;
     }
 
-    @kapt.internal.KaptSignature("<init>()V")
     public Test() {
         super();
     }
@@ -374,22 +331,4 @@ public final class Test<G extends java.lang.Object> {
 package error;
 
 public final class NonExistentClass {
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptMetadata {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptSignature {
-
-    public java.lang.String value();
 }
