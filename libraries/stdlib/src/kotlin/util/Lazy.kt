@@ -107,6 +107,7 @@ public enum class LazyThreadSafetyMode {
 
 private object UNINITIALIZED_VALUE
 
+@JvmVersion
 private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>, Serializable {
     private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
