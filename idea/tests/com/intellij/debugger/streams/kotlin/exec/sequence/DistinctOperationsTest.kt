@@ -7,5 +7,9 @@ package com.intellij.debugger.streams.kotlin.exec.sequence
 class DistinctOperationsTest : OperationsTestCase("distinct") {
   fun testDistinct() = doTestWithResult()
   fun testDistinctObjects() = doTestWithResult()
+
   fun testDistinctBy() = doTestWithResult()
+  fun testDistinctByNullableElement() = doTestWithResult()
+  fun testDistinctByNullableKey() = doTestWithResult()
+  fun testDistinctByNullableKeyAndElement() = doTestWithResult()
 }

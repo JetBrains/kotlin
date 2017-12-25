@@ -5,6 +5,7 @@ import com.intellij.debugger.streams.kotlin.resolve.ChunkedResolver
 import com.intellij.debugger.streams.kotlin.resolve.FilteredMapResolver
 import com.intellij.debugger.streams.kotlin.resolve.WindowedResolver
 import com.intellij.debugger.streams.kotlin.trace.impl.handler.sequence.FilterIsInstanceHandler
+import com.intellij.debugger.streams.kotlin.trace.impl.handler.sequence.KotlinDistinctByHandler
 import com.intellij.debugger.streams.lib.IntermediateOperation
 import com.intellij.debugger.streams.lib.impl.*
 import com.intellij.debugger.streams.resolve.AppendResolver
@@ -30,7 +31,7 @@ class KotlinSequencesSupport : LibrarySupportBase() {
     addIntermediateOperationsSupport(*sortedOperations("sorted", "sortedBy", "sortedDescending", "sortedWith"))
 
     addIntermediateOperationsSupport(DistinctOperation("distinct", ::DistinctTraceHandler))
-//    addIntermediateOperationsSupport(DistinctOperation("distinctBy", ::DistinctByKeyHandler)) waiting for a fix in the platform
+    addIntermediateOperationsSupport(DistinctOperation("distinctBy", ::KotlinDistinctByHandler))
 
     addIntermediateOperationsSupport(ConcatOperation("plus", AppendResolver()))
     addIntermediateOperationsSupport(ConcatOperation("plusElement", AppendResolver()))
