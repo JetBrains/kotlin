@@ -16,7 +16,7 @@
 
 package kotlin.collections
 
-expect open class ArrayList<E> : MutableList<E> {
+expect class ArrayList<E> : MutableList<E>, RandomAccess {
     constructor()
     constructor(initialCapacity: Int)
     constructor(elements: Collection<E>)
