@@ -11807,6 +11807,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("binaryEqEqNotNullInLeftSide.kt")
+        public void testBinaryEqEqNotNullInLeftSide() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/binaryEqEqNotNullInLeftSide.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("binaryEqEqNotNullInRightSide.kt")
+        public void testBinaryEqEqNotNullInRightSide() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/binaryEqEqNotNullInRightSide.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("binaryEqEqNullInLeftSide.kt")
+        public void testBinaryEqEqNullInLeftSide() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/binaryEqEqNullInLeftSide.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("binaryEqEqNullInRightSide.kt")
+        public void testBinaryEqEqNullInRightSide() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/binaryEqEqNullInRightSide.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("binaryEqEqNullable.kt")
         public void testBinaryEqEqNullable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/binaryEqEqNullable.kt");
