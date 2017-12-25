@@ -88,9 +88,13 @@ model {
       eachPlatform {
         cppCompiler.withArguments { args ->
           args.remove "/usr/include"
+          if (isLinux())
+            args.remove "/usr/include/x86_64-linux-gnu"
         }
 	cCompiler.withArguments { args ->
           args.remove "/usr/include"
+          if (isLinux())
+            args.remove "/usr/include/x86_64-linux-gnu"
         }
       }
     }
