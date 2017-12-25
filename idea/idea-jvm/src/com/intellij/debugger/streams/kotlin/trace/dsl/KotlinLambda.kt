@@ -13,7 +13,7 @@ class KotlinLambda(override val variableName: String, override val body: CodeBlo
   override fun call(callName: String, vararg args: Expression): Expression = TextExpression("(${toCode()})").call(callName, *args)
 
   override fun toCode(indent: Int): String =
-    "{ $variableName -> \n".withIndent(indent) +
+    "{ $variableName ->\n".withIndent(indent) +
     body.toCode(indent + 1) +
     "}"
 }
