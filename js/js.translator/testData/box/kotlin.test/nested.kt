@@ -3,11 +3,26 @@ import kotlin.test.Test
 
 class Outer {
 
+    val prop = "prop"
+
     @Test
     fun test1() {
     }
 
-    class Inner {
+    inner class Inner {
+
+        @Test fun innerTest() {
+            call(prop + "Inner")
+        }
+
+        inner class Inneer {
+            @Test fun inneerTest() {
+                call(prop + "Inneer")
+            }
+        }
+    }
+
+    class Nested {
         @Test
         fun a() {
         }
@@ -45,6 +60,16 @@ fun box() = checkLog {
     suite("Outer") {
         test("test1")
         suite("Inner") {
+            test("innerTest") {
+                call("propInner")
+            }
+            suite("Inneer") {
+                test("inneerTest") {
+                    call("propInneer")
+                }
+            }
+        }
+        suite("Nested") {
             test("a")
             test("b")
             suite("EvenDeeper") {
