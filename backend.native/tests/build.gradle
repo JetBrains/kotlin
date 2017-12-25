@@ -2345,7 +2345,14 @@ task produce_dynamic(type: DynamicKonanTest) {
     disabled = (project.testTarget != null && project.testTarget != project.hostName)
     source = "produce_dynamic/simple/hello.kt"
     cSource = "$projectDir/produce_dynamic/simple/main.c"
-    goldValue = "Hello, dynamic!\n"
+    goldValue = "Hello, dynamic!\n" +
+                "Base.foo\n" +
+                "Base.fooParam: a 1\n" +
+                "Child.fooParam: b 2\n" +
+                "Child.fooParam: c 3\n" +
+                "Impl1.I: d 4 Impl1\n" +
+                "Impl2.I: e 5 Impl2\n" +
+                "String is Kotlin/Native\n"
 }
 
 task buildKonanTests(type: BuildKonanTest) {

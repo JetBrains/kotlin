@@ -146,7 +146,7 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
                 (0 .. numberOfParameters).map { int8TypePtr }
         )
 
-        val result =  generateFunction(codegen, functionType, "invokeBlock$numberOfParameters") {
+        val result = generateFunction(codegen, functionType, "invokeBlock$numberOfParameters") {
             val blockPtr = bitcast(pointerType(blockLiteralType), param(0))
             val kotlinFunction = loadSlot(structGep(blockPtr, 1), isVar = false)
 
