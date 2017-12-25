@@ -16,85 +16,85 @@
 
 import kotlinx.cinterop.*
 import sdl.*
-import konan.worker.WorkerId
 import platform.posix.memset
 import platform.posix.memcpy
 
-class SDLAudio(val player: VideoPlayer) : SDLBase() {
+enum class SampleFormat {
+    INVALID,
+    S16
+}
 
-    private var threadData: CPointer<IntVar>? = null
+data class AudioOutput(val sampleRate: Int, val channels: Int, val sampleFormat: SampleFormat)
 
-    override fun init() {
-        threadData = nativeHeap.alloc<IntVar>().ptr
-    }
+private fun SampleFormat.toSDLFormat(): SDL_AudioFormat? = when (this) {
+    SampleFormat.S16 -> AUDIO_S16SYS.narrow()
+    SampleFormat.INVALID -> null
+}
 
-    override fun deinit() {
-        if (threadData != null) {
-            nativeHeap.free(threadData!!)
-            threadData = null
-        }
-    }
+class SDLAudio(val player: VideoPlayer) : DisposableContainer() {
+    private val threadData = arena.alloc<IntVar>().ptr
+    private var state = State.STOPPED
 
-    fun start(sampleRate: Int, channels: Int) {
-        println("Audio: $channels channels, $sampleRate samples per second")
+    fun start(audio: AudioOutput) {
+        stop()
+        val audioFormat = audio.sampleFormat.toSDLFormat() ?: return
+        println("SDL Audio: Playing output with ${audio.channels} channels, ${audio.sampleRate} samples per second")
 
         memScoped {
             // TODO: better mechanisms to ensure we have same output format here and in resampler of the decoder.
-            val spec = alloc<SDL_AudioSpec>()
-            spec.freq = 44100
-            spec.format = AUDIO_S16SYS.narrow()
-            spec.channels = 2.narrow()
-            spec.silence = 0
-            spec.samples = 4096
-            spec.callback = staticCFunction {
-                userdata, buffer, length ->
-                // This handler will be invoked in the audio thread, so reinit runtime.
-                konan.initRuntimeIfNeeded()
-
-                if (decoder == null) {
-                    val callbackData = userdata!!.reinterpret<IntVar>()
-                    decoder = DecodeWorker(callbackData.pointed.value)
-                }
-                var outPosition = 0
-                while (outPosition < length) {
-                    val frame = decoder!!.nextAudioFrame(length - outPosition)
-                    if (frame != null) {
-                       val toCopy = min(length - outPosition, frame.size - frame.position)
-                       memcpy(buffer + outPosition, frame.buffer.pointed.data + frame.position, toCopy.signExtend())
-                       frame.unref()
-                       outPosition += toCopy
-                    } else {
-                      println("Decoder returned nothing!")
-                      memset(buffer + outPosition, 0, (length - outPosition).signExtend())
-                      break
-                    }
-                }
+            val spec = alloc<SDL_AudioSpec>().apply {
+                freq = audio.sampleRate
+                format = audioFormat
+                channels = audio.channels.narrow()
+                silence = 0
+                samples = 4096
+                userdata = threadData
+                callback = staticCFunction(::audioCallback)
             }
-            threadData!!.pointed.value = player.decoder.workerId()
-            spec.userdata = threadData
+            threadData.pointed.value = player.workerId
             val realSpec = alloc<SDL_AudioSpec>()
             if (SDL_OpenAudio(spec.ptr, realSpec.ptr) < 0)
-                throw Error("SDL_OpenAudio: ${get_SDL_Error()}")
+                throwSDLError("SDL_OpenAudio")
             // TODO: ensure real spec matches what we asked for.
-
+            state = State.PAUSED
             resume()
         }
     }
 
     fun pause() {
-        SDL_PauseAudio(1)
+        state = state.transition(State.PLAYING, State.PAUSED) { SDL_PauseAudio(1) }
     }
 
     fun resume() {
-        SDL_PauseAudio(0)
+        state = state.transition(State.PAUSED, State.PLAYING) { SDL_PauseAudio(0) }
     }
 
     fun stop() {
         pause()
-        SDL_CloseAudio()
-
+        state = state.transition(State.PAUSED, State.STOPPED) { SDL_CloseAudio() }
     }
 }
 
-// This global is only set in the audio thread.
-var decoder: DecodeWorker? = null
+// Only set in the audio thread
+private var decoder: DecoderWorker? = null
+
+private fun audioCallback(userdata: COpaquePointer?, buffer: CPointer<Uint8Var>?, length: Int) {
+    // This handler will be invoked in the audio thread, so reinit runtime.
+    konan.initRuntimeIfNeeded()
+    val decoder = decoder ?:
+        DecoderWorker(userdata!!.reinterpret<IntVar>().pointed.value).also { decoder = it }
+    var outPosition = 0
+    while (outPosition < length) {
+        val frame = decoder.nextAudioFrame(length - outPosition)
+        if (frame != null) {
+            val toCopy = min(length - outPosition, frame.size - frame.position)
+            memcpy(buffer + outPosition, frame.buffer.pointed.data + frame.position, toCopy.signExtend())
+            frame.unref()
+            outPosition += toCopy
+        } else {
+            // println("Decoder returned nothing!")
+            memset(buffer + outPosition, 0, (length - outPosition).signExtend())
+            break
+        }
+    }
+}

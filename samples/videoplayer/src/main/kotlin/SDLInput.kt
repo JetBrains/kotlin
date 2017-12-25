@@ -17,26 +17,15 @@
 import kotlinx.cinterop.*
 import sdl.*
 
-class SDLInput(val player: VideoPlayer) : SDLBase() {
-    var event: CPointer<SDL_Event>? = null
-
-    override fun init() {
-        event = nativeHeap.alloc<SDL_Event>().ptr
-    }
-
-    override fun deinit() {
-        if (event != null) {
-            nativeHeap.free(event!!)
-            event = null
-        }
-    }
+class SDLInput(val player: VideoPlayer) : DisposableContainer() {
+    private val event = arena.alloc<SDL_Event>().ptr
 
     fun check() {
-        while (SDL_PollEvent(event!!.reinterpret()) != 0) {
-            when (event!!.pointed.type) {
+        while (SDL_PollEvent(event.reinterpret()) != 0) {
+            when (event.pointed.type) {
                 SDL_QUIT -> player.stop()
                 SDL_KEYDOWN -> {
-                    val keyboardEvent = event!!.reinterpret<SDL_KeyboardEvent>().pointed
+                    val keyboardEvent = event.reinterpret<SDL_KeyboardEvent>().pointed
                     when (keyboardEvent.keysym.scancode) {
                         SDL_SCANCODE_ESCAPE -> player.stop()
                         SDL_SCANCODE_SPACE -> player.pause()

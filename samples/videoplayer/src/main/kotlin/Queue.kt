@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-class Queue<T>(val maxSize: Int, val none: T) {
-    val array = Array<T>(maxSize, { _ -> none})
-    var head = 0
-    var tail = 0
+class Queue<T>(val maxSize: Int) {
+    private val array = kotlin.arrayOfNulls<Any>(maxSize)
+    private var head = 0
+    private var tail = 0
 
     fun push(element: T) {
         if ((tail + 1) % maxSize == head)
@@ -26,22 +26,25 @@ class Queue<T>(val maxSize: Int, val none: T) {
         tail = (tail + 1) % maxSize
     }
 
-    fun pop() : T {
+    @Suppress("UNCHECKED_CAST")
+    fun pop(): T {
         if (tail == head)
             throw Error("queue underflow")
-        val result = array[head]
-        array[head] = none
+        val result = array[head] as T
+        array[head] = null
         head = (head + 1) % maxSize
         return result
     }
 
-    fun peek() : T {
-        if (tail == head)
-            throw Error("queue underflow")
-        return array[head]
+    @Suppress("UNCHECKED_CAST")
+    fun peek() : T? {
+        if (isEmpty()) return null
+        return array[head] as T
     }
 
     fun size() = if (tail >= head) tail - head else maxSize - (head - tail)
 
     fun isEmpty() = head == tail
+
+    fun popOrNull(): T? = if (isEmpty()) null else pop()
 }

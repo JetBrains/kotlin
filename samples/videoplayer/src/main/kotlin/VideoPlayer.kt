@@ -22,25 +22,36 @@ import platform.posix.*
 enum class State {
     PLAYING,
     STOPPED,
-    PAUSED
+    PAUSED;
+
+    inline fun transition(from: State, to: State, block: () -> Unit): State =
+        if (this == from) {
+            block()
+            to
+        } else this
 }
 
-enum class PixelFormat {
-    INVALID,
-    RGB24,
-    ARGB32
+enum class PlayMode {
+    VIDEO,
+    AUDIO,
+    BOTH;
+
+    val useVideo: Boolean get() = this != AUDIO
+    val useAudio: Boolean get() = this != VIDEO
 }
 
-class VideoPlayer(val requestedWidth: Int, val requestedHeight: Int) {
-    val video = SDLVideo(this)
-    val audio = SDLAudio(this)
-    val input = SDLInput(this)
+class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
+    private val video = disposable { SDLVideo() }
+    private val audio = disposable { SDLAudio(this) }
+    private val input = disposable { SDLInput(this) }
+    private val decoder = disposable { DecoderWorker() }
+    private val now = arena.alloc<platform.posix.timespec>().ptr
 
-    var decoder = DecodeWorker()
-    var state: State = State.STOPPED
-    var hasAudio = false
-    var hasVideo = false
+    private var state = State.STOPPED
 
+    val workerId get() = decoder.workerId
+    var lastFrameTime = 0.0
+    
     fun stop() {
         state = State.STOPPED
     }
@@ -59,132 +70,112 @@ class VideoPlayer(val requestedWidth: Int, val requestedHeight: Int) {
         }
     }
 
-    private var now: CPointer<platform.posix.timespec>? = null
-
     private fun getTime(): Double {
         clock_gettime(platform.posix.CLOCK_MONOTONIC, now)
-        return now!!.pointed.tv_sec + now!!.pointed.tv_nsec / 1_000_000_000.0
+        return now.pointed.tv_sec + now.pointed.tv_nsec / 1e9
     }
 
-    fun init() {
-        // Prealloc this one, to avoid frequent allocation.
-        if (now == null)
-            now = nativeHeap.alloc<platform.posix.timespec>().ptr
-    }
-
-    fun deinit() {
-        if (now != null) {
-            nativeHeap.free(now!!)
-            now = null
+    fun playFile(fileName: String, mode: PlayMode) {
+        println("playFile $fileName")
+        val file = AVFile(fileName)
+        try {
+            file.dumpFormat()
+            val info = decoder.initDecode(file.context, mode.useVideo, mode.useAudio)
+            val videoSize = requestedSize ?: info.video?.size ?: Dimensions(400, 200)
+            // Use requested video size to start SDLVideo
+            info.video?.let { video.start(videoSize) }
+            // Configure decoder output based on actual SDLVideo pixel format
+            val videoOutput = VideoOutput(videoSize, video.pixelFormat())
+            // Use fixed audio output format
+            val audioOutput = AudioOutput(44100, 2, SampleFormat.S16)
+            // Start decoder
+            decoder.start(videoOutput, audioOutput)
+            // Start SDLAudio player
+            info.audio?.let { audio.start(audioOutput) }
+            // Main player loop
+            lastFrameTime = getTime()
+            state = State.PLAYING
+            decoder.requestDecodeChunk() // Fill in frame caches
+            while (state != State.STOPPED) {
+                // Fetch video
+                info.video?.let { playVideoFrame(it) }
+                // Audio is being auto-fetched by the audio thread
+                // Check if there are any input
+                input.check()
+                // Pause support
+                checkPause()
+                // Inter-frame pause, may lead to broken A/V sync, think of better approach
+                if (state == State.PLAYING) syncAV(info)
+                if (decoder.done()) stop()
+            }
+        } finally {
+            stop()
+            audio.stop()
+            video.stop()
+            decoder.stop()
+            file.dispose()
         }
     }
 
-    fun playFile(file: String) {
-        println("playFile $file")
+    private fun playVideoFrame(videoInfo: VideoInfo) {
+        // Fetch next frame
+        val frame = decoder.nextVideoFrame() ?: return
+        // Use video FPS to maintain frame rate
+        val now = getTime()
+        val frameDuration = 1.0 / videoInfo.fps
+        val passedTime = now - lastFrameTime
+        lastFrameTime += frameDuration // try to maintain perfect frame rate
+        // Wait for next frame, if needed
+        if (passedTime < frameDuration) {
+            usleep((1000_000 * (frameDuration - passedTime)).toInt())
+        } else if (passedTime > frameDuration * 1.5){
+            lastFrameTime = now // we fell behind more than half frame, reset time
+        }
+        // Play frame
+        video.nextFrame(frame.buffer.pointed.data!!, frame.lineSize)
+        frame.unref()
+    }
 
-        this.init()
-        decoder.init()
-        video.init()
-        audio.init()
-        input.init()
-
-        try {
-            val info = decoder.initDecode(file, true, true)
-            val windowWidth = if (requestedWidth == 0) {
-                if (info.width < 0) 400 else info.width
-            } else requestedWidth
-            val windowHeight = if (requestedHeight == 0) {
-                if (info.height < 0) 200 else info.height
-            } else requestedHeight
-            hasVideo = info.width > 0 && info.height > 0
-            hasAudio = info.sampleRate > 0 && info.channels > 0
-            if (hasVideo)
-                video.start(windowWidth, windowHeight)
-            decoder.start(windowWidth, windowHeight, video.pixelFormat())
-            if (hasAudio)
-                audio.start(info.sampleRate, info.channels)
-            var lastTimeStamp = getTime()
-            state = State.PLAYING
-            // Fill in frame caches.
-            decoder.requestDecodeChunk().result()
-            while (state != State.STOPPED) {
-                if (hasVideo) {
-                    val frame = decoder.nextVideoFrame()
-                    if (frame == null) {
-                        state = State.STOPPED
-                        continue
-                    }
-                    video.nextFrame(frame.buffer.pointed.data!!, frame.lineSize)
-                    frame.unref()
-                }
-                // Audio is being auto-fetched by the audio thread.
-
-                // Check if there are any input.
-                input.check()
-
-                // Pause support.
-                while (state == State.PAUSED) {
-                    if (hasAudio) audio.pause()
-                    input.check()
-                    usleep(1 * 1000)
-                }
-                if (hasAudio) audio.resume()
-
-                // Interframe pause, may lead to broken A/V sync, think of better approach.
-                if (state == State.PLAYING) {
-                    // Request decoding.
-                    decoder.requestDecodeChunk()
-                    if (hasVideo) {
-                        if (hasAudio) {
-                            // Use sound for A/V sync.
-                            while (!decoder.audioVideoSynced() && state == State.PLAYING) {
-                                usleep(500)
-                                input.check()
-                            }
-                        } else {
-                            // Use video FPS for frame rate.
-                            val now = getTime()
-                            val delta = now - lastTimeStamp
-                            if (delta < 1.0 / info.fps) {
-                                usleep((1000 * 1000 * (1.0 / info.fps - delta)).toInt())
-                            }
-                            lastTimeStamp = now
-                        }
-                    } else {
-                        // For pure sound, playback is driven by demand.
-                        usleep(10 * 1000)
-                    }
-
-                    if (decoder.done()) {
-                        state = State.STOPPED
+    private fun checkPause() {
+        while (state == State.PAUSED) {
+            audio.pause()
+            input.check()
+            usleep(1 * 1000)
+        }
+        audio.resume()
+    }
+    
+    private fun syncAV(info: CodecInfo) {
+        if (info.hasVideo) {
+            if (info.hasAudio) {
+                // Use sound for A/V sync.
+                if (!decoder.audioVideoSynced()) {
+                    println("Resynchronizing video with audio")
+                    while (!decoder.audioVideoSynced() && state == State.PLAYING) {
+                        usleep(500)
+                        input.check()
                     }
                 }
             }
-            if (hasAudio)
-                audio.stop()
-            if (hasVideo)
-                video.stop()
-            decoder.stop()
-        } finally {
-            input.deinit()
-            audio.deinit()
-            video.deinit()
-            decoder.deinit()
-            this.deinit()
+        } else {
+            // For pure sound, playback is driven by demand.
+            usleep(10 * 1000)
         }
     }
 }
 
 fun main(args: Array<String>) {
     if (args.size < 1) {
-        println("usage: koplayer file.ext <width> <height>")
+        println("usage: koplayer file.ext [<width> <height> | 'video' | 'audio' | 'both']")
         exitProcess(1)
     }
-
     av_register_all()
-
-    val width = if (args.size < 3) 0 else args[1].toInt()
-    val height = if (args.size < 3) 0 else args[2].toInt()
-    val player = VideoPlayer(width, height)
-    player.playFile(args[0])
+    val mode = if (args.size == 2) PlayMode.valueOf(args[1].toUpperCase()) else PlayMode.BOTH
+    val requestedSize = if (args.size < 3) null else Dimensions(args[1].toInt(), args[2].toInt())
+    val player = VideoPlayer(requestedSize)
+    try {
+        player.playFile(args[0], mode)
+    } finally {
+        player.dispose()
+    }
 }
