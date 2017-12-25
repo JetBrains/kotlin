@@ -8,7 +8,7 @@ import com.intellij.debugger.streams.trace.TraceInfo
 /**
  * @author Vitaliy.Bibaev
  */
-class MapNotNullResolver : ValuesOrderResolver {
+class FilteredMapResolver : ValuesOrderResolver {
   override fun resolve(info: TraceInfo): ValuesOrderResolver.Result {
     val before = info.valuesOrderBefore
     val after = info.valuesOrderAfter
