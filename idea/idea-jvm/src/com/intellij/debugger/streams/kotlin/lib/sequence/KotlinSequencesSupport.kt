@@ -2,13 +2,15 @@
 package com.intellij.debugger.streams.kotlin.lib.sequence
 
 import com.intellij.debugger.streams.kotlin.resolve.ChunkedResolver
-import com.intellij.debugger.streams.kotlin.resolve.MapNotNullResolver
+import com.intellij.debugger.streams.kotlin.resolve.FilteredMapResolver
 import com.intellij.debugger.streams.kotlin.resolve.WindowedResolver
+import com.intellij.debugger.streams.kotlin.trace.impl.handler.sequence.FilterIsInstanceHandler
 import com.intellij.debugger.streams.lib.IntermediateOperation
 import com.intellij.debugger.streams.lib.impl.*
 import com.intellij.debugger.streams.resolve.AppendResolver
 import com.intellij.debugger.streams.resolve.PairMapResolver
 import com.intellij.debugger.streams.trace.impl.handler.unified.DistinctTraceHandler
+import com.intellij.debugger.streams.trace.impl.interpret.SimplePeekCallTraceInterpreter
 
 /**
  * @author Vitaliy.Bibaev
@@ -16,7 +18,9 @@ import com.intellij.debugger.streams.trace.impl.handler.unified.DistinctTraceHan
 class KotlinSequencesSupport : LibrarySupportBase() {
   init {
     addIntermediateOperationsSupport(*filterOperations("filter", "filterNot", "filterIndexed",
-        "filterIsInstance", "drop", "dropWhile", "minus", "minusElement", "take", "takeWhile", "onEach", "asSequence"))
+        "drop", "dropWhile", "minus", "minusElement", "take", "takeWhile", "onEach", "asSequence"))
+
+    addIntermediateOperationsSupport(FilterIsInstanceOperationHandler())
 
     addIntermediateOperationsSupport(*mapOperations("map", "mapIndexed", "requireNoNulls", "withIndex",
         "zip", "constrainOnce"))
@@ -33,7 +37,7 @@ class KotlinSequencesSupport : LibrarySupportBase() {
 
     addIntermediateOperationsSupport(OrderBasedOperation("zipWithNext", PairMapResolver()))
 
-    addIntermediateOperationsSupport(OrderBasedOperation("mapNotNull", MapNotNullResolver()))
+    addIntermediateOperationsSupport(OrderBasedOperation("mapNotNull", FilteredMapResolver()))
     addIntermediateOperationsSupport(OrderBasedOperation("chunked", ChunkedResolver()))
     addIntermediateOperationsSupport(OrderBasedOperation("windowed", WindowedResolver()))
   }
@@ -49,4 +53,8 @@ class KotlinSequencesSupport : LibrarySupportBase() {
 
   private fun sortedOperations(vararg names: String): Array<IntermediateOperation> =
       names.map { SortedOperation(it) }.toTypedArray()
+
+  private class FilterIsInstanceOperationHandler()
+    : IntermediateOperationBase("filterIsInstance", ::FilterIsInstanceHandler,
+      SimplePeekCallTraceInterpreter(), FilteredMapResolver())
 }
