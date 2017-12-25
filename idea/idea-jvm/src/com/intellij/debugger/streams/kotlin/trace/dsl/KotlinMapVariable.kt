@@ -15,7 +15,7 @@ class KotlinMapVariable(type: MapType, name: String) : MapVariableBase(type, nam
   override fun set(key: Expression, newValue: Expression): Expression =
     TextExpression("${toCode()}[${key.toCode()}] = ${newValue.toCode()}")
 
-  override fun contains(key: Expression): Expression = TextExpression("${key.toCode()} in ${toCode()}")
+  override fun contains(key: Expression): Expression = TextExpression("(${key.toCode()} in ${toCode()})")
 
   override fun size(): Expression = TextExpression("${toCode()}.size")
 
