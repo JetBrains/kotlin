@@ -13,22 +13,22 @@ toList
     after: nothing
 mappings for distinctBy
   direct:
-    1 -> nothing
-    3 -> nothing
-    5 -> nothing
-    6 -> nothing
-    7 -> nothing
-    8 -> nothing
-    9 -> nothing
-    10 -> nothing
-    11 -> nothing
-    12 -> nothing
-    14 -> nothing
+    1 -> 2
+    3 -> 4
+    5 -> 4
+    6 -> 4
+    7 -> 4
+    8 -> 2
+    9 -> 4
+    10 -> 2
+    11 -> 2
+    12 -> 13
+    14 -> 15
   reverse:
-    nothing <- 2
-    nothing <- 4
-    nothing <- 13
-    nothing <- 15
+    1,8,10,11 <- 2
+    3,5,6,7,9 <- 4
+    12 <- 13
+    14 <- 15
 mappings for toList
   direct:
     2 -> nothing
@@ -37,7 +37,6 @@ mappings for toList
     15 -> nothing
   reverse:
     empty
-WRONG!
 Disconnected from the target VM
 
 Process finished with exit code 0
