@@ -207,8 +207,6 @@ private class AudioDecoder(
         }
 
         with (audioCodecContext) {
-            var inputChannelLayout = if (channel_layout != 0L)
-                channel_layout else av_get_default_channel_layout(audioCodecContext.channels)
             setResampleOpt("in_channel_layout", channel_layout.narrow())
             setResampleOpt("out_channel_layout", output.channelLayout)
             setResampleOpt("in_sample_rate", sample_rate)

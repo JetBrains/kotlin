@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import kotlinx.cinterop.*
 
@@ -38,11 +53,10 @@ abstract class DisposableContainer : Disposable {
             throw e
         }
 
-    // TODO: It shall be inline, but crashes backend
-    fun <T> disposable(
+    inline fun <T> disposable(
         message: String = "disposable",
         create: () -> T?,
-        dispose: (T) -> Unit
+        crossinline dispose: (T) -> Unit
     ): T =
         tryConstruct {
             create()?.also {
@@ -50,13 +64,15 @@ abstract class DisposableContainer : Disposable {
             } ?: throw Error(message)
         }
 
-    // TODO: It shall be inline, but crashes backend
-    fun <T : Disposable> disposable(create: () -> T): T =
+    inline fun <T : Disposable> disposable(create: () -> T): T =
         disposable(
             create = create,
             dispose = { it.dispose() })
 
-    fun <T : CPointed> sdlDisposable(message: String, ptr: CPointer<T>?, dispose: (CPointer<T>) -> Unit): CPointer<T> =
+    inline fun <T : CPointed> sdlDisposable(
+            message: String,
+            ptr: CPointer<T>?,
+            crossinline dispose: (CPointer<T>) -> Unit): CPointer<T> =
         disposable(
             create = { ptr ?: throwSDLError(message) },
             dispose = dispose)
