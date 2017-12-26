@@ -31,13 +31,13 @@ class IntroduceWhenSubjectInspection : AbstractApplicabilityBasedInspection<KtWh
 
     override fun inspectionTarget(element: KtWhenExpression) = element.whenKeyword
 
-    override fun inspectionText(element: KtWhenExpression) = "'when' with argument should be used"
+    override fun inspectionText(element: KtWhenExpression) = "'when' with subject should be used"
 
-    override val defaultFixText = "Introduce 'when' argument"
+    override val defaultFixText = "Introduce 'when' subject"
 
     override fun fixText(element: KtWhenExpression): String {
         val subject = element.getSubjectToIntroduce() ?: return ""
-        return "Introduce '${subject.text}' as argument to 'when'"
+        return "Introduce '${subject.text}' as subject of 'when'"
     }
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {

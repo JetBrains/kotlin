@@ -1,4 +1,4 @@
-// FIX: Replace with '/' operator
+// FIX: Replace with '/'
 fun test() {
     class Test {
         operator fun div(a: Int): Test = Test()

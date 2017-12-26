@@ -49,15 +49,15 @@ class SimplifyNegatedBinaryExpressionInspection : AbstractApplicabilityBasedInsp
 
     override fun inspectionTarget(element: KtPrefixExpression) = element.operationReference
 
-    override fun inspectionText(element: KtPrefixExpression) = "Negated expression should be simplified"
+    override fun inspectionText(element: KtPrefixExpression) = "Negated operation should be simplified"
 
-    override val defaultFixText = "Simplify negated expression"
+    override val defaultFixText = "Simplify negated operation"
 
     override fun fixText(element: KtPrefixExpression): String {
         val expression = KtPsiUtil.deparenthesize(element.baseExpression) as? KtOperationExpression ?: return defaultFixText
         val operation = expression.operationReference.getReferencedNameElementType() as? KtSingleValueToken ?: return defaultFixText
         val negatedOperation = operation.negate() ?: return defaultFixText
-        return "Simplify negated '${operation.value}' expression to '${negatedOperation.value}'"
+        return "Replace negated '${operation.value}' operation with '${negatedOperation.value}'"
     }
 
     override fun isApplicable(element: KtPrefixExpression): Boolean {

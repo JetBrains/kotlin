@@ -72,7 +72,7 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
         return target.name != OperatorNameConventions.SET || !element.isUsedAsExpression(bindingContext)
     }
 
-    override fun inspectionText(element: KtDotQualifiedExpression) = "Call replaceable with indexing operator"
+    override fun inspectionText(element: KtDotQualifiedExpression) = "Should be replaced with indexing"
 
     override fun inspectionHighlightType(element: KtDotQualifiedExpression): ProblemHighlightType {
         return if ((element.toResolvedCall(BodyResolveMode.PARTIAL)!!.resultingDescriptor as FunctionDescriptor).isExplicitOperator()) {

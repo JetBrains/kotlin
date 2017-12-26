@@ -55,7 +55,7 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
     override val defaultFixText = "Replace with operator-assignment"
 
     override fun fixText(element: KtBinaryExpression) =
-            "Replace with ${element.operationReference.operationSignTokenType?.value}= expression"
+            "Replace with '${element.operationReference.operationSignTokenType?.value}='"
 
     private fun checkExpressionRepeat(variableExpression: KtNameReferenceExpression, expression: KtBinaryExpression, bindingContext: BindingContext): Boolean {
         val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, expression.operationReference]?.containingDeclaration

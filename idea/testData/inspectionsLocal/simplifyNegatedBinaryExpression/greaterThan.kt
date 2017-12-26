@@ -1,4 +1,4 @@
-// FIX: Simplify negated '>' expression to '<='
+// FIX: Replace negated '>' operation with '<='
 fun test(n: Int) {
     <caret>!(0 > 1)
 }

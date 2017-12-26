@@ -5,7 +5,7 @@
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="singleArgument.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get' or 'set' call</problem_class>
-    <description>Call replaceable with indexing operator</description>
+    <description>Should be replaced with indexing</description>
   </problem>
 
   <problem>
@@ -14,7 +14,7 @@
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="multiArgument.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get' or 'set' call</problem_class>
-    <description>Call replaceable with indexing operator</description>
+    <description>Should be replaced with indexing</description>
   </problem>
 
   <problem>
@@ -23,7 +23,7 @@
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="functionalArgument.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get' or 'set' call</problem_class>
-    <description>Call replaceable with indexing operator</description>
+    <description>Should be replaced with indexing</description>
   </problem>
 
   <problem>
@@ -32,7 +32,7 @@
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="extensionFunction.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get' or 'set' call</problem_class>
-    <description>Call replaceable with indexing operator</description>
+    <description>Should be replaced with indexing</description>
   </problem>
 
   <problem>
@@ -41,7 +41,7 @@
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="argumentAndFunction.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get' or 'set' call</problem_class>
-    <description>Call replaceable with indexing operator</description>
+    <description>Should be replaced with indexing</description>
   </problem>
 
   <problem>
@@ -50,7 +50,7 @@
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="acceptableVararg.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get' or 'set' call</problem_class>
-    <description>Call replaceable with indexing operator</description>
+    <description>Should be replaced with indexing</description>
   </problem>
 
   <problem>
@@ -59,7 +59,7 @@
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="qualifier.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get' or 'set' call</problem_class>
-    <description>Call replaceable with indexing operator</description>
+    <description>Should be replaced with indexing</description>
   </problem>
 
   <problem>
@@ -68,7 +68,7 @@
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="set.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get' or 'set' call</problem_class>
-    <description>Call replaceable with indexing operator</description>
+    <description>Should be replaced with indexing</description>
   </problem>
 
   <problem>
@@ -77,6 +77,6 @@
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="set2.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get' or 'set' call</problem_class>
-    <description>Call replaceable with indexing operator</description>
+    <description>Should be replaced with indexing</description>
   </problem>
 </problems>

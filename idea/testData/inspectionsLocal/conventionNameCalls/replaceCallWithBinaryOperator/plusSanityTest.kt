@@ -1,4 +1,4 @@
-// FIX: Replace with '+' operator
+// FIX: Replace with '+'
 fun test() {
     class Test {
         operator fun plus(a: Int): Test = Test()

@@ -85,7 +85,7 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
     override fun fixText(element: KtDotQualifiedExpression): String {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression ?: return defaultFixText
         val operation = operation(calleeExpression) ?: return defaultFixText
-        return "Replace with '${operation.value}' operator"
+        return "Replace with '${operation.value}'"
     }
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
