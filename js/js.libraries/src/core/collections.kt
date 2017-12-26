@@ -139,3 +139,19 @@ private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in 
         list[i] = array[i]
     }
 }
+
+internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {
+    return arrayOfNulls<Any>(size).unsafeCast<Array<T>>()
+}
+
+// no singleton map implementation in js, return map as is
+internal inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = this
+
+internal inline fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> = this.toMutableMap()
+
+internal inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
+        if (isVarargs)
+        // no need to copy vararg array in JS
+            this
+        else
+            this.copyOf()
