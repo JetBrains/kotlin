@@ -17,15 +17,16 @@
 package org.jetbrains.kotlin.samWithReceiver.ide
 
 import org.jetbrains.kotlin.annotation.plugin.ide.AbstractGradleImportHandler
+import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedCompilerPluginSetup
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor
 import org.jetbrains.kotlin.utils.PathUtil
 
-class SamWithReceiverGradleProjectImportHandler : AbstractGradleImportHandler() {
+class SamWithReceiverGradleProjectImportHandler : AbstractGradleImportHandler<SamWithReceiverModel>() {
     override val compilerPluginId = SamWithReceiverCommandLineProcessor.PLUGIN_ID
     override val pluginName = "sam-with-receiver"
     override val annotationOptionName = SamWithReceiverCommandLineProcessor.ANNOTATION_OPTION.name
-    override val dataStorageTaskName = "samWithReceiverDataStorageTask"
     override val pluginJarFileFromIdea = PathUtil.kotlinPathsForIdeaPlugin.samWithReceiverJarPath
+    override val modelKey = SamWithReceiverProjectResolverExtension.KEY
 
     override fun getAnnotationsForPreset(presetName: String): List<String> {
         for ((name, annotations) in SamWithReceiverCommandLineProcessor.SUPPORTED_PRESETS.entries) {
