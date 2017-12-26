@@ -918,14 +918,11 @@ compileTestKotlin {
             buildscript {
                 repositories {
                     mavenCentral()
-                    maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
                 }
 
                 dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                    classpath("org.jetbrains.kotlin:kotlin-allopen:1.1.0")
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.10")
+                    classpath("org.jetbrains.kotlin:kotlin-allopen:1.2.10")
                 }
             }
 
@@ -944,6 +941,46 @@ compileTestKotlin {
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional",
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async",
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable"),
+                    compilerArguments!!.pluginOptions!!.toList()
+            )
+        }
+    }
+
+    @Test
+    fun testNoArgInvokeInitializers() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.10")
+                    classpath("org.jetbrains.kotlin:kotlin-noarg:1.2.10")
+                }
+            }
+
+            apply plugin: 'kotlin'
+            apply plugin: "kotlin-noarg"
+
+            noArg {
+                invokeInitializers = true
+                annotation("NoArg")
+            }
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals(
+                    "-version",
+                    compilerSettings!!.additionalArguments
+            )
+            Assert.assertEquals(
+                    listOf("plugin:org.jetbrains.kotlin.noarg:annotation=NoArg",
+                           "plugin:org.jetbrains.kotlin.noarg:invokeInitializers=true"),
                     compilerArguments!!.pluginOptions!!.toList()
             )
         }
