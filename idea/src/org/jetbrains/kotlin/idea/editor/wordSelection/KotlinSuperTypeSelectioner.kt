@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinSuperTypeSelectioner : ExtendWordSelectionHandlerBase() {
-    override fun canSelect(e: PsiElement?): Boolean {
+    override fun canSelect(e: PsiElement): Boolean {
         return e is KtSuperTypeList && e.getStrictParentOfType<KtObjectDeclaration>() == null
     }
 
