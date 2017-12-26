@@ -119,7 +119,7 @@ class JSTestGenerator(val context: TranslationContext) {
     }
 
     private fun ClassDescriptor.instance(context: TranslationContext): JsExpression {
-        return if (isCompanionObject || kind == ClassKind.OBJECT) {
+        return if (kind == ClassKind.OBJECT) {
             ReferenceTranslator.translateAsValueReference(this, context)
         }
         else {
