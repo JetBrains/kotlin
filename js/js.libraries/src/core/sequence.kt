@@ -17,10 +17,8 @@
 package kotlin.sequences
 
 internal class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
-    @Volatile private var sequenceRef: Sequence<T>? = sequence
-    //private val lock = Any()
+    private var sequenceRef: Sequence<T>? = sequence
 
-    //TODO: Synchronize with the synchonized() method
     override fun iterator(): Iterator<T> {
         val sequence = sequenceRef ?: throw IllegalStateException("This sequence can be consumed only once.")
         sequenceRef = null
