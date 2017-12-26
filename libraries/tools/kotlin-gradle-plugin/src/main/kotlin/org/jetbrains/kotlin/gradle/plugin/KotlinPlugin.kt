@@ -837,8 +837,6 @@ internal class SubpluginEnvironment(
     }
 }
 
-private val fileOptionsPathSensitivity = PathSensitivity.RELATIVE
-
 internal fun Task.registerSubpluginOptionAsInput(subpluginId: String, option: SubpluginOption) {
     when (option) {
         is WrapperSubpluginOption -> {
@@ -860,7 +858,7 @@ internal fun Task.registerSubpluginOptionAsInput(subpluginId: String, option: Su
                         if (option.kind == FileOptionKind.CLASSPATH_INPUT)
                             inputs.files(option.files).withNormalizer(ClasspathNormalizer::class.java)
                         else
-                            inputs.files(option.files).withPathSensitivity(fileOptionsPathSensitivity)
+                            inputs.files(option.files).withPathSensitivity(PathSensitivity.RELATIVE)
                     }
                 }
             }
