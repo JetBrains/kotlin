@@ -19,51 +19,6 @@ package kotlin
 import kotlin.annotation.AnnotationTarget.FIELD
 import kotlin.annotation.AnnotationTarget.PROPERTY
 
-open expect class Error : Throwable {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class Exception : Throwable {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class IllegalArgumentException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class IllegalStateException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class IndexOutOfBoundsException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class NoSuchElementException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class RuntimeException : Exception {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class UnsupportedOperationException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-// TODO: Provide typealias impl in stdlib-jvm
-open expect class AssertionError : Error {
-    constructor()
-    constructor(message: String)
-}
 
 
 expect interface Comparator<T> {
