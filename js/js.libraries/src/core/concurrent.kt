@@ -17,23 +17,10 @@
 package kotlin
 
 
-// Note:
-// Right now we don't want to have neither 'volatile' nor 'synchronized' at runtime,
-// so they annotated as `external` to avoid warnings/errors from some minifiers.
-// They was reserved word in ECMAScript 2, but is not since ECMAScript 5.
-
-// Additional note:
-// Although it's reasonable to mark these annotations as `@native` (`external` since 1.1),
-// we prohibit marking annotations this way.
-// TODO: Another workaround is required to remove these annotations from kotlin.js
-
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.SOURCE)
-public annotation class Volatile
-
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-@Retention(AnnotationRetention.SOURCE)
-public annotation class Synchronized
+@Deprecated("Use Synchronized annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Synchronized"), level = DeprecationLevel.WARNING)
+public typealias Synchronized = kotlin.jvm.Synchronized
+@Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
+public typealias Volatile = kotlin.jvm.Volatile
 
 @kotlin.internal.InlineOnly
 public inline fun <R> synchronized(@Suppress("UNUSED_PARAMETER") lock: Any, block: () -> R): R = block()
