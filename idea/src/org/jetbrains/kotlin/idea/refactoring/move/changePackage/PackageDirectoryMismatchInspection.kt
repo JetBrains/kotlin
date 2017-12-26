@@ -53,8 +53,11 @@ class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
                     val dirName = if (qualifiedName.isEmpty()) "source root" else "'${qualifiedName.replace('.', '/')}'"
                     fixes += MoveFileToPackageFix(dirName)
                     val fqNameByDirectory = file.getFqNameByDirectory()
-                    if (fqNameByDirectory.hasIdentifiersOnly()) {
-                        fixes += ChangePackageFix(fqNameByDirectory)
+                    when {
+                        fqNameByDirectory.isRoot ->
+                            fixes += ChangePackageFix("source root")
+                        fqNameByDirectory.hasIdentifiersOnly() ->
+                            fixes += ChangePackageFix("'${fqNameByDirectory.asString()}'")
                     }
 
                     holder.registerProblem(
@@ -105,10 +108,10 @@ class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
         }
     }
 
-    private class ChangePackageFix(val fqNameByDirectory: FqName) : LocalQuickFix {
+    private class ChangePackageFix(val packageName: String) : LocalQuickFix {
         override fun getFamilyName() = "Change file's package to match directory"
 
-        override fun getName() = "Change file's package to '${fqNameByDirectory.asString()}'"
+        override fun getName() = "Change file's package to $packageName"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val directive = descriptor.psiElement as? KtPackageDirective ?: return
