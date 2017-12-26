@@ -227,7 +227,7 @@ fun getSomething() = 10
             assertCompiledKotlinSources(relativePaths)
         }
 
-        val activityLayout = project.projectFile("activity_main.xml")
+        val activityLayout = File(project.projectDir, "app/src/main/res/layout/activity_main.xml")
         activityLayout.modify { it.replace("textView", "newTextView") }
 
         project.build("assembleDebug", options = options) {
