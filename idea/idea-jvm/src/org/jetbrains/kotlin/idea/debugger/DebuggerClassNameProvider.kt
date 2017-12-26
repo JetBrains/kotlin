@@ -20,7 +20,6 @@ import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.engine.DebuggerUtils
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ReferenceType
@@ -46,7 +45,6 @@ import java.util.*
 
 class DebuggerClassNameProvider(
         private val debugProcess: DebugProcess,
-        scopes: List<GlobalSearchScope>,
         val findInlineUseSites: Boolean = true,
         val alwaysReturnLambdaParentClass: Boolean = true
 ) {
@@ -71,7 +69,7 @@ class DebuggerClassNameProvider(
         }
     }
 
-    private val inlineUsagesSearcher = InlineCallableUsagesSearcher(debugProcess, scopes)
+    private val inlineUsagesSearcher = InlineCallableUsagesSearcher(debugProcess)
 
     /**
      * Returns classes in which the given line number *is* present.

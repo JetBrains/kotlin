@@ -26,9 +26,12 @@ import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.requests.ClassPrepareRequestor
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
+import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ThreeState
 import com.intellij.xdebugger.frame.XStackFrame
@@ -60,10 +63,24 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
 class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
+    private val allKotlinFilesScope =
+            object : DelegatingGlobalSearchScope(
+                    KotlinSourceFilterScope.projectAndLibrariesSources(GlobalSearchScope.allScope(myDebugProcess.project), myDebugProcess.project)
+            ) {
+                private val projectIndex = ProjectRootManager.getInstance(myDebugProcess.project).fileIndex
+                private val scopeComparator =
+                        Comparator.comparing(projectIndex::isInSourceContent)
+                                .thenComparing(projectIndex::isInLibrarySource)
+                                .thenComparing { file1, file2 -> super.compare(file1, file2) }
 
-    private val scopes: List<GlobalSearchScope> = listOf(
+                override fun compare(file1: VirtualFile, file2: VirtualFile): Int {
+                    return scopeComparator.compare(file1, file2)
+                }
+            }
+
+    private val sourceSearchScopes: List<GlobalSearchScope> = listOf(
             myDebugProcess.searchScope,
-            KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(myDebugProcess.project), myDebugProcess.project)
+            allKotlinFilesScope
     )
 
     override fun evaluateCondition(context: EvaluationContext, frame: StackFrameProxyImpl, location: Location, expression: String): ThreeState? {
@@ -100,12 +117,12 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                     val javaClassName = JvmClassName.byInternalName(defaultInternalName(location))
                     val project = myDebugProcess.project
 
-                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, scopes, javaClassName, javaSourceFileName)
+                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, sourceSearchScopes, javaClassName, javaSourceFileName)
                     if (defaultPsiFile != null) {
                         return SourcePosition.createFromLine(defaultPsiFile, 0)
                     }
                 }
-                catch(e: AbsentInformationException) {
+                catch (e: AbsentInformationException) {
                     // ignored
                 }
             }
@@ -208,7 +225,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 continue
             }
 
-            val internalClassNames = DebuggerClassNameProvider(myDebugProcess, scopes, alwaysReturnLambdaParentClass = false)
+            val internalClassNames = DebuggerClassNameProvider(myDebugProcess, alwaysReturnLambdaParentClass = false)
                     .getOuterClassNamesForElement(literal.firstChild)
                     .classNames
 
@@ -257,7 +274,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         val project = myDebugProcess.project
 
-        return DebuggerUtils.findSourceFileForClass(project, scopes, className, sourceName)
+        return DebuggerUtils.findSourceFileForClass(project, sourceSearchScopes, className, sourceName)
     }
 
     private fun defaultInternalName(location: Location): String {
@@ -271,7 +288,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val psiFile = sourcePosition.file
         if (psiFile is KtFile) {
             if (!ProjectRootsUtil.isInProjectOrLibSource(psiFile)) return emptyList()
-            return DebuggerClassNameProvider(myDebugProcess, scopes).getClassesForPosition(sourcePosition)
+            return DebuggerClassNameProvider(myDebugProcess).getClassesForPosition(sourcePosition)
         }
 
         if (psiFile is ClsFileImpl) {
@@ -286,7 +303,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     }
 
     fun originalClassNamesForPosition(position: SourcePosition): List<String> {
-        return DebuggerClassNameProvider(myDebugProcess, scopes, findInlineUseSites = false).getOuterClassNamesForPosition(position)
+        return DebuggerClassNameProvider(myDebugProcess, findInlineUseSites = false).getOuterClassNamesForPosition(position)
     }
 
     override fun locationsOfLine(type: ReferenceType, position: SourcePosition): List<Location> {
@@ -325,7 +342,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             throw NoDataException.INSTANCE
         }
 
-        val classNames = DebuggerClassNameProvider(myDebugProcess, scopes).getOuterClassNamesForPosition(position)
+        val classNames = DebuggerClassNameProvider(myDebugProcess).getOuterClassNamesForPosition(position)
         return classNames.flatMap { name ->
             listOfNotNull(
                     myDebugProcess.requestsManager.createClassPrepareRequest(requestor, name),

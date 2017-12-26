@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.debugger.DebuggerClassNameProvider.Companion.ge
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -38,10 +39,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
-class InlineCallableUsagesSearcher(
-        private val myDebugProcess: DebugProcess,
-        val scopes: List<GlobalSearchScope>
-) {
+class InlineCallableUsagesSearcher(private val myDebugProcess: DebugProcess) {
     fun findInlinedCalls(
             declaration: KtDeclaration,
             bindingContext: BindingContext = KotlinDebuggerCaches.getOrCreateTypeMapper(declaration).bindingContext,
@@ -102,7 +100,8 @@ class InlineCallableUsagesSearcher(
     private fun getScopeForInlineDeclarationUsages(inlineDeclaration: KtDeclaration): GlobalSearchScope {
         val virtualFile = runReadAction { inlineDeclaration.containingFile.virtualFile }
         return if (virtualFile != null && ProjectRootsUtil.isLibraryFile(myDebugProcess.project, virtualFile)) {
-            GlobalSearchScope.union(scopes.toTypedArray())
+            myDebugProcess.searchScope.uniteWith(
+                    KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(myDebugProcess.project), myDebugProcess.project))
         }
         else {
             myDebugProcess.searchScope
