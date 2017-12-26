@@ -21,6 +21,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.*
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder
@@ -158,7 +159,7 @@ class KaptModelBuilderService : AbstractKotlinGradleModelBuilder() {
     override fun canBuild(modelName: String?): Boolean = modelName == KaptGradleModel::class.java.name
 
     override fun buildAll(modelName: String?, project: Project): Any {
-        val kaptPlugin = project.plugins.findPlugin("kotlin-kapt")
+        val kaptPlugin: Plugin<*>? = project.plugins.findPlugin("kotlin-kapt")
         val kaptIsEnabled = kaptPlugin != null
 
         val sourceSets = mutableListOf<KaptSourceSetModel>()
