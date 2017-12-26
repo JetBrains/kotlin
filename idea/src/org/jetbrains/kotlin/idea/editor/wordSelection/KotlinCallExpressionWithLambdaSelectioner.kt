@@ -29,7 +29,7 @@ class KotlinCallExpressionWithLambdaSelectioner : ExtendWordSelectionHandlerBase
     override fun canSelect(e: PsiElement): Boolean
             = e is KtCallExpression && e.hasLambda()
 
-    override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor?): List<TextRange>? {
+    override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         if (e !is KtCallExpression) return null
 
         val endOffset = e.valueArgumentList?.endOffset ?: return null
