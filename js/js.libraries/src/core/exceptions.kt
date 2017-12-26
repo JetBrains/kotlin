@@ -16,32 +16,96 @@
 
 package kotlin
 
-public open class Error(message: String? = null) : Throwable(message, null)
+public open class Error : Throwable {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?): super(message, cause)
+    constructor(cause: Throwable?) : super(cause)
+}
 
-public open class Exception(message: String? = null) : Throwable(message, null)
+public open class Exception : Throwable {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?): super(message, cause)
+    constructor(cause: Throwable?) : super(cause)
+}
 
-public open class RuntimeException(message: String? = null) : Exception(message)
+public open class RuntimeException : Exception {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?): super(message, cause)
+    constructor(cause: Throwable?) : super(cause)
+}
 
-public open class IllegalArgumentException(message: String? = null) : RuntimeException(message)
+public open class IllegalArgumentException : RuntimeException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?): super(message, cause)
+    constructor(cause: Throwable?) : super(cause)
+}
 
-public open class IllegalStateException(message: String? = null) : RuntimeException(message)
+public open class IllegalStateException : RuntimeException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?): super(message, cause)
+    constructor(cause: Throwable?) : super(cause)
+}
 
-public open class IndexOutOfBoundsException(message: String? = null) : RuntimeException(message)
+public open class IndexOutOfBoundsException : RuntimeException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+}
 
-public open class ConcurrentModificationException(message: String? = null) : RuntimeException(message)
+public open class ConcurrentModificationException : RuntimeException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?): super(message, cause)
+    constructor(cause: Throwable?) : super(cause)
+}
 
-public open class UnsupportedOperationException(message: String? = null) : RuntimeException(message)
+public open class UnsupportedOperationException : RuntimeException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?): super(message, cause)
+    constructor(cause: Throwable?) : super(cause)
+}
 
-public open class NumberFormatException(message: String? = null) : RuntimeException(message)
+public open class NumberFormatException : IllegalArgumentException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+}
 
-public open class NullPointerException(message: String? = null) : RuntimeException(message)
+public open class NullPointerException : RuntimeException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+}
 
-public open class ClassCastException(message: String? = null) : RuntimeException(message)
+public open class ClassCastException : RuntimeException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+}
 
-public open class AssertionError(message: String? = null) : Error(message)
+public open class AssertionError : Error {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: Any?) : super(message.toString(), message as? Throwable)
+}
 
-public open class NoSuchElementException(message: String? = null) : Exception(message)
+public open class NoSuchElementException : Exception {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+}
 
-public open class NoWhenBranchMatchedException(message: String? = null) : RuntimeException(message)
+public open class NoWhenBranchMatchedException : RuntimeException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?): super(message, cause)
+    constructor(cause: Throwable?) : super(cause)
+}
 
-public open class UninitializedPropertyAccessException(message: String? = null) : RuntimeException(message)
+public open class UninitializedPropertyAccessException : RuntimeException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?): super(message, cause)
+    constructor(cause: Throwable?) : super(cause)
+}
