@@ -155,12 +155,12 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
                               problemDescriptors.all { it.highlightType.toString() == highlightExpectedString })
         }
 
-        val localFixActions = problemDescriptors.flatMap { problem ->
+        val allLocalFixActions = problemDescriptors.flatMap { problem ->
             val fixes = problem.fixes
             fixes?.toList() ?: emptyList()
-        }.filter { fix -> localFixTextString == null || fix.name == localFixTextString }
-
-        val availableDescription = localFixActions.joinToString { it.name }
+        }
+        val localFixActions = allLocalFixActions.filter { fix -> localFixTextString == null || fix.name == localFixTextString }
+        val availableDescription = allLocalFixActions.joinToString { it.name }
 
         val fixDescription = localFixTextString?.let { "with specified text '$localFixTextString'"} ?: ""
         TestCase.assertTrue("No fix action $fixDescription\n" +
