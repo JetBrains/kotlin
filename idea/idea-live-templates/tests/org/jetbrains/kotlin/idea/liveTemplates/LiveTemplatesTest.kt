@@ -73,6 +73,14 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
         paremeterless()
     }
 
+    fun testSoutf() {
+        paremeterless()
+    }
+
+    fun testSoutf_InCompanion() {
+        paremeterless()
+    }
+
     fun testSerr() {
         paremeterless()
     }
