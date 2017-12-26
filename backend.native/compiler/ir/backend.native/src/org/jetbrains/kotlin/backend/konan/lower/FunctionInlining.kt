@@ -331,7 +331,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         parameterToArgumentOld.forEach {
             val parameterDescriptor = it.parameterDescriptor
 
-            if (it.isInlinableLambda) {                                                     // If argument is inlinable lambda.
+            if (it.isInlinableLambda || it.argumentExpression is IrGetValue) {              // If argument is inlinable lambda. IrGetValue is skipped because of recursive inline.
                 substituteMap[parameterDescriptor] = it.argumentExpression                  // Associate parameter with lambda argument.
                 return@forEach
             }
