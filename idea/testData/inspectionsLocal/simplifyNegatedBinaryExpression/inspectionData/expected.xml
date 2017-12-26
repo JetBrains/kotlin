@@ -7,7 +7,7 @@
         <entry_point TYPE="file" FQNAME="temp:///src/notIs.kt"/>
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Negated boolean expression that can be simplified
         </problem_class>
-        <description>Negated expression can be simplified</description>
+        <description>Negated expression should be simplified</description>
     </problem>
 
     <problem>
@@ -17,7 +17,7 @@
         <entry_point TYPE="file" FQNAME="temp:///src/notIn.kt"/>
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Negated boolean expression that can be simplified
         </problem_class>
-        <description>Negated expression can be simplified</description>
+        <description>Negated expression should be simplified</description>
     </problem>
 
     <problem>
@@ -27,7 +27,7 @@
         <entry_point TYPE="file" FQNAME="temp:///src/notEquals.kt"/>
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Negated boolean expression that can be simplified
         </problem_class>
-        <description>Negated expression can be simplified</description>
+        <description>Negated expression should be simplified</description>
     </problem>
 
     <problem>
@@ -37,7 +37,7 @@
         <entry_point TYPE="file" FQNAME="temp:///src/lessThanOrEquals.kt"/>
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Negated boolean expression that can be simplified
         </problem_class>
-        <description>Negated expression can be simplified</description>
+        <description>Negated expression should be simplified</description>
     </problem>
 
     <problem>
@@ -47,7 +47,7 @@
         <entry_point TYPE="file" FQNAME="temp:///src/lessThan.kt"/>
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Negated boolean expression that can be simplified
         </problem_class>
-        <description>Negated expression can be simplified</description>
+        <description>Negated expression should be simplified</description>
     </problem>
 
     <problem>
@@ -57,7 +57,7 @@
         <entry_point TYPE="file" FQNAME="temp:///src/is.kt"/>
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Negated boolean expression that can be simplified
         </problem_class>
-        <description>Negated expression can be simplified</description>
+        <description>Negated expression should be simplified</description>
     </problem>
 
     <problem>
@@ -67,7 +67,7 @@
         <entry_point TYPE="file" FQNAME="temp:///src/in.kt"/>
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Negated boolean expression that can be simplified
         </problem_class>
-        <description>Negated expression can be simplified</description>
+        <description>Negated expression should be simplified</description>
     </problem>
 
     <problem>
@@ -77,7 +77,7 @@
         <entry_point TYPE="file" FQNAME="temp:///src/greaterThanOrEquals.kt"/>
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Negated boolean expression that can be simplified
         </problem_class>
-        <description>Negated expression can be simplified</description>
+        <description>Negated expression should be simplified</description>
     </problem>
 
     <problem>
@@ -87,7 +87,7 @@
         <entry_point TYPE="file" FQNAME="temp:///src/greaterThan.kt"/>
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Negated boolean expression that can be simplified
         </problem_class>
-        <description>Negated expression can be simplified</description>
+        <description>Negated expression should be simplified</description>
     </problem>
 
     <problem>
@@ -97,7 +97,7 @@
         <entry_point TYPE="file" FQNAME="temp:///src/equals.kt"/>
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Negated boolean expression that can be simplified
         </problem_class>
-        <description>Negated expression can be simplified</description>
+        <description>Negated expression should be simplified</description>
     </problem>
 
 </problems>

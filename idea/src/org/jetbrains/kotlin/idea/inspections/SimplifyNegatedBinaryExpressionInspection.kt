@@ -49,7 +49,7 @@ class SimplifyNegatedBinaryExpressionInspection : AbstractApplicabilityBasedInsp
 
     override fun inspectionTarget(element: KtPrefixExpression) = element.operationReference
 
-    override fun inspectionText(element: KtPrefixExpression) = "Negated expression can be simplified"
+    override fun inspectionText(element: KtPrefixExpression) = "Negated expression should be simplified"
 
     override val defaultFixText = "Simplify negated expression"
 

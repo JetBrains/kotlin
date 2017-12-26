@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.google.common.collect.Lists
 import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -137,6 +138,12 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
                     "Expected at least one problem at caret",
                 problemExpected == problemDescriptors.isNotEmpty())
         if (!problemExpected) return false
+        problemDescriptors
+                .filter { it.highlightType != ProblemHighlightType.INFORMATION }
+                .forEach {
+                    Assert.assertTrue("Problem description should not contain 'can': ${it.descriptionTemplate}",
+                                      " can " !in it.descriptionTemplate)
+                }
         if (problemExpectedString != null) {
             Assert.assertTrue("Expected the following problem at caret: $problemExpectedString\n" +
                               "Active problems: ${problemDescriptors.joinToString { it.descriptionTemplate }}",

@@ -66,7 +66,7 @@ class CascadeIfInspection : AbstractKotlinInspection() {
 
                     holder.registerProblem(
                             expression.ifKeyword,
-                            "Cascade if can be replaced with when",
+                            "Cascade if should be replaced with when",
                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                             IntentionWrapper(IfToWhenIntention(), expression.containingKtFile)
                     )

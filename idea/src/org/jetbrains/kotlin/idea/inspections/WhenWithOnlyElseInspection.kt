@@ -37,7 +37,7 @@ class WhenWithOnlyElseInspection : AbstractKotlinInspection() {
                 val usedAsExpression = expression.isUsedAsExpression(expression.analyze())
 
                 holder.registerProblem(expression,
-                                       "'when' has only 'else' branch and can be simplified",
+                                       "'when' has only 'else' branch and should be simplified",
                                        SimplifyFix(usedAsExpression)
                 )
             }

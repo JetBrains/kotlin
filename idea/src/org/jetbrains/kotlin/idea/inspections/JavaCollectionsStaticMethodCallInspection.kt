@@ -56,7 +56,7 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
 
                 val methodName = fqName.split(".").last()
                 holder.registerProblem(expression,
-                                       "Java Collections static method call can be replaced with Kotlin stdlib",
+                                       "Java Collections static method call should be replaced with Kotlin stdlib",
                                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                        ReplaceWithStdLibFix(methodName, firstArg.text))
             }

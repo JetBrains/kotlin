@@ -42,9 +42,9 @@ class UnnecessaryVariableInspection : AbstractApplicabilityBasedInspection<KtPro
 
     override fun inspectionText(element: KtProperty) = when (statusFor(element)) {
         Status.RETURN_ONLY ->
-            "Variable used only in following return and can be inlined"
+            "Variable used only in following return and should be inlined"
         Status.EXACT_COPY ->
-            "Variable is an exact copy of another variable and can be inlined"
+            "Variable is same as '${(element.initializer as? KtNameReferenceExpression)?.getReferencedName()}' and should be inlined"
         else -> ""
     }
 

@@ -60,7 +60,7 @@ class ReplacePutWithAssignmentInspection : AbstractApplicabilityBasedInspection<
 
     override fun inspectionTarget(element: KtDotQualifiedExpression) = element.callExpression?.calleeExpression ?: element
 
-    override fun inspectionText(element: KtDotQualifiedExpression): String = "map.put() can be converted to assignment"
+    override fun inspectionText(element: KtDotQualifiedExpression): String = "map.put() should be converted to assignment"
 
     override val defaultFixText = "Convert put to assignment"
 

@@ -59,7 +59,7 @@ class ReplaceArrayOfWithLiteralInspection : AbstractKotlinInspection() {
                 val calleeName = calleeExpression.getReferencedName()
                 holder.registerProblem(
                         calleeExpression,
-                        "'$calleeName' call can be replaced with array literal [...]",
+                        "'$calleeName' call should be replaced with array literal [...]",
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         ReplaceWithArrayLiteralFix()
                 )
