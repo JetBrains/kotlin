@@ -968,25 +968,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
         else if (at(IS_KEYWORD) || at(NOT_IS)) {
             advance(); // IS_KEYWORD or NOT_IS
-
-            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
-                error("Expecting a type");
-            }
-            else {
-                myKotlinParsing.parseTypeRef();
-            }
+            myKotlinParsing.parsePattern();
             condition.done(WHEN_CONDITION_IS_PATTERN);
-        }
-        else if (at(MATCH_KEYWORD)) {
-            advance(); // MATCH_KEYWORD
-
-            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
-                error("Expecting a type");
-            }
-            else {
-                myKotlinParsing.parsePattern();
-            }
-            condition.done(WHEN_CONDITION_MATCH_PATTERN);
         }
         else {
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {

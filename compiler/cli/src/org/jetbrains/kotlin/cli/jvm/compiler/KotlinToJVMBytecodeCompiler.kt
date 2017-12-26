@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -242,6 +245,20 @@ object KotlinToJVMBytecodeCompiler {
         for (path in friendPaths) {
             moduleVisibilityManager.addFriendPath(path)
         }
+
+        println("---BEGIN PSI STRUCTURE---")
+        for (file in environment.getSourceFiles()) {
+            val stack = ArrayList<PsiElement>()
+            stack.push(file)
+            while (stack.isNotEmpty()) {
+                val element = stack.pop()
+                for (child in element.children)
+                    stack.push(child);
+                println("|".repeat(stack.size) + element.toString())
+            }
+            println()
+        }
+        println("---END PSI STRUCTURE---")
 
         if (!checkKotlinPackageUsage(environment, environment.getSourceFiles())) return false
 

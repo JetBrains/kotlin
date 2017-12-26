@@ -154,17 +154,12 @@ public interface KtNodeTypes {
     KtNodeType WHEN_CONDITION_IN_RANGE   = new KtNodeType("WHEN_CONDITION_IN_RANGE", KtWhenConditionInRange.class);
     KtNodeType WHEN_CONDITION_IS_PATTERN = new KtNodeType("WHEN_CONDITION_IS_PATTERN", KtWhenConditionIsPattern.class);
     KtNodeType WHEN_CONDITION_EXPRESSION = new KtNodeType("WHEN_CONDITION_WITH_EXPRESSION", KtWhenConditionWithExpression.class);
-    KtNodeType WHEN_CONDITION_MATCH_PATTERN = new KtNodeType("WHEN_CONDITION_MATCH_PATTERN", KtWhenConditionMatchPattern.class);
 
     KtNodeType PATTERN = new KtNodeType("PATTERN", KtPattern.class);
     KtNodeType PATTERN_CONSTRAINT = new KtNodeType("PATTERN_CONSTRAINT", KtPatternConstraint.class);
+    KtNodeType PATTERN_VARIABLE_DECLARATION = new KtNodeType("PATTERN_VARIABLE_DECLARATION", KtPatternVariableDeclaration.class);
     KtNodeType PATTERN_EXPRESSION = new KtNodeType("PATTERN_EXPRESSION", KtPatternExpression.class);
     KtNodeType PATTERN_TYPED_TUPLE = new KtNodeType("PATTERN_TYPED_TUPLE", KtPatternTypedTuple.class);
-    KtNodeType PATTERN_HASH_EXPRESSION = new KtNodeType("PATTERN_HASH_EXPRESSION", KtPatternHashExpression.class);
-    KtNodeType PATTERN_VARIABLE_DECLARATION = new KtNodeType("PATTERN_VARIABLE_DECLARATION", KtPatternVariableDeclaration.class);
-    KtNodeType PATTERN_TYPE_REFERENCE = new KtNodeType("PATTERN_TYPE_REFERENCE", KtPatternTypeReference.class);
-    KtNodeType PATTERN_CONSTANT_EXPRESSION = new KtNodeType("PATTERN_CONSTANT_EXPRESSION", KtPatternConstantExpression.class);
-    KtNodeType PATTERN_STRING_EXPRESSION = new KtNodeType("PATTERN_STRING_EXPRESSION", KtPatternStringExpression.class);
     KtNodeType PATTERN_TUPLE = new KtNodeType("PATTERN_TUPLE", KtPatternTuple.class);
     KtNodeType PATTERN_GUARD = new KtNodeType("PATTERN_GUARD", KtPatternGuard.class);
 
