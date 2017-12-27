@@ -10125,6 +10125,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("differentTypesComparison.kt")
+        public void testDifferentTypesComparison() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/differentTypesComparison.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("equalsDouble.kt")
         public void testEqualsDouble() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/equalsDouble.kt");

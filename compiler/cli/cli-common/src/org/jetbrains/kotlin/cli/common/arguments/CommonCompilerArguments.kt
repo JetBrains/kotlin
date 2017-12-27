@@ -151,6 +151,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var useExperimental: Array<String>? by FreezableVar(null)
 
+    @Argument(
+        value = "-Xproper-ieee754-comparisons",
+        description = "Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types"
+    )
+    var properIeee754Comparisons by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)

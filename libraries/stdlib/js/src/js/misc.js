@@ -16,14 +16,13 @@
 
 Kotlin.compareTo = function (a, b) {
     var typeA = typeof a;
-    var typeB = typeof a;
-    if (Kotlin.isChar(a) && typeB === "number") {
-        return Kotlin.primitiveCompareTo(a.charCodeAt(0), b);
+    if (typeA === "number") {
+        if (typeof b === "number") {
+            return Kotlin.doubleCompareTo(a, b);
+        }
+        return Kotlin.primitiveCompareTo(a, b);
     }
-    if (typeA === "number" && Kotlin.isChar(b)) {
-        return Kotlin.primitiveCompareTo(a, b.charCodeAt(0));
-    }
-    if (typeA === "number" || typeA === "string" || typeA === "boolean") {
+    if (typeA === "string" || typeA === "boolean") {
         return Kotlin.primitiveCompareTo(a, b);
     }
     return a.compareTo_11rb$(b);
@@ -31,6 +30,20 @@ Kotlin.compareTo = function (a, b) {
 
 Kotlin.primitiveCompareTo = function (a, b) {
     return a < b ? -1 : a > b ? 1 : 0;
+};
+
+Kotlin.doubleCompareTo = function (a, b) {
+    if (a < b) return -1;
+    if (a > b) return 1;
+
+    if (a === b) {
+        if (a !== 0) return 0;
+
+        var ia = 1 / a;
+        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+    }
+
+    return a !== a ? (b !== b ? 0 : 1) : -1
 };
 
 Kotlin.charInc = function (value) {

@@ -1,5 +1,4 @@
 // !LANGUAGE: -ProperIeee754Comparisons
-// IGNORE_BACKEND: JS
 
 fun equals1(a: Double, b: Double) = a == b
 

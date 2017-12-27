@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
@@ -31,11 +30,8 @@ import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -46,9 +42,8 @@ import java.util.*
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
     private object EqualsIntrinsic : AbstractBinaryOperationIntrinsic() {
 
-        // Primitives with no boxing or tricky NaN behavior, represented by a Number at runtime.
-        // Whenever the left side of equality is of this type, equality could be tested via '==='.
-        private val SIMPLE_PRIMITIVES = EnumSet.of(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT)
+        private val JS_NUMBER_PRIMITIVES =
+            EnumSet.of(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT, PrimitiveType.DOUBLE, PrimitiveType.FLOAT)
 
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val isNegated = expression.isNegated()
@@ -60,25 +55,38 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
                 return TranslationUtils.nullCheck(coercedSubject, isNegated)
             }
 
-            val ktLeft = checkNotNull(expression.left) { "No left-hand side: " + expression.text }
-            val ktRight = checkNotNull(expression.right) { "No right-hand side: " + expression.text }
-            val leftKotlinType = getRefinedType(ktLeft, context)
-            val rightKotlinType = getRefinedType(ktRight, context)
+            val (leftKotlinType, rightKotlinType) = binaryOperationTypes(expression, context)
+
             val leftType = leftKotlinType?.let { KotlinBuiltIns.getPrimitiveType(it) }
             val rightType = rightKotlinType?.let { KotlinBuiltIns.getPrimitiveType(it) }
 
-            if (leftType != null && (leftType in SIMPLE_PRIMITIVES || leftType == rightType && leftType != PrimitiveType.LONG)) {
+            if (leftType != null && rightType != null && (
+                        leftType in JS_NUMBER_PRIMITIVES && rightType in JS_NUMBER_PRIMITIVES ||
+                        leftType in JS_NUMBER_PRIMITIVES && rightType == PrimitiveType.LONG ||
+                        leftType == PrimitiveType.LONG && rightType in JS_NUMBER_PRIMITIVES ||
+                        leftType == PrimitiveType.BOOLEAN && rightType == PrimitiveType.BOOLEAN ||
+                        leftType == PrimitiveType.CHAR && rightType == PrimitiveType.CHAR
+            )) {
+                val useEq = leftType == PrimitiveType.LONG || rightType == PrimitiveType.LONG
+
+                val operator = when {
+                    useEq && isNegated -> JsBinaryOperator.NEQ
+                    useEq && !isNegated -> JsBinaryOperator.EQ
+                    !useEq && isNegated -> JsBinaryOperator.REF_NEQ
+                    else /* !useEq && !isNegated */ -> JsBinaryOperator.REF_EQ
+                }
+
                 val coercedLeft = TranslationUtils.coerce(context, left, leftKotlinType)
-                val coercedRight = TranslationUtils.coerce(context, right, rightKotlinType!!)
-                return JsBinaryOperation(if (isNegated) JsBinaryOperator.REF_NEQ else JsBinaryOperator.REF_EQ, coercedLeft, coercedRight)
+                val coercedRight = TranslationUtils.coerce(context, right, rightKotlinType)
+                return JsBinaryOperation(operator, coercedLeft, coercedRight)
             }
 
             val resolvedCall = expression.getResolvedCall(context.bindingContext())
             val appliedToDynamic =
-                    resolvedCall != null &&
-                    with(resolvedCall.dispatchReceiver) {
-                        if (this != null) type.isDynamic() else false
-                    }
+                resolvedCall != null &&
+                        with(resolvedCall.dispatchReceiver) {
+                            if (this != null) type.isDynamic() else false
+                        }
 
             if (appliedToDynamic) {
                 return JsBinaryOperation(if (isNegated) JsBinaryOperator.NEQ else JsBinaryOperator.EQ, left, right)
@@ -88,37 +96,6 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             val coercedRight = TranslationUtils.coerce(context, right, anyType)
             val result = TopLevelFIF.KOTLIN_EQUALS.apply(coercedLeft, listOf(coercedRight), context)
             return if (isNegated) JsAstUtils.not(result) else result
-        }
-
-        /**
-         * Tries to get as precise statically known primitive type as possible - taking smart-casts and generic supertypes into account.
-         * This is needed to be compatible with JVM NaN behaviour, in particular the following two cases.
-         *
-         * // Smart-casts
-         * val a: Any = Double.NaN
-         * println(a == a) // true
-         * if (a is Double) {
-         *   println(a == a) // false
-         * }
-         *
-         * // Generics with Double super-type
-         * fun <T: Double> foo(v: T) = println(v == v)
-         * foo(Double.NaN) // false
-         *
-         * Also see org/jetbrains/kotlin/codegen/codegenUtil.kt#calcTypeForIEEE754ArithmeticIfNeeded
-         */
-        private fun getRefinedType(expression: KtExpression, context: TranslationContext): KotlinType? {
-            val bindingContext = context.bindingContext()
-            val descriptor = context.declarationDescriptor ?: context.currentModule
-            val ktType = bindingContext.getType(expression) ?: return null
-
-            val dataFlow = DataFlowValueFactoryImpl().createDataFlowValue(expression, ktType, bindingContext, descriptor)
-            val isPrimitiveFn = KotlinBuiltIns::isPrimitiveTypeOrNullablePrimitiveType
-
-            val languageVersionSettings = context.config.configuration.languageVersionSettings
-            return bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow, languageVersionSettings).find(isPrimitiveFn) ?: // Smart-casts
-                   TypeUtils.getAllSupertypes(ktType).find(isPrimitiveFn) ?: // Generic super-types
-                   ktType // Default
         }
     }
 

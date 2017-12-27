@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 val minus: Any = -0.0
 
 fun box(): String {

@@ -130,5 +130,5 @@ Kotlin.arrayDeepHashCode = function (arr) {
 };
 
 Kotlin.primitiveArraySort = function (array) {
-    array.sort(Kotlin.primitiveCompareTo)
+    array.sort(Kotlin.doubleCompareTo)
 };

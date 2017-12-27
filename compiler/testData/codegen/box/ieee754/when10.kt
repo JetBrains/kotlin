@@ -1,5 +1,4 @@
 // LANGUAGE_VERSION: 1.0
-// IGNORE_BACKEND: JS
 
 fun box(): String {
     val plusZero: Any = 0.0

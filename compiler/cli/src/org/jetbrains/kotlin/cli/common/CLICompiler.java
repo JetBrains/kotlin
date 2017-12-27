@@ -226,6 +226,9 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             extraLanguageFeatures.put(LanguageFeature.ReadDeserializedContracts, LanguageFeature.State.ENABLED);
         }
 
+        if (arguments.getProperIeee754Comparisons()) {
+            extraLanguageFeatures.put(LanguageFeature.ProperIeee754Comparisons, LanguageFeature.State.ENABLED);
+        }
 
         setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, arguments);
 

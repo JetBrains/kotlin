@@ -326,10 +326,8 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
         val patternTranslator = Translation.patternTranslator(context)
         return if (expressionToMatch == null) {
             patternTranslator.translateExpressionForExpressionPattern(patternExpression)
-        }
-        else {
-            val type = bindingContext().getType(whenExpression.subjectExpression!!)!!
-            patternTranslator.translateExpressionPattern(type, expressionToMatch, patternExpression)
+        } else {
+            patternTranslator.translateExpressionPattern(whenExpression.subjectExpression!!, expressionToMatch, patternExpression)
         }
     }
 
