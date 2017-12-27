@@ -28,12 +28,15 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class AddSuspendModifierFix(element: KtModifierListOwner, private val name: String?): AddModifierFix(element, KtTokens.SUSPEND_KEYWORD) {
+class AddSuspendModifierFix(
+        element: KtModifierListOwner,
+        private val declarationName: String?
+): AddModifierFix(element, KtTokens.SUSPEND_KEYWORD) {
 
     override fun getText() =
             when (element) {
-                is KtNamedFunction -> "Make ${name ?: "containing function"} suspend"
-                is KtTypeReference -> "Make ${name ?: "receiver"} type suspend"
+                is KtNamedFunction -> "Make ${declarationName ?: "containing function"} suspend"
+                is KtTypeReference -> "Make ${declarationName ?: "receiver"} type suspend"
                 else -> super.getText()
             }
 
