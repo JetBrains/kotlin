@@ -16,25 +16,21 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
-import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.util.nTabs
-import org.jetbrains.kotlin.renderer.*
-
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 
-public class DeepPrintVisitor(worker: DeclarationDescriptorVisitor<Boolean, Int>): DeepVisitor< Int>(worker) {
+class DeepPrintVisitor(worker: DeclarationDescriptorVisitor<Boolean, Int>): DeepVisitor<Int>(worker) {
 
-    override public fun visitChildren(descriptor: DeclarationDescriptor?, data: Int): Boolean {
+    override fun visitChildren(descriptor: DeclarationDescriptor?, data: Int): Boolean {
         return super.visitChildren(descriptor, data+1)
     }
 
-    override public fun visitChildren(descriptors: Collection<DeclarationDescriptor>, data: Int): Boolean {
+    override fun visitChildren(descriptors: Collection<DeclarationDescriptor>, data: Int): Boolean {
         return super.visitChildren(descriptors, data+1)
     }
 }
 
-public class PrintVisitor: DeclarationDescriptorVisitor<Boolean, Int> {
+class PrintVisitor: DeclarationDescriptorVisitor<Boolean, Int> {
 
     fun printDescriptor(descriptor: DeclarationDescriptor, amount: Int): Boolean {
         println("${nTabs(amount)} ${descriptor.toString()}")

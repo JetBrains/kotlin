@@ -280,8 +280,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
     }
 
-    private fun appendCAdapters(declaration: IrModuleFragment) {
-        declaration.acceptVoid(CAdapterGenerator(context, codegen))
+    private fun appendCAdapters() {
+        CAdapterGenerator(context, codegen).generateBindings()
     }
 
     //-------------------------------------------------------------------------//
@@ -304,7 +304,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         appendStaticInitializers(context.llvm.staticInitializers)
         appendEntryPointSelector(findMainEntryPoint(context))
         if (context.isDynamicLibrary) {
-            appendCAdapters(declaration)
+            appendCAdapters()
         }
 
     }

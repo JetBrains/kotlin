@@ -58,7 +58,7 @@ internal class DeserializerDriver(val context: Context) {
     }
 
 
-    inner class InlineBodiesPrinterVisitor(worker: EmptyDescriptorVisitorVoid): DeepVisitor<Unit>(worker) { }
+    inner class InlineBodiesPrinterVisitor(worker: EmptyDescriptorVisitorVoid): DeepVisitor<Unit>(worker)
 
     inner class InlineBodyPrinter: EmptyDescriptorVisitorVoid() {
 

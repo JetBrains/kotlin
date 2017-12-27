@@ -25,6 +25,10 @@ int main(void) {
 
     printf("String is %s\n", string);
 
+    printf("RO property is %d\n", __ kotlin.root.Child.get_roProperty(child));
+     __ kotlin.root.Child.set_rwProperty(child, 238);
+    printf("RW property is %d\n", __ kotlin.root.Child.get_rwProperty(child));
+
     __ DisposeString(string);
     __ DisposeStablePointer(base.pinned);
     __ DisposeStablePointer(child.pinned);

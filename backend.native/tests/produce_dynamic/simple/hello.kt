@@ -16,6 +16,13 @@ open class Base {
 
 class Child : Base() {
     override fun fooParam(arg0: String, arg1: Int) = println("Child.fooParam: $arg0 $arg1")
+
+    val roProperty: Int
+        get() = 42
+
+    var rwProperty: Int = 0
+        get() = field
+        set(value) { field = value + 1 }
 }
 
 // Interface.

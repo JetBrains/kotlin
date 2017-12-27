@@ -25,15 +25,14 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 private enum class ScopeKind {
     TOP,
@@ -100,11 +99,14 @@ private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
 }
 
 private fun isExportedClass(descriptor: ClassDescriptor): Boolean {
-    if (!descriptor.isEffectivelyPublicApi)
-        return false
+    if (!descriptor.isEffectivelyPublicApi) return false
+    // No sense to export annotations.
+    if (DescriptorUtils.isAnnotationClass(descriptor)) return false
     // Do not export types with type parameters.
     // TODO: is it correct?
-    return descriptor.declaredTypeParameters.isEmpty()
+    if (!descriptor.declaredTypeParameters.isEmpty()) return false
+
+    return true
 }
 
 private class ExportedElementScope(val kind: ScopeKind, val name: String) {
@@ -112,7 +114,6 @@ private class ExportedElementScope(val kind: ScopeKind, val name: String) {
     val scopes = mutableListOf<ExportedElementScope>()
     private val scopeNames = mutableSetOf<String>()
     private val scopeNamesMap = mutableMapOf<DeclarationDescriptor, String>()
-
 
     override fun toString(): String {
         return "$kind: $name ${elements.joinToString(", ")} ${scopes.joinToString("\n")}"
@@ -130,6 +131,7 @@ private class ExportedElementScope(val kind: ScopeKind, val name: String) {
     fun scopeUniqueName(descriptor: DeclarationDescriptor): String {
         scopeNamesMap[descriptor]?.apply { return this }
         var computedName = when (descriptor) {
+            is ConstructorDescriptor -> "${descriptor.constructedClass.fqNameSafe.shortName().asString()}"
             is PropertyGetterDescriptor -> "get_${descriptor.correspondingProperty.name.asString()}"
             is PropertySetterDescriptor -> "set_${descriptor.correspondingProperty.name.asString()}"
             else -> descriptor.fqNameSafe.shortName().asString()
@@ -198,7 +200,7 @@ private class ExportedElement(val kind: ElementKind,
         }
     }
 
-    fun uniqueName(descriptor: FunctionDescriptor) = scope.scopeUniqueName(descriptor)
+    fun uniqueName(descriptor: DeclarationDescriptor) = scope.scopeUniqueName(descriptor)
 
     val isFunction = declaration is FunctionDescriptor
     val isClass = declaration is ClassDescriptor
@@ -210,8 +212,7 @@ private class ExportedElement(val kind: ElementKind,
         val descriptor = declaration
         val original = descriptor.original as FunctionDescriptor
         val returned = when {
-            original is ConstructorDescriptor ->
-                scope.scopeUniqueName(original.constructedClass) to original.constructedClass
+            original is ConstructorDescriptor -> uniqueName(original) to original.constructedClass
             // Suspend functions actually return Any?.
             original.isSuspend -> uniqueName(original) to
                     TypeUtils.getClassDescriptor(owner.context.builtIns.nullableAnyType)!!
@@ -334,7 +335,7 @@ private class ExportedElement(val kind: ElementKind,
         if (type.constructor.declarationDescriptor is TypeParameterDescriptor) return
         val clazz = TypeUtils.getClassDescriptor(type)
         if (clazz == null) {
-            println("cannot get class for $type")
+            context.reportCompilationWarning("cannot get class for $type")
         } else {
             set += clazz
         }
@@ -356,58 +357,156 @@ private class ExportedElement(val kind: ElementKind,
     }
 }
 
+private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
+    val result = mutableSetOf<FqName>()
+
+    fun getSubPackages(fqName: FqName) {
+        result.add(fqName)
+        module.getSubPackagesOf(fqName) { true }.forEach { getSubPackages(it) }
+    }
+
+    getSubPackages(FqName.ROOT)
+    return result
+}
+
+private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescriptor> =
+        getPackagesFqNames(this).flatMap {
+            getPackage(it).fragments.filter { it.module == this }
+        }
+
 internal class CAdapterGenerator(
-        val context: Context, internal val codegen: CodeGenerator) : IrElementVisitorVoid {
+        val context: Context, internal val codegen: CodeGenerator) : DeclarationDescriptorVisitor<Boolean, Void?> {
 
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = context.config.moduleId
     private lateinit var outputStreamWriter: PrintWriter
 
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
+    private fun visitChildren(descriptors: Collection<DeclarationDescriptor>) {
+        for (descriptor in descriptors) {
+            descriptor.accept(this, null)
+        }
     }
 
-    override fun visitPackageFragment(declaration: IrPackageFragment) {
-        val fqName = declaration.packageFragmentDescriptor.fqName
-        val name = if (fqName.isRoot) "root" else fqName.shortName().asString()
-        val packageScope = ExportedElementScope(ScopeKind.PACKAGE, name)
-        scopes.last().scopes += packageScope
-        scopes.push(packageScope)
-        declaration.acceptChildrenVoid(this)
-        scopes.pop()
+    private fun visitChildren(descriptor: DeclarationDescriptor) {
+        descriptor.accept(this, null)
     }
 
-    override fun visitProperty(declaration: IrProperty) {
-        val descriptor = declaration.descriptor
-        if (!descriptor.isEffectivelyPublicApi || !descriptor.kind.isReal) return
-        ExportedElement(ElementKind.PROPERTY, scopes.last(), declaration.descriptor, this)
+    override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, ignored: Void?): Boolean {
+        if (!isExportedFunction(descriptor)) return true
+        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this)
+        return true
     }
 
-    override fun visitFunction(declaration: IrFunction) {
-        val descriptor = declaration.descriptor
-        if (!isExportedFunction(descriptor)) return
-        ExportedElement(ElementKind.FUNCTION, scopes.last(), declaration.descriptor, this)
+    override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, ignored: Void?): Boolean {
+        if (!isExportedFunction(descriptor)) return true
+        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this)
+        return true
     }
 
-    override fun visitClass(declaration: IrClass) {
-        val descriptor = declaration.descriptor
-        if (!isExportedClass(descriptor)) return
+    override fun visitClassDescriptor(descriptor: ClassDescriptor, ignored: Void?): Boolean {
+        if (!isExportedClass(descriptor)) return true
         // TODO: fix me!
         val shortName = descriptor.fqNameSafe.shortName()
         if (shortName.isSpecial || shortName.asString().contains("<anonymous>"))
-            return
+            return true
         val classScope = ExportedElementScope(ScopeKind.CLASS, shortName.asString())
         scopes.last().scopes += classScope
         scopes.push(classScope)
         // Add type getter.
         ExportedElement(ElementKind.TYPE, scopes.last(), descriptor, this)
-        declaration.acceptChildrenVoid(this)
+        visitChildren(descriptor.getConstructors())
+        visitChildren(DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().memberScope))
         scopes.pop()
+        return true
     }
 
-    override fun visitModuleFragment(declaration: IrModuleFragment) {
+    override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, ignored: Void?): Boolean {
+        descriptor.getter?.let { visitChildren(it) }
+        descriptor.setter?.let { visitChildren(it) }
+        return true
+    }
+
+    override fun visitPropertyGetterDescriptor(descriptor: PropertyGetterDescriptor, ignored: Void?): Boolean {
+        if (!isExportedFunction(descriptor)) return true
+        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this)
+        return true
+    }
+
+    override fun visitPropertySetterDescriptor(descriptor: PropertySetterDescriptor, ignored: Void?): Boolean {
+        if (!isExportedFunction(descriptor)) return true
+        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this)
+        return true
+    }
+
+    override fun visitScriptDescriptor(descriptor: ScriptDescriptor, ignored: Void?): Boolean {
+        context.reportCompilationWarning("visitScriptDescriptor() is ignored")
+        return true
+    }
+
+    override fun visitPackageViewDescriptor(descriptor: PackageViewDescriptor, ignored: Void?): Boolean {
+        if (descriptor.module != context.moduleDescriptor) return true
+        val fragments = descriptor.module.getPackage(FqName.ROOT).fragments.filter { it.module == context.moduleDescriptor }
+        visitChildren(fragments)
+        return true
+    }
+
+    override fun visitValueParameterDescriptor(descriptor: ValueParameterDescriptor, ignored: Void?): Boolean {
+        TODO("visitValueParameterDescriptor() shall not be seen")
+    }
+
+    override fun visitReceiverParameterDescriptor(descriptor: ReceiverParameterDescriptor?, ignored: Void?): Boolean {
+        TODO("visitReceiverParameterDescriptor() shall not be seen")
+    }
+
+    override fun visitVariableDescriptor(descriptor: VariableDescriptor, ignored: Void?): Boolean {
+        context.reportCompilationWarning("visitVariableDescriptor() is ignored for now")
+        return true
+    }
+
+    override fun visitTypeParameterDescriptor(descriptor: TypeParameterDescriptor, ignored: Void?): Boolean {
+        context.reportCompilationWarning("visitTypeParameterDescriptor() is ignored for now")
+        return true
+    }
+
+    private val seenPackageFragments = mutableSetOf<PackageFragmentDescriptor>()
+    private var currentPackageFragments: List<PackageFragmentDescriptor> = emptyList()
+
+    override fun visitModuleDeclaration(descriptor: ModuleDescriptor, ignored: Void?): Boolean {
+        currentPackageFragments = descriptor.getPackageFragments().sortedWith(
+                Comparator {
+                    o1, o2 -> o1.fqName.toString().compareTo(o2.fqName.toString())
+                })
+        seenPackageFragments.clear()
+        descriptor.getPackage(FqName.ROOT).accept(this, null)
+        return true
+    }
+
+    override fun visitTypeAliasDescriptor(descriptor: TypeAliasDescriptor, ignored: Void?): Boolean {
+        context.reportCompilationWarning("visitTypeAliasDescriptor() is ignored for now")
+        return true
+    }
+
+    override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, ignored: Void?): Boolean {
+        val fqName = descriptor.fqName
+        val name = if (fqName.isRoot) "root" else fqName.shortName().asString()
+        val packageScope = ExportedElementScope(ScopeKind.PACKAGE, name)
+        scopes.last().scopes += packageScope
+        scopes.push(packageScope)
+        visitChildren(DescriptorUtils.getAllDescriptors(descriptor.getMemberScope()))
+        for (currentPackageFragment in currentPackageFragments) {
+            if (!seenPackageFragments.contains(currentPackageFragment) &&
+                    currentPackageFragment.fqName.isChildOf(descriptor.fqName)) {
+                seenPackageFragments += currentPackageFragment
+                visitChildren(currentPackageFragment)
+            }
+        }
+        scopes.pop()
+        return true
+    }
+
+    fun generateBindings() {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))
-        declaration.acceptChildrenVoid(this)
+        context.moduleDescriptor.accept(this, null)
         val top = scopes.pop()
         assert(scopes.isEmpty() && top.kind == ScopeKind.TOP)
 
@@ -616,12 +715,13 @@ internal class CAdapterGenerator(
     }
 
     private val simpleNameMapping = mapOf(
-            "<this>" to "thiz"
+            "<this>" to "thiz",
+            "<set-?>" to "set"
     )
 
     private val primitiveTypeMapping = mapOf(
             "kotlin.Byte" to "${prefix}_KByte",
-            "kotlin.Short" to "(${prefix}_KShort",
+            "kotlin.Short" to "${prefix}_KShort",
             "kotlin.Int" to "${prefix}_KInt",
             "kotlin.Long" to "${prefix}_KLong",
             "kotlin.Float" to "${prefix}_KFloat",
