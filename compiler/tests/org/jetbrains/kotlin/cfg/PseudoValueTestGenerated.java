@@ -142,6 +142,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/bugs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("functionalCallInEnumEntry.kt")
+            public void testFunctionalCallInEnumEntry() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/bugs/functionalCallInEnumEntry.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("jumpToOuterScope.kt")
             public void testJumpToOuterScope() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/bugs/jumpToOuterScope.kt");

@@ -1448,11 +1448,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         }
 
         override fun visitInitializerList(list: KtInitializerList) {
-            list.initializers
-                    .filterIsInstance<KtSuperTypeCallEntry>()
-                    .forEach {
-                        generateCallOrMarkUnresolved(it)
-                    }
+            list.acceptChildren(this)
         }
 
         private fun generateCallOrMarkUnresolved(call: KtCallElement) {

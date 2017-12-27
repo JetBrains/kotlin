@@ -1,0 +1,56 @@
+== Test ==
+enum class Test(f: () -> Unit) {
+    A(getFunc())
+}
+---------------------
+L0:
+  1 <START>
+    v(f: () -> Unit)
+    magic[FAKE_INITIALIZER](f: () -> Unit) -> <v0>
+    w(f|<v0>)
+    v(A(getFunc()))
+    magic[FAKE_INITIALIZER](A(getFunc())) -> <v1>
+    w(A|<v1>)
+    mark(getFunc())
+    call(getFunc(), getFunc) -> <v2>
+    mark((getFunc()))
+    call((getFunc()), <init>|<v2>) -> <v3>
+L1:
+    <END>                                             NEXT:[<SINK>]
+error:
+    <ERROR>                                           PREV:[]
+sink:
+    <SINK>                                            PREV:[<ERROR>, <END>]
+=====================
+== getFunc ==
+fun getFunc(): () -> Unit = {}
+---------------------
+L0:
+  1 <START>
+    mark({})
+    jmp?(L2)          NEXT:[r({}) -> <v0>, d({})]
+    d({})             NEXT:[<SINK>]
+L2 [after local declaration]:
+    r({}) -> <v0>     PREV:[jmp?(L2)]
+    ret(*|<v0>) L1
+L1:
+    <END>             NEXT:[<SINK>]
+error:
+    <ERROR>           PREV:[]
+sink:
+    <SINK>            PREV:[<ERROR>, <END>, d({})]
+=====================
+== anonymous_0 ==
+{}
+---------------------
+L3:
+  2 <START>
+  3 mark()
+    read (Unit)
+L4:
+  2 <END>          NEXT:[<SINK>]
+error:
+    <ERROR>        PREV:[]
+sink:
+    <SINK>         PREV:[<ERROR>, <END>]
+=====================
