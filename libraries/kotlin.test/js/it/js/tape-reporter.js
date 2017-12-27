@@ -6,15 +6,15 @@ var Tester = require('./test-result-checker');
 // Tape doesn't report pending tests.
 // See https://github.com/substack/tape/pull/197 and https://github.com/substack/tape/issues/90
 var full = require('./expected-outcomes');
-var noPending = {};
+var noPendingAndAsyncPass = {};
 for (var name in full) {
     var result = full[name];
     if (result !== 'pending') {
-        noPending[name] = result;
+        noPendingAndAsyncPass[name] = name.startsWith('AsyncTest ') ? 'pass' : result;
     }
 }
 
-var tester = new Tester(noPending, 'tape');
+var tester = new Tester(noPendingAndAsyncPass, 'tape');
 
 process.on('exit', function () {
     tester.end();

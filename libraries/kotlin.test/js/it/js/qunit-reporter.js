@@ -1,5 +1,12 @@
 var Tester = require('./test-result-checker');
-var tester = new Tester(require('./expected-outcomes'), 'qunit');
+
+var full = require('./expected-outcomes');
+var allAsyncPass = {};
+for (var name in full) {
+    allAsyncPass[name] = name.startsWith('AsyncTest ') ? 'pass' : full[name];
+}
+
+var tester = new Tester(allAsyncPass, 'qunit');
 
 QUnit.testDone(function (details) {
     var testName = (details.module.replace('> ', '') + ' ' + details.name).trim();
