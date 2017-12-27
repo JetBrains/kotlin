@@ -321,7 +321,10 @@ fun PsiFile.getLineStartOffset(line: Int): Int? {
         val startOffset = doc.getLineStartOffset(line)
         val element = findElementAt(startOffset) ?: return startOffset
 
-        return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java, PsiComment::class.java)?.startOffset ?: startOffset
+        if (element is PsiWhiteSpace || element is PsiComment) {
+            return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java, PsiComment::class.java)?.startOffset ?: startOffset
+        }
+        return startOffset
     }
 
     return null

@@ -16,6 +16,11 @@
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.highlighterExtension"
                         interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"/>
+
+        <extensionPoint name="scratchFileLanguageProvider" beanClass="com.intellij.lang.LanguageExtensionPoint">
+            <with attribute="implementationClass" implements="org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider"/>
+        </extensionPoint>
+
         <extensionPoint qualifiedName="org.jetbrains.kotlin.binaryExtension"
                         interface="org.jetbrains.kotlin.idea.util.KotlinBinaryExtension"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.facetValidatorCreator"
@@ -48,5 +53,7 @@
         <idePlatformSupport implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformSupport"/>
         <idePlatformSupport implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformSupport"/>
         <idePlatformSupport implementation="org.jetbrains.kotlin.caches.resolve.CommonPlatformSupport"/>
+
+        <scratchFileLanguageProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileLanguageProvider"/>
     </extensions>
 </idea-plugin>
