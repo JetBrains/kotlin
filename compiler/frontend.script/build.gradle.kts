@@ -8,7 +8,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(projectDist(":kotlin-stdlib"))
     compileOnly(project(":kotlin-reflect-api"))
-    compile(preloadedDeps("kotlinx-coroutines-core"))
+    compile(ideaSdkDeps("kotlinx-coroutines-core"))
 }
 
 sourceSets {
