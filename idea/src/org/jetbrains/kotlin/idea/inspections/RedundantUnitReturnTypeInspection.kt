@@ -43,15 +43,7 @@ class RedundantUnitReturnTypeInspection : AbstractKotlinInspection(), CleanupLoc
                 val descriptor = context[BindingContext.FUNCTION, function] ?: return
                 if (descriptor.returnType?.isUnit() == true) {
                     if (!function.hasBlockBody()) {
-                        val bodyExpression = function.bodyExpression
-                        if (bodyExpression != null) {
-                            val bodyContext = bodyExpression.analyze(BodyResolveMode.PARTIAL)
-                            if (bodyContext.getType(bodyExpression)?.isNothing() == true) return
-                            val resolvedCall = bodyExpression.getResolvedCall(bodyContext)
-                            if (resolvedCall != null) {
-                                if (resolvedCall.candidateDescriptor.returnType?.isUnit() != true) return
-                            }
-                        }
+                        return
                     }
 
                     holder.registerProblem(typeElement,
