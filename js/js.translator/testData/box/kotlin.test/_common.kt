@@ -15,8 +15,8 @@ val underscore = kotlin.test.setAdapter(object : FrameworkAdapter {
         context.suite(name, ignored) { suiteFn() }
     }
 
-    override fun test(name: String, ignored: Boolean, testFn: () -> Unit) {
-        context.test(name, ignored) { testFn() }
+    override fun test(name: String, ignored: Boolean, testFn: () -> dynamic) {
+        context.test(name, ignored) { returned(testFn()) }
     }
 })
 
@@ -56,6 +56,10 @@ class TestContext {
 
     fun caught(msg: String) = indent {
         record("caught(\"$msg\")")
+    }
+
+    fun returned(msg: dynamic) = indent {
+        if (msg is String) record("returned(\"$msg\")")
     }
 
     private fun (TestContext.() -> Unit).runSafely() {

@@ -104,15 +104,18 @@ class JSTestGenerator(val context: TranslationContext) {
 
         val classVal = innerContext.defineTemporary(classDescriptor.instance(innerContext))
 
-        fun FunctionDescriptor.buildCall() = CallTranslator.buildCall(context, this, emptyList(), classVal).makeStmt()
+        fun FunctionDescriptor.buildCall() = CallTranslator.buildCall(context, this, emptyList(), classVal)
 
-        functionToTest.body.statements += beforeDescriptors.map { it.buildCall() }
+        functionToTest.body.statements += beforeDescriptors.map { it.buildCall().makeStmt() }
 
-        functionToTest.body.statements += if (afterDescriptors.isEmpty()) {
-            functionDescriptor.buildCall()
+        if (afterDescriptors.isEmpty()) {
+            functionToTest.body.statements += JsReturn(functionDescriptor.buildCall())
         }
         else {
-            JsTry(JsBlock(functionDescriptor.buildCall()), listOf(), JsBlock(afterDescriptors.map { it.buildCall() }))
+            functionToTest.body.statements += JsTry(
+                    JsBlock(JsReturn(functionDescriptor.buildCall())),
+                    listOf(),
+                    JsBlock(afterDescriptors.map { it.buildCall().makeStmt() }))
         }
 
         return functionToTest
