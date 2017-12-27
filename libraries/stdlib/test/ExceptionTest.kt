@@ -35,9 +35,7 @@ class ExceptionTest {
     @Test fun noSuchElementException() = testCreateException(::NoSuchElementException, ::NoSuchElementException)
 
     @Test fun noWhenBranchMatchedException() = testCreateException(::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException)
-
-    // TODO: Sort out with nullability of the parameters
-    //    @Test fun uninitializedPropertyAccessException() = testCreateException(::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException)
+    @Test fun uninitializedPropertyAccessException() = testCreateException(::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException)
 
     @Test fun assertionError() = testCreateException(::AssertionError, ::AssertionError, ::AssertionError)
 
