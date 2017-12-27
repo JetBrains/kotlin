@@ -1,0 +1,19 @@
+== Test ==
+enum class Test(f: () -> Unit) {
+    A(getFunc())
+}
+---------------------
+              <v0>: {<: () -> Unit}   NEW: magic[FAKE_INITIALIZER](f: () -> Unit) -> <v0>
+              <v1>: {<: Test}         NEW: magic[FAKE_INITIALIZER](A(getFunc())) -> <v1>
+getFunc()     <v2>: {<: () -> Unit}   NEW: call(getFunc(), getFunc) -> <v2>
+(getFunc())   <v3>: *                 NEW: call((getFunc()), <init>|<v2>) -> <v3>
+=====================
+== getFunc ==
+fun getFunc(): () -> Unit = {}
+---------------------
+{}   <v0>: {<: () -> Unit}   NEW: r({}) -> <v0>
+=====================
+== anonymous_0 ==
+{}
+---------------------
+=====================
