@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.inspections.KotlinUniversalQuickFix
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtFile
@@ -285,7 +286,12 @@ private class ElementAnnotator(private val element: PsiElement,
                 val annotation = data.create(diagnostic, range, holder)
                 val fixes = fixesMap[diagnostic]
 
-                fixes.forEach { annotation.registerFix(it) }
+                fixes.forEach {
+                    when (it) {
+                        is KotlinUniversalQuickFix -> annotation.registerUniversalFix(it, null, null)
+                        is IntentionAction -> annotation.registerFix(it)
+                    }
+                }
 
                 if (diagnostic.severity == Severity.WARNING) {
                     annotation.problemGroup = KotlinSuppressableWarningProblemGroup(diagnostic.factory)
