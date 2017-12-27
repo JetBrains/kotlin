@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.LocalQuickFixOnPsiElement
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -63,12 +65,13 @@ class UnusedLambdaExpressionBodyInspection : AbstractKotlinInspection() {
 
     private fun CallableDescriptor.returnsFunction() = returnType?.isFunctionType ?: false
 
-    class RemoveEqTokenFromFunctionDeclarationFix(val function: KtFunction) : LocalQuickFix {
-        override fun getName(): String = "Remove '=' token from function declaration"
+    class RemoveEqTokenFromFunctionDeclarationFix(function: KtFunction) : LocalQuickFixOnPsiElement(function) {
+        override fun getText(): String = "Remove '=' token from function declaration"
 
         override fun getFamilyName(): String = name
 
-        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
+            val function = startElement as? KtFunction ?: return
             if (!FileModificationService.getInstance().preparePsiElementForWrite(function)) {
                 return
             }
