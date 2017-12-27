@@ -1248,6 +1248,7 @@ OBJ_GETTER(AdoptStablePointer, KNativePtr pointer) {
   __sync_synchronize();
 #endif
   KRef ref = reinterpret_cast<KRef>(pointer);
+  UpdateRef(OBJ_RESULT, nullptr);
   // Somewhat hacky.
   *OBJ_RESULT = ref;
   return ref;
