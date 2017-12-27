@@ -17,7 +17,7 @@ dependencies {
     compile(ideaSdkCoreDeps("intellij-core", "util"))
     compile(ideaSdkDeps("openapi", "idea", "platform-api", "platform-impl", "java-api", "java-impl"))
     compile(ideaPluginDeps("gradle-api", "gradle", plugin = "gradle"))
-    compile(preloadedDeps("kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
+    compile(ideaSdkDeps("kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
 }
 
 sourceSets {
