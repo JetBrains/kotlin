@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputType
+import org.jetbrains.kotlin.idea.scratch.ui.scratchTopPanel
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
 import java.io.ByteArrayInputStream
@@ -45,7 +46,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
     override fun execute() {
         handlers.forEach { it.onStart(file) }
 
-        val module = file.module ?: return error(file, "Module should be selected")
+        val module = file.scratchTopPanel?.getModule() ?: return error(file, "Module should be selected")
         val cmdLine = KotlinConsoleKeeper.createCommandLine(module)
 
         osProcessHandler = ReplOSProcessHandler(cmdLine)

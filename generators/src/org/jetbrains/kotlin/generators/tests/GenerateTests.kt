@@ -129,6 +129,7 @@ import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractMultiModuleSafeD
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.idea.repl.AbstractIdeReplCompletionTest
 import org.jetbrains.kotlin.idea.resolve.*
+import org.jetbrains.kotlin.idea.scratch.AbstractScratchRunActionTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationCompletionTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
@@ -731,6 +732,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractSlicerNullnessGroupingTest> {
             model("slicer/inflow", singleClass = true)
+        }
+
+        testClass<AbstractScratchRunActionTest> {
+            model("scratch", extension = "kts")
         }
     }
 
