@@ -34,9 +34,6 @@ import java.util.Set;
 import static com.intellij.util.ObjectUtils.notNull;
 
 //todo[Alefas]: copypaste from org.jetbrains.jps.model.java.impl.JavaSdkUtil
-/**
- * @author nik
- */
 public class JavaSdkUtil {
   @NotNull
   public static List<File> getJdkClassesRoots(@NotNull File home, boolean isJre) {
