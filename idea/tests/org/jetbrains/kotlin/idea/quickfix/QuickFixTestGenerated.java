@@ -9021,21 +9021,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
-    @TestMetadata("idea/testData/quickfix/removeEqTokenFromFunctionDeclaration")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class RemoveEqTokenFromFunctionDeclaration extends AbstractQuickFixTest {
-        public void testAllFilesPresentInRemoveEqTokenFromFunctionDeclaration() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeEqTokenFromFunctionDeclaration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeEqTokenFromFunctionDeclaration/simple.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("idea/testData/quickfix/removeFinalUpperBound")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
