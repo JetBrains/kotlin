@@ -58,7 +58,7 @@ class CodeConformanceTest : TestCase() {
                 "ideaSDK",
                 "ultimate/ideaSDK",
                 "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
-                "idea/src/org/jetbrains/kotlin/idea/copyright",
+                "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
                 "js/js.tests/.gradle",
                 "js/js.translator/testData/node_modules",
                 "libraries/stdlib/common/build",
