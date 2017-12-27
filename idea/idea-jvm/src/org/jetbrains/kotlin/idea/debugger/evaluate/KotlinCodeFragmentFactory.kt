@@ -242,21 +242,27 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                 null
             }
 
-            if (javaExpression != null) {
+            if (javaExpression != null && !PsiTreeUtil.hasErrorElements(javaExpression)) {
                 var convertedFragment: KtExpressionCodeFragment? = null
                 project.executeWriteCommand("Convert java expression to kotlin in Evaluate Expression") {
-                    val newText = javaExpression.j2kText()
-                    val newImports = importList?.j2kText()
-                    if (newText != null) {
-                        convertedFragment = KtExpressionCodeFragment(
-                                project,
-                                kotlinCodeFragment.name,
-                                newText,
-                                newImports,
-                                kotlinCodeFragment.context
-                        )
+                    try {
+                        val newText = javaExpression.j2kText()
+                        val newImports = importList?.j2kText()
+                        if (newText != null) {
+                            convertedFragment = KtExpressionCodeFragment(
+                                    project,
+                                    kotlinCodeFragment.name,
+                                    newText,
+                                    newImports,
+                                    kotlinCodeFragment.context
+                            )
 
-                        AfterConversionPass(project, J2kPostProcessor(formatCode = false)).run(convertedFragment!!, range = null)
+                            AfterConversionPass(project, J2kPostProcessor(formatCode = false)).run(convertedFragment!!, range = null)
+                        }
+                    }
+                    catch (e: Throwable) {
+                        // ignored because text can be invalid
+                        LOG.error("Couldn't convert expression:\n`${javaExpression.text}`", e)
                     }
                 }
                 return convertedFragment ?: kotlinCodeFragment
