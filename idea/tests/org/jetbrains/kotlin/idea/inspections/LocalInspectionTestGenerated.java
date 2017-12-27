@@ -3965,6 +3965,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("leftBrace.kt")
+        public void testLeftBrace() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/leftBrace.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multiLine.kt")
         public void testMultiLine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/multiLine.kt");
