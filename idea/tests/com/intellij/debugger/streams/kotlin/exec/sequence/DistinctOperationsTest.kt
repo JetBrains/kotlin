@@ -12,4 +12,5 @@ class DistinctOperationsTest : OperationsTestCase("distinct") {
   fun testDistinctByNullableElement() = doTestWithResult()
   fun testDistinctByNullableKey() = doTestWithResult()
   fun testDistinctByNullableKeyAndElement() = doTestWithResult()
+  fun testDistinctByBigPrimitives() = doTestWithResult()
 }

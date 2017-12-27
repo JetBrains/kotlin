@@ -28,9 +28,9 @@ class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStr
   private val keyExtractor: CallArgument
   private val extractorVariable: Variable
   private val beforeTimes = dsl.list(dsl.types.INT, call.name + callNumber + "BeforeTimes")
-  private val beforeValues = dsl.list(KotlinTypes.NULLABLE_ANY, call.name + callNumber + "BeforeValues")
+  private val beforeValues = dsl.list(call.typeBefore, call.name + callNumber + "BeforeValues")
   private val keys = dsl.list(KotlinTypes.NULLABLE_ANY, call.name + callNumber + "Keys")
-  private val time2ValueAfter = dsl.linkedMap(dsl.types.INT, KotlinTypes.NULLABLE_ANY, call.name + callNumber + "after")
+  private val time2ValueAfter = dsl.linkedMap(dsl.types.INT, call.typeAfter, call.name + callNumber + "after")
 
   init {
     val arguments = call.arguments
@@ -81,7 +81,7 @@ class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStr
 
       forEachLoop(variable(types.INT, "afterTime"), time2ValueAfter.keys()) {
         val afterTime = loopVariable
-        val valueAfter = declare(variable(KotlinTypes.NULLABLE_ANY, "valueAfter"), time2ValueAfter.get(loopVariable), false)
+        val valueAfter = declare(variable(call.typeAfter, "valueAfter"), time2ValueAfter.get(loopVariable), false)
         val key = declare(variable(KotlinTypes.NULLABLE_ANY, "key"), nullExpression, true)
         integerIteration(beforeTimes.size(), forEachLoop@ this) {
           ifBranch((valueAfter same beforeValues.get(loopVariable)) and !transitions.contains(beforeTimes.get(loopVariable))) {
