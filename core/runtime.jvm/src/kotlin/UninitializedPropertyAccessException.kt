@@ -19,9 +19,9 @@ package kotlin
 public class UninitializedPropertyAccessException : RuntimeException {
     constructor()
 
-    constructor(message: String) : super(message)
+    constructor(message: String?) : super(message)
 
-    constructor(message: String, cause: Throwable) : super(message, cause)
+    constructor(message: String?, cause: Throwable?) : super(message, cause)
 
-    constructor(cause: Throwable) : super(cause)
+    constructor(cause: Throwable?) : super(cause)
 }
