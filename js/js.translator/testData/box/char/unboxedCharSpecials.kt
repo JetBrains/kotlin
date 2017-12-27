@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1099
+// EXPECTED_REACHABLE_NODES: 1219
 private inline fun typeOf(x: dynamic): String = js("typeof x").unsafeCast<String>()
 
 fun box(): String {
