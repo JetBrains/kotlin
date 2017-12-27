@@ -87,7 +87,7 @@ dependencies {
     sideJars(project(":kotlin-compiler-client-embeddable"))
     sideJars(commonDep("io.javaslang", "javaslang"))
     sideJars(commonDep("javax.inject"))
-    sideJars(preloadedDeps("markdown", "kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
+    sideJars(preloadedDeps("markdown"))
 }
 
 val jar = runtimeJar(task<ShadowJar>("shadowJar")) {

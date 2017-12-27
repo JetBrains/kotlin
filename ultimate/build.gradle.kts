@@ -63,7 +63,7 @@ dependencies {
     testCompile(projectTests(":generators:test-generator"))
     testCompile(commonDep("junit:junit"))
     testCompile(ideaUltimateSdkDeps("gson"))
-    testCompile(preloadedDeps("kotlinx-coroutines-core"))
+    testCompile(ideaSdkDeps("kotlinx-coroutines-core"))
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-script-runtime"))
