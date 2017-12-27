@@ -72,14 +72,26 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
                     super.visitDeclaration(declaration)
 
                     declaration as? KtDeclarationWithBody ?: return
-                    val (toHighlight, suffix, highlightType) = statusFor(declaration) ?: return
+                    val (toHighlightElement, suffix, highlightType) = statusFor(declaration) ?: return
+                    // Change range to start with left brace
+                    val hasHighlighting = highlightType != INFORMATION
+                    val toHighlightRange = toHighlightElement?.textRange?.let {
+                        if (hasHighlighting) {
+                            it
+                        }
+                        else {
+                            // Extend range to [left brace..end of highlight element]
+                            val offset = (declaration.blockExpression()?.lBrace?.startOffset ?: it.startOffset) - it.startOffset
+                            it.shiftRight(offset).grown(-offset)
+                        }
+                    }
 
                     holder.registerProblemWithoutOfflineInformation(
                             declaration,
                             "Use expression body instead of $suffix",
                             isOnTheFly,
                             highlightType,
-                            toHighlight?.textRange?.shiftRight(-declaration.startOffset),
+                            toHighlightRange?.shiftRight(-declaration.startOffset),
                             ConvertToExpressionBodyFix()
                     )
                 }
