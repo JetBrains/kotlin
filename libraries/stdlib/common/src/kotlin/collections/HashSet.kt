@@ -16,7 +16,7 @@
 
 package kotlin.collections
 
-open expect class HashSet<E> : MutableSet<E> {
+expect class HashSet<E> : MutableSet<E> {
     constructor()
     constructor(initialCapacity: Int)
     constructor(initialCapacity: Int, loadFactor: Float)

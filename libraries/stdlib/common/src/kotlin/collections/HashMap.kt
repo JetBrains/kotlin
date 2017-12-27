@@ -16,7 +16,7 @@
 
 package kotlin.collections
 
-open expect class HashMap<K, V> : MutableMap<K, V> {
+expect class HashMap<K, V> : MutableMap<K, V> {
     constructor()
     constructor(initialCapacity: Int)
     constructor(initialCapacity: Int, loadFactor: Float)
