@@ -38,7 +38,7 @@ import javax.swing.JPanel
 import javax.swing.JSeparator
 
 val ScratchFile.scratchTopPanel: ScratchTopPanel?
-    get() = getScratchPanel(psiFile).firstOrNull { it.scratchFile == this@scratchTopPanel }
+    get() = getScratchPanel(psiFile)?.takeIf { it.scratchFile == this@scratchTopPanel }
 
 class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel(HorizontalLayout(5)) {
     companion object {

@@ -46,7 +46,14 @@ class RunScratchAction : AnAction(
         }
 
         val runnable = r@ {
-            // todo
+            val executor = provider.createReplExecutor(scratchFile)
+            if (executor == null) {
+                return@r
+            }
+
+            e.presentation.isEnabled = false
+
+            executor.execute()
         }
 
         if (isMakeBeforeRun) {

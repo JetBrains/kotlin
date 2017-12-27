@@ -29,7 +29,6 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.SystemProperties
-import org.jetbrains.kotlin.console.actions.errorNotification
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -45,7 +44,7 @@ class KotlinConsoleKeeper(val project: Project) {
 
     fun run(module: Module, previousCompilationFailed: Boolean = false): KotlinConsoleRunner? {
         val path = module.moduleFilePath
-        val cmdLine = createCommandLine(module) ?: return run { errorNotification(project, "Module SDK not found"); null }
+        val cmdLine = createCommandLine(module)
 
         val consoleRunner = KotlinConsoleRunner(module, cmdLine, previousCompilationFailed, project, REPL_TITLE, path)
         consoleRunner.initAndRun()
@@ -54,61 +53,61 @@ class KotlinConsoleKeeper(val project: Project) {
         return consoleRunner
     }
 
-    private fun createCommandLine(module: Module): GeneralCommandLine? {
-        val javaParameters = createJavaParametersWithSdk(module)
-
-        javaParameters.mainClass = "dummy"
-
-        val commandLine = javaParameters.toCommandLine()
-
-        val paramList = commandLine.parametersList
-        paramList.clearAll()
-
-        // use to debug repl process
-        //paramList.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
-
-        val kotlinPaths = PathUtil.kotlinPathsForIdeaPlugin
-        val replClassPath = listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
-                .joinToString(File.pathSeparator) { it.absolutePath }
-
-        paramList.add("-cp")
-        paramList.add(replClassPath)
-
-        paramList.add("-Dkotlin.repl.ideMode=true")
-
-        paramList.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
-
-        addPathToCompiledOutput(paramList, module)
-
-        return commandLine
-    }
-
-    private fun createJavaParametersWithSdk(module: Module): JavaParameters {
-        val params = JavaParameters()
-        params.charset = null
-
-        val sdk = ModuleRootManager.getInstance(module).sdk
-        if (sdk != null && sdk.sdkType is JavaSdkType && File(sdk.homePath).exists()) {
-            params.jdk = sdk
-        }
-
-        if (params.jdk == null) {
-            params.jdk = SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome())
-        }
-
-        return params
-    }
-
-    private fun addPathToCompiledOutput(paramList: ParametersList, module: Module) {
-        val compiledModulePath = CompilerPathsEx.getOutputPaths(arrayOf(module)).joinToString(File.pathSeparator)
-        val moduleDependencies = OrderEnumerator.orderEntries(module).recursively().pathsList.pathsString
-        val compiledOutputClasspath = "$compiledModulePath${File.pathSeparator}$moduleDependencies"
-
-        paramList.add("-cp")
-        paramList.add(compiledOutputClasspath)
-    }
-
     companion object {
         @JvmStatic fun getInstance(project: Project) = ServiceManager.getService(project, KotlinConsoleKeeper::class.java)
+
+        fun createCommandLine(module: Module): GeneralCommandLine {
+            val javaParameters = createJavaParametersWithSdk(module)
+
+            javaParameters.mainClass = "dummy"
+
+            val commandLine = javaParameters.toCommandLine()
+
+            val paramList = commandLine.parametersList
+            paramList.clearAll()
+
+            // use to debug repl process
+            //paramList.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
+
+            val kotlinPaths = PathUtil.kotlinPathsForIdeaPlugin
+            val replClassPath = listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
+                    .joinToString(File.pathSeparator) { it.absolutePath }
+
+            paramList.add("-cp")
+            paramList.add(replClassPath)
+
+            paramList.add("-Dkotlin.repl.ideMode=true")
+
+            paramList.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+
+            addPathToCompiledOutput(paramList, module)
+
+            return commandLine
+        }
+
+        private fun createJavaParametersWithSdk(module: Module): JavaParameters {
+            val params = JavaParameters()
+            params.charset = null
+
+            val sdk = ModuleRootManager.getInstance(module).sdk
+            if (sdk != null && sdk.sdkType is JavaSdkType && File(sdk.homePath).exists()) {
+                params.jdk = sdk
+            }
+
+            if (params.jdk == null) {
+                params.jdk = SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome())
+            }
+
+            return params
+        }
+
+        private fun addPathToCompiledOutput(paramList: ParametersList, module: Module) {
+            val compiledModulePath = CompilerPathsEx.getOutputPaths(arrayOf(module)).joinToString(File.pathSeparator)
+            val moduleDependencies = OrderEnumerator.orderEntries(module).recursively().pathsList.pathsString
+            val compiledOutputClasspath = "$compiledModulePath${File.pathSeparator}$moduleDependencies"
+
+            paramList.add("-cp")
+            paramList.add(compiledOutputClasspath)
+        }
     }
 }

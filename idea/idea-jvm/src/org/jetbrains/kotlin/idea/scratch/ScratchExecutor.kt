@@ -16,14 +16,6 @@
 
 package org.jetbrains.kotlin.idea.scratch
 
-import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.scratch.repl.KtScratchReplExecutor
-import org.jetbrains.kotlin.psi.KtFile
-
-class KtScratchFileLanguageProvider : ScratchFileLanguageProvider() {
-    override fun createFile(psiFile: PsiFile): ScratchFile? {
-        return (psiFile as? KtFile)?.let { KtScratchFile(psiFile) }
-    }
-
-    override fun createReplExecutor(file: ScratchFile) = KtScratchReplExecutor(file)
+abstract class ScratchExecutor(protected val file: ScratchFile) {
+    abstract fun execute()
 }
