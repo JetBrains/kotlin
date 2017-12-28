@@ -30,7 +30,7 @@ private ArrayList<DefFile> targetDefFiles(String target) {
     def platform = targetToPlatform(target)
     def substitution = ['arch': target,
                         'os'  : targetToOs(target)]
-    rootProject.project(':klib').file("src/platform/$platform") // TODO: Move source from klib project into this project
+    file("src/platform/$platform")
             .listFiles()
             .findAll { it.name.endsWith(".def") }
             // The libz.a/libz.so and zlib.h are missing in raspberrypi and mips sysroots.
