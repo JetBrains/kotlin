@@ -15,10 +15,27 @@
  */
 
 buildscript {
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+    ext.mainBuildDir = file('../')
+
+    def rootProperties = new Properties()
+    file("$mainBuildDir/gradle.properties").withReader {
+        rootProperties.load(it)
+    }
+    rootProperties.each { k, v ->
+        ext.set(k, v)
+    }
+
+    apply from: "$mainBuildDir/gradle/kotlinGradlePlugin.gradle"
 }
 
 apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+    maven {
+        url kotlinCompilerRepo
+    }
+}
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"

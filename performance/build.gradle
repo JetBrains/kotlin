@@ -1,22 +1,19 @@
 buildscript {
-    def rootProperties = new Properties()
-    rootProperties.load(new FileReader(project.file('../gradle.properties')))
-    rootProperties.each {k, v -> ext.set(k, v)}
     repositories {
 
         maven {
-            //TODO: this path should be removed!!
+            //TODO: this path should be removed!! But how? O_oc
             url "https://oss.sonatype.org/content/repositories/snapshots"
         }
         maven {
-            url rootProperties.kotlinCompilerRepo
+            url kotlinCompilerRepo
         }
         mavenCentral()
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinGradlePluginVersion"
-        classpath files(project.file('../tools/kotlin-native-gradle-plugin/build/libs').listFiles().findAll{it.name.endsWith('.jar')}.collect().first().absolutePath)
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$konanVersion"
     }
 }
 
@@ -39,6 +36,9 @@ apply plugin: 'kotlin'
 apply plugin: 'application'
 apply plugin: 'konan'
 
+project.setProperty("konan.home", distDir)
+checkKonanCompiler.dependsOn ':dist'
+
 konanArtifacts {
     program('Ring') {
         enableOptimizations true
@@ -57,6 +57,7 @@ dependencies {
 }
 
 task jvmRun(type: JavaExec) {
+    dependsOn 'build'
     def output = new ByteArrayOutputStream()
     classpath sourceSets.main.runtimeClasspath
     main = "MainKt"
@@ -74,6 +75,7 @@ private void dumpReport(String name, ByteArrayOutputStream output) {
 }
 
 task konanRun(type: Exec) {
+    dependsOn 'build'
     def output = new ByteArrayOutputStream()
     commandLine konanArtifacts.Ring.getByTarget('host').artifact.absolutePath, "$ringWarmup", "$iterations"
     standardOutput = output

@@ -150,6 +150,12 @@ class PlatformInfo {
     }
 }
 
+// TODO: Add a task for gradle plugin uploading
+// TODO: And fix release readme: add info about compiler version and about new gradle-plugin uploading task
+task sharedJar {
+    dependsOn gradle.includedBuild('shared').task(':jar')
+}
+
 task dist_compiler(dependsOn: "distCompiler")
 task dist_runtime(dependsOn: "distRuntime")
 task cross_dist(dependsOn: "crossDist")
@@ -159,7 +165,7 @@ task distCompiler(type: Copy) {
     dependsOn ':backend.native:jar'
     dependsOn ':utilities:jar'
     dependsOn ':klib:jar'
-    dependsOn ':shared:jar'
+    dependsOn ':sharedJar'
 
     destinationDir distDir
 
@@ -215,7 +221,8 @@ task distCompiler(type: Copy) {
         into('konan/lib')
     }
 
-    from(project(':shared').file('build/libs')) {
+    // TODO: Is there another way to specify a path to shared?
+    from(file('shared/build/libs')) {
         into('konan/lib')
     }
 
@@ -440,18 +447,9 @@ task uploadBundle {
     }
 }
 
-task performance(type: GradleBuild) {
+task performance {
     dependsOn 'dist'
-    dependsOn ':tools:kotlin-native-gradle-plugin:jar'
-
-    dir = 'performance'
-    tasks = ['build', 'bench']
-
-    doFirst {
-        startParameter.projectProperties = [
-                'konanPluginClasspath' : project(':tools:kotlin-native-gradle-plugin').tasks.getByName('jar').archivePath.canonicalPath,
-                'exe_suffix': TargetManager.host.family.exeSuffix]
-    }
+    dependsOn ':performance:bench'
 }
 
 task clean {

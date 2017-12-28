@@ -20,7 +20,21 @@
  */
 
 buildscript {
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+    ext {
+        mainBuildDir = file('../../') // TODO: move mainBuildDir into gradle.properties
+        distDir = file("$mainBuildDir/dist")
+    }
+
+    // TODO: Make a separate function?
+    def rootProperties = new Properties()
+    file("$mainBuildDir/gradle.properties").withReader {
+        rootProperties.load(it)
+    }
+    rootProperties.each { k, v ->
+        ext.set(k, v)
+    }
+
+    apply from: "$mainBuildDir/gradle/kotlinGradlePlugin.gradle"
 
     repositories {
         jcenter()
@@ -28,6 +42,7 @@ buildscript {
 
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
     }
 }
 apply plugin: 'java'
@@ -35,12 +50,16 @@ apply plugin: 'kotlin'
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 group = 'org.jetbrains.kotlin'
 version = konanVersion
 
 repositories {
     mavenCentral()
+    maven {
+        url kotlinCompilerRepo
+    }
 }
 
 task pluginMetadata {
@@ -60,9 +79,11 @@ task pluginMetadata {
 }
 
 dependencies {
-    compile project(':shared')
+    compile "org.jetbrains.kotlin:kotlin-native-shared" // TODO: What about version?
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile gradleApi()
+
+    shadow "org.jetbrains.kotlin:kotlin-native-shared"
 
     testCompile gradleTestKit()
     testCompile 'junit:junit:4.12'
@@ -89,19 +110,15 @@ test {
     }
 }
 
-jar {
-    from (rootProject.findProject(':shared').sourceSets.main.output)
-}
-
 processResources {
     expand('konanVersion': konanVersion)
-    from(rootProject.project(':utilities').file('env_blacklist'))
+    from(file("$mainBuildDir/utilities/env_blacklist"))
 }
 
 publishing {
     publications {
         gradlePlugin(MavenPublication) {
-            artifact jar
+            artifact shadowJar
             pom.withXml { XmlProvider xml ->
                 def stdlibDep = xml.asNode().appendNode("dependencies").appendNode("dependency")
                 stdlibDep.appendNode("groupId", "org.jetbrains.kotlin")

@@ -21,4 +21,7 @@ include ':uikit'
 include ':win32'
 include ':videoplayer'
 include ':workers'
-includeBuild '../'
+// TODO: set up some rule to remove these strings in bundle
+includeBuild('../shared') { dependencySubstitution { substitute module('org.jetbrains.kotlin:kotlin-native-shared') with project(':') } }
+includeBuild '../tools/kotlin-native-gradle-plugin'
+
