@@ -31,7 +31,7 @@ plugins {
     `kotlin-dsl`
 }
 
-fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty("intellijUltimateEnabled")?.let {
+fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
     val v = it.toString()
     if (v.isBlank()) true
     else v.toBoolean()
