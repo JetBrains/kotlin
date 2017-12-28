@@ -23,13 +23,12 @@ import org.jetbrains.kotlin.fileClasses.isInsideJvmMultifileClassFile
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmFieldApplicabilityChecker.Problem.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-
 
 class JvmFieldApplicabilityChecker : SimpleDeclarationChecker {
 
@@ -83,7 +82,7 @@ class JvmFieldApplicabilityChecker : SimpleDeclarationChecker {
         val containingClass = containingDeclaration as? ClassDescriptor ?: return false
         if (!DescriptorUtils.isCompanionObject(containingClass)) return false
 
-        val outerClassForObject = containingClass.containingDeclaration as? ClassDescriptor ?: return false
-        return DescriptorUtils.isInterface(outerClassForObject)
+        val outerClassKind = (containingClass.containingDeclaration as? ClassDescriptor)?.kind
+        return outerClassKind == ClassKind.INTERFACE || outerClassKind == ClassKind.ANNOTATION_CLASS
     }
 }

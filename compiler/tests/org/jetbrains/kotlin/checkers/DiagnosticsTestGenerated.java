@@ -1151,6 +1151,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nestedClassesInAnnotations.kt")
+            public void testNestedClassesInAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/nestedClassesInAnnotations.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noNameProperty.kt")
             public void testNoNameProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/noNameProperty.kt");

@@ -449,7 +449,7 @@ class DeclarationsChecker(
                 }
             }
             classDescriptor.kind == ClassKind.ANNOTATION_CLASS -> {
-                checkAnnotationClassWithBody(aClass)
+                checkAnnotationClassMembers(aClass)
                 checkValOnAnnotationParameter(aClass)
             }
             aClass is KtEnumEntry -> checkEnumEntry(aClass, classDescriptor)
@@ -524,8 +524,13 @@ class DeclarationsChecker(
         }
     }
 
-    private fun checkAnnotationClassWithBody(classOrObject: KtClassOrObject) {
-        classOrObject.getBody()?.let { trace.report(ANNOTATION_CLASS_WITH_BODY.on(it)) }
+    private fun checkAnnotationClassMembers(classOrObject: KtClassOrObject) {
+        for (declaration in classOrObject.declarations) {
+            if (declaration !is KtClassOrObject ||
+                !languageVersionSettings.supportsFeature(LanguageFeature.NestedClassesInAnnotations)) {
+                trace.report(ANNOTATION_CLASS_MEMBER.on(declaration))
+            }
+        }
     }
 
     private fun checkValOnAnnotationParameter(aClass: KtClass) {

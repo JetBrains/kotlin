@@ -201,6 +201,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("nestedClassesInAnnotations.kt")
+        public void testNestedClassesInAnnotations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/annotations/nestedClassesInAnnotations.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("parameterAnnotationInDefaultImpls.kt")
         public void testParameterAnnotationInDefaultImpls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/annotations/parameterAnnotationInDefaultImpls.kt");

@@ -790,7 +790,7 @@ public class DefaultErrorMessages {
         MAP.put(VAR_ANNOTATION_PARAMETER, "An annotation parameter cannot be 'var'");
         MAP.put(ANNOTATION_CLASS_CONSTRUCTOR_CALL, "Annotation class cannot be instantiated");
         MAP.put(NOT_AN_ANNOTATION_CLASS, "''{0}'' is not an annotation class", NAME);
-        MAP.put(ANNOTATION_CLASS_WITH_BODY, "Body is not allowed for annotation class");
+        MAP.put(ANNOTATION_CLASS_MEMBER, "Members are not allowed in annotation class");
         MAP.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member");
         MAP.put(NULLABLE_TYPE_OF_ANNOTATION_MEMBER, "An annotation parameter cannot be nullable");
         MAP.put(ANNOTATION_PARAMETER_MUST_BE_CONST, "An annotation parameter must be a compile-time constant");
