@@ -20,21 +20,10 @@
  */
 
 buildscript {
-    ext {
-        mainBuildDir = file('../../') // TODO: move mainBuildDir into gradle.properties
-        distDir = file("$mainBuildDir/dist")
-    }
+    ext.rootBuildDirectory = file('../../')
 
-    // TODO: Make a separate function?
-    def rootProperties = new Properties()
-    file("$mainBuildDir/gradle.properties").withReader {
-        rootProperties.load(it)
-    }
-    rootProperties.each { k, v ->
-        ext.set(k, v)
-    }
-
-    apply from: "$mainBuildDir/gradle/kotlinGradlePlugin.gradle"
+    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 
     repositories {
         jcenter()
@@ -79,7 +68,7 @@ task pluginMetadata {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-native-shared" // TODO: What about version?
+    compile 'org.jetbrains.kotlin:kotlin-native-shared'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile gradleApi()
 
@@ -112,7 +101,7 @@ test {
 
 processResources {
     expand('konanVersion': konanVersion)
-    from(file("$mainBuildDir/utilities/env_blacklist"))
+    from(file("$rootBuildDirectory/utilities/env_blacklist"))
 }
 
 publishing {

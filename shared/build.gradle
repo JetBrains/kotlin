@@ -15,17 +15,10 @@
  */
 
 buildscript {
-    ext.mainBuildDir = file('../')
+    ext.rootBuildDirectory = file('../')
 
-    def rootProperties = new Properties()
-    file("$mainBuildDir/gradle.properties").withReader {
-        rootProperties.load(it)
-    }
-    rootProperties.each { k, v ->
-        ext.set(k, v)
-    }
-
-    apply from: "$mainBuildDir/gradle/kotlinGradlePlugin.gradle"
+    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 }
 
 apply plugin: 'kotlin'

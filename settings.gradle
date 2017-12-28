@@ -26,10 +26,6 @@ include ':runtime'
 include ':common'
 include ':backend.native:tests'
 include ':backend.native:debugger-tests'
-// TODO: remove
-// TODO: Use 'shared' build in buildSrc and all build scripts as a dependency (of a build script too)
-//include ':shared'
-//include ':tools:kotlin-native-gradle-plugin'
 include ':utilities'
 include ':performance'
 include ':platformLibs'

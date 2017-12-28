@@ -221,8 +221,7 @@ task distCompiler(type: Copy) {
         into('konan/lib')
     }
 
-    // TODO: Is there another way to specify a path to shared?
-    from(file('shared/build/libs')) {
+    from(file("${gradle.includedBuild('shared').projectDir}/build/libs")) {
         into('konan/lib')
     }
 
