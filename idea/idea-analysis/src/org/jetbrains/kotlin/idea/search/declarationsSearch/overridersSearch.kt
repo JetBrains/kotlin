@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.excludeKotlinSources
-import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -140,19 +139,22 @@ private fun forEachKotlinOverride(
     val baseDescriptors = runReadAction { members.mapNotNull { it.unsafeResolveToDescriptor() as? CallableMemberDescriptor }.filter { it.isOverridable } }
     if (baseDescriptors.isEmpty()) return true
 
-    HierarchySearchRequest(ktClass, scope, true).searchInheritors().forEach {
-        val inheritor = it.unwrapped as? KtClassOrObject ?: return@forEach
-        val inheritorDescriptor = runReadAction { inheritor.unsafeResolveToDescriptor() as ClassDescriptor }
-        val substitutor = getTypeSubstitutor(baseClassDescriptor.defaultType, inheritorDescriptor.defaultType) ?: return@forEach
-        baseDescriptors.forEach {
-            val superMember = it.source.getPsi()!!
-            val overridingDescriptor = inheritorDescriptor.findCallableMemberBySignature(it.substitute(substitutor) as CallableMemberDescriptor)
-            val overridingMember = overridingDescriptor?.source?.getPsi()
-            if (overridingMember != null) {
-                if (!processor(superMember, overridingMember)) return false
+    HierarchySearchRequest(ktClass, scope, true).searchInheritors().forEach(Processor {
+        val inheritor = it.unwrapped as? KtClassOrObject ?: return@Processor true
+        runReadAction {
+            val inheritorDescriptor = inheritor.unsafeResolveToDescriptor() as ClassDescriptor
+            val substitutor = getTypeSubstitutor(baseClassDescriptor.defaultType, inheritorDescriptor.defaultType) ?: return@runReadAction true
+            baseDescriptors.forEach {
+                val superMember = it.source.getPsi()!!
+                val overridingDescriptor = inheritorDescriptor.findCallableMemberBySignature(it.substitute(substitutor) as CallableMemberDescriptor)
+                val overridingMember = overridingDescriptor?.source?.getPsi()
+                if (overridingMember != null) {
+                    if (!processor(superMember, overridingMember)) return@runReadAction false
+                }
             }
+            true
         }
-    }
+    })
 
     return true
 }
