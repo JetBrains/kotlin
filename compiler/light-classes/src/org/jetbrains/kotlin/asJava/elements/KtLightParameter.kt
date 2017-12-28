@@ -1,199 +1,117 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.asJava.elements;
+package org.jetbrains.kotlin.asJava.elements
 
-import com.intellij.lang.Language;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
-import com.intellij.psi.search.LocalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
+import com.intellij.lang.Language
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.*
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.SearchScope
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 
-import java.util.Collections;
-import java.util.List;
+class KtLightParameter(
+        override val clsDelegate: PsiParameter,
+        private val index: Int,
+        val method: KtLightMethod
+) : LightParameter(clsDelegate.name ?: "p$index", clsDelegate.type, method, KotlinLanguage.INSTANCE),
+        KtLightDeclaration<KtParameter, PsiParameter> {
 
-public class KtLightParameter extends LightParameter implements KtLightDeclaration<KtParameter, PsiParameter> {
-    private static String getName(PsiParameter delegate, int index) {
-        String name = delegate.getName();
-        return name != null ? name : "p" + index;
-    }
+    private val modifierList: PsiModifierList
+    private var lightIdentifier: KtLightIdentifier? = null
 
-    private final PsiModifierList modifierList;
-    private final PsiParameter delegate;
-    private final int index;
-    private final KtLightMethod method;
-    private KtLightIdentifier lightIdentifier = null;
+    override val kotlinOrigin: KtParameter?
+        get() {
+            val declaration = method.kotlinOrigin ?: return null
 
-    public KtLightParameter(PsiParameter delegate, int index, KtLightMethod method) {
-        super(getName(delegate, index), delegate.getType(), method, KotlinLanguage.INSTANCE);
+            val jetIndex = if (declaration.isExtensionDeclaration()) index - 1 else index
+            if (jetIndex < 0) return null
 
-        this.delegate = delegate;
-        this.index = index;
-        this.method = method;
+            if (declaration is KtFunction) {
+                val paramList = declaration.valueParameters
+                return if (jetIndex < paramList.size) paramList[jetIndex] else null
+            }
 
-        if (method.getLightMemberOrigin() instanceof LightMemberOriginForDeclaration) {
-            this.modifierList = new KtLightSimpleModifierList(this, Collections.emptySet());
+            if (jetIndex != 0) return null
+
+            var setter: KtPropertyAccessor? = null
+            if (declaration is KtPropertyAccessor) {
+                setter = if (declaration.isSetter) declaration else null
+            }
+            else if (declaration is KtProperty) {
+                setter = declaration.setter
+            }
+            else if (declaration is KtParameter) {
+                return declaration
+            }
+
+            return if (setter != null) setter.parameter else null
+        }
+
+    init {
+        if (method.lightMemberOrigin is LightMemberOriginForDeclaration) {
+            this.modifierList = KtLightSimpleModifierList(this, emptySet())
         }
         else {
-            this.modifierList = super.getModifierList();
+            this.modifierList = super.getModifierList()
         }
     }
 
-    @NotNull
-    @Override
-    public PsiModifierList getModifierList() {
-        return modifierList;
+    override fun getModifierList(): PsiModifierList = modifierList
+
+    override fun getNavigationElement(): PsiElement = kotlinOrigin ?: super.getNavigationElement()
+
+    override fun isValid(): Boolean = method.isValid
+
+    @Throws(IncorrectOperationException::class)
+    override fun setName(@NonNls name: String): PsiElement {
+        kotlinOrigin?.setName(name)
+        return this
     }
 
-    @NotNull
-    @Override
-    public PsiParameter getClsDelegate() {
-        return delegate;
+    override fun getContainingFile(): PsiFile = method.containingFile
+
+    override fun getLanguage(): Language = KotlinLanguage.INSTANCE
+
+    override fun getUseScope(): SearchScope {
+        return kotlinOrigin?.useScope ?: LocalSearchScope(this)
     }
 
-    @Nullable
-    @Override
-    public KtParameter getKotlinOrigin() {
-        KtDeclaration declaration = method.getKotlinOrigin();
-        if (declaration == null) return null;
+    override fun getText(): String = kotlinOrigin?.text ?: ""
 
-        int jetIndex = KtPsiUtilKt.isExtensionDeclaration(declaration) ? index - 1 : index;
-        if (jetIndex < 0) return null;
+    override fun getTextRange(): TextRange = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
 
-        if (declaration instanceof KtFunction) {
-            List<KtParameter> paramList = ((KtFunction) declaration).getValueParameters();
-            return jetIndex < paramList.size() ? paramList.get(jetIndex) : null;
-        }
-
-        if (jetIndex != 0) return null;
-
-        KtPropertyAccessor setter = null;
-        if (declaration instanceof KtPropertyAccessor) {
-            KtPropertyAccessor accessor = (KtPropertyAccessor) declaration;
-            setter = accessor.isSetter() ? accessor : null;
-        }
-        else if (declaration instanceof KtProperty) {
-            setter = ((KtProperty) declaration).getSetter();
-        }
-        else if (declaration instanceof KtParameter) {
-            return (KtParameter) declaration;
-        }
-
-        return setter != null ? setter.getParameter() : null;
-    }
-
-    @NotNull
-    @Override
-    public PsiElement getNavigationElement() {
-        KtParameter origin = getKotlinOrigin();
-        return origin != null ? origin : super.getNavigationElement();
-    }
-
-    @Override
-    public boolean isValid() {
-        return method.isValid();
-    }
-
-    @Override
-    public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        KtParameter origin = getKotlinOrigin();
-        if (origin != null) {
-            origin.setName(name);
-        }
-        return this;
-    }
-
-    @Override
-    public PsiFile getContainingFile() {
-        return method.getContainingFile();
-    }
-
-    @NotNull
-    @Override
-    public Language getLanguage() {
-        return KotlinLanguage.INSTANCE;
-    }
-
-    @NotNull
-    @Override
-    public SearchScope getUseScope() {
-        KtParameter origin = getKotlinOrigin();
-        return origin != null ? origin.getUseScope() : new LocalSearchScope(this);
-    }
-
-    public KtLightMethod getMethod() {
-        return method;
-    }
-
-    @Override
-    public String getText() {
-        KtParameter origin = getKotlinOrigin();
-        return origin != null ? origin.getText() : "";
-    }
-
-    @Override
-    public TextRange getTextRange() {
-        KtParameter origin = getKotlinOrigin();
-        return origin != null ? origin.getTextRange() : TextRange.EMPTY_RANGE;
-    }
-
-    @Override
-    public PsiIdentifier getNameIdentifier() {
+    override fun getNameIdentifier(): PsiIdentifier? {
         if (lightIdentifier == null) {
-            lightIdentifier = new KtLightIdentifier(this, getKotlinOrigin());
+            lightIdentifier = KtLightIdentifier(this, kotlinOrigin)
         }
-        return lightIdentifier;
+        return lightIdentifier
     }
 
-    @Override
-    public PsiElement getParent() {
-        return getMethod().getParameterList();
+    override fun getParent(): PsiElement = method.parameterList
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        val kotlinOrigin = kotlinOrigin
+        if (another is KtLightParameter && kotlinOrigin != null) {
+            val anotherParam = another as KtLightParameter?
+            return kotlinOrigin == anotherParam!!.kotlinOrigin && clsDelegate == anotherParam.clsDelegate
+        }
+        return super.isEquivalentTo(another)
     }
 
-    @Override
-    public boolean isEquivalentTo(PsiElement another) {
-        KtParameter kotlinOrigin = getKotlinOrigin();
-        if (another instanceof KtLightParameter && kotlinOrigin != null) {
-            KtLightParameter anotherParam = (KtLightParameter) another;
-            return kotlinOrigin.equals(anotherParam.getKotlinOrigin()) && getClsDelegate().equals(anotherParam.getClsDelegate());
-        }
-        return super.isEquivalentTo(another);
+    override fun equals(other: Any?): Boolean {
+        return other is PsiElement && isEquivalentTo(other)
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof PsiElement && isEquivalentTo((PsiElement) obj);
-    }
-
-    @Override
-    public int hashCode() {
-        KtParameter kotlinOrigin = getKotlinOrigin();
-        if (kotlinOrigin != null) {
-            return kotlinOrigin.hashCode();
-        }
-        else {
-            return 0;
-        }
-    }
+    override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: 0
 }
