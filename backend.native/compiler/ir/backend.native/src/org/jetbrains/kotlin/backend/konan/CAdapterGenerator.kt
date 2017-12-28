@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 private enum class ScopeKind {
@@ -171,14 +172,15 @@ private class ExportedElement(val kind: ElementKind,
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 val llvmFunction = owner.codegen.llvmFunction(function)
                 // If function is virtual, we need to resolve receiver properly.
-                val bridge = if (!DescriptorUtils.isTopLevelDeclaration(function) && function.isOverridable) {
+                val bridge = if (!DescriptorUtils.isTopLevelDeclaration(function) && !function.isExtension &&
+                        function.isOverridable) {
                     // We need LLVMGetElementType() as otherwise type is function pointer.
                     generateFunction(owner.codegen, LLVMGetElementType(llvmFunction.type)!!, cname) {
                         val receiver = param(0)
                         val numParams = LLVMCountParams(llvmFunction)
                         val args = (0 .. numParams - 1).map { index -> param(index) }
                         val callee = lookupVirtualImpl(receiver, function)
-                        val result = callAtFunctionScope(callee, args, Lifetime.RETURN_VALUE)
+                        val result = callAtFunctionScopeVerbatim(callee, args)
                         ret(result)
                     }
 
@@ -488,7 +490,7 @@ internal class CAdapterGenerator(
 
     override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, ignored: Void?): Boolean {
         val fqName = descriptor.fqName
-        val name = if (fqName.isRoot) "root" else fqName.shortName().asString()
+        val name = if (fqName.isRoot) "root" else translateName(fqName.shortName().asString())
         val packageScope = ExportedElementScope(ScopeKind.PACKAGE, name)
         scopes.last().scopes += packageScope
         scopes.push(packageScope)
@@ -745,6 +747,7 @@ internal class CAdapterGenerator(
     fun translateName(name: String): String {
         return when {
             simpleNameMapping.contains(name) -> simpleNameMapping[name]!!
+            cKeywords.contains(name) -> "${name}_"
             else -> name
         }
     }

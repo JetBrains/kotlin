@@ -245,10 +245,15 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                             lifetime: Lifetime) =
             call(llvmFunction, args, lifetime, { cleanupLandingpad })
 
+
+    fun callAtFunctionScopeVerbatim(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>) =
+            call(llvmFunction, args, Lifetime.IRRELEVANT, { cleanupLandingpad }, true)
+
     fun call(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
              resultLifetime: Lifetime = Lifetime.IRRELEVANT,
-             lazyLandingpad: () -> LLVMBasicBlockRef? = { null }): LLVMValueRef {
-        val callArgs = if (!isObjectReturn(llvmFunction.type)) {
+             lazyLandingpad: () -> LLVMBasicBlockRef? = { null },
+             verbatim: Boolean = false): LLVMValueRef {
+        val callArgs = if (verbatim || !isObjectReturn(llvmFunction.type)) {
             args
         } else {
             // If function returns an object - create slot for the returned value or give local arena.
