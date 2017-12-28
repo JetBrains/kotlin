@@ -32,6 +32,7 @@ include ':backend.native:debugger-tests'
 //include ':tools:kotlin-native-gradle-plugin'
 include ':utilities'
 include ':performance'
+include ':platformLibs'
 
 includeBuild 'tools/kotlin-native-gradle-plugin'
 includeBuild('shared') {

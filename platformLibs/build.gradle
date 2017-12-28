@@ -1,0 +1,142 @@
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.util.DefFile
+
+
+import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.getVisibleName
+
+apply plugin: 'konan'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url kotlinCompilerRepo
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin"
+    }
+}
+
+String konanHome = distDir.absolutePath
+String jvmArgs = project.findProperty("platformLibsJvmArgs") ?: "-Xmx6G"
+ext.setProperty("konan.home", konanHome)
+ext.setProperty("konan.jvmArgs", jvmArgs)
+// TODO: split jvmArgs in gradle plugin
+
+
+//#region Util functions.
+private ArrayList<DefFile> targetDefFiles(String target) {
+    def platform = targetToPlatform(target)
+    def substitution = ['arch': target,
+                        'os'  : targetToOs(target)]
+    rootProject.project(':klib').file("src/platform/$platform") // TODO: Move source from klib project into this project
+            .listFiles()
+            .findAll { it.name.endsWith(".def") }
+            // The libz.a/libz.so and zlib.h are missing in raspberrypi and mips sysroots.
+            // Just workaround it until we have sysroots corrected.
+            .findAll { ! ((target == 'raspberrypi' || target == 'linux_mips32' || target == 'linux_mipsel32') && it.name == 'zlib.def') }
+            .collect { new DefFile(it, substitution) }
+}
+
+private String targetToPlatform(String target) {
+    getVisibleName(new TargetManager(target).target.family)
+}
+
+private String targetToOs(String target) {
+    new TargetManager(target).target.detailedName
+}
+
+private String defFileToLibName(String target, String name) {
+    return "$target-$name".toString()
+}
+
+private String defFileToInstallTaskName(String target, String name) {
+    return "install${defFileToLibName(target, name).capitalize()}"
+}
+
+// TODO: Fix the report in performance project
+class KlibInstall extends Exec {
+    public File klib
+    public File repo
+    public String target
+
+    @Override
+    Task configure(Closure config) {
+        super.configure(config)
+
+        def konanHome = project.property("konan.home")
+        def suffix = (TargetManager.host == KonanTarget.MINGW) ? ".bat" : ""
+        def klibProgram = "$konanHome/bin/klib$suffix"
+
+        doFirst {
+            repo.mkdirs()
+
+            commandLine klibProgram,
+                    'install', klib.absolutePath,
+                    '-target', target,
+                    '-repository', repo.absolutePath
+        }
+    }
+}
+
+//#endregion
+
+println(targetList)
+
+targetList.each { target ->
+
+    ArrayList<Task> installTasks = []
+
+    targetDefFiles(target).each { df ->
+        def libName = defFileToLibName(target, df.name)
+        def installTaskName = defFileToLibName(target, df.name)
+
+        konan.targets = [target] // TODO: Support custom targets in gradle plugin.
+        konanArtifacts {
+            interop(libName) {
+                defFile df.file
+                artifactName df.name
+                noDefaultLibs true
+                libraries {
+                    files df.config.depends.collect { "$konanHome/klib/platform/$target/$it" }
+                }
+                extraOpts '--purge_user_libs'
+            }
+        }
+
+        def libTask = konanArtifacts."$libName"."$target"
+        libTask.dependsOn df.config.depends.collect{ defFileToInstallTaskName(target, it) }
+        libTask.dependsOn ':cross_dist'
+
+        task "$installTaskName"(type: KlibInstall) {
+            klib = libTask.artifact
+            repo = file("$konanHome/klib/platform/$target")
+            it.target = target
+            dependsOn libTask
+
+        }
+        installTasks.add(tasks[installTaskName])
+    }
+
+    task "${target}Install" {
+        dependsOn installTasks
+    }
+}
+
+// TODO: Don't install libraries here - copy them in the distPlatformLibs task
+task hostInstall {
+    dependsOn tasks.withType(KlibInstall.class).findAll {
+        new TargetManager(it.target).target == TargetManager.host
+    }
+}
+
+task install {
+    dependsOn tasks.withType(KlibInstall.class)
+}
+
+
+
+

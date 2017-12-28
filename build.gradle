@@ -300,64 +300,13 @@ targetList.each { target ->
         }
     }
 
-    Task platformLibs = task("${target}PlatformLibs") {}
-
-    targetDefFiles(target).forEach{
-        defFile ->
-            def taskName = defFileToTaskName(target, defFile.name)
-            def jvmArgs = project.findProperty("platformLibsJvmArgs") ?: "-Xmx3G"
-            def suffix = null
-            if (new PlatformInfo().isWindows())
-                suffix = 'bat'
-            Task libTask = task(taskName, type:GradleBuild) {
-                dependsOn ':dist'
-                dependsOn ':tools:kotlin-native-gradle-plugin:jar'
-                dependsOn defFile.config.depends.collect{defFileToTaskName(target, it)}
-                tasks = ['clean', 'klibInstall']
-                buildFile project('klib').file('platform.gradle')
-                dir project(':klib').projectDir
-                startParameter.projectProperties = [
-                        'konan.jvmArgs'  : jvmArgs,
-                        'konanVersion'   : konanVersion,
-                        'name'           : defFile.name,
-                        'defFile'        : defFile.file.absolutePath,
-                        'konan.home'     : distDir,
-                        'target'         : target,
-                        'suffix'         : suffix,
-                        'libraries'      : defFile.config.depends.join(" ")
-                ]
-            }
-            platformLibs.dependsOn(libTask)
+    Task platformLibs = task("${target}PlatformLibs") {
+        dependsOn ":platformLibs:${target}Install"
     }
 }
 
-private ArrayList<DefFile> targetDefFiles(String target) {
-    def platform = targetToPlatform(target)
-    def substitution = ['arch': target,
-                        'os'  : targetToOs(target)]
-    project(':klib').file("src/platform/$platform")
-            .listFiles()
-            .findAll { it.name.endsWith(".def") }
-            // The libz.a/libz.so and zlib.h are missing in raspberrypi and mips sysroots.
-            // Just workaround it until we have sysroots corrected.
-            .findAll { ! ((target == 'raspberrypi' || target == 'linux_mips32' || target == 'linux_mipsel32') && it.name == 'zlib.def') }
-            .collect { new DefFile(it, substitution) }
-}
-
-private String targetToPlatform(String target) {
-    getVisibleName(new TargetManager(target).target.family)
-}
-
-private String targetToOs(String target) {
-    new TargetManager(target).target.detailedName
-}
-
-private String defFileToTaskName(String target, String name) {
-    return "$target-$name".toString()
-}
-
 task distPlatformLibs {
-    dependsOn targetDefFiles(hostName).collect {defFileToTaskName(hostName, it.name)}
+    dependsOn ':platformLibs:hostInstall'
 }
 
 task dist {
