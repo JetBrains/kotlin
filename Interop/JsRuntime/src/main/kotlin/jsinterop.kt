@@ -16,6 +16,17 @@ external public fun freeArena(arena: Arena)
 @SymbolName("Konan_js_pushIntToArena")
 external public fun pushIntToArena(arena: Arena, value: Int)
 
+const val upperWord = 0xffffffff.toLong() shl 32
+
+fun doubleUpper(value: Double): Int =
+    ((value.toBits() and upperWord) ushr 32) .toInt()
+
+fun doubleLower(value: Double): Int =
+    (value.toBits() and 0x00000000ffffffff) .toInt()
+
+@SymbolName("ReturnSlot_getDouble")
+external public fun ReturnSlot_getDouble(): Double
+
 @SymbolName("Kotlin_String_utf16pointer")
 external public fun stringPointer(message: String): Pointer
 

@@ -311,6 +311,9 @@ targetList.each { target ->
 
     task("${target}PlatformLibs") {
         dependsOn ":platformLibs:${target}Install"
+        if (target == 'wasm32') {
+            dependsOn 'Interop:JsRuntime:installJsRuntime'
+        }
     }
 
     task("${target}CrossDist") {

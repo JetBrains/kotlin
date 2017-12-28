@@ -118,6 +118,8 @@ data class File constructor(internal val javaPath: Path) {
         Files.write(javaPath, lines)
     }
 
+    fun writeText(text: String): Unit = writeLines(listOf(text))
+
     fun forEachLine(action: (String) -> Unit) {
         Files.lines(javaPath).use { lines ->
             lines.forEach { action(it) }

@@ -1001,5 +1001,4 @@ class StubGenerator(
 
     val mappingBridgeGenerator: MappingBridgeGenerator =
             MappingBridgeGeneratorImpl(declarationMapper, simpleBridgeGenerator)
-
 }

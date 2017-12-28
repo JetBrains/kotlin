@@ -16,22 +16,27 @@
 
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
-import org.jetbrains.kotlin.native.interop.tool.*
 import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.native.interop.gen.HeadersInclusionPolicyImpl
 import org.jetbrains.kotlin.native.interop.gen.ImportsImpl
+import org.jetbrains.kotlin.native.interop.gen.argsToCompiler
+import org.jetbrains.kotlin.native.interop.gen.wasm.processIdlLib
 import org.jetbrains.kotlin.native.interop.indexer.*
+import org.jetbrains.kotlin.native.interop.tool.*
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.nio.file.*
 import java.util.*
 
-fun main(args: Array<String>) = interop(args, null)
-
-fun interop(args: Array<String>, argsToCompiler: MutableList<String>? = null) {
-    val arguments = parseCommandLine(args, CInteropArguments())
-    processLib(arguments, argsToCompiler)
+fun main(args: Array<String>) {
+    processCLib(args)
 }
+
+fun interop(flavor: String, args: Array<String>) = when(flavor) {
+        "jvm", "native" -> processCLib(args)
+        "wasm" -> processIdlLib(args)
+        else -> error("Unexpected flavor")
+    }
 
 // Options, whose values are space-separated and can be escaped.
 val escapedOptions = setOf("-compilerOpts", "-linkerOpts")
@@ -162,27 +167,6 @@ private fun selectNativeLanguage(config: DefFile.DefFileConfig): Language {
             error("Unexpected language '$language'. Possible values are: ${languages.keys.joinToString { "'$it'" }}")
 }
 
-private fun resolveLibraries(staticLibraries: List<String>, libraryPaths: List<String>): List<String> {
-    val result = mutableListOf<String>()
-    staticLibraries.forEach { library ->
-        
-        val resolution = libraryPaths.map { "$it/$library" } 
-                .find { File(it).exists() }
-
-        if (resolution != null) {
-            result.add(resolution)
-        } else {
-            error("Could not find '$library' binary in neither of $libraryPaths")
-        }
-    }
-    return result
-}
-
-private fun argsToCompiler(staticLibraries: List<String>, libraryPaths: List<String>): List<String> {
-    return resolveLibraries(staticLibraries, libraryPaths)
-        .map { it -> listOf("-includeBinary", it) } .flatten()
-}
-
 private fun parseImports(imports: Array<String>): ImportsImpl {
     val headerIdToPackage = imports.map { arg ->
         val (pkg, joinedIds) = arg.split(':')
@@ -247,9 +231,9 @@ private fun findFilesByGlobs(roots: List<Path>, globs: List<String>): Map<Path, 
 }
 
 
-private fun processLib(arguments: CInteropArguments,
-                       argsToCompiler: MutableList<String>?) {
+private fun processCLib(args: Array<String>): Array<String>? {
 
+    val arguments = parseCommandLine(args, CInteropArguments())
     val userDir = System.getProperty("user.dir")
     val ktGenRoot = arguments.generated ?: userDir
     val nativeLibsDir = arguments.natives ?: userDir
@@ -260,7 +244,7 @@ private fun processLib(arguments: CInteropArguments,
     
     if (defFile == null && arguments.pkg == null) {
         usage()
-        return
+        return null
     }
 
     val tool = ToolConfig(
@@ -314,8 +298,6 @@ private fun processLib(arguments: CInteropArguments,
     val excludedFunctions = def.config.excludedFunctions.toSet()
     val staticLibraries = def.config.staticLibraries + arguments.staticLibrary
     val libraryPaths = def.config.libraryPaths + arguments.libraryPath
-    argsToCompiler ?. let { it.addAll(argsToCompiler(staticLibraries, libraryPaths)) }
-
     val fqParts = (arguments.pkg ?: def.config.packageName)?.let {
         it.split('.')
     } ?: defFile!!.name.split('.').reversed().drop(1)
@@ -414,4 +396,6 @@ private fun processLib(arguments: CInteropArguments,
     if (!arguments.keepcstubs) {
         outCFile.delete()
     }
+
+    return argsToCompiler(staticLibraries, libraryPaths)
 }

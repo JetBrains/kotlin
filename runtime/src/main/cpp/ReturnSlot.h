@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-include ':dependencies'
-include ':Interop:Indexer'
-include ':Interop:JsRuntime'
-include ':Interop:StubGenerator'
-include ':Interop:Runtime'
-include ':llvmDebugInfoC'
-include ':libclangext'
-include ':klib'
-include ':backend.native'
-include ':runtime'
-include ':common'
-include ':backend.native:tests'
-include ':backend.native:debugger-tests'
-include ':utilities'
-include ':performance'
-include ':platformLibs'
+#include "Types.h"
 
-includeBuild 'tools/kotlin-native-gradle-plugin'
-includeBuild 'shared'
+#ifdef KONAN_WASM
+extern "C" {
+    KDouble     ReturnSlot_getDouble();
+    void        ReturnSlot_setDouble(KInt upper, KInt lower);
+}
+#endif

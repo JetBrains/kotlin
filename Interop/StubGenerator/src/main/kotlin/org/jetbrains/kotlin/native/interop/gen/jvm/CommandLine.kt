@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.native.interop.tool
 import org.jetbrains.kotlin.cli.common.arguments.*
 
 open class CommonInteropArguments : CommonToolArguments() {
-    @Argument(value = "-flavor", valueDescription = "<flavor>", description = "One of: jvm, native")
+    @Argument(value = "-flavor", valueDescription = "<flavor>", description = "One of: jvm, native or wasm")
     var flavor: String? = null
 
     @Argument(value = "-pkg", valueDescription = "<fully qualified name>", description = "place generated bindings to the package")
@@ -27,6 +27,18 @@ open class CommonInteropArguments : CommonToolArguments() {
 
     @Argument(value = "-generated", valueDescription = "<dir>", description = "place generated bindings to the directory")
     var generated: String? = null
+
+    @Argument(value = "-natives", valueDescription = "<directory>", description = "where to put the built native files") 
+    var natives: String? = null
+
+    @Argument(value = "-manifest", valueDescription = "<file>", description = "library manifest addend") 
+    var manifest: String? = null
+
+    @Argument(value = "-staticLibrary", valueDescription = "<file>", description = "embed static library to the result") 
+    var staticLibrary: Array<String> = arrayOf()
+
+    @Argument(value = "-libraryPath", valueDescription = "<dir>", description = "add a library search path") 
+    var libraryPath: Array<String> = arrayOf()
 }
 
 class CInteropArguments : CommonInteropArguments() {
@@ -36,14 +48,8 @@ class CInteropArguments : CommonInteropArguments() {
     @Argument(value = "-target", valueDescription = "<target>", description = "native target to compile to") 
     var target: String? = null
 
-    @Argument(value = "-natives", valueDescription = "<directory>", description = "where to put the built native files") 
-    var natives: String? = null
-
     @Argument(value = "-def", valueDescription = "<file>", description = "the library definition file") 
     var def: String? = null
-
-    @Argument(value = "-manifest", valueDescription = "<file>", description = "library manifest addend") 
-    var manifest: String? = null
 
     @Argument(value = "-properties", valueDescription = "<file>", description = "an alternative location of konan.properties file") 
     var properties: String? = null
@@ -66,14 +72,8 @@ class CInteropArguments : CommonInteropArguments() {
     var shims: Boolean = false
 
     @Argument(value = "-linker", valueDescription = "<file>", description = "use specified linker") 
+
     var linker: String? = null
-
-    @Argument(value = "-staticLibrary", valueDescription = "<file>", description = "embed static library to the result") 
-    var staticLibrary: Array<String> = arrayOf()
-
-    @Argument(value = "-libraryPath", valueDescription = "<dir>", description = "add a library search path") 
-    var libraryPath: Array<String> = arrayOf()
-
     @Argument(value = "-cstubsname", valueDescription = "<name>", description = "provide a name for the generated c stubs file") 
     var cstubsname: String? = null
 

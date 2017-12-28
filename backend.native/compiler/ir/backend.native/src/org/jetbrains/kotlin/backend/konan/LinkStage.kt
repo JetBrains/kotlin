@@ -278,13 +278,20 @@ internal open class WasmPlatform(distribution: Distribution)
             private fun javaScriptLink(jsFiles: List<String>, executable: String): String {
                 val linkedJavaScript = File("$executable.js")
 
-                val linkerStub = "var konan = { libraries: [] };\n"
+                val linkerHeader = "var konan = { libraries: [] };\n"
+                val linkerFooter = """|if (isBrowser()) {
+                                      |   konan.moduleEntry([]);
+                                      |} else {
+                                      |   konan.moduleEntry(arguments);
+                                      |}""".trimMargin()
 
-                linkedJavaScript.writeBytes(linkerStub.toByteArray());
+                linkedJavaScript.writeBytes(linkerHeader.toByteArray());
 
                 jsFiles.forEach {
                     linkedJavaScript.appendBytes(File(it).readBytes())
                 }
+
+                linkedJavaScript.appendBytes(linkerFooter.toByteArray());
                 return linkedJavaScript.name
             }
         }

@@ -1,0 +1,39 @@
+import org.jetbrains.kotlin.KlibInstall
+
+apply plugin: 'konan'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url kotlinCompilerRepo
+        }
+    }
+
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin"
+    }
+
+    ext.konanHome = distDir.absolutePath
+    ext.jvmArgs = project.findProperty("platformLibsJvmArgs") ?: "-Xmx3G"
+    ext.setProperty("konan.home", konanHome)
+    ext.setProperty("konan.jvmArgs", jvmArgs)
+}
+
+konan.targets = [ 'wasm32' ]
+
+konanArtifacts {
+    library("jsinterop") {
+        dependsOn ':wasm32CrossDist' // our plugin runs konanc, so make sure it is already there.
+        extraOpts '-includeBinary', project.file('src/main/js/jsinterop.js')
+    }
+}
+
+task installJsRuntime(type: KlibInstall) {
+    dependsOn konanArtifacts.jsinterop.wasm32
+    klib = konanArtifacts.jsinterop.wasm32.artifact
+    repo = file("$konanHome/klib/platform/wasm32")
+    it.target = 'wasm32'
+}
+

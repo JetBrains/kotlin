@@ -95,11 +95,34 @@ function toUTF16String(pointer, size) {
     return string;
 }
 
+function twoIntsToDouble(upper, lower) {
+    var buffer = new ArrayBuffer(8);
+    var ints = new Int32Array(buffer);
+    var doubles = new Float64Array(buffer);
+    ints[1] = upper;
+    ints[0] = lower;
+    return doubles[0];
+}
+
+function doubleToTwoInts(value) {
+    var buffer = new ArrayBuffer(8);
+    var ints = new Int32Array(buffer);
+    var doubles = new Float64Array(buffer);
+    doubles[0] = value;
+    var twoInts = {upper: ints[1], lower: ints[0]};
+    return twoInts
+}
+
 function int32ToHeap(value, pointer) {
     heap[pointer]   = value & 0xff;
     heap[pointer+1] = (value & 0xff00) >>> 8;
     heap[pointer+2] = (value & 0xff0000) >>> 16;
     heap[pointer+3] = (value & 0xff000000) >>> 24;
+}
+
+function doubleToReturnSlot(value) {
+    var twoInts = doubleToTwoInts(value);
+    instance.exports.ReturnSlot_setDouble(twoInts.upper, twoInts.lower);
 }
 
 function stackTop() {
@@ -239,17 +262,22 @@ function instantiateAndRunSync(arraybuffer, args) {
     return invokeModule(instance, args)
 }
 
-if (isBrowser()) {
-    var filename = document.currentScript.getAttribute("wasm");
-    fetch(filename).then( function(response) {
-        return response.arrayBuffer();
-    }).then(function(arraybuffer) { 
-        instantiateAndRun(arraybuffer, [filename]); 
-    });
-} else {
-    // Invoke from d8.
-    var arrayBuffer = readbuffer(arguments[0]);
-    var exitStatus = instantiateAndRunSync(arrayBuffer, arguments);
-    quit(exitStatus);
+konan.moduleEntry = function (args) {
+    if (isBrowser()) {
+        if (!document.currentScript.hasAttribute("wasm")) {
+            throw new Error('Could not find the wasm attribute pointing to the WebAssembly binary.') ;
+        }
+        var filename = document.currentScript.getAttribute("wasm");
+        fetch(filename).then( function(response) {
+            return response.arrayBuffer();
+        }).then(function(arraybuffer) { 
+            instantiateAndRun(arraybuffer, [filename]); 
+        });
+    } else {
+        // Invoke from d8.
+        var arrayBuffer = readbuffer(args[0]);
+        var exitStatus = instantiateAndRunSync(arrayBuffer, args);
+        quit(exitStatus);
+    }
 }
 
