@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,9 @@ import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.getBinaryLibrariesModuleInfos
+import org.jetbrains.kotlin.idea.caches.resolve.getLibrarySourcesModuleInfos
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
@@ -275,7 +277,8 @@ object SourceNavigationHelper {
         when (navigationKind) {
             SourceNavigationHelper.NavigationKind.CLASS_FILES_TO_SOURCES -> if (!from.containingKtFile.isCompiled) return from
             SourceNavigationHelper.NavigationKind.SOURCES_TO_CLASS_FILES -> {
-                if (from.containingKtFile.isCompiled) return from
+                val file = from.containingFile
+                if (file is KtFile && file.isCompiled) return from
                 if (!ProjectRootsUtil.isInContent(from, false, true, false, true)) return from
                 if (KtPsiUtil.isLocal(from)) return from
             }
