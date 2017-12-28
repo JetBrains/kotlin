@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
+import java.io.IOException
 
 fun updateLibraries(project: Project, libraries: Collection<Library>) {
     if (project.allModules().any { module -> KotlinPluginUtil.isMavenModule(module) }) {
@@ -92,7 +93,15 @@ private fun updateJar(
     }
 
     val jarFileToReplace = getLocalJar(fileToReplace)!!
-    val newVFile = replaceFile(jarPath, jarFileToReplace)
+    val newVFile = try {
+        replaceFile(jarPath, jarFileToReplace)
+    } catch (e: IOException) {
+        Messages.showErrorDialog(project,
+                                 "Failed to update $jarPath: ${e.message}",
+                                 "Library update failed")
+        return
+    }
+
     if (newVFile != null) {
         val model = library.modifiableModel
         runWriteAction {
