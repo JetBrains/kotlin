@@ -1,3 +1,4 @@
+
 import org.gradle.api.Project
 import java.util.*
 import java.io.File
@@ -113,8 +114,10 @@ extra["JDK_17"] = jdkPath("1.7")
 extra["JDK_18"] = jdkPath("1.8")
 extra["JDK_9"] = jdkPathIfFound("9")
 
-extra["versions.intellijSdk"] = "172.4343.14"
-extra["versions.androidBuildTools"] = "r23.0.1"
+rootProject.apply {
+    from(rootProject.file("versions.gradle.kts"))
+}
+
 extra["versions.protobuf-java"] = "2.6.1"
 extra["versions.javax.inject"] = "1"
 extra["versions.jsr305"] = "1.3.9"
@@ -131,7 +134,6 @@ extra["versions.native-platform"] = "0.14"
 extra["versions.ant-launcher"] = "1.8.0"
 extra["versions.robolectric"] = "3.1"
 extra["versions.org.springframework"] = "4.2.0.RELEASE"
-extra["versions.idea.NodeJS"] = "172.3757.32"
 extra["versions.jflex"] = "1.7.0"
 
 val markdownVer =  "4054 - Kotlin 1.0.2-dev-566".replace(" ", "%20") // fixed here, was last with "status:SUCCESS,tag:forKotlin"

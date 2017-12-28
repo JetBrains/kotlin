@@ -37,6 +37,10 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
     else v.toBoolean()
 }
 
+rootProject.apply {
+    from(rootProject.file("../versions.gradle.kts"))
+}
+
 val intellijUltimateEnabled = project.getBooleanProperty("intellijUltimateEnabled")
                               ?: project.hasProperty("teamcity")
                               || System.getenv("TEAMCITY_VERSION") != null
@@ -45,10 +49,7 @@ extra["intellijUltimateEnabled"] = intellijUltimateEnabled
 extra["intellijSeparateSdks"] = intellijSeparateSdks
 extra["intellijRepo"] = "https://www.jetbrains.com/intellij-repository"
 extra["intellijReleaseType"] = "releases" // or "snapshots"
-extra["versions.intellijSdk"] = "172.4343.14"
-extra["versions.androidBuildTools"] = "r23.0.1"
 extra["versions.androidDxSources"] = "5.0.0_r2"
-extra["versions.idea.NodeJS"] = "172.3757.32"
 
 extra["customDepsRepo"] = "$rootDir/repo"
 extra["customDepsOrg"] = "kotlin.build.custom.deps"
