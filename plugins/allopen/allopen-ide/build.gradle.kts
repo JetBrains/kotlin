@@ -15,8 +15,8 @@ dependencies {
     compile(project(":idea:idea-jps-common"))
     compile(project(":plugins:annotation-based-compiler-plugins-ide-support"))
     compileOnly(intellijDep()) { includeJars("openapi", "idea") }
-    compileOnly(intellijPluginDep("maven")) { includeJars("maven") }
-    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api-3.5", "gradle") }
+    excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) { includeJars("maven") } }
+    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api", "gradle", rootProject = rootProject) }
 }
 
 sourceSets {

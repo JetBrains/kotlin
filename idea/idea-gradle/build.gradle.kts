@@ -1,3 +1,4 @@
+
 apply { plugin("kotlin") }
 
 val androidSdk by configurations.creating
@@ -17,14 +18,14 @@ dependencies {
     compile(project(":js:js.frontend"))
 
     compileOnly(intellijDep()) { includeJars("openapi", "idea", "external-system-rt", "forms_rt", "extensions", "jdom", "util") }
-    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api-3.5", "gradle", "gradle-base-services-3.5") }
+    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api", "gradle", "gradle-base-services", rootProject = rootProject) }
     compileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
     compileOnly(intellijPluginDep("junit")) { includeJars("idea-junit") }
 
     testCompile(projectTests(":idea"))
     testCompile(project(":idea:idea-test-framework"))
 
-    testCompile(intellijPluginDep("gradle")) { includeJars("gradle-wrapper-3.5", "gradle-base-services-3.5", "gradle-tooling-extension-impl", "gradle-tooling-api-3.5", "gradle") }
+    testCompile(intellijPluginDep("gradle")) { includeJars("gradle-wrapper", "gradle-base-services", "gradle-tooling-extension-impl", "gradle-tooling-api", "gradle", rootProject = rootProject) }
     testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
     testCompileOnly(intellijDep()) { includeJars("groovy-all-2.4.6", "idea_rt") }
 

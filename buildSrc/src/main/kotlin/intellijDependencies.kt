@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
 import org.gradle.api.GradleException
@@ -6,6 +22,7 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.kotlin.dsl.extra
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
+import org.gradle.kotlin.dsl.DependencyHandlerScope
 
 private fun Project.intellijRepoDir() = File("${project.rootDir.absoluteFile}/buildSrc/prepare-deps/intellij-sdk/build/repo")
 
@@ -36,10 +53,17 @@ fun Project.intellijUltimateDep() = intellijDep("intellij")
 
 fun Project.intellijUltimatePluginDep(plugin: String) = intellijDep(plugin)
 
-fun ModuleDependency.includeJars(vararg names: String) {
+fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = null) {
     names.forEach {
+        var baseName = it.removeSuffix(".jar")
+        if (rootProject != null && rootProject.extra.has("ignore.jar.$baseName")) {
+            return@forEach
+        }
+        if (rootProject != null && rootProject.extra.has("versions.jar.$baseName")) {
+            baseName += "-${rootProject.extra["versions.jar.$baseName"]}"
+        }
         artifact {
-            name = it.removeSuffix(".jar")
+            name = baseName
             type = "jar"
             extension = "jar"
         }
@@ -47,10 +71,10 @@ fun ModuleDependency.includeJars(vararg names: String) {
 }
 
 fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project) =
-        includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).toTypedArray())
+        includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).toTypedArray(), rootProject = project.rootProject)
 
 fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFilterPredicate: (String) -> Boolean) =
-        includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter { jarsFilterPredicate(it) }.toTypedArray())
+        includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter { jarsFilterPredicate(it) }.toTypedArray(), rootProject = project.rootProject)
 
 fun Project.isIntellijCommunityAvailable() = !(rootProject.extra["intellijUltimateEnabled"] as Boolean) || rootProject.extra["intellijSeparateSdks"] as Boolean
 
@@ -65,3 +89,8 @@ fun Project.intellijUltimateRootDir() =
         else
             throw GradleException("intellij ultimate SDK is not available")
 
+fun DependencyHandlerScope.excludeInAndroidStudio(rootProject: Project, block: DependencyHandlerScope.() -> Unit) {
+    if (!rootProject.extra.has("versions.androidStudioRelease")) {
+        block()
+    }
+}

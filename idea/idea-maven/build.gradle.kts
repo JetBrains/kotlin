@@ -15,14 +15,14 @@ dependencies {
     compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-jps-common"))
 
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "gson-2.5", "jdom", "extensions", "util") }
-    compileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
+    compileOnly(intellijDep()) { includeJars("openapi", "idea", "gson", "jdom", "extensions", "util", rootProject = rootProject) }
+    excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") } }
 
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":idea:idea-test-framework"))
 
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "gson-2.5", "idea_rt") }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "gson", "idea_rt", rootProject = rootProject) }
     testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
 
     testRuntime(projectDist(":kotlin-reflect"))

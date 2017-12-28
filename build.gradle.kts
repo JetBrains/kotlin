@@ -162,7 +162,7 @@ extra["IntellijCoreDependencies"] =
                "log4j",
                "picocontainer",
                "snappy-in-java-0.5.1",
-               "streamex-0.6.2",
+               "streamex",
                "trove4j",
                "xpp3-1.1.4-min",
                "xstream-1.4.8")

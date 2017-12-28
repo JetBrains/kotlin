@@ -1,3 +1,4 @@
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 apply { plugin("kotlin") }
@@ -21,7 +22,7 @@ dependencies {
 
     compile(androidDxJar())
 
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "extensions", "util", "guava-21.0") }
+    compileOnly(intellijDep()) { includeJars("openapi", "idea", "extensions", "util", "guava-21.0", "android-base-common", rootProject = rootProject) }
     compileOnly(intellijPluginDep("android")) {
         includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
     }

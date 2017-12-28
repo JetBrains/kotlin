@@ -12,8 +12,8 @@ val intellijUltimateEnabled: Boolean by rootProject.extra
 val intellijRepo: String by rootProject.extra
 val intellijReleaseType: String by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
-val androidStudioRelease = rootProject.extra["versions.androidStudioRelease"] as String?
-val androidStudioBuild = rootProject.extra["versions.androidStudioBuild"] as String?
+val androidStudioRelease = if (rootProject.extra.has("versions.androidStudioRelease")) rootProject.extra["versions.androidStudioRelease"] as String else null
+val androidStudioBuild = if (rootProject.extra.has("versions.androidStudioBuild")) rootProject.extra["versions.androidStudioBuild"] as String else null
 val intellijSeparateSdks: Boolean by rootProject.extra
 val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
 val installIntellijUltimate = intellijUltimateEnabled
@@ -64,8 +64,8 @@ dependencies {
         if (installIntellijUltimate) {
             intellijUltimate("com.jetbrains.intellij.idea:ideaIU:$intellijVersion")
         }
-        sources("com.jetbrains.intellij.idea:ideaIC:$intellijVersion:sources@jar")
     }
+    sources("com.jetbrains.intellij.idea:ideaIC:$intellijVersion:sources@jar")
     `jps-standalone`("com.jetbrains.intellij.idea:jps-standalone:$intellijVersion")
     `jps-build-test`("com.jetbrains.intellij.idea:jps-build-test:$intellijVersion")
     `intellij-core`("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
@@ -74,7 +74,9 @@ dependencies {
     }
 }
 
-fun Task.configureExtractFromConfigurationTask(sourceConfig: Configuration, extractor: (Configuration) -> Any) {
+fun Task.configureExtractFromConfigurationTask(sourceConfig: Configuration,
+                                               pathRemap: (String) -> String = { it },
+                                               extractor: (Configuration) -> Any) {
     dependsOn(sourceConfig)
     inputs.files(sourceConfig)
     val targetDir = File(repoDir, sourceConfig.name)
@@ -83,11 +85,26 @@ fun Task.configureExtractFromConfigurationTask(sourceConfig: Configuration, extr
         project.copy {
             from(extractor(sourceConfig))
             into(targetDir)
+            eachFile {
+                path = pathRemap(path)
+            }
         }
     }
 }
 
-val unzipIntellijSdk by tasks.creating { configureExtractFromConfigurationTask(intellij) { zipTree(it.singleFile) } }
+fun removePathPrefix(path: String): String {
+    if (androidStudioRelease == null) return path
+    val slashes = if (studioOs == "mac") 2 else 1
+    var result = path
+    repeat(slashes) {
+        result = result.substringAfter('/')
+    }
+    return result
+}
+
+val unzipIntellijSdk by tasks.creating {
+    configureExtractFromConfigurationTask(intellij, pathRemap = { removePathPrefix(it) }) { zipTree(it.singleFile) }
+}
 
 val unzipIntellijUltimateSdk by tasks.creating { configureExtractFromConfigurationTask(intellijUltimate) { zipTree(it.singleFile) } }
 
@@ -96,9 +113,7 @@ val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(
 val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask(`jps-standalone`) { zipTree(it.singleFile) } }
 
 val copyIntellijSdkSources by tasks.creating {
-    if (androidStudioRelease == null) {
-        configureExtractFromConfigurationTask(sources) { it.singleFile }
-    }
+    configureExtractFromConfigurationTask(sources) { it.singleFile }
 }
 
 val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(`jps-build-test`) { it.singleFile } }

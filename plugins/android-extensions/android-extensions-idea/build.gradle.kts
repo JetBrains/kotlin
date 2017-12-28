@@ -22,7 +22,7 @@ dependencies {
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijPluginDep("android")) { includeJars("android.jar", "android-common.jar", "sdk-common.jar", "sdk-tools.jar") }
     compileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy.jar") }
-    compileOnly(intellijDep()) { includeJars("extensions.jar", "openapi.jar", "util.jar", "idea.jar") }
+    compileOnly(intellijDep()) { includeJars("extensions.jar", "openapi.jar", "util.jar", "idea.jar", "android-base-common.jar", rootProject = rootProject) }
 
     testCompile(project(":compiler:tests-common"))
     testCompile(project(":compiler:cli"))
