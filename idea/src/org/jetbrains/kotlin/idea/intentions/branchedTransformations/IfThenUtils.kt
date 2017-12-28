@@ -106,7 +106,12 @@ fun KtExpression.convertToIfStatement(condition: KtExpression, thenClause: KtExp
 
 fun KtIfExpression.introduceValueForCondition(occurrenceInThenClause: KtExpression, editor: Editor?) {
     val project = this.project
-    val occurrenceInConditional = (this.condition as KtBinaryExpression).left!!
+    val condition = condition
+    val occurrenceInConditional = when (condition) {
+        is KtBinaryExpression -> condition.left
+        is KtIsExpression -> condition.leftHandSide
+        else -> throw AssertionError("Only binary / is expressions are supported here: ${condition?.text}")
+    }!!
     KotlinIntroduceVariableHandler.doRefactoring(project,
                                                  editor,
                                                  occurrenceInConditional,

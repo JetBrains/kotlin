@@ -1225,6 +1225,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("fakeSafeCast.kt")
+            public void testFakeSafeCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/elvisToIfThen/fakeSafeCast.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localValLhs.kt")
             public void testLocalValLhs() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/elvisToIfThen/localValLhs.kt");
@@ -1237,6 +1243,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("longSafeCast.kt")
+            public void testLongSafeCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/elvisToIfThen/longSafeCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("safeCast.kt")
+            public void testSafeCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/elvisToIfThen/safeCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("safeCastUnstable.kt")
+            public void testSafeCastUnstable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/elvisToIfThen/safeCastUnstable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simpleNameExpression.kt")
             public void testSimpleNameExpression() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/elvisToIfThen/simpleNameExpression.kt");
@@ -1246,6 +1270,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("simpleNameExpressionInParens.kt")
             public void testSimpleNameExpressionInParens() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/elvisToIfThen/simpleNameExpressionInParens.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleSafeCast.kt")
+            public void testSimpleSafeCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/elvisToIfThen/simpleSafeCast.kt");
                 doTest(fileName);
             }
 
