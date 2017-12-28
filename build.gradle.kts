@@ -12,7 +12,7 @@ val ideaProjectResources =  project(":idea").the<JavaPluginConvention>().sourceS
 
 evaluationDependsOn(":prepare:idea-plugin")
 
-val intellijUltimateEnabled = true // : Boolean by rootProject.extra
+val intellijUltimateEnabled : Boolean by rootProject.extra
 
 val springClasspath by configurations.creating
 
@@ -197,7 +197,9 @@ projectTest {
     dependsOn(preparePluginXml)
     workingDir = rootDir
     doFirst {
-        systemProperty("idea.home.path", intellijUltimateRootDir().canonicalPath)
+        if (intellijUltimateEnabled) {
+            systemProperty("idea.home.path", intellijUltimateRootDir().canonicalPath)
+        }
         systemProperty("spring.classpath", springClasspath.asPath)
     }
 }

@@ -1,5 +1,8 @@
+
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.tasks.RunIdeTask
+
+val intellijUltimateEnabled : Boolean by rootProject.extra
 
 buildscript {
     repositories {
@@ -40,29 +43,31 @@ afterEvaluate {
         destinationDir = File(buildDir, "sandbox-fake")
     }
 
-    task<RunIdeTask>("runUltimate") {
-        dependsOn(":dist", ":prepare:idea-plugin:idea-plugin", ":ideaPlugin", ":ultimate:idea-ultimate-plugin")
-        dependsOn(prepareSandbox)
-        group = "intellij"
-        description = "Runs Intellij IDEA Ultimate with installed plugin."
-        setIdeaDirectory(intellijUltimateRootDir())
-        setConfigDirectory(File(ideaUltimateSandboxDir, "config"))
-        setSystemDirectory(ideaUltimateSandboxDir)
-        setPluginsDirectory(ideaUltimatePluginDir.parent)
-        jvmArgs(
-                "-Xmx1250m",
-                "-XX:ReservedCodeCacheSize=240m",
-                "-XX:+HeapDumpOnOutOfMemoryError",
-                "-ea",
-                "-Didea.is.internal=true",
-                "-Didea.debug.mode=true",
-                "-Dapple.laf.useScreenMenuBar=true",
-                "-Dapple.awt.graphics.UseQuartz=true",
-                "-Dsun.io.useCanonCaches=false",
-                "-Dkotlin.internal.mode.enabled=true"
-        )
-        if (project.hasProperty("noPCE")) {
-            jvmArgs("-Didea.ProcessCanceledException=disabled")
+    if (intellijUltimateEnabled) {
+        task<RunIdeTask>("runUltimate") {
+            dependsOn(":dist", ":prepare:idea-plugin:idea-plugin", ":ideaPlugin", ":ultimate:idea-ultimate-plugin")
+            dependsOn(prepareSandbox)
+            group = "intellij"
+            description = "Runs Intellij IDEA Ultimate with installed plugin."
+            setIdeaDirectory(intellijUltimateRootDir())
+            setConfigDirectory(File(ideaUltimateSandboxDir, "config"))
+            setSystemDirectory(ideaUltimateSandboxDir)
+            setPluginsDirectory(ideaUltimatePluginDir.parent)
+            jvmArgs(
+                    "-Xmx1250m",
+                    "-XX:ReservedCodeCacheSize=240m",
+                    "-XX:+HeapDumpOnOutOfMemoryError",
+                    "-ea",
+                    "-Didea.is.internal=true",
+                    "-Didea.debug.mode=true",
+                    "-Dapple.laf.useScreenMenuBar=true",
+                    "-Dapple.awt.graphics.UseQuartz=true",
+                    "-Dsun.io.useCanonCaches=false",
+                    "-Dkotlin.internal.mode.enabled=true"
+            )
+            if (project.hasProperty("noPCE")) {
+                jvmArgs("-Didea.ProcessCanceledException=disabled")
+            }
         }
     }
 }
