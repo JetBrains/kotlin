@@ -74,7 +74,7 @@ public class PluginTestCaseBase {
     @TestOnly
     @NotNull
     public static Sdk mockJdk9() {
-        return createMockJdk("9", "compiler/testData/mockJDK9/jre");
+        return getSdk("compiler/testData/mockJDK9/jre", "9");
     }
 
     @NotNull
