@@ -260,10 +260,9 @@ open class ConvertLambdaToReferenceIntention(text: String) :
                                 "$receiverName::$selectorReferenceName"
                             }
                         }
-                        is KtThisExpression -> {
+                        else -> {
                             "${receiver.text}::$selectorReferenceName"
                         }
-                        else -> null
                     }
                 }
                 else -> null
