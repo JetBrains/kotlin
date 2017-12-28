@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.lang.Language
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.search.LocalSearchScope
@@ -112,11 +114,18 @@ class KtLightParameter(
     override fun getParent(): PsiElement = method.parameterList
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        val kotlinOrigin = kotlinOrigin
-        if (another is KtLightParameter && kotlinOrigin != null) {
-            val anotherParam = another as KtLightParameter?
-            return kotlinOrigin == anotherParam!!.kotlinOrigin && clsDelegate == anotherParam.clsDelegate
-        }
+        val result = ApplicationManager.getApplication().runReadAction(Computable {
+            val kotlinOrigin = kotlinOrigin
+            if (another is KtLightParameter && kotlinOrigin != null) {
+                val anotherParam = another as KtLightParameter?
+                kotlinOrigin == anotherParam!!.kotlinOrigin && clsDelegate == anotherParam.clsDelegate
+            }
+            else {
+                null
+            }
+        })
+        result?.let { return it }
+
         return super.isEquivalentTo(another)
     }
 
