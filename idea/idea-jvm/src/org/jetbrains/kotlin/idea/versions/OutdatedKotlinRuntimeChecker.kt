@@ -39,6 +39,7 @@ data class VersionedLibrary(val library: Library, val version: String?, val used
 fun findOutdatedKotlinLibraries(project: Project): List<VersionedLibrary> {
     val pluginVersion = KotlinPluginUtil.getPluginVersion()
     if (KotlinPluginUtil.isSnapshotVersion()) return emptyList() // plugin is run from sources, can't compare versions
+    if (project.isDisposed) return emptyList()
 
     // user already clicked suppress
     if (pluginVersion == PropertiesComponent.getInstance(project).getValue(SUPPRESSED_PROPERTY_NAME)) {
@@ -118,7 +119,9 @@ fun notifyOutdatedKotlinRuntime(project: Project, outdatedLibraries: Collection<
                     }
                 }
                 "ignore" == event.description -> {
-                    PropertiesComponent.getInstance(project).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion)
+                    if (!project.isDisposed) {
+                        PropertiesComponent.getInstance(project).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion)
+                    }
                 }
                 else -> {
                     throw AssertionError()
