@@ -15,3 +15,7 @@ To run the code generator from the `libraries` directory of a kotlin checkout, u
 > Note: on Windows type `gradlew` without the leading `./`
 
 This then runs the script which generates a significant part of stdlib sources from the [templates](https://github.com/JetBrains/kotlin/tree/master/libraries/tools/kotlin-stdlib-gen/src/templates) authored with a special kotlin based DSL.
+
+### Usage samples
+
+If you want to author samples for the standard library, please head to [the samples readme](samples/ReadMe.md).
