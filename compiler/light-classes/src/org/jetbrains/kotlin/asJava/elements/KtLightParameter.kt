@@ -46,18 +46,14 @@ class KtLightParameter(
 
             if (jetIndex != 0) return null
 
-            var setter: KtPropertyAccessor? = null
-            if (declaration is KtPropertyAccessor) {
-                setter = if (declaration.isSetter) declaration else null
-            }
-            else if (declaration is KtProperty) {
-                setter = declaration.setter
-            }
-            else if (declaration is KtParameter) {
-                return declaration
+            val setter = when (declaration) {
+                is KtPropertyAccessor -> if (declaration.isSetter) declaration else null
+                is KtProperty -> declaration.setter
+                is KtParameter -> return declaration
+                else -> return null
             }
 
-            return if (setter != null) setter.parameter else null
+            return setter?.parameter
         }
 
     init {
@@ -106,8 +102,7 @@ class KtLightParameter(
         val result = ApplicationManager.getApplication().runReadAction(Computable {
             val kotlinOrigin = kotlinOrigin
             if (another is KtLightParameter && kotlinOrigin != null) {
-                val anotherParam = another as KtLightParameter?
-                kotlinOrigin == anotherParam!!.kotlinOrigin && clsDelegate == anotherParam.clsDelegate
+                kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate
             }
             else {
                 null
