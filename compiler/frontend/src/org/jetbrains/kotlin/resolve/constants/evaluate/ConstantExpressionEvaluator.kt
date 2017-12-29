@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -662,7 +663,8 @@ private class ConstantExpressionEvaluatorVisitor(
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val enumDescriptor = trace.bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
         if (enumDescriptor != null && DescriptorUtils.isEnumEntry(enumDescriptor)) {
-            return ConstantValueFactory.createEnumValue(enumDescriptor as ClassDescriptor).wrap()
+            val enumClassId = (enumDescriptor.containingDeclaration as ClassDescriptor).classId ?: return null
+            return EnumValue(enumClassId, enumDescriptor.name).wrap()
         }
 
         val resolvedCall = expression.getResolvedCall(trace.bindingContext)

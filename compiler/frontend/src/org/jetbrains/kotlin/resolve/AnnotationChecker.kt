@@ -208,7 +208,7 @@ class AnnotationChecker(
             val valueArguments = targetEntryDescriptor.allValueArguments
             val valueArgument = valueArguments.entries.firstOrNull()?.value as? ArrayValue ?: return null
             return valueArgument.value.filterIsInstance<EnumValue>().mapNotNull {
-                KotlinTarget.valueOrNull(it.value.name.asString())
+                KotlinTarget.valueOrNull(it.enumEntryName.asString())
             }.toSet()
         }
 

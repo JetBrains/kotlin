@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findNonGenericClassAcrossDependencies
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
+import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.storage.getValue
@@ -98,21 +98,9 @@ class LazyJavaAnnotationDescriptor(
     }
 
     private fun resolveFromEnumValue(enumClassId: ClassId?, entryName: Name?): ConstantValue<*>? {
-        if (entryName == null) return null
+        if (enumClassId == null || entryName == null) return null
 
-        if (enumClassId == null) {
-            return ConstantValueFactory.createEnumValue(ErrorUtils.createErrorClassWithExactName(entryName))
-        }
-
-        val enumClass = c.module.findNonGenericClassAcrossDependencies(
-                enumClassId,
-                c.components.deserializedDescriptorResolver.components.notFoundClasses
-        )
-
-        val classifier = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(entryName, NoLookupLocation.FROM_JAVA_LOADER)
-                                 as? ClassDescriptor ?: return null
-
-        return ConstantValueFactory.createEnumValue(classifier)
+        return EnumValue(enumClassId, entryName)
     }
 
     private fun resolveFromJavaClassObjectType(javaType: JavaType): ConstantValue<*>? {

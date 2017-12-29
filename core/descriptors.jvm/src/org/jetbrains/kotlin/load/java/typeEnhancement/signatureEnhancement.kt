@@ -50,11 +50,11 @@ class SignatureEnhancement(
 ) {
 
     private fun AnnotationDescriptor.extractNullabilityTypeFromArgument(): NullabilityQualifierWithMigrationStatus? {
-        val enumEntryDescriptor = firstArgument().safeAs<EnumValue>()?.value
-                                  // if no argument is specified, use default value: NOT_NULL
-                                  ?: return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+        val enumValue = firstArgument() as? EnumValue
+                        // if no argument is specified, use default value: NOT_NULL
+                        ?: return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
 
-        return when (enumEntryDescriptor.name.asString()) {
+        return when (enumValue.enumEntryName.asString()) {
             "ALWAYS" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
             "MAYBE", "NEVER" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
             "UNKNOWN" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY)

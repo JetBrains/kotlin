@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -46,8 +45,6 @@ object ConstantValueFactory {
     fun createStringValue(value: String) = StringValue(value)
 
     fun createNullValue() = NullValue()
-
-    fun createEnumValue(enumEntryClass: ClassDescriptor): EnumValue = EnumValue(enumEntryClass)
 
     fun createArrayValue(value: List<ConstantValue<*>>, type: KotlinType) = createArrayValue(value) { type }
 

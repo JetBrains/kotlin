@@ -78,9 +78,8 @@ class AnnotationSerializer(private val stringTable: StringTable) {
 
             override fun visitEnumValue(value: EnumValue, data: Unit) {
                 type = Type.ENUM
-                val enumEntry = value.value
-                classId = stringTable.getFqNameIndex(enumEntry.containingDeclaration as ClassDescriptor)
-                enumValueId = stringTable.getStringIndex(enumEntry.name.asString())
+                classId = stringTable.getClassIdIndex(value.enumClassId)
+                enumValueId = stringTable.getStringIndex(value.enumEntryName.asString())
             }
 
             override fun visitErrorValue(value: ErrorValue, data: Unit) {

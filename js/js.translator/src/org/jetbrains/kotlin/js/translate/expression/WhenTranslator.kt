@@ -197,7 +197,7 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
     ): Pair<List<EntryWithConstants>, Int> {
         return collectConstantEntries(
                 fromIndex, entries,
-                { (it.toConstantValue(expectedType) as? EnumValue)?.value?.name?.identifier },
+                { (it.toConstantValue(expectedType) as? EnumValue)?.enumEntryName?.identifier },
                 { uniqueEnumNames.add(it) },
                 { JsStringLiteral(it) }
         )

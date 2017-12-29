@@ -438,7 +438,7 @@ public abstract class AnnotationCodegen {
     }
 
     @Nullable
-    private Set<ElementType> getJavaTargetList(ClassDescriptor descriptor) {
+    private static Set<ElementType> getJavaTargetList(ClassDescriptor descriptor) {
         AnnotationDescriptor targetAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Target.class.getName()));
         if (targetAnnotation != null) {
             Collection<ConstantValue<?>> valueArguments = targetAnnotation.getAllValueArguments().values();
@@ -449,12 +449,9 @@ public abstract class AnnotationCodegen {
                     Set<ElementType> result = EnumSet.noneOf(ElementType.class);
                     for (ConstantValue<?> value : values) {
                         if (value instanceof EnumValue) {
-                            ClassDescriptor enumEntry = ((EnumValue) value).getValue();
-                            KotlinType classObjectType = DescriptorUtilsKt.getClassValueType(enumEntry);
-                            if (classObjectType != null) {
-                                if ("java/lang/annotation/ElementType".equals(typeMapper.mapType(classObjectType).getInternalName())) {
-                                    result.add(ElementType.valueOf(enumEntry.getName().asString()));
-                                }
+                            FqName enumClassFqName = ((EnumValue) value).getEnumClassId().asSingleFqName();
+                            if (ElementType.class.getName().equals(enumClassFqName.asString())) {
+                                result.add(ElementType.valueOf(((EnumValue) value).getEnumEntryName().asString()));
                             }
                         }
                     }
@@ -466,21 +463,18 @@ public abstract class AnnotationCodegen {
     }
 
     @NotNull
-    private RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
+    private static RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
         KotlinRetention retention = DescriptorUtilsKt.getAnnotationRetention(descriptor);
         if (retention != null) {
             return annotationRetentionMap.get(retention);
         }
         AnnotationDescriptor retentionAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Retention.class.getName()));
         if (retentionAnnotation != null) {
-            ConstantValue<?> compileTimeConstant = CollectionsKt.firstOrNull(retentionAnnotation.getAllValueArguments().values());
-            if (compileTimeConstant instanceof EnumValue) {
-                ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
-                KotlinType classObjectType = DescriptorUtilsKt.getClassValueType(enumEntry);
-                if (classObjectType != null) {
-                    if ("java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName())) {
-                        return RetentionPolicy.valueOf(enumEntry.getName().asString());
-                    }
+            ConstantValue<?> value = CollectionsKt.firstOrNull(retentionAnnotation.getAllValueArguments().values());
+            if (value instanceof EnumValue) {
+                FqName enumClassFqName = ((EnumValue) value).getEnumClassId().asSingleFqName();
+                if (RetentionPolicy.class.getName().equals(enumClassFqName.asString())) {
+                    return RetentionPolicy.valueOf(((EnumValue) value).getEnumEntryName().asString());
                 }
             }
         }

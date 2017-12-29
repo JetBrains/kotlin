@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.android.synthetic.descriptors
 
 import kotlinx.android.extensions.CacheImplementation
-import kotlinx.android.extensions.CacheImplementation.*
+import kotlinx.android.extensions.CacheImplementation.NO_CACHE
+import kotlinx.android.extensions.CacheImplementation.valueOf
 import kotlinx.android.extensions.ContainerOptions
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidContainerType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -61,7 +62,7 @@ class ContainerOptionsProxy(val containerType: AndroidContainerType, val cache: 
 }
 
 private fun <E : Enum<E>> AnnotationDescriptor.getEnumValue(name: String, factory: (String) -> E): E? {
-    val valueName = (allValueArguments[Name.identifier(name)] as? EnumValue)?.value?.name?.asString() ?: return null
+    val valueName = (allValueArguments[Name.identifier(name)] as? EnumValue)?.enumEntryName?.asString() ?: return null
 
     return try {
         factory(valueName)

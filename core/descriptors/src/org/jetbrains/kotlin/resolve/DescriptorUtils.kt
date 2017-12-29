@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+private val RETENTION_PARAMETER_NAME = Name.identifier("value")
+
 fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = companionObjectDescriptor ?: this
 
 fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescriptor {
@@ -216,11 +218,10 @@ fun Annotated.isDocumentedAnnotation(): Boolean =
         annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) != null
 
 fun Annotated.getAnnotationRetention(): KotlinRetention? {
-    val retentionArgumentValue = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention)
-                                         ?.allValueArguments
-                                         ?.get(Name.identifier("value"))
-                                         as? EnumValue ?: return null
-    return KotlinRetention.valueOf(retentionArgumentValue.value.name.asString())
+    val retentionArgumentValue =
+            annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention)?.allValueArguments?.get(RETENTION_PARAMETER_NAME)
+                    as? EnumValue ?: return null
+    return KotlinRetention.valueOf(retentionArgumentValue.enumEntryName.asString())
 }
 
 val DeclarationDescriptor.parentsWithSelf: Sequence<DeclarationDescriptor>

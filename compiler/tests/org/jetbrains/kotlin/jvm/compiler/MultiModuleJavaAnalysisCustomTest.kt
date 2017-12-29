@@ -169,8 +169,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             it.allValueArguments.forEach {
                 val argument = it.value
                 if (argument is EnumValue) {
-                    Assert.assertEquals("Enum entry name should be <module-name>X", "X", argument.value.name.identifier.last().toString())
-                    checkDescriptor(argument.value, callable)
+                    Assert.assertEquals("Enum entry name should be <module-name>X", "X", argument.enumEntryName.identifier.last().toString())
                 }
             }
         }

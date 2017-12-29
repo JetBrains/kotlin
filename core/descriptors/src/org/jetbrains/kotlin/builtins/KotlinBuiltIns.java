@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget;
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory;
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter;
@@ -572,29 +570,6 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getThrowable() {
         return getBuiltInClassByName("Throwable");
-    }
-
-    @Nullable
-    private static ClassDescriptor getEnumEntry(@NotNull ClassDescriptor enumDescriptor, @NotNull String entryName) {
-        ClassifierDescriptor result = enumDescriptor.getUnsubstitutedInnerClassesScope().getContributedClassifier(
-                Name.identifier(entryName), NoLookupLocation.FROM_BUILTINS
-        );
-        return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
-    }
-
-    @Nullable
-    public ClassDescriptor getDeprecationLevelEnumEntry(@NotNull String level) {
-        return getEnumEntry(getBuiltInClassByName(FQ_NAMES.deprecationLevel.shortName()), level);
-    }
-
-    @Nullable
-    public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull KotlinTarget target) {
-        return getEnumEntry(getAnnotationClassByName(FQ_NAMES.annotationTarget.shortName()), target.name());
-    }
-
-    @Nullable
-    public ClassDescriptor getAnnotationRetentionEnumEntry(@NotNull KotlinRetention retention) {
-        return getEnumEntry(getAnnotationClassByName(FQ_NAMES.annotationRetention.shortName()), retention.name());
     }
 
     @NotNull

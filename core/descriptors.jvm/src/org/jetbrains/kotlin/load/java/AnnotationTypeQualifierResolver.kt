@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.ReportLevel
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val TYPE_QUALIFIER_NICKNAME_FQNAME = FqName("javax.annotation.meta.TypeQualifierNickname")
 private val TYPE_QUALIFIER_FQNAME = FqName("javax.annotation.meta.TypeQualifier")
@@ -148,12 +147,12 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     }
 
     private fun ClassDescriptor.migrationAnnotationStatus(): ReportLevel? {
-        val stateDescriptor = annotations.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.firstArgument()?.safeAs<EnumValue>()?.value
-                              ?: return null
+        val enumValue = annotations.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.firstArgument() as? EnumValue
+                        ?: return null
 
-        jsr305State.migration?.let { return jsr305State.migration }
+        jsr305State.migration?.let { return it }
 
-        return when (stateDescriptor.name.asString()) {
+        return when (enumValue.enumEntryName.asString()) {
             "STRICT" -> ReportLevel.STRICT
             "WARN" -> ReportLevel.WARN
             "IGNORE" -> ReportLevel.IGNORE
@@ -165,7 +164,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         when (this) {
             is ArrayValue -> value.flatMap { it.mapConstantToQualifierApplicabilityTypes() }
             is EnumValue -> listOfNotNull(
-                    when (value.name.identifier) {
+                    when (enumEntryName.identifier) {
                         "METHOD" -> QualifierApplicabilityType.METHOD_RETURN_TYPE
                         "FIELD" -> QualifierApplicabilityType.FIELD
                         "PARAMETER" -> QualifierApplicabilityType.VALUE_PARAMETER

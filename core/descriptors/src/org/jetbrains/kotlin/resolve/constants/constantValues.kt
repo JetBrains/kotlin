@@ -17,15 +17,13 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -111,14 +109,10 @@ class DoubleValue(value: Double) : ConstantValue<Double>(value) {
     override fun toString() = "$value.toDouble()"
 }
 
-class EnumValue(value: ClassDescriptor) : ConstantValue<ClassDescriptor>(value) {
-    val enumClassId: ClassId get() = (value.containingDeclaration as ClassDescriptor).classId!!
-
-    val enumEntryName: Name get() = value.name
-
+class EnumValue(val enumClassId: ClassId, val enumEntryName: Name) : ConstantValue<Pair<ClassId, Name>>(enumClassId to enumEntryName) {
     override fun getType(module: ModuleDescriptor): KotlinType =
-            value.classValueType
-            ?: ErrorUtils.createErrorType("Containing class for error-class based enum entry ${value.fqNameUnsafe}")
+            module.findClassAcrossModuleDependencies(enumClassId)?.takeIf(DescriptorUtils::isEnumClass)?.defaultType
+            ?: ErrorUtils.createErrorType("Containing class for error-class based enum entry $enumClassId.$enumEntryName")
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitEnumValue(this, data)
 
