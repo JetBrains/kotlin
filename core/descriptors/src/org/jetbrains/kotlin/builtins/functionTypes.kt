@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.*
@@ -169,7 +168,7 @@ fun getFunctionTypeArgumentProjections(
             val parameterNameAnnotation = BuiltInAnnotationDescriptor(
                     builtIns,
                     KotlinBuiltIns.FQ_NAMES.parameterName,
-                    mapOf(Name.identifier("name") to ConstantValueFactory.createStringValue(name.asString()))
+                    mapOf(Name.identifier("name") to StringValue(name.asString()))
             )
             type.replaceAnnotations(AnnotationsImpl(type.annotations + parameterNameAnnotation))
         }

@@ -31,9 +31,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
-import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.storage.getValue
@@ -76,7 +74,7 @@ class LazyJavaAnnotationDescriptor(
     }
 
     private fun resolveFromAnnotation(javaAnnotation: JavaAnnotation): ConstantValue<*> {
-        return ConstantValueFactory.createAnnotationValue(LazyJavaAnnotationDescriptor(c, javaAnnotation))
+        return AnnotationValue(LazyJavaAnnotationDescriptor(c, javaAnnotation))
     }
 
     private fun resolveFromArray(argumentName: Name, elements: List<JavaAnnotationArgument>): ConstantValue<*>? {
@@ -91,7 +89,7 @@ class LazyJavaAnnotationDescriptor(
                     )
 
         val values = elements.map {
-            argument -> resolveAnnotationArgument(argument) ?: ConstantValueFactory.createNullValue()
+            argument -> resolveAnnotationArgument(argument) ?: NullValue()
         }
 
         return ConstantValueFactory.createArrayValue(values, arrayType)
@@ -116,7 +114,7 @@ class LazyJavaAnnotationDescriptor(
 
         val javaClassObjectType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, jlClass, arguments)
 
-        return ConstantValueFactory.createKClassValue(javaClassObjectType)
+        return KClassValue(javaClassObjectType)
     }
 
     override fun toString(): String {

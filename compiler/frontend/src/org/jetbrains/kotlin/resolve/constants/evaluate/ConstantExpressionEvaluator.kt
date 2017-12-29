@@ -312,8 +312,8 @@ private class ConstantExpressionEvaluatorVisitor(
             }
             return when (constantValue) {
                 is ErrorValue, is EnumValue -> return null
-                is NullValue -> ConstantValueFactory.createStringValue("null")
-                else -> ConstantValueFactory.createStringValue(constantValue.value.toString())
+                is NullValue -> StringValue("null")
+                else -> StringValue(constantValue.value.toString())
             }.wrap(compileTimeConstant.parameters)
         }
 
@@ -336,17 +336,17 @@ private class ConstantExpressionEvaluatorVisitor(
             entry: KtLiteralStringTemplateEntry,
             data: Nothing?
         ): TypedCompileTimeConstant<String> =
-            ConstantValueFactory.createStringValue(entry.text).wrap()
+            StringValue(entry.text).wrap()
 
         override fun visitEscapeStringTemplateEntry(entry: KtEscapeStringTemplateEntry, data: Nothing?): TypedCompileTimeConstant<String> =
-            ConstantValueFactory.createStringValue(entry.unescapedValue).wrap()
+            StringValue(entry.unescapedValue).wrap()
     }
 
     override fun visitConstantExpression(expression: KtConstantExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val text = expression.text ?: return null
 
         val nodeElementType = expression.node.elementType
-        if (nodeElementType == KtNodeTypes.NULL) return ConstantValueFactory.createNullValue().wrap()
+        if (nodeElementType == KtNodeTypes.NULL) return NullValue().wrap()
 
         val result: Any? = when (nodeElementType) {
             KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> parseNumericLiteral(text, nodeElementType)
@@ -546,7 +546,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
                 if ((isIntegerType(argumentForReceiver.value) && isIntegerType(argumentForParameter.value)) ||
                     !constantExpressionEvaluator.languageVersionSettings.supportsFeature(LanguageFeature.DivisionByZeroInConstantExpressions)) {
-                    return ConstantValueFactory.createErrorValue("Division by zero").wrap()
+                    return ErrorValue.create("Division by zero").wrap()
                 }
             }
 
@@ -781,7 +781,7 @@ private class ConstantExpressionEvaluatorVisitor(
     override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val type = trace.getType(expression)!!
         if (type.isError) return null
-        return ConstantValueFactory.createKClassValue(type).wrap()
+        return KClassValue(type).wrap()
     }
 
     private fun resolveArguments(valueArguments: List<ValueArgument>, expectedType: KotlinType): List<CompileTimeConstant<*>?> {
@@ -885,8 +885,8 @@ private class ConstantExpressionEvaluatorVisitor(
             return integerValue.wrap(parameters)
         }
         return when (value) {
-            value.toInt().toLong() -> ConstantValueFactory.createIntValue(value.toInt())
-            else -> ConstantValueFactory.createLongValue(value)
+            value.toInt().toLong() -> IntValue(value.toInt())
+            else -> LongValue(value)
         }.wrap(parameters)
     }
 
@@ -972,7 +972,7 @@ private fun createCompileTimeConstantForEquals(result: Any?, operationReference:
             }
             else -> throw IllegalStateException("Unknown equals operation token: $operationToken ${operationReference.text}")
         }
-        return ConstantValueFactory.createBooleanValue(value)
+        return BooleanValue(value)
     }
     return null
 }
@@ -982,13 +982,13 @@ private fun createCompileTimeConstantForCompareTo(result: Any?, operationReferen
         assert(operationReference is KtSimpleNameExpression) { "This method should be called only for compareTo operations" }
         val operationToken = (operationReference as KtSimpleNameExpression).getReferencedNameElementType()
         return when (operationToken) {
-            KtTokens.LT -> ConstantValueFactory.createBooleanValue(result < 0)
-            KtTokens.LTEQ -> ConstantValueFactory.createBooleanValue(result <= 0)
-            KtTokens.GT -> ConstantValueFactory.createBooleanValue(result > 0)
-            KtTokens.GTEQ -> ConstantValueFactory.createBooleanValue(result >= 0)
+            KtTokens.LT -> BooleanValue(result < 0)
+            KtTokens.LTEQ -> BooleanValue(result <= 0)
+            KtTokens.GT -> BooleanValue(result > 0)
+            KtTokens.GTEQ -> BooleanValue(result >= 0)
             KtTokens.IDENTIFIER -> {
                 assert(operationReference.getReferencedNameAsName() == OperatorNameConventions.COMPARE_TO) { "This method should be called only for compareTo operations" }
-                return ConstantValueFactory.createIntValue(result)
+                return IntValue(result)
             }
             else -> throw IllegalStateException("Unknown compareTo operation token: $operationToken")
         }

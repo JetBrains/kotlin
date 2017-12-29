@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.AnnotationValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
-import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
@@ -137,8 +134,8 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {
-                return ConstantValueFactory.createConstantValue(value) ?:
-                       ConstantValueFactory.createErrorValue("Unsupported annotation argument: $name")
+                return ConstantValueFactory.createConstantValue(value)
+                       ?: ErrorValue.create("Unsupported annotation argument: $name")
             }
         }
     }

@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.SimpleType
@@ -114,7 +114,7 @@ class JavaDeprecatedAnnotationDescriptor(
         c: LazyJavaResolverContext
 ): JavaAnnotationDescriptor(c, annotation, KotlinBuiltIns.FQ_NAMES.deprecated) {
     override val allValueArguments: Map<Name, ConstantValue<*>> by c.storageManager.createLazyValue {
-        mapOf(JavaAnnotationMapper.DEPRECATED_ANNOTATION_MESSAGE to ConstantValueFactory.createStringValue("Deprecated in Java"))
+        mapOf(JavaAnnotationMapper.DEPRECATED_ANNOTATION_MESSAGE to StringValue("Deprecated in Java"))
     }
 }
 

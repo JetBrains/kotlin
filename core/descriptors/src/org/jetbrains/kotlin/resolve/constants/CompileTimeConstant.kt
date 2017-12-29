@@ -88,10 +88,10 @@ class IntegerValueTypeConstant(
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<Number> {
         val type = getType(expectedType)
         return when {
-            KotlinBuiltIns.isInt(type) -> ConstantValueFactory.createIntValue(value.toInt())
-            KotlinBuiltIns.isByte(type) -> ConstantValueFactory.createByteValue(value.toByte())
-            KotlinBuiltIns.isShort(type) -> ConstantValueFactory.createShortValue(value.toShort())
-            else -> ConstantValueFactory.createLongValue(value.toLong())
+            KotlinBuiltIns.isInt(type) -> IntValue(value.toInt())
+            KotlinBuiltIns.isByte(type) -> ByteValue(value.toByte())
+            KotlinBuiltIns.isShort(type) -> ShortValue(value.toShort())
+            else -> LongValue(value.toLong())
         }
     }
 
