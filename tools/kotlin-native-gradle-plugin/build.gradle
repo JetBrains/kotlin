@@ -67,12 +67,18 @@ task pluginMetadata {
     }
 }
 
+configurations {
+    bundleDependencies {
+        transitive = false
+    }
+}
+
 dependencies {
     compile 'org.jetbrains.kotlin:kotlin-native-shared'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile gradleApi()
 
-    shadow "org.jetbrains.kotlin:kotlin-native-shared"
+    bundleDependencies 'org.jetbrains.kotlin:kotlin-native-shared'
 
     testCompile gradleTestKit()
     testCompile 'junit:junit:4.12'
@@ -80,6 +86,11 @@ dependencies {
         exclude module: 'groovy-all'
     }
     testRuntime files(pluginMetadata)
+}
+
+shadowJar {
+    configurations = [project.configurations.bundleDependencies]
+    classifier = null
 }
 
 test {

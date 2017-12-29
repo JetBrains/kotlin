@@ -10,5 +10,7 @@ file("$rootDir/gradle.properties").withReader {
     rootProperties.load(it)
 }
 rootProperties.each { k, v ->
-    ext.set(k, v)
+    if (!project.hasProperty(k)) {
+        ext.set(k, v)
+    }
 }
