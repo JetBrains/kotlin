@@ -17,14 +17,14 @@ object Foo {
     val Foo: String = ""
 
     var FOO_BAR: Int = 0
+
+    var _FOO: Int = 0
 }
 
 class D {
     private val _foo: String
 
     private val FOO_BAR: String
-
-    val _Foo: String
 
     companion object {
         val Foo: String = ""
