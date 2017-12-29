@@ -33,6 +33,10 @@ repositories {
     }
 }
 
+jar {
+    archiveName = "shared.jar"
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
 }

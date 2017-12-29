@@ -147,10 +147,10 @@ dependencies {
     compilerCompile kotlinCompilerModule
     compilerCompile kotlinNativeInterop['llvm'].configuration
     compilerCompile kotlinNativeInterop['hash'].configuration
-    compilerCompile 'org.jetbrains.kotlin:kotlin-native-shared'
+    compilerCompile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 
     cli_bcCompile "org.jetbrains.kotlin:kotlin-runtime:$buildKotlinVersion"
-    cli_bcCompile 'org.jetbrains.kotlin:kotlin-native-shared'
+    cli_bcCompile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     cli_bcCompile sourceSets.compiler.output
 
     bc_frontendCompile kotlinCompilerModule
