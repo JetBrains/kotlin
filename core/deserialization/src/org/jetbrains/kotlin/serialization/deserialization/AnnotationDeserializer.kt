@@ -40,8 +40,6 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
     private val builtIns: KotlinBuiltIns
         get() = module.builtIns
 
-    private val factory = ConstantValueFactory(builtIns)
-
     fun deserializeAnnotation(proto: Annotation, nameResolver: NameResolver): AnnotationDescriptor {
         val annotationClass = resolveClass(nameResolver.getClassId(proto.id))
 
@@ -72,16 +70,16 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
             nameResolver: NameResolver
     ): ConstantValue<*> {
         val result: ConstantValue<*> = when (value.type) {
-            Type.BYTE -> factory.createByteValue(value.intValue.toByte())
-            Type.CHAR -> factory.createCharValue(value.intValue.toChar())
-            Type.SHORT -> factory.createShortValue(value.intValue.toShort())
-            Type.INT -> factory.createIntValue(value.intValue.toInt())
-            Type.LONG -> factory.createLongValue(value.intValue)
-            Type.FLOAT -> factory.createFloatValue(value.floatValue)
-            Type.DOUBLE -> factory.createDoubleValue(value.doubleValue)
-            Type.BOOLEAN -> factory.createBooleanValue(value.intValue != 0L)
+            Type.BYTE -> ConstantValueFactory.createByteValue(value.intValue.toByte())
+            Type.CHAR -> ConstantValueFactory.createCharValue(value.intValue.toChar())
+            Type.SHORT -> ConstantValueFactory.createShortValue(value.intValue.toShort())
+            Type.INT -> ConstantValueFactory.createIntValue(value.intValue.toInt())
+            Type.LONG -> ConstantValueFactory.createLongValue(value.intValue)
+            Type.FLOAT -> ConstantValueFactory.createFloatValue(value.floatValue)
+            Type.DOUBLE -> ConstantValueFactory.createDoubleValue(value.doubleValue)
+            Type.BOOLEAN -> ConstantValueFactory.createBooleanValue(value.intValue != 0L)
             Type.STRING -> {
-                factory.createStringValue(nameResolver.getString(value.stringValue))
+                ConstantValueFactory.createStringValue(nameResolver.getString(value.stringValue))
             }
             Type.CLASS -> {
                 resolveClassLiteralValue(nameResolver.getClassId(value.classId))
@@ -111,7 +109,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
 
                 val expectedElementType = builtIns.getArrayElementType(if (expectedIsArray) expectedType else actualArrayType)
 
-                factory.createArrayValue(
+                ConstantValueFactory.createArrayValue(
                         arrayElements.map {
                             resolveValue(expectedElementType, it, nameResolver)
                         },
@@ -121,12 +119,12 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
             else -> error("Unsupported annotation argument type: ${value.type} (expected $expectedType)")
         }
 
-        return if (result.type.isSubtypeOf(expectedType)) {
+        return if (result.getType(module).isSubtypeOf(expectedType)) {
             result
         }
         else {
             // This means that an annotation class has been changed incompatibly without recompiling clients
-            factory.createErrorValue("Unexpected argument value")
+            ConstantValueFactory.createErrorValue("Unexpected argument value")
         }
     }
 
@@ -136,7 +134,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
         val starProjectedType = resolveClass(classId).defaultType.replaceArgumentsWithStarProjections()
         val kClass = resolveClass(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.kClass.toSafe()))
         val type = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClass, listOf(TypeProjectionImpl(starProjectedType)))
-        return factory.createKClassValue(type)
+        return ConstantValueFactory.createKClassValue(type)
     }
 
     // NOTE: see analogous code in BinaryClassAnnotationAndConstantLoaderImpl
@@ -145,10 +143,10 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
         if (enumClass.kind == ClassKind.ENUM_CLASS) {
             val enumEntry = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(enumEntryName, NoLookupLocation.FROM_DESERIALIZATION)
             if (enumEntry is ClassDescriptor) {
-                return factory.createEnumValue(enumEntry)
+                return ConstantValueFactory.createEnumValue(enumEntry)
             }
         }
-        return factory.createErrorValue("Unresolved enum entry: $enumClassId.$enumEntryName")
+        return ConstantValueFactory.createErrorValue("Unresolved enum entry: $enumClassId.$enumEntryName")
     }
 
     private fun resolveArrayElementType(value: Value, nameResolver: NameResolver): SimpleType =

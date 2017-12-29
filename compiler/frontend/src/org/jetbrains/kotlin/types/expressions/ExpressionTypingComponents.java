@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.contracts.EffectSystem;
 import org.jetbrains.kotlin.contracts.parsing.ContractParsingServices;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.*;
@@ -36,6 +37,7 @@ import javax.inject.Inject;
 
 public class ExpressionTypingComponents {
     /*package*/ GlobalContext globalContext;
+    /*package*/ ModuleDescriptor moduleDescriptor;
     /*package*/ ExpressionTypingServices expressionTypingServices;
     /*package*/ CallResolver callResolver;
     /*package*/ PlatformToKotlinClassMap platformToKotlinClassMap;
@@ -72,6 +74,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
         this.globalContext = globalContext;
+    }
+
+    @Inject
+    public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     @Inject

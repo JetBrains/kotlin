@@ -114,8 +114,7 @@ class JavaDeprecatedAnnotationDescriptor(
         c: LazyJavaResolverContext
 ): JavaAnnotationDescriptor(c, annotation, KotlinBuiltIns.FQ_NAMES.deprecated) {
     override val allValueArguments: Map<Name, ConstantValue<*>> by c.storageManager.createLazyValue {
-        mapOf(JavaAnnotationMapper.DEPRECATED_ANNOTATION_MESSAGE to
-                      ConstantValueFactory(c.module.builtIns).createStringValue("Deprecated in Java"))
+        mapOf(JavaAnnotationMapper.DEPRECATED_ANNOTATION_MESSAGE to ConstantValueFactory.createStringValue("Deprecated in Java"))
     }
 }
 
@@ -170,7 +169,7 @@ object JavaAnnotationTargetMapper {
                 JavaAnnotationMapper.TARGET_ANNOTATION_ALLOWED_TARGETS,
                 builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.target)
         )
-        return ArrayValue(kotlinTargets, parameterDescriptor?.type ?: ErrorUtils.createErrorType("Error: AnnotationTarget[]"), builtIns)
+        return ArrayValue(kotlinTargets) { parameterDescriptor?.type ?: ErrorUtils.createErrorType("Error: AnnotationTarget[]") }
     }
 
     private val retentionNameList = mapOf(

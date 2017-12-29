@@ -19,41 +19,37 @@ package org.jetbrains.kotlin.resolve.constants
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
-class ConstantValueFactory(
-        private val builtins: KotlinBuiltIns
-) {
-    fun createLongValue(value: Long) = LongValue(value, builtins)
+object ConstantValueFactory {
+    fun createLongValue(value: Long) = LongValue(value)
 
-    fun createIntValue(value: Int) = IntValue(value, builtins)
+    fun createIntValue(value: Int) = IntValue(value)
 
     fun createErrorValue(message: String) = ErrorValue.create(message)
 
-    fun createShortValue(value: Short) = ShortValue(value, builtins)
+    fun createShortValue(value: Short) = ShortValue(value)
 
-    fun createByteValue(value: Byte) = ByteValue(value, builtins)
+    fun createByteValue(value: Byte) = ByteValue(value)
 
-    fun createDoubleValue(value: Double) = DoubleValue(value, builtins)
+    fun createDoubleValue(value: Double) = DoubleValue(value)
 
-    fun createFloatValue(value: Float) = FloatValue(value, builtins)
+    fun createFloatValue(value: Float) = FloatValue(value)
 
-    fun createBooleanValue(value: Boolean) = BooleanValue(value, builtins)
+    fun createBooleanValue(value: Boolean) = BooleanValue(value)
 
-    fun createCharValue(value: Char) = CharValue(value, builtins)
+    fun createCharValue(value: Char) = CharValue(value)
 
-    fun createStringValue(value: String) = StringValue(value, builtins)
+    fun createStringValue(value: String) = StringValue(value)
 
-    fun createNullValue() = NullValue(builtins)
+    fun createNullValue() = NullValue()
 
     fun createEnumValue(enumEntryClass: ClassDescriptor): EnumValue = EnumValue(enumEntryClass)
 
-    fun createArrayValue(
-            value: List<ConstantValue<*>>,
-            type: KotlinType
-    ) = ArrayValue(value, type, builtins)
+    fun createArrayValue(value: List<ConstantValue<*>>, type: KotlinType) = createArrayValue(value) { type }
 
     fun createAnnotationValue(value: AnnotationDescriptor) = AnnotationValue(value)
 
@@ -83,11 +79,14 @@ class ConstantValueFactory(
         }
     }
 
+    private fun createArrayValue(value: List<ConstantValue<*>>, computeType: (ModuleDescriptor) -> KotlinType): ArrayValue =
+            ArrayValue(value, computeType)
+
     private fun List<*>.arrayToList(): List<ConstantValue<*>> =
             this.toList().mapNotNull { createConstantValue(it) }
 
-    private fun PrimitiveType.arrayType(): KotlinType =
-            builtins.getPrimitiveArrayKotlinType(this)
+    private fun PrimitiveType.arrayType(): (ModuleDescriptor) -> KotlinType =
+            { module -> module.builtIns.getPrimitiveArrayKotlinType(this) }
 
     fun createIntegerConstantValue(
             value: Long,
@@ -104,4 +103,3 @@ class ConstantValueFactory(
         }
     }
 }
-

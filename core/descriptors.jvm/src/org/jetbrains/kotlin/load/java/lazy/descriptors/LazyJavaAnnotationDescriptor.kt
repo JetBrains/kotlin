@@ -57,8 +57,6 @@ class LazyJavaAnnotationDescriptor(
 
     override val source = c.components.sourceElementFactory.source(javaAnnotation)
 
-    private val factory = ConstantValueFactory(c.module.builtIns)
-
     override val allValueArguments by c.storageManager.createLazyValue {
         javaAnnotation.arguments.mapNotNull { arg ->
             val name = arg.name ?: DEFAULT_ANNOTATION_MEMBER_NAME
@@ -68,7 +66,7 @@ class LazyJavaAnnotationDescriptor(
 
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): ConstantValue<*>? {
         return when (argument) {
-            is JavaLiteralAnnotationArgument -> factory.createConstantValue(argument.value)
+            is JavaLiteralAnnotationArgument -> ConstantValueFactory.createConstantValue(argument.value)
             is JavaEnumValueAnnotationArgument -> resolveFromEnumValue(argument.resolve(), argument.entryName)
             is JavaArrayAnnotationArgument -> resolveFromArray(argument.name ?: DEFAULT_ANNOTATION_MEMBER_NAME, argument.getElements())
             is JavaAnnotationAsAnnotationArgument -> resolveFromAnnotation(argument.getAnnotation())
@@ -78,7 +76,7 @@ class LazyJavaAnnotationDescriptor(
     }
 
     private fun resolveFromAnnotation(javaAnnotation: JavaAnnotation): ConstantValue<*> {
-        return factory.createAnnotationValue(LazyJavaAnnotationDescriptor(c, javaAnnotation))
+        return ConstantValueFactory.createAnnotationValue(LazyJavaAnnotationDescriptor(c, javaAnnotation))
     }
 
     private fun resolveFromArray(argumentName: Name, elements: List<JavaAnnotationArgument>): ConstantValue<*>? {
@@ -93,16 +91,16 @@ class LazyJavaAnnotationDescriptor(
                     )
 
         val values = elements.map {
-            argument -> resolveAnnotationArgument(argument) ?: factory.createNullValue()
+            argument -> resolveAnnotationArgument(argument) ?: ConstantValueFactory.createNullValue()
         }
 
-        return factory.createArrayValue(values, arrayType)
+        return ConstantValueFactory.createArrayValue(values, arrayType)
     }
 
     private fun resolveFromEnumValue(element: JavaField?, entryName: Name?): ConstantValue<*>? {
         if (element == null || !element.isEnumEntry) {
             if (entryName == null) return null
-            return factory.createEnumValue(ErrorUtils.createErrorClassWithExactName(entryName))
+            return ConstantValueFactory.createEnumValue(ErrorUtils.createErrorClassWithExactName(entryName))
         }
 
         val containingJavaClass = element.containingClass
@@ -112,7 +110,7 @@ class LazyJavaAnnotationDescriptor(
         val classifier = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(element.name, NoLookupLocation.FROM_JAVA_LOADER)
                                  as? ClassDescriptor ?: return null
 
-        return factory.createEnumValue(classifier)
+        return ConstantValueFactory.createEnumValue(classifier)
     }
 
     private fun resolveFromJavaClassObjectType(javaType: JavaType): ConstantValue<*>? {
@@ -128,7 +126,7 @@ class LazyJavaAnnotationDescriptor(
 
         val javaClassObjectType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, jlClass, arguments)
 
-        return factory.createKClassValue(javaClassObjectType)
+        return ConstantValueFactory.createKClassValue(javaClassObjectType)
     }
 
     override fun toString(): String {

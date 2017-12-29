@@ -45,7 +45,6 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
         storageManager, kotlinClassFinder
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module, notFoundClasses)
-    private val factory = ConstantValueFactory(module.builtIns)
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
             annotationDeserializer.deserializeAnnotation(proto, nameResolver)
@@ -65,7 +64,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             initializer
         }
 
-        return factory.createConstantValue(normalizedValue)
+        return ConstantValueFactory.createConstantValue(normalizedValue)
     }
 
     override fun loadPropertyAnnotations(
@@ -116,7 +115,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                     override fun visitEnd() {
                         val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                         if (parameter != null) {
-                            arguments[name] = factory.createArrayValue(elements.compact(), parameter.type)
+                            arguments[name] = ConstantValueFactory.createArrayValue(elements.compact(), parameter.type)
                         }
                     }
                 }
@@ -139,10 +138,10 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                 if (enumClass.kind == ClassKind.ENUM_CLASS) {
                     val classifier = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(name, NoLookupLocation.FROM_JAVA_LOADER)
                     if (classifier is ClassDescriptor) {
-                        return factory.createEnumValue(classifier)
+                        return ConstantValueFactory.createEnumValue(classifier)
                     }
                 }
-                return factory.createErrorValue("Unresolved enum entry: $enumClassId.$name")
+                return ConstantValueFactory.createErrorValue("Unresolved enum entry: $enumClassId.$name")
             }
 
             override fun visitEnd() {
@@ -150,8 +149,8 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {
-                return factory.createConstantValue(value) ?:
-                       factory.createErrorValue("Unsupported annotation argument: $name")
+                return ConstantValueFactory.createConstantValue(value) ?:
+                       ConstantValueFactory.createErrorValue("Unsupported annotation argument: $name")
             }
         }
     }

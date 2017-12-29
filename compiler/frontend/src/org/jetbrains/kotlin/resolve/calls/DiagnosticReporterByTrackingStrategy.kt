@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -242,9 +242,9 @@ class DiagnosticReporterByTrackingStrategy(
 
     private fun reportConstantTypeMismatch(constraintError: NewConstraintError, expression: KtExpression): Boolean {
         if (expression is KtConstantExpression) {
-            val builtIns = context.scope.ownerDescriptor.builtIns
+            val module = context.scope.ownerDescriptor.module
             val constantValue = constantExpressionEvaluator.evaluateToConstantValue(expression, trace, context.expectedType)
-            val hasConstantTypeError = CompileTimeConstantChecker(context, builtIns, true)
+            val hasConstantTypeError = CompileTimeConstantChecker(context, module, true)
                 .checkConstantExpressionType(constantValue, expression, constraintError.upperType)
             if (hasConstantTypeError) return true
         }

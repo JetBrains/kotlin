@@ -169,7 +169,7 @@ fun getFunctionTypeArgumentProjections(
             val parameterNameAnnotation = BuiltInAnnotationDescriptor(
                     builtIns,
                     KotlinBuiltIns.FQ_NAMES.parameterName,
-                    mapOf(Name.identifier("name") to ConstantValueFactory(builtIns).createStringValue(name.asString()))
+                    mapOf(Name.identifier("name") to ConstantValueFactory.createStringValue(name.asString()))
             )
             type.replaceAnnotations(AnnotationsImpl(type.annotations + parameterNameAnnotation))
         }

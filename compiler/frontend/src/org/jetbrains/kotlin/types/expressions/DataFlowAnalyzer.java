@@ -53,11 +53,10 @@ import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEP
 import static org.jetbrains.kotlin.types.TypeUtils.*;
 
 public class DataFlowAnalyzer {
-
     private final Iterable<AdditionalTypeChecker> additionalTypeCheckers;
     private final ConstantExpressionEvaluator constantExpressionEvaluator;
+    private final ModuleDescriptor module;
     private final KotlinBuiltIns builtIns;
-    private final SmartCastManager smartCastManager;
     private final ExpressionTypingFacade facade;
     private final LanguageVersionSettings languageVersionSettings;
     private final EffectSystem effectSystem;
@@ -65,16 +64,16 @@ public class DataFlowAnalyzer {
     public DataFlowAnalyzer(
             @NotNull Iterable<AdditionalTypeChecker> additionalTypeCheckers,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
+            @NotNull ModuleDescriptor module,
             @NotNull KotlinBuiltIns builtIns,
-            @NotNull SmartCastManager smartCastManager,
             @NotNull ExpressionTypingFacade facade,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull EffectSystem effectSystem
     ) {
         this.additionalTypeCheckers = additionalTypeCheckers;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
+        this.module = module;
         this.builtIns = builtIns;
-        this.smartCastManager = smartCastManager;
         this.facade = facade;
         this.languageVersionSettings = languageVersionSettings;
         this.effectSystem = effectSystem;
@@ -285,7 +284,7 @@ public class DataFlowAnalyzer {
 
         if (expression instanceof KtConstantExpression && reportErrorForTypeMismatch) {
             ConstantValue<?> constantValue = constantExpressionEvaluator.evaluateToConstantValue(expression, c.trace, c.expectedType);
-            boolean error = new CompileTimeConstantChecker(c, builtIns, true)
+            boolean error = new CompileTimeConstantChecker(c, module, true)
                     .checkConstantExpressionType(constantValue, (KtConstantExpression) expression, c.expectedType);
             hasError.set(error);
             return expressionType;

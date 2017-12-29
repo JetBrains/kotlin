@@ -370,8 +370,9 @@ public abstract class AnnotationCodegen {
 
             @Override
             public Void visitEnumValue(EnumValue value, Void data) {
-                String propertyName = value.getValue().getName().asString();
-                annotationVisitor.visitEnum(name, typeMapper.mapType(value.getType()).getDescriptor(), propertyName);
+                String enumClassInternalName = AsmUtil.asmTypeByClassId(value.getEnumClassId()).getDescriptor();
+                String enumEntryName = value.getEnumEntryName().asString();
+                annotationVisitor.visitEnum(name, enumClassInternalName, enumEntryName);
                 return null;
             }
 

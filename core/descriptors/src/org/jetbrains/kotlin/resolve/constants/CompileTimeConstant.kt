@@ -17,8 +17,12 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeUtils
 
 interface CompileTimeConstant<out T> {
     val isError: Boolean
@@ -48,12 +52,13 @@ interface CompileTimeConstant<out T> {
 
 class TypedCompileTimeConstant<out T>(
         val constantValue: ConstantValue<T>,
+        module: ModuleDescriptor,
         override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<T> {
     override val isError: Boolean
         get() = constantValue is ErrorValue
 
-    val type: KotlinType = constantValue.type
+    val type: KotlinType = constantValue.getType(module)
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<T> = constantValue
 
@@ -75,32 +80,24 @@ class TypedCompileTimeConstant<out T>(
 
 class IntegerValueTypeConstant(
         private val value: Number,
-        private val builtIns: KotlinBuiltIns,
+        builtIns: KotlinBuiltIns,
         override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<Number> {
     private val typeConstructor = IntegerValueTypeConstructor(value.toLong(), builtIns)
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<Number> {
-        val factory = ConstantValueFactory(builtIns)
         val type = getType(expectedType)
         return when {
-            KotlinBuiltIns.isInt(type) -> {
-                factory.createIntValue(value.toInt())
-            }
-            KotlinBuiltIns.isByte(type) -> {
-                factory.createByteValue(value.toByte())
-            }
-            KotlinBuiltIns.isShort(type) -> {
-                factory.createShortValue(value.toShort())
-            }
-            else -> {
-                factory.createLongValue(value.toLong())
-            }
+            KotlinBuiltIns.isInt(type) -> ConstantValueFactory.createIntValue(value.toInt())
+            KotlinBuiltIns.isByte(type) -> ConstantValueFactory.createByteValue(value.toByte())
+            KotlinBuiltIns.isShort(type) -> ConstantValueFactory.createShortValue(value.toShort())
+            else -> ConstantValueFactory.createLongValue(value.toLong())
         }
     }
 
-    val unknownIntegerType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(Annotations.EMPTY, typeConstructor, emptyList<TypeProjection>(),
-                                                                                   false, ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
+    val unknownIntegerType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+            Annotations.EMPTY, typeConstructor, emptyList(), false,
+            ErrorUtils.createErrorScope("Scope for number value type ($typeConstructor)", true)
     )
 
     fun getType(expectedType: KotlinType): KotlinType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)

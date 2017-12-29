@@ -207,7 +207,7 @@ class StatementGenerator(
 
     fun generateConstantExpression(expression: KtExpression, constant: CompileTimeConstant<*>): IrExpression {
         val constantValue = constant.toConstantValue(getInferredTypeWithImplicitCastsOrFail(expression))
-        val constantType = constantValue.type
+        val constantType = constantValue.getType(context.moduleDescriptor)
 
         return when (constantValue) {
             is StringValue ->
@@ -231,7 +231,7 @@ class StatementGenerator(
             is ShortValue ->
                 IrConstImpl.short(expression.startOffset, expression.endOffset, constantType, constantValue.value)
             else ->
-                TODO("handle other literal types: ${constantValue.type}")
+                TODO("handle other literal types: $constantType")
         }
     }
 
