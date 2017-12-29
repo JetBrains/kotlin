@@ -127,7 +127,27 @@ class FunctionNameInspection : NamingConventionInspection(
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitNamedFunction(function: KtNamedFunction) {
-                if (TestUtils.isInTestSourceContent(function) && function.nameIdentifier?.text?.startsWith("`") == true) {
+                if (TestUtils.isInTestSourceContent(function)) {
+                    return
+                }
+                verifyName(function, holder)
+            }
+        }
+    }
+}
+
+class TestFunctionNameInspection : NamingConventionInspection(
+    "Test function",
+    "[a-z][A-Za-z_\\d]*",
+    START_LOWER
+) {
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+        return object : KtVisitorVoid() {
+            override fun visitNamedFunction(function: KtNamedFunction) {
+                if (!TestUtils.isInTestSourceContent(function)) {
+                    return
+                }
+                if (function.nameIdentifier?.text?.startsWith("`") == true) {
                     return
                 }
                 verifyName(function, holder)

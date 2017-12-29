@@ -2392,6 +2392,14 @@
                      displayName="Function naming convention"
                      level="WEAK WARNING"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.TestFunctionNameInspection"
+                     language="kotlin"
+                     groupPath="Kotlin"
+                     groupName="Naming conventions"
+                     enabledByDefault="true"
+                     displayName="Test function naming convention"
+                     level="WEAK WARNING"/>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.PropertyNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
