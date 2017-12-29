@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.io.IOException
 import java.util.*
 
 fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<BinaryVersionedFile<JvmMetadataVersion>> {
@@ -129,7 +130,15 @@ private fun updateJar(
     }
 
     val jarFileToReplace = getLocalJar(fileToReplace)!!
-    val newVFile = replaceFile(jarPath, jarFileToReplace)
+    val newVFile = try {
+        replaceFile(jarPath, jarFileToReplace)
+    } catch (e: IOException) {
+        Messages.showErrorDialog(project,
+                                 "Failed to update $jarPath: ${e.message}",
+                                 "Library update failed")
+        return
+    }
+
     if (newVFile != null) {
         val model = library.modifiableModel
         runWriteAction {
