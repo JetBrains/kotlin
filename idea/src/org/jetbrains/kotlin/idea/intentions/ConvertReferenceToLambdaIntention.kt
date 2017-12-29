@@ -135,7 +135,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, element] ?: return true
         val expectedTypeDescriptor = expectedType.constructor.declarationDescriptor as? ClassDescriptor ?: return true
         val expectedTypeFqName = expectedTypeDescriptor.fqNameSafe
-        return expectedTypeFqName.parent() == KOTLIN_REFLECT_FQ_NAME
+        return expectedTypeFqName.parent() != KOTLIN_REFLECT_FQ_NAME
     }
 
     companion object {
