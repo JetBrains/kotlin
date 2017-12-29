@@ -179,7 +179,11 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createCompanionObject(): KtObjectDeclaration {
-        return createClass("class A {\n companion object{\n}\n}").companionObjects.first()
+        return createCompanionObject("companion object {\n}")
+    }
+
+    fun createCompanionObject(text: String): KtObjectDeclaration {
+        return createClass("class A {\n $text\n}").companionObjects.first()
     }
 
     fun createFileAnnotation(annotationText: String): KtAnnotationEntry {
