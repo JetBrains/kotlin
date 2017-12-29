@@ -31,8 +31,4 @@ include ':performance'
 include ':platformLibs'
 
 includeBuild 'tools/kotlin-native-gradle-plugin'
-includeBuild('shared') {
-    dependencySubstitution {
-        substitute module('org.jetbrains.kotlin:kotlin-native-shared') with project(':')
-    }
-}
+includeBuild 'shared'

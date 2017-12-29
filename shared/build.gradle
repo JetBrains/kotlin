@@ -23,6 +23,9 @@ buildscript {
 
 apply plugin: 'kotlin'
 
+group = 'org.jetbrains.kotlin'
+version = konanVersion
+
 repositories {
     mavenCentral()
     maven {

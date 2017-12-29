@@ -151,7 +151,7 @@ class PlatformInfo {
 }
 
 task sharedJar {
-    dependsOn gradle.includedBuild('shared').task(':jar')
+    dependsOn gradle.includedBuild('kotlin-native-shared').task(':jar')
 }
 
 task gradlePluginJar {
@@ -227,7 +227,7 @@ task distCompiler(type: Copy) {
         into('konan/lib')
     }
 
-    from(file("${gradle.includedBuild('shared').projectDir}/build/libs")) {
+    from(file("${gradle.includedBuild('kotlin-native-shared').projectDir}/build/libs")) {
         into('konan/lib')
     }
 
@@ -305,7 +305,7 @@ targetList.each { target ->
         }
     }
 
-    Task platformLibs = task("${target}PlatformLibs") {
+    task("${target}PlatformLibs") {
         dependsOn ":platformLibs:${target}Install"
     }
 }
