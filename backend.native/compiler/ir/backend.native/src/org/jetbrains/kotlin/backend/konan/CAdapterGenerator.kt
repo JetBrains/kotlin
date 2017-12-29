@@ -220,8 +220,8 @@ private class ExportedElement(val kind: ElementKind,
                     TypeUtils.getClassDescriptor(owner.context.builtIns.nullableAnyType)!!
             else -> uniqueName(original) to TypeUtils.getClassDescriptor(original.returnType!!)!!
         }
-        val params = ArrayList(original.explicitParameters.map {
-            owner.translateName(it.name.asString()) to TypeUtils.getClassDescriptor(it.type)!!
+        val params = ArrayList(original.explicitParameters.mapIndexed() { index, it ->
+            "p$index /* ${it.name.asString()} */" to TypeUtils.getClassDescriptor(it.type)!!
         })
         return listOf(returned) + params
     }
