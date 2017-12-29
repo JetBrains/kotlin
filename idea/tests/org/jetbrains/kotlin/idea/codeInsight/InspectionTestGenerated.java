@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -260,6 +260,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("naming/function/inspectionData/inspections.test")
         public void testNaming_function_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/function/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("naming/objectProperty/inspectionData/inspections.test")
+        public void testNaming_objectProperty_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/objectProperty/inspectionData/inspections.test");
             doTest(fileName);
         }
 

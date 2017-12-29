@@ -51,6 +51,10 @@ private val NO_UNDERSCORES = NamingRule("should not contain underscores") {
     '_' in it
 }
 
+private val NO_START_UNDERSCORE = NamingRule("should not start with an underscore") {
+    it.startsWith('_')
+}
+
 private val NO_MIDDLE_UNDERSCORES = NamingRule("should not contain underscores in the middle or the end") {
     '_' in it.substring(1)
 }
@@ -174,7 +178,7 @@ abstract class PropertyNameInspectionBase protected constructor(
     vararg rules: NamingRule
 ) : NamingConventionInspection(entityName, defaultNamePattern, *rules) {
 
-    protected enum class PropertyKind { NORMAL, PRIVATE, OBJECT, CONST, LOCAL }
+    protected enum class PropertyKind { NORMAL, PRIVATE, OBJECT_OR_TOP_LEVEL, CONST, LOCAL }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
@@ -189,7 +193,9 @@ abstract class PropertyNameInspectionBase protected constructor(
     private fun KtProperty.getKind(): PropertyKind = when {
         isLocal -> PropertyKind.LOCAL
 
-        containingClassOrObject is KtObjectDeclaration -> PropertyKind.OBJECT
+        containingClassOrObject is KtObjectDeclaration -> PropertyKind.OBJECT_OR_TOP_LEVEL
+
+        isTopLevel -> PropertyKind.OBJECT_OR_TOP_LEVEL
 
         hasModifier(KtTokens.CONST_KEYWORD) -> PropertyKind.CONST
 
@@ -203,7 +209,12 @@ class PropertyNameInspection :
     PropertyNameInspectionBase(PropertyKind.NORMAL, "Property", "[a-z][A-Za-z\\d]*", START_LOWER, NO_UNDERSCORES)
 
 class ObjectPropertyNameInspection :
-    PropertyNameInspectionBase(PropertyKind.OBJECT, "Object property", "[A-Za-z][_A-Za-z\\d]*")
+    PropertyNameInspectionBase(
+        PropertyKind.OBJECT_OR_TOP_LEVEL,
+        "Object or top-level property",
+        "[A-Za-z][_A-Za-z\\d]*",
+        NO_START_UNDERSCORE
+    )
 
 class PrivatePropertyNameInspection :
     PropertyNameInspectionBase(PropertyKind.PRIVATE, "Private property", "_?[a-z][A-Za-z\\d]*", NO_MIDDLE_UNDERSCORES)
