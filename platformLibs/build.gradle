@@ -51,10 +51,7 @@ private String defFileToLibName(String target, String name) {
     return "$target-$name".toString()
 }
 
-private String defFileToInstallTaskName(String target, String name) {
-    return "install${defFileToLibName(target, name).capitalize()}"
-}
-
+// TODO: Implement as a part of the gradle plugin
 class KlibInstall extends Exec {
     @InputFile
     public File klib
@@ -86,8 +83,6 @@ class KlibInstall extends Exec {
         def klibName = klib.name.take(klib.name.lastIndexOf('.'))
         return project.file("$repo.absolutePath/$klibName")
     }
-
-
 }
 
 //#endregion
@@ -98,7 +93,6 @@ targetList.each { target ->
 
     targetDefFiles(target).each { df ->
         def libName = defFileToLibName(target, df.name)
-        def installTaskName = defFileToInstallTaskName(target, df.name)
 
         konanArtifacts {
             interop (libName, targets: [target]) {
@@ -113,17 +107,17 @@ targetList.each { target ->
         }
 
         def libTask = konanArtifacts."$libName"."$target"
-        libTask.dependsOn df.config.depends.collect{ defFileToInstallTaskName(target, it) }
+        libTask.dependsOn df.config.depends.collect{ defFileToLibName(target, it) }
         libTask.dependsOn ':cross_dist'
 
-        task "$installTaskName"(type: KlibInstall) {
+        task "$libName"(type: KlibInstall) {
             klib = libTask.artifact
             repo = file("$konanHome/klib/platform/$target")
             it.target = target
             dependsOn libTask
 
         }
-        installTasks.add(tasks[installTaskName])
+        installTasks.add(tasks[libName])
     }
 
     task "${target}Install" {
