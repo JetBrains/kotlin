@@ -19,6 +19,10 @@ buildscript {
 
 repositories {
     maven {
+        //TODO: this path should be removed!!
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+    maven {
         url kotlinCompilerRepo
     }
     mavenCentral()
@@ -91,12 +95,19 @@ task bench(type:DefaultTask) {
     doLast {
         def jvmReport = new Report(project.file("build/jvmReport.txt"))
         def konanReport = new Report(project.file("build/konanReport.txt"))
+        def average = "none"
         jvmReport.report.each { k, v ->
             def ratio = String.format('%.2f', konanReport.report[k]/v * 100)
+            if (k == 'RingAverage') {
+                average = ratio
+            }
             println("$k : $ratio %")
             if (System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null)
                 println("##teamcity[buildStatisticValue key='$k' value='$ratio']")
         }
+
+        println()
+        println("Average Ring score: $average %")
     }
 }
 
@@ -105,7 +116,7 @@ class Report {
     def Map<String, Double> report = new HashMap()
 
     Report(File path) {
-        path.readLines().drop(3).takeWhile { it.split(':').length == 2 }.each {
+        path.readLines().drop(3).findAll { it.split(':').length == 2 }.each {
             def p = it.split(':')
             report.put(p[0].trim(), Double.parseDouble(p[1].trim()))
         }

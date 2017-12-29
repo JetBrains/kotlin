@@ -55,7 +55,6 @@ private String defFileToInstallTaskName(String target, String name) {
     return "install${defFileToLibName(target, name).capitalize()}"
 }
 
-// TODO: Fix the report in performance project
 class KlibInstall extends Exec {
     @InputFile
     public File klib
