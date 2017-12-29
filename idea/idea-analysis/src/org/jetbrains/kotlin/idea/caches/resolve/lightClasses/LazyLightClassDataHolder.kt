@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
@@ -34,7 +23,10 @@ import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
+import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 typealias ExactLightClassContextProvider = () -> LightClassConstructionContext
 typealias DummyLightClassContextProvider = (() -> LightClassConstructionContext?)?
@@ -151,18 +143,19 @@ sealed class LazyLightClassDataHolder(
 }
 
 private sealed class LazyLightClassMemberMatchingError(message: String, containingClass: KtLightClass)
-    : AssertionError(message) {
+    : KotlinExceptionWithAttachments(message) {
 
     init {
         containingClass.kotlinOrigin?.hasLightClassMatchingErrors = true
+        withAttachment("class.kt", (containingClass as KtElement).getDebugText())
     }
 
     class NoMatch(dummyMember: PsiMember, containingClass: KtLightClass) : LazyLightClassMemberMatchingError(
-            "Couldn't match ${dummyMember.debugName} in $containingClass", containingClass
+            "Couldn't match ${dummyMember.debugName}", containingClass
     )
 
     class WrongMatch(realMember: PsiMember, dummyMember: PsiMember, containingClass: KtLightClass) : LazyLightClassMemberMatchingError(
-            "Matched ${dummyMember.debugName} to ${realMember.debugName} in $containingClass", containingClass
+            "Matched ${dummyMember.debugName} to ${realMember.debugName}", containingClass
     )
 }
 
