@@ -106,23 +106,25 @@ open class AddModifierFix(
         }
 
         fun createIfApplicable(modifierListOwner: KtModifierListOwner, modifier: KtModifierKeywordToken): AddModifierFix? {
-            if (modifier == ABSTRACT_KEYWORD || modifier == OPEN_KEYWORD) {
-                if (modifierListOwner is KtObjectDeclaration) return null
-                if (modifierListOwner is KtEnumEntry) return null
-                if (modifierListOwner is KtDeclaration && modifierListOwner !is KtClass) {
-                    val parentClassOrObject = modifierListOwner.containingClassOrObject ?: return null
-                    if (parentClassOrObject is KtObjectDeclaration) return null
-                    if (parentClassOrObject is KtEnumEntry) return null
+            when (modifier) {
+                ABSTRACT_KEYWORD, OPEN_KEYWORD -> {
+                    if (modifierListOwner is KtObjectDeclaration) return null
+                    if (modifierListOwner is KtEnumEntry) return null
+                    if (modifierListOwner is KtDeclaration && modifierListOwner !is KtClass) {
+                        val parentClassOrObject = modifierListOwner.containingClassOrObject ?: return null
+                        if (parentClassOrObject is KtObjectDeclaration) return null
+                        if (parentClassOrObject is KtEnumEntry) return null
+                    }
                 }
-            }
-            if (modifier == INNER_KEYWORD) {
-                if (modifierListOwner is KtObjectDeclaration) return null
-                if (modifierListOwner is KtClass) {
-                    if (modifierListOwner.isInterface() ||
-                        modifierListOwner.isSealed() ||
-                        modifierListOwner.isEnum() ||
-                        modifierListOwner.isData() ||
-                        modifierListOwner.isAnnotation()) return null
+                INNER_KEYWORD -> {
+                    if (modifierListOwner is KtObjectDeclaration) return null
+                    if (modifierListOwner is KtClass) {
+                        if (modifierListOwner.isInterface() ||
+                            modifierListOwner.isSealed() ||
+                            modifierListOwner.isEnum() ||
+                            modifierListOwner.isData() ||
+                            modifierListOwner.isAnnotation()) return null
+                    }
                 }
             }
             return AddModifierFix(modifierListOwner, modifier)
