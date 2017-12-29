@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.load.java.structure.impl
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class JavaAnnotationArgumentImpl(
@@ -64,14 +66,17 @@ class JavaEnumValueAnnotationArgumentImpl(
         private val psiReference: PsiReferenceExpression,
         name: Name?
 ) : JavaAnnotationArgumentImpl(name), JavaEnumValueAnnotationArgument {
-    override fun resolve(): JavaField? {
-        val element = psiReference.resolve()
-        return when (element) {
-            null -> null
-            is PsiEnumConstant -> JavaFieldImpl(element)
-            else -> throw IllegalStateException("Reference argument should be an enum value, but was $element: ${element.text}")
+    override val enumClassId: ClassId?
+        get() {
+            val element = psiReference.resolve()
+            if (element is PsiEnumConstant) {
+                return JavaFieldImpl(element).containingClass.classId
+            }
+
+            val fqName = (psiReference.qualifier as? PsiReferenceExpression)?.qualifiedName ?: return null
+            // TODO: find a way to construct a correct name (with nested classes) for unresolved enums
+            return ClassId.topLevel(FqName(fqName))
         }
-    }
 
     override val entryName: Name?
         get() = psiReference.referenceName?.let(Name::identifier)

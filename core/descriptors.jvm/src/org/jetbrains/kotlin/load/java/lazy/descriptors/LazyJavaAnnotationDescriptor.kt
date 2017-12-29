@@ -67,7 +67,7 @@ class LazyJavaAnnotationDescriptor(
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): ConstantValue<*>? {
         return when (argument) {
             is JavaLiteralAnnotationArgument -> ConstantValueFactory.createConstantValue(argument.value)
-            is JavaEnumValueAnnotationArgument -> resolveFromEnumValue(argument.resolve(), argument.entryName)
+            is JavaEnumValueAnnotationArgument -> resolveFromEnumValue(argument.enumClassId, argument.entryName)
             is JavaArrayAnnotationArgument -> resolveFromArray(argument.name ?: DEFAULT_ANNOTATION_MEMBER_NAME, argument.getElements())
             is JavaAnnotationAsAnnotationArgument -> resolveFromAnnotation(argument.getAnnotation())
             is JavaClassObjectAnnotationArgument -> resolveFromJavaClassObjectType(argument.getReferencedType())
@@ -97,17 +97,19 @@ class LazyJavaAnnotationDescriptor(
         return ConstantValueFactory.createArrayValue(values, arrayType)
     }
 
-    private fun resolveFromEnumValue(element: JavaField?, entryName: Name?): ConstantValue<*>? {
-        if (element == null || !element.isEnumEntry) {
-            if (entryName == null) return null
+    private fun resolveFromEnumValue(enumClassId: ClassId?, entryName: Name?): ConstantValue<*>? {
+        if (entryName == null) return null
+
+        if (enumClassId == null) {
             return ConstantValueFactory.createEnumValue(ErrorUtils.createErrorClassWithExactName(entryName))
         }
 
-        val containingJavaClass = element.containingClass
+        val enumClass = c.module.findNonGenericClassAcrossDependencies(
+                enumClassId,
+                c.components.deserializedDescriptorResolver.components.notFoundClasses
+        )
 
-        val enumClass = c.components.moduleClassResolver.resolveClass(containingJavaClass) ?: return null
-
-        val classifier = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(element.name, NoLookupLocation.FROM_JAVA_LOADER)
+        val classifier = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(entryName, NoLookupLocation.FROM_JAVA_LOADER)
                                  as? ClassDescriptor ?: return null
 
         return ConstantValueFactory.createEnumValue(classifier)

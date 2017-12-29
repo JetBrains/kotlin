@@ -90,6 +90,9 @@ interface JavaClass : JavaClassifier, JavaTypeParameterListOwner, JavaModifierLi
     val constructors: Collection<JavaConstructor>
 }
 
+val JavaClass.classId: ClassId?
+    get() = outerClass?.classId?.createNestedClassId(name) ?: fqName?.let(ClassId::topLevel)
+
 enum class LightClassOriginKind {
     SOURCE, BINARY
 }

@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal.structure
 
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 abstract class ReflectJavaAnnotationArgument(
@@ -51,11 +52,12 @@ class ReflectJavaEnumValueAnnotationArgument(
         name: Name?,
         private val value: Enum<*>
 ) : ReflectJavaAnnotationArgument(name), JavaEnumValueAnnotationArgument {
-    override fun resolve(): ReflectJavaField {
-        val clazz = value::class.java
-        val enumClass = if (clazz.isEnum) clazz else clazz.enclosingClass
-        return ReflectJavaField(enumClass.getDeclaredField(value.name))
-    }
+    override val enumClassId: ClassId?
+        get() {
+            val clazz = value::class.java
+            val enumClass = if (clazz.isEnum) clazz else clazz.enclosingClass
+            return enumClass.classId
+        }
 
     override val entryName: Name?
         get() = Name.identifier(value.name)

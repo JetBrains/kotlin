@@ -162,7 +162,7 @@ object JavaAnnotationTargetMapper {
     internal fun mapJavaTargetArguments(arguments: List<JavaAnnotationArgument>, builtIns: KotlinBuiltIns): ConstantValue<*> {
         // Map arguments: java.lang.annotation.Target -> kotlin.annotation.Target
         val kotlinTargets = arguments.filterIsInstance<JavaEnumValueAnnotationArgument>()
-                .flatMap { mapJavaTargetArgumentByName(it.resolve()?.name?.asString()) }
+                .flatMap { mapJavaTargetArgumentByName(it.entryName?.asString()) }
                 .mapNotNull { builtIns.getAnnotationTargetEnumEntry(it) }
                 .map(::EnumValue)
         val parameterDescriptor = DescriptorResolverUtils.getAnnotationParameterByName(
@@ -181,7 +181,7 @@ object JavaAnnotationTargetMapper {
     internal fun mapJavaRetentionArgument(element: JavaAnnotationArgument?, builtIns: KotlinBuiltIns): ConstantValue<*>? {
         // Map argument: java.lang.annotation.Retention -> kotlin.annotation.annotation
         return (element as? JavaEnumValueAnnotationArgument)?.let {
-            retentionNameList[it.resolve()?.name?.asString()]?.let {
+            retentionNameList[it.entryName?.asString()]?.let {
                 builtIns.getAnnotationRetentionEnumEntry(it)?.let(::EnumValue)
             }
         }
