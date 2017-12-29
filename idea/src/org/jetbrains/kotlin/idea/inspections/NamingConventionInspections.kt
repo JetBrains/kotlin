@@ -26,9 +26,28 @@ import java.awt.BorderLayout
 import java.util.regex.PatternSyntaxException
 import javax.swing.JPanel
 
+data class NamingRule(val message: String, val matcher: (String) -> Boolean)
+
+private val START_UPPER = NamingRule("should start with an uppercase letter") {
+    it.getOrNull(0)?.isUpperCase() == false
+}
+
+private val START_LOWER = NamingRule("should start with a lowercase letter") {
+    it.getOrNull(0)?.isLowerCase() == false
+}
+
+private val NO_UNDERSCORES = NamingRule("should not contain underscores") {
+    '_' in it
+}
+
+private val NO_MIDDLE_UNDERSCORES = NamingRule("should not contain underscores in the middle or the end") {
+    '_' in it.substring(1)
+}
+
 abstract class NamingConventionInspection(
     private val entityName: String,
-    defaultNamePattern: String
+    private val defaultNamePattern: String,
+    private vararg val rules: NamingRule
 ) : AbstractKotlinInspection() {
     protected var nameRegex: Regex? = defaultNamePattern.toRegex()
     var namePattern: String = defaultNamePattern
@@ -45,18 +64,34 @@ abstract class NamingConventionInspection(
         val name = element.name
         val nameIdentifier = element.nameIdentifier
         if (name != null && nameIdentifier != null && nameRegex?.matches(name) == false) {
+            val message = getNameMismatchMessage(name)
             holder.registerProblem(
                 element.nameIdentifier!!,
-                "$entityName name <code>#ref</code> doesn't match regex '$namePattern' #loc",
+                "$entityName name <code>#ref</code> $message #loc",
                 RenameIdentifierFix()
             )
         }
     }
 
+    protected fun getNameMismatchMessage(name: String): String {
+        if (namePattern == defaultNamePattern) {
+            for (rule in rules) {
+                if (rule.matcher(name)) {
+                    return rule.message
+                }
+            }
+        }
+        return "doesn't match regex '$namePattern'"
+    }
+
     override fun createOptionsPanel() = NamingConventionOptionsPanel(this)
 }
 
-class ClassNameInspection : NamingConventionInspection("Class", "[A-Z][A-Za-z\\d]*") {
+class ClassNameInspection : NamingConventionInspection(
+    "Class",
+    "[A-Z][A-Za-z\\d]*",
+    START_UPPER, NO_UNDERSCORES
+) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitClassOrObject(classOrObject: KtClassOrObject) {
@@ -70,7 +105,11 @@ class ClassNameInspection : NamingConventionInspection("Class", "[A-Z][A-Za-z\\d
     }
 }
 
-class EnumEntryNameInspection : NamingConventionInspection("Enum entry", "[A-Z]([A-Za-z\\d]*|[A-Z_\\d]*)") {
+class EnumEntryNameInspection : NamingConventionInspection(
+    "Enum entry",
+    "[A-Z]([A-Za-z\\d]*|[A-Z_\\d]*)",
+    START_UPPER
+) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitEnumEntry(enumEntry: KtEnumEntry) {
@@ -80,7 +119,11 @@ class EnumEntryNameInspection : NamingConventionInspection("Enum entry", "[A-Z](
     }
 }
 
-class FunctionNameInspection : NamingConventionInspection("Function", "[a-z][A-Za-z\\d]*") {
+class FunctionNameInspection : NamingConventionInspection(
+    "Function",
+    "[a-z][A-Za-z\\d]*",
+    START_LOWER, NO_UNDERSCORES
+) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitNamedFunction(function: KtNamedFunction) {
@@ -96,8 +139,9 @@ class FunctionNameInspection : NamingConventionInspection("Function", "[a-z][A-Z
 abstract class PropertyNameInspectionBase protected constructor(
     private val kind: PropertyKind,
     entityName: String,
-    defaultNamePattern: String
-) : NamingConventionInspection(entityName, defaultNamePattern) {
+    defaultNamePattern: String,
+    vararg rules: NamingRule
+) : NamingConventionInspection(entityName, defaultNamePattern, *rules) {
 
     protected enum class PropertyKind { NORMAL, PRIVATE, OBJECT, CONST, LOCAL }
 
@@ -124,25 +168,32 @@ abstract class PropertyNameInspectionBase protected constructor(
     }
 }
 
-class PropertyNameInspection : PropertyNameInspectionBase(PropertyKind.NORMAL, "Property", "[a-z][A-Za-z\\d]*")
+class PropertyNameInspection :
+    PropertyNameInspectionBase(PropertyKind.NORMAL, "Property", "[a-z][A-Za-z\\d]*", START_LOWER, NO_UNDERSCORES)
 
-class ObjectPropertyNameInspection : PropertyNameInspectionBase(PropertyKind.OBJECT, "Object property", "[A-Za-z][_A-Za-z\\d]*")
+class ObjectPropertyNameInspection :
+    PropertyNameInspectionBase(PropertyKind.OBJECT, "Object property", "[A-Za-z][_A-Za-z\\d]*")
 
-class PrivatePropertyNameInspection : PropertyNameInspectionBase(PropertyKind.PRIVATE, "Private property", "_?[a-z][A-Za-z\\d]*")
+class PrivatePropertyNameInspection :
+    PropertyNameInspectionBase(PropertyKind.PRIVATE, "Private property", "_?[a-z][A-Za-z\\d]*", NO_MIDDLE_UNDERSCORES)
 
-class ConstPropertyNameInspection : PropertyNameInspectionBase(PropertyKind.CONST, "Const property", "[A-Z][_A-Z\\d]*")
+class ConstPropertyNameInspection :
+    PropertyNameInspectionBase(PropertyKind.CONST, "Const property", "[A-Z][_A-Z\\d]*")
 
-class LocalVariableNameInspection : PropertyNameInspectionBase(PropertyKind.LOCAL, "Local variable", "[a-z][A-Za-z\\d]*")
+class LocalVariableNameInspection :
+    PropertyNameInspectionBase(PropertyKind.LOCAL, "Local variable", "[a-z][A-Za-z\\d]*", START_LOWER, NO_UNDERSCORES)
 
-class PackageNameInspection : NamingConventionInspection("Package", "[a-z][A-Za-z\\d]*(\\.[a-z][A-Za-z\\d]*)*") {
+class PackageNameInspection :
+    NamingConventionInspection("Package", "[a-z][A-Za-z\\d]*(\\.[a-z][A-Za-z\\d]*)*", NO_UNDERSCORES) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitPackageDirective(directive: KtPackageDirective) {
                 val qualifiedName = directive.qualifiedName
                 if (qualifiedName.isNotEmpty() && nameRegex?.matches(qualifiedName) == false) {
+                    val message = getNameMismatchMessage(qualifiedName)
                     holder.registerProblem(
                         directive.packageNameExpression!!,
-                        "Package name <code>#ref</code> doesn't match regex '$namePattern' #loc",
+                        "Package name <code>#ref</code> $message #loc",
                         RenamePackageFix()
                     )
                 }
