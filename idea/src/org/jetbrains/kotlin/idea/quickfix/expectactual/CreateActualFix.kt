@@ -225,7 +225,15 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
         }
 
     val expectedText = expectedClass.text
-    val actualClass = if (expectedClass is KtObjectDeclaration) createObject(expectedText) else createClass(expectedText)
+    val actualClass = if (expectedClass is KtObjectDeclaration) {
+        if (expectedClass.isCompanion()) {
+            createCompanionObject(expectedText)
+        } else {
+            createObject(expectedText)
+        }
+    } else {
+        createClass(expectedText)
+    }
     val isInterface = expectedClass is KtClass && expectedClass.isInterface()
     actualClass.declarations.forEach {
         if (it.exists()) {
