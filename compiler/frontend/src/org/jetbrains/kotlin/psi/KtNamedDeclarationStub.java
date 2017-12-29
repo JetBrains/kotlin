@@ -157,17 +157,4 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
         }
         return KtNamedDeclarationUtil.getFQName(this);
     }
-
-    @Override
-    public void delete() throws IncorrectOperationException {
-        KtClassOrObject classOrObject = KtPsiUtilKt.getContainingClassOrObject(this);
-
-        super.delete();
-
-        if (classOrObject instanceof KtObjectDeclaration
-            && ((KtObjectDeclaration) classOrObject).isCompanion()
-            && classOrObject.getDeclarations().isEmpty()) {
-            classOrObject.delete();
-        }
-    }
 }
