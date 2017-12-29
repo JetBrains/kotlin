@@ -80,6 +80,11 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCo
 }
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKotlinCompileTool<T>() {
+
+    init {
+        cacheOnlyIfEnabledForKotlin()
+    }
+
     @get:LocalState
     internal val taskBuildDirectory: File
         get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
@@ -412,11 +417,11 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                         kaptAnnotationsFileUpdater = AnnotationFileUpdaterImpl(kaptAnnotationsFile)
                     }
 
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, FilesSubpluginOption("output", FileOptionKind.INTERNAL, listOf(kaptAnnotationsFile)))
+                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, FilesSubpluginOption("output", listOf(kaptAnnotationsFile)))
                 }
 
                 if (kaptOptions.generateStubs) {
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, FilesSubpluginOption("stubs", FileOptionKind.INTERNAL, listOf(destinationDir)))
+                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, FilesSubpluginOption("stubs", listOf(destinationDir)))
                 }
 
                 if (kaptOptions.supportInheritedAnnotations) {

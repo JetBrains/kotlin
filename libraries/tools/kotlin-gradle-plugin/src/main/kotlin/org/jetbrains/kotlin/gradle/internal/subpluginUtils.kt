@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
-import org.jetbrains.kotlin.gradle.plugin.WrapperSubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.CompositeSubpluginOption
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.util.*
@@ -43,6 +43,6 @@ fun encodePluginOptions(options: Map<String, List<String>>): String {
 fun wrapPluginOptions(options: List<SubpluginOption>, newOptionName: String): List<SubpluginOption> {
     val groupedOptions = options.groupBy { it.key }.mapValues { opt -> opt.value.map { it.value } }
     val encodedOptions = encodePluginOptions(groupedOptions)
-    val singleOption = WrapperSubpluginOption(newOptionName, encodedOptions, options)
+    val singleOption = CompositeSubpluginOption(newOptionName, encodedOptions, options)
     return listOf(singleOption)
 }

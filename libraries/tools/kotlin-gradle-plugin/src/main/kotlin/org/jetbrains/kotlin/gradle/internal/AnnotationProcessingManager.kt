@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.kapt.generateAnnotationProcessorWrapper
 import org.jetbrains.kotlin.gradle.tasks.kapt.generateKotlinAptAnnotation
-import org.jetbrains.kotlin.gradle.tasks.shouldEnableGradleCache
+import org.jetbrains.kotlin.gradle.tasks.isBuildCacheSupported
 import java.io.File
 import java.io.IOException
 import java.util.zip.ZipFile
@@ -80,7 +80,7 @@ internal fun Project.initKapt(
 //            moveGeneratedJavaFilesToCorrespondingDirectories(kaptManager.aptOutputDir)
 //        }
 
-        if (shouldEnableGradleCache()) {
+        if (isBuildCacheSupported()) {
             // Since Kapt1 is about to be dropped, disable the cache for it:
             kotlinAfterJavaTask.outputs.doNotCacheIf("Caching is not supported with deprecated Kapt1") { true }
         }
@@ -110,7 +110,7 @@ internal fun Project.initKapt(
 
     kotlinTask.kaptOptions.annotationsFile = kaptManager.getAnnotationFile()
 
-    if (shouldEnableGradleCache()) {
+    if (isBuildCacheSupported()) {
         // Since Kapt1 is about to be dropped, disable the cache for it:
         kotlinTask.outputs.doNotCacheIf("Caching is not supported with deprecated Kapt1") { true }
     }

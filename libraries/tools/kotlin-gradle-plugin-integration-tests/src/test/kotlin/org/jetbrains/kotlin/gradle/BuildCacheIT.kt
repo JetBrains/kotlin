@@ -16,12 +16,9 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
-import java.nio.file.Files
-import kotlin.test.assertEquals
 
 class BuildCacheIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
@@ -32,7 +29,7 @@ class BuildCacheIT : BaseGradleIT() {
     }
 
     @Test
-    fun noCacheWithGradlePre43() = with(Project("simpleProject", "4.2")) {
+    fun testNoCacheWithGradlePre43() = with(Project("simpleProject", "4.2")) {
         // Check that even with the build cache enabled, the Kotlin tasks are not cacheable with Gradle < 4.3:
         val optionsWithCache = defaultBuildOptions().copy(withBuildCache = true)
 
@@ -44,6 +41,21 @@ class BuildCacheIT : BaseGradleIT() {
             assertSuccessful()
             assertNotContains(":compileKotlin FROM-CACHE")
             assertContains(":compileJava FROM-CACHE")
+        }
+    }
+
+    @Test
+    fun testKotlinCachingEnabledFlag() = with(Project("simpleProject", GRADLE_VERSION)) {
+        prepareLocalBuildCache()
+
+        build("assemble") {
+            assertSuccessful()
+            assertContains("Packing task ':compileKotlin'")
+        }
+
+        build("clean", "assemble", "-Dkotlin.caching.enabled=false") {
+            assertSuccessful()
+            assertNotContains(":compileKotlin FROM-CACHE")
         }
     }
 
@@ -99,19 +111,8 @@ class BuildCacheIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCorrectBuildAfterCacheHit() = with(Project("simpleProject", GRADLE_VERSION)) {
+    fun testCorrectBuildAfterCacheHit() = with(Project("buildCacheSimple", GRADLE_VERSION)) {
         prepareLocalBuildCache()
-
-        val fooKt = File(projectDir, "src/main/kotlin/foo/foo.kt").apply {
-            parentFile.mkdirs()
-            writeText("package foo; fun foo(i: Int): Int = 1")
-        }
-
-        // bar.kt references foo.kt; we expect it to recompile during the first build after a cache hit.
-        File(projectDir, "src/main/kotlin/bar/bar.kt").apply {
-            parentFile.mkdirs()
-            writeText("package bar; import foo.*; fun bar() = foo(1)")
-        }
 
         // First build, should be stored into the build cache:
         build("assemble") {
@@ -125,13 +126,11 @@ class BuildCacheIT : BaseGradleIT() {
             assertContains(":compileKotlin FROM-CACHE")
         }
 
-        // Change the return type Int to String, so that bar.kt should be recompiled, and check that:
-        fooKt.modify { it.replace("Int = 1", "String = \"abc\"") }
+        // Change the return type of foo() from Int to String in foo.kt, and check that fooUsage.kt is recompiled as well:
+        File(projectDir, "src/main/kotlin/foo.kt").modify { it.replace("Int = 1", "String = \"abc\"") }
         build("assemble") {
             assertSuccessful()
-            checkBytecodeContains(
-                    File(projectDir, "build/classes/kotlin/main/bar/BarKt.class"),
-                    "INVOKESTATIC foo/FooKt.foo (I)Ljava/lang/String;")
+            assertCompiledKotlinSources(relativize(allKotlinFiles))
         }
     }
 
@@ -166,7 +165,7 @@ class BuildCacheIT : BaseGradleIT() {
     }
 }
 
-fun BaseGradleIT.Project.prepareLocalBuildCache(directory: File = Files.createTempDirectory("GradleTestBuildCache").toFile()): File {
+fun BaseGradleIT.Project.prepareLocalBuildCache(directory: File = File(projectDir.parentFile, "buildCache").apply { mkdir() }): File {
     if (!projectDir.exists()) {
         setupWorkingDir()
     }

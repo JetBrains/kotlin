@@ -18,15 +18,10 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.file.FileTree
-import org.gradle.api.internal.file.UnionFileCollection
-import org.gradle.api.internal.file.UnionFileTree
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
-import org.jetbrains.kotlin.gradle.tasks.useBuildCacheIfSupported
 import java.io.File
 
 class KotlinJsDcePlugin : Plugin<Project> {
@@ -46,18 +41,15 @@ class KotlinJsDcePlugin : Plugin<Project> {
             project.tasks.findByName("build")!!.dependsOn(it)
         }
 
-        dceTask.useBuildCacheIfSupported()
-
         project.afterEvaluate {
             val outputDir = File(File(project.buildDir, DEFAULT_OUT_DIR), sourceSet.name)
 
             val configuration = project.configurations.findByName(sourceSet.compileConfigurationName)!!
-            val dceInputTree = project.fileTree(kotlinTask.outputFile)
 
             with (dceTask) {
                 classpath = configuration
                 destinationDir = dceTask.dceOptions.outputDirectory?.let { File(it) } ?: outputDir
-                source(dceInputTree)
+                source(kotlinTask.outputFile)
             }
         }
     }

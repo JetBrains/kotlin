@@ -118,10 +118,10 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         fun addVariant(sourceSet: AndroidSourceSet) {
             val optionValue = sourceSet.name + ';' +
                               sourceSet.res.srcDirs.joinToString(";") { it.absolutePath }
-            pluginOptions += WrapperSubpluginOption("variant", optionValue, listOf(
+            pluginOptions += CompositeSubpluginOption("variant", optionValue, listOf(
                     SubpluginOption("sourceSetName", sourceSet.name),
                     //use the INTERNAL option kind since the resources are tracked as sources (see below)
-                    FilesSubpluginOption("resDirs", FileOptionKind.INTERNAL, sourceSet.res.srcDirs.toList())
+                    FilesSubpluginOption("resDirs", sourceSet.res.srcDirs.toList())
             ))
             kotlinCompile.source(project.files(getLayoutDirectories(sourceSet.res.srcDirs)))
         }
@@ -170,10 +170,10 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 append(';')
                 resDirectories.joinTo(this, separator = ";") { it.canonicalPath }
             }
-            pluginOptions += WrapperSubpluginOption("variant", optionValue, listOf(
+            pluginOptions += CompositeSubpluginOption("variant", optionValue, listOf(
                     SubpluginOption("variantName", name),
                     // use INTERNAL option kind since the resources are tracked as sources (see below)
-                    FilesSubpluginOption("resDirs", FileOptionKind.INTERNAL, resDirectories)))
+                    FilesSubpluginOption("resDirs", resDirectories)))
 
             kotlinCompile.source(project.files(getLayoutDirectories(resDirectories)))
         }

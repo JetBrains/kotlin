@@ -689,8 +689,8 @@ internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractComp
 
     // Make Gradle check if the javaTask is up-to-date based on the Kotlin classes
     javaTask.inputsCompatible.run {
-        if (shouldEnableGradleCache()) {
-            dir(kotlinTask.destinationDir).withNormalizer(ClasspathNormalizer::class.java)
+        if (isBuildCacheSupported()) {
+            dir(kotlinTask.destinationDir).withNormalizer(CompileClasspathNormalizer::class.java)
         }
         else {
             dirCompatible(kotlinTask.destinationDir)
@@ -839,30 +839,11 @@ internal class SubpluginEnvironment(
 
 internal fun Task.registerSubpluginOptionAsInput(subpluginId: String, option: SubpluginOption) {
     when (option) {
-        is WrapperSubpluginOption -> {
+        is CompositeSubpluginOption -> {
             val subpluginIdWithWrapperKey = "$subpluginId.${option.key}"
             option.originalOptions.forEach { registerSubpluginOptionAsInput(subpluginIdWithWrapperKey, it) }
         }
-        is FilesSubpluginOption -> {
-            when (option.kind) {
-                FileOptionKind.INTERNAL -> Unit
-                FileOptionKind.OUTPUT_FILES -> outputsCompatible.filesCompatible(*option.files.toTypedArray())
-                FileOptionKind.OUTPUT_DIRS -> option.files.forEach { outputsCompatible.dirCompatible(it) }
-                FileOptionKind.INPUT_FILES, FileOptionKind.CLASSPATH_INPUT -> {
-                    if (!shouldEnableGradleCache()) {
-                        // Normalization makes no sense when we don't mean to use the cache,
-                        // and moreover, Gradle lacks some of the APIs in the earlier versions.
-                        inputsCompatible.filesCompatible(option.files)
-                    }
-                    else {
-                        if (option.kind == FileOptionKind.CLASSPATH_INPUT)
-                            inputs.files(option.files).withNormalizer(ClasspathNormalizer::class.java)
-                        else
-                            inputs.files(option.files).withPathSensitivity(PathSensitivity.RELATIVE)
-                    }
-                }
-            }
-        }
+        is FilesSubpluginOption -> Unit
         else -> {
             // Since there might be multiple subplugin options with the same key,
             // use the properties count to resolve duplication:
