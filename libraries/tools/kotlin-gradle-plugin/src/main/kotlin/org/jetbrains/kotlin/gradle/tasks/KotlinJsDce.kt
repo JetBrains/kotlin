@@ -35,6 +35,10 @@ import java.io.File
 @CacheableTask
 open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJsDce {
 
+    init {
+        cacheOnlyIfEnabledForKotlin()
+    }
+
     override fun createCompilerArgs(): K2JSDceArguments = K2JSDceArguments()
 
     override fun setupCompilerArgs(args: K2JSDceArguments, defaultsOnly: Boolean) {

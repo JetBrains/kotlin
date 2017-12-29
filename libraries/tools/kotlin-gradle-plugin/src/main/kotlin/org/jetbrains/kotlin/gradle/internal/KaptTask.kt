@@ -16,6 +16,16 @@ import java.io.File
 @CacheableTask
 open class KaptTask : ConventionTask(), CompilerArgumentAware<K2JVMCompilerArguments> {
 
+    init {
+        cacheOnlyIfEnabledForKotlin()
+
+        if (isBuildCacheSupported()) {
+            val reason = "Caching is disabled by default for kapt because of arbitrary behavior of external " +
+                         "annotation processors. You can enable it by adding 'kapt.useBuildCache = true' to the build script."
+            outputs.cacheIf(reason) { useBuildCache }
+        }
+    }
+
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 

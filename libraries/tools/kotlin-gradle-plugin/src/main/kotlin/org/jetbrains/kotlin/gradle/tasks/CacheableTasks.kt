@@ -18,21 +18,24 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Task
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.utils.outputsCompatible
+
+internal fun isBuildCacheSupported(): Boolean =
+    gradleVersion >= GradleVersion.version("4.3")
+
+internal fun isBuildCacheEnabledForKotlin(): Boolean =
+        isBuildCacheSupported() &&
+        System.getProperty(KOTLIN_CACHING_ENABLED_PROPERTY)?.toBoolean() ?: true
+
+internal fun <T : Task> T.cacheOnlyIfEnabledForKotlin() {
+    // The `cacheIf` method may be missing if the Gradle version is too low:
+    try {
+        outputsCompatible.cacheIf { isBuildCacheEnabledForKotlin() }
+    }
+    catch (_: NoSuchMethodError) {
+    }
+}
 
 private val gradleVersion = GradleVersion.current()
 
-internal fun shouldEnableGradleCache(): Boolean =
-    gradleVersion >= GradleVersion.version("4.3")
-
-internal fun <T : Task> T.useBuildCacheIfSupported() {
-    when {
-        gradleVersion >= GradleVersion.version("3.4") ->
-            outputs.cacheIf("Gradle version is at least 4.3") { shouldEnableGradleCache() }
-
-        // There was no 'cacheIf' method accepting a reason string before 3.4:
-        gradleVersion >= GradleVersion.version("3.0") -> outputs.cacheIf { false }
-
-        // Before 3.0, there was no build cache at all, no need to restrict anything
-        else -> Unit
-    }
-}
+private const val KOTLIN_CACHING_ENABLED_PROPERTY = "kotlin.caching.enabled"

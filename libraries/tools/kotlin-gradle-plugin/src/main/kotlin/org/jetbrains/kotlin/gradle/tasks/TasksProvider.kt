@@ -24,19 +24,16 @@ import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
 internal open class KotlinTasksProvider {
     fun createKotlinJVMTask(project: Project, name: String, sourceSetName: String): KotlinCompile =
             project.tasks.create(name, KotlinCompile::class.java).apply {
-                useBuildCacheIfSupported()
                 configure(project, sourceSetName)
             }
 
     fun createKotlinJSTask(project: Project, name: String, sourceSetName: String): Kotlin2JsCompile =
             project.tasks.create(name, Kotlin2JsCompile::class.java).apply {
-                useBuildCacheIfSupported()
                 configure(project, sourceSetName)
             }
 
     fun createKotlinCommonTask(project: Project, name: String, sourceSetName: String): KotlinCompileCommon =
             project.tasks.create(name, KotlinCompileCommon::class.java).apply {
-                useBuildCacheIfSupported()
                 configure(project, sourceSetName)
             }
 

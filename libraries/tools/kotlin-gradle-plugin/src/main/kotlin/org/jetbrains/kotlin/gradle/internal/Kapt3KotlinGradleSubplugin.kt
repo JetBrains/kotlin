@@ -35,8 +35,6 @@ import java.io.File
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
-import org.jetbrains.kotlin.gradle.tasks.shouldEnableGradleCache
-import org.jetbrains.kotlin.gradle.tasks.useBuildCacheIfSupported
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.util.*
@@ -210,14 +208,14 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         pluginOptions += SubpluginOption("aptMode", aptMode)
         disableAnnotationProcessingInJavaTask()
 
-        kaptClasspath.forEach { pluginOptions += FilesSubpluginOption("apclasspath", FileOptionKind.INTERNAL, listOf(it)) }
+        kaptClasspath.forEach { pluginOptions += FilesSubpluginOption("apclasspath", listOf(it)) }
 
         javaCompile.source(generatedFilesDir)
 
-        pluginOptions += FilesSubpluginOption("sources", FileOptionKind.INTERNAL, listOf(generatedFilesDir))
-        pluginOptions += FilesSubpluginOption("classes", FileOptionKind.INTERNAL, listOf(getKaptGeneratedClassesDir(project, sourceSetName)))
+        pluginOptions += FilesSubpluginOption("sources", listOf(generatedFilesDir))
+        pluginOptions += FilesSubpluginOption("classes", listOf(getKaptGeneratedClassesDir(project, sourceSetName)))
 
-        pluginOptions += FilesSubpluginOption("incrementalData", FileOptionKind.INTERNAL, listOf(getKaptIncrementalDataDir()))
+        pluginOptions += FilesSubpluginOption("incrementalData", listOf(getKaptIncrementalDataDir()))
 
         val annotationProcessors = kaptExtension.processors
         if (annotationProcessors.isNotEmpty()) {
@@ -235,9 +233,9 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val apOptions =
                 (kaptExtension.getAdditionalArguments(project, kaptVariantData?.variantData, androidPlugin) + androidOptions)
                         .map { SubpluginOption(it.key, it.value) } +
-                FilesSubpluginOption("kapt.kotlin.generated", FileOptionKind.INTERNAL, listOf(kotlinSourcesOutputDir))
+                FilesSubpluginOption("kapt.kotlin.generated", listOf(kotlinSourcesOutputDir))
 
-        pluginOptions += WrapperSubpluginOption("apoptions", encodeList(apOptions.associate { it.key to it.value }), apOptions)
+        pluginOptions += CompositeSubpluginOption("apoptions", encodeList(apOptions.associate { it.key to it.value }), apOptions)
 
         pluginOptions += SubpluginOption("javacArguments", encodeList(kaptExtension.getJavacOptions()))
 
@@ -284,7 +282,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         pluginOptions += SubpluginOption("useLightAnalysis", "${kaptExtension.useLightAnalysis}")
         pluginOptions += SubpluginOption("correctErrorTypes", "${kaptExtension.correctErrorTypes}")
-        pluginOptions += FilesSubpluginOption("stubs", FileOptionKind.INTERNAL, listOf(getKaptStubsDir()))
+        pluginOptions += FilesSubpluginOption("stubs", listOf(getKaptStubsDir()))
 
         if (project.hasProperty(VERBOSE_OPTION_NAME) && project.property(VERBOSE_OPTION_NAME) == "true") {
             pluginOptions += SubpluginOption("verbose", "true")
@@ -295,14 +293,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val kaptTask = project.tasks.create(
                 getKaptTaskName("kapt"),
                 KaptTask::class.java)
-
-        kaptTask.useBuildCacheIfSupported()
-
-        if (shouldEnableGradleCache()) {
-            val reason = "Caching is disabled by default for kapt because of arbitrary behavior of external " +
-                         "annotation processors. You can enable it by adding 'kapt.useBuildCache = true' to the build script."
-            kaptTask.outputs.doNotCacheIf(reason) { !kaptTask.useBuildCache }
-        }
 
         kaptTask.useBuildCache = kaptExtension.useBuildCache
 
@@ -341,8 +331,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val kaptTask = project.tasks.create(
                 getKaptTaskName("kaptGenerateStubs"),
                 KaptGenerateStubsTask::class.java)
-
-        kaptTask.useBuildCacheIfSupported()
 
         kaptTask.sourceSetName = sourceSetName
         kaptTask.kotlinCompileTask = kotlinCompile
