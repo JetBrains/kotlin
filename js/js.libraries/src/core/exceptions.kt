@@ -16,96 +16,117 @@
 
 package kotlin
 
-public open class Error : Throwable {
+// NOTE: Do not author your exceptions as they are written in this file, instead use this template:
+/*
+public open class MyException : Exception {
     constructor() : super()
     constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?): super(message, cause)
+    constructor(message: String?, cause: Throwable?) : super(message, cause)
     constructor(cause: Throwable?) : super(cause)
 }
+*/
 
-public open class Exception : Throwable {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?): super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+
+// TODO: remove workarounds for KT-22053 from direct Throwable inheritors
+// TODO: remove primary constructors, make all secondary KT-22055
+
+@Suppress("USELESS_ELVIS_RIGHT_IS_NULL")
+public open class Error(message: String?, cause: Throwable?) : Throwable(message, cause ?: null) {
+    constructor() : this(null, null) {
+        Error::class.js.asDynamic().call(this, null, null)
+    }
+
+    constructor(message: String?) : this(message, null) {
+        Error::class.js.asDynamic().call(this, message, null)
+    }
+
+    constructor(cause: Throwable?) : this(undefined, cause) {
+        Error::class.js.asDynamic().call(this, undefined, cause)
+    }
 }
 
-public open class RuntimeException : Exception {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?): super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+@Suppress("USELESS_ELVIS_RIGHT_IS_NULL")
+public open class Exception(message: String?, cause: Throwable?) : Throwable(message, cause ?: null) {
+    constructor() : this(null, null) {
+        Exception::class.js.asDynamic().call(this, null, null)
+    }
+
+    constructor(message: String?) : this(message, null) {
+        Exception::class.js.asDynamic().call(this, message, null)
+    }
+
+    constructor(cause: Throwable?) : this(undefined, cause) {
+        Exception::class.js.asDynamic().call(this, undefined, cause)
+    }
 }
 
-public open class IllegalArgumentException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?): super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+public open class RuntimeException(message: String?, cause: Throwable?) : Exception(message, cause) {
+    constructor() : this(null, null)
+    constructor(message: String?) : this(message, null)
+    constructor(cause: Throwable?) : this(undefined, cause)
 }
 
-public open class IllegalStateException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?): super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+public open class IllegalArgumentException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    constructor() : this(null, null)
+    constructor(message: String?) : this(message, null)
+    constructor(cause: Throwable?) : this(undefined, cause)
 }
 
-public open class IndexOutOfBoundsException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
+public open class IllegalStateException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    constructor() : this(null, null)
+    constructor(message: String?) : this(message, null)
+    constructor(cause: Throwable?) : this(undefined, cause)
 }
 
-public open class ConcurrentModificationException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?): super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+public open class IndexOutOfBoundsException(message: String?) : RuntimeException(message) {
+    constructor() : this(null)
 }
 
-public open class UnsupportedOperationException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?): super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+public open class ConcurrentModificationException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    constructor() : this(null, null)
+    constructor(message: String?) : this(message, null)
+    constructor(cause: Throwable?) : this(undefined, cause)
 }
 
-public open class NumberFormatException : IllegalArgumentException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
+public open class UnsupportedOperationException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    constructor() : this(null, null)
+    constructor(message: String?) : this(message, null)
+    constructor(cause: Throwable?) : this(undefined, cause)
 }
 
-public open class NullPointerException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
+
+public open class NumberFormatException(message: String?) : IllegalArgumentException(message) {
+    constructor() : this(null)
 }
 
-public open class ClassCastException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
+
+public open class NullPointerException(message: String?) : RuntimeException(message) {
+    constructor() : this(null)
 }
 
-public open class AssertionError : Error {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: Any?) : super(message.toString(), message as? Throwable)
+public open class ClassCastException(message: String?) : RuntimeException(message) {
+    constructor() : this(null)
 }
 
-public open class NoSuchElementException : Exception {
-    constructor() : super()
-    constructor(message: String?) : super(message)
+public open class AssertionError private constructor(message: String?, cause: Throwable?) : Error(message, cause) {
+    constructor() : this(null)
+    constructor(message: String?) : this(message, null)
+    constructor(message: Any?) : this(message.toString(), message as? Throwable)
 }
 
-public open class NoWhenBranchMatchedException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?): super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+public open class NoSuchElementException(message: String?) : RuntimeException(message) {
+    constructor() : this(null)
 }
 
-public open class UninitializedPropertyAccessException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?): super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+
+public open class NoWhenBranchMatchedException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    constructor() : this(null, null)
+    constructor(message: String?) : this(message, null)
+    constructor(cause: Throwable?) : this(undefined, cause)
+}
+
+public open class UninitializedPropertyAccessException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    constructor() : this(null, null)
+    constructor(message: String?) : this(message, null)
+    constructor(cause: Throwable?) : this(undefined, cause)
 }
