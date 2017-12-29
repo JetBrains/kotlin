@@ -55,15 +55,7 @@ class ArrayValue(
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitArrayValue(this, data)
 
-    val elementType: KotlinType
-        get() = builtIns.getArrayElementType(type)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || other::class.java != this::class.java) return false
-
-        return value == (other as ArrayValue).value
-    }
+    override fun equals(other: Any?): Boolean = this === other || value == (other as? ArrayValue)?.value
 
     override fun hashCode() = value.hashCode()
 }
@@ -144,12 +136,7 @@ class EnumValue(
 
     override fun toString() = "$type.${value.name}"
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || other::class.java != this::class.java) return false
-
-        return value == (other as EnumValue).value
-    }
+    override fun equals(other: Any?): Boolean = this === other || value == (other as? EnumValue)?.value
 
     override fun hashCode() = value.hashCode()
 }
@@ -196,14 +183,7 @@ class IntValue(
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitIntValue(this, data)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || other::class.java != this::class.java) return false
-
-        val intValue = other as IntValue
-
-        return value == intValue.value
-    }
+    override fun equals(other: Any?): Boolean = this === other || value == (other as? IntValue)?.value
 
     override fun hashCode() = value
 }
@@ -261,12 +241,7 @@ class StringValue(
 
     override fun toString() = "\"$value\""
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || other::class.java != this::class.java) return false
-
-        return value != (other as StringValue).value
-    }
+    override fun equals(other: Any?): Boolean = this === other || value == (other as? StringValue)?.value
 
     override fun hashCode() = value.hashCode()
 }
