@@ -28,8 +28,13 @@ import org.jetbrains.kotlin.gradle.plugin.KonanInteropSpec.IncludeDirectoriesSpe
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-open class KonanInteropLibrary(name: String, project: ProjectInternal, instantiator: Instantiator)
-    : KonanBuildingConfig<KonanInteropTask>(name, KonanInteropTask::class.java, project, instantiator), KonanInteropSpec {
+open class KonanInteropLibrary(name: String,
+                               project: ProjectInternal,
+                               instantiator: Instantiator,
+                               targets: Iterable<String> = project.konanExtension.targets
+) : KonanBuildingConfig<KonanInteropTask>(name, KonanInteropTask::class.java, project, instantiator, targets),
+    KonanInteropSpec
+{
 
     override fun generateTaskDescription(task: KonanInteropTask) =
             "Build the Kotlin/Native interop library '${task.name}' for target '${task.konanTarget}'"

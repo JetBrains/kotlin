@@ -22,13 +22,15 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import java.io.File
 
 abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
                                                        type: Class<T>,
                                                        project: ProjectInternal,
-                                                       instantiator: Instantiator)
-    : KonanBuildingConfig<T>(name, type, project, instantiator), KonanCompileSpec {
+                                                       instantiator: Instantiator,
+                                                       targets: Iterable<String>)
+    : KonanBuildingConfig<T>(name, type, project, instantiator, targets), KonanCompileSpec {
 
     protected abstract val typeForDescription: String
 
@@ -63,9 +65,16 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     override fun measureTime(flag: Boolean) = forEach { it.measureTime(flag) }
 }
 
-open class KonanProgram(name: String, project: ProjectInternal, instantiator: Instantiator)
-    : KonanCompileConfig<KonanCompileProgramTask>(name, KonanCompileProgramTask::class.java, project, instantiator) {
-
+open class KonanProgram(name: String,
+                        project: ProjectInternal,
+                        instantiator: Instantiator,
+                        targets: Iterable<String> = project.konanExtension.targets
+) : KonanCompileConfig<KonanCompileProgramTask>(name,
+        KonanCompileProgramTask::class.java,
+        project,
+        instantiator,
+        targets
+) {
     override val typeForDescription: String
         get() = "executable"
 
@@ -73,29 +82,55 @@ open class KonanProgram(name: String, project: ProjectInternal, instantiator: In
         get() = project.konanBinBaseDir
 }
 
-open class KonanDynamic(name: String, project: ProjectInternal, instantiator: Instantiator)
-    : KonanCompileConfig<KonanCompileDynamicTask>(name, KonanCompileDynamicTask::class.java, project, instantiator) {
-
+open class KonanDynamic(name: String,
+                        project: ProjectInternal,
+                        instantiator: Instantiator,
+                        targets: Iterable<String> = project.konanExtension.targets)
+    : KonanCompileConfig<KonanCompileDynamicTask>(name,
+        KonanCompileDynamicTask::class.java,
+        project,
+        instantiator,
+        targets
+) {
     override val typeForDescription: String
         get() = "dynamic library"
 
     override val defaultBaseDir: File
         get() = project.konanBinBaseDir
+
+    override fun targetIsSupported(target: KonanTarget): Boolean = target != WASM32
 }
 
-open class KonanFramework(name: String, project: ProjectInternal, instantiator: Instantiator)
-    : KonanCompileConfig<KonanCompileFrameworkTask>(name, KonanCompileFrameworkTask::class.java, project, instantiator) {
-
+open class KonanFramework(name: String,
+                          project: ProjectInternal,
+                          instantiator: Instantiator,
+                          targets: Iterable<String> = project.konanExtension.targets)
+    : KonanCompileConfig<KonanCompileFrameworkTask>(name,
+        KonanCompileFrameworkTask::class.java,
+        project,
+        instantiator,
+        targets
+) {
     override val typeForDescription: String
         get() = "framework"
 
     override val defaultBaseDir: File
         get() = project.konanBinBaseDir
+
+    override fun targetIsSupported(target: KonanTarget): Boolean =
+        target == MACBOOK || target == IPHONE_SIM || target == IPHONE_SIM
 }
 
-open class KonanLibrary(name: String, project: ProjectInternal, instantiator: Instantiator)
-    : KonanCompileConfig<KonanCompileLibraryTask>(name, KonanCompileLibraryTask::class.java, project, instantiator) {
-
+open class KonanLibrary(name: String,
+                        project: ProjectInternal,
+                        instantiator: Instantiator,
+                        targets: Iterable<String> = project.konanExtension.targets)
+    : KonanCompileConfig<KonanCompileLibraryTask>(name,
+        KonanCompileLibraryTask::class.java,
+        project,
+        instantiator,
+        targets
+) {
     override val typeForDescription: String
         get() = "library"
 
@@ -103,8 +138,16 @@ open class KonanLibrary(name: String, project: ProjectInternal, instantiator: In
         get() = project.konanLibsBaseDir
 }
 
-open class KonanBitcode(name: String, project: ProjectInternal, instantiator: Instantiator)
-    : KonanCompileConfig<KonanCompileBitcodeTask>(name, KonanCompileBitcodeTask::class.java, project, instantiator) {
+open class KonanBitcode(name: String,
+                        project: ProjectInternal,
+                        instantiator: Instantiator,
+                        targets: Iterable<String> = project.konanExtension.targets)
+    : KonanCompileConfig<KonanCompileBitcodeTask>(name,
+        KonanCompileBitcodeTask::class.java,
+        project,
+        instantiator,
+        targets
+) {
     override val typeForDescription: String
         get() = "bitcode"
 

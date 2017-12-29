@@ -101,9 +101,8 @@ targetList.each { target ->
         def libName = defFileToLibName(target, df.name)
         def installTaskName = defFileToInstallTaskName(target, df.name)
 
-        konan.targets = [target] // TODO: Support custom targets in gradle plugin.
         konanArtifacts {
-            interop(libName) {
+            interop (libName, targets: [target]) {
                 defFile df.file
                 artifactName df.name
                 noDefaultLibs true

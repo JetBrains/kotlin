@@ -36,7 +36,8 @@ import java.io.File
 abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: String,
                                                          type: Class<T>,
                                                          val project: ProjectInternal,
-                                                         instantiator: Instantiator)
+                                                         instantiator: Instantiator,
+                                                         val targets: Iterable<String>)
     : KonanBuildingSpec, Named, DefaultNamedDomainObjectSet<T>(type, instantiator, { it.konanTarget.visibleName }) {
 
     override fun getName() = name_
@@ -45,15 +46,20 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
 
     internal val aggregateBuildTask: Task
 
-    val declaredTargets: Iterable<KonanTarget> = project.konanTargets
+    private val konanTargets: Iterable<KonanTarget>
+        get() = targets.map { TargetManager(it).target }.distinct()
 
     init {
-        declaredTargets.forEach {
-            if (it.enabled) {
-                super.add(createTask(it))
-            } else {
-                project.logger.warn("The target is not enabled on the current host: ${it.visibleName}")
+        for (target in konanTargets) {
+            if (!target.enabled) {
+                project.logger.warn("The target is not enabled on the current host: ${target.visibleName}")
+                continue
             }
+            if (!targetIsSupported(target)) {
+                project.logger.warn("The target ${target.visibleName} is not supported by the artifact $name")
+                continue
+            }
+            super.add(createTask(target))
         }
         aggregateBuildTask = createAggregateTask()
         createHostTaskIfDeclared()
@@ -73,6 +79,8 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     protected abstract fun generateHostTaskDescription(task: Task, hostTarget: KonanTarget): String
 
     protected abstract val defaultBaseDir: File
+
+    protected open fun targetIsSupported(target: KonanTarget): Boolean = true
 
     override fun didAdd(toAdd: T) {
         super.didAdd(toAdd)

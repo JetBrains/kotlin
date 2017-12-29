@@ -18,11 +18,12 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import groovy.lang.Closure
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.DefaultPolymorphicDomainObjectContainer
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.util.ConfigureUtil
-
+import kotlin.reflect.KClass
 
 open class KonanArtifactContainer(val project: ProjectInternal)
     : DefaultPolymorphicDomainObjectContainer<KonanBuildingConfig<*>>(
@@ -30,78 +31,141 @@ open class KonanArtifactContainer(val project: ProjectInternal)
         project.services.get(Instantiator::class.java)
 ) {
 
-    init {
-        registerFactory(KonanProgram::class.java) { name ->
-            instantiator.newInstance(KonanProgram::class.java, name, project, instantiator)
-        }
-        registerFactory(KonanDynamic::class.java) { name ->
-            instantiator.newInstance(KonanDynamic::class.java, name, project, instantiator)
-        }
-        registerFactory(KonanFramework::class.java) { name ->
-            instantiator.newInstance(KonanFramework::class.java, name, project, instantiator)
-        }
-        registerFactory(KonanLibrary::class.java) { name ->
-            instantiator.newInstance(KonanLibrary::class.java, name, project, instantiator)
-        }
-        registerFactory(KonanBitcode::class.java) { name ->
-            instantiator.newInstance(KonanBitcode::class.java, name, project, instantiator)
-        }
-        registerFactory(KonanInteropLibrary::class.java) { name ->
-            instantiator.newInstance(KonanInteropLibrary::class.java, name, project, instantiator)
-        }
+    private inner class KonanBuildingConfigFactory<T: KonanBuildingConfig<*>>(val configClass: KClass<T>)
+        : NamedDomainObjectFactory<T> {
+
+        var targets: Iterable<String> = emptyList()
+
+        override fun create(name: String?): T =
+                instantiator.newInstance(configClass.java, name, project, instantiator, targets)
     }
 
-    // TODO: Investigate if we can support the same DSL as project.task:
-    //   program foo(targets: [target1, target2, target3]) {
-    //       ...
-    //   }
+    private val factories = mutableMapOf<KClass<out KonanBuildingConfig<*>>, KonanBuildingConfigFactory<*>>()
 
-    fun program(name: String) = create(name, KonanProgram::class.java)
-    fun program(name: String, configureAction: Action<KonanProgram>) =
-            create(name, KonanProgram::class.java, configureAction)
-    fun program(name: String, configureAction: KonanProgram.() -> Unit) =
-            create(name, KonanProgram::class.java, configureAction)
-    fun program(name: String, configureAction: Closure<*>) =
-            program(name, ConfigureUtil.configureUsing(configureAction))
+    private fun <T: KonanBuildingConfig<*>> createFactory(configClass: KClass<T>) {
+        val factory = KonanBuildingConfigFactory(configClass)
+        super.registerFactory(configClass.java, factory)
+        factories.put(configClass, factory)
+    }
 
-    fun dynamic(name: String) = create(name, KonanDynamic::class.java)
-    fun dynamic(name: String, configureAction: Action<KonanDynamic>) =
-            create(name, KonanDynamic::class.java, configureAction)
-    fun dynamic(name: String, configureAction: KonanDynamic.() -> Unit) =
-            create(name, KonanDynamic::class.java, configureAction)
-    fun dynamic(name: String, configureAction: Closure<*>) =
-            dynamic(name, ConfigureUtil.configureUsing(configureAction))
+    init {
+        createFactory(KonanProgram::class)
+        createFactory(KonanDynamic::class)
+        createFactory(KonanFramework::class)
+        createFactory(KonanLibrary::class)
+        createFactory(KonanBitcode::class)
+        createFactory(KonanInteropLibrary::class)
+    }
 
-    fun framework(name: String) = create(name, KonanFramework::class.java)
-    fun framework(name: String, configureAction: Action<KonanFramework>) =
-            create(name, KonanFramework::class.java, configureAction)
-    fun framework(name: String, configureAction: KonanFramework.() -> Unit) =
-            create(name, KonanFramework::class.java, configureAction)
-    fun framework(name: String, configureAction: Closure<*>) =
-            framework(name, ConfigureUtil.configureUsing(configureAction))
+    private fun determineTargets(configClass: KClass<out KonanBuildingConfig<*>>, args: Map<String, Any?>) {
+        val targetsArg = args["targets"]
+        val targets = when {
+            targetsArg == null -> project.konanExtension.targets
+            targetsArg is Iterable<*> -> targetsArg.map { it.toString() }
+            else -> listOf(targetsArg.toString())
+        }
+        factories[configClass]?.targets = targets
+    }
 
-    fun library(name: String) = create(name, KonanLibrary::class.java)
-    fun library(name: String, configureAction: Action<KonanLibrary>) =
-            create(name, KonanLibrary::class.java, configureAction)
-    fun library(name: String, configureAction: KonanLibrary.() -> Unit) =
-            create(name, KonanLibrary::class.java, configureAction)
-    fun library(name: String, configureAction: Closure<*>) =
-            library(name, ConfigureUtil.configureUsing(configureAction))
+    private fun <T: KonanBuildingConfig<*>> create(name: String,
+               configClass: KClass<T>,
+               args: Map<String, Any?>,
+               configureAction: Action<T>) {
+        determineTargets(configClass, args)
+        super.create(name, configClass.java, configureAction)
+    }
 
-    fun bitcode(name: String) = create(name, KonanBitcode::class.java)
-    fun bitcode(name: String, configureAction: Action<KonanBitcode>) =
-            create(name, KonanBitcode::class.java, configureAction)
-    fun bitcode(name: String, configureAction: KonanBitcode.() -> Unit) =
-            create(name, KonanBitcode::class.java, configureAction)
-    fun bitcode(name: String, configureAction: Closure<*>) =
-            bitcode(name, ConfigureUtil.configureUsing(configureAction))
+    private fun <T: KonanBuildingConfig<*>> create(name: String,
+                                                   configClass: KClass<T>,
+                                                   args: Map<String, Any?>,
+                                                   configureAction: T.() -> Unit) {
+        determineTargets(configClass, args)
+        super.create(name, configClass.java, configureAction)
+    }
 
-    fun interop(name: String) = create(name, KonanInteropLibrary::class.java)
-    fun interop(name: String, configureAction: Action<KonanInteropLibrary>) =
-            create(name, KonanInteropLibrary::class.java, configureAction)
-    fun interop(name: String, configureAction: KonanInteropLibrary.() -> Unit) =
-            create(name, KonanInteropLibrary::class.java, configureAction)
-    fun interop(name: String, configureAction: Closure<*>) =
-            interop(name, ConfigureUtil.configureUsing(configureAction))
+    private fun <T: KonanBuildingConfig<*>> create(name: String,
+                                                   configClass: KClass<T>,
+                                                   args: Map<String, Any?>) {
+        determineTargets(configClass, args)
+        super.create(name, configClass.java)
+    }
+
+    fun program(args: Map<String, Any?>, name: String) = create(name, KonanProgram::class, args)
+    fun program(args: Map<String, Any?>, name: String, configureAction: Action<KonanProgram>) =
+            create(name, KonanProgram::class, args, configureAction)
+    fun program(args: Map<String, Any?>, name: String, configureAction: KonanProgram.() -> Unit) =
+            create(name, KonanProgram::class, args, configureAction)
+    fun program(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
+            program(args, name, ConfigureUtil.configureUsing(configureAction))
+
+    fun dynamic(args: Map<String, Any?>, name: String) = create(name, KonanDynamic::class, args)
+    fun dynamic(args: Map<String, Any?>, name: String, configureAction: Action<KonanDynamic>) =
+            create(name, KonanDynamic::class, args, configureAction)
+    fun dynamic(args: Map<String, Any?>, name: String, configureAction: KonanDynamic.() -> Unit) =
+            create(name, KonanDynamic::class, args, configureAction)
+    fun dynamic(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
+            dynamic(args, name, ConfigureUtil.configureUsing(configureAction))
+
+    fun framework(args: Map<String, Any?>, name: String) = create(name, KonanFramework::class, args)
+    fun framework(args: Map<String, Any?>, name: String, configureAction: Action<KonanFramework>) =
+            create(name, KonanFramework::class, args, configureAction)
+    fun framework(args: Map<String, Any?>, name: String, configureAction: KonanFramework.() -> Unit) =
+            create(name, KonanFramework::class, args, configureAction)
+    fun framework(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
+            framework(args, name, ConfigureUtil.configureUsing(configureAction))
+
+    fun library(args: Map<String, Any?>, name: String) = create(name, KonanLibrary::class, args)
+    fun library(args: Map<String, Any?>, name: String, configureAction: Action<KonanLibrary>) =
+            create(name, KonanLibrary::class, args, configureAction)
+    fun library(args: Map<String, Any?>, name: String, configureAction: KonanLibrary.() -> Unit) =
+            create(name, KonanLibrary::class, args, configureAction)
+    fun library(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
+            library(args, name, ConfigureUtil.configureUsing(configureAction))
+
+    fun bitcode(args: Map<String, Any?>, name: String) = create(name, KonanBitcode::class, args)
+    fun bitcode(args: Map<String, Any?>, name: String, configureAction: Action<KonanBitcode>) =
+            create(name, KonanBitcode::class, args, configureAction)
+    fun bitcode(args: Map<String, Any?>, name: String, configureAction: KonanBitcode.() -> Unit) =
+            create(name, KonanBitcode::class, args, configureAction)
+    fun bitcode(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
+            bitcode(args, name, ConfigureUtil.configureUsing(configureAction))
+
+    fun interop(args: Map<String, Any?>, name: String) = create(name, KonanInteropLibrary::class, args)
+    fun interop(args: Map<String, Any?>, name: String, configureAction: Action<KonanInteropLibrary>) =
+            create(name, KonanInteropLibrary::class, args, configureAction)
+    fun interop(args: Map<String, Any?>, name: String, configureAction: KonanInteropLibrary.() -> Unit) =
+            create(name, KonanInteropLibrary::class, args, configureAction)
+    fun interop(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
+            interop(args, name, ConfigureUtil.configureUsing(configureAction))
+
+    fun program(name: String)                                           = program(emptyMap(), name)
+    fun program(name: String, configureAction: Action<KonanProgram>)    = program(emptyMap(), name, configureAction)
+    fun program(name: String, configureAction: KonanProgram.() -> Unit) = program(emptyMap(), name, configureAction)
+    fun program(name: String, configureAction: Closure<*>)              = program(emptyMap(), name, configureAction)
+
+    fun dynamic(name: String)                                           = dynamic(emptyMap(), name)
+    fun dynamic(name: String, configureAction: Action<KonanDynamic>)    = dynamic(emptyMap(), name, configureAction)
+    fun dynamic(name: String, configureAction: KonanDynamic.() -> Unit) = dynamic(emptyMap(), name, configureAction)
+    fun dynamic(name: String, configureAction: Closure<*>)              = dynamic(emptyMap(), name, configureAction)
+
+    fun framework(name: String)                                             = framework(emptyMap(), name)
+    fun framework(name: String, configureAction: Action<KonanFramework>)    = framework(emptyMap(), name, configureAction)
+    fun framework(name: String, configureAction: KonanFramework.() -> Unit) = framework(emptyMap(), name, configureAction)
+    fun framework(name: String, configureAction: Closure<*>)                = framework(emptyMap(), name, configureAction)
+
+    fun library(name: String)                                           = library(emptyMap(), name)
+    fun library(name: String, configureAction: Action<KonanLibrary>)    = library(emptyMap(), name, configureAction)
+    fun library(name: String, configureAction: KonanLibrary.() -> Unit) = library(emptyMap(), name, configureAction)
+    fun library(name: String, configureAction: Closure<*>)              = library(emptyMap(), name, configureAction)
+
+    fun bitcode(name: String)                                           = bitcode(emptyMap(), name)
+    fun bitcode(name: String, configureAction: Action<KonanBitcode>)    = bitcode(emptyMap(), name, configureAction)
+    fun bitcode(name: String, configureAction: KonanBitcode.() -> Unit) = bitcode(emptyMap(), name, configureAction)
+    fun bitcode(name: String, configureAction: Closure<*>)              = bitcode(emptyMap(), name, configureAction)
+
+    fun interop(name: String)                                                  = interop(emptyMap(), name)
+    fun interop(name: String, configureAction: Action<KonanInteropLibrary>)    = interop(emptyMap(), name, configureAction)
+    fun interop(name: String, configureAction: KonanInteropLibrary.() -> Unit) = interop(emptyMap(), name, configureAction)
+    fun interop(name: String, configureAction: Closure<*>)                     = interop(emptyMap(), name, configureAction)
 
 }
