@@ -33,6 +33,9 @@ import org.jetbrains.kotlin.resolve.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.calls.checkers.isOperatorMod
 import org.jetbrains.kotlin.resolve.calls.checkers.shouldWarnAboutDeprecatedModFromBuiltIns
+import org.jetbrains.kotlin.resolve.constants.AnnotationValue
+import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -42,6 +45,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
 
@@ -55,27 +59,22 @@ fun Deprecation.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedB
 
 fun Deprecation.deprecatedByAnnotationReplaceWithExpression(): String? {
     val annotation = (this as? DeprecatedByAnnotation)?.annotation ?: return null
-    val replaceWithAnnotation = annotation.argumentValue(kotlin.Deprecated::replaceWith.name)
-            as? AnnotationDescriptor ?: return null
-
-    return replaceWithAnnotation.argumentValue(kotlin.ReplaceWith::expression.name) as String
+    val replaceWithAnnotation =
+        annotation.argumentValue(kotlin.Deprecated::replaceWith.name)?.safeAs<AnnotationValue>()?.value ?: return null
+    return replaceWithAnnotation.argumentValue(kotlin.ReplaceWith::expression.name)?.safeAs<StringValue>()?.value
 }
 
 private data class DeprecatedByAnnotation(val annotation: AnnotationDescriptor, override val target: DeclarationDescriptor) : Deprecation {
     override val deprecationLevel: DeprecationLevelValue
-        get() {
-            val level = annotation.argumentValue("level") as? ClassDescriptor
-
-            return when (level?.name?.asString()) {
-                "WARNING" -> WARNING
-                "ERROR" -> ERROR
-                "HIDDEN" -> HIDDEN
-                else -> WARNING
-            }
+        get() = when (annotation.argumentValue("level")?.safeAs<EnumValue>()?.enumEntryName?.asString()) {
+            "WARNING" -> WARNING
+            "ERROR" -> ERROR
+            "HIDDEN" -> HIDDEN
+            else -> WARNING
         }
 
     override val message: String?
-        get() = annotation.argumentValue("message") as? String
+        get() = annotation.argumentValue("message")?.safeAs<StringValue>()?.value
 }
 
 private data class DeprecatedByOverridden(private val deprecations: Collection<Deprecation>) : Deprecation {

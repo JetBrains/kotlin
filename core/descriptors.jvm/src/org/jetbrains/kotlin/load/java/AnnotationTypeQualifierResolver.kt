@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Jsr305State
@@ -148,7 +148,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     }
 
     private fun ClassDescriptor.migrationAnnotationStatus(): ReportLevel? {
-        val stateDescriptor = annotations.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.firstArgumentValue()?.safeAs<ClassDescriptor>()
+        val stateDescriptor = annotations.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.firstArgument()?.safeAs<EnumValue>()?.value
                               ?: return null
 
         jsr305State.migration?.let { return jsr305State.migration }
