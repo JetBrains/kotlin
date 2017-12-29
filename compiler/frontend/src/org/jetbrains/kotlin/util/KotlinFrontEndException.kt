@@ -15,6 +15,13 @@ class KotlinFrontEndException(message: String, cause: Throwable) : KotlinExcepti
             cause: Throwable,
             element: PsiElement
     ) : this(getExceptionMessage("Front-end", message, cause, DiagnosticUtils.atLocation(element)), cause) {
-        withAttachment("element.kt", element.text)
+        withAttachment(
+            "element.kt",
+            if (element.isValid) {
+                element.text
+            } else {
+                "PsiElement (invalid): " + element.toString()
+            }
+        )
     }
 }

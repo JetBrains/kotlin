@@ -20,7 +20,7 @@ fun getExceptionMessage(
         }
 
         if (location != null) {
-            result.append("File being compiled and position: ").append(location).append("\n")
+            result.append("File being compiled at position: ").append(location).append("\n")
         }
         else {
             result.append("Element is unknown")
