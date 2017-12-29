@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice;
 import org.jetbrains.kotlin.util.slicedMap.Slices;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
@@ -124,7 +125,8 @@ public class CodegenBinding {
             return asmTypeForAnonymousClass(bindingContext, variableDescriptor);
         }
 
-        throw new IllegalStateException("Couldn't compute ASM type for " + PsiUtilsKt.getElementTextWithContext(expression));
+        throw new KotlinExceptionWithAttachments("Couldn't compute ASM type for expression")
+              .withAttachment("expression.kt", PsiUtilsKt.getElementTextWithContext(expression));
     }
 
     @NotNull

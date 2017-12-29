@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,15 @@
 package org.jetbrains.kotlin.util
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
-class KotlinFrontEndException(message: String, cause: Throwable) : RuntimeException(message, cause) {
+class KotlinFrontEndException(message: String, cause: Throwable) : KotlinExceptionWithAttachments(message, cause) {
     constructor(
             message: String,
             cause: Throwable,
             element: PsiElement
-    ) : this(getExceptionMessage("Front-end", message, cause, element), cause)
+    ) : this(getExceptionMessage("Front-end", message, cause, DiagnosticUtils.atLocation(element)), cause) {
+        withAttachment("element.kt", element.text)
+    }
 }

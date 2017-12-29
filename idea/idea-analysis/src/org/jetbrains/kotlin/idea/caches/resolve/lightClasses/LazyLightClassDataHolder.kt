@@ -34,7 +34,10 @@ import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
+import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 typealias ExactLightClassContextProvider = () -> LightClassConstructionContext
 typealias DummyLightClassContextProvider = (() -> LightClassConstructionContext?)?
@@ -151,18 +154,19 @@ sealed class LazyLightClassDataHolder(
 }
 
 private sealed class LazyLightClassMemberMatchingError(message: String, containingClass: KtLightClass)
-    : AssertionError(message) {
+    : KotlinExceptionWithAttachments(message) {
 
     init {
         containingClass.kotlinOrigin?.hasLightClassMatchingErrors = true
+        withAttachment("class.kt", (containingClass as KtElement).getDebugText())
     }
 
     class NoMatch(dummyMember: PsiMember, containingClass: KtLightClass) : LazyLightClassMemberMatchingError(
-            "Couldn't match ${dummyMember.debugName} in $containingClass", containingClass
+            "Couldn't match ${dummyMember.debugName}", containingClass
     )
 
     class WrongMatch(realMember: PsiMember, dummyMember: PsiMember, containingClass: KtLightClass) : LazyLightClassMemberMatchingError(
-            "Matched ${dummyMember.debugName} to ${realMember.debugName} in $containingClass", containingClass
+            "Matched ${dummyMember.debugName} to ${realMember.debugName}", containingClass
     )
 }
 

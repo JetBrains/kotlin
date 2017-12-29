@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,22 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.util.ExceptionUtilKt;
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
 
-public class CompilationException extends RuntimeException {
+public class CompilationException extends KotlinExceptionWithAttachments {
     private final PsiElement element;
 
     public CompilationException(@NotNull String message, @Nullable Throwable cause, @Nullable PsiElement element) {
-        super(ExceptionUtilKt.getExceptionMessage("Back-end (JVM)", message, cause, element), cause);
+        super(ExceptionUtilKt.getExceptionMessage("Back-end (JVM)", message, cause,
+                                                  element == null ? null : DiagnosticUtils.atLocation(element)),
+              cause);
         this.element = element;
+
+        if (element != null) {
+            withAttachment("element.kt", element.getText());
+        }
     }
 
     @Nullable

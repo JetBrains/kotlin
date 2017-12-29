@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,12 @@
 package org.jetbrains.kotlin.util
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 
 fun getExceptionMessage(
         subsystemName: String,
         message: String,
         cause: Throwable?,
-        element: PsiElement?
+        location: String?
 ): String = ApplicationManager.getApplication().runReadAction<String> {
         val result = StringBuilder(subsystemName + " Internal error: ").append(message).append("\n")
         if (cause != null) {
@@ -32,9 +30,8 @@ fun getExceptionMessage(
             result.append("Cause: ").append(causeMessage ?: cause.toString()).append("\n")
         }
 
-        if (element != null) {
-            result.append("File being compiled and position: ").append(DiagnosticUtils.atLocation(element)).append("\n")
-            result.append("PsiElement: ").append(element.text).append("\n")
+        if (location != null) {
+            result.append("File being compiled and position: ").append(location).append("\n")
         }
         else {
             result.append("Element is unknown")

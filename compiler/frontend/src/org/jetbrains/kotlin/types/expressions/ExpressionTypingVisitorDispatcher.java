@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.util.KotlinFrontEndException;
 import org.jetbrains.kotlin.util.LookupTrackerUtilKt;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
 
@@ -240,8 +241,8 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
         try {
             // This trows AssertionError in CLI and reports the error in the IDE
             LOG.error(
-                    "Exception while analyzing expression at " + DiagnosticUtils.atLocation(expression) + ":\n" + expression.getText() + "\n",
-                    e
+                    new KotlinExceptionWithAttachments("Exception while analyzing expression at " + DiagnosticUtils.atLocation(expression), e)
+                        .withAttachment("expression.kt", expression.getText())
             );
         }
         catch (AssertionError errorFromLogger) {

@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen
+package org.jetbrains.kotlin.utils
 
 import com.intellij.openapi.diagnostic.Attachment
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import com.intellij.openapi.diagnostic.ExceptionWithAttachments
 
-object ExceptionLogger {
-    @JvmStatic
-    fun logDescriptorNotFound(problemDescription: String, psi: PsiElement): AssertionError {
-        LOG.error(problemDescription, Attachment("psi.kt", psi.getElementTextWithContext()))
-        throw AssertionError(problemDescription)
+open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttachments {
+    private val attachments = mutableListOf<Attachment>()
+
+    constructor(message: String) : super(message)
+
+    constructor(message: String?, cause: Throwable?) : super(message, cause)
+
+    override fun getAttachments(): Array<Attachment> = attachments.toTypedArray()
+
+    fun withAttachment(name: String, content: String?): KotlinExceptionWithAttachments {
+        attachments.add(Attachment(name, content ?: "<null>"))
+        return this
     }
-
-    private val LOG = Logger.getInstance(ExceptionLogger::class.java)
 }

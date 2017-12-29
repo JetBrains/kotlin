@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.lazy
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 interface AbsentDescriptorHandler {
     fun diagnoseDescriptorNotFound(declaration: KtDeclaration): DeclarationDescriptor
@@ -29,5 +30,9 @@ class BasicAbsentDescriptorHandler : AbsentDescriptorHandler {
 }
 
 class NoDescriptorForDeclarationException @JvmOverloads constructor(declaration: KtDeclaration, additionalDetails: String? = null) :
-        IllegalStateException("Descriptor wasn't found for declaration $declaration\n${declaration.getElementTextWithContext()}"
-                              + (additionalDetails?.let { "\n---------------------------------------------------\n$it" } ?: ""))
+        KotlinExceptionWithAttachments("Descriptor wasn't found for declaration $declaration"
+                              + (additionalDetails?.let { "\n---------------------------------------------------\n$it" } ?: "")) {
+    init {
+        withAttachment("declaration.kt", declaration.getElementTextWithContext())
+    }
+}

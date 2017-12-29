@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 interface LightClassDataHolder {
     val javaFileStub: PsiJavaFileStub
@@ -107,7 +108,10 @@ fun PsiJavaFileStub.findDelegate(classOrObject: KtClassOrObject): PsiClass {
     }
 
     val stubFileText = DebugUtil.stubTreeToString(this)
-    throw IllegalStateException("Couldn't get delegate for ${classOrObject.getDebugText()}\nin $ktFileText\nstub: \n$stubFileText")
+    throw KotlinExceptionWithAttachments("Couldn't get delegate for class")
+            .withAttachment(classOrObject.name ?: "unnamed class or object", classOrObject.getDebugText())
+            .withAttachment("file.kt", ktFileText)
+            .withAttachment("stub text", stubFileText)
 }
 
 fun PsiJavaFileStub.findDelegate(classFqName: FqName): PsiClass {
