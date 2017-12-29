@@ -120,7 +120,7 @@ class ScriptDependenciesCache(private val project: Project) {
 
     fun delete(virtualFile: VirtualFile): Boolean {
         val changed = cacheLock.write {
-            cache.remove(virtualFile) != null
+            cache.remove(virtualFile)
         }
         if (changed) {
             onChange(listOf(virtualFile))
