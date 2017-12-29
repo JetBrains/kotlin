@@ -150,10 +150,16 @@ class PlatformInfo {
     }
 }
 
-// TODO: Add a task for gradle plugin uploading
-// TODO: And fix release readme: add info about compiler version and about new gradle-plugin uploading task
 task sharedJar {
     dependsOn gradle.includedBuild('shared').task(':jar')
+}
+
+task gradlePluginJar {
+    dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':shadowJar')
+}
+
+task uploadGradlePlugin {
+    dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':bintrayUpload')
 }
 
 task dist_compiler(dependsOn: "distCompiler")

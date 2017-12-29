@@ -19,10 +19,6 @@ buildscript {
 
 repositories {
     maven {
-        //TODO: this path should be removed!!
-        url "https://oss.sonatype.org/content/repositories/snapshots"
-    }
-    maven {
         url kotlinCompilerRepo
     }
     mavenCentral()

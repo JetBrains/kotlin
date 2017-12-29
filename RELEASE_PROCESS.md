@@ -2,7 +2,7 @@
 
 ### Move version up in the repository ###
 
-   * Increment `konanVersion` in topmost `gradle.properties`.
+   * Increment `konanVersion` in topmost `gradle.properties` and in `KonanVersion.kt`
    * Create entry for new release in CHANGELOG.md file (consult git history for features included)
    * Update RELEASE_NOTES.md with actual information on the released bits
 
@@ -41,7 +41,7 @@ in few minutes after upload.
 
  Upload Gradle plugin to BinTray
 
-    BINTRAY_USER=... BINTRAY_KEY=... ./gradlew :tools:kotlin-native-gradle-plugin:bintrayUpload
+    BINTRAY_USER=... BINTRAY_KEY=... ./gradlew :uploadGradlePlugin
 
 ### Blog post ###
  
