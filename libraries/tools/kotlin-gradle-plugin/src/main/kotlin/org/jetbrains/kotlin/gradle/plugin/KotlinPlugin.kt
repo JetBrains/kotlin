@@ -826,10 +826,12 @@ internal class SubpluginEnvironment(
             val subpluginClasspath = subpluginClasspaths[subplugin] ?: continue
             subpluginClasspath.forEach { pluginOptions.addClasspathEntry(it) }
 
-            for (option in subplugin.apply(project, kotlinTask, javaTask, variantData, androidProjectHandler, javaSourceSet)) {
-                val pluginId = subplugin.getCompilerPluginId()
-                pluginOptions.addPluginArgument(pluginId, option)
-                kotlinTask.registerSubpluginOptionAsInput(pluginId, option)
+            val subpluginOptions = subplugin.apply(project, kotlinTask, javaTask, variantData, androidProjectHandler, javaSourceSet)
+            val subpluginId = subplugin.getCompilerPluginId()
+            kotlinTask.registerSubpluginOptionsAsInputs(subpluginId, subpluginOptions)
+
+            for (option in subpluginOptions) {
+                pluginOptions.addPluginArgument(subpluginId, option)
             }
         }
 
@@ -837,18 +839,27 @@ internal class SubpluginEnvironment(
     }
 }
 
-internal fun Task.registerSubpluginOptionAsInput(subpluginId: String, option: SubpluginOption) {
-    when (option) {
-        is CompositeSubpluginOption -> {
-            val subpluginIdWithWrapperKey = "$subpluginId.${option.key}"
-            option.originalOptions.forEach { registerSubpluginOptionAsInput(subpluginIdWithWrapperKey, it) }
-        }
-        is FilesSubpluginOption -> Unit
-        else -> {
-            // Since there might be multiple subplugin options with the same key,
-            // use the properties count to resolve duplication:
-            val propertyInputsCount = inputsCompatible.properties.size
-            inputsCompatible.propertyCompatible("$subpluginId." + option.key + ".$propertyInputsCount", option.value)
+internal fun Task.registerSubpluginOptionsAsInputs(subpluginId: String, subpluginOptions: List<SubpluginOption>) {
+    // There might be several options with the same key. We group them together
+    // and add an index to the Gradle input property name to resolve possible duplication:
+    val pluginOptionsGrouped = subpluginOptions.groupBy { it.key }
+    for ((optionKey, optionsGroup) in pluginOptionsGrouped) {
+        optionsGroup.forEachIndexed { index, option ->
+            val indexSuffix = if (optionsGroup.size > 1) ".$index" else ""
+            when (option) {
+                is CompositeSubpluginOption -> {
+                    val subpluginIdWithWrapperKey = "$subpluginId.${optionKey}$indexSuffix"
+                    registerSubpluginOptionsAsInputs(subpluginIdWithWrapperKey, option.originalOptions)
+                }
+
+                is FilesSubpluginOption -> when (option.kind) {
+                    FilesOptionKind.INTERNAL -> Unit
+                }.run { /* exhaustive when */ }
+
+                else -> {
+                    inputsCompatible.propertyCompatible("$subpluginId." + option.key + indexSuffix, option.value)
+                }
+            }
         }
     }
 }

@@ -246,17 +246,17 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private fun Kapt3SubpluginContext.buildAndAddOptionsTo(task: Task, container: CompilerPluginOptions, aptMode: String) {
         val compilerPluginId = getCompilerPluginId()
-        for (option in wrapPluginOptions(buildOptions(aptMode), "configuration")) {
+        val kaptSubpluginOptions = wrapPluginOptions(buildOptions(aptMode), "configuration")
+        task.registerSubpluginOptionsAsInputs(compilerPluginId, kaptSubpluginOptions)
+
+        for (option in kaptSubpluginOptions) {
             container.addPluginArgument(compilerPluginId, option)
-            task.registerSubpluginOptionAsInput(compilerPluginId, option)
         }
 
         // Also register all the subplugin options from the Kotlin task:
         project.afterEvaluate {
             kotlinCompile.pluginOptions.subpluginOptionsByPluginId.forEach { (pluginId, options) ->
-                options.forEach { option ->
-                    task.registerSubpluginOptionAsInput("kotlinCompile.$pluginId", option)
-                }
+                task.registerSubpluginOptionsAsInputs("kotlinCompile.$pluginId", options)
             }
         }
     }
