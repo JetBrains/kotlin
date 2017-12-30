@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package samples.delegates
+package samples.properties
 
+import kotlin.properties.Delegates
 import samples.*
 import kotlin.test.*
 
@@ -38,7 +39,7 @@ class Delegates {
     @Sample
     fun throwVetoableDelegate() {
         var max: Int by Delegates.vetoable(0) { property, oldValue, newValue ->
-            return if (newValue > oldValue) true else throw(Throwable("New value must be larger than old value."))
+            if (newValue > oldValue) true else throw(Throwable("New value must be larger than old value."))
         }
 
         assertPrints(max, "0")
@@ -56,12 +57,12 @@ class Delegates {
         assertFailsWith<IllegalStateException> { println(max) }
 
         max = 10
-        assertPrints(10, max)
+        assertPrints(max, "10")
     }
 
     @Sample
     fun observableDelegate() {
-        var observed: Boolean = false
+        var observed = false
         var max: Int by Delegates.observable(0) { property, oldValue, newValue ->
             observed = true
         }
