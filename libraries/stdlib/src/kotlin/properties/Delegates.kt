@@ -12,7 +12,6 @@ public object Delegates {
      * assigned results in an exception.
      *
      * @sample samples.properties.Delegates.notNullDelegate
-     * @sample samples.properties.Delegates.notNullAccessError
      */
     public fun <T: Any> notNull(): ReadWriteProperty<Any?, T> = NotNullVar()
 
@@ -39,6 +38,7 @@ public object Delegates {
      *  and if the callback returns `false` the new value is discarded and the property remains its old value.
      *
      *  @sample samples.properties.Delegates.vetoableDelegate
+     *  @sample samples.properties.Delegates.throwVetoableDelegate
      */
     public inline fun <T> vetoable(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Boolean):
         ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {

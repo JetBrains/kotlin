@@ -36,18 +36,27 @@ class Delegates {
     }
 
     @Sample
-    fun notNullDelegate() {
-        var max: Int by Delegates.notNull()
+    fun throwVetoableDelegate() {
+        var max: Int by Delegates.vetoable(0) { property, oldValue, newValue ->
+            return if (newValue > oldValue) true else throw(Throwable("New value must be larger than old value."))
+        }
+
+        assertPrints(max, "0")
 
         max = 10
-        assertPrints(10, max)
+        assertPrints(max, "10")
+
+        assertFailsWith<Throwable> { max = 5 }
     }
 
     @Sample
-    fun notNullAccessError() {
+    fun notNullDelegate() {
         var max: Int by Delegates.notNull()
 
         assertFailsWith<IllegalStateException> { println(max) }
+
+        max = 10
+        assertPrints(10, max)
     }
 
     @Sample
