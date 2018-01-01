@@ -957,11 +957,39 @@ public fun Collection<Short>.toShortArray(): ShortArray {
 }
 
 /**
+ * Returns a [Map] containing the elements from this [Iterable] as keys
+ * and the elements from the other [Iterable], as values.
+ *
+ * If any of two pairs would have the same key, the last one gets added to the map.
+ *
+ * The returned map preserves the entry iteration order of the original collection.
+ */
+public infix fun <K, V> Iterable<K>.associateWith(values: Iterable<V>): Map<K, V> =
+    associateWith(this, values.iterator())
+
+/**
+ * Returns a [Map] containing the elements from this [Iterable] as keys
+ * and the elements from the [Sequence], as values.
+ *
+ * If any of two pairs would have the same key, the last one gets added to the map.
+ *
+ * The returned map preserves the entry iteration order of the original collection.
+ */
+public infix fun <K, V> Iterable<K>.associateWith(values: Sequence<V>): Map<K, V> =
+    associateWith(this, values.iterator())
+
+private fun <K, V> associateWith(keys: Iterable<K>, values: Iterator<V>): LinkedHashMap<K, V> {
+    val destination = LinkedHashMap<K, V>(mapCapacity(keys.collectionSizeOrDefault(10)).coerceAtLeast(16))
+    keys.forEach { destination[it] = values.next() }
+    return destination
+}
+
+/**
  * Returns a [Map] containing key-value pairs provided by [transform] function
  * applied to elements of the given collection.
- * 
+ *
  * If any of two pairs would have the same key the last one gets added to the map.
- * 
+ *
  * The returned map preserves the entry iteration order of the original collection.
  */
 public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {

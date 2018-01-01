@@ -257,6 +257,34 @@ class MapTest {
         assertEquals("CCC", map[3])
     }
 
+    @Test fun createWithOtherIterable() {
+        val keys = listOf("a", "b")
+        val map = keys associateWith keys.indices
+        assertEquals(mapOf("a" to 0, "b" to 1), map)
+    }
+
+    @Test fun createWithOtherIterableThatIsBigger() {
+        val map = listOf("a", "b") associateWith 10..20
+        assertEquals(mapOf("a" to 10, "b" to 11), map)
+    }
+
+    @Test fun createWithOtherIterableThatIsSmaller() {
+        assertFailsWith<NoSuchElementException> {
+            listOf("a") associateWith emptyList<Int>()
+        }
+    }
+
+    @Test fun createWithOtherInfiniteSequence() {
+        val map = listOf("a", "b") associateWith generateSequence { 0 }
+        assertEquals(mapOf("a" to 0, "b" to 0), map)
+    }
+
+    @Test fun createWithOtherSequenceThatIsSmaller() {
+        assertFailsWith<NoSuchElementException> {
+            listOf("a") associateWith generateSequence { null }
+        }
+    }
+
     @Test fun createWithPairSelector() {
         val map = listOf("a", "bb", "ccc").associate { it.length to it.toUpperCase() }
         assertEquals(3, map.size)
