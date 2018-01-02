@@ -1,4 +1,5 @@
 // !API_VERSION: 1.3
+// MODULE: api
 // FILE: api.kt
 
 package api
@@ -24,6 +25,7 @@ fun e2() {}
 @E3
 fun e3() {}
 
+// MODULE: usage(api)
 // FILE: usage.kt
 
 package usage

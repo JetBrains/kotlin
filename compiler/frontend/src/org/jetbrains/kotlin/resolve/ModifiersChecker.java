@@ -278,8 +278,9 @@ public class ModifiersChecker {
 
 
         public void runDeclarationCheckers(@NotNull KtDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
-            DeclarationCheckerContext context =
-                    new DeclarationCheckerContext(trace, languageVersionSettings, deprecationResolver, expectActualTracker);
+            DeclarationCheckerContext context = new DeclarationCheckerContext(
+                    trace, languageVersionSettings, deprecationResolver, moduleDescriptor, expectActualTracker
+            );
             for (DeclarationChecker checker : declarationCheckers) {
                 checker.check(declaration, descriptor, context);
             }
@@ -301,19 +302,22 @@ public class ModifiersChecker {
     private final LanguageVersionSettings languageVersionSettings;
     private final ExpectActualTracker expectActualTracker;
     private final DeprecationResolver deprecationResolver;
+    private final ModuleDescriptor moduleDescriptor;
 
     public ModifiersChecker(
             @NotNull AnnotationChecker annotationChecker,
             @NotNull Iterable<DeclarationChecker> declarationCheckers,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull ExpectActualTracker expectActualTracker,
-            @NotNull DeprecationResolver deprecationResolver
+            @NotNull DeprecationResolver deprecationResolver,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.annotationChecker = annotationChecker;
         this.declarationCheckers = declarationCheckers;
         this.languageVersionSettings = languageVersionSettings;
         this.expectActualTracker = expectActualTracker;
         this.deprecationResolver = deprecationResolver;
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     @NotNull

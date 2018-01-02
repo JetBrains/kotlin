@@ -1,4 +1,5 @@
 // !API_VERSION: 1.3
+// MODULE: api
 // FILE: api.kt
 
 package api
@@ -21,6 +22,7 @@ fun linkage() {}
 @ExperimentalRuntimeAPI
 fun runtime() {}
 
+// MODULE: usage1(api)
 // FILE: usage.kt
 
 package usage1
@@ -52,6 +54,7 @@ fun recursiveUse() {
     recursiveUse()
 }
 
+// MODULE: usage2(api,usage1)
 // FILE: usage-no-annotation.txt
 
 package usage2

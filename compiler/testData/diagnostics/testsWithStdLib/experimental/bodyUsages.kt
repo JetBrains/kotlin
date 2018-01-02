@@ -1,4 +1,5 @@
 // !API_VERSION: 1.3
+// MODULE: api
 // FILE: api.kt
 
 package api
@@ -11,6 +12,7 @@ interface I
 @ExperimentalCompilationAPI
 class Impl : I
 
+// MODULE: usage(api)
 // FILE: usage.kt
 
 package usage

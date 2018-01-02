@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -39,6 +40,7 @@ interface CallChecker {
 class CallCheckerContext @JvmOverloads constructor(
     val resolutionContext: ResolutionContext<*>,
     override val deprecationResolver: DeprecationResolver,
+    override val moduleDescriptor: ModuleDescriptor,
     override val trace: BindingTrace = resolutionContext.trace
 ) : CheckerContext {
     val scope: LexicalScope

@@ -1,3 +1,4 @@
+// -- Module: <api> --
 package
 
 package api {
@@ -13,6 +14,13 @@ package api {
     @api.ExperimentalAPI public typealias Typealias = kotlin.String
 }
 
+
+// -- Module: <usage1> --
+package
+
+package api {
+}
+
 package usage1 {
     @api.ExperimentalAPI public fun useAll(): kotlin.Unit
 
@@ -25,6 +33,13 @@ package usage1 {
     }
 }
 
+
+// -- Module: <usage2> --
+package
+
+package api {
+}
+
 package usage2 {
     public fun useAll(): kotlin.Unit
 
@@ -35,6 +50,13 @@ package usage2 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         public final fun useAll(): kotlin.Unit
     }
+}
+
+
+// -- Module: <usage3> --
+package
+
+package api {
 }
 
 package usage3 {
