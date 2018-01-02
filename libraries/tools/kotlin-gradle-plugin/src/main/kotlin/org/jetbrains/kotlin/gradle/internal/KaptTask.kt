@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.File
 
 @CacheableTask
-open class KaptTask : ConventionTask(), CompilerArgumentAware<K2JVMCompilerArguments> {
+open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
 
     init {
         cacheOnlyIfEnabledForKotlin()
