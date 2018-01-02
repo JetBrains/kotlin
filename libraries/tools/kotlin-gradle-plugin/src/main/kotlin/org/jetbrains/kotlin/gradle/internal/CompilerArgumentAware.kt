@@ -22,17 +22,14 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 
 interface CompilerArgumentAware<T : CommonToolArguments> {
-    @get:Internal
     val serializedCompilerArguments: List<String>
         get() = ArgumentUtils.convertArgumentsToStringList(prepareCompilerArguments())
 
-    @get:Internal
     val defaultSerializedCompilerArguments: List<String>
         get() = createCompilerArgs()
                 .also { setupCompilerArgs(it, defaultsOnly = true) }
                 .let(ArgumentUtils::convertArgumentsToStringList)
 
-    @get:Input
     val filteredArgumentsMap: Map<String, String>
         get() = CompilerArgumentsGradleInput.createInputsMap(prepareCompilerArguments())
 
@@ -42,3 +39,17 @@ interface CompilerArgumentAware<T : CommonToolArguments> {
 
 internal fun <T : CommonToolArguments> CompilerArgumentAware<T>.prepareCompilerArguments() =
         createCompilerArgs().also { setupCompilerArgs(it) }
+
+interface CompilerArgumentAwareWithInput<T : CommonToolArguments> : CompilerArgumentAware<T> {
+    @get:Internal
+    override val serializedCompilerArguments: List<String>
+        get() = super.serializedCompilerArguments
+
+    @get:Internal
+    override val defaultSerializedCompilerArguments: List<String>
+        get() = super.defaultSerializedCompilerArguments
+
+    @get:Input
+    override val filteredArgumentsMap: Map<String, String>
+        get() = super.filteredArgumentsMap
+}
