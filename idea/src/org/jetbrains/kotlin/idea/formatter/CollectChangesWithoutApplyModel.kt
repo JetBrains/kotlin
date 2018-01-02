@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.intellij.formatting.Block
 import com.intellij.formatting.FormattingDocumentModel
 import com.intellij.formatting.FormattingModel
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
@@ -61,7 +62,7 @@ fun collectFormattingChanges(file: PsiFile): Set<FormattingChange> {
 }
 
 private class CollectChangesWithoutApplyModel(val file: PsiFile, val block: Block) : FormattingModel {
-    private val documentModel = FormattingDocumentModelImpl.createOn(file)
+    private val documentModel = FormattingDocumentModelImpl(DocumentImpl(file.viewProvider.contents, true), file)
     private val changes = HashSet<FormattingChange>()
 
     val requestedChanges: Set<FormattingChange> get() = changes
