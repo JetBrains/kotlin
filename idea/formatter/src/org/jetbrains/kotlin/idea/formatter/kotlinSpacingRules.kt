@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -186,10 +186,10 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 }
             }
 
-            inPosition(left = CONDITION, right = RPAR).customRule { parent, _, _ ->
+            inPosition(left = CONDITION, right = RPAR).customRule { parent, left, _ ->
                 if (kotlinCustomSettings.IF_RPAREN_ON_NEW_LINE) {
                     Spacing.createDependentLFSpacing(0, 0,
-                                                     excludeLambdasAndObjects(parent),
+                                                     excludeLambdasAndObjects(left),
                                                      commonCodeStyleSettings.KEEP_LINE_BREAKS,
                                                      commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
                 }
