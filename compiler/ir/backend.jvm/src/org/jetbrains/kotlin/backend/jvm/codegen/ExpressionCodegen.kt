@@ -878,6 +878,11 @@ class ExpressionCodegen(
         return expression.onStack
     }
 
+    override fun visitGetClass(expression: IrGetClass, data: BlockInfo): StackValue {
+        generateClassLiteralReference(expression, true, data)
+        return expression.onStack
+    }
+
     override fun visitClassReference(expression: IrClassReference, data: BlockInfo): StackValue {
         generateClassLiteralReference(expression, true, data)
         return expression.onStack
