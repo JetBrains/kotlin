@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -48,6 +48,14 @@ private val NO_MIDDLE_UNDERSCORES = NamingRule("should not contain underscores i
     '_' in it.substring(1)
 }
 
+private val NO_BAD_CHARACTERS = NamingRule("may contain only letters and digits") {
+    it.any { c -> c !in 'a'..'z' && c !in 'A'..'Z' && c !in '0'..'9' }
+}
+
+private val NO_BAD_CHARACTERS_OR_UNDERSCORE = NamingRule("may contain only letters, digits or underscores") {
+    it.any { c -> c !in 'a'..'z' && c !in 'A'..'Z' && c !in '0'..'9' && c != '_' }
+}
+
 abstract class NamingConventionInspection(
     private val entityName: String,
     private val defaultNamePattern: String,
@@ -94,7 +102,7 @@ abstract class NamingConventionInspection(
 class ClassNameInspection : NamingConventionInspection(
     "Class",
     "[A-Z][A-Za-z\\d]*",
-    START_UPPER, NO_UNDERSCORES
+    START_UPPER, NO_UNDERSCORES, NO_BAD_CHARACTERS
 ) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
@@ -112,7 +120,7 @@ class ClassNameInspection : NamingConventionInspection(
 class EnumEntryNameInspection : NamingConventionInspection(
     "Enum entry",
     "[A-Z]([A-Za-z\\d]*|[A-Z_\\d]*)",
-    START_UPPER
+    START_UPPER, NO_BAD_CHARACTERS_OR_UNDERSCORE
 ) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
@@ -126,7 +134,7 @@ class EnumEntryNameInspection : NamingConventionInspection(
 class FunctionNameInspection : NamingConventionInspection(
     "Function",
     "[a-z][A-Za-z\\d]*",
-    START_LOWER, NO_UNDERSCORES
+    START_LOWER, NO_UNDERSCORES, NO_BAD_CHARACTERS
 ) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
@@ -195,24 +203,33 @@ abstract class PropertyNameInspectionBase protected constructor(
 }
 
 class PropertyNameInspection :
-    PropertyNameInspectionBase(PropertyKind.NORMAL, "Property", "[a-z][A-Za-z\\d]*", START_LOWER, NO_UNDERSCORES)
+    PropertyNameInspectionBase(
+        PropertyKind.NORMAL, "Property", "[a-z][A-Za-z\\d]*",
+        START_LOWER, NO_UNDERSCORES, NO_BAD_CHARACTERS
+    )
 
 class ObjectPropertyNameInspection :
     PropertyNameInspectionBase(
         PropertyKind.OBJECT_OR_TOP_LEVEL,
         "Object or top-level property",
         "[A-Za-z][_A-Za-z\\d]*",
-        NO_START_UNDERSCORE
+        NO_START_UNDERSCORE, NO_BAD_CHARACTERS_OR_UNDERSCORE
     )
 
 class PrivatePropertyNameInspection :
-    PropertyNameInspectionBase(PropertyKind.PRIVATE, "Private property", "_?[a-z][A-Za-z\\d]*", NO_MIDDLE_UNDERSCORES)
+    PropertyNameInspectionBase(
+        PropertyKind.PRIVATE, "Private property", "_?[a-z][A-Za-z\\d]*",
+        NO_MIDDLE_UNDERSCORES, NO_BAD_CHARACTERS_OR_UNDERSCORE
+    )
 
 class ConstPropertyNameInspection :
     PropertyNameInspectionBase(PropertyKind.CONST, "Const property", "[A-Z][_A-Z\\d]*")
 
 class LocalVariableNameInspection :
-    PropertyNameInspectionBase(PropertyKind.LOCAL, "Local variable", "[a-z][A-Za-z\\d]*", START_LOWER, NO_UNDERSCORES)
+    PropertyNameInspectionBase(
+        PropertyKind.LOCAL, "Local variable", "[a-z][A-Za-z\\d]*",
+        START_LOWER, NO_UNDERSCORES, NO_BAD_CHARACTERS
+    )
 
 class PackageNameInspection :
     NamingConventionInspection("Package", "[a-z][A-Za-z\\d]*(\\.[a-z][A-Za-z\\d]*)*", NO_UNDERSCORES) {
