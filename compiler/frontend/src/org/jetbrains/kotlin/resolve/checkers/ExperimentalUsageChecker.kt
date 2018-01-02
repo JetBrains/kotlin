@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -55,7 +58,7 @@ object ExperimentalUsageChecker : CallChecker {
         val markerDescriptor: ClassDescriptor,
         val annotationFqName: FqName,
         val severity: Severity,
-        private val impact: List<Impact>
+        val impact: List<Impact>
     ) {
         val isCompilationOnly: Boolean get() = impact.all(Impact.COMPILATION::equals)
 
@@ -219,6 +222,37 @@ object ExperimentalUsageChecker : CallChecker {
         val annotationClasses = allValueArguments[USE_EXPERIMENTAL_ANNOTATION_CLASS]
         return annotationClasses is ArrayValue && annotationClasses.value.any { annotationClass ->
             (annotationClass as? KClassValue)?.value?.constructor?.declarationDescriptor?.fqNameSafe == annotationFqName
+        }
+    }
+
+    fun checkCompilerArguments(module: ModuleDescriptor, languageVersionSettings: LanguageVersionSettings, reportError: (String) -> Unit) {
+        fun checkAnnotation(fqName: String, allowNonCompilationImpact: Boolean): Boolean {
+            val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_NON_TRACKED_SCOPE)
+            val experimentality = descriptor?.loadExperimentalityForMarkerAnnotation()
+            val message = when {
+                descriptor == null ->
+                    "Experimental API marker $fqName is unresolved. " +
+                    "Please make sure it's present in the module dependencies"
+                experimentality == null ->
+                    "Class $fqName is not an experimental API marker annotation"
+                !allowNonCompilationImpact && !experimentality.impact.all(Experimentality.Impact.COMPILATION::equals) ->
+                    "Experimental API marker $fqName has impact other than COMPILATION, " +
+                    "therefore it can't be used with -Xuse-experimental"
+                else -> return true
+            }
+            reportError(message)
+            return false
+        }
+
+        val validExperimental =
+            languageVersionSettings.getFlag(AnalysisFlag.experimental)
+                .filter { checkAnnotation(it, allowNonCompilationImpact = true) }
+        val validUseExperimental =
+            languageVersionSettings.getFlag(AnalysisFlag.useExperimental)
+                .filter { checkAnnotation(it, allowNonCompilationImpact = false) }
+
+        for (fqName in validExperimental.intersect(validUseExperimental)) {
+            reportError("'-Xuse-experimental=$fqName' has no effect because '-Xexperimental=$fqName' is used")
         }
     }
 

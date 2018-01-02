@@ -123,7 +123,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             value = "-Xlegacy-smart-cast-after-try",
             description = "Allow var smart casts despite assignment in try block"
     )
-    var legacySmartCastAfterTry by FreezableVar(false)
+    var legacySmartCastAfterTry: Boolean by FreezableVar(false)
 
     @Argument(
             value = "-Xeffect-system",
@@ -137,11 +137,27 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var readDeserializedContracts: Boolean by FreezableVar(false)
 
+    @Argument(
+            value = "-Xexperimental",
+            valueDescription = "<fq.name>",
+            description = "Enable and propagate usages of experimental API for marker annotation with the given fully qualified name"
+    )
+    var experimental: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xuse-experimental",
+        valueDescription = "<fq.name>",
+        description = "Enable usages of COMPILATION-affecting experimental API for marker annotation with the given fully qualified name"
+    )
+    var useExperimental: Array<String>? by FreezableVar(null)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
             put(AnalysisFlag.multiPlatformDoNotCheckActual, noCheckActual)
             put(AnalysisFlag.allowKotlinPackage, allowKotlinPackage)
+            put(AnalysisFlag.experimental, experimental?.toList().orEmpty())
+            put(AnalysisFlag.useExperimental, useExperimental?.toList().orEmpty())
         }
     }
 

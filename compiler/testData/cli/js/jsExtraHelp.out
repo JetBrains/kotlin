@@ -7,6 +7,7 @@ where advanced options include:
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
   -Xeffect-system            Enable experimental language feature: effect system
+  -Xexperimental=<fq.name>   Enable and propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
   -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
   -Xmulti-platform           Enable experimental language support for multi-platform projects
@@ -18,6 +19,7 @@ where advanced options include:
   -Xrepeat=<count>           Repeat compilation (for performance analysis)
   -Xreport-output-files      Report source to output files mapping
   -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
+  -Xuse-experimental=<fq.name> Enable usages of COMPILATION-affecting experimental API for marker annotation with the given fully qualified name
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

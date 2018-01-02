@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/experimentalRuntimeScope.kt
+-d
+$TEMP_DIR$
+-Xskip-runtime-version-check
+-language-version
+1.3
+-Xexperimental=org.test.Experimental1
+-Xuse-experimental=org.test.Experimental2

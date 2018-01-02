@@ -42,6 +42,10 @@ class AnalysisFlag<out T> internal constructor(
         object Jsr305StateWarnByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, Jsr305State.DEFAULT)
         }
+
+        object ListOfStrings {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, emptyList<String>())
+        }
     }
 
     companion object Flags {
@@ -56,5 +60,11 @@ class AnalysisFlag<out T> internal constructor(
 
         @JvmStatic
         val allowKotlinPackage by Flag.Boolean
+
+        @JvmStatic
+        val experimental by Flag.ListOfStrings
+
+        @JvmStatic
+        val useExperimental by Flag.ListOfStrings
     }
 }

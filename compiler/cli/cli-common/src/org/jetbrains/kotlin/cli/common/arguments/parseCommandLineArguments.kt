@@ -22,6 +22,7 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 
+@Target(AnnotationTarget.PROPERTY)
 annotation class Argument(
         val value: String,
         val shortName: String = "",
