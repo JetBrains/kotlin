@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.builtins.replaceReturnType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.psi.KtElement
@@ -53,9 +54,10 @@ class ResolvedAtomCompleter(
     private val expressionTypingServices: ExpressionTypingServices,
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
-    deprecationResolver: DeprecationResolver
+    deprecationResolver: DeprecationResolver,
+    moduleDescriptor: ModuleDescriptor
 ) {
-    private val callCheckerContext = CallCheckerContext(topLevelCallContext, deprecationResolver)
+    private val callCheckerContext = CallCheckerContext(topLevelCallContext, deprecationResolver, moduleDescriptor)
 
     private fun complete(resolvedAtom: ResolvedAtom) {
         when (resolvedAtom) {

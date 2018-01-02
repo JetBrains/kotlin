@@ -1,0 +1,36 @@
+// -- Module: <api> --
+package
+
+package api {
+    @api.ExperimentalCompilationAPI public fun compilation(): kotlin.Unit
+    @api.ExperimentalLinkageAPI public fun linkage(): kotlin.Unit
+
+    @kotlin.Experimental(changesMayBreak = {Impact.COMPILATION}, level = Level.WARNING) public final annotation class ExperimentalCompilationAPI : kotlin.Annotation {
+        public constructor ExperimentalCompilationAPI()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.Experimental(changesMayBreak = {Impact.LINKAGE}, level = Level.WARNING) public final annotation class ExperimentalLinkageAPI : kotlin.Annotation {
+        public constructor ExperimentalLinkageAPI()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <usage> --
+package
+
+package api {
+}
+
+package usage {
+    public fun indirectUseNoAnnotation(): kotlin.Unit
+    @api.ExperimentalCompilationAPI @api.ExperimentalLinkageAPI public fun indirectUseOptInBoth(): kotlin.Unit
+    @api.ExperimentalCompilationAPI public fun indirectUseOptInCompilation(): kotlin.Unit
+    @api.ExperimentalLinkageAPI public fun indirectUseOptInLinkage(): kotlin.Unit
+    @api.ExperimentalCompilationAPI @api.ExperimentalLinkageAPI public fun use(): kotlin.Unit
+}

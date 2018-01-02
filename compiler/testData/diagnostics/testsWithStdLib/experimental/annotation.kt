@@ -1,5 +1,6 @@
 // !API_VERSION: 1.3
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// MODULE: api
 // FILE: api.kt
 
 package api
@@ -14,6 +15,7 @@ annotation class ExperimentalAPI
         AnnotationTarget.VALUE_PARAMETER)
 annotation class EAnno
 
+// MODULE: usage1(api)
 // FILE: usage-propagate.kt
 
 package usage1
@@ -59,6 +61,7 @@ val inProperty = @EAnno fun() {}
 val inPropertyAccessor: () -> Unit
     get() = @EAnno fun() {}
 
+// MODULE: usage2(api)
 // FILE: usage-use.kt
 
 package usage2
@@ -102,6 +105,7 @@ val inPropertyAccessor: () -> Unit
     @UseExperimental(ExperimentalAPI::class)
     get() = @EAnno fun() {}
 
+// MODULE: usage3(api)
 // FILE: usage-none.kt
 
 package usage3

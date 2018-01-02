@@ -1,3 +1,4 @@
+// -- Module: <api> --
 package
 
 package api {
@@ -21,6 +22,13 @@ package api {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
+}
+
+
+// -- Module: <usage> --
+package
+
+package api {
 }
 
 package usage {

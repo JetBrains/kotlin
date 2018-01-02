@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DeprecationResolver
 
@@ -26,4 +27,6 @@ interface CheckerContext {
     val languageVersionSettings: LanguageVersionSettings
 
     val deprecationResolver: DeprecationResolver
+
+    val moduleDescriptor: ModuleDescriptor
 }

@@ -65,7 +65,8 @@ class KotlinToResolvedCallTransformer(
     private val deprecationResolver: DeprecationResolver,
     private val expressionTypingServices: ExpressionTypingServices,
     private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
-    private val additionalDiagnosticReporter: AdditionalDiagnosticReporter
+    private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
+    private val moduleDescriptor: ModuleDescriptor
 ) {
     companion object {
         private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
@@ -97,8 +98,8 @@ class KotlinToResolvedCallTransformer(
             CallResolutionResult.Type.ERROR, CallResolutionResult.Type.COMPLETED -> {
                 val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
-                    resultSubstitutor, context.trace, context, this,
-                    expressionTypingServices, argumentTypeResolver, doubleColonExpressionResolver, deprecationResolver
+                    resultSubstitutor, context.trace, context, this, expressionTypingServices, argumentTypeResolver,
+                    doubleColonExpressionResolver, deprecationResolver, moduleDescriptor
                 )
 
                 for (subKtPrimitive in candidate.subResolvedAtoms) {
