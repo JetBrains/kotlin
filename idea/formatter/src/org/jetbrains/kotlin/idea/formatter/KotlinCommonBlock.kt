@@ -33,7 +33,7 @@ private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
 private val QUALIFIED_EXPRESSIONS = TokenSet.create(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION)
 private val ELVIS_SET = TokenSet.create(KtTokens.ELVIS)
 
-private val KDOC_COMMENT_INDENT = 1
+private const val KDOC_COMMENT_INDENT = 1
 
 private val BINARY_EXPRESSIONS = TokenSet.create(KtNodeTypes.BINARY_EXPRESSION, KtNodeTypes.BINARY_WITH_TYPE, KtNodeTypes.IS_EXPRESSION)
 private val KDOC_CONTENT = TokenSet.create(KDocTokens.KDOC, KDocElementTypes.KDOC_SECTION, KDocElementTypes.KDOC_TAG)
@@ -55,10 +55,10 @@ abstract class KotlinCommonBlock(
     private val spacingBuilder: KotlinSpacingBuilder,
     private val alignmentStrategy: CommonAlignmentStrategy
 ) {
-    private @Volatile
-    var mySubBlocks: List<ASTBlock>? = null
+    @Volatile
+    private var mySubBlocks: List<ASTBlock>? = null
 
-    abstract protected fun createBlock(
+    protected abstract fun createBlock(
         node: ASTNode,
         alignmentStrategy: CommonAlignmentStrategy,
         indent: Indent?,
@@ -67,21 +67,21 @@ abstract class KotlinCommonBlock(
         spacingBuilder: KotlinSpacingBuilder
     ): ASTBlock
 
-    abstract protected fun createSyntheticSpacingNodeBlock(node: ASTNode): ASTBlock
+    protected abstract fun createSyntheticSpacingNodeBlock(node: ASTNode): ASTBlock
 
-    abstract protected fun getSubBlocks(): List<Block>
+    protected abstract fun getSubBlocks(): List<Block>
 
-    abstract protected fun getSuperChildAttributes(newChildIndex: Int): ChildAttributes
+    protected abstract fun getSuperChildAttributes(newChildIndex: Int): ChildAttributes
 
-    abstract protected fun isIncompleteInSuper(): Boolean
+    protected abstract fun isIncompleteInSuper(): Boolean
 
-    abstract protected fun getAlignmentForCaseBranch(shouldAlignInColumns: Boolean): CommonAlignmentStrategy
+    protected abstract fun getAlignmentForCaseBranch(shouldAlignInColumns: Boolean): CommonAlignmentStrategy
 
-    abstract protected fun getAlignment(): Alignment?
+    protected abstract fun getAlignment(): Alignment?
 
-    abstract protected fun createAlignmentStrategy(alignOption: Boolean, defaultAlignment: Alignment?): CommonAlignmentStrategy
+    protected abstract fun createAlignmentStrategy(alignOption: Boolean, defaultAlignment: Alignment?): CommonAlignmentStrategy
 
-    abstract protected fun getNullAlignmentStrategy(): CommonAlignmentStrategy
+    protected abstract fun getNullAlignmentStrategy(): CommonAlignmentStrategy
 
     fun isLeaf(): Boolean = node.firstChildNode == null
 
@@ -169,7 +169,7 @@ abstract class KotlinCommonBlock(
         return nodeSubBlocks
     }
 
-    fun createChildIndent(child: ASTNode): Indent? {
+    private fun createChildIndent(child: ASTNode): Indent? {
         val childParent = child.treeParent
         val childType = child.elementType
 
@@ -595,7 +595,7 @@ fun NodeIndentStrategy.PositionStrategy.continuationIf(
     }
 }
 
-private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
+private val INDENT_RULES = arrayOf(
     strategy("No indent for braces in blocks")
         .within(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL)
         .forType(RBRACE, LBRACE)
