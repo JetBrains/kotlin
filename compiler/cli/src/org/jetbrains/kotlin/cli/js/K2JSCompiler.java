@@ -222,7 +222,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
+        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
+                messageCollector, CommonConfigurationKeysKt.getLanguageVersionSettings(configuration)
+        );
         analyzerWithCompilerReport.analyzeAndReport(sourcesFiles, () -> TopDownAnalyzerFacadeForJS.analyzeFiles(sourcesFiles, config));
         if (analyzerWithCompilerReport.hasErrors()) {
             return COMPILATION_ERROR;

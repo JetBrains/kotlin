@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/experimentalAndUseExperimentalWithSameAnnotation.kt
+-d
+$TEMP_DIR$
+-Xskip-runtime-version-check
+-language-version
+1.3
+-Xexperimental=org.test.ExperimentalAPI
+-Xuse-experimental=org.test.ExperimentalAPI

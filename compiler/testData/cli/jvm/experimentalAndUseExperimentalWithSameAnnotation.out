@@ -1,0 +1,3 @@
+warning: language version 1.3 is experimental, there are no backwards compatibility guarantees for new language and library features
+error: '-Xuse-experimental=org.test.ExperimentalAPI' has no effect because '-Xexperimental=org.test.ExperimentalAPI' is used
+COMPILATION_ERROR

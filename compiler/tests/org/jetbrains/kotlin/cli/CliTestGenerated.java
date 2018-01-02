@@ -177,6 +177,42 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("experimentalAndUseExperimentalWithSameAnnotation.args")
+        public void testExperimentalAndUseExperimentalWithSameAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalAndUseExperimentalWithSameAnnotation.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalIsNotAnnotation.args")
+        public void testExperimentalIsNotAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalIsNotAnnotation.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalIsNotMarker.args")
+        public void testExperimentalIsNotMarker() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalIsNotMarker.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalNested.args")
+        public void testExperimentalNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalNested.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalRuntimeScope.args")
+        public void testExperimentalRuntimeScope() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalRuntimeScope.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalUnresolved.args")
+        public void testExperimentalUnresolved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalUnresolved.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("extraArgumentPassedInObsoleteForm.args")
         public void testExtraArgumentPassedInObsoleteForm() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/extraArgumentPassedInObsoleteForm.args");
