@@ -1,23 +1,13 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.run.script.standalone;
 
-import com.intellij.execution.ui.AlternativeJREPanel;
 import com.intellij.execution.ui.CommonJavaParametersPanel;
+import com.intellij.execution.ui.DefaultJreSelector;
+import com.intellij.execution.ui.JrePathEditor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
@@ -38,14 +28,15 @@ import javax.swing.*;
 public class KotlinStandaloneScriptRunConfigurationEditor extends SettingsEditor<KotlinStandaloneScriptRunConfiguration> implements PanelWithAnchor {
     private JPanel mainPanel;
     private CommonJavaParametersPanel commonProgramParameters;
-    private AlternativeJREPanel alternativeJREPanel;
+    private JrePathEditor jrePathEditor;
     private TextFieldWithBrowseButton chooseScriptFileTextField;
     private LabeledComponent<TextFieldWithBrowseButton> chooseScriptFileComponent;
     private JComponent anchor;
 
     public KotlinStandaloneScriptRunConfigurationEditor(Project project) {
         initChooseFileField(project);
-        anchor = UIUtil.mergeComponentsWithAnchor(chooseScriptFileComponent, commonProgramParameters, alternativeJREPanel);
+        jrePathEditor.setDefaultJreSelector(DefaultJreSelector.projectSdk(project));
+        anchor = UIUtil.mergeComponentsWithAnchor(chooseScriptFileComponent, commonProgramParameters, jrePathEditor);
     }
 
     void initChooseFileField(Project project) {
@@ -66,14 +57,14 @@ public class KotlinStandaloneScriptRunConfigurationEditor extends SettingsEditor
         commonProgramParameters.reset(configuration);
         String path = configuration.filePath;
         chooseScriptFileTextField.setText(path != null ? path : "");
-        alternativeJREPanel.init(configuration.getAlternativeJrePath(), configuration.isAlternativeJrePathEnabled());
+        jrePathEditor.setPathOrName(configuration.getAlternativeJrePath(), configuration.isAlternativeJrePathEnabled());
     }
 
     @Override
     protected void applyEditorTo(KotlinStandaloneScriptRunConfiguration configuration) throws ConfigurationException {
         commonProgramParameters.applyTo(configuration);
-        configuration.setAlternativeJrePath(alternativeJREPanel.getPath());
-        configuration.setAlternativeJrePathEnabled(alternativeJREPanel.isPathEnabled());
+        configuration.setAlternativeJrePath(jrePathEditor.getJrePathOrName());
+        configuration.setAlternativeJrePathEnabled(jrePathEditor.isAlternativeJreSelected());
         configuration.filePath = chooseScriptFileTextField.getText();
     }
 
@@ -92,7 +83,7 @@ public class KotlinStandaloneScriptRunConfigurationEditor extends SettingsEditor
     public void setAnchor(JComponent anchor) {
         this.anchor = anchor;
         commonProgramParameters.setAnchor(anchor);
-        alternativeJREPanel.setAnchor(anchor);
+        jrePathEditor.setAnchor(anchor);
         chooseScriptFileComponent.setAnchor(anchor);
     }
 
