@@ -3,49 +3,40 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea
 
-import com.intellij.lang.BracePair;
-import com.intellij.lang.PairedBraceMatcher;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.KtTokens;
+import com.intellij.lang.BracePair
+import com.intellij.lang.PairedBraceMatcher
+import com.intellij.psi.PsiFile
+import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.lexer.KtTokens
 
-public class KotlinPairMatcher implements PairedBraceMatcher {
-    private final BracePair[] pairs = new BracePair[]{
-            new BracePair(KtTokens.LPAR, KtTokens.RPAR, false),
-            new BracePair(KtTokens.LONG_TEMPLATE_ENTRY_START, KtTokens.LONG_TEMPLATE_ENTRY_END, false),
-            new BracePair(KtTokens.LBRACE, KtTokens.RBRACE, true),
-            new BracePair(KtTokens.LBRACKET, KtTokens.RBRACKET, false),
-    };
+class KotlinPairMatcher : PairedBraceMatcher {
+    private val pairs = arrayOf(
+        BracePair(KtTokens.LPAR, KtTokens.RPAR, false),
+        BracePair(KtTokens.LONG_TEMPLATE_ENTRY_START, KtTokens.LONG_TEMPLATE_ENTRY_END, false),
+        BracePair(KtTokens.LBRACE, KtTokens.RBRACE, true),
+        BracePair(KtTokens.LBRACKET, KtTokens.RBRACKET, false)
+    )
 
-    @Override
-    public BracePair[] getPairs() {
-        return pairs;
-    }
+    override fun getPairs(): Array<BracePair> = pairs
 
-    @Override
-    public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, @Nullable IElementType contextType) {
-        if (lbraceType.equals(KtTokens.LONG_TEMPLATE_ENTRY_START)) {
+    override fun isPairedBracesAllowedBeforeType(lbraceType: IElementType, contextType: IElementType?): Boolean {
+        return if (lbraceType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
             // KotlinTypedHandler insert paired brace in this case
-            return false;
-        }
+            false
+        } else KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(contextType)
+                || contextType === KtTokens.SEMICOLON
+                || contextType === KtTokens.COMMA
+                || contextType === KtTokens.RPAR
+                || contextType === KtTokens.RBRACKET
+                || contextType === KtTokens.RBRACE
+                || contextType === KtTokens.LBRACE
+                || contextType === KtTokens.LONG_TEMPLATE_ENTRY_END
 
-        return KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(contextType)
-               || contextType == KtTokens.SEMICOLON
-               || contextType == KtTokens.COMMA
-               || contextType == KtTokens.RPAR
-               || contextType == KtTokens.RBRACKET
-               || contextType == KtTokens.RBRACE
-               || contextType == KtTokens.LBRACE
-               || contextType == KtTokens.LONG_TEMPLATE_ENTRY_END;
     }
 
-    @Override
-    public int getCodeConstructStart(PsiFile file, int openingBraceOffset) {
-        return openingBraceOffset;
+    override fun getCodeConstructStart(file: PsiFile, openingBraceOffset: Int): Int {
+        return openingBraceOffset
     }
-
 }
