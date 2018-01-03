@@ -425,4 +425,37 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/joinLines/stringTemplate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StringTemplate extends AbstractJoinLinesTest {
+        public void testAllFilesPresentInStringTemplate() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("firstLineVariable.kt")
+        public void testFirstLineVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/firstLineVariable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondLineVariable.kt")
+        public void testSecondLineVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/secondLineVariable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("threeLines.kt")
+        public void testThreeLines() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/threeLines.kt");
+            doTest(fileName);
+        }
+    }
 }
