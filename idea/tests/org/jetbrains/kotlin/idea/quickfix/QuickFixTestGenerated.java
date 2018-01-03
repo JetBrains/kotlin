@@ -6683,6 +6683,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("invalidSealedClassInheritance.kt")
+        public void testInvalidSealedClassInheritance() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/invalidSealedClassInheritance.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("overriddenProtectedMemberToPublicSingleFile.kt")
         public void testOverriddenProtectedMemberToPublicSingleFile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/overriddenProtectedMemberToPublicSingleFile.kt");
@@ -6704,6 +6710,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("privateMemberToPublicSingleFile.kt")
         public void testPrivateMemberToPublicSingleFile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/privateMemberToPublicSingleFile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateSealedClassInheritance.kt")
+        public void testPrivateSealedClassInheritance() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/privateSealedClassInheritance.kt");
             doTest(fileName);
         }
 

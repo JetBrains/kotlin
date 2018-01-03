@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
@@ -41,6 +43,8 @@ object MakeVisibleFactory : KotlinIntentionActionsFactory() {
         val factory = diagnostic.factory as DiagnosticFactory3<*, DeclarationDescriptor, *, DeclarationDescriptor>
         val descriptor = factory.cast(diagnostic).c as? DeclarationDescriptorWithVisibility ?: return emptyList()
         val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtModifierListOwner ?: return emptyList()
+
+        if (declaration.hasModifier(KtTokens.SEALED_KEYWORD) && descriptor is ClassConstructorDescriptor) return emptyList()
 
         val module = DescriptorUtils.getContainingModule(descriptor)
         val targetVisibilities = when (descriptor.visibility) {
