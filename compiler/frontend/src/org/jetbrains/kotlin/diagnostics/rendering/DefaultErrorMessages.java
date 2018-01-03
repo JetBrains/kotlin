@@ -151,6 +151,9 @@ public class DefaultErrorMessages {
         MAP.put(EXPERIMENTAL_API_USAGE, "This declaration is experimental and its usage should be marked with ''@{0}''{1}", TO_STRING, renderUseExperimental);
         MAP.put(EXPERIMENTAL_API_USAGE_ERROR, "This declaration is experimental and its usage must be marked with ''@{0}''{1}", TO_STRING, renderUseExperimental);
 
+        MAP.put(EXPERIMENTAL_OVERRIDE, "This declaration overrides experimental member of supertype ''{1}'' and should be annotated with ''@{0}''", TO_STRING, NAME);
+        MAP.put(EXPERIMENTAL_OVERRIDE_ERROR, "This declaration overrides experimental member of supertype ''{1}'' and must be annotated with ''@{0}''", TO_STRING, NAME);
+
         MAP.put(USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, "@UseExperimental without any arguments has no effect");
         MAP.put(USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not an experimental API marker, therefore its usage in @UseExperimental is ignored", TO_STRING);
         MAP.put(USE_EXPERIMENTAL_ARGUMENT_HAS_NON_COMPILATION_IMPACT,

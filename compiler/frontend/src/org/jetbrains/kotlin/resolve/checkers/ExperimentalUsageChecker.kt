@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -70,15 +69,32 @@ object ExperimentalUsageChecker : CallChecker {
     }
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        checkExperimental(resolvedCall.resultingDescriptor, reportOn, context.trace, context.moduleDescriptor)
+        checkExperimental(resolvedCall.resultingDescriptor, reportOn, context)
     }
 
-    private fun checkExperimental(descriptor: DeclarationDescriptor, element: PsiElement, trace: BindingTrace, module: ModuleDescriptor) {
+    private fun checkExperimental(descriptor: DeclarationDescriptor, element: PsiElement, context: CheckerContext) {
         val experimentalities = descriptor.loadExperimentalities()
-        if (experimentalities.isEmpty()) return
+        if (experimentalities.isNotEmpty()) {
+            checkExperimental(experimentalities, element, context.trace.bindingContext, context.moduleDescriptor) {
+                experimentality, isBodyUsageOfSourceOnlyExperimentality ->
+                val diagnostic = when (experimentality.severity) {
+                    Experimentality.Severity.WARNING -> Errors.EXPERIMENTAL_API_USAGE
+                    Experimentality.Severity.ERROR -> Errors.EXPERIMENTAL_API_USAGE_ERROR
+                }
+                context.trace.report(diagnostic.on(element, experimentality.annotationFqName, isBodyUsageOfSourceOnlyExperimentality))
+            }
+        }
+    }
 
-        val isBodyUsageExceptPublicInline = element.isBodyUsage(trace.bindingContext, allowPublicInline = false)
-        val isBodyUsage = isBodyUsageExceptPublicInline || element.isBodyUsage(trace.bindingContext, allowPublicInline = true)
+    private fun checkExperimental(
+        experimentalities: Collection<Experimentality>,
+        element: PsiElement,
+        bindingContext: BindingContext,
+        module: ModuleDescriptor,
+        report: (experimentality: Experimentality, isBodyUsageOfCompilationExperimentality: Boolean) -> Unit
+    ) {
+        val isBodyUsageExceptPublicInline = element.isBodyUsage(bindingContext, allowPublicInline = false)
+        val isBodyUsage = isBodyUsageExceptPublicInline || element.isBodyUsage(bindingContext, allowPublicInline = true)
 
         for (experimentality in experimentalities) {
             val isBodyUsageOfCompilationExperimentality =
@@ -87,20 +103,14 @@ object ExperimentalUsageChecker : CallChecker {
             val isBodyUsageInSameModule =
                 experimentality.markerDescriptor.module == module && isBodyUsageExceptPublicInline
 
-            val annotationFqName = experimentality.annotationFqName
-
             val isExperimentalityAccepted =
                     isBodyUsageInSameModule ||
                     (isBodyUsageOfCompilationExperimentality &&
-                     element.hasContainerAnnotatedWithUseExperimental(annotationFqName, trace.bindingContext)) ||
-                    element.propagates(annotationFqName, trace.bindingContext)
+                     element.hasContainerAnnotatedWithUseExperimental(experimentality.annotationFqName, bindingContext)) ||
+                    element.propagates(experimentality.annotationFqName, bindingContext)
 
             if (!isExperimentalityAccepted) {
-                val diagnostic = when (experimentality.severity) {
-                    ExperimentalUsageChecker.Experimentality.Severity.WARNING -> Errors.EXPERIMENTAL_API_USAGE
-                    ExperimentalUsageChecker.Experimentality.Severity.ERROR -> Errors.EXPERIMENTAL_API_USAGE_ERROR
-                }
-                trace.report(diagnostic.on(element, annotationFqName, isBodyUsageOfCompilationExperimentality))
+                report(experimentality, isBodyUsageOfCompilationExperimentality)
             }
         }
     }
@@ -214,7 +224,30 @@ object ExperimentalUsageChecker : CallChecker {
 
     object ClassifierUsage : ClassifierUsageChecker {
         override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
-            checkExperimental(targetDescriptor, element, context.trace, context.moduleDescriptor)
+            checkExperimental(targetDescriptor, element, context)
+        }
+    }
+
+    object Overrides : DeclarationChecker {
+        override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+            if (descriptor !is CallableMemberDescriptor) return
+
+            val experimentalOverridden = descriptor.overriddenDescriptors.flatMap { member ->
+                member.loadExperimentalities().map { experimentality -> experimentality to member }
+            }.toMap()
+
+            val module = descriptor.module
+
+            for ((experimentality, member) in experimentalOverridden) {
+                checkExperimental(listOf(experimentality), declaration, context.trace.bindingContext, module) { _, _ ->
+                    val diagnostic = when (experimentality.severity) {
+                        Experimentality.Severity.WARNING -> Errors.EXPERIMENTAL_OVERRIDE
+                        Experimentality.Severity.ERROR -> Errors.EXPERIMENTAL_OVERRIDE_ERROR
+                    }
+                    val reportOn = (declaration as? KtNamedDeclaration)?.nameIdentifier ?: declaration
+                    context.trace.report(diagnostic.on(reportOn, experimentality.annotationFqName, member.containingDeclaration))
+                }
+            }
         }
     }
 

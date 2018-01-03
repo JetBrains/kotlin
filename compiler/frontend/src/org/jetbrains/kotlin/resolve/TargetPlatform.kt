@@ -81,7 +81,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     DelegationChecker(),
     KClassWithIncorrectTypeArgumentChecker,
     SuspendOperatorsCheckers,
-    InlineClassDeclarationChecker
+    InlineClassDeclarationChecker,
+    ExperimentalUsageChecker.Overrides
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
