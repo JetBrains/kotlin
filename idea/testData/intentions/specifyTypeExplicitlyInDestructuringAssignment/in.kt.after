@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun test() {
+    val map = mapOf(1 to "two")
+    for ((key: Int, value: String<caret>) in map) {
+    }
+}

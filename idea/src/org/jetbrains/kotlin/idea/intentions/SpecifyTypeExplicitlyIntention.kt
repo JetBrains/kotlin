@@ -166,18 +166,32 @@ class SpecifyTypeExplicitlyIntention :
             }
         }
 
-        fun createTypeReferencePostprocessor(declaration: KtCallableDeclaration): TemplateEditingAdapter {
+        @JvmOverloads
+        fun createTypeReferencePostprocessor(declaration: KtCallableDeclaration,
+                                             iterator: Iterator<KtCallableDeclaration>? = null,
+                                             editor: Editor? = null): TemplateEditingAdapter {
             return object : TemplateEditingAdapter() {
                 override fun templateFinished(template: Template?, brokenOff: Boolean) {
                     val typeRef = declaration.typeReference
                     if (typeRef != null && typeRef.isValid) {
-                        runWriteAction { ShortenReferences.DEFAULT.process(typeRef) }
+                        runWriteAction {
+                            ShortenReferences.DEFAULT.process(typeRef)
+                            if (iterator != null && editor != null) addTypeAnnotationWithTemplate(editor, iterator)
+                        }
                     }
                 }
             }
         }
 
-        private fun addTypeAnnotationWithTemplate(editor: Editor, declaration: KtCallableDeclaration, exprType: KotlinType) {
+        fun addTypeAnnotationWithTemplate(editor: Editor, iterator: Iterator<KtCallableDeclaration>?) {
+            if (iterator == null || !iterator.hasNext()) return
+            val declaration = iterator.next()
+            val exprType = getTypeForDeclaration(declaration)
+            addTypeAnnotationWithTemplate(editor, declaration, exprType, iterator)
+        }
+
+        private fun addTypeAnnotationWithTemplate(editor: Editor, declaration: KtCallableDeclaration, exprType: KotlinType,
+                                                  iterator: Iterator<KtCallableDeclaration>? = null) {
             assert(!exprType.isError) { "Unexpected error type, should have been checked before: " + declaration.getElementTextWithContext() + ", type = " + exprType }
 
             val project = declaration.project
@@ -194,7 +208,10 @@ class SpecifyTypeExplicitlyIntention :
 
             editor.caretModel.moveToOffset(newTypeRef.node.startOffset)
 
-            TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate(), createTypeReferencePostprocessor(declaration))
+            TemplateManager.getInstance(project).startTemplate(
+                    editor,
+                    builder.buildInlineTemplate(),
+                    createTypeReferencePostprocessor(declaration, iterator, editor))
         }
     }
 }
