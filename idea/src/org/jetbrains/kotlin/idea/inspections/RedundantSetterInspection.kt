@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ class RedundantSetterInspection : AbstractKotlinInspection(), CleanupLocalInspec
 private fun KtPropertyAccessor.isRedundantSetter(): Boolean {
     if (!isSetter) return false
     if (annotationEntries.isNotEmpty()) return false
+    if (property.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
     if (hasLowerVisibilityThanProperty()) return false
     val expression = bodyExpression ?: return true
     if (expression is KtBlockExpression) {

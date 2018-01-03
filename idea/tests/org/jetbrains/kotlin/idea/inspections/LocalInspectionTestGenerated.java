@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2198,6 +2198,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("onlyReturnFieldBody.kt")
         public void testOnlyReturnFieldBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/onlyReturnFieldBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("override.kt")
+        public void testOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/override.kt");
             doTest(fileName);
         }
 
