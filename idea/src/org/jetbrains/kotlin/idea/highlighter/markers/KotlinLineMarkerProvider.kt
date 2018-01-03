@@ -6,24 +6,26 @@
 package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeHighlighting.Pass
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
-import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.codeInsight.daemon.LineMarkerProvider
-import com.intellij.codeInsight.daemon.NavigateAction
+import com.intellij.codeInsight.daemon.*
 import com.intellij.codeInsight.daemon.impl.LineMarkerNavigator
 import com.intellij.codeInsight.daemon.impl.MarkerType
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.editor.colors.CodeInsightColors
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.markup.GutterIconRenderer
+import com.intellij.openapi.editor.markup.SeparatorPlacement
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.search.searches.ClassInheritorsSearch
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMe
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.Icon
@@ -49,8 +52,31 @@ import javax.swing.ListCellRenderer
 
 class KotlinLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
-        // all Kotlin markers are added in slow marker pass
+        if (DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS) {
+            if (element.canHaveSeparator()) {
+                val prevSibling = element.getPrevSiblingIgnoringWhitespaceAndComments()
+                if (prevSibling.canHaveSeparator() &&
+                    (element.wantsSeparator() || prevSibling?.wantsSeparator() == true)) {
+                    return createLineSeparatorByElement(element)
+                }
+            }
+        }
+
         return null
+    }
+
+    private fun PsiElement?.canHaveSeparator() =
+        this is KtFunction || this is KtClassInitializer || (this is KtProperty && !isLocal)
+
+    private fun PsiElement.wantsSeparator() = StringUtil.getLineBreakCount(text) > 0
+
+    private fun createLineSeparatorByElement(element: PsiElement): LineMarkerInfo<PsiElement> {
+        val anchor = PsiTreeUtil.getDeepestFirst(element)
+
+        val info = LineMarkerInfo(anchor, anchor.textRange, null, Pass.LINE_MARKERS, null, null, GutterIconRenderer.Alignment.RIGHT)
+        info.separatorColor = EditorColorsManager.getInstance().globalScheme.getColor(CodeInsightColors.METHOD_SEPARATORS_COLOR)
+        info.separatorPlacement = SeparatorPlacement.TOP
+        return info
     }
 
     override fun collectSlowLineMarkers(elements: List<PsiElement>, result: MutableCollection<LineMarkerInfo<*>>) {

@@ -25,6 +25,12 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/lineMarker"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("MethodSeparators.kt")
+    public void testMethodSeparators() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/MethodSeparators.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("idea/testData/codeInsight/lineMarker/overrideImplement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
