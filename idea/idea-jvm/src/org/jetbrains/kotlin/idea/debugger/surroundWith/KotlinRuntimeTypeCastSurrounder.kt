@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger.surroundWith
@@ -26,6 +15,7 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.util.ProgressWindow
 import com.intellij.openapi.progress.util.ProgressWindowWithNotification
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -59,7 +49,7 @@ class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
         val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
         val debuggerSession = debuggerContext.debuggerSession
         if (debuggerSession != null) {
-            val progressWindow = ProgressWindowWithNotification(true, expression.project)
+            val progressWindow = ProgressWindow(true, expression.project)
             val worker = SurroundWithCastWorker(editor, expression, debuggerContext, progressWindow)
             progressWindow.title = DebuggerBundle.message("title.evaluating")
             debuggerContext.debugProcess?.managerThread?.startProgress(worker, progressWindow)
