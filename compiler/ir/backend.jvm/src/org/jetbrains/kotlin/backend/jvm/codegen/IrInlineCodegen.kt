@@ -42,11 +42,13 @@ class IrInlineCodegen(
 
     override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
         val lambdaInfo = next as IrExpressionLambda
+        activeLambda = lambdaInfo
 
         val argumentTypes = lambdaInfo.loweredMethod.argumentTypes
-        lambdaInfo.reference.getArguments().forEachIndexed { index, (descriptor, ir) ->
+        lambdaInfo.reference.getArguments().forEachIndexed { index, (_, ir) ->
             putCapturedValueOnStack(ir, argumentTypes[index], index)
         }
+        activeLambda = null
     }
 
     override fun genValueAndPut(valueParameterDescriptor: ValueParameterDescriptor?, argumentExpression: IrExpression, parameterType: Type, parameterIndex: Int, codegen: ExpressionCodegen, blockInfo: BlockInfo) {
@@ -112,17 +114,24 @@ class IrExpressionLambda(
     override val lambdaClassType: Type
         get() = Type.getObjectType("test123")
 
-    override val invokeMethod: Method
-        get() = typeMapper.mapAsmMethod(function.descriptor)
+    override val capturedVars: List<CapturedParamDesc> by lazy {
+        arrayListOf<CapturedParamDesc>().apply {
+            reference.getArguments().forEachIndexed { _, (_, ir) ->
+                    val getValue = ir as? IrGetValue ?: error("Unrecognized expression: $ir")
+                    add(capturedParamDesc(getValue.descriptor.name.asString(), typeMapper.mapType(getValue.descriptor.type)))
+                }
+        }
+    }
 
     val loweredMethod: Method
         get() = typeMapper.mapAsmMethod(function.descriptor)
 
+    override val invokeMethod: Method = loweredMethod.let {
+        Method(it.name, it.returnType, it.argumentTypes.drop(capturedVars.size).toTypedArray())
+    }
+
     override val invokeMethodDescriptor: FunctionDescriptor
         get() = function.descriptor
-
-    override val capturedVars: List<CapturedParamDesc>
-        get() = emptyList() //cause closure conversion
 
     override val hasDispatchReceiver: Boolean
         get() = false
