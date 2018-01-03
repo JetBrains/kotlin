@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.intellij.codeInsight.hint.DeclarationRangeUtil
 import com.intellij.lang.BracePair
 import com.intellij.lang.PairedBraceMatcher
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtClassBody
 
 class KotlinPairMatcher : PairedBraceMatcher {
     private val pairs = arrayOf(
@@ -37,6 +40,12 @@ class KotlinPairMatcher : PairedBraceMatcher {
     }
 
     override fun getCodeConstructStart(file: PsiFile, openingBraceOffset: Int): Int {
-        return openingBraceOffset
+        val element = file.findElementAt(openingBraceOffset)
+        if (element == null || element is PsiFile) return openingBraceOffset
+        val parent = element.parent
+        return when (parent) {
+            is KtClassBody, is KtBlockExpression -> DeclarationRangeUtil.getDeclarationRange(parent.parent).startOffset
+            else -> openingBraceOffset
+        }
     }
 }

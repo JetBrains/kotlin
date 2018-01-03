@@ -774,6 +774,12 @@
 
     <gotoRelatedProvider implementation="org.jetbrains.kotlin.idea.goto.KotlinExpectOrActualGotoRelatedProvider"/>
 
+    <declarationRangeHandler key="org.jetbrains.kotlin.psi.KtClassOrObject"
+                             implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinClassDeclarationRangeHandler"/>
+
+    <declarationRangeHandler key="org.jetbrains.kotlin.psi.KtDeclarationWithBody"
+                             implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinFunDeclarationRangeHandler"/>
+
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
       <category>Kotlin</category>
