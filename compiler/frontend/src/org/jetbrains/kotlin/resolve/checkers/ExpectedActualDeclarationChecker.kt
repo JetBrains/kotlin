@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker.Compatibility.Compatible
@@ -56,24 +54,17 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 
 object ExpectedActualDeclarationChecker : DeclarationChecker {
-    override fun check(
-        declaration: KtDeclaration,
-        descriptor: DeclarationDescriptor,
-        diagnosticHolder: DiagnosticSink,
-        bindingContext: BindingContext,
-        languageVersionSettings: LanguageVersionSettings,
-        expectActualTracker: ExpectActualTracker
-    ) {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
 
         if (declaration !is KtNamedDeclaration) return
         if (descriptor !is MemberDescriptor || DescriptorUtils.isEnumEntry(descriptor)) return
 
         if (descriptor.isExpect) {
-            checkExpectedDeclarationHasActual(declaration, descriptor, diagnosticHolder, descriptor.module, expectActualTracker)
+            checkExpectedDeclarationHasActual(declaration, descriptor, context.trace, descriptor.module, context.expectActualTracker)
         } else {
-            val checkActual = !languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckActual)
-            checkActualDeclarationHasExpected(declaration, descriptor, diagnosticHolder, checkActual)
+            val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckActual)
+            checkActualDeclarationHasExpected(declaration, descriptor, context.trace, checkActual)
         }
     }
 

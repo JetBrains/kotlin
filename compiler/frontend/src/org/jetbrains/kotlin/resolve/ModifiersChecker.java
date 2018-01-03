@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker;
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext;
 import org.jetbrains.kotlin.resolve.checkers.PublishedApiUsageChecker;
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker;
 
@@ -276,12 +277,11 @@ public class ModifiersChecker {
         }
 
 
-        public void runDeclarationCheckers(
-                @NotNull KtDeclaration declaration,
-                @NotNull DeclarationDescriptor descriptor
-        ) {
+        public void runDeclarationCheckers(@NotNull KtDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
+            DeclarationCheckerContext context =
+                    new DeclarationCheckerContext(trace, languageVersionSettings, deprecationResolver, expectActualTracker);
             for (DeclarationChecker checker : declarationCheckers) {
-                checker.check(declaration, descriptor, trace, trace.getBindingContext(), languageVersionSettings, expectActualTracker);
+                checker.check(declaration, descriptor, context);
             }
             OperatorModifierChecker.INSTANCE.check(declaration, descriptor, trace, languageVersionSettings);
             PublishedApiUsageChecker.INSTANCE.check(declaration, descriptor, trace);
@@ -296,28 +296,24 @@ public class ModifiersChecker {
         }
     }
 
-    @NotNull
     private final AnnotationChecker annotationChecker;
-
-    @NotNull
     private final Iterable<DeclarationChecker> declarationCheckers;
-
-    @NotNull
     private final LanguageVersionSettings languageVersionSettings;
-
-    @NotNull
     private final ExpectActualTracker expectActualTracker;
+    private final DeprecationResolver deprecationResolver;
 
     public ModifiersChecker(
             @NotNull AnnotationChecker annotationChecker,
             @NotNull Iterable<DeclarationChecker> declarationCheckers,
             @NotNull LanguageVersionSettings languageVersionSettings,
-            @NotNull ExpectActualTracker expectActualTracker
+            @NotNull ExpectActualTracker expectActualTracker,
+            @NotNull DeprecationResolver deprecationResolver
     ) {
         this.annotationChecker = annotationChecker;
         this.declarationCheckers = declarationCheckers;
         this.languageVersionSettings = languageVersionSettings;
         this.expectActualTracker = expectActualTracker;
+        this.deprecationResolver = deprecationResolver;
     }
 
     @NotNull

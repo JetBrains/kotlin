@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
@@ -46,31 +47,27 @@ val ANDROID_PARCELABLE_CLASS_FQNAME = FqName("android.os.Parcelable")
 val ANDROID_PARCELABLE_CREATOR_CLASS_FQNAME = FqName("android.os.Parcelable.Creator")
 val ANDROID_PARCEL_CLASS_FQNAME = FqName("android.os.Parcel")
 
-class ParcelableDeclarationChecker : SimpleDeclarationChecker {
+class ParcelableDeclarationChecker : DeclarationChecker {
     private companion object {
         private val IGNORED_ON_PARCEL_FQNAME = FqName(IgnoredOnParcel::class.java.canonicalName)
     }
 
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        val trace = context.trace
         when (descriptor) {
-            is ClassDescriptor -> checkParcelableClass(descriptor, declaration, diagnosticHolder, bindingContext)
+            is ClassDescriptor -> checkParcelableClass(descriptor, declaration, trace, trace.bindingContext)
             is SimpleFunctionDescriptor -> {
                 val containingClass = descriptor.containingDeclaration as? ClassDescriptor
                 val ktFunction = declaration as? KtFunction
                 if (containingClass != null && ktFunction != null) {
-                    checkParcelableClassMethod(descriptor, containingClass, ktFunction, diagnosticHolder)
+                    checkParcelableClassMethod(descriptor, containingClass, ktFunction, trace)
                 }
             }
             is PropertyDescriptor -> {
                 val containingClass = descriptor.containingDeclaration as? ClassDescriptor
                 val ktProperty = declaration as? KtProperty
                 if (containingClass != null && ktProperty != null) {
-                    checkParcelableClassProperty(descriptor, containingClass, ktProperty, diagnosticHolder, bindingContext)
+                    checkParcelableClassProperty(descriptor, containingClass, ktProperty, trace, trace.bindingContext)
                 }
             }
         }

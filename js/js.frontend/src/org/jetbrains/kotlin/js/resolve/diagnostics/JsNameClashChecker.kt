@@ -25,12 +25,13 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-class JsNameClashChecker(private val nameSuggestion: NameSuggestion) : SimpleDeclarationChecker {
+class JsNameClashChecker(private val nameSuggestion: NameSuggestion) : DeclarationChecker {
     companion object {
         private val COMMON_DIAGNOSTICS = setOf(
                 Errors.REDECLARATION,
@@ -42,16 +43,11 @@ class JsNameClashChecker(private val nameSuggestion: NameSuggestion) : SimpleDec
     private val clashedFakeOverrides = mutableMapOf<DeclarationDescriptor, Pair<DeclarationDescriptor, DeclarationDescriptor>>()
     private val clashedDescriptors = mutableSetOf<Pair<DeclarationDescriptor, String>>()
 
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         // We don't generate JS properties for extension properties, we generate methods instead, so in this case
         // check name clash only for accessors, not properties
         if (!descriptor.isExtensionProperty) {
-            checkDescriptor(descriptor, declaration, diagnosticHolder, bindingContext)
+            checkDescriptor(descriptor, declaration, context.trace, context.trace.bindingContext)
         }
     }
 

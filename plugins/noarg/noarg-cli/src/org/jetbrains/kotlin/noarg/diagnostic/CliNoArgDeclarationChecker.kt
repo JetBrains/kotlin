@@ -16,21 +16,18 @@
 
 package org.jetbrains.kotlin.noarg.diagnostic
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.noarg.NO_ARG_CLASS_KEY
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 
@@ -39,14 +36,7 @@ class CliNoArgDeclarationChecker(val noArgAnnotationFqNames: List<String>) : Abs
 }
 
 abstract class AbstractNoArgDeclarationChecker : DeclarationChecker, AnnotationBasedExtension {
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings,
-            expectActualTracker: ExpectActualTracker
-    ) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         // Handle only classes
         if (descriptor !is ClassDescriptor || declaration !is KtClass) return
         if (descriptor.kind != ClassKind.CLASS) return
@@ -57,7 +47,7 @@ abstract class AbstractNoArgDeclarationChecker : DeclarationChecker, AnnotationB
             val superClass = descriptor.getSuperClassOrAny()
             if (superClass.constructors.none { it.isNoArgConstructor() } && !superClass.hasSpecialAnnotation(declaration)) {
                 val reportTarget = declaration.nameIdentifier ?: declaration.getClassOrInterfaceKeyword() ?: declaration
-                diagnosticHolder.reportFromPlugin(ErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS.on(reportTarget), DefaultErrorMessagesNoArg)
+                context.trace.reportFromPlugin(ErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS.on(reportTarget), DefaultErrorMessagesNoArg)
             }
         }
     }

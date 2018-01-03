@@ -24,12 +24,9 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 
 object UnderscoreChecker : DeclarationChecker {
-
     @JvmOverloads
     fun checkIdentifier(
         identifier: PsiElement?,
@@ -61,29 +58,22 @@ object UnderscoreChecker : DeclarationChecker {
         checkIdentifier(declaration.nameIdentifier, diagnosticHolder, languageVersionSettings, allowSingleUnderscore)
     }
 
-    override fun check(
-        declaration: KtDeclaration,
-        descriptor: DeclarationDescriptor,
-        diagnosticHolder: DiagnosticSink,
-        bindingContext: BindingContext,
-        languageVersionSettings: LanguageVersionSettings,
-        expectActualTracker: ExpectActualTracker
-    ) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration is KtProperty && descriptor !is VariableDescriptor) return
         if (declaration is KtCallableDeclaration) {
             for (parameter in declaration.valueParameters) {
                 checkNamed(
-                    parameter, diagnosticHolder, languageVersionSettings,
+                    parameter, context.trace, context.languageVersionSettings,
                     allowSingleUnderscore = descriptor is FunctionExpressionDescriptor
                 )
             }
         }
         if (declaration is KtTypeParameterListOwner) {
             for (typeParameter in declaration.typeParameters) {
-                checkNamed(typeParameter, diagnosticHolder, languageVersionSettings)
+                checkNamed(typeParameter, context.trace, context.languageVersionSettings)
             }
         }
         if (declaration !is KtNamedDeclaration) return
-        checkNamed(declaration, diagnosticHolder, languageVersionSettings)
+        checkNamed(declaration, context.trace, context.languageVersionSettings)
     }
 }

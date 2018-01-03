@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.RequireKotlinNames
 import org.jetbrains.kotlin.resolve.SINCE_KOTLIN_FQ_NAME
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -33,26 +31,15 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 abstract class KotlinVersionStringAnnotationValueChecker(
     private val annotationFqName: FqName
 ) : DeclarationChecker {
-    override fun check(
-        declaration: KtDeclaration,
-        descriptor: DeclarationDescriptor,
-        diagnosticHolder: DiagnosticSink,
-        bindingContext: BindingContext,
-        languageVersionSettings: LanguageVersionSettings,
-        expectActualTracker: ExpectActualTracker
-    ) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val annotation = descriptor.annotations.findAnnotation(annotationFqName) ?: return
         val version = annotation.allValueArguments.values.singleOrNull()?.value as? String ?: return
         if (!version.matches(VERSION_REGEX)) {
-            diagnosticHolder.report(
-                Errors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE.on(
-                    annotation.source.getPsi() ?: declaration, annotationFqName
-                )
-            )
+            context.trace.report(Errors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE.on(annotation.source.getPsi() ?: declaration, annotationFqName))
             return
         }
 
-        extraCheck(declaration, annotation, version, diagnosticHolder, languageVersionSettings)
+        extraCheck(declaration, annotation, version, context.trace, context.languageVersionSettings)
     }
 
     open fun extraCheck(
