@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -422,6 +422,39 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         @TestMetadata("While.kt")
         public void testWhile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/While.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/joinLines/stringTemplate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StringTemplate extends AbstractJoinLinesTest {
+        public void testAllFilesPresentInStringTemplate() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("firstLineVariable.kt")
+        public void testFirstLineVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/firstLineVariable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondLineVariable.kt")
+        public void testSecondLineVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/secondLineVariable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("threeLines.kt")
+        public void testThreeLines() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/threeLines.kt");
             doTest(fileName);
         }
     }

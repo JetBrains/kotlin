@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
         }
 
         @JvmStatic
-        protected fun buildReplacement(expression: KtBinaryExpression): KtStringTemplateExpression {
+        fun buildReplacement(expression: KtBinaryExpression): KtStringTemplateExpression {
             val rightText = buildText(expression.right, false)
             return fold(expression.left, rightText, KtPsiFactory(expression))
         }
@@ -130,7 +130,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
             return "\${$expressionText}"
         }
 
-        private fun isApplicableToNoParentCheck(expression: KtBinaryExpression): Boolean {
+        fun isApplicableToNoParentCheck(expression: KtBinaryExpression): Boolean {
             if (expression.operationToken != KtTokens.PLUS) return false
             val expressionType = expression.analyze(BodyResolveMode.PARTIAL).getType(expression)
             if (!KotlinBuiltIns.isString(expressionType)) return false
