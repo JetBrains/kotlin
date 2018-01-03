@@ -211,9 +211,6 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"
                         serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.configuration.KotlinModuleTypeManager"
-                        serviceImplementation="org.jetbrains.kotlin.idea.KotlinModuleTypeManagerImpl"/>
-
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.quickfix.QuickFixes"
                         serviceImplementation="org.jetbrains.kotlin.idea.quickfix.QuickFixes"/>
 
