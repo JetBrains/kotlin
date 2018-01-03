@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
-import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
@@ -96,7 +96,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     protected fun checkFiles(shouldCheckFile: () -> Boolean = { true }, check: () -> Unit) {
         var atLeastOneFile = false
-        PluginJetFilesProvider.allFilesInProject(myProject!!).forEach { file ->
+        myProject.allKotlinFiles().forEach { file ->
             configureByExistingFile(file.virtualFile!!)
             if (shouldCheckFile()) {
                 atLeastOneFile = true
