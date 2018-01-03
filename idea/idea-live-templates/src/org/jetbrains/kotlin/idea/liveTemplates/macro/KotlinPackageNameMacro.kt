@@ -20,7 +20,6 @@ import com.intellij.codeInsight.template.Expression
 import com.intellij.codeInsight.template.ExpressionContext
 import com.intellij.codeInsight.template.Result
 import com.intellij.codeInsight.template.TextResult
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinPackageNameMacro : KotlinMacro() {
@@ -28,9 +27,7 @@ class KotlinPackageNameMacro : KotlinMacro() {
     override fun getPresentableName() = "kotlinPackageName()"
 
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
-        val project = context.project
-        val document = context.editor?.document ?: return null
-        val file = PsiDocumentManager.getInstance(project).getPsiFile(document) as? KtFile ?: return null
+        val file = context.psiElementAtStartOffset?.containingFile as? KtFile ?: return null
         val packageName = file.packageFqName.asString().takeIf { it.isNotEmpty() } ?: return null
         return TextResult(packageName)
     }
