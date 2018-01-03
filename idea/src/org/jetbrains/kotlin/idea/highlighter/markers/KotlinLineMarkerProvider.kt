@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.highlighter.markers
@@ -20,11 +9,13 @@ import com.intellij.codeHighlighting.Pass
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
+import com.intellij.codeInsight.daemon.NavigateAction
 import com.intellij.codeInsight.daemon.impl.LineMarkerNavigator
 import com.intellij.codeInsight.daemon.impl.MarkerType
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
@@ -51,9 +42,6 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMe
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.Icon
@@ -234,15 +222,21 @@ private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: M
     // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
     // clearing the whole BindingTrace.
 
-    result.add(LineMarkerInfo(
-            anchor,
-            anchor.textRange,
-            if (implements) IMPLEMENTING_MARK else OVERRIDING_MARK,
-            Pass.LINE_MARKERS,
-            SuperDeclarationMarkerTooltip,
-            SuperDeclarationMarkerNavigationHandler(),
-            GutterIconRenderer.Alignment.RIGHT
-    ))
+    val lineMarkerInfo = LineMarkerInfo(
+        anchor,
+        anchor.textRange,
+        if (implements) IMPLEMENTING_MARK else OVERRIDING_MARK,
+        Pass.LINE_MARKERS,
+        SuperDeclarationMarkerTooltip,
+        SuperDeclarationMarkerNavigationHandler(),
+        GutterIconRenderer.Alignment.RIGHT
+    )
+    NavigateAction.setNavigateAction(
+        lineMarkerInfo,
+        if (declaration is KtNamedFunction) "Go to super method" else "Go to super property",
+        IdeActions.ACTION_GOTO_SUPER
+    )
+    result.add(lineMarkerInfo)
 }
 
 private fun collectInheritedClassMarker(element: KtClass, result: MutableCollection<LineMarkerInfo<*>>) {
@@ -256,15 +250,21 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
 
     val anchor = element.nameIdentifier ?: element
 
-    result.add(LineMarkerInfo(
-            anchor,
-            anchor.textRange,
-            if (element.isInterface()) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
-            Pass.LINE_MARKERS,
-            SUBCLASSED_CLASS.tooltip,
-            SUBCLASSED_CLASS.navigationHandler,
-            GutterIconRenderer.Alignment.RIGHT
-    ))
+    val lineMarkerInfo = LineMarkerInfo(
+        anchor,
+        anchor.textRange,
+        if (element.isInterface()) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
+        Pass.LINE_MARKERS,
+        SUBCLASSED_CLASS.tooltip,
+        SUBCLASSED_CLASS.navigationHandler,
+        GutterIconRenderer.Alignment.RIGHT
+    )
+    NavigateAction.setNavigateAction(
+        lineMarkerInfo,
+        if (element.isInterface()) "Go to implementations" else "Go to subclasses",
+        IdeActions.ACTION_GOTO_IMPLEMENTATION
+    )
+    result.add(lineMarkerInfo)
 }
 
 private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDeclaration>,
@@ -284,15 +284,21 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDec
 
         val anchor = (property as? PsiNameIdentifierOwner)?.nameIdentifier ?: property
 
-        result.add(LineMarkerInfo(
-                anchor,
-                anchor.textRange,
-                if (isImplemented(property)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
-                Pass.LINE_MARKERS,
-                OVERRIDDEN_PROPERTY.tooltip,
-                OVERRIDDEN_PROPERTY.navigationHandler,
-                GutterIconRenderer.Alignment.RIGHT
-        ))
+        val lineMarkerInfo = LineMarkerInfo(
+            anchor,
+            anchor.textRange,
+            if (isImplemented(property)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
+            Pass.LINE_MARKERS,
+            OVERRIDDEN_PROPERTY.tooltip,
+            OVERRIDDEN_PROPERTY.navigationHandler,
+            GutterIconRenderer.Alignment.RIGHT
+        )
+        NavigateAction.setNavigateAction(
+            lineMarkerInfo,
+            "Go to overridden properties",
+            IdeActions.ACTION_GOTO_IMPLEMENTATION
+        )
+        result.add(lineMarkerInfo)
     }
 }
 
@@ -314,15 +320,21 @@ private fun collectActualMarkers(declaration: KtNamedDeclaration,
 
     val anchor = declaration.expectOrActualAnchor
 
-    result.add(LineMarkerInfo(
-            anchor,
-            anchor.textRange,
-            KotlinIcons.FROM_EXPECTED,
-            Pass.LINE_MARKERS,
-            PLATFORM_ACTUAL.tooltip,
-            PLATFORM_ACTUAL.navigationHandler,
-            GutterIconRenderer.Alignment.RIGHT
-    ))
+    val lineMarkerInfo = LineMarkerInfo(
+        anchor,
+        anchor.textRange,
+        KotlinIcons.FROM_EXPECTED,
+        Pass.LINE_MARKERS,
+        PLATFORM_ACTUAL.tooltip,
+        PLATFORM_ACTUAL.navigationHandler,
+        GutterIconRenderer.Alignment.RIGHT
+    )
+    NavigateAction.setNavigateAction(
+        lineMarkerInfo,
+        "Go to actual declarations",
+        null
+    )
+    result.add(lineMarkerInfo)
 }
 
 private fun collectExpectedMarkers(declaration: KtNamedDeclaration,
@@ -335,15 +347,21 @@ private fun collectExpectedMarkers(declaration: KtNamedDeclaration,
 
     val anchor = declaration.expectOrActualAnchor
 
-    result.add(LineMarkerInfo(
-            anchor,
-            anchor.textRange,
-            KotlinIcons.FROM_ACTUAL,
-            Pass.LINE_MARKERS,
-            EXPECTED_DECLARATION.tooltip,
-            EXPECTED_DECLARATION.navigationHandler,
-            GutterIconRenderer.Alignment.RIGHT
-    ))
+    val lineMarkerInfo = LineMarkerInfo(
+        anchor,
+        anchor.textRange,
+        KotlinIcons.FROM_ACTUAL,
+        Pass.LINE_MARKERS,
+        EXPECTED_DECLARATION.tooltip,
+        EXPECTED_DECLARATION.navigationHandler,
+        GutterIconRenderer.Alignment.RIGHT
+    )
+    NavigateAction.setNavigateAction(
+        lineMarkerInfo,
+        "Go to expected declaration",
+        null
+    )
+    result.add(lineMarkerInfo)
 }
 
 private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, result: MutableCollection<LineMarkerInfo<*>>) {
@@ -365,13 +383,19 @@ private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, r
 
         val anchor = function.nameIdentifier ?: function
 
-        result.add(LineMarkerInfo(
-                anchor,
-                anchor.textRange,
-                if (isImplemented(function)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
-                Pass.LINE_MARKERS, OVERRIDDEN_FUNCTION.tooltip,
-                OVERRIDDEN_FUNCTION.navigationHandler,
-                GutterIconRenderer.Alignment.RIGHT
-        ))
+        val lineMarkerInfo = LineMarkerInfo(
+            anchor,
+            anchor.textRange,
+            if (isImplemented(function)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
+            Pass.LINE_MARKERS, OVERRIDDEN_FUNCTION.tooltip,
+            OVERRIDDEN_FUNCTION.navigationHandler,
+            GutterIconRenderer.Alignment.RIGHT
+        )
+        NavigateAction.setNavigateAction(
+            lineMarkerInfo,
+            "Go to overridden methods",
+            IdeActions.ACTION_GOTO_IMPLEMENTATION
+        )
+        result.add(lineMarkerInfo)
     }
 }

@@ -70,6 +70,7 @@ object DirectiveBasedActionUtils {
             "Edit cleanup profile settings",
             "Fix all '",
             "Cleanup code",
+            "Go to ",
             "Show local variable type hints",
             "Show function return type hints",
             "Show property type hints",
