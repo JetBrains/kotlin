@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.siyeh.ig.psiutils.TestUtils
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -42,18 +43,21 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class KDocMissingDocumentationInspection() : AbstractKotlinInspection() {
+class KDocMissingDocumentationInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
-            KDocMissingDocumentationInspection(holder)
+        KDocMissingDocumentationInspection(holder)
 
     private class KDocMissingDocumentationInspection(private val holder: ProblemsHolder) : PsiElementVisitor() {
         override fun visitElement(element: PsiElement) {
+            if (TestUtils.isInTestSourceContent(element)) {
+                return
+            }
 
             if (element is KtNamedDeclaration) {
                 val nameIdentifier = element.nameIdentifier
                 val descriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL)
-                                         as? DeclarationDescriptorWithVisibility
-                                         as? MemberDescriptor ?: return
+                        as? DeclarationDescriptorWithVisibility
+                        as? MemberDescriptor ?: return
                 if (nameIdentifier != null && descriptor.isEffectivelyPublicApi) {
                     if (descriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, it) } == null) {
                         val message = element.describe()?.let { "$it is missing documentation" } ?: "Missing documentation"
@@ -72,8 +76,7 @@ class KDocMissingDocumentationInspection() : AbstractKotlinInspection() {
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
             val declaration = descriptor.psiElement.getParentOfType<KtNamedDeclaration>(true)
-                              ?: throw IllegalStateException("Can't find declaration")
-
+                    ?: throw IllegalStateException("Can't find declaration")
 
             declaration.addBefore(KDocElementFactory(project).createKDocFromText("/**\n*\n*/\n"), declaration.firstChild)
 
