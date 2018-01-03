@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ object KotlinPackageSourcesMemberNamesIndex : FileBasedIndexExtension<String, Co
 
     override fun getIndexer(): DataIndexer<String, Collection<String>, FileContent> =
         DataIndexer { inputData ->
-            val ktFile = inputData.psiFile as KtFile
+            val ktFile = inputData.psiFile as? KtFile ?: return@DataIndexer emptyMap()
             val packageName = ktFile.packageDirective?.fqName?.asString() ?: ""
 
             mapOf(packageName to ktFile.declarations.mapNotNullTo(hashSetOf(), KtDeclaration::getName))
