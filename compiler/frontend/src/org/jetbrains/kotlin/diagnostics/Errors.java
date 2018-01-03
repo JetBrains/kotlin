@@ -241,6 +241,9 @@ public interface Errors {
     DiagnosticFactory2<PsiElement, FqName, Boolean> EXPERIMENTAL_API_USAGE = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, FqName, Boolean> EXPERIMENTAL_API_USAGE_ERROR = DiagnosticFactory2.create(ERROR);
 
+    DiagnosticFactory2<PsiElement, FqName, DeclarationDescriptor> EXPERIMENTAL_OVERRIDE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, FqName, DeclarationDescriptor> EXPERIMENTAL_OVERRIDE_ERROR = DiagnosticFactory2.create(ERROR);
+
     DiagnosticFactory0<KtAnnotationEntry> USE_EXPERIMENTAL_WITHOUT_ARGUMENTS = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory1<KtAnnotationEntry, FqName> USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<KtAnnotationEntry, FqName> USE_EXPERIMENTAL_ARGUMENT_HAS_NON_COMPILATION_IMPACT = DiagnosticFactory1.create(ERROR);

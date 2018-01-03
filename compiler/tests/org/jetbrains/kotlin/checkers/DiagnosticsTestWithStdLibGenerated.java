@@ -1839,6 +1839,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("errors.kt")
+        public void testErrors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/errors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("experimentalWithNoImpact.kt")
         public void testExperimentalWithNoImpact() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalWithNoImpact.kt");
@@ -1860,6 +1866,18 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("indirectBodyUsageInAnotherModule.kt")
         public void testIndirectBodyUsageInAnotherModule() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/indirectBodyUsageInAnotherModule.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("override.kt")
+        public void testOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/override.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideDifferentExperimentalities.kt")
+        public void testOverrideDifferentExperimentalities() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/overrideDifferentExperimentalities.kt");
             doTest(fileName);
         }
 

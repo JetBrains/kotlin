@@ -91,7 +91,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     DynamicReceiverChecker,
     DelegationChecker(),
     KClassWithIncorrectTypeArgumentChecker,
-    SuspendOperatorsCheckers
+    SuspendOperatorsCheckers,
+    ExperimentalUsageChecker.Overrides
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
