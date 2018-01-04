@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.parameterInfo
@@ -30,6 +19,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getRet
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
@@ -51,9 +41,10 @@ enum class HintType(desc: String, enabled: Boolean) {
             return providePropertyTypeHint(elem)
         }
 
-        override fun isApplicable(elem: PsiElement): Boolean = (elem is KtProperty && elem.getReturnTypeReference() == null && elem.isLocal) ||
-                                                               (elem is KtParameter && elem.isLoopParameter && elem.typeReference == null) ||
-                                                               (elem is KtDestructuringDeclarationEntry && elem.getReturnTypeReference() == null)
+        override fun isApplicable(elem: PsiElement): Boolean =
+            (elem is KtProperty && elem.getReturnTypeReference() == null && elem.isLocal) ||
+                    (elem is KtParameter && elem.isLoopParameter && elem.typeReference == null) ||
+                    (elem is KtDestructuringDeclarationEntry && elem.getReturnTypeReference() == null)
     },
 
     FUNCTION_HINT("Show function return type hints", false) {
@@ -66,8 +57,10 @@ enum class HintType(desc: String, enabled: Boolean) {
             return emptyList()
         }
 
-        override fun isApplicable(elem: PsiElement): Boolean = elem is KtNamedFunction && !(elem.hasBlockBody() || elem.hasDeclaredReturnType())
+        override fun isApplicable(elem: PsiElement): Boolean =
+            elem is KtNamedFunction && !(elem.hasBlockBody() || elem.hasDeclaredReturnType())
     },
+
     PARAMETER_TYPE_HINT("Show parameter type hints ", false) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             (elem as? KtParameter)?.let { param ->
@@ -80,16 +73,27 @@ enum class HintType(desc: String, enabled: Boolean) {
 
         override fun isApplicable(elem: PsiElement): Boolean = elem is KtParameter && elem.typeReference == null && !elem.isLoopParameter
     },
+
     PARAMETER_HINT("Show argument name hints", true) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
-            (elem as? KtCallElement)?.let {
-                return provideArgumentNameHints(it)
+            val callElement = elem.getStrictParentOfType<KtCallElement>() ?: return emptyList()
+            return provideArgumentNameHints(callElement)
+        }
+
+        override fun isApplicable(elem: PsiElement): Boolean = elem is KtValueArgumentList
+    },
+
+    LAMBDA_RETURN_EXPRESSION("Show lambda return expression hints", true) {
+        override fun isApplicable(elem: PsiElement) = elem is KtExpression
+
+        override fun provideHints(elem: PsiElement): List<InlayInfo> {
+            if (elem is KtExpression) {
+                return provideLambdaReturnValueHints(elem)
             }
             return emptyList()
         }
-
-        override fun isApplicable(elem: PsiElement): Boolean = elem is KtCallElement
-    };
+    }
+    ;
 
     companion object {
 
@@ -99,8 +103,7 @@ enum class HintType(desc: String, enabled: Boolean) {
             val resolved = elem?.let { resolve(it) } ?: return null
             return if (resolved.enabled) {
                 resolved
-            }
-            else {
+            } else {
                 null
             }
         }
@@ -118,26 +121,30 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
     override fun getSupportedOptions(): List<Option> = HintType.values().map { it.option }
 
     override fun getDefaultBlackList(): Set<String> =
-            setOf("*listOf", "*setOf", "*arrayOf", "*ListOf", "*SetOf", "*ArrayOf", "*assert*(*)", "*mapOf", "*MapOf")
+        setOf("*listOf", "*setOf", "*arrayOf", "*ListOf", "*SetOf", "*ArrayOf", "*assert*(*)", "*mapOf", "*MapOf")
 
     override fun getHintInfo(element: PsiElement): HintInfo? {
         val hintType = HintType.resolve(element) ?: return null
         return when (hintType) {
-            HintType.PARAMETER_HINT -> (element as? KtCallElement)?.let { getMethodInfo(it) }
+            HintType.PARAMETER_HINT -> {
+                val parent = (element as? KtValueArgumentList)?.parent
+                (parent as? KtCallElement)?.let { getMethodInfo(it) }
+            }
             else -> HintInfo.OptionInfo(hintType.option)
         }
     }
 
-    override fun getParameterHints(element: PsiElement?): List<InlayInfo> = HintType.resolveToEnabled(element)?.provideHints(element!!) ?: emptyList()
+    override fun getParameterHints(element: PsiElement?): List<InlayInfo> =
+        HintType.resolveToEnabled(element)?.provideHints(element!!) ?: emptyList()
 
     override fun getBlackListDependencyLanguage(): Language = JavaLanguage.INSTANCE
 
-    override fun getInlayPresentation(inlayText: String): String = if (inlayText.startsWith(TYPE_INFO_PREFIX)) {
-        inlayText.substring(TYPE_INFO_PREFIX.length)
-    }
-    else {
-        super.getInlayPresentation(inlayText)
-    }
+    override fun getInlayPresentation(inlayText: String): String =
+        if (inlayText.startsWith(TYPE_INFO_PREFIX)) {
+            inlayText.substring(TYPE_INFO_PREFIX.length)
+        } else {
+            super.getInlayPresentation(inlayText)
+        }
 
     private fun getMethodInfo(elem: KtCallElement): HintInfo.MethodInfo? {
         val ctx = elem.analyze(BodyResolveMode.PARTIAL)
@@ -149,11 +156,11 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
             else
                 (resolvedCallee.fqNameOrNull()?.asString() ?: return null)
             val paramNames = resolvedCall.valueArguments
-                    .mapNotNull { (valueParameterDescriptor, resolvedValueArgument) ->
-                        if (resolvedValueArgument !is DefaultValueArgument) valueParameterDescriptor.name else null
-                    }
-                    .filter { !it.isSpecial }
-                    .map(Name::asString)
+                .mapNotNull { (valueParameterDescriptor, resolvedValueArgument) ->
+                    if (resolvedValueArgument !is DefaultValueArgument) valueParameterDescriptor.name else null
+                }
+                .filter { !it.isSpecial }
+                .map(Name::asString)
             return HintInfo.MethodInfo(fqName, paramNames)
         }
         return null
