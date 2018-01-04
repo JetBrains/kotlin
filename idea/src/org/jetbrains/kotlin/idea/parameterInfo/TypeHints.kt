@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
+import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -82,9 +83,12 @@ private fun isUnclearType(type: KotlinType, element: KtCallableDeclaration): Boo
         if (initializer is KtCallExpression) {
             val bindingContext = element.analyze()
             val resolvedCall = initializer.getResolvedCall(bindingContext)
-            val constructorDescriptor = resolvedCall?.candidateDescriptor as? ConstructorDescriptor
-            if (constructorDescriptor != null &&
-                (constructorDescriptor.constructedClass.declaredTypeParameters.isEmpty() || initializer.typeArgumentList != null)) {
+            val resolvedDescriptor = resolvedCall?.candidateDescriptor
+            if (resolvedDescriptor is SamConstructorDescriptor) {
+                return false
+            }
+            if (resolvedDescriptor is ConstructorDescriptor &&
+                (resolvedDescriptor.constructedClass.declaredTypeParameters.isEmpty() || initializer.typeArgumentList != null)) {
                 return false
             }
         }
