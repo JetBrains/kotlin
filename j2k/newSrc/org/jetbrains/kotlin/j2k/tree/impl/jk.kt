@@ -94,10 +94,6 @@ class JKBlockImpl(override var statements: List<JKStatement>) : JKBlock, JKEleme
     }
 }
 
-class JKStringLiteralExpressionImpl(override val text: String) : JKStringLiteralExpression, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitStringLiteralExpression(this, data)
-}
-
 class JKBinaryExpressionImpl(
     override var left: JKExpression, override var right: JKExpression?,
     override var operator: JKOperatorIdentifier

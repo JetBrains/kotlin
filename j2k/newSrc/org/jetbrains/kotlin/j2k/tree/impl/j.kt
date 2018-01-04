@@ -39,8 +39,9 @@ class JKJavaFieldImpl(override var modifierList: JKModifierList,
     }
 }
 
-class JKJavaStringLiteralExpressionImpl(override val text: String) : JKJavaStringLiteralExpression, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaStringLiteralExpression(this, data)
+
+class JKJavaLiteralExpressionImpl(override val literal: String, override val type: JKLiteralExpression.LiteralType) : JKJavaLiteralExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaLiteralExpression(this, data)
 }
 
 

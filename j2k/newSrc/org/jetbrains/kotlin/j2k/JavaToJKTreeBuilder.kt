@@ -108,10 +108,12 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
             if (this !is PsiLiteralExpressionImpl) {
                 throw RuntimeException("Not supported")
             }
-            return when (this.literalElementType) {
-                JavaTokenType.STRING_LITERAL -> JKJavaStringLiteralExpressionImpl(innerText!!)
+            return JKJavaLiteralExpressionImpl(innerText!!, when (this.literalElementType) {
+                JavaTokenType.STRING_LITERAL -> JKLiteralExpression.LiteralType.STRING
+                JavaTokenType.TRUE_KEYWORD, JavaTokenType.FALSE_KEYWORD -> JKLiteralExpression.LiteralType.BOOLEAN
+                JavaTokenType.NULL_KEYWORD -> JKLiteralExpression.LiteralType.NULL
                 else -> throw RuntimeException("Not supported")
-            }
+            })
         }
 
         fun PsiJavaToken.toJK(): JKOperatorIdentifier = when (tokenType) {

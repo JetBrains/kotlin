@@ -139,7 +139,14 @@ interface JKNameIdentifier : JKIdentifier {
     val name: String
 }
 
-interface JKLiteralExpression : JKExpression
+interface JKLiteralExpression : JKExpression {
+    val literal: String
+    val type: LiteralType
+
+    enum class LiteralType {
+        STRING, BOOLEAN, NULL
+    }
+}
 
 interface JKModifierList : JKElement {
     val modifiers: List<JKModifier>
