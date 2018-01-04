@@ -14,6 +14,7 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.name.Name
@@ -83,9 +84,11 @@ enum class HintType(desc: String, enabled: Boolean) {
         override fun isApplicable(elem: PsiElement): Boolean = elem is KtValueArgumentList
     },
 
+
     LAMBDA_RETURN_EXPRESSION("Show lambda return expression hints", true) {
         override fun isApplicable(elem: PsiElement) =
-            elem is KtExpression && elem !is KtLambdaExpression && elem !is KtFunctionLiteral
+            elem is KtExpression && elem !is KtLambdaExpression && elem !is KtFunctionLiteral &&
+                    !elem.isNameReferenceInCall()
 
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             if (elem is KtExpression) {
@@ -103,6 +106,14 @@ enum class HintType(desc: String, enabled: Boolean) {
                 return provideLambdaImplicitHints(elem)
             }
             return emptyList()
+        }
+    },
+    SUSPENDING_CALL("Show hints for suspending calls", false) {
+        override fun isApplicable(elem: PsiElement) = elem.isNameReferenceInCall() && KotlinInternalMode.enabled
+
+        override fun provideHints(elem: PsiElement): List<InlayInfo> {
+            val callExpression = elem.parent as? KtCallExpression ?: return emptyList()
+            return provideSuspendingCallHint(callExpression)?.let { listOf(it) } ?: emptyList()
         }
     };
 
@@ -178,3 +189,5 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
     }
 }
 
+private fun PsiElement.isNameReferenceInCall() =
+    this is KtNameReferenceExpression && parent is KtCallExpression
