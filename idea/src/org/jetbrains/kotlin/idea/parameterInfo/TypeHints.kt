@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 
 //hack to separate type presentation from param info presentation
 const val TYPE_INFO_PREFIX = "@TYPE@"
-private val typeRenderer = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
+val inlayHintsTypeRenderer = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
     textFormat = RenderingFormat.PLAIN
     renderUnabbreviatedType = false
 }
@@ -76,7 +76,7 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
             append(":")
             if (settings.SPACE_AFTER_TYPE_COLON)
                 append(" ")
-            append(typeRenderer.renderType(type))
+            append(inlayHintsTypeRenderer.renderType(type))
         }
         listOf(InlayInfo(declString, offset))
     }

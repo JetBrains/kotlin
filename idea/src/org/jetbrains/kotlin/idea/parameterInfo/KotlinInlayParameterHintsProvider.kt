@@ -95,7 +95,8 @@ enum class HintType(desc: String, enabled: Boolean) {
     },
 
     LAMBDA_RETURN_EXPRESSION("Show lambda return expression hints", true) {
-        override fun isApplicable(elem: PsiElement) = elem is KtExpression
+        override fun isApplicable(elem: PsiElement) =
+            elem is KtExpression && elem !is KtLambdaExpression && elem !is KtFunctionLiteral
 
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             if (elem is KtExpression) {
@@ -103,8 +104,18 @@ enum class HintType(desc: String, enabled: Boolean) {
             }
             return emptyList()
         }
-    }
-    ;
+    },
+
+    LAMBDA_IMPLICIT_PARAMETER_RECEIVER("Show hints for implicit receivers and parameters of lambdas", true) {
+        override fun isApplicable(elem: PsiElement) = elem is KtLambdaExpression
+
+        override fun provideHints(elem: PsiElement): List<InlayInfo> {
+            (elem as? KtLambdaExpression)?.let {
+                return provideLambdaImplicitHints(elem)
+            }
+            return emptyList()
+        }
+    };
 
     companion object {
 
