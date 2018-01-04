@@ -120,6 +120,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("SyntheticExtensionProperty.kt")
+    public void testSyntheticExtensionProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/SyntheticExtensionProperty.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Todo.kt")
     public void testTodo() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Todo.kt");
