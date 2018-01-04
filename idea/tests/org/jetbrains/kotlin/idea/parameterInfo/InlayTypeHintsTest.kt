@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,5 +115,10 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             fun x() :Triple<String, String,String> {
                 return Triple(<hint text="first:" />"A", <hint text="second:" />"B", <hint text="third:" />"C")
             }""")
+    }
+
+    fun testSAMConstructor() {
+        HintType.PROPERTY_HINT.option.set(true)
+        check("""val x = Runnable { }""")
     }
 }
