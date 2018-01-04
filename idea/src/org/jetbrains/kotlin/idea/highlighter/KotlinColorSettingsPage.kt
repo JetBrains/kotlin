@@ -89,6 +89,9 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
 <KEYWORD>interface</KEYWORD> <TRAIT>FunctionLike</TRAIT> {
     <BUILTIN_ANNOTATION>operator</BUILTIN_ANNOTATION> <KEYWORD>fun</KEYWORD> <FUNCTION_DECLARATION>invoke</FUNCTION_DECLARATION>() = <NUMBER>1</NUMBER>
 }
+
+<KEYWORD>typealias</KEYWORD> <TYPE_ALIAS>Predicate</TYPE_ALIAS><<TYPE_PARAMETER>T</TYPE_PARAMETER>> = (<TYPE_PARAMETER>T</TYPE_PARAMETER>) -> <CLASS>Boolean</CLASS>
+<KEYWORD>fun</KEYWORD> <FUNCTION_DECLARATION>baz</FUNCTION_DECLARATION>(<PARAMETER>p</PARAMETER>: <TYPE_ALIAS>Predicate</TYPE_ALIAS><<CLASS>Int</CLASS>>) = <PARAMETER><VARIABLE_AS_FUNCTION_CALL>p</VARIABLE_AS_FUNCTION_CALL></PARAMETER>(<NUMBER>42</NUMBER>)
 """
     }
 
@@ -143,6 +146,7 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
                        KotlinBundle.message("options.kotlin.attribute.descriptor.annotation") to KotlinHighlightingColors.ANNOTATION,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.object") to KotlinHighlightingColors.OBJECT,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.enumEntry") to KotlinHighlightingColors.ENUM_ENTRY,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.typeAlias") to KotlinHighlightingColors.TYPE_ALIAS,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.var") to KotlinHighlightingColors.MUTABLE_VARIABLE,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.local.variable") to KotlinHighlightingColors.LOCAL_VARIABLE,
                        OptionsBundle.message("options.java.attribute.descriptor.parameter") to KotlinHighlightingColors.PARAMETER,
