@@ -110,4 +110,19 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         HintType.PROPERTY_HINT.option.set(true)
         check("""val x = Runnable { }""")
     }
+
+    fun testNestedClassImports() {
+        HintType.PROPERTY_HINT.option.set(true)
+        check(
+            """import kotlin.collections.Map.Entry
+                    val entries<hint text=": Set<Entry<Int, String>>" /> = mapOf(1 to "1").entries"""
+        )
+    }
+
+    fun testNestedClassWithoutImport() {
+        HintType.PROPERTY_HINT.option.set(true)
+        check(
+            """val entries<hint text=": Set<Map.Entry<Int, String>>" /> = mapOf(1 to "1").entries"""
+        )
+    }
 }

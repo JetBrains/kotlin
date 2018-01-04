@@ -8,27 +8,55 @@ package org.jetbrains.kotlin.idea.parameterInfo
 import com.intellij.codeInsight.hints.InlayInfo
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 
 //hack to separate type presentation from param info presentation
 const val TYPE_INFO_PREFIX = "@TYPE@"
-val inlayHintsTypeRenderer = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
-    textFormat = RenderingFormat.PLAIN
-    renderUnabbreviatedType = false
+
+class ImportAwareClassifierNamePolicy(
+    val bindingContext: BindingContext,
+    val context: KtElement
+) : ClassifierNamePolicy {
+    override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
+        if (classifier.containingDeclaration is ClassDescriptor) {
+            val resolutionFacade = context.getResolutionFacade()
+            val scope = context.getResolutionScope(bindingContext, resolutionFacade)
+            if (scope.findClassifier(classifier.name, NoLookupLocation.FROM_IDE) == classifier) {
+                return classifier.name.asString()
+            }
+        }
+
+        return ClassifierNamePolicy.SHORT.renderClassifier(classifier, renderer)
+    }
 }
+
+fun getInlayHintsTypeRenderer(bindingContext: BindingContext, context: KtElement) =
+    DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
+        textFormat = RenderingFormat.PLAIN
+        renderUnabbreviatedType = false
+        classifierNamePolicy = ImportAwareClassifierNamePolicy(bindingContext, context)
+    }
 
 fun providePropertyTypeHint(elem: PsiElement): List<InlayInfo> {
     (elem as? KtCallableDeclaration)?.let { property ->
@@ -50,14 +78,13 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
             return emptyList()
         }
         type = type.immediateSupertypes().singleOrNull() ?: return emptyList()
-    }
-    else if (name?.isSpecial == true) {
+    } else if (name?.isSpecial == true) {
         return emptyList()
     }
 
     return if (isUnclearType(type, element)) {
         val settings = CodeStyleSettingsManager.getInstance(element.project).currentSettings
-                .getCustomSettings(KotlinCodeStyleSettings::class.java)
+            .getCustomSettings(KotlinCodeStyleSettings::class.java)
 
         val declString = buildString {
             append(TYPE_INFO_PREFIX)
@@ -66,11 +93,10 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
             append(":")
             if (settings.SPACE_AFTER_TYPE_COLON)
                 append(" ")
-            append(inlayHintsTypeRenderer.renderType(type))
+            append(getInlayHintsTypeRenderer(element.analyze(), element).renderType(type))
         }
         listOf(InlayInfo(declString, offset))
-    }
-    else {
+    } else {
         emptyList()
     }
 }

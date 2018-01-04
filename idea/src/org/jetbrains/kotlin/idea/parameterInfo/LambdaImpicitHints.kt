@@ -29,7 +29,7 @@ fun provideLambdaImplicitHints(lambda: KtLambdaExpression): List<InlayInfo> {
         val text = buildString {
             append(TYPE_INFO_PREFIX)
             append("this: ")
-            append(inlayHintsTypeRenderer.renderType(implicitReceiver.type))
+            append(getInlayHintsTypeRenderer(bindingContext, lambda).renderType(implicitReceiver.type))
         }
         return listOf(InlayInfo(text, lbrace.textRange.endOffset))
     }
@@ -41,7 +41,7 @@ fun provideLambdaImplicitHints(lambda: KtLambdaExpression): List<InlayInfo> {
         val text = buildString {
             append(TYPE_INFO_PREFIX)
             append("it: ")
-            append(inlayHintsTypeRenderer.renderType(type))
+            append(getInlayHintsTypeRenderer(bindingContext, lambda).renderType(type))
         }
         return listOf(InlayInfo(text, lbrace.textRange.endOffset))
     }
