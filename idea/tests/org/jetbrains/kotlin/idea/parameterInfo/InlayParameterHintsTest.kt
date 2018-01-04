@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -183,5 +183,16 @@ annotation class ManyArgs(val name: String, val surname: String)
         check("""fun foo(vararg x: Int) {
             intArrayOf(1, 0).apply { foo(<hint text="...x:" />*this) }
         }""")
+    }
+
+    fun `test line break`() {
+        check("""fun foo(vararg x: Int) {
+            foo(<hint text="...x:" />
+                1,
+                2,
+                3
+            ) }
+        }"""
+        )
     }
 }
