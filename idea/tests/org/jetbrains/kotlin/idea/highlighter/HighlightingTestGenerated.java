@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,6 +123,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
     @TestMetadata("Todo.kt")
     public void testTodo() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Todo.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TypeAlias.kt")
+    public void testTypeAlias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/TypeAlias.kt");
         doTest(fileName);
     }
 

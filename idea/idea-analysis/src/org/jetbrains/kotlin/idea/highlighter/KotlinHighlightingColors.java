@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey ANNOTATION = createTextAttributesKey("KOTLIN_ANNOTATION", JavaHighlightingColors.ANNOTATION_NAME_ATTRIBUTES);
     public static final TextAttributesKey OBJECT = createTextAttributesKey("KOTLIN_OBJECT", CLASS);
     public static final TextAttributesKey ENUM_ENTRY = createTextAttributesKey("KOTLIN_ENUM_ENTRY", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+    public static final TextAttributesKey TYPE_ALIAS = createTextAttributesKey("KOTLIN_TYPE_ALIAS", CLASS);
 
     // variable kinds
     public static final TextAttributesKey MUTABLE_VARIABLE = createTextAttributesKey("KOTLIN_MUTABLE_VARIABLE");

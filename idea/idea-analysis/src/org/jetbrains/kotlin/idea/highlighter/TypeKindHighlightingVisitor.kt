@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,9 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
             else if (referenceTarget is TypeParameterDescriptor) {
                 highlightName(expression, TYPE_PARAMETER)
             }
+            else if (referenceTarget is TypeAliasDescriptor) {
+                highlightName(expression, TYPE_ALIAS)
+            }
         }
     }
 
@@ -90,6 +93,16 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
             highlightName(identifier, textAttributesKeyForClass(classDescriptor))
         }
         super.visitClassOrObject(classOrObject)
+    }
+
+    override fun visitTypeAlias(typeAlias: KtTypeAlias) {
+        val identifier = typeAlias.nameIdentifier
+        val descriptor = bindingContext.get(BindingContext.TYPE_ALIAS, typeAlias)
+        if (identifier != null && descriptor != null) {
+            if (applyHighlighterExtensions(identifier, descriptor)) return
+            highlightName(identifier, TYPE_ALIAS)
+        }
+        super.visitTypeAlias(typeAlias)
     }
 
     override fun visitDynamicType(type: KtDynamicType) {
