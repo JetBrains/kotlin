@@ -36,21 +36,13 @@ interface JKJavaArrayType : JKType {
     val type: JKType
 }
 
-interface JKJavaStringLiteralExpression : JKLiteralExpression {
-    val text: String
-}
-
 interface JKJavaOperatorIdentifier : JKOperatorIdentifier
 
 interface JKJavaQualificationIdentifier : JKQualificationIdentifier
 
-interface JKJavaMethodCallExpression : JKMethodCallExpression {
+interface JKJavaMethodCallExpression : JKMethodCallExpression
 
-}
-
-interface JKJavaFieldAccessExpression : JKFieldAccessExpression {
-
-}
+interface JKJavaFieldAccessExpression : JKFieldAccessExpression
 
 interface JKJavaNewExpression : JKExpression {
     val identifier: JKClassReference
@@ -86,3 +78,5 @@ interface JKJavaNewEmptyArray : JKExpression {
 interface JKJavaNewArray : JKExpression {
     val initializer: List<JKExpression>
 }
+
+interface JKJavaLiteralExpression : JKLiteralExpression

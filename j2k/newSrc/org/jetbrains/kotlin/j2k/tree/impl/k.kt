@@ -57,3 +57,39 @@ class JKKtFunctionImpl(override var returnType: JKTypeIdentifier,
     override val valid: Boolean
         get() = true
 }
+
+sealed class JKKtQualificationIdentifierImpl : JKKtQualificationIdentifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtQualificationIdentifier(this, data)
+
+    object DOT : JKKtQualificationIdentifierImpl()
+    object SAFE : JKKtQualificationIdentifierImpl()
+}
+
+class JKKtCallExpressionImpl(override val identifier: JKMethodReference,
+                                     override val arguments: JKExpressionList) : JKKtMethodCallExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtMethodCallExpression(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        identifier.accept(visitor, data)
+        arguments.accept(visitor, data)
+    }
+}
+
+class JKKtFieldAccessExpressionImpl(override val identifier: JKFieldReference) : JKKtFieldAccessExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtFieldAccessExpression(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        identifier.accept(visitor, data)
+    }
+}
+
+class JKKtLiteralExpressionImpl(override val literal: String, override val type: JKLiteralExpression.LiteralType) : JKKtLiteralExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtLiteralExpression(this, data)
+}
+
+sealed class JKKtOperatorIdentifierImpl : JKKtOperatorIdentifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtOperatorIdentifier(this, data)
+
+    object PLUS : JKKtOperatorIdentifierImpl()
+    object MINUS : JKKtOperatorIdentifierImpl()
+}

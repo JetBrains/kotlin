@@ -48,3 +48,13 @@ interface JKKtModifier : JKModifier {
         INTERNAL, LATEINIT, NOINLINE, OPEN, OPERATOR, OUT, OVERRIDE, REIFIED, SEALED, SUSPEND, TAILREC, VARARG
     }
 }
+
+interface JKKtQualificationIdentifier : JKQualificationIdentifier
+
+interface JKKtMethodCallExpression : JKMethodCallExpression
+
+interface JKKtFieldAccessExpression : JKFieldAccessExpression
+
+interface JKKtLiteralExpression : JKLiteralExpression
+
+interface JKKtOperatorIdentifier : JKOperatorIdentifier
