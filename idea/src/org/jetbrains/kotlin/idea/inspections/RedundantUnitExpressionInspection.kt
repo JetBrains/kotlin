@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -25,27 +14,22 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-
-            override fun visitReferenceExpression(expression: KtReferenceExpression) {
-                super.visitReferenceExpression(expression)
-
-                if (KotlinBuiltIns.FQ_NAMES.unit.shortName() != (expression as? KtNameReferenceExpression)?.getReferencedNameAsName()) {
-                    return
-                }
-
-                val parent = expression.parent
-                if (parent !is KtReturnExpression && parent !is KtBlockExpression) return
-
-                // Do not report just 'Unit' in function literals (return@label Unit is OK even in literals)
-                if (parent is KtBlockExpression && parent.getParentOfType<KtFunctionLiteral>(strict = true) != null) return
-
-                holder.registerProblem(expression,
-                                       "Redundant 'Unit'",
-                                       ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                       RemoveRedundantUnitFix())
+        return referenceExpressionVisitor(fun(expression) {
+            if (KotlinBuiltIns.FQ_NAMES.unit.shortName() != (expression as? KtNameReferenceExpression)?.getReferencedNameAsName()) {
+                return
             }
-        }
+
+            val parent = expression.parent
+            if (parent !is KtReturnExpression && parent !is KtBlockExpression) return
+
+            // Do not report just 'Unit' in function literals (return@label Unit is OK even in literals)
+            if (parent is KtBlockExpression && parent.getParentOfType<KtFunctionLiteral>(strict = true) != null) return
+
+            holder.registerProblem(expression,
+                                   "Redundant 'Unit'",
+                                   ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                   RemoveRedundantUnitFix())
+        })
     }
 }
 
