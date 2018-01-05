@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+// FIX: Convert to 'also'
+
+val x = "".<caret>also {
+    "".apply {
+        this.length
+        length
+    }
+}

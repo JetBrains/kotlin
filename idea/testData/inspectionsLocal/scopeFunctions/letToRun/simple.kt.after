@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+// FIX: Convert to 'run'
+
+val x = "".<caret>run {
+    length
+}
