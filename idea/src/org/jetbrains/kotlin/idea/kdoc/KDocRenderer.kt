@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.kdoc
 
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.psi.PsiElement
-import com.intellij.util.LineSeparator
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
