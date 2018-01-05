@@ -16701,6 +16701,34 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/reflection/builtins")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Builtins extends AbstractBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInBuiltins() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/builtins"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("collections.kt")
+            public void testCollections() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/builtins/collections.kt");
+            }
+
+            @TestMetadata("enumNameOrdinal.kt")
+            public void testEnumNameOrdinal() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/builtins/enumNameOrdinal.kt");
+            }
+
+            @TestMetadata("stringLength.kt")
+            public void testStringLength() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/builtins/stringLength.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/reflection/call")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -17422,6 +17450,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/reflection/functions/declaredVsInheritedFunctions.kt");
             }
 
+            @TestMetadata("enumValuesValueOf.kt")
+            public void testEnumValuesValueOf() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/functions/enumValuesValueOf.kt");
+            }
+
             @TestMetadata("functionFromStdlib.kt")
             public void testFunctionFromStdlib() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/functions/functionFromStdlib.kt");
@@ -17872,6 +17905,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
             public void testAllFilesPresentInMethodsFromAny() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("builtinFunctionsToString.kt")
+            public void testBuiltinFunctionsToString() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/methodsFromAny/builtinFunctionsToString.kt");
             }
 
             @TestMetadata("callableReferencesEqualToCallablesFromAPI.kt")
@@ -18514,24 +18552,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 public void testVariableOfGenericType() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/variableOfGenericType.kt");
                 }
-            }
-        }
-
-        @TestMetadata("compiler/testData/codegen/box/reflection/specialBuiltIns")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class SpecialBuiltIns extends AbstractBlackBoxCodegenTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInSpecialBuiltIns() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/specialBuiltIns"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
-            }
-
-            @TestMetadata("getMembersOfStandardJavaClasses.kt")
-            public void testGetMembersOfStandardJavaClasses() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/specialBuiltIns/getMembersOfStandardJavaClasses.kt");
             }
         }
 
