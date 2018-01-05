@@ -23,6 +23,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
@@ -38,7 +39,8 @@ internal class BeforeResolveHighlightingVisitor(holder: AnnotationHolder) : High
     override fun visitElement(element: PsiElement) {
         val elementType = element.node.elementType
         val attributes = when {
-            element is KDocLink && !willApplyRainbowHighlight(element) -> KotlinHighlightingColors.KDOC_LINK
+            (element is KDocLink || elementType == KDocTokens.MARKDOWN_INLINE_LINK) && !willApplyRainbowHighlight(element) ->
+                KotlinHighlightingColors.KDOC_LINK
 
             elementType in KtTokens.SOFT_KEYWORDS -> {
                 when (elementType) {
@@ -54,7 +56,7 @@ internal class BeforeResolveHighlightingVisitor(holder: AnnotationHolder) : High
         createInfoAnnotation(element, null).textAttributes = attributes
     }
 
-    private fun willApplyRainbowHighlight(element: KDocLink): Boolean {
+    private fun willApplyRainbowHighlight(element: PsiElement): Boolean {
         if (!RainbowHighlighter.isRainbowEnabledWithInheritance(EditorColorsManager.getInstance().globalScheme, KotlinLanguage.INSTANCE)) {
             return false
         }
