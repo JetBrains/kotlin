@@ -472,6 +472,7 @@ public expect infix fun Short.until(to: Short): IntRange
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T
 
@@ -479,6 +480,7 @@ public expect fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Byte.coerceAtLeast(minimumValue: Byte): Byte
 
@@ -486,6 +488,7 @@ public expect fun Byte.coerceAtLeast(minimumValue: Byte): Byte
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Short.coerceAtLeast(minimumValue: Short): Short
 
@@ -493,6 +496,7 @@ public expect fun Short.coerceAtLeast(minimumValue: Short): Short
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Int.coerceAtLeast(minimumValue: Int): Int
 
@@ -500,6 +504,7 @@ public expect fun Int.coerceAtLeast(minimumValue: Int): Int
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Long.coerceAtLeast(minimumValue: Long): Long
 
@@ -507,6 +512,7 @@ public expect fun Long.coerceAtLeast(minimumValue: Long): Long
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Float.coerceAtLeast(minimumValue: Float): Float
 
@@ -514,6 +520,7 @@ public expect fun Float.coerceAtLeast(minimumValue: Float): Float
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Double.coerceAtLeast(minimumValue: Double): Double
 
