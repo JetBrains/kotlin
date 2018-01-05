@@ -89,7 +89,7 @@ class DescriptorSerializer private constructor(
             }
         }
 
-        if (classDescriptor.kind != ClassKind.ENUM_ENTRY) {
+        if (!DescriptorUtils.isAnonymousObject(classDescriptor) && classDescriptor.kind != ClassKind.ENUM_ENTRY) {
             for (descriptor in classDescriptor.constructors) {
                 builder.addConstructor(constructorProto(descriptor))
             }
