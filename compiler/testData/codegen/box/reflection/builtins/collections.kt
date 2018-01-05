@@ -1,16 +1,11 @@
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
-
+// IGNORE_BACKEND: JVM_IR, JS_IR, JS, NATIVE
 // WITH_REFLECT
 // FULL_JDK
-// See KT-11258 Incorrect resolution sequence for Java field
 
-// TODO: enable this test on JVM, see KT-16616
-// IGNORE_BACKEND: JVM
+// See KT-11258, KT-16616
 
 import java.util.*
+import kotlin.test.assertEquals
 
 fun box(): String {
     listOf(
@@ -26,5 +21,8 @@ fun box(): String {
     ).map {
         it.members.map(Any::toString)
     }
+
+    assertEquals(1, Collection<Any>::size.getter(listOf(1)))
+
     return "OK"
 }
