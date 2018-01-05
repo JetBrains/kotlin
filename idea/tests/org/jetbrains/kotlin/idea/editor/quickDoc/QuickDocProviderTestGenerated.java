@@ -258,6 +258,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("OnMethodUsageWithMultilineParam.kt")
+    public void testOnMethodUsageWithMultilineParam() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithMultilineParam.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OnMethodUsageWithReceiver.kt")
     public void testOnMethodUsageWithReceiver() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithReceiver.kt");

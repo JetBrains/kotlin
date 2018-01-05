@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.kdoc
 
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.psi.PsiElement
+import com.intellij.util.LineSeparator
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
@@ -163,7 +164,10 @@ object KDocRenderer {
         // Avoid wrapping the entire converted contents in a <p> tag if it's just a single paragraph
         val maybeSingleParagraph = markdownNode.children.singleOrNull { it.type != MarkdownTokenTypes.EOL }
         return if (maybeSingleParagraph != null && !allowSingleParagraph) {
-            maybeSingleParagraph.children.joinToString("") { it.toHtml() }
+            val lineSeparator = LineSeparator.getSystemLineSeparator().separatorString
+            maybeSingleParagraph.children.joinToString("") {
+                if (it.text == lineSeparator) " " else it.toHtml()
+            }
         }
         else {
             markdownNode.toHtml()
