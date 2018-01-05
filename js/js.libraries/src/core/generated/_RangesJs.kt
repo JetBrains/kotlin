@@ -652,6 +652,7 @@ public infix fun Short.until(to: Short): IntRange {
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T {
     return if (this < minimumValue) minimumValue else this
@@ -661,6 +662,7 @@ public fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T {
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public fun Byte.coerceAtLeast(minimumValue: Byte): Byte {
     return if (this < minimumValue) minimumValue else this
@@ -670,6 +672,7 @@ public fun Byte.coerceAtLeast(minimumValue: Byte): Byte {
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public fun Short.coerceAtLeast(minimumValue: Short): Short {
     return if (this < minimumValue) minimumValue else this
@@ -679,6 +682,7 @@ public fun Short.coerceAtLeast(minimumValue: Short): Short {
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public fun Int.coerceAtLeast(minimumValue: Int): Int {
     return if (this < minimumValue) minimumValue else this
@@ -688,6 +692,7 @@ public fun Int.coerceAtLeast(minimumValue: Int): Int {
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public fun Long.coerceAtLeast(minimumValue: Long): Long {
     return if (this < minimumValue) minimumValue else this
@@ -697,6 +702,7 @@ public fun Long.coerceAtLeast(minimumValue: Long): Long {
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public fun Float.coerceAtLeast(minimumValue: Float): Float {
     return if (this < minimumValue) minimumValue else this
@@ -706,6 +712,7 @@ public fun Float.coerceAtLeast(minimumValue: Float): Float {
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public fun Double.coerceAtLeast(minimumValue: Double): Double {
     return if (this < minimumValue) minimumValue else this
