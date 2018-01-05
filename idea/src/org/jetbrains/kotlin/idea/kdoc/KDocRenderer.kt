@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -163,7 +163,9 @@ object KDocRenderer {
         // Avoid wrapping the entire converted contents in a <p> tag if it's just a single paragraph
         val maybeSingleParagraph = markdownNode.children.singleOrNull { it.type != MarkdownTokenTypes.EOL }
         return if (maybeSingleParagraph != null && !allowSingleParagraph) {
-            maybeSingleParagraph.children.joinToString("") { it.toHtml() }
+            maybeSingleParagraph.children.joinToString("") {
+                if (it.text == "\n") " " else it.toHtml()
+            }
         }
         else {
             markdownNode.toHtml()

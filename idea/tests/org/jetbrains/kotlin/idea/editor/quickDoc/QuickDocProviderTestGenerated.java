@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -255,6 +255,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
     @TestMetadata("OnMethodUsageWithMarkdown.kt")
     public void testOnMethodUsageWithMarkdown() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithMarkdown.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnMethodUsageWithMultilineParam.kt")
+    public void testOnMethodUsageWithMultilineParam() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithMultilineParam.kt");
         doTest(fileName);
     }
 
