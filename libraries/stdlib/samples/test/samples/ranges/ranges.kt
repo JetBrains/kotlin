@@ -25,19 +25,19 @@ class Ranges {
     fun rangeFromComparable() {
         val start = Date.valueOf("2017-01-01")
         val end = Date.valueOf("2017-12-31")
-        val range = start.rangeTo(end)
+        val range = start..end
         assertPrints(range, "2017-01-01..2017-12-31")
     }
 
     @Sample
     fun rangeFromDouble() {
-        val range = 1.0.rangeTo(100.0)
+        val range = 1.0..100.0
         assertPrints(range, "1.0..100.0")
     }
 
     @Sample
     fun rangeFromFloat() {
-        val range = 1f.rangeTo(100f)
+        val range = 1f..100f
         assertPrints(range, "1.0..100.0")
     }
 }
