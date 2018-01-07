@@ -22,7 +22,10 @@ internal object EmptySet : Set<Nothing>, Serializable {
 }
 
 
-/** Returns an empty read-only set.  The returned set is serializable (JVM). */
+/**
+ * Returns an empty read-only set.  The returned set is serializable (JVM).
+ * @sample samples.collections.Sets.Usage.emptyReadOnlySet
+ */
 public fun <T> emptySet(): Set<T> = EmptySet
 /**
  * Returns a new read-only set with the given elements.
@@ -31,7 +34,10 @@ public fun <T> emptySet(): Set<T> = EmptySet
  */
 public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elements.toSet() else emptySet()
 
-/** Returns an empty read-only set.  The returned set is serializable (JVM). */
+/**
+ * Returns an empty read-only set.  The returned set is serializable (JVM).
+ * @sample samples.collections.Sets.Usage.emptyReadOnlySet
+ */
 @kotlin.internal.InlineOnly
 public inline fun <T> setOf(): Set<T> = emptySet()
 
