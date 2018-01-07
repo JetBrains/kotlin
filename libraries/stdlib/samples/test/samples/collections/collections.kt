@@ -257,6 +257,22 @@ class Collections {
         }
     }
 
+    class Sets {
+
+        @Sample
+        fun emptyReadOnlySet() {
+            val set = setOf<String>()
+            assertTrue(set.isEmpty())
+
+            // another way to create an empty set,
+            // type parameter is inferred from the expected type
+            val other: Set<Int> = emptySet()
+
+            assertTrue(set == other, "Empty sets are equal")
+            assertPrints(set, "[]")
+        }
+    }
+
     class Transformations {
 
         @Sample
