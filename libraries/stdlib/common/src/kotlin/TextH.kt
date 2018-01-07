@@ -127,6 +127,11 @@ expect fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, othe
 
 
 /**
+ * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
+ */
+expect fun String.toBoolean(): Boolean
+
+/**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */

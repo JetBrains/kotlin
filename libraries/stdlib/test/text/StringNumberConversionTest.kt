@@ -5,7 +5,6 @@ import kotlin.test.*
 
 class StringNumberConversionTest {
 
-    @kotlin.jvm.JvmVersion
     @Test fun toBoolean() {
         assertEquals(true, "true".toBoolean())
         assertEquals(true, "True".toBoolean())
