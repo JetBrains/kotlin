@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -294,4 +293,16 @@ fun KtCallExpression.isArrayOfMethod(): Boolean {
     val descriptor = resolvedCall.candidateDescriptor
     return (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
            ARRAY_OF_METHODS.contains(descriptor.name)
+}
+
+fun <T : KtValueArgument> List<T>.findArgumentWithGivenBlock(
+    block: KtBlockExpression
+): T? = firstOrNull {
+    val argumentExpression = it.getArgumentExpression()
+    val lambda = when (argumentExpression) {
+        is KtLambdaExpression -> argumentExpression
+        is KtLabeledExpression -> argumentExpression.baseExpression as? KtLambdaExpression
+        else -> null
+    }
+    lambda?.bodyExpression === block
 }
