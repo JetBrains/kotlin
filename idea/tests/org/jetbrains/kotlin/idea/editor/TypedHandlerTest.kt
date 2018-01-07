@@ -74,6 +74,12 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
             """val x = "$dollar{}]" """
     )
 
+    fun testAutoCloseRawString() = doCharTypeTest(
+            '"',
+            """val x = ""<caret>""",
+            """val x = ""${'"'}"<caret>""${'"'}"""
+    )
+
     fun testAutoCloseBraceInFunctionDeclaration() = doCharTypeTest(
             '{',
             "fun foo() <caret>",
