@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
 
 internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext)
     : AfterAnalysisHighlightingVisitor(holder, bindingContext) {
@@ -79,7 +80,7 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
                 DYNAMIC_PROPERTY_CALL
 
             descriptor.extensionReceiverParameter != null ->
-                EXTENSION_PROPERTY
+                if (descriptor.isSynthesized) SYNTHETIC_EXTENSION_PROPERTY else EXTENSION_PROPERTY
 
             DescriptorUtils.isStaticDeclaration(descriptor) ->
                 PACKAGE_PROPERTY
