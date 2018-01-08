@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -539,6 +539,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("KT20362.after.kt")
         public void testKT20362() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT20362.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("KT22071.after.kt")
+        public void testKT22071() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT22071.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("KT22115.after.kt")
+        public void testKT22115() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT22115.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("KT22148.after.kt")
+        public void testKT22148() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT22148.after.kt");
             doTest(fileName);
         }
 
