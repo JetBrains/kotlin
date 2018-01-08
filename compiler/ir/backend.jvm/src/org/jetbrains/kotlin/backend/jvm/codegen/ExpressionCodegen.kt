@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
+import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Label
@@ -258,11 +259,14 @@ class ExpressionCodegen(
                     assert(parameterDescriptor.varargElementType != null)
                     //empty vararg
 
+                    // Upper bound for type of vararg parameter should always have a form of 'Array<out T>',
+                    // while its lower bound may be Nothing-typed after approximation
+                    val type = typeMapper.mapType(parameterDescriptor.type.upperIfFlexible())
                     callGenerator.putValueIfNeeded(
                             parameterType,
-                            StackValue.operation(parameterType) {
+                            StackValue.operation(type) {
                                 it.aconst(0)
-                                it.newarray(correctElementType(parameterType))
+                                it.newarray(correctElementType(type))
                             },
                             ValueKind.GENERAL_VARARG, i, this@ExpressionCodegen)
                 }
