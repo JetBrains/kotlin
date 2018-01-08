@@ -60,6 +60,7 @@ class KotlinColorSettingsPage : ColorSettingsPage, RainbowColorSettingsPage {
         dyn.<DYNAMIC_FUNCTION_CALL>dynamicCall</DYNAMIC_FUNCTION_CALL>()
         dyn.<DYNAMIC_PROPERTY_CALL>dynamicProp</DYNAMIC_PROPERTY_CALL> = 5
         val <LOCAL_VARIABLE>klass</LOCAL_VARIABLE> = <CLASS>MyClass</CLASS>::<KEYWORD>class</KEYWORD>
+        val year = java.time.LocalDate.now().<SYNTHETIC_EXTENSION_PROPERTY>year</SYNTHETIC_EXTENSION_PROPERTY>
     }
 
     <BUILTIN_ANNOTATION>override</BUILTIN_ANNOTATION> fun hashCode(): Int {
@@ -155,6 +156,7 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
                        KotlinBundle.message("options.kotlin.attribute.descriptor.package.property") to KotlinHighlightingColors.PACKAGE_PROPERTY,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.field") to KotlinHighlightingColors.BACKING_FIELD_VARIABLE,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.extension.property") to KotlinHighlightingColors.EXTENSION_PROPERTY,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.synthetic.extension.property") to KotlinHighlightingColors.SYNTHETIC_EXTENSION_PROPERTY,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.dynamic.property") to KotlinHighlightingColors.DYNAMIC_PROPERTY_CALL,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.android.extensions.property") to KotlinHighlightingColors.ANDROID_EXTENSIONS_PROPERTY_CALL,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.it") to KotlinHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER,
