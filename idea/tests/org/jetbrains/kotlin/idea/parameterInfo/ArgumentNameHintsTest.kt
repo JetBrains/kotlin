@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.parameterInfo
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 
-class InlayParameterHintsTest : KotlinLightCodeInsightFixtureTestCase() {
+class ArgumentNameHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     fun check(text: String) {
