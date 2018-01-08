@@ -382,7 +382,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             object Modality : Incompatible("modality is different")
             object Visibility : Incompatible("visibility is different")
 
-            object TypeParameterUpperBounds : Incompatible("upper bounds of type parameters are different")
+            object TypeParameterUpperBounds : Incompatible("upper bounds of type parameters are different", IncompatibilityKind.STRONG)
             object TypeParameterVariance : Incompatible("declaration-site variances of type parameters are different")
             object TypeParameterReified : Incompatible("some type parameter is reified in one declaration and non-reified in the other")
 
@@ -523,8 +523,14 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         platformModule: ModuleDescriptor,
         substitutor: Substitutor
     ): Compatibility {
-        if (!areCompatibleTypeLists(a.map { substitutor(it.defaultType) }, b.map { it.defaultType }, platformModule))
-            return Incompatible.TypeParameterUpperBounds
+        for (i in a.indices) {
+            val aBounds = a[i].upperBounds
+            val bBounds = b[i].upperBounds
+            if (aBounds.size != bBounds.size || !areCompatibleTypeLists(aBounds.map(substitutor), bBounds, platformModule)) {
+                return Incompatible.TypeParameterUpperBounds
+            }
+        }
+
         if (!equalsBy(a, b, TypeParameterDescriptor::getVariance)) return Incompatible.TypeParameterVariance
 
         // Removing "reified" from an expected function's type parameter is fine

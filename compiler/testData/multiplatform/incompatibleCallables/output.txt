@@ -50,6 +50,24 @@ The following declaration is incompatible because number of type parameters is d
 
 expect fun <T> f7()
            ^
+compiler/testData/multiplatform/incompatibleCallables/common.kt:19:12: error: expected function 'f11' has no actual declaration in module
+The following declaration is incompatible because upper bounds of type parameters are different:
+    public actual fun <T : Annotation> f11(): Unit
+
+expect fun <T : Number> f11()
+           ^
+compiler/testData/multiplatform/incompatibleCallables/common.kt:20:12: error: expected function 'f12' has no actual declaration in module
+The following declaration is incompatible because upper bounds of type parameters are different:
+    public actual fun <U : MutableList<out String>> f12(): Unit
+
+expect fun <U : MutableList<String>> f12()
+           ^
+compiler/testData/multiplatform/incompatibleCallables/common.kt:21:12: error: expected function 'f13' has no actual declaration in module
+The following declaration is incompatible because upper bounds of type parameters are different:
+    public actual fun <A, B : Comparable<B>> f13(): Unit
+
+expect fun <A, B : Comparable<A>> f13()
+           ^
 compiler/testData/multiplatform/incompatibleCallables/common.kt:32:15: error: expected function 'f21' has no actual declaration in module
 The following declaration is incompatible because parameter types are different:
     public actual fun f21(c: Unit.() -> Unit): Unit
@@ -122,6 +140,24 @@ The following declaration is incompatible because visibility is different:
 
 internal actual fun f10() {}
 ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:19:12: error: actual function 'f11' has no corresponding expected declaration
+The following declaration is incompatible because upper bounds of type parameters are different:
+    public expect fun <T : Number> f11(): Unit
+
+actual fun <T : Annotation> f11() {}
+           ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:20:12: error: actual function 'f12' has no corresponding expected declaration
+The following declaration is incompatible because upper bounds of type parameters are different:
+    public expect fun <U : MutableList<String>> f12(): Unit
+
+actual fun <U : MutableList<out String>> f12() {}
+           ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:21:12: error: actual function 'f13' has no corresponding expected declaration
+The following declaration is incompatible because upper bounds of type parameters are different:
+    public expect fun <A, B : Comparable<A>> f13(): Unit
+
+actual fun <A, B : Comparable<B>> f13() {}
+           ^
 compiler/testData/multiplatform/incompatibleCallables/jvm.kt:23:19: error: actual function 'f14' has no corresponding expected declaration
 The following declaration is incompatible because some type parameter is reified in one declaration and non-reified in the other:
     public expect inline fun <X> f14(): Unit

@@ -14290,9 +14290,27 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/generic"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("functionTypeParameterBounds.kt")
+                public void testFunctionTypeParameterBounds() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/generic/functionTypeParameterBounds.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("genericMemberBounds.kt")
+                public void testGenericMemberBounds() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/generic/genericMemberBounds.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("membersInGenericClass.kt")
                 public void testMembersInGenericClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/generic/membersInGenericClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeParameterBoundsDifferentOrderActualMissing.kt")
+                public void testTypeParameterBoundsDifferentOrderActualMissing() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/generic/typeParameterBoundsDifferentOrderActualMissing.kt");
                     doTest(fileName);
                 }
             }
