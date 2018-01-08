@@ -446,7 +446,8 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             IrClassReferenceImpl(
                     expression.startOffset, expression.endOffset,
                     expression.type,
-                    mapClassifierReference(expression.descriptor)
+                    mapClassifierReference(expression.descriptor),
+                    expression.classType
             )
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrInstanceInitializerCall =

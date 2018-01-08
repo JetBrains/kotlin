@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
+import org.jetbrains.kotlin.codegen.ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
 import org.jetbrains.kotlin.codegen.StackValue.*
 import org.jetbrains.kotlin.codegen.inline.NameGenerator
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.TypeParameterMappings
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty
@@ -46,6 +48,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_THROWABLE_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.keysToMap
@@ -889,21 +892,22 @@ class ExpressionCodegen(
     }
 
     fun generateClassLiteralReference(
-            receiverExpression: IrExpression,
-            wrapIntoKClass: Boolean,
-            data: BlockInfo
+        classReference: IrExpression,
+        wrapIntoKClass: Boolean,
+        data: BlockInfo
     ) {
-        if (receiverExpression !is IrClassReference /* && DescriptorUtils.isObjectQualifier(receiverExpression.descriptor)*/) {
-            assert(receiverExpression is IrGetClass)
-            JavaClassProperty.generateImpl(mv, gen((receiverExpression as IrGetClass).argument, data))
+        if (classReference !is IrClassReference /* && DescriptorUtils.isObjectQualifier(classReference.descriptor)*/) {
+            assert(classReference is IrGetClass)
+            JavaClassProperty.generateImpl(mv, gen((classReference as IrGetClass).argument, data))
         }
         else {
-//                if (TypeUtils.isTypeParameter(type)) {
-//                    assert(TypeUtils.isReifiedTypeParameter(type)) { "Non-reified type parameter under ::class should be rejected by type checker: " + type }
-//                    putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
-//                }
+            val type = classReference.classType
+            if (TypeUtils.isTypeParameter(type)) {
+                assert(TypeUtils.isReifiedTypeParameter(type)) { "Non-reified type parameter under ::class should be rejected by type checker: " + type }
+                putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
+            }
 
-            putJavaLangClassInstance(mv, typeMapper.mapType(receiverExpression.descriptor.defaultType))
+            putJavaLangClassInstance(mv, typeMapper.mapType(type))
         }
 
         if (wrapIntoKClass) {

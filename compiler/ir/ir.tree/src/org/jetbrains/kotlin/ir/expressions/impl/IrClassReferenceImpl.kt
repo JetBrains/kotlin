@@ -30,7 +30,8 @@ class IrClassReferenceImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        symbol: IrClassifierSymbol
+        symbol: IrClassifierSymbol,
+        override val classType: KotlinType
 ) : IrClassReference,
         IrTerminalDeclarationReferenceBase<IrClassifierSymbol, ClassifierDescriptor>(
                 startOffset, endOffset, type,
@@ -42,8 +43,9 @@ class IrClassReferenceImpl(
             startOffset: Int,
             endOffset: Int,
             type: KotlinType,
-            descriptor: ClassifierDescriptor
-    ) : this(startOffset, endOffset, type, createClassifierSymbolForClassReference(descriptor))
+            descriptor: ClassifierDescriptor,
+            classType: KotlinType
+    ) : this(startOffset, endOffset, type, createClassifierSymbolForClassReference(descriptor), classType)
 
     override val descriptor: ClassifierDescriptor get() = symbol.descriptor
 
