@@ -184,4 +184,8 @@ annotation class ManyArgs(val name: String, val surname: String)
         }"""
         )
     }
+
+    fun `test incomplete Pair call`() {
+        check("val x = Pair(1, )")
+    }
 }
