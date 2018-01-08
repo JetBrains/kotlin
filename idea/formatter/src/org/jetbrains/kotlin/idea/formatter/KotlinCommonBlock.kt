@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.leaves
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
 private val QUALIFIED_EXPRESSIONS = TokenSet.create(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION)
@@ -112,14 +112,16 @@ abstract class KotlinCommonBlock(
             // Create fake ".something" or "?.something" block here, so child indentation will be
             // relative to it when it starts from new line (see Indent javadoc).
 
-            val indentType = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
-                Indent.Type.CONTINUATION
-            else
-                Indent.Type.NORMAL
             val isNonFirstChainedCall = operationBlockIndex > 0 && isCallBlock(nodeSubBlocks[operationBlockIndex - 1])
+            val enforceIndentToChildren = isNonFirstChainedCall && hasLineBreakBefore(nodeSubBlocks[operationBlockIndex])
+            val indentType = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS) {
+                if (enforceIndentToChildren) Indent.Type.CONTINUATION else Indent.Type.CONTINUATION_WITHOUT_FIRST
+            } else {
+                Indent.Type.NORMAL
+            }
             val indent = Indent.getIndent(
                 indentType, false,
-                isNonFirstChainedCall && hasLineBreakBefore(nodeSubBlocks[operationBlockIndex - 1])
+                enforceIndentToChildren
             )
             val wrap = if ((settings.kotlinCommonSettings.WRAP_FIRST_METHOD_IN_CALL_CHAIN || isNonFirstChainedCall) &&
                 canWrapCallChain(node))
@@ -566,18 +568,10 @@ fun needWrapArgumentList(psi: PsiElement): Boolean {
 }
 
 private fun hasLineBreakBefore(block: ASTBlock): Boolean {
-    val topLevelParent = block.node.parents().firstOrNull {
-        it.treeParent.elementType == KtNodeTypes.BLOCK || it.treeParent.elementType == KtStubElementTypes.FILE
-    } ?: return false
-    for (leaf in block.node.leaves(forward = false)) {
-        if (leaf.textContains('\n')) {
-            return true
-        }
-        if (leaf.textRange.startOffset == topLevelParent.startOffset) {
-            break
-        }
-    }
-    return false
+    val prevSibling = block.node.leaves(false)
+        .dropWhile { it.psi is PsiComment || it.elementType == KtTokens.RBRACE }
+        .firstOrNull()
+    return prevSibling?.elementType == TokenType.WHITE_SPACE && prevSibling?.textContains('\n') == true
 }
 
 fun NodeIndentStrategy.PositionStrategy.continuationIf(
