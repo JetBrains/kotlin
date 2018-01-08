@@ -581,6 +581,13 @@ private fun excludeLambdasAndObjects(parent: ASTBlock): List<TextRange> {
             super.visitObjectLiteralExpression(expression)
             rangesToExclude.add(expression.textRange)
         }
+
+        override fun visitNamedFunction(function: KtNamedFunction) {
+            super.visitNamedFunction(function)
+            if (function.name == null) {
+                rangesToExclude.add(function.textRange)
+            }
+        }
     })
     return TextRangeUtil.excludeRanges(parent.textRange, rangesToExclude).toList()
 }
