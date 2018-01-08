@@ -261,7 +261,7 @@ public class DefaultErrorMessages {
 
         MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "Actual class ''{0}'' has no corresponding members for expected class members:{1}",
                 NAME, IncompatibleExpectedActualClassScopesRenderer.TEXT);
-        MAP.put(ACTUAL_MISSING, "Declaration should be marked with 'actual' (suppress with -Xno-check-actual)");
+        MAP.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'");
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");
