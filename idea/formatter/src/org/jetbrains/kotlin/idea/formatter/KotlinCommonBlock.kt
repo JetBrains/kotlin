@@ -262,10 +262,13 @@ abstract class KotlinCommonBlock(
                     ChildAttributes(block.indent, block.alignment)
                 } else {
                     val indent =
-                        if (type == KtNodeTypes.VALUE_PARAMETER_LIST && !settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
+                        if ((type == KtNodeTypes.VALUE_PARAMETER_LIST && !settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS) ||
+                            (type == KtNodeTypes.VALUE_ARGUMENT_LIST && !settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_ARGUMENT_LISTS)
+                        ) {
                             Indent.getNormalIndent()
-                        else
+                        } else {
                             Indent.getContinuationIndent()
+                        }
                     ChildAttributes(indent, null)
                 }
             }
