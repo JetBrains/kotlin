@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
 class KotlinRawStringTypedHandler : TypedHandlerDelegate() {
-    override fun beforeCharTyped(c: Char, project: Project?, editor: Editor?, file: PsiFile?, fileType: FileType?): Result {
+    override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): Result {
         if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_QUOTE) {
             return Result.CONTINUE
         }
@@ -38,22 +38,21 @@ class KotlinRawStringTypedHandler : TypedHandlerDelegate() {
             return Result.CONTINUE
         }
         // A quote is typed after 2 other quotes
-        editor?.let {
-            val offset = it.caretModel.offset
-            val psiElement = file.findElementAt(offset) ?: return Result.CONTINUE
-            if (PsiTreeUtil.getParentOfType(psiElement, KtStringTemplateExpression::class.java) != null) {
-                return Result.CONTINUE
-            }
-
-            val text = it.document.text
-            if (offset >= 2)
-                if (text[offset - 1] == '"')
-                    if (text[offset - 2] == '"') {
-                        it.document.insertString(offset, "\"\"\"\"")
-                        it.caretModel.currentCaret.moveToOffset(offset + 1)
-                        return Result.STOP
-                    }
+        val offset = editor.caretModel.offset
+        val psiElement = file.findElementAt(offset) ?: return Result.CONTINUE
+        if (PsiTreeUtil.getParentOfType(psiElement, KtStringTemplateExpression::class.java) != null) {
+            return Result.CONTINUE
         }
+
+        val text = editor.document.text
+        if (offset >= 2)
+            if (text[offset - 1] == '"')
+                if (text[offset - 2] == '"') {
+                    editor.document.insertString(offset, "\"\"\"\"")
+                    editor.caretModel.currentCaret.moveToOffset(offset + 1)
+                    return Result.STOP
+                }
+
         return Result.CONTINUE
     }
 }

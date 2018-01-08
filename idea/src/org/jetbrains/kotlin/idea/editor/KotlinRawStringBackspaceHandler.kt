@@ -19,65 +19,38 @@ package org.jetbrains.kotlin.idea.editor
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.BackspaceHandlerDelegate
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
+import com.intellij.openapi.editor.RangeMarker
 import com.intellij.psi.PsiFile
-import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinRawStringBackspaceHandler : BackspaceHandlerDelegate() {
-    var ele: SmartPsiElementPointer<KtStringTemplateExpression>? = null
+    private var rangeMarker: RangeMarker? = null
 
-    override fun beforeCharDeleted(c: Char, file: PsiFile?, editor: Editor?) {
-        ele = null
+    override fun beforeCharDeleted(c: Char, file: PsiFile, editor: Editor) {
+        rangeMarker = null
         if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_QUOTE) {
             return
         }
         if (file !is KtFile) {
             return
         }
-        if (editor != null) {
-            val offset = editor.caretModel.offset
-            val psiElement = file.findElementAt(offset) ?: return
+        val offset = editor.caretModel.offset
+        val psiElement = file.findElementAt(offset) ?: return
 
-            val possibleString: KtStringTemplateExpression = getStringTemplate(psiElement) ?: return
-            if (possibleString.text == "\"\"\"\"\"\"") {
-                ele = possibleString.createSmartPointer()
+        psiElement.parentOfType(KtStringTemplateExpression::class)?.let {
+            if (it.text == "\"\"\"\"\"\"") {
+                rangeMarker = editor.document.createRangeMarker(it.textRange)
             }
         }
     }
 
-    override fun charDeleted(c: Char, file: PsiFile?, editor: Editor?): Boolean {
-        ele?.element?.let {
-            editor?.document?.deleteString(it.startOffset, it.endOffset - 1)
-            ele = null
+    override fun charDeleted(c: Char, file: PsiFile, editor: Editor): Boolean {
+        rangeMarker?.let {
+            editor.document.deleteString(it.startOffset, it.endOffset)
+            rangeMarker = null
             return true
         }
         return false
-    }
-
-    private fun getStringTemplate(psiElement: PsiElement): KtStringTemplateExpression? {
-        if (psiElement is KtStringTemplateExpression) {
-            return psiElement
-        }
-        val sibling = psiElement.prevSibling ?: return null
-        if (sibling is KtStringTemplateExpression) {
-            return sibling
-        }
-
-        var sibling2 = sibling.lastChild
-        if (sibling2 is KtStringTemplateExpression) {
-            return sibling2
-        }
-
-        sibling2 = sibling.parent
-        if (sibling2 is KtStringTemplateExpression) {
-            return sibling2
-        }
-
-        return null
     }
 }
