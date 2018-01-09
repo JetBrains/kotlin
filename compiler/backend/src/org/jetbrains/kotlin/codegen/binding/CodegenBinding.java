@@ -133,7 +133,10 @@ public class CodegenBinding {
             return false;
         }
 
-        return classDescriptor.isInner() || !(classDescriptor.getContainingDeclaration() instanceof ClassDescriptor);
+        DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
+        return classDescriptor.isInner()
+               || containingDeclaration instanceof ScriptDescriptor
+               || !(containingDeclaration instanceof ClassDescriptor);
     }
 
     @NotNull
