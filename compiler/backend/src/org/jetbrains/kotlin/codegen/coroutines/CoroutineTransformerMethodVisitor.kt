@@ -701,12 +701,11 @@ private fun allSuspensionPointsAreTailCalls(
         if (insideTryBlock) return@all false
 
         safelyReachableReturns[endIndex + 1]?.all { returnIndex ->
-            val sourceInsn =
-                    sourceFrames[returnIndex].top().sure {
-                        "There must be some value on stack to return"
-                    }.insns.singleOrNull()
-
-            sourceInsn?.let(instructions::indexOf) in beginIndex..endIndex
+            sourceFrames[returnIndex].top().sure {
+                "There must be some value on stack to return"
+            }.insns.all { sourceInsn ->
+                sourceInsn?.let(instructions::indexOf) in beginIndex..endIndex
+            }
         } ?: false
     }
 }

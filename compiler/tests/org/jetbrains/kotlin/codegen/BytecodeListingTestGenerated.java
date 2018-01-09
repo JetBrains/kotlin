@@ -151,6 +151,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("tailCallIntrinsics.kt")
+    public void testTailCallIntrinsics() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/tailCallIntrinsics.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("tailSuspendUnitFun.kt")
     public void testTailSuspendUnitFun() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/tailSuspendUnitFun.kt");
