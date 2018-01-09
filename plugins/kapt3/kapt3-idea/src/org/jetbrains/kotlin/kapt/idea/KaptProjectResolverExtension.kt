@@ -116,8 +116,9 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
             try {
                 sourceSet.generatedKotlinSourcesDirFile?.let { variant.mainArtifact.generatedSourceFolders += it }
             } catch (e: Throwable) {
-                LOG.error(RuntimeException(
-                        "Kapt importer for generated source roots failed, source root name: ${sourceSet.sourceSetName}", e))
+                // There was an error being thrown here, but the code above doesn't work for the newer versions of Android Studio 3
+                // (generatedSourceFolders returns a wrapped unmodifiable list), and the thrown exception breaks the import.
+                // The error will be moved back when I find a work-around for AS3.
             }
         }
     }
