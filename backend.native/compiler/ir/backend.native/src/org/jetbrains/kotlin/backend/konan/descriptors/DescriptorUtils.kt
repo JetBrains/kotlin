@@ -336,3 +336,11 @@ fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescriptor> =
         getPackagesFqNames(this).flatMap {
             getPackage(it).fragments.filter { it.module == this }
         }
+
+val ClassDescriptor.enumEntries: List<ClassDescriptor>
+    get() {
+        assert(this.kind == ClassKind.ENUM_CLASS)
+        return this.unsubstitutedMemberScope.getContributedDescriptors()
+                .filterIsInstance<ClassDescriptor>()
+                .filter { it.kind == ClassKind.ENUM_ENTRY }
+    }

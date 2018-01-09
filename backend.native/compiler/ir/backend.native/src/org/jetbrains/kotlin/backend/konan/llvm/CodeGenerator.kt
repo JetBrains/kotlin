@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
@@ -594,6 +595,31 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 bbCurrent to objectVal, bbInitResult to newValue)
 
         return valuePhi
+    }
+
+    /**
+     * Note: the same code is generated as IR in [org.jetbrains.kotlin.backend.konan.lower.EnumUsageLowering].
+     */
+    fun getEnumEntry(descriptor: ClassDescriptor, exceptionHandler: ExceptionHandler): LLVMValueRef {
+        assert(descriptor.kind == ClassKind.ENUM_ENTRY)
+
+        val enumClassDescriptor = descriptor.containingDeclaration as ClassDescriptor
+        val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClassDescriptor)
+
+        val ordinal = loweredEnum.entriesMap[descriptor.name]!!
+        val values = call(
+                loweredEnum.valuesGetter.descriptor.original.llvmFunction,
+                emptyList(),
+                Lifetime.ARGUMENT,
+                exceptionHandler
+        )
+
+        return call(
+                loweredEnum.itemGetterDescriptor.original.llvmFunction,
+                listOf(values, Int32(ordinal).llvm),
+                Lifetime.GLOBAL,
+                exceptionHandler
+        )
     }
 
     fun resetDebugLocation() {

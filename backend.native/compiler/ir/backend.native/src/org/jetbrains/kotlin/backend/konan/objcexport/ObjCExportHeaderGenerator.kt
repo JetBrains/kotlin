@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
+import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
@@ -203,11 +203,6 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
 
             +"@interface $name : $superName${descriptor.superProtocolsClause}"
 
-            if (descriptor.isUnit()) {
-                +"+ (instancetype)unit NS_SWIFT_NAME(init());"
-                +""
-            }
-
             val presentConstructors = mutableSetOf<String>()
 
             descriptor.constructors.filter { mapper.shouldBeExposed(it) }.forEach {
@@ -217,10 +212,30 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
                 +""
             }
 
-            if (descriptor.isArray) {
+            if (descriptor.isArray || descriptor.kind == ClassKind.OBJECT || descriptor.kind == ClassKind.ENUM_CLASS) {
                 +"+(instancetype)alloc __attribute__((unavailable));"
                 +"+(instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));"
                 +""
+            }
+
+            // TODO: consider adding exception-throwing impls for these.
+            when (descriptor.kind) {
+                ClassKind.OBJECT -> {
+                    +"+(instancetype)${namer.getObjectInstanceSelector(descriptor)} NS_SWIFT_NAME(init());"
+                    +""
+                }
+                ClassKind.ENUM_CLASS -> {
+                    val type = mapType(descriptor.defaultType, ReferenceBridge)
+
+                    descriptor.enumEntries.forEach {
+                        val entryName = namer.getEnumEntrySelector(it)
+                        +"@property (class, readonly) ${type.render(entryName)};"
+                    }
+                    +""
+                }
+                else -> {
+                    // Nothing special.
+                }
             }
 
             // Hide "unimplemented" super constructors:

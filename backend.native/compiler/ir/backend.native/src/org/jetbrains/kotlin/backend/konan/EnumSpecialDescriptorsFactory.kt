@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.createSimpleDelegatingConstructorDescriptor
+import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
@@ -127,8 +128,7 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
 
     private fun createEnumEntriesMap(enumClassDescriptor: ClassDescriptor): Map<Name, Int> {
         val map = mutableMapOf<Name, Int>()
-        enumClassDescriptor.unsubstitutedMemberScope.getContributedDescriptors()
-                .filter { it is ClassDescriptor && it.kind == ClassKind.ENUM_ENTRY }
+        enumClassDescriptor.enumEntries
                 .sortedBy { it.name }
                 .forEachIndexed { index, entry -> map.put(entry.name, index) }
         return map

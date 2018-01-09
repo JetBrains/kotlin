@@ -137,6 +137,10 @@ internal class ObjCExportCodeGenerator(
         }
     }
 
+    fun FunctionGenerationContext.initRuntimeIfNeeded() {
+        callFromBridge(context.llvm.initRuntimeIfNeeded, emptyList())
+    }
+
     inline fun FunctionGenerationContext.convertKotlin(
             genValue: (Lifetime) -> LLVMValueRef,
             actualType: KotlinType,
@@ -440,8 +444,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         // TODO: check for abstract class if it is a constructor.
 
         if (methodBridge.isKotlinTopLevel) {
-            callFromBridge(context.llvm.initRuntimeIfNeeded, emptyList())
-            // For instance methods it gets called when allocating.
+            initRuntimeIfNeeded() // For instance methods it gets called when allocating.
         }
 
         if (target == null) {
@@ -494,7 +497,7 @@ private fun ObjCExportCodeGenerator.generateObjCImpForArrayConstructor(
     val result = LLVMAddFunction(context.llvmModule, "", objCFunctionType(methodBridge))!!
 
     generateFunction(codegen, result) {
-        callFromBridge(context.llvm.initRuntimeIfNeeded, emptyList())
+        initRuntimeIfNeeded() // For instance methods it gets called when allocating.
 
         val kotlinValueArgs = methodBridge.paramBridges
                 .drop(1) // Drop class method receiver.
@@ -786,8 +789,22 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         emptyList()
     }
 
-    if (descriptor.isUnit()) {
-        classAdapters += createUnitInstanceAdapter()
+    when (descriptor.kind) {
+        ClassKind.OBJECT -> {
+            classAdapters += if (descriptor.isUnit()) {
+                createUnitInstanceAdapter()
+            } else {
+                createObjectInstanceAdapter(descriptor)
+            }
+        }
+        ClassKind.ENUM_CLASS -> {
+            descriptor.enumEntries.mapTo(classAdapters) {
+                createEnumEntryAdapter(it)
+            }
+        }
+        else -> {
+            // Nothing special.
+        }
     }
 
     return ObjCTypeAdapter(
@@ -832,18 +849,62 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
             }
 }
 
-private fun ObjCExportCodeGenerator.createUnitInstanceAdapter(): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
-    val selector = "unit"
-    val methodBridge = MethodBridge(ReferenceBridge, listOf(ReferenceBridge, ReferenceBridge))
+private inline fun ObjCExportCodeGenerator.generateObjCToKotlinMethodAdapter(
+        methodBridge: MethodBridge,
+        selector: String,
+        block: FunctionGenerationContext.() -> Unit
+): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
     val encoding = getEncoding(methodBridge)
-
     val imp = generateFunction(codegen, objCFunctionType(methodBridge), "") {
-        ret(callFromBridge(context.llvm.Kotlin_ObjCExport_convertUnit, listOf(codegen.theUnitInstanceRef.llvm)))
+        block()
     }
 
     LLVMSetLinkage(imp, LLVMLinkage.LLVMPrivateLinkage)
 
     return ObjCToKotlinMethodAdapter(selector, encoding, constPointer(imp))
+}
+
+private fun ObjCExportCodeGenerator.createUnitInstanceAdapter() =
+        generateObjCToKotlinMethodAdapter(
+                MethodBridge(ReferenceBridge, listOf(ReferenceBridge, ReferenceBridge)),
+                namer.getObjectInstanceSelector(context.builtIns.unit)
+        ) {
+            initRuntimeIfNeeded() // For instance methods it gets called when allocating.
+
+            ret(callFromBridge(context.llvm.Kotlin_ObjCExport_convertUnit, listOf(codegen.theUnitInstanceRef.llvm)))
+        }
+
+private fun ObjCExportCodeGenerator.createObjectInstanceAdapter(
+        descriptor: ClassDescriptor
+): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
+    assert(descriptor.kind == ClassKind.OBJECT)
+    assert(!descriptor.isUnit())
+
+    val selector = namer.getObjectInstanceSelector(descriptor)
+    val methodBridge = MethodBridge(ReferenceBridge, listOf(ReferenceBridge, ReferenceBridge))
+
+    return generateObjCToKotlinMethodAdapter(methodBridge, selector) {
+        initRuntimeIfNeeded() // For instance methods it gets called when allocating.
+
+        val value = getObjectValue(descriptor, ExceptionHandler.Caller, locationInfo = null)
+        ret(kotlinToObjC(value, ReferenceBridge))
+    }
+}
+
+private fun ObjCExportCodeGenerator.createEnumEntryAdapter(
+        descriptor: ClassDescriptor
+): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
+    assert(descriptor.kind == ClassKind.ENUM_ENTRY)
+
+    val selector = namer.getEnumEntrySelector(descriptor)
+    val methodBridge = MethodBridge(ReferenceBridge, listOf(ReferenceBridge, ReferenceBridge))
+
+    return generateObjCToKotlinMethodAdapter(methodBridge, selector) {
+        initRuntimeIfNeeded() // For instance methods it gets called when allocating.
+
+        val value = getEnumEntry(descriptor, ExceptionHandler.Caller)
+        ret(kotlinToObjC(value, ReferenceBridge))
+    }
 }
 
 private fun List<CallableMemberDescriptor>.toMethods(): List<FunctionDescriptor> = this.flatMap {

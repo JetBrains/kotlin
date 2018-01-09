@@ -35,6 +35,17 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
     private val topLevelNamePrefix = context.moduleDescriptor.namePrefix
 
     private val methodSelectors = object : Mapping<FunctionDescriptor, String>() {
+
+        // Try to avoid clashing with critical NSObject instance methods:
+
+        private val reserved = setOf(
+                "retain", "release", "autorelease",
+                "class", "superclass",
+                "hash"
+        )
+
+        override fun reserved(name: String) = name in reserved
+
         override fun conflict(first: FunctionDescriptor, second: FunctionDescriptor): Boolean =
                 !mapper.canHaveSameSelector(first, second)
     }
@@ -56,6 +67,30 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
 
     private val protocolNames = object : Mapping<Any, String>() {
         override fun conflict(first: Any, second: Any): Boolean = true
+    }
+
+    private abstract inner class ClassPropertyNameMapping<T : Any> : Mapping<T, String>() {
+
+        // Try to avoid clashing with NSObject class methods:
+
+        private val reserved = setOf(
+                "retain", "release", "autorelease",
+                "initialize", "load", "alloc", "new", "class", "superclass",
+                "classFallbacksForKeyedArchiver", "classForKeyedUnarchiver",
+                "description", "debugDescription", "version", "hash",
+                "useStoredAccessor"
+        )
+
+        override fun reserved(name: String) = name in reserved
+    }
+
+    private val objectInstanceSelectors = object : ClassPropertyNameMapping<ClassDescriptor>() {
+        override fun conflict(first: ClassDescriptor, second: ClassDescriptor) = false
+    }
+
+    private val enumEntrySelectors = object : ClassPropertyNameMapping<ClassDescriptor>() {
+        override fun conflict(first: ClassDescriptor, second: ClassDescriptor) =
+                first.containingDeclaration == second.containingDeclaration
     }
 
     fun getPackageName(fqName: FqName): String = classNames.getOrPut(fqName) {
@@ -168,6 +203,30 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
         }
     }
 
+    fun getObjectInstanceSelector(descriptor: ClassDescriptor): String {
+        assert(descriptor.kind == ClassKind.OBJECT)
+
+        return objectInstanceSelectors.getOrPut(descriptor) {
+            val name = descriptor.name.asString().decapitalize().mangleIfSpecialFamily("get")
+
+            StringBuilder(name).mangledSequence { append("_") }
+        }
+    }
+
+    fun getEnumEntrySelector(descriptor: ClassDescriptor): String {
+        assert(descriptor.kind == ClassKind.ENUM_ENTRY)
+
+        return enumEntrySelectors.getOrPut(descriptor) {
+            // FOO_BAR_BAZ -> fooBarBaz:
+            val name = descriptor.name.asString().split('_').mapIndexed { index, s ->
+                val lower = s.toLowerCase()
+                if (index == 0) lower else lower.capitalize()
+            }.joinToString("").mangleIfSpecialFamily("the")
+
+            StringBuilder(name).mangledSequence { append("_") }
+        }
+    }
+
     init {
         val any = context.builtIns.any
 
@@ -204,18 +263,22 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
             else -> this.name.asString()
         }
 
-        val trimmedCandidate = candidate.dropWhile { it == '_' }
+        return candidate.mangleIfSpecialFamily("do")
+    }
+
+    private fun String.mangleIfSpecialFamily(prefix: String): String {
+        val trimmed = this.dropWhile { it == '_' }
         for (family in listOf("alloc", "copy", "mutableCopy", "new", "init")) {
-            if (trimmedCandidate.startsWithWords(family)) {
+            if (trimmed.startsWithWords(family)) {
                 // Then method can be detected as having special family by Objective-C compiler.
                 // mangle the name:
-                return "do" + candidate.capitalize()
+                return prefix + this.capitalize()
             }
         }
 
         // TODO: handle clashes with NSObject methods etc.
 
-        return candidate
+        return this
     }
 
     private fun String.startsWithWords(words: String) = this.startsWith(words) &&
@@ -226,6 +289,7 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
         private val nameToElements = mutableMapOf<N, MutableList<T>>()
 
         abstract fun conflict(first: T, second: T): Boolean
+        open fun reserved(name: N) = false
 
         fun getOrPut(element: T, nameCandidates: () -> Sequence<N>): N {
             getIfAssigned(element)?.let { return it }
@@ -243,6 +307,8 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
 
         fun tryAssign(element: T, name: N): Boolean {
             if (element in elementToName) error(element)
+
+            if (reserved(name)) return false
 
             val elements = nameToElements.getOrPut(name) { mutableListOf() }
             if (elements.any { conflict(element, it) }) {
