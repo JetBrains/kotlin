@@ -24,6 +24,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.ui.RowIcon
+import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -43,12 +44,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class OverridesCompletion(
-        private val collector: LookupElementsCollector,
-        private val lookupElementFactory: BasicLookupElementFactory
+    private val collector: LookupElementsCollector,
+    private val lookupElementFactory: BasicLookupElementFactory
 ) {
     private val PRESENTATION_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
         modifiers = emptySet()
         includeAdditionalModifiers = false
+        includeSuspendModifier = true
     }
 
     fun complete(position: PsiElement, declaration: KtCallableDeclaration?) {
@@ -85,7 +87,9 @@ class OverridesCompletion(
             val baseClassIcon = KotlinDescriptorIconProvider.getIcon(baseClass, baseClassDeclaration, 0)
 
             lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
-                override fun getLookupString() = if (declaration == null) "override" else delegate.lookupString // don't use "override" as lookup string when already in the name of declaration
+                override fun getLookupString() =
+                    if (declaration == null) "override" else delegate.lookupString // don't use "override" as lookup string when already in the name of declaration
+
                 override fun getAllLookupStrings() = setOf(lookupString, delegate.lookupString)
 
                 override fun renderElement(presentation: LookupElementPresentation) {
@@ -122,6 +126,7 @@ class OverridesCompletion(
                     val prototype = memberObject.generateMember(classOrObject, false)
                     prototype.modifierList!!.replace(modifierList)
                     val insertedMember = dummyMember.replaced(prototype)
+                    if (memberObject.descriptor.isSuspend) insertedMember.addModifier(KtTokens.SUSPEND_KEYWORD)
 
                     ShortenReferences.DEFAULT.process(insertedMember)
 
@@ -135,8 +140,7 @@ class OverridesCompletion(
                         context.document.deleteString(offset, atCharOffset + 1)
 
                         context.editor.moveCaret(offset)
-                    }
-                    else {
+                    } else {
                         moveCaretIntoGeneratedElement(context.editor, insertedMember)
                     }
                 }
@@ -156,8 +160,7 @@ class OverridesCompletion(
                 if (descriptorToOverride !is PropertyDescriptor) return false
                 return if (declaration.valOrVarKeyword?.node?.elementType == KtTokens.VAL_KEYWORD) {
                     !descriptorToOverride.isVar
-                }
-                else {
+                } else {
                     true // var can override either var or val
                 }
             }

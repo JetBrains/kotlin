@@ -221,6 +221,7 @@ interface DescriptorRendererOptions {
     var renderConstructorKeyword: Boolean
     var renderUnabbreviatedType: Boolean
     var includeAdditionalModifiers: Boolean
+    var includeSuspendModifier: Boolean
     var parameterNamesInFunctionalTypes: Boolean
     var renderFunctionContracts: Boolean
 }

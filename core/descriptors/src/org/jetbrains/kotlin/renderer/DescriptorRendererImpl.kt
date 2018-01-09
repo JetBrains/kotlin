@@ -524,10 +524,14 @@ internal class DescriptorRendererImpl(
                 functionDescriptor.isInfix && (functionDescriptor.overriddenDescriptors.none { it.isInfix } || alwaysRenderModifiers)
 
         renderModifier(builder, functionDescriptor.isTailrec, "tailrec")
-        renderModifier(builder, functionDescriptor.isSuspend, "suspend")
+        renderSuspendModifier(functionDescriptor, builder)
         renderModifier(builder, functionDescriptor.isInline, "inline")
         renderModifier(builder, isInfix, "infix")
         renderModifier(builder, isOperator, "operator")
+    }
+
+    private fun renderSuspendModifier(functionDescriptor: FunctionDescriptor, builder: StringBuilder) {
+        renderModifier(builder, functionDescriptor.isSuspend, "suspend")
     }
 
     override fun render(declarationDescriptor: DeclarationDescriptor): String {
@@ -630,6 +634,8 @@ internal class DescriptorRendererImpl(
 
                 if (includeAdditionalModifiers) {
                     renderAdditionalModifiers(function, builder)
+                } else if (includeSuspendModifier) {
+                    renderSuspendModifier(function, builder)
                 }
 
                 renderMemberKind(function, builder)
