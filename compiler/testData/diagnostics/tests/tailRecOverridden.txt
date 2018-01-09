@@ -13,8 +13,8 @@ public final class B : A {
     public constructor B()
     public final tailrec fun bar(/*0*/ y: kotlin.Double): kotlin.Double
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open tailrec override /*1*/ fun foo(/*0*/ x: kotlin.Int = ...): kotlin.Unit
-    public open tailrec override /*1*/ fun gav(/*0*/ y: kotlin.Int = ..., /*1*/ z: kotlin.Int = ...): kotlin.Unit
+    public open override /*1*/ tailrec fun foo(/*0*/ x: kotlin.Int = ...): kotlin.Unit
+    public open override /*1*/ tailrec fun gav(/*0*/ y: kotlin.Int = ..., /*1*/ z: kotlin.Int = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -23,8 +23,8 @@ public final class C : A {
     public constructor C()
     public final tailrec fun bar(/*0*/ y: kotlin.Int = ..., /*1*/ z: kotlin.Int = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open tailrec override /*1*/ fun foo(/*0*/ x: kotlin.Int = ...): kotlin.Unit
-    public open tailrec override /*1*/ fun gav(/*0*/ y: kotlin.Int = ..., /*1*/ z: kotlin.Int = ...): kotlin.Unit
+    public open override /*1*/ tailrec fun foo(/*0*/ x: kotlin.Int = ...): kotlin.Unit
+    public open override /*1*/ tailrec fun gav(/*0*/ y: kotlin.Int = ..., /*1*/ z: kotlin.Int = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

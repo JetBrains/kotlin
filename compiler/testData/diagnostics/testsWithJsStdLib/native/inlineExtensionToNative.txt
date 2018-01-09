@@ -1,8 +1,8 @@
 package
 
 public inline fun A.foo(/*0*/ x: kotlin.Int): kotlin.String
-public operator inline fun A.get(/*0*/ x: kotlin.Int): kotlin.String
-public operator inline fun A.B.get(/*0*/ x: kotlin.Int): kotlin.String
+public inline operator fun A.get(/*0*/ x: kotlin.Int): kotlin.String
+public inline operator fun A.B.get(/*0*/ x: kotlin.Int): kotlin.String
 
 public final external class A {
     public constructor A()

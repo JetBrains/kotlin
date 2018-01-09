@@ -1,5 +1,5 @@
 package
 
 public fun </*0*/ A> main(/*0*/ tp: A, /*1*/ any: kotlin.Any): kotlin.Unit
-public operator inline fun </*0*/ reified T> T.invoke(): T
-public operator inline fun </*0*/ reified T> T.plus(/*0*/ p: T): T
+public inline operator fun </*0*/ reified T> T.invoke(): T
+public inline operator fun </*0*/ reified T> T.plus(/*0*/ p: T): T

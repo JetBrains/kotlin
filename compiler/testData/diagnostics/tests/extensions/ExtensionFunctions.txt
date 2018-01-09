@@ -25,7 +25,7 @@ package outer {
     public fun kotlin.Int.foo(): kotlin.Int
     public operator fun </*0*/ T> T.minus(/*0*/ t: T): kotlin.Int
     public fun kotlin.Int?.optint(): kotlin.Unit
-    public operator infix fun outer.A.plus(/*0*/ a: kotlin.Any): kotlin.Unit
+    public infix operator fun outer.A.plus(/*0*/ a: kotlin.Any): kotlin.Unit
     public operator fun outer.A.plus(/*0*/ a: kotlin.Int): kotlin.Unit
 
     public final class A {
