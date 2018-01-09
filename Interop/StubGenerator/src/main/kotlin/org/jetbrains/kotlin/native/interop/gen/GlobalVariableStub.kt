@@ -22,20 +22,20 @@ import org.jetbrains.kotlin.native.interop.indexer.GlobalDecl
 
 class GlobalVariableStub(global: GlobalDecl, stubGenerator: StubGenerator) : KotlinStub, NativeBacked {
 
-    val getAddressExpression: KotlinExpression
-    val header: String
-    val getter: KotlinExpression
-    val setter: KotlinExpression?
-
-    init {
-        getAddressExpression = stubGenerator.simpleBridgeGenerator.kotlinToNative(
+    private val getAddressExpression: KotlinExpression by lazy {
+        stubGenerator.simpleBridgeGenerator.kotlinToNative(
                 nativeBacked = this,
                 returnType = BridgedType.NATIVE_PTR,
                 kotlinValues = emptyList()
         ) {
             "&${global.name}"
         }
+    }
+    val header: String
+    val getter: KotlinExpression
+    val setter: KotlinExpression?
 
+    init {
         val kotlinScope = stubGenerator.kotlinFile
 
         // TODO: consider sharing the logic below with field generator.
@@ -50,14 +50,38 @@ class GlobalVariableStub(global: GlobalDecl, stubGenerator: StubGenerator) : Kot
             getter = mirror.info.argFromBridged(getAddressExpression, kotlinScope, nativeBacked = this) + "!!"
             setter = null
         } else {
-            val pointedTypeName = mirror.pointedType.render(kotlinScope)
-            val storagePointed = "interpretPointed<$pointedTypeName>($getAddressExpression)"
             if (mirror is TypeMirror.ByValue) {
+                getter = mirror.info.argFromBridged(stubGenerator.simpleBridgeGenerator.kotlinToNative(
+                        nativeBacked = this,
+                        returnType = mirror.info.bridgedType,
+                        kotlinValues = emptyList()
+                ) {
+                    mirror.info.cToBridged(expr = global.name)
+                }, kotlinScope, nativeBacked = this)
+
+                setter = if (global.isConst) {
+                    null
+                } else {
+                    val bridgedValue = BridgeTypedKotlinValue(mirror.info.bridgedType, mirror.info.argToBridged("value"))
+
+                    stubGenerator.simpleBridgeGenerator.kotlinToNative(
+                            nativeBacked = this,
+                            returnType = BridgedType.VOID,
+                            kotlinValues = listOf(bridgedValue)
+                    ) { nativeValues ->
+                        out("${global.name} = ${mirror.info.cFromBridged(
+                                nativeValues.single(),
+                                scope,
+                                nativeBacked = this@GlobalVariableStub
+                        )};")
+                        ""
+                    }
+                }
+
                 kotlinType = mirror.argType
-                val valueProperty = "$storagePointed.value"
-                getter = valueProperty
-                setter = if (global.isConst) null else "$valueProperty = value"
             } else {
+                val pointedTypeName = mirror.pointedType.render(kotlinScope)
+                val storagePointed = "interpretPointed<$pointedTypeName>($getAddressExpression)"
                 kotlinType = mirror.pointedType
                 getter = storagePointed
                 setter = null

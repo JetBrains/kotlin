@@ -52,3 +52,6 @@ void invoke2(void (^block)(void)) {
 
 int (^getSupplier(int x))(void);
 Class (^ _Nonnull getClassGetter(NSObject* obj))(void);
+
+extern NSString* globalString;
+extern NSObject* globalObject;

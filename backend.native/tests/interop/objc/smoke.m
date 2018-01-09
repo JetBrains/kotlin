@@ -57,3 +57,6 @@ int (^getSupplier(int x))(void) {
 Class (^ _Nonnull getClassGetter(NSObject* obj))() {
     return ^{ return obj.class; };
 }
+
+NSString* globalString = @"Global string";
+NSObject* globalObject = nil;

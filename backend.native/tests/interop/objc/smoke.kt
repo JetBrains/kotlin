@@ -48,6 +48,18 @@ fun run() {
         // toString (virtually):
         println(map.keys.map { it.toString() }.min() == foo.description())
     }
+
+    println(globalString)
+    autoreleasepool {
+        globalString = "Another global string"
+    }
+    println(globalString)
+
+    println(globalObject)
+    globalObject = object : NSObject() {
+        override fun description() = "global object"
+    }
+    println(globalObject)
 }
 
 fun MutablePairProtocol.swap() {
