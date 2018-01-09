@@ -42,11 +42,9 @@ class KaptJavaLog(
         warnWriter: PrintWriter,
         noticeWriter: PrintWriter,
         val interceptorData: DiagnosticInterceptorData
-) : Log(context, errWriter, warnWriter, noticeWriter) {
+    ) : Log(context, errWriter, warnWriter, noticeWriter) {
     private val stubLineInfo = KaptStubLineInformation()
-
-    private val diagnosticFactory by lazy { JCDiagnostic.Factory.instance(context) }
-    private val javacMessages by lazy { JavacMessages.instance(context) }
+    private val javacMessages = JavacMessages.instance(context)
 
     init {
         context.put(Log.outKey, noticeWriter)
@@ -104,7 +102,7 @@ class KaptJavaLog(
             val kotlinFile = kotlinPosition?.let { getKotlinSourceFile(it) }
             if (kotlinPosition != null && kotlinFile != null) {
                 val locationMessage = "$KOTLIN_LOCATION_PREFIX${kotlinFile.absolutePath}: (${kotlinPosition.line}, ${kotlinPosition.column})"
-                val locationDiagnostic = diagnosticFactory.note(null as DiagnosticSource?, null, "proc.messager", locationMessage)
+                val locationDiagnostic = diags.note(null as DiagnosticSource?, null, "proc.messager", locationMessage)
                 val wrappedDiagnostic = JCDiagnostic.MultilineDiagnostic(diagnostic, JavacList.of(locationDiagnostic))
 
                 reportDiagnostic(wrappedDiagnostic)
