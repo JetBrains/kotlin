@@ -22,7 +22,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
 
 class KotlinExternalSystemSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
-    override fun onStart(id: ExternalSystemTaskId) {
+    override fun onStart(id: ExternalSystemTaskId, workingDir: String) {
         if (id.type == ExternalSystemTaskType.RESOLVE_PROJECT) {
             id.findProject()?.let { project ->
                 KotlinConfigurationCheckerComponent.getInstance(project).syncStarted()
