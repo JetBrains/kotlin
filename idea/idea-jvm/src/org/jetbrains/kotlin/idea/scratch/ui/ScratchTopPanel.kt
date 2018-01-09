@@ -70,11 +70,11 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         }
     }
 
-    fun isRepl() = isReplCheckbox.isEnabled
+    fun isRepl() = isReplCheckbox.isSelected
 
     @TestOnly
-    fun setReplMode(isEnabled: Boolean) {
-        isReplCheckbox.isEnabled = isEnabled
+    fun setReplMode(isSelected: Boolean) {
+        isReplCheckbox.isSelected = isSelected
     }
 
     private fun createActionsToolbar(): JComponent {
