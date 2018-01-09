@@ -21,6 +21,7 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.backend.konan.descriptors.stdlibModule
 import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
@@ -49,6 +50,32 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun functionLlvmValue(descriptor: FunctionDescriptor) = descriptor.llvmFunction
     fun functionEntryPointAddress(descriptor: FunctionDescriptor) = descriptor.entryPointAddress.llvm
     fun functionHash(descriptor: FunctionDescriptor): LLVMValueRef = descriptor.functionName.localHash.llvm
+
+    fun getObjectInstanceStorage(descriptor: ClassDescriptor): LLVMValueRef {
+        assert (!descriptor.isUnit())
+        val llvmGlobal = if (!isExternal(descriptor)) {
+            context.llvmDeclarations.forSingleton(descriptor).instanceFieldRef
+        } else {
+            val llvmType = getLLVMType(descriptor.defaultType)
+            importGlobal(
+                    descriptor.objectInstanceFieldSymbolName,
+                    llvmType,
+                    origin = descriptor.llvmSymbolOrigin,
+                    threadLocal = true
+            )
+        }
+        context.llvm.objects += llvmGlobal
+        return llvmGlobal
+    }
+
+    fun typeInfoForAllocation(constructedClass: ClassDescriptor): LLVMValueRef {
+        val descriptorForTypeInfo = if (constructedClass.isObjCClass()) {
+            context.interopBuiltIns.objCPointerHolder
+        } else {
+            constructedClass
+        }
+        return typeInfoValue(descriptorForTypeInfo)
+    }
 }
 
 internal sealed class ExceptionHandler {
@@ -352,6 +379,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return call(context.llvm.allocInstanceFunction, listOf(typeInfo), lifetime)
     }
 
+    fun allocInstance(descriptor: ClassDescriptor, lifetime: Lifetime): LLVMValueRef =
+            allocInstance(codegen.typeInfoForAllocation(descriptor), lifetime)
+
     fun allocArray(
             typeInfo: LLVMValueRef, count: LLVMValueRef, lifetime: Lifetime): LLVMValueRef {
         return call(context.llvm.allocArrayFunction, listOf(typeInfo, count), lifetime)
@@ -530,6 +560,40 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
         val functionPtrType = pointerType(codegen.getLlvmFunctionType(descriptor))   // Construct type of the method to be invoked
         return bitcast(functionPtrType, llvmMethod)           // Cast method address to the type
+    }
+
+    fun getObjectValue(
+            descriptor: ClassDescriptor,
+            exceptionHandler: ExceptionHandler,
+            locationInfo: LocationInfo?
+    ): LLVMValueRef {
+        if (descriptor.isUnit()) {
+            return codegen.theUnitInstanceRef.llvm
+        }
+
+        val objectPtr = codegen.getObjectInstanceStorage(descriptor)
+        val bbCurrent = currentBlock
+        val bbInit    = basicBlock("label_init", locationInfo)
+        val bbExit    = basicBlock("label_continue", locationInfo)
+        val objectVal = loadSlot(objectPtr, false)
+        val condition = icmpNe(objectVal, codegen.kNullObjHeaderPtr)
+        condBr(condition, bbExit, bbInit)
+
+        positionAtEnd(bbInit)
+        val typeInfo = codegen.typeInfoForAllocation(descriptor)
+        val initFunction = descriptor.constructors.first { it.valueParameters.size == 0 }
+        val ctor = codegen.llvmFunction(initFunction)
+        val args = listOf(objectPtr, typeInfo, ctor)
+        val newValue = call(context.llvm.initInstanceFunction, args, Lifetime.GLOBAL, exceptionHandler)
+        val bbInitResult = currentBlock
+        br(bbExit)
+
+        positionAtEnd(bbExit)
+        val valuePhi = phi(codegen.getLLVMType(descriptor.defaultType))
+        addPhiIncoming(valuePhi,
+                bbCurrent to objectVal, bbInitResult to newValue)
+
+        return valuePhi
     }
 
     fun resetDebugLocation() {
