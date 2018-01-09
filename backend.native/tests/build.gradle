@@ -43,6 +43,7 @@ dependencies {
 
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
 ext.externalTestsDir = project.file("external")
+ext.externalStdlibTestsDir = project.file("stdlib_external")
 externalTestsDir.mkdirs()
 
 project.convention.plugins.remoteExec = new org.jetbrains.kotlin.ExecRemote(project)
@@ -58,6 +59,11 @@ allprojects {
         // backend.native/tests/external
         testOutputExternal {
             output.dir(rootProject.file("$testOutputRoot/external"))
+        }
+
+        // backend.native/tests/stdlib_external
+        testOutputStdlib {
+            output.dir(rootProject.file("$testOutputRoot/stdlib"))
         }
     }
 }
@@ -130,12 +136,15 @@ task clean {
     }
 }
 
-task run() {
+def tasksOf(Closure<Task> filter) {
     String prefix = project.findProperty("prefix")
-    if (prefix != null)
-        dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled && it.name.startsWith(prefix) })
-    else
-        dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled })
+    project.tasks.withType(KonanTest)
+            .matching { filter(it) && it.enabled && (prefix != null ? it.name.startsWith(prefix) : true) }
+}
+
+task run() {
+    def tasks = tasksOf { it instanceof RunKonanTest && !(it instanceof RunStdlibTest) }
+    dependsOn(tasks)
 }
 
 // Collect results in one json.
@@ -161,8 +170,7 @@ task resultsTask() {
     }
 }
 
-Set<RunExternalTestGroup> createExternalTests(File testRoot, Closure taskConfiguration) {
-    def result = new HashSet<RunExternalTestGroup>()
+def createTestTasks(File testRoot, Class<Task> taskType, Closure taskConfiguration) {
     testRoot.eachDirRecurse {
         // Skip build directory and directories without *.kt files.
         if (it.name == "build" || it.listFiles().count { it.name.endsWith(".kt") && it.isFile() } == 0) {
@@ -172,35 +180,25 @@ Set<RunExternalTestGroup> createExternalTests(File testRoot, Closure taskConfigu
         def taskDirectory = project.relativePath(it)
         def taskName = taskDirectory.replaceAll("[-/\\\\]", '_')
 
-        def task = (RunExternalTestGroup) project.task("$taskName", type: RunExternalTestGroup) {
-            groupDirectory = "$taskDirectory"
+        def task = project.task(taskName, type: taskType) {
+            groupDirectory = taskDirectory
             finalizedBy resultsTask
         }
         taskConfiguration(task)
-        result.add(task)
     }
-    return result
 }
 
 task run_external () {
-    // TODO Consider test output directory cleaning before execution.
-    // TODO Consider using some logger instead of println
     // Create tasks for external tests.
-
     for (testDir in ["codegen", "compileKotlinAgainstKotlin"]) {
-        createExternalTests(new File(externalTestsDir, testDir)) {
+        createTestTasks(new File(externalTestsDir, testDir), RunExternalTestGroup) {
             it.goldValue = "OK"
         }
     }
-    createExternalTests(new File(externalTestsDir, "stdlib")) {}
 
     // Set up dependencies.
-    def testTasks = tasks.withType(RunExternalTestGroup).matching { it.enabled }
-    String prefix = project.findProperty("prefix")
-    if (prefix != null) {
-        testTasks = testTasks.matching { it.name.startsWith(prefix) }
-    }
-    dependsOn(testTasks)
+    dependsOn(clean)
+    dependsOn(tasksOf { it instanceof RunExternalTestGroup || it instanceof RunStdlibTest })
 }
 
 task daily() {
@@ -500,7 +498,7 @@ task entry0(type: RunStandaloneKonanTest) {
 task entry1(type: RunStandaloneKonanTest) {
     goldValue = "Hello.\n"
     source = "runtime/basic/entry1.kt"
-    flags = ["-entry", "foo"] 
+    flags = ["-entry", "foo"]
 }
 
 task entry2(type: LinkKonanTest) {
@@ -2355,6 +2353,19 @@ task produce_dynamic(type: DynamicKonanTest) {
                 "String is Kotlin/Native\n" +
                 "RO property is 42\n" +
                 "RW property is 239\n"
+}
+
+task buildKonanStdlibTests(type: BuildKonanTest) {
+    outputSourceSetName = "testOutputStdlib"
+    compileList = [ "stdlib_external", "testUtils.kt" ]
+}
+
+task runStdlibTests(type: RunStdlibTest) {
+    outputSourceSetName = "testOutputStdlib"
+    // runs all tests and hence source name should be not null
+    source = "stdlib_external/testUtils.kt"
+    useFilter = false
+    runnerLogger = RunKonanTest.Logger.GTEST
 }
 
 task buildKonanTests(type: BuildKonanTest) {

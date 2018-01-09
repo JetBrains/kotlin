@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.properties.*
 import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.*
 
+import javax.inject.Inject
 import java.util.regex.Pattern
 
 abstract class KonanTest extends JavaExec {
@@ -353,10 +354,15 @@ class BuildKonanTest extends ExtKonanTest {
         // create list of tests to compile
         def compileFiles = new ArrayList<String>()
         compileList.each {
-            project.file(it).eachFileRecurse {
-                if (it.isFile() && it.name.endsWith(".kt") && !excludeFiles.contains(it.absolutePath)) {
-                    compileFiles.add(it.absolutePath)
+            def file = project.file(it)
+            if (file.isDirectory()) {
+                file.eachFileRecurse {
+                    if (it.isFile() && it.name.endsWith(".kt") && !excludeFiles.contains(it.absolutePath)) {
+                        compileFiles.add(it.absolutePath)
+                    }
                 }
+            } else {
+                compileFiles.add(file.absolutePath)
             }
         }
         compileFiles
@@ -384,10 +390,26 @@ class BuildKonanTest extends ExtKonanTest {
  * Runs test built with Konan's TestRunner
  */
 class RunKonanTest extends ExtKonanTest {
+    public def buildTaskName = 'buildKonanTests'
+    public def runnerLogger = Logger.SILENT
+    public def useFilter = true
 
+    enum Logger {
+        GTEST,
+        TEAMCITY,
+        SIMPLE,
+        SILENT
+    }
+
+    @Inject
     RunKonanTest() {
         super()
-        dependsOn('buildKonanTests')
+        dependsOn(buildTaskName)
+    }
+
+    RunKonanTest(def depends) {
+        buildTaskName = depends
+        dependsOn(buildTaskName)
     }
 
     @Override
@@ -400,8 +422,10 @@ class RunKonanTest extends ExtKonanTest {
     void executeTest() {
         arguments = arguments ?: []
         // Print only test's output
-        arguments.add("--ktest_logger=SILENT")
-        arguments.add("--ktest_filter=" + convertToPattern(source))
+        arguments.add("--ktest_logger=" + runnerLogger.toString())
+        if (useFilter) {
+            arguments.add("--ktest_filter=" + convertToPattern(source))
+        }
         super.executeTest()
     }
 
@@ -409,6 +433,13 @@ class RunKonanTest extends ExtKonanTest {
         return source.replace('/', '.')
                 .replace(".kt", "")
                 .concat(".*")
+    }
+}
+
+class RunStdlibTest extends RunKonanTest {
+
+    RunStdlibTest() {
+        super('buildKonanStdlibTests')
     }
 }
 
