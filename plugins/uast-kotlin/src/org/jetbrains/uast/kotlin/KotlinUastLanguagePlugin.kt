@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.uast.*
-import org.jetbrains.uast.java.JavaUastLanguagePlugin
+import org.jetbrains.uast.KotlinUDeclarationsExpression
+import org.jetbrains.uast.KotlinUDestructuringDeclarationExpression
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
@@ -204,6 +204,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                 is KtFile -> el<UFile> { KotlinUFile(original, this@KotlinUastLanguagePlugin) }
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement, this@KotlinUastLanguagePlugin) }
                 is KtAnnotationEntry -> el<UAnnotation>(build(::KotlinUAnnotation))
+                is KtLightAnnotationForSourceEntry -> convertElement(original.kotlinOrigin, givenParent, requiredType)
                 else -> null
             }
         }
