@@ -625,7 +625,7 @@ public class OverridingUtil {
         boolean allInvisible = visibleOverridables.isEmpty();
         Collection<CallableMemberDescriptor> effectiveOverridden = allInvisible ? overridables : visibleOverridables;
 
-        Modality modality = determineModality(effectiveOverridden);
+        Modality modality = determineModalityForFakeOverride(effectiveOverridden, current);
         Visibility visibility = allInvisible ? Visibilities.INVISIBLE_FAKE : Visibilities.INHERITED;
 
         // FIXME doesn't work as expected for flexible types: should create a refined signature.
@@ -652,11 +652,16 @@ public class OverridingUtil {
     }
 
     @NotNull
-    private static Modality determineModality(@NotNull Collection<CallableMemberDescriptor> descriptors) {
+    private static Modality determineModalityForFakeOverride(
+            @NotNull Collection<CallableMemberDescriptor> descriptors,
+            @NotNull ClassDescriptor current
+    ) {
         // Optimization: avoid creating hash sets in frequent cases when modality can be computed trivially
         boolean hasOpen = false;
         boolean hasAbstract = false;
+        boolean hasExpect = false;
         for (CallableMemberDescriptor descriptor : descriptors) {
+            hasExpect |= descriptor.isExpect();
             switch (descriptor.getModality()) {
                 case FINAL:
                     return Modality.FINAL;
@@ -671,25 +676,38 @@ public class OverridingUtil {
             }
         }
 
-        if (hasOpen && !hasAbstract) return Modality.OPEN;
-        if (!hasOpen && hasAbstract) return Modality.ABSTRACT;
+        if (!hasExpect) {
+            if (hasOpen && !hasAbstract) return Modality.OPEN;
+            if (!hasOpen && hasAbstract) return Modality.ABSTRACT;
+        }
 
         Set<CallableMemberDescriptor> allOverriddenDeclarations = new HashSet<CallableMemberDescriptor>();
         for (CallableMemberDescriptor descriptor : descriptors) {
             allOverriddenDeclarations.addAll(getOverriddenDeclarations(descriptor));
         }
-        return getMinimalModality(filterOutOverridden(allOverriddenDeclarations));
+        // Fake overrides of abstract members in non-abstract expected classes should not be abstract, because otherwise it would be
+        // impossible to inherit a non-expected class from that expected class in common code.
+        // We cannot assume that they're open though, because the actual abstract function from an expected super class
+        // can be implemented with a final function in the actual class for this class.
+        boolean transformAbstractToFinal =
+                current.isExpect() && (current.getModality() != Modality.ABSTRACT && current.getModality() != Modality.SEALED);
+        return getMinimalModality(filterOutOverridden(allOverriddenDeclarations), transformAbstractToFinal);
     }
 
     @NotNull
-    private static Modality getMinimalModality(@NotNull Collection<CallableMemberDescriptor> descriptors) {
-        Modality modality = Modality.ABSTRACT;
+    private static Modality getMinimalModality(
+            @NotNull Collection<CallableMemberDescriptor> descriptors,
+            boolean transformAbstractToFinal
+    ) {
+        Modality result = Modality.ABSTRACT;
         for (CallableMemberDescriptor descriptor : descriptors) {
-            if (descriptor.getModality().compareTo(modality) < 0) {
-                modality = descriptor.getModality();
+            Modality effectiveModality =
+                    transformAbstractToFinal && descriptor.getModality() == Modality.ABSTRACT ? Modality.FINAL : descriptor.getModality();
+            if (effectiveModality.compareTo(result) < 0) {
+                result = effectiveModality;
             }
         }
-        return modality;
+        return result;
     }
 
     @NotNull

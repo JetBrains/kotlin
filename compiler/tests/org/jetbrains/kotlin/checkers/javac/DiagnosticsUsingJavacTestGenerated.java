@@ -14452,6 +14452,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("extendExpectedClassWithAbstractMember.kt")
+                public void testExtendExpectedClassWithAbstractMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/extendExpectedClassWithAbstractMember.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("extendExpectedClassWithoutExplicitOverrideOfMethod.kt")
                 public void testExtendExpectedClassWithoutExplicitOverrideOfMethod() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/extendExpectedClassWithoutExplicitOverrideOfMethod.kt");
