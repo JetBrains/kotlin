@@ -157,6 +157,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("tryCatchTailCall.kt")
+    public void testTryCatchTailCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/tryCatchTailCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

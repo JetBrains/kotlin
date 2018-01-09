@@ -6388,6 +6388,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/simple.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("tryCatch.kt")
+            public void testTryCatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tryCatch.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/coroutines/tailOperations")

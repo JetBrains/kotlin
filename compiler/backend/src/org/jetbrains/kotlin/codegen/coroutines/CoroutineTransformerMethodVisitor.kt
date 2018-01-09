@@ -692,6 +692,14 @@ private fun allSuspensionPointsAreTailCalls(
         val beginIndex = instructions.indexOf(suspensionPoint.suspensionCallBegin)
         val endIndex = instructions.indexOf(suspensionPoint.suspensionCallEnd)
 
+        val insideTryBlock = methodNode.tryCatchBlocks.any { block ->
+            val tryBlockStartIndex = instructions.indexOf(block.start)
+            val tryBlockEndIndex = instructions.indexOf(block.end)
+
+            beginIndex in tryBlockStartIndex..tryBlockEndIndex
+        }
+        if (insideTryBlock) return@all false
+
         safelyReachableReturns[endIndex + 1]?.all { returnIndex ->
             val sourceInsn =
                     sourceFrames[returnIndex].top().sure {
