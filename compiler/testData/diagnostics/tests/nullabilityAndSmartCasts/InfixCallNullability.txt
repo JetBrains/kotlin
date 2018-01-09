@@ -1,15 +1,15 @@
 package
 
 public fun test(/*0*/ x: kotlin.Int?, /*1*/ a: A?): kotlin.Unit
-public operator infix fun A.div(/*0*/ i: kotlin.Int): kotlin.Unit
-public operator infix fun A?.times(/*0*/ i: kotlin.Int): kotlin.Unit
+public infix operator fun A.div(/*0*/ i: kotlin.Int): kotlin.Unit
+public infix operator fun A?.times(/*0*/ i: kotlin.Int): kotlin.Unit
 
 public final class A {
     public constructor A()
-    public final operator infix fun contains(/*0*/ a: kotlin.Any?): kotlin.Boolean
+    public final infix operator fun contains(/*0*/ a: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final operator infix fun plus(/*0*/ i: kotlin.Int): kotlin.Unit
+    public final infix operator fun plus(/*0*/ i: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     public final operator fun unaryMinus(): kotlin.Unit
 }

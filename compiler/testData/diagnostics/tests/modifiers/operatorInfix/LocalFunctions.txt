@@ -4,9 +4,9 @@ public fun a(): kotlin.Unit
 public fun consumeInt(/*0*/ i: kotlin.Int): kotlin.Unit
 public fun consumeString(/*0*/ s: kotlin.String): kotlin.Unit
 public fun Example.div(/*0*/ other: Example): kotlin.Int
-public operator infix fun Example.minus(/*0*/ other: Example): kotlin.Int
+public infix operator fun Example.minus(/*0*/ other: Example): kotlin.Int
 public fun Example.plus(/*0*/ other: Example): kotlin.Int
-public operator infix fun Example.times(/*0*/ other: Example): kotlin.Int
+public infix operator fun Example.times(/*0*/ other: Example): kotlin.Int
 
 public final class Example {
     public constructor Example()
