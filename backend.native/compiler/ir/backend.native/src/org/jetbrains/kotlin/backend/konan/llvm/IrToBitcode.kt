@@ -165,7 +165,7 @@ internal interface CodeContext {
 
     fun genContinue(destination: IrContinue)
 
-    fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>, resultLifetime: Lifetime): LLVMValueRef
+    val exceptionHandler: ExceptionHandler
 
     fun genThrow(exception: LLVMValueRef)
 
@@ -237,7 +237,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         override fun genContinue(destination: IrContinue) = unsupported()
 
-        override fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>, resultLifetime: Lifetime) = unsupported(function)
+        override val exceptionHandler get() = unsupported()
 
         override fun genThrow(exception: LLVMValueRef) = unsupported()
 
@@ -558,14 +558,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
         }
 
-        override fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>, resultLifetime: Lifetime) =
-                functionGenerationContext.callAtFunctionScope(function, args, resultLifetime)
+        override val exceptionHandler get() = ExceptionHandler.Caller
 
         override fun genThrow(exception: LLVMValueRef) {
             val objHeaderPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, exception)
             val args = listOf(objHeaderPtr)
 
-            this.genCall(context.llvm.throwExceptionFunction, args, Lifetime.IRRELEVANT)
+            functionGenerationContext.call(
+                    context.llvm.throwExceptionFunction, args, Lifetime.IRRELEVANT, this.exceptionHandler
+            )
             functionGenerationContext.unreachable()
         }
 
@@ -938,10 +939,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
         }
 
-        // The call inside [CatchingScope] must be configured to dispatch exception to the scope's handler.
-        override fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>, resultLifetime: Lifetime): LLVMValueRef {
-            val res = functionGenerationContext.call(function, args, resultLifetime, this::landingpad)
-            return res
+        override val exceptionHandler: ExceptionHandler get() = object : ExceptionHandler.Local() {
+            override val unwind get() = landingpad
         }
 
         override fun genThrow(exception: LLVMValueRef) {
@@ -2363,7 +2362,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun call(function: LLVMValueRef, args: List<LLVMValueRef>,
                      resultLifetime: Lifetime = Lifetime.IRRELEVANT): LLVMValueRef {
-        return currentCodeContext.genCall(function, args, resultLifetime)
+        return functionGenerationContext.call(function, args, resultLifetime, currentCodeContext.exceptionHandler)
     }
 
     //-------------------------------------------------------------------------//
@@ -2420,7 +2419,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             // launcher, so we could optimize out creating slot for 'parameter' in
             // this function.
             val parameter = LLVMGetParam(selector, 0)!!
-            callAtFunctionScope(entryPoint, listOf(parameter), Lifetime.IRRELEVANT)
+            call(entryPoint, listOf(parameter), Lifetime.IRRELEVANT, ExceptionHandler.Caller)
             ret(null)
         }
         return selector

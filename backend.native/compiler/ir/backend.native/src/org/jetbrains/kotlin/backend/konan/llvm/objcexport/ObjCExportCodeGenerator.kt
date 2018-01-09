@@ -65,7 +65,7 @@ internal class ObjCExportCodeGenerator(
         // TODO: it is required only for Kotlin-to-Objective-C bridges.
         this.forwardingForeignExceptionsTerminatedWith = objcTerminate
 
-        return callAtFunctionScope(function, args, resultLifetime)
+        return call(function, args, resultLifetime, ExceptionHandler.Caller)
     }
 
     fun FunctionGenerationContext.genSendMessage(

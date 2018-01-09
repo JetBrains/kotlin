@@ -51,6 +51,14 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun functionHash(descriptor: FunctionDescriptor): LLVMValueRef = descriptor.functionName.localHash.llvm
 }
 
+internal sealed class ExceptionHandler {
+    object None : ExceptionHandler()
+    object Caller : ExceptionHandler()
+    abstract class Local : ExceptionHandler() {
+        abstract val unwind: LLVMBasicBlockRef
+    }
+}
+
 val LLVMValueRef.name:String?
     get() = LLVMGetValueName(this)?.toKString()
 
@@ -132,6 +140,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private val epilogueBb        = basicBlockInFunction("epilogue", endLocation)
     private val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
 
+    /**
+     * TODO: consider merging this with [ExceptionHandler].
+     */
     var forwardingForeignExceptionsTerminatedWith: LLVMValueRef? = null
 
     init {
@@ -241,17 +252,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     //-------------------------------------------------------------------------//
 
-    fun callAtFunctionScope(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
-                            lifetime: Lifetime) =
-            call(llvmFunction, args, lifetime, { cleanupLandingpad })
-
-
-    fun callAtFunctionScopeVerbatim(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>) =
-            call(llvmFunction, args, Lifetime.IRRELEVANT, { cleanupLandingpad }, true)
-
     fun call(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
              resultLifetime: Lifetime = Lifetime.IRRELEVANT,
-             lazyLandingpad: () -> LLVMBasicBlockRef? = { null },
+             exceptionHandler: ExceptionHandler = ExceptionHandler.None,
              verbatim: Boolean = false): LLVMValueRef {
         val callArgs = if (verbatim || !isObjectReturn(llvmFunction.type)) {
             args
@@ -291,30 +294,34 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
             args + resultSlot
         }
-        return callRaw(llvmFunction, callArgs, lazyLandingpad)
+        return callRaw(llvmFunction, callArgs, exceptionHandler)
     }
 
     private fun callRaw(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
-                        lazyLandingpad: () -> LLVMBasicBlockRef?): LLVMValueRef {
+                        exceptionHandler: ExceptionHandler): LLVMValueRef {
         val rargs = args.toCValues()
         if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */  &&
                 isFunctionNoUnwind(llvmFunction)) {
 
             return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
         } else {
-            val landingpad = lazyLandingpad()
+            val unwind = when (exceptionHandler) {
+                ExceptionHandler.Caller -> cleanupLandingpad
+                is ExceptionHandler.Local -> exceptionHandler.unwind
 
-            if (landingpad == null) {
-                // When calling a function that is not marked as nounwind (can throw an exception),
-                // it is required to specify a landingpad to handle exceptions properly.
-                // Runtime C++ function can be marked as non-throwing using `RUNTIME_NOTHROW`.
-                val functionName = llvmFunction.name
-                val message = "no landingpad specified when calling function $functionName without nounwind attr"
-                throw IllegalArgumentException(message)
+                ExceptionHandler.None -> {
+                    // When calling a function that is not marked as nounwind (can throw an exception),
+                    // it is required to specify an unwind label to handle exceptions properly.
+                    // Runtime C++ function can be marked as non-throwing using `RUNTIME_NOTHROW`.
+                    val functionName = llvmFunction.name
+                    val message =
+                            "no exception handler specified when calling function $functionName without nounwind attr"
+                    throw IllegalArgumentException(message)
+                }
             }
 
             val success = basicBlock("call_success", position())
-            val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, landingpad, "")!!
+            val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, unwind, "")!!
             positionAtEnd(success)
             return result
         }

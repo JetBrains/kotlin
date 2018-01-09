@@ -180,7 +180,7 @@ private class ExportedElement(val kind: ElementKind,
                         val numParams = LLVMCountParams(llvmFunction)
                         val args = (0 .. numParams - 1).map { index -> param(index) }
                         val callee = lookupVirtualImpl(receiver, function)
-                        val result = callAtFunctionScopeVerbatim(callee, args)
+                        val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                         ret(result)
                     }
 
