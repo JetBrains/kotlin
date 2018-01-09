@@ -21,7 +21,7 @@ class LambdaImplicitHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         check(
             """
             val x = listOf("").filter {<hint text="it: String" />
-                it.startsWith("")
+                it.startsWith(<hint text="prefix:" />"")
             }"""
         )
     }
@@ -38,7 +38,7 @@ class LambdaImplicitHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testSingleLine() {
         check(
             """
-            val x = listOf("").filter { it.startsWith("") }
+            val x = listOf("").filter { it.startsWith(<hint text="prefix:" />"") }
             """
         )
     }
