@@ -204,6 +204,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                 is KtFile -> el<UFile> { KotlinUFile(original, this@KotlinUastLanguagePlugin) }
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement, this@KotlinUastLanguagePlugin) }
                 is KtAnnotationEntry -> el<UAnnotation>(build(::KotlinUAnnotation))
+                is KtLightAnnotationForSourceEntry -> convertElement(original.kotlinOrigin, givenParent, requiredType)
                 else -> null
             }
         }

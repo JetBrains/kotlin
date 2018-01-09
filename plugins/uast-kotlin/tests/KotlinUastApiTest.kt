@@ -2,11 +2,14 @@ package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiModifier
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.asJava.toLightAnnotation
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.test.env.findElementByText
@@ -27,6 +30,10 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             val toAttribute = annotation.findAttributeValue("to")!!
             assertEquals(toAttribute.evaluate(), 0)
             KtUsefulTestCase.assertInstanceOf(annotation.psi.toUElement(), UAnnotation::class.java)
+            KtUsefulTestCase.assertInstanceOf(
+                annotation.psi.cast<KtAnnotationEntry>().toLightAnnotation().toUElement(),
+                UAnnotation::class.java
+            )
             KtUsefulTestCase.assertInstanceOf(toAttribute.uastParent, UNamedExpression::class.java)
             KtUsefulTestCase.assertInstanceOf(toAttribute.psi.toUElement()?.uastParent, UNamedExpression::class.java)
         }
