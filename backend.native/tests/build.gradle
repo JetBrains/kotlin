@@ -1310,6 +1310,9 @@ task link_omit_unused(type: LinkKonanTest) {
 }
 
 task link_default_libs(type: RunStandaloneKonanTest) {
+    if (!project.hasProperty("konan.home")) {
+        dependsOn ':distPlatformLibs'
+    }
     disabled = (project.testTarget == 'wasm32') // there will be no posix.klib for wasm
     goldValue = "sizet = 0\n"
     source = "link/default/default.kt"
@@ -1328,6 +1331,9 @@ task link_testLib_explicitly(type: RunStandaloneKonanTest) {
 }
 
 task no_purge_for_dependencies(type: LinkKonanTest) {
+    if (!project.hasProperty("konan.home")) {
+        dependsOn ':distPlatformLibs'
+    }
     disabled = (project.testTarget == 'wasm32') // there will be no posix.klib for wasm
     goldValue = "linked library\nand symbols from posix available: 17; 1.0\n"
     source = "link/purge1/prog.kt"
@@ -2322,7 +2328,10 @@ task interop_echo_server(type: RunInteropKonanTest) {
 
 if (isMac()) {
     task interop_opengl_teapot(type: RunStandaloneKonanTest) {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+        if (!project.hasProperty("konan.home")) {
+            dependsOn ':distPlatformLibs'
+        }
+        disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
         run = false
         source = "interop/basics/opengl_teapot.kt"
     }
