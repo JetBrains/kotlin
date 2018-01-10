@@ -123,6 +123,7 @@ object ComparableOps : TemplateGroupBase() {
             Ensures that this value lies in the specified [range].
 
             @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+            @sample samples.comparisons.ComparableOps.coerceInFloatingPointRange
             """
         }
         body(Generic) {

@@ -640,6 +640,7 @@ public expect fun Double.coerceIn(minimumValue: Double, maximumValue: Double): D
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * @sample samples.comparisons.ComparableOps.coerceInFloatingPointRange
  */
 @SinceKotlin("1.1")
 public expect fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T
