@@ -17,7 +17,25 @@
 import groovy.json.JsonOutput
 import org.jetbrains.kotlin.*
 
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url kotlinCompilerRepo
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin"
+    }
+    ext.useCustomDist = project.hasProperty("konan.home")
+    if (!useCustomDist) {
+        ext.setProperty("konan.home", distDir.absolutePath)
+    }
+}
+
 apply plugin: NativeInteropPlugin
+apply plugin: 'konan'
 
 configurations {
     cli_bc
@@ -68,34 +86,19 @@ allprojects {
     }
 }
 
-def konanHome = rootProject.file(project.findProperty("konan.home") ?: distDir).absolutePath
-def suffix = isWindows() ? ".bat" : ""
-
-// TODO: Ideally we want to write just konanArtifacts{} clause here,
-// but we need to make Kotlin/Native Gradle Plugin a dependence
-// of our buildScripts first.
-task compileKonanTestLibrary(type: Exec) {
-    if (!project.hasProperty("konan.home")) {
-        dependsOn ':dist'
+konanArtifacts {
+    library('testLibrary') {
+        if (!useCustomDist) {
+            dependsOn ':dist'
+        }
+        srcDir 'testLibrary'
     }
-
-    def compiler = "$konanHome/bin/konanc$suffix"
-    def source = 'testLibrary'
-    def artifact = 'build/konan/bin/testLibrary'
-
-    executable compiler
-    args source, '-o', artifact, '-p', 'library'
 }
 
-task installTestLibrary(type: Exec) {
-    dependsOn 'compileKonanTestLibrary'
-
-    def tool = "$konanHome/bin/klib$suffix"
-    def repo = "$konanHome/klib/common"
-    def library = 'build/konan/bin/testLibrary.klib'
-
-    executable tool
-    args 'install', library, '-repository', repo
+task installTestLibrary(type: KlibInstall) {
+    dependsOn compileKonanTestLibraryHost
+    klib = konanArtifacts.testLibrary.getArtifactByTarget('host')
+    repo = rootProject.file("${project.property("konan.home")}/klib/common")
 }
 
 // TODO: use lastSuccessful teamcity build.
@@ -130,7 +133,7 @@ task update_external_tests() {
     }
 }
 
-task clean {
+clean {
     doLast {
         delete(rootProject.file(testOutputRoot))
     }
@@ -142,7 +145,7 @@ def tasksOf(Closure<Task> filter) {
             .matching { filter(it) && it.enabled && (prefix != null ? it.name.startsWith(prefix) : true) }
 }
 
-task run() {
+run {
     def tasks = tasksOf { it instanceof RunKonanTest && !(it instanceof RunStdlibTest) }
     dependsOn(tasks)
 }
@@ -1310,7 +1313,7 @@ task link_omit_unused(type: LinkKonanTest) {
 }
 
 task link_default_libs(type: RunStandaloneKonanTest) {
-    if (!project.hasProperty("konan.home")) {
+    if (!useCustomDist) {
         dependsOn ':distPlatformLibs'
     }
     disabled = (project.testTarget == 'wasm32') // there will be no posix.klib for wasm
@@ -1331,7 +1334,7 @@ task link_testLib_explicitly(type: RunStandaloneKonanTest) {
 }
 
 task no_purge_for_dependencies(type: LinkKonanTest) {
-    if (!project.hasProperty("konan.home")) {
+    if (!useCustomDist) {
         dependsOn ':distPlatformLibs'
     }
     disabled = (project.testTarget == 'wasm32') // there will be no posix.klib for wasm
@@ -2328,7 +2331,7 @@ task interop_echo_server(type: RunInteropKonanTest) {
 
 if (isMac()) {
     task interop_opengl_teapot(type: RunStandaloneKonanTest) {
-        if (!project.hasProperty("konan.home")) {
+        if (!useCustomDist) {
             dependsOn ':distPlatformLibs'
         }
         disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.

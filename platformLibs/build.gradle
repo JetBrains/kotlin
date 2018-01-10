@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.KlibInstall
 import org.jetbrains.kotlin.konan.target.TargetManager
 import org.jetbrains.kotlin.konan.util.DefFile
 
@@ -50,41 +50,6 @@ private String targetToOs(String target) {
 private String defFileToLibName(String target, String name) {
     return "$target-$name".toString()
 }
-
-// TODO: Implement as a part of the gradle plugin
-class KlibInstall extends Exec {
-    @InputFile
-    public File klib
-    public File repo
-
-    @Input
-    public String target
-
-    @Override
-    Task configure(Closure config) {
-        super.configure(config)
-
-        def konanHome = project.property("konan.home")
-        def suffix = (TargetManager.host == KonanTarget.MINGW) ? ".bat" : ""
-        def klibProgram = "$konanHome/bin/klib$suffix"
-
-        doFirst {
-            repo.mkdirs()
-
-            commandLine klibProgram,
-                    'install', klib.absolutePath,
-                    '-target', target,
-                    '-repository', repo.absolutePath
-        }
-    }
-
-    @OutputDirectory
-    File getInstallDir() {
-        def klibName = klib.name.take(klib.name.lastIndexOf('.'))
-        return project.file("$repo.absolutePath/$klibName")
-    }
-}
-
 //#endregion
 
 targetList.each { target ->
