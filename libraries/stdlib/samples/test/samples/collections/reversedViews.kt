@@ -22,11 +22,20 @@ import samples.assertPrints
 class ReversedViews {
     @Sample
     fun asReversedList() {
-        val original = ('a'..'e').toList()
-        val reversed = original.asReversed()
+        val original = mutableListOf('a', 'b', 'c', 'd', 'e')
+        val originalReadOnly = original as List<Char>
+        val reversed = originalReadOnly.asReversed()
 
         assertPrints(original, "[a, b, c, d, e]")
         assertPrints(reversed, "[e, d, c, b, a]")
+
+        original.add(original.size, 'f')
+        assertPrints(original, "[a, b, c, d, e, f]")
+        assertPrints(reversed, "[f, e, d, c, b, a]")
+
+        original.set(original.lastIndex, 'z')
+        assertPrints(original, "[a, b, c, d, e, z]")
+        assertPrints(reversed, "[z, e, d, c, b, a]")
     }
 
     @Sample
@@ -37,24 +46,12 @@ class ReversedViews {
         assertPrints(original, "[1, 2, 3, 4, 5]")
         assertPrints(reversed, "[5, 4, 3, 2, 1]")
 
-        original.add(6)
-        assertPrints(original, "[1, 2, 3, 4, 5, 6]")
-        assertPrints(reversed, "[6, 5, 4, 3, 2, 1]")
-
-        original.add(0, 0)
-        assertPrints(original, "[0, 1, 2, 3, 4, 5, 6]")
-        assertPrints(reversed, "[6, 5, 4, 3, 2, 1, 0]")
-
-        original[original.lastIndex] = 10
-        assertPrints(original, "[0, 1, 2, 3, 4, 5, 10]")
-        assertPrints(reversed, "[10, 5, 4, 3, 2, 1, 0]")
-
-        original.removeAt(original.lastIndex)
+        reversed.add(reversed.size, 0)
         assertPrints(original, "[0, 1, 2, 3, 4, 5]")
         assertPrints(reversed, "[5, 4, 3, 2, 1, 0]")
 
-        original.remove(5)
-        assertPrints(original, "[0, 1, 2, 3, 4]")
-        assertPrints(reversed, "[4, 3, 2, 1, 0]")
+        reversed.set(0, 10)
+        assertPrints(original, "[0, 1, 2, 3, 4, 10]")
+        assertPrints(reversed, "[10, 4, 3, 2, 1, 0]")
     }
 }
