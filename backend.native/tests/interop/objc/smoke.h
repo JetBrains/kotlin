@@ -55,3 +55,5 @@ Class (^ _Nonnull getClassGetter(NSObject* obj))(void);
 
 extern NSString* globalString;
 extern NSObject* globalObject;
+
+int formatStringLength(NSString* format, ...);

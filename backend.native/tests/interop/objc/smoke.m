@@ -60,3 +60,11 @@ Class (^ _Nonnull getClassGetter(NSObject* obj))() {
 
 NSString* globalString = @"Global string";
 NSObject* globalObject = nil;
+
+int formatStringLength(NSString* format, ...) {
+  va_list args;
+  va_start(args, format);
+  NSString* result = [[NSString alloc] initWithFormat:format arguments:args];
+  va_end(args);
+  return result.length;
+}

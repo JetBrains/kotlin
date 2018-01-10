@@ -60,6 +60,8 @@ fun run() {
         override fun description() = "global object"
     }
     println(globalObject)
+
+    println(formatStringLength("%d %d", 42, 17))
 }
 
 fun MutablePairProtocol.swap() {

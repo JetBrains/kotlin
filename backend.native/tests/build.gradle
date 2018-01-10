@@ -2332,6 +2332,7 @@ if (isMac()) {
         goldValue = "84\nFoo\nHello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
                 "true\ntrue\n" +
                 "Global string\nAnother global string\nnull\nglobal object\n" +
+                "5\n" +
                 "Deallocated\nDeallocated\n"
 
         source = "interop/objc/smoke.kt"
