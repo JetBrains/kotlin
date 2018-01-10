@@ -27,9 +27,11 @@ import org.jetbrains.kotlin.lexer.KtTokens
 /**
  * Parses the contents of a Markdown link in KDoc. Uses the standard Kotlin lexer.
  */
-class KDocLinkParser : PsiParser {
+class KDocLinkParser(val inlineLink: Boolean) : PsiParser {
     companion object {
-        @JvmStatic fun parseMarkdownLink(root: IElementType, chameleon: ASTNode): ASTNode {
+        @JvmStatic
+        @JvmOverloads
+        fun parseMarkdownLink(root: IElementType, chameleon: ASTNode, inlineLink: Boolean = false): ASTNode {
             val parentElement = chameleon.treeParent.psi
             val project = parentElement.project
             val builder = PsiBuilderFactory.getInstance().createBuilder(project,
@@ -37,7 +39,7 @@ class KDocLinkParser : PsiParser {
                                                                         KotlinLexer(),
                                                                         root.language,
                                                                         chameleon.text)
-            val parser = KDocLinkParser()
+            val parser = KDocLinkParser(inlineLink)
 
             return parser.parse(root, builder).firstChildNode
         }
@@ -49,7 +51,14 @@ class KDocLinkParser : PsiParser {
         if (hasLBracket) {
             builder.advanceLexer()
         }
-        parseQualifiedName(builder)
+        if (inlineLink) {
+            while (!builder.eof() && builder.tokenType != KtTokens.RBRACKET) {
+                builder.advanceLexer()
+            }
+        }
+        else {
+            parseQualifiedName(builder)
+        }
         if (hasLBracket) {
             if (!builder.eof() && builder.tokenType != KtTokens.RBRACKET) {
                 builder.error("Closing bracket expected")
@@ -59,6 +68,18 @@ class KDocLinkParser : PsiParser {
             }
             if (builder.tokenType == KtTokens.RBRACKET) {
                 builder.advanceLexer()
+            }
+            if (inlineLink) {
+                if (builder.tokenType == KtTokens.LPAR) {
+                    builder.advanceLexer()
+                    parseQualifiedName(builder)
+                    while (!builder.eof() && builder.tokenType != KtTokens.RPAR) {
+                        builder.advanceLexer()
+                    }
+                    if (builder.tokenType == KtTokens.RPAR) {
+                        builder.advanceLexer()
+                    }
+                }
             }
         }
         else {
@@ -85,6 +106,9 @@ class KDocLinkParser : PsiParser {
             builder.advanceLexer()
             marker.done(KDocElementTypes.KDOC_NAME)
             if (builder.tokenType != KtTokens.DOT) {
+                if (inlineLink && builder.tokenType == KtTokens.COLON) {
+                    marker.drop()
+                }
                 break
             }
             marker = marker.precede()

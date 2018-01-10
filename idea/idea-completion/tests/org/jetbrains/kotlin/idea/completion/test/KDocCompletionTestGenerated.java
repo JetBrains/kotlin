@@ -72,6 +72,12 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
         doTest(fileName);
     }
 
+    @TestMetadata("InlineLink.kt")
+    public void testInlineLink() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/InlineLink.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Link.kt")
     public void testLink() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/Link.kt");

@@ -65,7 +65,7 @@ class KotlinParserDefinition : ParserDefinition {
             is KtStubElementType<*, *> -> elementType.createPsiFromAst(astNode)
             KtNodeTypes.TYPE_CODE_FRAGMENT, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, KtNodeTypes.BLOCK_CODE_FRAGMENT -> ASTWrapperPsiElement(astNode)
             is KDocElementType -> elementType.createPsi(astNode)
-            KDocTokens.MARKDOWN_LINK -> KDocLink(astNode)
+            KDocTokens.MARKDOWN_LINK, KDocTokens.MARKDOWN_INLINE_LINK -> KDocLink(astNode)
             else -> (elementType as KtNodeType).createPsi(astNode)
         }
     }

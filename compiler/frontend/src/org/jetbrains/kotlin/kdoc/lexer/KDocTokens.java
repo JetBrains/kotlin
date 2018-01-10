@@ -66,7 +66,12 @@ public interface KDocTokens {
     };
 
     KDocToken MARKDOWN_ESCAPED_CHAR = new KDocToken("KDOC_MARKDOWN_ESCAPED_CHAR");
-    KDocToken MARKDOWN_INLINE_LINK = new KDocToken("KDOC_MARKDOWN_INLINE_LINK");
+    ILazyParseableElementType MARKDOWN_INLINE_LINK = new ILazyParseableElementType("KDOC_MARKDOWN_INLINE_LINK", KotlinLanguage.INSTANCE) {
+        @Override
+        public ASTNode parseContents(ASTNode chameleon) {
+            return KDocLinkParser.parseMarkdownLink(this, chameleon, true);
+        }
+    };
 
     TokenSet KDOC_HIGHLIGHT_TOKENS = TokenSet.create(START, END, LEADING_ASTERISK, TEXT, CODE_BLOCK_TEXT, MARKDOWN_LINK, MARKDOWN_ESCAPED_CHAR, MARKDOWN_INLINE_LINK);
     TokenSet CONTENT_TOKENS = TokenSet.create(TEXT, CODE_BLOCK_TEXT, TAG_NAME, MARKDOWN_LINK, MARKDOWN_ESCAPED_CHAR, MARKDOWN_INLINE_LINK);

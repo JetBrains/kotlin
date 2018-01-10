@@ -32,6 +32,9 @@ class KDocLink(node: ASTNode) : KtElementImpl(node) {
         if (text.startsWith('[') && text.endsWith(']')) {
             return TextRange(1, text.length - 1)
         }
+        if (text.startsWith('[') && text.endsWith(')')) {
+            return TextRange(text.indexOf('(') + 1, text.length - 1)
+        }
         return TextRange(0, text.length)
     }
 
