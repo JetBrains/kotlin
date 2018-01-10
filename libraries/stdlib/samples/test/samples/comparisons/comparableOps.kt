@@ -17,6 +17,7 @@
 package samples.comparisons
 
 import samples.*
+import java.time.DayOfWeek
 import kotlin.test.assertFailsWith
 
 class ComparableOps {
@@ -28,9 +29,22 @@ class ComparableOps {
     }
 
     @Sample
+    fun coerceAtLeastComparable() {
+        assertPrints(DayOfWeek.WEDNESDAY.coerceAtLeast(DayOfWeek.MONDAY), "WEDNESDAY")
+        assertPrints(DayOfWeek.WEDNESDAY.coerceAtLeast(DayOfWeek.FRIDAY), "FRIDAY")
+    }
+
+    @Sample
     fun coerceAtMost() {
         assertPrints(10.coerceAtMost(5), "5")
         assertPrints(10.coerceAtMost(20), "10")
+    }
+
+
+    @Sample
+    fun coerceAtMostComparable() {
+        assertPrints(DayOfWeek.FRIDAY.coerceAtMost(DayOfWeek.SATURDAY), "FRIDAY")
+        assertPrints(DayOfWeek.FRIDAY.coerceAtMost(DayOfWeek.WEDNESDAY), "WEDNESDAY")
     }
 
     @Sample
@@ -42,5 +56,14 @@ class ComparableOps {
         assertFailsWith<IllegalArgumentException> {
             10.coerceIn(100, 0)
         }
+    }
+
+    @Sample
+    fun coerceInComparable() {
+        val workingDays = DayOfWeek.MONDAY..DayOfWeek.FRIDAY
+        assertPrints(DayOfWeek.WEDNESDAY.coerceIn(workingDays), "WEDNESDAY")
+        assertPrints(DayOfWeek.SATURDAY.coerceIn(workingDays), "FRIDAY")
+
+        assertPrints(DayOfWeek.FRIDAY.coerceIn(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY), "SATURDAY")
     }
 }

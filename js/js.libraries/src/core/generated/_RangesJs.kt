@@ -652,7 +652,7 @@ public infix fun Short.until(to: Short): IntRange {
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
- * @sample samples.comparisons.ComparableOps.coerceAtLeast
+ * @sample samples.comparisons.ComparableOps.coerceAtLeastComparable
  */
 public fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T {
     return if (this < minimumValue) minimumValue else this
@@ -722,7 +722,7 @@ public fun Double.coerceAtLeast(minimumValue: Double): Double {
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
- * @sample samples.comparisons.ComparableOps.coerceAtMost
+ * @sample samples.comparisons.ComparableOps.coerceAtMostComparable
  */
 public fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T {
     return if (this > maximumValue) maximumValue else this
@@ -792,6 +792,7 @@ public fun Double.coerceAtMost(maximumValue: Double): Double {
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceInComparable
  */
 public fun <T: Comparable<T>> T.coerceIn(minimumValue: T?, maximumValue: T?): T {
     if (minimumValue !== null && maximumValue !== null) {
@@ -810,6 +811,7 @@ public fun <T: Comparable<T>> T.coerceIn(minimumValue: T?, maximumValue: T?): T 
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public fun Byte.coerceIn(minimumValue: Byte, maximumValue: Byte): Byte {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
@@ -822,6 +824,7 @@ public fun Byte.coerceIn(minimumValue: Byte, maximumValue: Byte): Byte {
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public fun Short.coerceIn(minimumValue: Short, maximumValue: Short): Short {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
@@ -834,6 +837,7 @@ public fun Short.coerceIn(minimumValue: Short, maximumValue: Short): Short {
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public fun Int.coerceIn(minimumValue: Int, maximumValue: Int): Int {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
@@ -846,6 +850,7 @@ public fun Int.coerceIn(minimumValue: Int, maximumValue: Int): Int {
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public fun Long.coerceIn(minimumValue: Long, maximumValue: Long): Long {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
@@ -858,6 +863,7 @@ public fun Long.coerceIn(minimumValue: Long, maximumValue: Long): Long {
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public fun Float.coerceIn(minimumValue: Float, maximumValue: Float): Float {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
@@ -870,6 +876,7 @@ public fun Float.coerceIn(minimumValue: Float, maximumValue: Float): Float {
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
@@ -899,7 +906,7 @@ public fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T 
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
- * @sample samples.comparisons.ComparableOps.coerceIn
+ * @sample samples.comparisons.ComparableOps.coerceInComparable
  */
 public fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T {
     if (range is ClosedFloatingPointRange) {
