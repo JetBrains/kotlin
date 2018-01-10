@@ -84,21 +84,6 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         return destination
     }
 
-    private fun java9BuildVersion(): Int? {
-        val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return null
-        val process = ProcessBuilder().command(File(jdk9Home, "bin/java").path, "--version").start()
-        val lines = process.inputStream.use {
-            it.reader().readLines().also {
-                process.waitFor()
-            }
-        }
-        if (process.exitValue() != 0) return null
-        val line = lines.getOrNull(1) ?: return null
-
-        val result = ".*\\(build 9(-ea)?\\+(\\d+)\\)".toRegex().matchEntire(line)?.groupValues ?: return null
-        return result[2].toIntOrNull()
-    }
-
     // -------------------------------------------------------
 
     fun testSimple() {
@@ -207,14 +192,6 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     }
 
     fun testAutomaticModuleNames() {
-        // Automatic module names are computed differently starting from some build of 9-ea
-        // TODO: remove this as soon as Java 9 is released and installed on all TeamCity agents
-        val version = java9BuildVersion()
-        if (version == null || version < 176) {
-            System.err.println("Java 9 build is not recognized or is too old (build $version), skipping the test")
-            return
-        }
-
         // This name should be sanitized to just "auto.mat1c.m0d.ule"
         val m1 = File(tmpdir, ".auto--mat1c-_-!@#\$%^&*()m0d_ule--1.0..0-release..jar")
         module("automatic-module1").renameTo(m1)
