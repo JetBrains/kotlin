@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -29,17 +28,16 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 abstract class IntrinsicMethod {
 
     open fun toCallable(
-            expression: IrMemberAccessExpression,
-            signature: JvmMethodSignature,
-            context: JvmBackendContext
+        expression: IrMemberAccessExpression,
+        signature: JvmMethodSignature,
+        context: JvmBackendContext
     ): IrIntrinsicFunction {
         TODO()
     }
 
-    open  fun toCallable(method: CallableMethod): Callable {
+    open fun toCallable(method: CallableMethod): Callable {
         throw UnsupportedOperationException("Not implemented")
     }
-
 
     companion object {
         fun calcReceiverType(call: IrMemberAccessExpression, context: JvmBackendContext): Type {
