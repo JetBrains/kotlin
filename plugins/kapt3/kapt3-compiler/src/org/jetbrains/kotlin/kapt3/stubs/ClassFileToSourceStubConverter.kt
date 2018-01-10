@@ -170,9 +170,13 @@ class ClassFileToSourceStubConverter(
     }
 
     private fun convertImports(file: KtFile, classDeclaration: JCClassDecl): JavacList<JCTree> {
-        val imports = mutableListOf<JCTree>()
+        val imports = mutableListOf<JCTree.JCImport>()
+        val importedShortNames = mutableSetOf<String>()
 
-        for (importDirective in file.importDirectives) {
+        // We prefer ordinary imports over aliased ones.
+        val sortedImportDirectives = file.importDirectives.partition { it.aliasName == null }.run { first + second }
+
+        for (importDirective in sortedImportDirectives) {
             // Qualified name should be valid Java fq-name
             val importedFqName = importDirective.importedFqName?.takeIf { it.pathSegments().size > 1 } ?: continue
             if (!isValidQualifiedName(importedFqName)) continue
@@ -191,6 +195,10 @@ class ClassFileToSourceStubConverter(
             imports += if (importDirective.isAllUnder) {
                 treeMaker.Import(treeMaker.Select(importedExpr, treeMaker.nameTable.names.asterisk), false)
             } else {
+                if (!importedShortNames.add(importedFqName.shortName().asString())) {
+                    continue
+                }
+
                 treeMaker.Import(importedExpr, false)
             }
         }
@@ -274,7 +282,7 @@ class ClassFileToSourceStubConverter(
             }?.desc ?: "()Z")
 
             val args = mapJList(constructorArguments.drop(2)) { convertLiteralExpression(getDefaultValue(it)) }
-            
+
             val def = data.correspondingClass?.let { convertClass(it, lineMappings, packageFqName, false) }
 
             convertField(data.field, clazz, lineMappings, packageFqName, treeMaker.NewClass(
@@ -405,7 +413,7 @@ class ClassFileToSourceStubConverter(
                                 ktTypeProvider = {
                                     val fieldOrigin = (kaptContext.origins[field]?.element as? KtCallableDeclaration)
                                             ?.takeIf { it !is KtFunction }
-                                    
+
                                     fieldOrigin?.typeReference
                                 },
                                 ifNonError = { signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type)) })

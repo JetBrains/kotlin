@@ -132,6 +132,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("importsKt22083.kt")
+    public void testImportsKt22083() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/importsKt22083.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inheritanceSimple.kt")
     public void testInheritanceSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/inheritanceSimple.kt");
