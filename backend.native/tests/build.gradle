@@ -1513,6 +1513,7 @@ task to_string0(type: RunKonanTest) {
 }
 
 task trim(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions
     goldValue = "OK\n"
     source = "runtime/text/trim.kt"
 }
