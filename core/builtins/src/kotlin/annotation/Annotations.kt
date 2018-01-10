@@ -16,6 +16,8 @@
 
 package kotlin.annotation
 
+import kotlin.annotation.AnnotationTarget.*
+
 /**
  * Contains the list of code elements which are the possible annotation targets
  */
@@ -70,8 +72,8 @@ public enum class AnnotationRetention {
 /**
  * This meta-annotation indicates the kinds of code elements which are possible targets of an annotation.
  *
- * If the target meta-annotation is not present on an annotation declaration, the annotation
- * is applicable to any code element, except type parameters, type usages, expressions, and files.
+ * If the target meta-annotation is not present on an annotation declaration, the annotation is applicable to the following elements:
+ * [CLASS], [PROPERTY], [FIELD], [LOCAL_VARIABLE], [VALUE_PARAMETER], [CONSTRUCTOR], [FUNCTION], [PROPERTY_GETTER], [PROPERTY_SETTER].
  *
  * @property allowedTargets list of allowed annotation targets
  */
