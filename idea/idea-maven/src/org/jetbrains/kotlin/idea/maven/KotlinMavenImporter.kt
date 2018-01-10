@@ -175,7 +175,6 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
                     }
                 }
             }
-            argsElement?.getChildren("arg")?.mapNotNullTo(this) { it.text }
         }
         parseCommandLineArguments(additionalArgs, arguments)
 
