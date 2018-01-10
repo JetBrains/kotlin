@@ -58,6 +58,7 @@ object ComparableOps : TemplateGroupBase() {
             Ensures that this value is not greater than the specified [maximumValue].
 
             @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+            @sample samples.comparisons.ComparableOps.coerceAtMost
             """
         }
         body {
