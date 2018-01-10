@@ -641,6 +641,7 @@ public expect fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public expect fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T
 
@@ -648,6 +649,7 @@ public expect fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public expect fun Int.coerceIn(range: ClosedRange<Int>): Int
 
@@ -655,6 +657,7 @@ public expect fun Int.coerceIn(range: ClosedRange<Int>): Int
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public expect fun Long.coerceIn(range: ClosedRange<Long>): Long
 
