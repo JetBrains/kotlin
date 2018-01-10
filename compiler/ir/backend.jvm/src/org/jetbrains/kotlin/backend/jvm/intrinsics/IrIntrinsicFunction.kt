@@ -82,7 +82,12 @@ open class IrIntrinsicFunction(
         TODO("not implemented for $this")
     }
 
-    open fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo):StackValue {
+    open fun genInvokeInstructionWithResult(v: InstructionAdapter): Type {
+        genInvokeInstruction(v)
+        return returnType
+    }
+
+    open fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
         val args = listOfNotNull(expression.dispatchReceiver, expression.extensionReceiver) +
                                     expression.descriptor.valueParameters.mapIndexed { i, descriptor ->
                        expression.getValueArgument(i) ?:
@@ -103,8 +108,7 @@ open class IrIntrinsicFunction(
                 genArg(irExpression, codegen, i, data)
             }
         }
-        genInvokeInstruction(v)
-        return StackValue.onStack(returnType)
+        return StackValue.onStack(genInvokeInstructionWithResult(v))
     }
 
     open fun genArg(expression: IrExpression, codegen: ExpressionCodegen, index: Int, data: BlockInfo) {
@@ -118,9 +122,19 @@ open class IrIntrinsicFunction(
                    argsTypes: List<Type> = expression.argTypes(context),
                    invokeInstuction: IrIntrinsicFunction.(InstructionAdapter) -> Unit): IrIntrinsicFunction {
             return object : IrIntrinsicFunction(expression, signature, context, argsTypes) {
-                override fun genInvokeInstruction(v: InstructionAdapter) {
-                    invokeInstuction(v)
-                }
+
+                override fun genInvokeInstruction(v: InstructionAdapter) = invokeInstuction(v)
+            }
+        }
+
+        fun createWithResult(expression: IrMemberAccessExpression,
+                   signature: JvmMethodSignature,
+                   context: JvmBackendContext,
+                   argsTypes: List<Type> = expression.argTypes(context),
+                   invokeInstuction: IrIntrinsicFunction.(InstructionAdapter) -> Type): IrIntrinsicFunction {
+            return object : IrIntrinsicFunction(expression, signature, context, argsTypes) {
+
+                override fun genInvokeInstructionWithResult(v: InstructionAdapter) = invokeInstuction(v)
             }
         }
 

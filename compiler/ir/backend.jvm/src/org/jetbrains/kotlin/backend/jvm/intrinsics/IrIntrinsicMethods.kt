@@ -39,6 +39,7 @@ class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
         irMapping.put(irBuiltIns.gteq0, compare)
         irMapping.put(irBuiltIns.enumValueOf, IrEnumValueOf())
         irMapping.put(irBuiltIns.noWhenBranchMatchedException, IrNoWhenBranchMatchedException())
+        irMapping.put(irBuiltIns.throwNpe, ThrowNPE())
     }
 
     fun getIntrinsic(descriptor: CallableMemberDescriptor): IntrinsicMethod? {
