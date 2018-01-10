@@ -282,11 +282,26 @@ class MethodInliner(
                             info = oldInfo
                         }
 
+                        val isContinuationCreate = isContinuation && oldInfo != null && resultNode.name == "create" &&
+                                resultNode.desc.startsWith("(" + CONTINUATION_ASM_TYPE.descriptor)
+
                         for (capturedParamDesc in info.allRecapturedParameters) {
-                            visitFieldInsn(
+                            if (capturedParamDesc.fieldName == THIS && isContinuationCreate) {
+                                // Common inliner logic doesn't support cases when transforming anonymous object can
+                                // be instantiated by itself.
+                                // To support such cases workaround with 'oldInfo' is used.
+                                // But it corresponds to outer context and a bit inapplicable for nested 'create' method context.
+                                // 'This' in outer context corresponds to outer instance in current
+                                visitFieldInsn(
+                                    Opcodes.GETSTATIC, owner,
+                                    CAPTURED_FIELD_FOLD_PREFIX + THIS_0, capturedParamDesc.type.descriptor
+                                )
+                            } else {
+                                visitFieldInsn(
                                     Opcodes.GETSTATIC, capturedParamDesc.containingLambdaName,
                                     CAPTURED_FIELD_FOLD_PREFIX + capturedParamDesc.fieldName, capturedParamDesc.type.descriptor
-                            )
+                                )
+                            }
                         }
                         super.visitMethodInsn(opcode, info.newClassName, name, info.newConstructorDescriptor, itf)
 

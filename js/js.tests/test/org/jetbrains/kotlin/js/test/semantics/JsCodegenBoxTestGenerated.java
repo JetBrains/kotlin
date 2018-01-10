@@ -6387,6 +6387,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
+        @TestMetadata("crossInlineWithCapturedOuterReceiver.kt")
+        public void testCrossInlineWithCapturedOuterReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/crossInlineWithCapturedOuterReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultParametersInSuspend.kt")
         public void testDefaultParametersInSuspend() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/defaultParametersInSuspend.kt");
