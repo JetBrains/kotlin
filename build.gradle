@@ -158,7 +158,11 @@ task gradlePluginJar {
     dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':shadowJar')
 }
 
-task uploadGradlePlugin {
+task gradlePluginCheck() {
+    dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':check')
+}
+
+task gradlePluginUpload {
     dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':bintrayUpload')
 }
 

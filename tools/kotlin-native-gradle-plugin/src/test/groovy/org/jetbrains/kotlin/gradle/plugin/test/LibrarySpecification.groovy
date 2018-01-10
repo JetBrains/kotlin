@@ -1,7 +1,5 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
-import spock.lang.Ignore
-
 class LibrarySpecification extends BaseKonanSpecification {
     
     def libraries = [

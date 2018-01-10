@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.GradleRunner
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.TargetManager
 
 import java.nio.file.Files
@@ -12,7 +11,9 @@ enum ArtifactType {
     PROGRAM("program"),
     LIBRARY("library"),
     BITCODE("bitcode"),
-    INTEROP("interop")
+    INTEROP("interop"),
+    DYNAMIC("dynamic"),
+    FRAMEWORK("framework")
 
     String type
     ArtifactType(String type) { this.type = type }
@@ -199,7 +200,6 @@ class KonanProject {
             konan.home=$konanHome
             ${!konanJvmArgs.isEmpty() ? "konan.jvmArgs=$konanJvmArgs\n" : ""}
         """.stripIndent())
-        println(propertiesFile.text)
         return propertiesFile
     }
 

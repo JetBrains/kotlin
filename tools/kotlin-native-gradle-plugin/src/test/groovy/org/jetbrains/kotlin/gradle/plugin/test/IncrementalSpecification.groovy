@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
-import spock.lang.IgnoreIf
 import spock.lang.Unroll
 
 class IncrementalSpecification extends BaseKonanSpecification {

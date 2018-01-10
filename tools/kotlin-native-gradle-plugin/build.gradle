@@ -97,7 +97,7 @@ test {
     if (project.hasProperty("konan.home")) {
         systemProperty("konan.home", project.property("konan.home"))
     } else {
-        dependsOn ':dist'
+        // The Koltin/Native compiler must be built before test execution.
         systemProperty("konan.home", distDir.absolutePath)
     }
     if (project.hasProperty("konan.jvmArgs")) {
@@ -108,6 +108,10 @@ test {
     if (project.hasProperty("maxParallelForks")) {
         maxParallelForks=project.property("maxParallelForks")
     }
+    if (project.hasProperty("filter")) {
+        filter.includeTestsMatching project.property("filter")
+    }
+
 }
 
 processResources {

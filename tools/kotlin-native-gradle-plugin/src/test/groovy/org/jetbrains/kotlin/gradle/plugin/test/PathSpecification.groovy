@@ -1,11 +1,49 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.TaskOutcome
+import org.jetbrains.kotlin.konan.target.TargetManager
 
 class PathSpecification extends BaseKonanSpecification {
 
     boolean fileExists(KonanProject project, String path) {
         project.konanBuildDir.toPath().resolve(path).toFile().exists()
+    }
+
+    def 'Plugin should provide a correct path to the artifacts created'() {
+        expect:
+        def project = KonanProject.createEmpty(
+                projectDirectory,
+                new TargetManager('host')
+                        .getTargets()
+                        .findAll { k, v -> v.enabled }
+                        .collect { k, v -> k }
+        ) { KonanProject it ->
+            it.generateSrcFile("main.kt")
+            it.generateDefFile("interop.def", "")
+            it.buildFile.append("""
+                konanArtifacts {
+                    program('program')
+                    library('library')
+                    bitcode('bitcode')
+                    interop('interop')
+                    framework('framework')
+                    dynamic('dynamic')
+                }
+
+                task checkArtifacts(type: DefaultTask) {
+                    dependsOn(':build')
+                    doLast {
+                        for(artifact in konanArtifacts) {
+                            for (target in artifact) {
+                                if (!target.artifact.exists()) throw new Exception("Artifact doesn't exist. Type: \${artifact.name}, target: \${target.target}")
+                            }
+                        }
+                    }
+                }
+            """.stripIndent())
+        }
+        project.createRunner().withArguments("checkArtifacts").build()
+
     }
 
     def 'Plugin should create all necessary directories'() {

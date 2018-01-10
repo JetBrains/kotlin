@@ -2,6 +2,9 @@ package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.TargetManager
+import spock.lang.Requires
 import spock.lang.Unroll
 
 class TaskSpecification extends BaseKonanSpecification {
@@ -53,6 +56,77 @@ class TaskSpecification extends BaseKonanSpecification {
         "includeDirs.headerFilterOnly" | "headerFilter=foo.h bar.h"
         "includeDirs.allHeaders"       | ""
         "includeDirs"                  | ""
+    }
+
+    @Requires({ TargetManager.host == KonanTarget.MACBOOK })
+    def 'Plugin should create framework tasks only for Apple targets'() {
+        when:
+        def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
+            it.buildFile.append("""
+                konan.targets = ['wasm32', 'macbook', 'iphone', 'iphone_sim']
+                
+                konanArtifacts {
+                    framework('foo')
+                }
+            """.stripIndent())
+        }
+        def result = project.createRunner().withArguments('tasks', '--all').build()
+
+        then:
+        !compilationTaskExists(result,'foo', 'wasm32')
+        compilationTaskExists (result,'foo', 'macbook')
+        compilationTaskExists (result,'foo', 'iphone')
+        compilationTaskExists (result,'foo', 'iphone_sim')
+    }
+
+    def 'Plugin should support different targets for different artifacts'() {
+        when:
+        def project = KonanProject.createEmpty(projectDirectory, ['host']) { KonanProject it ->
+            it.buildFile.append("""
+                konanArtifacts {
+                    program('defaultTarget')
+                    program('customTarget', targets: ['wasm32'])
+                    program('customTargets', targets: ['host', 'wasm32'])
+                }
+            """.stripIndent())
+        }
+        def result = project.createRunner().withArguments('tasks', '--all').build()
+        def hostName = TargetManager.getHostName()
+
+        then:
+        compilationTaskExists (result, 'defaultTarget', hostName)
+        !compilationTaskExists(result, 'defaultTarget', 'wasm32')
+        !compilationTaskExists(result, 'customTarget', hostName)
+        compilationTaskExists (result, 'customTarget', 'wasm32')
+        compilationTaskExists (result, 'customTargets', hostName)
+        compilationTaskExists (result, 'customTargets', 'wasm32')
+    }
+
+    def 'Plugin should not create dynamic task for wasm'() {
+        when:
+        def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
+            it.buildFile.append("""
+                konan.targets = ['wasm32']
+                
+                konanArtifacts {
+                    dynamic('foo')
+                }
+            """.stripIndent())
+        }
+        def result = project.createRunner().withArguments('tasks', '--all').build()
+
+        then:
+        !compilationTaskExists(result, 'foo', 'wasm32')
+    }
+
+
+    boolean taskExists(BuildResult result, String taskName) {
+        def taskNameForSearch = taskName.startsWith(':') ? taskName.substring(1) : taskName
+        return result.output.contains(taskNameForSearch)
+    }
+
+    boolean compilationTaskExists(BuildResult result, String artifactName, String targetName) {
+        return taskExists(result, KonanProject.compilationTask(artifactName, targetName))
     }
 
     BuildResult failOnPropertyAccess(KonanProject project, String property) {
