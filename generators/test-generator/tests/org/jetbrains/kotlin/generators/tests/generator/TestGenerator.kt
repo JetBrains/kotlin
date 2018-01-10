@@ -49,7 +49,14 @@ class TestGenerator(
         val out = StringBuilder()
         val p = Printer(out)
 
-        p.println(File("license/LICENSE.txt").readText(Charsets.UTF_8))
+        val year = GregorianCalendar()[Calendar.YEAR]
+        p.println(
+            """/*
+            | * Copyright 2000-$year JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+            | * that can be found in the license/LICENSE.txt file.
+            | */
+            |""".trimMargin()
+        )
         p.println("package ", suiteClassPackage, ";")
         p.println()
         p.println("import com.intellij.testFramework.TestDataPath;")
