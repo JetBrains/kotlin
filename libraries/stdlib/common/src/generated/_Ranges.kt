@@ -528,6 +528,7 @@ public expect fun Double.coerceAtLeast(minimumValue: Double): Double
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T
 
@@ -535,6 +536,7 @@ public expect fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Byte.coerceAtMost(maximumValue: Byte): Byte
 
@@ -542,6 +544,7 @@ public expect fun Byte.coerceAtMost(maximumValue: Byte): Byte
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Short.coerceAtMost(maximumValue: Short): Short
 
@@ -549,6 +552,7 @@ public expect fun Short.coerceAtMost(maximumValue: Short): Short
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Int.coerceAtMost(maximumValue: Int): Int
 
@@ -556,6 +560,7 @@ public expect fun Int.coerceAtMost(maximumValue: Int): Int
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Long.coerceAtMost(maximumValue: Long): Long
 
@@ -563,6 +568,7 @@ public expect fun Long.coerceAtMost(maximumValue: Long): Long
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Float.coerceAtMost(maximumValue: Float): Float
 
@@ -570,6 +576,7 @@ public expect fun Float.coerceAtMost(maximumValue: Float): Float
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Double.coerceAtMost(maximumValue: Double): Double
 

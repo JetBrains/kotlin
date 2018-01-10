@@ -26,4 +26,9 @@ class ComparableOps {
         assertPrints(10.coerceAtLeast(20), "20")
     }
 
+    @Sample
+    fun coerceAtMost() {
+        assertPrints(10.coerceAtMost(5), "5")
+        assertPrints(10.coerceAtMost(20), "10")
+    }
 }

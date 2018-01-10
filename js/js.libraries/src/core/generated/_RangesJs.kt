@@ -722,6 +722,7 @@ public fun Double.coerceAtLeast(minimumValue: Double): Double {
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T {
     return if (this > maximumValue) maximumValue else this
@@ -731,6 +732,7 @@ public fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T {
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public fun Byte.coerceAtMost(maximumValue: Byte): Byte {
     return if (this > maximumValue) maximumValue else this
@@ -740,6 +742,7 @@ public fun Byte.coerceAtMost(maximumValue: Byte): Byte {
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public fun Short.coerceAtMost(maximumValue: Short): Short {
     return if (this > maximumValue) maximumValue else this
@@ -749,6 +752,7 @@ public fun Short.coerceAtMost(maximumValue: Short): Short {
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public fun Int.coerceAtMost(maximumValue: Int): Int {
     return if (this > maximumValue) maximumValue else this
@@ -758,6 +762,7 @@ public fun Int.coerceAtMost(maximumValue: Int): Int {
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public fun Long.coerceAtMost(maximumValue: Long): Long {
     return if (this > maximumValue) maximumValue else this
@@ -767,6 +772,7 @@ public fun Long.coerceAtMost(maximumValue: Long): Long {
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public fun Float.coerceAtMost(maximumValue: Float): Float {
     return if (this > maximumValue) maximumValue else this
@@ -776,6 +782,7 @@ public fun Float.coerceAtMost(maximumValue: Float): Float {
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public fun Double.coerceAtMost(maximumValue: Double): Double {
     return if (this > maximumValue) maximumValue else this
