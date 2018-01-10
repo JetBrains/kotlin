@@ -46,6 +46,9 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     override val artifactSuffix: String
         @Internal get() = produce.kind.suffix(konanTarget)
 
+    override val artifactPrefix: String
+        @Internal get() = produce.kind.prefix(konanTarget)
+
     // Other compilation parameters -------------------------------------------
 
     protected val srcFiles_ = mutableSetOf<FileCollection>()

@@ -44,6 +44,9 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
     override val artifactSuffix: String
         @Internal get() = ".klib"
 
+    override val artifactPrefix: String
+        @Internal get() = ""
+
     // Interop stub generator parameters -------------------------------------
 
     @InputFile lateinit var defFile: File

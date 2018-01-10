@@ -62,18 +62,21 @@ abstract class KonanTargetableTask: DefaultTask() {
 abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
 
     open val artifact: File
-        @OutputFile get() = destinationDir.resolve(artifactNameWithSuffix)
+        @OutputFile get() = destinationDir.resolve(artifactFullName)
 
     @Internal lateinit var destinationDir: File
     @Internal lateinit var artifactName: String
 
-    protected val artifactNameWithSuffix: String
-        @Internal get() = "$artifactName$artifactSuffix"
+    protected val artifactFullName: String
+        @Internal get() = "$artifactPrefix$artifactName$artifactSuffix"
 
     val artifactPath: String
         @Internal get() = artifact.canonicalPath
 
     protected abstract val artifactSuffix: String
+        @Internal get
+
+    protected abstract val artifactPrefix: String
         @Internal get
 
     internal open fun init(destinationDir: File, artifactName: String, target: KonanTarget) {
