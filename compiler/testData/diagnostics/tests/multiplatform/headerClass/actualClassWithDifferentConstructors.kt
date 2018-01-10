@@ -11,6 +11,7 @@ expect class Bar2()
 expect class Bar3()
 expect class Bar4()
 expect class Bar5()
+expect class Bar6()
 
 // MODULE: m2-jvm(m1-common)
 
@@ -41,5 +42,9 @@ actual class Bar4(val s: String) {
 
 actual class Bar5 {
     actual constructor()
-    constructor(s: String)
+    constructor(<!UNUSED_PARAMETER!>s<!>: String)
+}
+
+class <!ACTUAL_MISSING!>Bar6<!> {
+    actual constructor()
 }
