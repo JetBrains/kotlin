@@ -17,6 +17,7 @@
 package samples.comparisons
 
 import samples.*
+import kotlin.test.assertFailsWith
 
 class ComparableOps {
 
@@ -30,5 +31,16 @@ class ComparableOps {
     fun coerceAtMost() {
         assertPrints(10.coerceAtMost(5), "5")
         assertPrints(10.coerceAtMost(20), "10")
+    }
+
+    @Sample
+    fun coerceIn() {
+        assertPrints(10.coerceIn(1, 100), "10")
+        assertPrints(10.coerceIn(1..100), "10")
+        assertPrints(0.coerceIn(1, 100), "1")
+        assertPrints(500.coerceIn(1, 100), "100")
+        assertFailsWith<IllegalArgumentException> {
+            10.coerceIn(100, 0)
+        }
     }
 }

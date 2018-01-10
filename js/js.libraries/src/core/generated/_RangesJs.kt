@@ -899,6 +899,7 @@ public fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T 
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T {
     if (range is ClosedFloatingPointRange) {
@@ -916,6 +917,7 @@ public fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T {
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public fun Int.coerceIn(range: ClosedRange<Int>): Int {
     if (range is ClosedFloatingPointRange) {
@@ -933,6 +935,7 @@ public fun Int.coerceIn(range: ClosedRange<Int>): Int {
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public fun Long.coerceIn(range: ClosedRange<Long>): Long {
     if (range is ClosedFloatingPointRange) {
