@@ -39,7 +39,7 @@ class Delegates {
     @Sample
     fun throwVetoableDelegate() {
         var max: Int by Delegates.vetoable(0) { property, oldValue, newValue ->
-            if (newValue > oldValue) true else throw(Throwable("New value must be larger than old value."))
+            if (newValue > oldValue) true else throw IllegalArgumentException("New value must be larger than old value.")
         }
 
         assertPrints(max, "0")
@@ -47,7 +47,7 @@ class Delegates {
         max = 10
         assertPrints(max, "10")
 
-        assertFailsWith<Throwable> { max = 5 }
+        assertFailsWith<IllegalArgumentException> { max = 5 }
     }
 
     @Sample
