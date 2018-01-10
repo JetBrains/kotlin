@@ -282,7 +282,8 @@ public fun <T : Comparable<T>> MutableList<T>.sort(): Unit = sortWith(Comparator
 public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
     if (size > 1) {
         val it = listIterator()
-        for (v in toTypedArray().apply { sortWith(comparator) }) {
+        val sortedArray = @Suppress("TYPE_PARAMETER_AS_REIFIED") toTypedArray().apply { sortWith(comparator) }
+        for (v in sortedArray) {
             it.next()
             it.set(v)
         }

@@ -24,6 +24,7 @@ package kotlin.collections
 @kotlin.internal.InlineExposed
 internal fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
     // TODO: special case for size == 0?
+    @Suppress("TYPE_PARAMETER_AS_REIFIED")
     return Array<E>(size)
 }
 
@@ -51,7 +52,7 @@ fun <E> Array<E>.copyOfNulls(fromIndex: Int, toIndex: Int): Array<E?> {
     if (newSize < 0) {
         throw IllegalArgumentException("$fromIndex > $toIndex")
     }
-    val result = arrayOfNulls<E>(newSize)
+    val result = @Suppress("TYPE_PARAMETER_AS_REIFIED") arrayOfNulls<E>(newSize)
     copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
     return result
 }

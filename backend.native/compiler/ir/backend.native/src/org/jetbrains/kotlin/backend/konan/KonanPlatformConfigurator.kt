@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
@@ -32,7 +33,10 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings
 object KonanPlatformConfigurator : PlatformConfigurator(
         DynamicTypesSettings(),
         additionalDeclarationCheckers = listOf(ExpectedActualDeclarationChecker),
-        additionalCallCheckers = listOf(),
+        additionalCallCheckers = listOf(
+                org.jetbrains.kotlin.resolve.jvm.checkers.SuperCallWithDefaultArgumentsChecker(),
+                ReifiedTypeParameterSubstitutionChecker()
+        ),
         additionalTypeCheckers = listOf(),
         additionalClassifierUsageCheckers = listOf(),
         additionalAnnotationCheckers = listOf(),

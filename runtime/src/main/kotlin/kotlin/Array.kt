@@ -23,6 +23,7 @@ import konan.internal.InlineConstructor
 public final class Array<T> {
     // Constructors are handled with compiler magic.
     @InlineConstructor
+    @Suppress("TYPE_PARAMETER_AS_REIFIED")
     public constructor(size: Int, init: (Int) -> T): this(size) {
         var index = 0
         while (index < size) {
