@@ -339,6 +339,27 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
+    fun testVarargWithSingleArg() {
+        myFixture.addClass("""
+            public @interface Annotation {
+                String[] value();
+            }
+        """.trimIndent())
+
+        myFixture.configureByText("AnnotatedClass.kt", """
+            @Annotation(value = "a")
+            open class AnnotatedClass
+        """.trimIndent())
+        myFixture.testHighlighting("Annotation.java", "AnnotatedClass.kt")
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("value") as PsiArrayInitializerMemberValue
+        assertTextAndRange("\"a\"", annotationAttributeVal)
+        for ((i, arg) in listOf("\"a\"").withIndex()) {
+            assertTextAndRange(arg, annotationAttributeVal.initializers[i])
+        }
+    }
+
     fun testVarargWithArrayLiteralAndSpread() {
         myFixture.addClass("""
             public @interface Annotation {

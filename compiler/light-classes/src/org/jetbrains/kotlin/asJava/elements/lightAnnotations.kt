@@ -194,15 +194,20 @@ class KtLightAnnotationForSourceEntry(
             delegate.initializers.mapIndexed { i, memberValue ->
                 wrapAnnotationValue(memberValue, this, {
                     originalExpression.let { ktOrigin ->
-                        when (ktOrigin) {
-                            is KtValueArgumentList -> ktOrigin.arguments.getOrNull(i)?.getArgumentExpression()
-                            is KtCallElement -> ktOrigin.valueArguments.getOrNull(i)?.getArgumentExpression()
-                            is KtCollectionLiteralExpression -> ktOrigin.getInnerExpressions().getOrNull(i)
+                        when {
+                            ktOrigin is KtValueArgumentList -> ktOrigin.arguments.getOrNull(i)?.getArgumentExpression()
+                            ktOrigin is KtCallElement -> ktOrigin.valueArguments.getOrNull(i)?.getArgumentExpression()
+                            ktOrigin is KtCollectionLiteralExpression -> ktOrigin.getInnerExpressions().getOrNull(i)
+                            delegate.initializers.size == 1 -> ktOrigin
                             else -> null
                         }.also {
                             if (it == null)
                                 LOG.error("error wrapping ${memberValue.javaClass} for ${ktOrigin?.javaClass} in ${ktOrigin?.containingFile}",
-                                          Attachment("source_fragments.txt", "origin: '${psiReport(ktOrigin)}', delegate: ${psiReport(delegate)}"))
+                                          Attachment(
+                                              "source_fragments.txt",
+                                              "origin: '${psiReport(ktOrigin)}', delegate: ${psiReport(delegate)}, parent: ${psiReport(parent)}"
+                                          )
+                                )
                         }
                     }
                 })
