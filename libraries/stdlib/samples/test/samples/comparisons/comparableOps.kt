@@ -66,4 +66,12 @@ class ComparableOps {
 
         assertPrints(DayOfWeek.FRIDAY.coerceIn(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY), "SATURDAY")
     }
+
+    @Sample
+    fun coerceInFloatingPointRange() {
+        assertPrints(10.1.coerceIn(1.0..10.0), "10.0")
+        assertPrints(9.9.coerceIn(1.0..10.0), "9.9")
+
+        assertFailsWith<IllegalArgumentException> { 9.9.coerceIn(1.0..Double.NaN) }
+    }
 }
