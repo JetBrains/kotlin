@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,20 +67,6 @@ val EAP_REPOSITORY = RepositoryDescription(
         "https://bintray.com/kotlin/kotlin-eap/kotlin/",
         isSnapshot = false)
 
-val EAP_11_REPOSITORY = RepositoryDescription(
-        "bintray.kotlin.eap",
-        "Bintray Kotlin 1.1 EAP Repository",
-        "http://dl.bintray.com/kotlin/kotlin-eap-1.1",
-        "https://bintray.com/kotlin/kotlin-eap-1.1/kotlin/",
-        isSnapshot = false)
-
-val EAP_12_REPOSITORY = RepositoryDescription(
-        "bintray.kotlin.eap",
-        "Bintray Kotlin 1.2 EAP Repository",
-        "http://dl.bintray.com/kotlin/kotlin-eap-1.2",
-        "https://bintray.com/kotlin/kotlin-eap-1.2/kotlin/",
-        isSnapshot = false)
-
 val MAVEN_CENTRAL = "mavenCentral()"
 
 val JCENTER = "jcenter()"
@@ -105,8 +91,6 @@ fun RepositoryDescription.toKotlinRepositorySnippet() = "maven {\n    setUrl(\"$
 
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY
-    useEapRepository(2, version) -> EAP_12_REPOSITORY
-    useEapRepository(1, version) -> EAP_11_REPOSITORY
     isEap(version) -> EAP_REPOSITORY
     else -> null
 }
@@ -263,11 +247,6 @@ fun isSnapshot(version: String): Boolean {
 
 fun isEap(version: String): Boolean {
     return version.contains("rc") || version.contains("eap")
-}
-
-fun useEapRepository(minorKotlinVersion: Int, version: String): Boolean {
-    return Regex("1\\.$minorKotlinVersion(\\.\\d\\d?)?-[A-Za-z][A-Za-z0-9-]*").matches(version) &&
-           !version.startsWith("1.$minorKotlinVersion.0-dev")
 }
 
 private class LibraryKindSearchScope(val module: Module,
