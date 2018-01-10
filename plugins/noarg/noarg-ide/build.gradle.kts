@@ -3,6 +3,8 @@ description = "Kotlin NoArg IDEA Plugin"
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     compile(project(":kotlin-noarg-compiler-plugin"))
     compile(project(":compiler:util"))

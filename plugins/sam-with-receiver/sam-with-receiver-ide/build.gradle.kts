@@ -3,6 +3,8 @@ description = "Kotlin SamWithReceiver IDEA Plugin"
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     compile(project(":kotlin-sam-with-receiver-compiler-plugin"))
     compile(project(":plugins:annotation-based-compiler-plugins-ide-support"))
