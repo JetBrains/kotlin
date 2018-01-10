@@ -155,6 +155,10 @@ internal class SpecialDeclarationsFactory(val context: Context) {
 }
 
 internal class Context(config: KonanConfig) : KonanBackendContext(config) {
+    override fun getClass(fqName: FqName): ClassDescriptor {
+        TODO("not implemented")
+    }
+
     lateinit var moduleDescriptor: ModuleDescriptor
 
     override val builtIns: KonanBuiltIns by lazy(PUBLICATION) {
