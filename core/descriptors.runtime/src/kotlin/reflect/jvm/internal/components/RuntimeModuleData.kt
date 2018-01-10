@@ -68,7 +68,7 @@ class RuntimeModuleData private constructor(
                     runtimePackagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
                     ReflectionTypes(module, notFoundClasses),
                     annotationTypeQualifierResolver,
-                    SignatureEnhancement(annotationTypeQualifierResolver),
+                    SignatureEnhancement(annotationTypeQualifierResolver, Jsr305State.DISABLED),
                     JavaClassesTracker.Default
             )
 

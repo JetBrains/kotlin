@@ -35,6 +35,11 @@ where advanced options include:
   -Xskip-runtime-version-check Allow Kotlin runtime libraries of incompatible versions in the classpath
   -Xstrict-java-nullability-assertions
                              Generate nullability assertions for non-null Java expressions
+  -Xsupport-compatqual-checker-framework-annotations=enable|disable
+
+                             Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
+                             Default value is 'enable'
+
   -Xuse-javac                Use javac for Java source and class files analysis
   -Xuse-old-class-files-reading Use old class files reading implementation (may slow down the build and should be used in case of problems with the new implementation)
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
