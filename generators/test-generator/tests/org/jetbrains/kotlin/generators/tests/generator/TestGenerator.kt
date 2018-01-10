@@ -1,223 +1,186 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.tests.generator;
+package org.jetbrains.kotlin.generators.tests.generator
 
-import kotlin.io.FilesKt;
-import kotlin.text.Charsets;
-import kotlin.text.StringsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
-import org.jetbrains.kotlin.test.TestMetadata;
-import org.jetbrains.kotlin.utils.Printer;
-import org.junit.runner.RunWith;
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.utils.Printer
+import org.junit.runner.RunWith
+import java.io.File
+import java.io.IOException
+import java.util.*
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+class TestGenerator(
+    baseDir: String,
+    suiteTestClassFqName: String,
+    baseTestClassFqName: String,
+    testClassModels: Collection<TestClassModel>
+) {
 
-import static kotlin.collections.CollectionsKt.single;
+    private val baseTestClassPackage: String
+    private val suiteClassPackage: String
+    private val suiteClassName: String
+    private val baseTestClassName: String
+    private val testClassModels: Collection<TestClassModel>
+    private val testSourceFilePath: String
 
-public class TestGenerator {
-    private static final Set<String> GENERATED_FILES = new HashSet<>();
-    private static final Class RUNNER = JUnit3RunnerWithInners.class;
+    init {
+        this.baseTestClassPackage = baseTestClassFqName.substringBeforeLast('.', "")
+        this.baseTestClassName = baseTestClassFqName.substringAfterLast('.', baseTestClassFqName)
+        this.suiteClassPackage = suiteTestClassFqName.substringBeforeLast('.', baseTestClassPackage)
+        this.suiteClassName = suiteTestClassFqName.substringAfterLast('.', suiteTestClassFqName)
+        this.testClassModels = ArrayList(testClassModels)
 
-    private final String baseTestClassPackage;
-    private final String suiteClassPackage;
-    private final String suiteClassName;
-    private final String baseTestClassName;
-    private final Collection<TestClassModel> testClassModels;
-    private final String testSourceFilePath;
-
-    public TestGenerator(
-            @NotNull String baseDir,
-            @NotNull String suiteTestClassFqName,
-            @NotNull String baseTestClassFqName,
-            @NotNull Collection<? extends TestClassModel> testClassModels
-    ) {
-        this.baseTestClassPackage = StringsKt.substringBeforeLast(baseTestClassFqName, '.', "");
-        this.baseTestClassName = StringsKt.substringAfterLast(baseTestClassFqName, '.', baseTestClassFqName);
-        this.suiteClassPackage = StringsKt.substringBeforeLast(suiteTestClassFqName, '.', baseTestClassPackage);
-        this.suiteClassName = StringsKt.substringAfterLast(suiteTestClassFqName, '.', suiteTestClassFqName);
-        this.testClassModels = new ArrayList<>(testClassModels);
-
-        this.testSourceFilePath = baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java";
+        this.testSourceFilePath = baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java"
 
         if (!GENERATED_FILES.add(testSourceFilePath)) {
-            throw new IllegalArgumentException("Same test file already generated in current session: " + testSourceFilePath);
+            throw IllegalArgumentException("Same test file already generated in current session: " + testSourceFilePath)
         }
     }
 
-    public void generateAndSave() throws IOException {
-        StringBuilder out = new StringBuilder();
-        Printer p = new Printer(out);
+    @Throws(IOException::class)
+    fun generateAndSave() {
+        val out = StringBuilder()
+        val p = Printer(out)
 
-        p.println(FilesKt.readText(new File("license/LICENSE.txt"), Charsets.UTF_8));
-        p.println("package ", suiteClassPackage, ";");
-        p.println();
-        p.println("import com.intellij.testFramework.TestDataPath;");
-        p.println("import ", RUNNER.getCanonicalName(), ";");
-        p.println("import " + KotlinTestUtils.class.getCanonicalName() + ";");
-        p.println("import " + TargetBackend.class.getCanonicalName() + ";");
-        if (!suiteClassPackage.equals(baseTestClassPackage)) {
-            p.println("import " + baseTestClassPackage + "." + baseTestClassName + ";");
+        p.println(File("license/LICENSE.txt").readText(Charsets.UTF_8))
+        p.println("package ", suiteClassPackage, ";")
+        p.println()
+        p.println("import com.intellij.testFramework.TestDataPath;")
+        p.println("import ", RUNNER.canonicalName, ";")
+        p.println("import " + KotlinTestUtils::class.java.canonicalName + ";")
+        p.println("import " + TargetBackend::class.java.canonicalName + ";")
+        if (suiteClassPackage != baseTestClassPackage) {
+            p.println("import $baseTestClassPackage.$baseTestClassName;")
         }
-        p.println("import " + TestMetadata.class.getCanonicalName() + ";");
-        p.println("import " + RunWith.class.getCanonicalName() + ";");
-        p.println();
-        p.println("import java.io.File;");
-        p.println("import java.util.regex.Pattern;");
-        p.println();
-        p.println("/** This class is generated by {@link ", KotlinTestUtils.TEST_GENERATOR_NAME, "}. DO NOT MODIFY MANUALLY */");
+        p.println("import " + TestMetadata::class.java.canonicalName + ";")
+        p.println("import " + RunWith::class.java.canonicalName + ";")
+        p.println()
+        p.println("import java.io.File;")
+        p.println("import java.util.regex.Pattern;")
+        p.println()
+        p.println("/** This class is generated by {@link ", KotlinTestUtils.TEST_GENERATOR_NAME, "}. DO NOT MODIFY MANUALLY */")
 
-        generateSuppressAllWarnings(p);
+        generateSuppressAllWarnings(p)
 
-        TestClassModel model;
-        if (testClassModels.size() == 1) {
-            model = new DelegatingTestClassModel(single(testClassModels)) {
-                @NotNull
-                @Override
-                public String getName() {
-                    return suiteClassName;
-                }
-            };
-        }
-        else {
-            model = new TestClassModel() {
-                @NotNull
-                @Override
-                public Collection<TestClassModel> getInnerTestClasses() {
-                    return testClassModels;
-                }
+        val model: TestClassModel
+        if (testClassModels.size == 1) {
+            model = object : DelegatingTestClassModel(testClassModels.single()) {
+                override val name: String
+                    get() = suiteClassName
+            }
+        } else {
+            model = object : TestClassModel {
+                override val innerTestClasses: Collection<TestClassModel>
+                    get() = testClassModels
 
-                @NotNull
-                @Override
-                public Collection<MethodModel> getMethods() {
-                    return Collections.emptyList();
-                }
+                override val methods: Collection<MethodModel>
+                    get() = emptyList()
 
-                @Override
-                public boolean isEmpty() {
-                    return false;
-                }
+                override val isEmpty: Boolean
+                    get() = false
 
-                @NotNull
-                @Override
-                public String getName() {
-                    return suiteClassName;
-                }
+                override val name: String
+                    get() = suiteClassName
 
-                @Override
-                public String getDataString() {
-                    return null;
-                }
+                override val dataString: String?
+                    get() = null
 
-                @Nullable
-                @Override
-                public String getDataPathRoot() {
-                    return null;
-                }
-            };
+                override val dataPathRoot: String?
+                    get() = null
+            }
         }
 
-        generateTestClass(p, model, false);
+        generateTestClass(p, model, false)
 
-        File testSourceFile = new File(testSourceFilePath);
-        GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, out.toString(), false);
+        val testSourceFile = File(testSourceFilePath)
+        GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, out.toString(), false)
     }
 
-    private void generateTestClass(Printer p, TestClassModel testClassModel, boolean isStatic) {
-        String staticModifier = isStatic ? "static " : "";
+    private fun generateTestClass(p: Printer, testClassModel: TestClassModel, isStatic: Boolean) {
+        val staticModifier = if (isStatic) "static " else ""
 
-        generateMetadata(p, testClassModel);
-        generateTestDataPath(p, testClassModel);
-        p.println("@RunWith(", RUNNER.getSimpleName(), ".class)");
+        generateMetadata(p, testClassModel)
+        generateTestDataPath(p, testClassModel)
+        p.println("@RunWith(", RUNNER.simpleName, ".class)")
 
-        p.println("public " + staticModifier + "class ", testClassModel.getName(), " extends ", baseTestClassName, " {");
-        p.pushIndent();
+        p.println("public " + staticModifier + "class ", testClassModel.name, " extends ", baseTestClassName, " {")
+        p.pushIndent()
 
-        Collection<MethodModel> testMethods = testClassModel.getMethods();
-        Collection<TestClassModel> innerTestClasses = testClassModel.getInnerTestClasses();
+        val testMethods = testClassModel.methods
+        val innerTestClasses = testClassModel.innerTestClasses
 
-        boolean first = true;
+        var first = true
 
-        for (MethodModel methodModel : testMethods) {
-            if (!methodModel.shouldBeGenerated()) continue;
+        for (methodModel in testMethods) {
+            if (!methodModel.shouldBeGenerated()) continue
 
             if (first) {
-                first = false;
-            }
-            else {
-                p.println();
+                first = false
+            } else {
+                p.println()
             }
 
-            generateTestMethod(p, methodModel);
+            generateTestMethod(p, methodModel)
         }
 
-        for (TestClassModel innerTestClass : innerTestClasses) {
-            if (!innerTestClass.isEmpty()) {
+        for (innerTestClass in innerTestClasses) {
+            if (!innerTestClass.isEmpty) {
                 if (first) {
-                    first = false;
-                }
-                else {
-                    p.println();
+                    first = false
+                } else {
+                    p.println()
                 }
 
-                generateTestClass(p, innerTestClass, true);
+                generateTestClass(p, innerTestClass, true)
             }
         }
 
-        p.popIndent();
-        p.println("}");
+        p.popIndent()
+        p.println("}")
     }
 
-    private static void generateTestMethod(Printer p, MethodModel methodModel) {
-        generateMetadata(p, methodModel);
-        
-        methodModel.generateSignature(p);
-        p.printWithNoIndent(" {");
-        p.println();
-        
-        p.pushIndent();
+    companion object {
+        private val GENERATED_FILES = HashSet<String>()
+        private val RUNNER = JUnit3RunnerWithInners::class.java
 
-        methodModel.generateBody(p);
+        private fun generateTestMethod(p: Printer, methodModel: MethodModel) {
+            generateMetadata(p, methodModel)
 
-        p.popIndent();
-        p.println("}");
-    }
+            methodModel.generateSignature(p)
+            p.printWithNoIndent(" {")
+            p.println()
 
-    private static void generateMetadata(Printer p, TestEntityModel testDataSource) {
-        String dataString = testDataSource.getDataString();
-        if (dataString != null) {
-            p.println("@TestMetadata(\"", dataString, "\")");
+            p.pushIndent()
+
+            methodModel.generateBody(p)
+
+            p.popIndent()
+            p.println("}")
         }
-    }
 
-    private static void generateTestDataPath(Printer p, TestClassModel testClassModel) {
-        String dataPathRoot = testClassModel.getDataPathRoot();
-        if (dataPathRoot != null) {
-            p.println("@TestDataPath(\"", dataPathRoot, "\")");
+        private fun generateMetadata(p: Printer, testDataSource: TestEntityModel) {
+            val dataString = testDataSource.dataString
+            if (dataString != null) {
+                p.println("@TestMetadata(\"", dataString, "\")")
+            }
         }
-    }
 
-    private static void generateSuppressAllWarnings(Printer p) {
-        p.println("@SuppressWarnings(\"all\")");
+        private fun generateTestDataPath(p: Printer, testClassModel: TestClassModel) {
+            val dataPathRoot = testClassModel.dataPathRoot
+            if (dataPathRoot != null) {
+                p.println("@TestDataPath(\"", dataPathRoot, "\")")
+            }
+        }
+
+        private fun generateSuppressAllWarnings(p: Printer) {
+            p.println("@SuppressWarnings(\"all\")")
+        }
     }
 }
