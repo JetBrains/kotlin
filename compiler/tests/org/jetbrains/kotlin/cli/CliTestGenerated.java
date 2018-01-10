@@ -99,6 +99,30 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("compatqualDefault.args")
+        public void testCompatqualDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/compatqualDefault.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("compatqualDisable.args")
+        public void testCompatqualDisable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/compatqualDisable.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("compatqualEnable.args")
+        public void testCompatqualEnable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/compatqualEnable.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("compatqualWrong.args")
+        public void testCompatqualWrong() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/compatqualWrong.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("conflictingOverloads.args")
         public void testConflictingOverloads() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/conflictingOverloads.args");

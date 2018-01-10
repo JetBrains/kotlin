@@ -16,13 +16,10 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.utils.Jsr305State
-import org.jetbrains.kotlin.utils.ReportLevel
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -192,6 +189,17 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var jsr305: Array<String>? by FreezableVar(null)
 
     @Argument(
+        value = "-Xsupport-compatqual-checker-framework-annotations",
+        valueDescription = "enable|disable",
+        description =
+        """
+Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
+Default value is 'enable'
+"""
+    )
+    var supportCompatqualCheckerFrameworkAnnotations: String? by FreezableVar(null)
+
+    @Argument(
             value = "-Xno-exception-on-explicit-equals-for-boxed-null",
             description = "Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type"
     )
@@ -202,7 +210,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
-        result[AnalysisFlag.jsr305] = Jsr305Parser(collector).parse(jsr305)
+        result[AnalysisFlag.jsr305] = Jsr305Parser(collector).parse(
+            jsr305,
+            supportCompatqualCheckerFrameworkAnnotations
+        )
         return result
     }
 }

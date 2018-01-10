@@ -33,7 +33,8 @@ enum class ReportLevel(val description: String) {
 data class Jsr305State(
         val global: ReportLevel,
         val migration: ReportLevel?,
-        val user: Map<String, ReportLevel>
+        val user: Map<String, ReportLevel>,
+        val enableCompatqualCheckerFrameworkAnnotations: Boolean = COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE
 ) {
     val description: Array<String> by lazy {
         val result = mutableListOf<String>()
@@ -51,6 +52,8 @@ data class Jsr305State(
     val disabled: Boolean get() = this === DISABLED
 
     companion object {
+        const val COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE = true
+
         @JvmField
         val DEFAULT: Jsr305State = Jsr305State(ReportLevel.WARN, null, emptyMap())
 
