@@ -337,11 +337,14 @@ class ExpressionCodegen(
     private fun generateFieldValue(expression: IrFieldAccessExpression, data: BlockInfo): StackValue {
         val receiverValue = expression.receiver?.accept(this, data) ?: StackValue.none()
         val propertyDescriptor = expression.descriptor
-        val fieldType = typeMapper.mapType(propertyDescriptor.type)
+
+        val realDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor)
+        val fieldType = typeMapper.mapType(realDescriptor.original.type)
         val ownerType = typeMapper.mapImplementationOwner(propertyDescriptor)
         val fieldName = propertyDescriptor.name.asString()
         val isStatic = expression.receiver == null // TODO
-        return StackValue.field(fieldType, ownerType, fieldName, isStatic, receiverValue, propertyDescriptor)
+
+        return StackValue.field(fieldType, ownerType, fieldName, isStatic, receiverValue, realDescriptor)
     }
 
     override fun visitGetField(expression: IrGetField, data: BlockInfo): StackValue {
