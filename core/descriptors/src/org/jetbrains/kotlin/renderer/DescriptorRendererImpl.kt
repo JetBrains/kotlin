@@ -634,7 +634,7 @@ internal class DescriptorRendererImpl(
 
                 if (includeAdditionalModifiers) {
                     renderAdditionalModifiers(function, builder)
-                } else if (includeSuspendModifier) {
+                } else {
                     renderSuspendModifier(function, builder)
                 }
 

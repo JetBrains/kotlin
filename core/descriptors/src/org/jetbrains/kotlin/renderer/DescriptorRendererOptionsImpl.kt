@@ -108,8 +108,6 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
 
     override var includeAdditionalModifiers: Boolean by property(true)
 
-    override var includeSuspendModifier: Boolean by property(true)
-
     override var parameterNamesInFunctionalTypes: Boolean by property(true)
 
     override var renderFunctionContracts: Boolean by property(false)

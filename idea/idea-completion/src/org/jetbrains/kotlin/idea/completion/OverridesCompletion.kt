@@ -50,7 +50,6 @@ class OverridesCompletion(
     private val PRESENTATION_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
         modifiers = emptySet()
         includeAdditionalModifiers = false
-        includeSuspendModifier = true
     }
 
     fun complete(position: PsiElement, declaration: KtCallableDeclaration?) {
