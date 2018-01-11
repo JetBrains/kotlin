@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.idea.spring.tests
 
 import com.intellij.facet.impl.FacetUtil
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import com.intellij.spring.facet.SpringFacet
 import com.intellij.spring.facet.SpringFileSet
-import com.intellij.spring.settings.SpringGeneralSettings
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.util.PathUtil
@@ -87,9 +85,4 @@ fun configureSpringFileSetByDirective(module: Module, directives: String, psiFil
     if (!InTextDirectivesUtils.isDirectiveDefined(directives, "// CONFIGURE_SPRING_FILE_SET")) return
     val fileSet = SpringFacet.getInstance(module)!!.addFileSet("default", "default")!!
     psiFiles.forEach { fileSet.addFile(it.virtualFile) }
-}
-
-fun forbidSpringFileSetAutoConfigureByDirective(project: Project, directives: String) {
-    if (!InTextDirectivesUtils.isDirectiveDefined(directives, "// FORBID_SPRING_FILE_SET_AUTOCONFIGURE")) return
-    SpringGeneralSettings.getInstance(project).isAllowAutoConfigurationMode = false
 }
