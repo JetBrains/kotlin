@@ -9,15 +9,20 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.StatementFilter
+import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -188,6 +193,75 @@ internal fun KotlinCallArgument.setResultDataFlowInfoIfRelevant(resultDataFlowIn
     if (this is PSIFunctionKotlinCallArgument) {
         lambdaInitialDataFlowInfo = resultDataFlowInfo
     }
+}
+
+fun processFunctionalExpression(
+    outerCallContext: BasicCallResolutionContext,
+    argumentExpression: KtExpression,
+    startDataFlowInfo: DataFlowInfo,
+    valueArgument: ValueArgument,
+    argumentName: Name?,
+    builtIns: KotlinBuiltIns,
+    typeResolver: TypeResolver
+): PSIKotlinCallArgument? {
+    val expression = ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(argumentExpression, outerCallContext) ?: return null
+    val postponedExpression = if (expression is KtFunctionLiteral) expression.getParentOfType<KtLambdaExpression>(true) else expression
+
+    val lambdaArgument: PSIKotlinCallArgument? = when (postponedExpression) {
+        is KtLambdaExpression ->
+            LambdaKotlinCallArgumentImpl(
+                outerCallContext, valueArgument, startDataFlowInfo, argumentName, postponedExpression, argumentExpression,
+                resolveParametersTypes(outerCallContext, postponedExpression.functionLiteral, typeResolver)
+            )
+
+        is KtNamedFunction -> {
+            val receiverType = resolveType(outerCallContext, postponedExpression.receiverTypeReference, typeResolver)
+            val parametersTypes = resolveParametersTypes(outerCallContext, postponedExpression, typeResolver) ?: emptyArray()
+            val returnType = resolveType(outerCallContext, postponedExpression.typeReference, typeResolver)
+                    ?: if (postponedExpression.hasBlockBody()) builtIns.unitType else null
+
+            FunctionExpressionImpl(
+                outerCallContext, valueArgument, startDataFlowInfo, argumentName,
+                argumentExpression, postponedExpression, receiverType, parametersTypes, returnType
+            )
+        }
+
+        else -> return null
+    }
+
+    checkNoSpread(outerCallContext, valueArgument)
+
+    return lambdaArgument
+}
+
+fun checkNoSpread(context: BasicCallResolutionContext, valueArgument: ValueArgument) {
+    valueArgument.getSpreadElement()?.let {
+        context.trace.report(Errors.SPREAD_OF_LAMBDA_OR_CALLABLE_REFERENCE.on(it))
+    }
+}
+
+private fun resolveParametersTypes(
+    context: BasicCallResolutionContext,
+    ktFunction: KtFunction,
+    typeResolver: TypeResolver
+): Array<UnwrappedType?>? {
+    val parameterList = ktFunction.valueParameterList ?: return null
+
+    return Array(parameterList.parameters.size) {
+        parameterList.parameters[it]?.typeReference?.let { resolveType(context, it, typeResolver) }
+    }
+}
+
+internal fun resolveType(
+    context: BasicCallResolutionContext,
+    typeReference: KtTypeReference?,
+    typeResolver: TypeResolver
+): UnwrappedType? {
+    if (typeReference == null) return null
+
+    val type = typeResolver.resolveType(context.scope, typeReference, context.trace, checkBounds = true)
+    ForceResolveUtil.forceResolveAllContents(type)
+    return type.unwrap()
 }
 
 

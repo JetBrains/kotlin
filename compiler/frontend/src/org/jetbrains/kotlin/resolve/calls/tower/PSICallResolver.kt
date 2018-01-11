@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.EffectSystem
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
@@ -157,7 +154,7 @@ class PSICallResolver(
         KotlinResolutionCallbacksImpl(
             trace, expressionTypingServices, typeApproximator,
             argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
-            constantExpressionEvaluator, dataFlowValueFactory, inferenceSession
+            dataFlowValueFactory, inferenceSession, constantExpressionEvaluator, typeResolver
         )
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
@@ -540,14 +537,6 @@ class PSICallResolver(
             else -> error("Incorrect receiver: $oldReceiver")
         }
 
-    private fun resolveType(context: BasicCallResolutionContext, typeReference: KtTypeReference?): UnwrappedType? {
-        if (typeReference == null) return null
-
-        val type = typeResolver.resolveType(context.scope, typeReference, context.trace, checkBounds = true)
-        ForceResolveUtil.forceResolveAllContents(type)
-        return type.unwrap()
-    }
-
     private fun resolveTypeArguments(context: BasicCallResolutionContext, typeArguments: List<KtTypeProjection>): List<TypeArgument> =
         typeArguments.map { projection ->
             if (projection.projectionKind != KtProjectionKind.NONE) {
@@ -555,7 +544,7 @@ class PSICallResolver(
             }
             ModifierCheckerCore.check(projection, context.trace, null, languageVersionSettings)
 
-            resolveType(context, projection.typeReference)?.let { SimpleTypeArgumentImpl(projection.typeReference!!, it) }
+            resolveType(context, projection.typeReference, typeResolver)?.let { SimpleTypeArgumentImpl(projection.typeReference!!, it) }
                     ?: TypeArgumentPlaceholder
         }
 
@@ -584,7 +573,10 @@ class PSICallResolver(
 
         val argumentName = valueArgument.getArgumentName()?.asName
 
-        processFunctionalExpression(outerCallContext, argumentExpression, startDataFlowInfo, valueArgument, argumentName, builtIns)?.let {
+        processFunctionalExpression(
+            outerCallContext, argumentExpression, startDataFlowInfo,
+            valueArgument, argumentName, builtIns, typeResolver
+        )?.let {
             return it
         }
 
@@ -646,57 +638,5 @@ class PSICallResolver(
         // argumentExpression instead of ktExpression is hack -- type info should be stored also for parenthesized expression
         val typeInfo = expressionTypingServices.getTypeInfo(argumentExpression, context)
         return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: parseErrorArgument
-    }
-
-    private fun processFunctionalExpression(
-        outerCallContext: BasicCallResolutionContext,
-        argumentExpression: KtExpression,
-        startDataFlowInfo: DataFlowInfo,
-        valueArgument: ValueArgument,
-        argumentName: Name?,
-        builtIns: KotlinBuiltIns
-    ): PSIKotlinCallArgument? {
-        val expression = ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(argumentExpression, outerCallContext) ?: return null
-        val postponedExpression = if (expression is KtFunctionLiteral) expression.getParentOfType<KtLambdaExpression>(true) else expression
-
-        val lambdaArgument: PSIKotlinCallArgument? = when (postponedExpression) {
-            is KtLambdaExpression ->
-                LambdaKotlinCallArgumentImpl(
-                    outerCallContext, valueArgument, startDataFlowInfo, argumentName, postponedExpression,
-                    argumentExpression, resolveParametersTypes(outerCallContext, postponedExpression.functionLiteral)
-                )
-
-            is KtNamedFunction -> {
-                val receiverType = resolveType(outerCallContext, postponedExpression.receiverTypeReference)
-                val parametersTypes = resolveParametersTypes(outerCallContext, postponedExpression) ?: emptyArray()
-                val returnType = resolveType(outerCallContext, postponedExpression.typeReference)
-                        ?: if (postponedExpression.hasBlockBody()) builtIns.unitType else null
-
-                FunctionExpressionImpl(
-                    outerCallContext, valueArgument, startDataFlowInfo, argumentName,
-                    argumentExpression, postponedExpression, receiverType, parametersTypes, returnType
-                )
-            }
-
-            else -> return null
-        }
-
-        checkNoSpread(outerCallContext, valueArgument)
-
-        return lambdaArgument
-    }
-
-    private fun checkNoSpread(context: BasicCallResolutionContext, valueArgument: ValueArgument) {
-        valueArgument.getSpreadElement()?.let {
-            context.trace.report(Errors.SPREAD_OF_LAMBDA_OR_CALLABLE_REFERENCE.on(it))
-        }
-    }
-
-    private fun resolveParametersTypes(context: BasicCallResolutionContext, ktFunction: KtFunction): Array<UnwrappedType?>? {
-        val parameterList = ktFunction.valueParameterList ?: return null
-
-        return Array(parameterList.parameters.size) {
-            parameterList.parameters[it]?.typeReference?.let { resolveType(context, it) }
-        }
     }
 }

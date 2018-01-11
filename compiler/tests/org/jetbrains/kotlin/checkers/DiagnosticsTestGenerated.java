@@ -10903,6 +10903,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("returnLambdaFromLambda.kt")
+                public void testReturnLambdaFromLambda() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/returnLambdaFromLambda.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("subtypeConstraintOnNullableType.kt")
                 public void testSubtypeConstraintOnNullableType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/subtypeConstraintOnNullableType.kt");
