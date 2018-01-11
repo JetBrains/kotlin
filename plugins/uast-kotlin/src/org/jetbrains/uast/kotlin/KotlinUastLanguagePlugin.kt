@@ -80,7 +80,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         if (!element.isJvmElement) return null
         return convertDeclarationOrElement(element, parent, requiredType)
     }
-
+    
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
         if (!element.isJvmElement) return null
         if (element is PsiFile) return convertDeclaration(element, null, requiredType)
@@ -117,7 +117,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return null
         val resultingDescriptor = resolvedCall.resultingDescriptor
         if (resultingDescriptor !is FunctionDescriptor || resultingDescriptor.name.asString() != methodName) return null
-
+        
         val parent = element.parent
         val parentUElement = convertElementWithParent(parent, null) ?: return null
 
@@ -134,7 +134,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         if (element !is KtCallExpression) return null
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return null
         val resultingDescriptor = resolvedCall.resultingDescriptor
-        if (resultingDescriptor !is ConstructorDescriptor
+        if (resultingDescriptor !is ConstructorDescriptor 
                 || resultingDescriptor.returnType.constructor.declarationDescriptor?.name?.asString() != fqName) {
             return null
         }
@@ -151,13 +151,9 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     internal fun convertDeclaration(element: PsiElement,
                                    givenParent: UElement?,
                                    requiredType: Class<out UElement>?): UElement? {
-        fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? = { ctor(element as P, givenParent) }
-
-        fun <P : PsiElement, K : KtElement> buildKt(ktElement: K, ctor: (P, K, UElement?) -> UElement): () -> UElement? =
-                { ctor(element as P, ktElement, givenParent) }
-
-        fun <P : PsiElement, K : KtElement> buildKtOpt(ktElement: K?, ctor: (P, K?, UElement?) -> UElement): () -> UElement? =
-                { ctor(element as P, ktElement, givenParent) }
+        fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? {
+            return { ctor(element as P, givenParent) }
+        }
 
         val original = element.originalElement
         return with(requiredType) {
@@ -169,11 +165,10 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                     }
                     else -> el<UClass> { KotlinUClass.create(original, givenParent) }
                 }
-                is KtLightFieldImpl.KtLightEnumConstant -> el<UEnumConstant>(buildKtOpt(original.kotlinOrigin, ::KotlinUEnumConstant))
-                is KtLightField -> el<UField>(buildKtOpt(original.kotlinOrigin, ::KotlinUField))
-                is KtLightParameter -> el<UParameter>(buildKtOpt(original.kotlinOrigin, ::KotlinUParameter))
-                is UastKotlinPsiParameter -> el<UParameter>(buildKt(original.ktParameter, ::KotlinUParameter))
-                is UastKotlinPsiVariable -> el<UVariable>(buildKt(original.ktElement, ::KotlinUVariable))
+                is KtLightFieldImpl.KtLightEnumConstant -> el<UEnumConstant>(build(::KotlinUEnumConstant))
+                is KtLightField -> el<UField>(build(::KotlinUField))
+                is KtLightParameter, is UastKotlinPsiParameter -> el<UParameter>(build(::KotlinUParameter))
+                is UastKotlinPsiVariable -> el<UVariable>(build(::KotlinUVariable))
 
                 is KtEnumEntry -> el<UEnumConstant> {
                     convertEnumEntry(original, givenParent)
@@ -220,7 +215,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                     val ownerFunction = original.ownerFunction as? KtFunction ?: return null
                     val lightMethod = LightClassUtil.getLightClassMethod(ownerFunction) ?: return null
                     val lightParameter = lightMethod.parameterList.parameters.find { it.name == original.name } ?: return null
-                    KotlinUParameter(lightParameter, original, givenParent)
+                    KotlinUParameter(lightParameter, givenParent)
                 }
 
                 is KtFile -> el<UFile> { KotlinUFile(original, this@KotlinUastLanguagePlugin) }
@@ -246,7 +241,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     private fun convertEnumEntry(original: KtEnumEntry, givenParent: UElement?): UElement? {
         return LightClassUtil.getLightClassBackingField(original)?.let { psiField ->
             if (psiField is KtLightFieldImpl.KtLightEnumConstant) {
-                KotlinUEnumConstant(psiField, psiField.kotlinOrigin, givenParent)
+                KotlinUEnumConstant(psiField, givenParent)
             }
             else {
                 null
@@ -280,7 +275,7 @@ private fun convertNonLocalProperty(property: KtProperty,
     val methods = LightClassUtil.getLightClassPropertyMethods(property)
     return methods.backingField?.let { backingField ->
         with(requiredType) {
-            el<UField> { KotlinUField(backingField, (backingField as? KtLightElement<*,*>)?.kotlinOrigin,  givenParent) }
+            el<UField> { KotlinUField(backingField, givenParent) }
         }
     } ?: methods.getter?.let { getter ->
         KotlinUastLanguagePlugin().convertDeclaration(getter, givenParent, requiredType)
@@ -310,7 +305,7 @@ internal object KotlinConverter {
                 val declarationsExpression = KotlinUDeclarationsExpression(givenParent)
                 declarationsExpression.apply {
                     declarations = element.parameters.mapIndexed { i, p ->
-                        KotlinUParameter(UastKotlinPsiParameter.create(p, element, declarationsExpression, i), p, this)
+                        KotlinUParameter(UastKotlinPsiParameter.create(p, element, declarationsExpression, i), this)
                     }
                 }
             }
@@ -320,7 +315,7 @@ internal object KotlinConverter {
                 if (element is KtProperty && !element.isLocal) {
                     el<UField> {
                         LightClassUtil.getLightClassBackingField(element)?.let {
-                            KotlinUField(it, element, givenParent)
+                            KotlinUField(it, givenParent)
                         }
                     }
                 }
@@ -420,13 +415,13 @@ internal object KotlinConverter {
             is KtDestructuringDeclaration -> expr<UDeclarationsExpression> {
                 val declarationsExpression = KotlinUDestructuringDeclarationExpression(givenParent, expression)
                 declarationsExpression.apply {
-                    val tempAssignment = KotlinULocalVariable(UastKotlinPsiVariable.create(expression, declarationsExpression), expression, declarationsExpression)
+                    val tempAssignment = KotlinULocalVariable(UastKotlinPsiVariable.create(expression, declarationsExpression), declarationsExpression)
                     val destructuringAssignments = expression.entries.mapIndexed { i, entry ->
                         val psiFactory = KtPsiFactory(expression.project)
                         val initializer = psiFactory.createAnalyzableExpression("${tempAssignment.name}.component${i + 1}()",
                                                                                 expression.containingFile)
                         initializer.destructuringDeclarationInitializer = true
-                        KotlinULocalVariable(UastKotlinPsiVariable.create(entry, tempAssignment.psi, declarationsExpression, initializer), entry, declarationsExpression)
+                        KotlinULocalVariable(UastKotlinPsiVariable.create(entry, tempAssignment.psi, declarationsExpression, initializer), declarationsExpression)
                     }
                     declarations = listOf(tempAssignment) + destructuringAssignments
                 }
@@ -551,7 +546,7 @@ private fun convertVariablesDeclaration(
     val declarationsExpression = KotlinUDeclarationsExpression(null, parent, psi)
     val parentPsiElement = parent?.psi
     val variable = KotlinUAnnotatedLocalVariable(
-            UastKotlinPsiVariable.create(psi, parentPsiElement, declarationsExpression), psi, declarationsExpression) { annotationParent ->
+            UastKotlinPsiVariable.create(psi, parentPsiElement, declarationsExpression), declarationsExpression) { annotationParent ->
         psi.annotationEntries.map { KotlinUAnnotation(it, annotationParent) }
     }
     return declarationsExpression.apply { declarations = listOf(variable) }

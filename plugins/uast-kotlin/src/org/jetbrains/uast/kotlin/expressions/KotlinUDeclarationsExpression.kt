@@ -25,9 +25,6 @@ open class KotlinUDeclarationsExpression(
         val psiAnchor: PsiElement? = null
 ) : KotlinAbstractUExpression(givenParent), UDeclarationsExpression {
 
-    override val sourcePsi: PsiElement?
-        get() = psiAnchor
-
     override val uastParent: UElement?
         get() = if (psiAnchor != null) doConvertParent(this, psiAnchor.parent) else super.uastParent
 
