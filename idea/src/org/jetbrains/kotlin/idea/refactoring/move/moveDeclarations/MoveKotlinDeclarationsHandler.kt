@@ -163,8 +163,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     }
 
     private fun canMove(elements: Array<out PsiElement>, targetContainer: PsiElement?, editorMode: Boolean): Boolean {
-        if (targetContainer != null && !isValidTarget(targetContainer, elements)) return false
-
+        if (!super.canMove(elements, targetContainer)) return false
         val container = getUniqueContainer(elements) ?: return false
 
         if (container is KtClassOrObject && targetContainer != null && targetContainer !is KtClassOrObject && elements.size > 1) {
