@@ -1,4 +1,4 @@
-public class SimpleScript {
+public class SimpleScript : kotlin.script.templates.standard.ScriptTemplateWithArgs {
     public final fun getBarOrNull(@org.jetbrains.annotations.NotNull flag: boolean) : SimpleScript.Bar {
         return if (flag) <init>(42) else null
     }
