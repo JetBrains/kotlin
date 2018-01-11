@@ -61,6 +61,8 @@
 
         <projectTaskRunner implementation="org.jetbrains.kotlin.idea.run.MultiplatformGradleProjectTaskRunner" order="first"/>
         <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.run.MultiplatformGradleOrderEnumeratorHandler$FactoryImpl" order="first"/>
+
+        <moduleBuilder builderClass="org.jetbrains.kotlin.gradle.kdsl.GradleModuleBuilder" />
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -77,6 +79,10 @@
 
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMultiplatformModuleBuilder"/>
 
+        <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleJavaFrameworkSupportProvider" />
+        <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleKotlinDSLKotlinJavaFrameworkSupportProvider" />
+        <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleKotlinDSLKotlinJSFrameworkSupportProvider" />
+        <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleGroovyFrameworkSupportProvider" />
         <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
     </extensions>
 </idea-plugin>
