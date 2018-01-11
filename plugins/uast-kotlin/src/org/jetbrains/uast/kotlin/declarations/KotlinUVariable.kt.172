@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.types.typeUtil.nullability
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
+import org.jetbrains.uast.java.JavaAbstractUExpression
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
@@ -406,7 +407,7 @@ open class KotlinUEnumConstant(
             override val psi: PsiEnumConstant,
             override val sourcePsi: KtElement?,
             private val givenParent: UElement?
-    ) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression {
+    ) : JavaAbstractUExpression(), USimpleNameReferenceExpression {
         override val javaPsi: PsiElement?
             get() = psi
 
