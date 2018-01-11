@@ -1,3 +1,0 @@
-[NotNull Values]
-4 	val <bold>x = n</bold>
-4 		val <bold>x = n</bold>
