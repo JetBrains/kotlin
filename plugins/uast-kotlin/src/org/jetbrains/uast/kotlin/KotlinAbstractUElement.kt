@@ -28,7 +28,7 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
-abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement, JvmDeclarationUElement {
+abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement {
 
     override val uastParent: UElement? by lz {
         givenParent ?: convertParent()
@@ -164,11 +164,7 @@ private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter):
 }
 
 abstract class KotlinAbstractUExpression(givenParent: UElement?)
-    : KotlinAbstractUElement(givenParent), UExpression, JvmDeclarationUElement {
-
-    override val javaPsi = null
-    override val sourcePsi
-        get() = psi
+    : KotlinAbstractUElement(givenParent), UExpression {
 
     override val annotations: List<UAnnotation>
         get() {

@@ -38,12 +38,6 @@ open class KotlinUMethod(
 ) : KotlinAbstractUElement(givenParent), UAnnotationMethod, JavaUElementWithComments, PsiMethod by psi {
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
 
-    override val javaPsi = psi
-
-    override val sourcePsi = psi.kotlinOrigin
-
-    override fun getSourceElement() = sourcePsi ?: this
-
     override val uastDefaultValue by lz {
         val annotationParameter = psi.kotlinOrigin as? KtParameter ?: return@lz null
         val defaultValue = annotationParameter.defaultValue ?: return@lz null
@@ -63,7 +57,7 @@ open class KotlinUMethod(
     }
 
     override val uastParameters by lz {
-        psi.parameterList.parameters.map { KotlinUParameter(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, this) }
+        psi.parameterList.parameters.map { KotlinUParameter(it, this) }
     }
 
     override val uastAnchor: UElement

@@ -19,7 +19,10 @@ package org.jetbrains.uast.kotlin
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.java.JavaAbstractUExpression
@@ -83,13 +86,9 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
 
 class KotlinUVariable(
         psi: PsiVariable,
-        override val sourcePsi: KtElement,
         givenParent: UElement?
 ) : AbstractKotlinUVariable(givenParent), UVariable, PsiVariable by psi {
-
-    override val javaPsi = unwrap<UVariable, PsiVariable>(psi)
-
-    override val psi = javaPsi
+    override val psi = unwrap<UVariable, PsiVariable>(psi)
 
     override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
 
@@ -114,13 +113,10 @@ class KotlinUVariable(
 
 open class KotlinUParameter(
         psi: PsiParameter,
-        override val sourcePsi: KtElement?,
         givenParent: UElement?
 ) : AbstractKotlinUVariable(givenParent), UParameter, PsiParameter by psi {
 
-    override val javaPsi = unwrap<UParameter, PsiParameter>(psi)
-
-    override val psi = javaPsi
+    override val psi = unwrap<UParameter, PsiParameter>(psi)
 
     override fun getInitializer(): PsiExpression? {
         return super<AbstractKotlinUVariable>.getInitializer()
@@ -141,13 +137,10 @@ open class KotlinUParameter(
 
 open class KotlinUField(
         psi: PsiField,
-        override val sourcePsi: KtElement?,
         givenParent: UElement?
 ) : AbstractKotlinUVariable(givenParent), UField, PsiField by psi {
 
-    override val javaPsi  = unwrap<UField, PsiField>(psi)
-
-    override val psi = javaPsi
+    override val psi = unwrap<UField, PsiField>(psi)
 
     override fun getInitializer(): PsiExpression? {
         return super<AbstractKotlinUVariable>.getInitializer()
@@ -180,13 +173,10 @@ open class KotlinUField(
 
 open class KotlinULocalVariable(
         psi: PsiLocalVariable,
-        override val sourcePsi: KtElement,
         givenParent: UElement?
 ) : AbstractKotlinUVariable(givenParent), ULocalVariable, PsiLocalVariable by psi {
 
-    override val javaPsi = unwrap<ULocalVariable, PsiLocalVariable>(psi)
-
-    override val psi = javaPsi
+    override val psi = unwrap<ULocalVariable, PsiLocalVariable>(psi)
 
     override fun getInitializer(): PsiExpression? {
         return super<AbstractKotlinUVariable>.getInitializer()
@@ -215,29 +205,24 @@ open class KotlinULocalVariable(
 
 open class KotlinUAnnotatedLocalVariable(
         psi: PsiLocalVariable,
-        sourcePsi: KtElement,
         uastParent: UElement?,
         computeAnnotations: (parent: UElement) -> List<UAnnotation>
-) : KotlinULocalVariable(psi, sourcePsi, uastParent) {
+) : KotlinULocalVariable(psi, uastParent) {
 
     override val annotations: List<UAnnotation> by lz { computeAnnotations(this) }
 }
 
 open class KotlinUEnumConstant(
         psi: PsiEnumConstant,
-        override val sourcePsi: KtElement?,
         givenParent: UElement?
 ) : AbstractKotlinUVariable(givenParent), UEnumConstant, PsiEnumConstant by psi {
-
     override val initializingClass: UClass? by lz {
         (psi.initializingClass as? KtLightClass)?.let { initializingClass ->
             KotlinUClass.create(initializingClass, this)
         }
     }
 
-    override val javaPsi = unwrap<UEnumConstant, PsiEnumConstant>(psi)
-
-    override val psi = javaPsi
+    override val psi = unwrap<UEnumConstant, PsiEnumConstant>(psi)
 
     override fun getContainingFile(): PsiFile {
         return super.getContainingFile()
@@ -260,7 +245,7 @@ open class KotlinUEnumConstant(
         get() = null
 
     override val classReference: UReferenceExpression?
-        get() = KotlinEnumConstantClassReference(psi, sourcePsi, this)
+        get() = KotlinEnumConstantClassReference(psi, this)
 
     override val typeArgumentCount: Int
         get() = 0
@@ -287,12 +272,8 @@ open class KotlinUEnumConstant(
 
     private class KotlinEnumConstantClassReference(
             override val psi: PsiEnumConstant,
-            override val sourcePsi: KtElement?,
             private val givenParent: UElement?
     ) : JavaAbstractUExpression(), USimpleNameReferenceExpression {
-        override val javaPsi: PsiElement?
-            get() = psi
-
         override val uastParent: UElement? by lz {
             givenParent ?: KotlinUastLanguagePlugin().convertElementWithParent(psi.parent ?: psi.containingFile, null)
         }

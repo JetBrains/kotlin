@@ -75,10 +75,6 @@ class KotlinUObjectLiteralExpression(
             override val psi: KtSuperTypeCallEntry,
             givenParent: UElement?
     ) : KotlinAbstractUElement(givenParent), USimpleNameReferenceExpression {
-
-        override val javaPsi = null
-        override val sourcePsi = psi
-
         override fun resolve() = (psi.resolveCallToDeclaration(this) as? PsiMethod)?.containingClass
 
         override val annotations: List<UAnnotation>
