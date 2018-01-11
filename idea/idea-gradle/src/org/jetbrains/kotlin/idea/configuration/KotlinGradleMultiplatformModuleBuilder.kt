@@ -90,6 +90,6 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         val buildScriptData = BuildScriptDataBuilder(buildGradle)
         supportProvider.addSupport(buildScriptData, sdk)
         buildScriptData.addDependencyNotation("expectedBy project(\":\")")
-        VfsUtil.saveText(buildGradle, buildScriptData.buildConfigurationPart() + buildScriptData.buildMainPart())
+        VfsUtil.saveText(buildGradle, buildScriptData.build())
     }
 }
