@@ -75,8 +75,7 @@ abstract class AbstractSpringClassAnnotatorTest : KotlinLightCodeInsightFixtureT
             val iconName = config.getString("icon")
             val icon = SpringApiIcons::class.java.getField(iconName)[null]
 
-            val gutter = myFixture.findGutter(fileName) ?: throw AssertionError("no gutter for '$fileName'")
-            val gutterMark = gutter.let {
+            val gutterMark = myFixture.findGutter(fileName)!!.let {
                 if (it.icon == icon) it
                 else myFixture.findGuttersAtCaret().let { gutters ->
                     gutters.firstOrNull() { it.icon == icon }
