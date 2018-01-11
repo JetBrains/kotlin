@@ -37,8 +37,7 @@ import com.intellij.spring.model.SpringModelSearchParameters
 import com.intellij.spring.model.actions.generate.GenerateSpringBeanDependenciesUtil
 import com.intellij.spring.model.actions.generate.GenerateSpringBeanDependenciesUtil.*
 import com.intellij.spring.model.actions.generate.SpringBeanClassMember
-import com.intellij.spring.model.highlighting.xml.SpringConstructorArgResolveUtil
-
+import com.intellij.spring.model.highlighting.SpringConstructorArgResolveUtil
 import com.intellij.spring.model.utils.SpringBeanCoreUtils
 import com.intellij.spring.model.utils.SpringBeanUtils
 import com.intellij.spring.model.utils.SpringModelSearchers

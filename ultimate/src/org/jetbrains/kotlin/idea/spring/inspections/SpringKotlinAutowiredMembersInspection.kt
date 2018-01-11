@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.idea.spring.inspections
 
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.spring.model.highlighting.autowire.SpringJavaAutowiredMembersInspection
-
+import com.intellij.spring.model.highlighting.SpringJavaAutowiredMembersInspection
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.inspections.registerWithElementsUnwrapped
