@@ -3,9 +3,6 @@
 // CONFIGURE_SPRING_FILE_SET
 // WITH_RUNTIME
 // DISABLE-ERRORS
-// FORCE_PACKAGE_FOLDER
-
-package pkg
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
