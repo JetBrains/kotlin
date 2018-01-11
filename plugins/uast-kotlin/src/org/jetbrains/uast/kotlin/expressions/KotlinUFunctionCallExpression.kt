@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.visitor.UastVisitor
 
 class KotlinUFunctionCallExpression(
@@ -76,7 +77,7 @@ class KotlinUFunctionCallExpression(
 
     override val methodIdentifier by lz {
         val calleeExpression = psi.calleeExpression ?: return@lz null
-        UIdentifier(calleeExpression, this)
+        KotlinUIdentifier(calleeExpression, this)
     }
 
     override val valueArgumentCount: Int
