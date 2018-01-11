@@ -104,14 +104,16 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
         accept(object : UastVisitor {
             override fun visitElement(node: UElement): Boolean {
 
+                if (node is UDeclaration) {// visitDeclaration hasn't come yet
+                    node.uastAnchor?.let { visitElement(it) }
+                }
+
                 val jvmDeclaration = node as? JvmDeclarationUElement
                                      ?: throw AssertionError("${node.javaClass} should implement 'JvmDeclarationUElement'")
 
                 jvmDeclaration.sourcePsi?.let {
                     assertTrue("sourcePsi should be physical but ${it.javaClass} found for [${it.text}] " +
-                                       "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}",
-                               it is KtElement || it is LeafPsiElement
-                    )
+                               "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}",it is LeafPsiElement || it is KtElement|| it is LeafPsiElement)
                 }
                 jvmDeclaration.javaPsi?.let {
                     assertTrue("javaPsi should be light but ${it.javaClass} found for [${it.text}] " +
