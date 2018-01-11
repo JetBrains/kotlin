@@ -19,10 +19,6 @@ package org.jetbrains.kotlin.idea.intentions
 import com.google.common.collect.Lists
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
-import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
@@ -43,8 +39,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 import java.util.*
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 
 abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
     protected open fun intentionFileName(): String = ".intention"
@@ -130,29 +124,12 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
-    private fun <T> computeUnderProgressIndicatorAndWait(compute: () -> T): T {
-        val result = CompletableFuture<T>()
-        val progressIndicator = ProgressIndicatorBase()
-        try {
-            val task = object : Task.Backgroundable(project, "isApplicable", false) {
-                override fun run(indicator: ProgressIndicator) {
-                    result.complete(compute())
-                }
-            }
-            ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, progressIndicator)
-            return result.get(10, TimeUnit.SECONDS)
-        }
-        finally {
-            progressIndicator.cancel()
-        }
-    }
-
     @Throws(Exception::class)
     private fun doTestFor(mainFilePath: String, pathToFiles: Map<String, PsiFile>, intentionAction: IntentionAction, fileText: String) {
         val isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// ${isApplicableDirectiveName()}: ")
         val isApplicableExpected = isApplicableString == null || isApplicableString == "true"
 
-        val isApplicableOnPooled = computeUnderProgressIndicatorAndWait { ApplicationManager.getApplication().runReadAction(Computable { intentionAction.isAvailable(project, editor, file) }) }
+        val isApplicableOnPooled = ApplicationManager.getApplication().executeOnPooledThread(java.util.concurrent.Callable { ApplicationManager.getApplication().runReadAction(Computable { intentionAction.isAvailable(project, editor, file) }) }).get()
 
         val isApplicableOnEdt = intentionAction.isAvailable(project, editor, file)
 
