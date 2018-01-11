@@ -7,10 +7,8 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
-import org.jetbrains.uast.JvmDeclarationUElement
-import org.jetbrains.uast.UDeclaration
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UFile
+import org.jetbrains.uast.*
+import org.jetbrains.uast.java.JavaUAnnotation
 import org.jetbrains.uast.kotlin.KOTLIN_CACHED_UELEMENT_KEY
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.test.common.RenderLogTestBase
@@ -106,6 +104,8 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
 
                 val jvmDeclaration = node as? JvmDeclarationUElement
                                      ?: throw AssertionError("${node.javaClass} should implement 'JvmDeclarationUElement'")
+
+                if (jvmDeclaration is UIdentifier) return false // probably should be fixed in platform to fully support in in Kotlin
 
                 jvmDeclaration.sourcePsi?.let {
                     assertTrue("sourcePsi should be physical but ${it.javaClass} found for [${it.text}] " +
