@@ -14043,6 +14043,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/replaceSubstringWithIndexingOperation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceSubstringWithIndexingOperation extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceSubstringWithIndexingOperation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSubstringWithIndexingOperation"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("nonOneSecondArgument.kt")
+        public void testNonOneSecondArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithIndexingOperation/nonOneSecondArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonZeroFirstArgument.kt")
+        public void testNonZeroFirstArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithIndexingOperation/nonZeroFirstArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("replaceWithIndexingOperation.kt")
+        public void testReplaceWithIndexingOperation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithIndexingOperation/replaceWithIndexingOperation.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/replaceSubstringWithSubstringAfter")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
