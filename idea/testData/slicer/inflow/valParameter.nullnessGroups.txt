@@ -1,3 +1,0 @@
-[NotNull Values]
-3 	open class A(val <bold>n: Int</bold>)
-3 		open class A(val <bold>n: Int</bold>)

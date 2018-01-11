@@ -1,3 +1,0 @@
-[NotNull Values]
-20 	val <bold>y = b.foo</bold>
-20 		val <bold>y = b.foo</bold>

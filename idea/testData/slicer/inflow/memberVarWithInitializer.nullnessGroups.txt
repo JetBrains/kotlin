@@ -1,3 +1,0 @@
-[NotNull Values]
-4 	var <bold>x: Int = 1</bold>
-4 		var <bold>x: Int = 1</bold>
