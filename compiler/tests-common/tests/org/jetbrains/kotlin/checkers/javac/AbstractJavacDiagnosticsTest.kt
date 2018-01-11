@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.checkers.javac
 
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractJavacDiagnosticsTest : AbstractDiagnosticsTest() {
@@ -40,19 +39,5 @@ abstract class AbstractJavacDiagnosticsTest : AbstractDiagnosticsTest() {
         super.doTest(path)
     }
 
-    override fun getExpectedDiagnosticsFile(testDataFile: File): File {
-        val suffix = if (useJavac) ".WithJavac.txt" else ".WithoutJavac.txt"
-        val specialFile = File(testDataFile.parent, testDataFile.name + suffix)
-        return specialFile.takeIf { it.exists() } ?: super.getExpectedDiagnosticsFile(testDataFile)
-    }
-
-    override fun createTestFiles(file: File, expectedText: String, modules: MutableMap<String, ModuleAndDependencies>?): List<TestFile> {
-        val specialFile = getExpectedDiagnosticsFile(file)
-        if (file.path == specialFile.path) {
-            return super.createTestFiles(file, expectedText, modules)
-        }
-
-        return super.createTestFiles(specialFile, KotlinTestUtils.doLoadFile(specialFile), modules)
-    }
 }
 
