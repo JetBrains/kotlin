@@ -61,7 +61,6 @@ messages/**)
 -dontwarn net.jpountz.lz4.LZ4Factory
 -dontwarn org.jetbrains.annotations.ReadOnly
 -dontwarn org.jetbrains.annotations.Mutable
--dontwarn com.intellij.util.io.TarUtil
 
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
