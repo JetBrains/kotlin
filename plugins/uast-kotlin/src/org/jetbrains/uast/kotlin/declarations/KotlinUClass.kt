@@ -18,6 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -26,38 +27,21 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
+import org.jetbrains.uast.java.AbstractJavaUClass
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 
-abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUElement(givenParent), UClass, JvmDeclarationUElement {
+abstract class AbstractKotlinUClass(private val givenParent: UElement?) : AbstractJavaUClass(), JvmDeclarationUElement {
+    override val uastParent: UElement? by lz { givenParent ?: convertParent() }
 
-    override val uastDeclarations by lz {
-        mutableListOf<UDeclaration>().apply {
-            addAll(fields)
-            addAll(initializers)
-            addAll(methods)
-            addAll(innerClasses)
-        }
-    }
-
-    override val uastSuperTypes: List<UTypeReferenceExpression>
-        get() {
-            val ktClass = (psi as? KtLightClass)?.kotlinOrigin ?: return emptyList()
-            return ktClass.superTypeListEntries.mapNotNull { it.typeReference }.map {
-                LazyKotlinUTypeReferenceExpression(it, this)
-            }
-        }
-
-    override val uastAnchor: UElement?
-        get() = UIdentifier(psi.nameIdentifier, this)
-
-    override val annotations: List<UAnnotation> by lz {
-        (sourcePsi as? KtModifierListOwner)?.annotationEntries.orEmpty().map { KotlinUAnnotation(it, this) }
-    }
-
-    override fun equals(other: Any?) = other is AbstractKotlinUClass && psi == other.psi
-    override fun hashCode() = psi.hashCode()
-
+    //TODO: should be merged with KotlinAbstractUElement.convertParent() after detaching from AbstractJavaUClass
+    override fun convertParent(): UElement? =
+            (this.psi as? KtLightClassForLocalDeclaration)?.kotlinOrigin?.parent?.let {
+                when (it) {
+                    is KtClassBody -> it.parent.toUElement() // TODO: it seems that `class_body`-s are never created in kotlin uast in top-down walk, probably they should be completely skipped and always unwrapped
+                    else -> it.toUElement()
+                }
+            } ?: (psi.parent ?: psi.containingFile).toUElement()
 }
 
 open class KotlinUClass private constructor(
@@ -80,6 +64,9 @@ open class KotlinUClass private constructor(
     override fun getNameIdentifier(): PsiIdentifier? = UastLightIdentifier(psi, ktClass)
 
     override fun getContainingFile(): PsiFile? = unwrapFakeFileForLightClass(psi.containingFile)
+
+    override val annotations: List<UAnnotation>
+        get() = ktClass?.annotationEntries?.map { KotlinUAnnotation(it, this) } ?: emptyList()
 
     override val uastAnchor: UElement
         get() = UIdentifier(nameIdentifier, this)
@@ -223,8 +210,8 @@ class KotlinUAnonymousClass(
 
 class KotlinScriptUClass(
         psi: KtLightClassForScript,
-        givenParent: UElement?
-) : AbstractKotlinUClass(givenParent), PsiClass by psi {
+        override val uastParent: UElement?
+) : AbstractJavaUClass(), PsiClass by psi {
     override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(psi.containingFile)
 
     override fun getNameIdentifier(): PsiIdentifier? = UastLightIdentifier(psi, psi.kotlinOrigin)
