@@ -41,13 +41,13 @@ abstract class AbstractNavigateToLibraryTest : KotlinCodeInsightTestCase() {
     abstract val expectedFileExt: String
 
     protected fun doTestEx(path: String, additionalConfig: (() -> Unit)? = null) {
+        configureByFile(path)
         module.configureAs(getProjectDescriptor())
 
         if (additionalConfig != null) {
             additionalConfig()
         }
 
-        configureByFile(path)
         NavigationChecker.checkAnnotatedCode(file, File(path.replace(".kt", expectedFileExt)))
     }
 
