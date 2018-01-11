@@ -23,30 +23,20 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.util.text.StringUtilRt
-import com.intellij.patterns.PatternCondition
-import com.intellij.patterns.PatternConditionPlus
-import com.intellij.patterns.PsiClassNamePatternCondition
-import com.intellij.patterns.ValuePatternCondition
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.InjectorUtils
 import org.intellij.plugins.intelliLang.inject.LanguageInjectionSupport
 import org.intellij.plugins.intelliLang.inject.TemporaryPlacesRegistry
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
-import org.intellij.plugins.intelliLang.inject.config.InjectionPlace
 import org.intellij.plugins.intelliLang.inject.java.JavaLanguageInjectionSupport
 import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.patterns.KotlinFunctionPattern
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriority
@@ -56,29 +46,28 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import java.util.*
+import kotlin.collections.ArrayList
 import org.jetbrains.kotlin.util.aliasImportMap
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinLanguageInjector(
-        private val configuration: Configuration,
-        private val project: Project,
-        private val temporaryPlacesRegistry: TemporaryPlacesRegistry
+        val configuration: Configuration,
+        val project: Project,
+        val temporaryPlacesRegistry: TemporaryPlacesRegistry
 ) : MultiHostInjector {
     companion object {
         private val STRING_LITERALS_REGEXP = "\"([^\"]*)\"".toRegex()
         private val ABSENT_KOTLIN_INJECTION = BaseInjection("ABSENT_KOTLIN_BASE_INJECTION")
     }
 
-    var annotationInjectionsEnabled = Registry.`is`("kotlin.annotation.injection.enabled", false)
-
-    private val kotlinSupport: KotlinLanguageInjectionSupport? by lazy {
+    val kotlinSupport: KotlinLanguageInjectionSupport? by lazy {
         ArrayList(InjectorUtils.getActiveInjectionSupports()).filterIsInstance(KotlinLanguageInjectionSupport::class.java).firstOrNull()
     }
 
     private data class KotlinCachedInjection(val modificationCount: Long, val baseInjection: BaseInjection)
-
     private var KtStringTemplateExpression.cachedInjectionWithModification: KotlinCachedInjection? by UserDataProperty(
             Key.create<KotlinCachedInjection>("CACHED_INJECTION_WITH_MODIFICATION"))
 
@@ -88,7 +77,7 @@ class KotlinLanguageInjector(
 
         val support = kotlinSupport ?: return
 
-        if (!ProjectRootsUtil.isInProjectOrLibSource(ktHost.containingFile.originalFile)) return
+        if (!ProjectRootsUtil.isInProjectOrLibSource(ktHost)) return
 
         val needImmediateAnswer = with(ApplicationManager.getApplication()) { isDispatchThread && !isUnitTestMode }
         val kotlinCachedInjection = ktHost.cachedInjectionWithModification
@@ -169,9 +158,9 @@ class KotlinLanguageInjector(
     private fun findInjectionInfo(place: KtElement, originalHost: Boolean = true): InjectionInfo? {
         return injectWithExplicitCodeInstruction(place)
                ?: injectWithCall(place)
-               ?: injectInAnnotationCall(place)
                ?: injectWithReceiver(place)
                ?: injectWithVariableUsage(place, originalHost)
+               ?: injectWithAnnotationEntry(place)
     }
 
     private fun injectWithExplicitCodeInstruction(host: KtElement): InjectionInfo? {
@@ -190,9 +179,9 @@ class KotlinLanguageInjector(
         val callExpression = qualifiedExpression.selectorExpression as? KtCallExpression ?: return null
         val callee = callExpression.calleeExpression ?: return null
 
-        if (isAnalyzeOff()) return null
+        if (isAnalyzeOff(qualifiedExpression.project)) return null
 
-        val kotlinInjections = configuration.getInjections(KOTLIN_SUPPORT_ID)
+        val kotlinInjections = Configuration.getInstance().getInjections(KOTLIN_SUPPORT_ID)
 
         val calleeName = callee.text
         val possibleNames = collectPossibleNames(kotlinInjections)
@@ -235,10 +224,11 @@ class KotlinLanguageInjector(
         // Given place is not original host of the injection so we stop to prevent stepping through indirect references
         if (!originalHost) return null
 
+        val ktHost: KtElement = host
         val ktProperty = host.parent as? KtProperty ?: return null
         if (ktProperty.initializer != host) return null
 
-        if (isAnalyzeOff()) return null
+        if (isAnalyzeOff(ktHost.project)) return null
 
         val searchScope = LocalSearchScope(arrayOf(ktProperty.containingFile), "", true)
         return ReferencesSearch.search(ktProperty, searchScope).asSequence().mapNotNull { psiReference ->
@@ -254,7 +244,7 @@ class KotlinLanguageInjector(
         val callExpression = PsiTreeUtil.getParentOfType(ktHost, KtCallExpression::class.java) ?: return null
         val callee = callExpression.calleeExpression ?: return null
 
-        if (isAnalyzeOff()) return null
+        if (isAnalyzeOff(ktHost.project)) return null
 
         for (reference in callee.references) {
             ProgressManager.checkCanceled()
@@ -277,38 +267,18 @@ class KotlinLanguageInjector(
         return null
     }
 
-    private fun injectInAnnotationCall(host: KtElement): InjectionInfo? {
-        if (!annotationInjectionsEnabled) return null
-        val argument = host.parent as? KtValueArgument ?: return null
-        val annotationEntry = argument.parent.parent as? KtAnnotationEntry ?: return null
-        if (!fastCheckInjectionsExists(annotationEntry)) return null
-        val calleeReference = annotationEntry.calleeExpression?.constructorReferenceExpression?.mainReference
-        val callee = calleeReference?.resolve()
-        when (callee) {
-            is KtFunction -> return injectionForKotlinCall(argument, callee, calleeReference)
-            is PsiClass -> {
-                val psiClass = callee as? PsiClass ?: return null
-                val argumentName = argument.getArgumentName()?.asName?.identifier ?: "value"
-                val method = psiClass.findMethodsByName(argumentName, false).singleOrNull() ?: return null
-                return findInjection(method, configuration.getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID))
-            }
-            else -> return null
-        }
-
-    }
-
     private fun injectionForJavaMethod(argument: KtValueArgument, javaMethod: PsiMethod): InjectionInfo? {
         val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
         val psiParameter = javaMethod.parameterList.parameters.getOrNull(argumentIndex) ?: return null
 
-        val injectionInfo = findInjection(psiParameter, configuration.getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID))
+        val injectionInfo = findInjection(psiParameter, Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID))
         if (injectionInfo != null) {
             return injectionInfo
         }
 
         val annotations = AnnotationUtilEx.getAnnotationFrom(
                 psiParameter,
-                configuration.advancedConfiguration.languageAnnotationPair,
+                Configuration.getProjectInstance(psiParameter.project).advancedConfiguration.languageAnnotationPair,
                 true)
 
         if (annotations.isNotEmpty()) {
@@ -322,7 +292,7 @@ class KotlinLanguageInjector(
         val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
         val ktParameter = ktFunction.valueParameters.getOrNull(argumentIndex) ?: return null
 
-        val patternInjection = findInjection(ktParameter, configuration.getInjections(KOTLIN_SUPPORT_ID))
+        val patternInjection = findInjection(ktParameter, Configuration.getInstance().getInjections(KOTLIN_SUPPORT_ID))
         if (patternInjection != null) {
             return patternInjection
         }
@@ -340,6 +310,29 @@ class KotlinLanguageInjector(
         return InjectionInfo(languageId, null, null)
     }
 
+    private fun injectWithAnnotationEntry(host: KtElement): InjectionInfo? {
+        val argument = host.parent as? KtValueArgument ?: return null
+        val annotationEntry = PsiTreeUtil.getParentOfType(host, KtAnnotationEntry::class.java) ?: return null
+        if (isAnalyzeOff(host.project)) return null
+
+        val calleeReference = annotationEntry.calleeExpression?.constructorReferenceExpression?.mainReference
+        val callee = calleeReference?.resolve()
+        return when (callee) {
+            is KtFunction -> injectionForKotlinCall(argument, callee, calleeReference)
+            is PsiClass -> {
+                // Look for java injections for the PsiAnnotationMethod.
+                (argument.reference ?: argument.getArgumentName()?.referenceExpression?.mainReference)
+                        ?.let { it.resolve() as? PsiMethod }
+                        ?.let { findInjection(it, Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID)) }
+                        ?.takeIf { injectionInfo ->
+                            // Temporary forbid injection for SpEL because of inspections that gives warnings when host language is not Java.
+                            injectionInfo.languageId != "SpEL"
+                        }
+            }
+            else -> null
+        }
+    }
+
     private fun findInjection(element: PsiElement?, injections: List<BaseInjection>): InjectionInfo? {
         for (injection in injections) {
             if (injection.acceptsPsiElement(element)) {
@@ -350,8 +343,8 @@ class KotlinLanguageInjector(
         return null
     }
 
-    private fun isAnalyzeOff(): Boolean {
-        return configuration.advancedConfiguration.dfaOption == Configuration.DfaOption.OFF
+    private fun isAnalyzeOff(project: Project): Boolean {
+        return Configuration.getProjectInstance(project).advancedConfiguration.dfaOption == Configuration.DfaOption.OFF
     }
 
     private class InjectionInfo(val languageId: String?, val prefix: String?, val suffix: String?) {
@@ -380,52 +373,4 @@ class KotlinLanguageInjector(
 
         return InjectionInfo(id, prefix, suffix)
     }
-
-    private val injectableTargetClassShortNames = CachedValuesManager.getManager(project)
-            .createCachedValue({
-                                   CachedValueProvider.Result.create(HashSet<String>().apply {
-                                       for (injection in configuration.getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID)) {
-                                           for (injectionPlace in injection.injectionPlaces) {
-                                               for (targetClassFQN in retrieveJavaPlaceTargetClassesFQNs(injectionPlace)) {
-                                                   add(StringUtilRt.getShortName(targetClassFQN))
-                                               }
-                                           }
-                                       }
-                                       for (injection in configuration.getInjections(org.jetbrains.kotlin.idea.injection.KOTLIN_SUPPORT_ID)) {
-                                           for (injectionPlace in injection.injectionPlaces) {
-                                               for (targetClassFQN in retrieveKotlinPlaceTargetClassesFQNs(injectionPlace)) {
-                                                   add(StringUtilRt.getShortName(targetClassFQN))
-                                               }
-                                           }
-                                       }
-                                   }, configuration)
-                               }, false)
-
-    private fun fastCheckInjectionsExists(annotationEntry: KtAnnotationEntry): Boolean {
-        val referencedName = (annotationEntry.typeReference?.typeElement as? KtUserType)?.referencedName ?: return false
-        val annotationShortName = annotationEntry.containingKtFile.aliasImportMap()[referencedName].singleOrNull() ?: referencedName
-        return annotationShortName in injectableTargetClassShortNames.value
-    }
-
-    private fun retrieveJavaPlaceTargetClassesFQNs(place: InjectionPlace): Collection<String> {
-        val classCondition = place.elementPattern.condition.conditions.firstOrNull { it.debugMethodName == "definedInClass" }
-                                     as? PatternConditionPlus<*, *> ?: return emptyList()
-        val psiClassNamePatternCondition = classCondition.valuePattern.condition.conditions.
-                firstIsInstanceOrNull<PsiClassNamePatternCondition>() ?: return emptyList()
-        val valuePatternCondition = psiClassNamePatternCondition.namePattern.condition.conditions.firstIsInstanceOrNull<ValuePatternCondition<String>>() ?: return emptyList()
-        return valuePatternCondition.values
-    }
-
-    private fun retrieveKotlinPlaceTargetClassesFQNs(place: InjectionPlace): Collection<String> {
-        val classNames = SmartList<String>()
-        fun collect(condition: PatternCondition<*>) {
-            when (condition) {
-                is PatternConditionPlus<*, *> -> condition.valuePattern.condition.conditions.forEach { collect(it) }
-                is KotlinFunctionPattern.DefinedInClassCondition -> classNames.add(condition.fqName)
-            }
-        }
-        place.elementPattern.condition.conditions.forEach { collect(it) }
-        return classNames
-    }
-
 }
