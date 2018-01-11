@@ -29,7 +29,6 @@ import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
-import org.jetbrains.uast.visitor.UastTypedVisitor
 import org.jetbrains.uast.visitor.UastVisitor
 
 abstract class AbstractKotlinUVariable(givenParent: UElement?)
@@ -72,7 +71,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
 
     override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(psi.containingFile)
 
-    override val annotations: List<UAnnotation> by lz { psi.annotations.map { WrappedUAnnotation(it, this) } }
+    override val annotations: List<UAnnotation> by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
 
     override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
 
@@ -80,35 +79,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
         get() = UIdentifier(nameIdentifier, this)
 
     override fun equals(other: Any?) = other is AbstractKotlinUVariable && psi == other.psi
-
-    class WrappedUAnnotation(psiAnnotation: PsiAnnotation, override val uastParent: UElement) : UAnnotation, JvmDeclarationUElement {
-
-        override val javaPsi: PsiAnnotation = psiAnnotation
-        override val psi: PsiAnnotation = javaPsi
-        override val sourcePsi: PsiElement? = null
-
-        override val attributeValues: List<UNamedExpression> by lz {
-            psi.parameterList.attributes.map { WrappedUNamedExpression(it, this) }
-        }
-
-        class WrappedUNamedExpression(pair: PsiNameValuePair, override val uastParent: UElement?) : UNamedExpression, JvmDeclarationUElement {
-            override val name: String? = pair.name
-            override val psi = pair
-            override val javaPsi: PsiElement? = psi
-            override val sourcePsi: PsiElement? = null
-            override val annotations: List<UAnnotation> = emptyList()
-            override val expression: UExpression by lz { toUExpression(psi.value) }
-        }
-
-        override val qualifiedName: String? = psi.qualifiedName
-        override fun findAttributeValue(name: String?): UExpression? = psi.findAttributeValue(name)?.let { toUExpression(it) }
-        override fun findDeclaredAttributeValue(name: String?): UExpression? = psi.findDeclaredAttributeValue(name)?.let { toUExpression(it) }
-        override fun resolve(): PsiClass? = psi.nameReferenceElement?.resolve() as? PsiClass
-    }
-
 }
-
-private fun toUExpression(psi: PsiElement?): UExpression = psi.toUElementOfType<UExpression>() ?: UastEmptyExpression
 
 class KotlinUVariable(
         psi: PsiVariable,
@@ -119,6 +90,8 @@ class KotlinUVariable(
     override val javaPsi = unwrap<UVariable, PsiVariable>(psi)
 
     override val psi = javaPsi
+
+    override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
 
     override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
 
@@ -137,7 +110,6 @@ class KotlinUVariable(
     override fun getContainingFile(): PsiFile {
         return super.getContainingFile()
     }
-
 }
 
 open class KotlinUParameter(

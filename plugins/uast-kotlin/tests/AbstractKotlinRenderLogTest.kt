@@ -105,6 +105,7 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
                 val jvmDeclaration = node as? JvmDeclarationUElement
                                      ?: throw AssertionError("${node.javaClass} should implement 'JvmDeclarationUElement'")
 
+                if (jvmDeclaration is JavaUAnnotation) return false // but actually it's strange to meet JavaUAnnotation here
                 if (jvmDeclaration is UIdentifier) return false // probably should be fixed in platform to fully support in in Kotlin
 
                 jvmDeclaration.sourcePsi?.let {
