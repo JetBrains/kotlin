@@ -335,11 +335,10 @@ class ExpressionsOfTypeProcessor(
                 val searchRequestCollector = SearchRequestCollector(SearchSession())
                 val resultProcessor = StaticMemberRequestResultProcessor(member, classes)
 
-                val memberName = runReadAction { member.name }
                 for (klass in classes) {
                     val request = klass.name + "." + declarationName
 
-                    testLog { "Searched references to static $memberName in non-Java files by request $request" }
+                    testLog { "Searched references to static ${member.name} in non-Java files by request $request" }
                     searchRequestCollector.searchWord(
                             request,
                             classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
@@ -348,7 +347,7 @@ class ExpressionsOfTypeProcessor(
                     if (qualifiedName != null) {
                         val importAllUnderRequest = qualifiedName + ".*"
 
-                        testLog { "Searched references to static $memberName in non-Java files by request $importAllUnderRequest" }
+                        testLog { "Searched references to static ${member.name} in non-Java files by request $importAllUnderRequest" }
                         searchRequestCollector.searchWord(
                                 importAllUnderRequest,
                                 classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
