@@ -121,6 +121,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("TopLevelOpenSuspendFun.kt")
+    public void testTopLevelOpenSuspendFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/TopLevelOpenSuspendFun.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeAlias.kt")
     public void testTypeAlias() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/TypeAlias.kt");
