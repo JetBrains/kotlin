@@ -1,9 +1,0 @@
-4 val f = { <bold>1</bold> }
-5 	val <bold>x = f()</bold>
-5 		val x = <bold>f()</bold>
-5 			[LAMBDA] val x = <bold>f</bold>()
-4 				[LAMBDA] val <bold>f = { 1 }</bold>
-4 					[LAMBDA] val f = <bold>{ 1 }</bold>
-4 						val f = <bold>{ 1 }</bold>
-4 							val f = { <bold>1</bold> }
-
