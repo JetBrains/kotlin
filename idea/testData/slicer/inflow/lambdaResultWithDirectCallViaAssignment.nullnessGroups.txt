@@ -1,3 +1,0 @@
-[NotNull Values]
-5 	val <bold>x = f()</bold>
-5 		val <bold>x = f()</bold>

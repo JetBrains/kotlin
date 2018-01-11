@@ -1,3 +1,0 @@
-[NotNull Values]
-12 	val <bold>x = foo</bold>
-12 		val <bold>x = foo</bold>
