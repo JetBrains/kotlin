@@ -78,7 +78,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         if (!element.isJvmElement) return null
         return convertDeclarationOrElement(element, parent, requiredType)
     }
-
+    
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
         if (!element.isJvmElement) return null
         if (element is PsiFile) return convertDeclaration(element, null, requiredType)
@@ -115,7 +115,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return null
         val resultingDescriptor = resolvedCall.resultingDescriptor
         if (resultingDescriptor !is FunctionDescriptor || resultingDescriptor.name.asString() != methodName) return null
-
+        
         val parent = element.parent
         val parentUElement = convertElementWithParent(parent, null) ?: return null
 
@@ -132,7 +132,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         if (element !is KtCallExpression) return null
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return null
         val resultingDescriptor = resolvedCall.resultingDescriptor
-        if (resultingDescriptor !is ConstructorDescriptor
+        if (resultingDescriptor !is ConstructorDescriptor 
                 || resultingDescriptor.returnType.constructor.declarationDescriptor?.name?.asString() != fqName) {
             return null
         }
