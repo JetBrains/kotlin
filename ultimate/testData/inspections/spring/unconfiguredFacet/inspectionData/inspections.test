@@ -1,3 +1,2 @@
 // INSPECTION_CLASS: org.jetbrains.kotlin.idea.spring.inspections.KotlinSpringFacetCodeInspection
 // FIXTURE_CLASS: org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension
-// FORBID_SPRING_FILE_SET_AUTOCONFIGURE
