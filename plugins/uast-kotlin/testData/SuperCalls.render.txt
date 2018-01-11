@@ -15,11 +15,11 @@ public final class SuperCallsKt {
 
 public class A {
     @org.jetbrains.annotations.NotNull private final var str: java.lang.String
-    public fun foo(@org.jetbrains.annotations.NotNull a: long) : void {
+    public fun foo(@null a: long) : void {
     }
     public final fun getStr() : java.lang.String = UastEmptyExpression
     public fun A(@org.jetbrains.annotations.NotNull str: java.lang.String) = UastEmptyExpression
-    public fun A(@org.jetbrains.annotations.NotNull i: int) {
+    public fun A(@null i: int) {
         <init>(i.toString())
     }
 }
@@ -31,13 +31,13 @@ public final class B : A {
 }
 
 public final class C : A {
-    public fun foo(@org.jetbrains.annotations.NotNull a: long) : void {
+    public fun foo(@null a: long) : void {
         super.foo(a)
     }
     public fun C(@org.jetbrains.annotations.NotNull p: java.lang.String) {
         <init>(p)
     }
-    public fun C(@org.jetbrains.annotations.NotNull i: int) {
+    public fun C(@null i: int) {
         <init>(i)
         println()
     }

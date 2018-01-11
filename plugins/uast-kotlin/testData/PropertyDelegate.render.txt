@@ -1,9 +1,7 @@
 public final class PropertyDelegateKt {
     @org.jetbrains.annotations.NotNull private static final var sdCardPath$delegate: kotlin.Lazy
-    @org.jetbrains.annotations.NotNull @kotlin.Suppress private static final var annotatedDelegate$delegate: kotlin.Lazy
     public static final fun getSdCardPath() : java.lang.String = UastEmptyExpression
     public static final fun localPropertyTest() : void {
         var sdCardPathLocal: java.lang.String
     }
-    public static final fun getAnnotatedDelegate() : int = UastEmptyExpression
 }

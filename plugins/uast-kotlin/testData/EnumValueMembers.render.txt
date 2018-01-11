@@ -1,5 +1,5 @@
 public enum Style {
-    @null SHEET {
+    SHEET {
         public fun getExitAnimation() : java.lang.String = "bar"
         fun SHEET() = UastEmptyExpression
     }

@@ -1,5 +1,5 @@
 public class SimpleScript : kotlin.script.templates.standard.ScriptTemplateWithArgs {
-    public final fun getBarOrNull(@org.jetbrains.annotations.NotNull flag: boolean) : SimpleScript.Bar {
+    public final fun getBarOrNull(@null flag: boolean) : SimpleScript.Bar {
         return if (flag) <init>(42) else null
     }
     public fun SimpleScript(@null p: java.lang.String[]) {
@@ -8,12 +8,12 @@ public class SimpleScript : kotlin.script.templates.standard.ScriptTemplateWithA
         println("Goodbye World!")
     }
     public static final class Bar {
-        @org.jetbrains.annotations.NotNull private final var b: int = 0
-        @org.jetbrains.annotations.NotNull private final var a: int
+        @null private final var b: int = 0
+        @null private final var a: int
         public final fun getB() : int = UastEmptyExpression
         public final fun getAPlusB() : int = a + b
         public final fun getA() : int = UastEmptyExpression
-        public fun Bar(@org.jetbrains.annotations.NotNull a: int) = UastEmptyExpression
+        public fun Bar(@null a: int) = UastEmptyExpression
         public static final class Baz {
             public final fun doSomething() : void {
             }
