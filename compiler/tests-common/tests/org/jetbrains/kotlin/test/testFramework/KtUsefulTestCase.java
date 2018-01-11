@@ -52,7 +52,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public abstract class KtUsefulTestCase extends TestCase {
@@ -218,11 +217,9 @@ public abstract class KtUsefulTestCase extends TestCase {
     protected void runTest() throws Throwable {
         Throwable[] throwables = new Throwable[1];
 
-        AtomicBoolean completed = new AtomicBoolean(false);
         Runnable runnable = () -> {
             try {
                 super.runTest();
-                completed.set(true);
             }
             catch (InvocationTargetException e) {
                 e.fillInStackTrace();
@@ -241,9 +238,6 @@ public abstract class KtUsefulTestCase extends TestCase {
 
         if (throwables[0] != null) {
             throw throwables[0];
-        }
-        if (!completed.get()) {
-            throw new IllegalStateException("test didn't start");
         }
     }
 
