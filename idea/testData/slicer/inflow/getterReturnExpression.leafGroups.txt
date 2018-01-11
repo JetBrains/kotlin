@@ -1,6 +1,0 @@
-5 return <bold>0</bold>
-9 	val <bold>x = foo</bold>
-9 		val x = <bold>foo</bold>
-3 			val <bold>foo: Int</bold>
-5 				return <bold>0</bold>
-

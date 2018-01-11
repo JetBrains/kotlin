@@ -19,28 +19,16 @@ package org.jetbrains.kotlin.idea.slicer
 import com.intellij.ide.util.treeView.AbstractTreeStructure
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.psi.PsiElement
-import com.intellij.slicer.*
-import org.jetbrains.kotlin.idea.references.KtReference
+import com.intellij.slicer.SliceAnalysisParams
+import com.intellij.slicer.SliceLanguageSupportProvider
+import com.intellij.slicer.SliceTreeBuilder
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPlainWithEscapes
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
-class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer {
-    companion object {
-        val LEAF_ELEMENT_EQUALITY = object : SliceLeafEquality() {
-            override fun substituteElement(element: PsiElement) = (element as? KtReference)?.resolve() ?: element
-        }
-    }
-
-    val leafAnalyzer by lazy { SliceLeafAnalyzer(LEAF_ELEMENT_EQUALITY, this) }
-
+class KotlinSliceProvider : SliceLanguageSupportProvider {
     override fun createRootUsage(element: PsiElement, params: SliceAnalysisParams) = KotlinSliceUsage(element, params)
-
-    override fun transform(usage: SliceUsage): Collection<SliceUsage>? {
-        if (usage is KotlinSliceUsage) return null
-        return listOf(KotlinSliceUsage(usage.element, usage.parent, 0, false))
-    }
 
     override fun getExpressionAtCaret(atCaret: PsiElement?, dataFlowToThis: Boolean): KtExpression? {
         val element =
@@ -69,7 +57,7 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
     override fun getRenderer() = KotlinSliceUsageCellRenderer
 
     override fun startAnalyzeLeafValues(structure: AbstractTreeStructure, finalRunnable: Runnable) {
-        leafAnalyzer.startAnalyzeValues(structure, finalRunnable)
+
     }
 
     override fun startAnalyzeNullness(structure: AbstractTreeStructure, finalRunnable: Runnable) {
@@ -77,8 +65,6 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
     }
 
     override fun registerExtraPanelActions(group: DefaultActionGroup, builder: SliceTreeBuilder) {
-        if (builder.dataFlowToThis) {
-            group.add(GroupByLeavesAction(builder))
-        }
+
     }
 }

@@ -1,8 +1,0 @@
-7 x = <bold>1</bold>
-4 	var <bold>x: Int</bold>
-7 		x = <bold>1</bold>
-
-14 x = <bold>2</bold>
-4 	var <bold>x: Int</bold>
-14 		x = <bold>2</bold>
-

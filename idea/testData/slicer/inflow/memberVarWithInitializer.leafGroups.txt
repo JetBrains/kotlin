@@ -1,8 +1,0 @@
-4 var x: Int = <bold>1</bold>
-4 	var <bold>x: Int = 1</bold>
-4 		var x: Int = <bold>1</bold>
-
-9 x = <bold>2</bold>
-4 	var <bold>x: Int = 1</bold>
-9 		x = <bold>2</bold>
-
