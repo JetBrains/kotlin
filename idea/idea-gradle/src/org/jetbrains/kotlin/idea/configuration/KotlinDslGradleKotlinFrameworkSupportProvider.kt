@@ -66,12 +66,10 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
                 .addBuildscriptRepositoriesDefinition("mavenCentral()")
                 .addRepositoriesDefinition("mavenCentral()")
                 // TODO: in gradle > 4.1 this could be single declaration e.g. 'val kotlin_version: String by extra { "1.1.11" }'
-                .addBuildscriptPropertyDefinition("var $GSK_KOTLIN_VERSION_PROPERTY_NAME: String by extra\n    $GSK_KOTLIN_VERSION_PROPERTY_NAME = \"$kotlinVersion\"")
+                .addBuildscriptPropertyDefinition("var $GSK_KOTLIN_VERSION_PROPERTY_NAME: String by extra\n$GSK_KOTLIN_VERSION_PROPERTY_NAME = \"$kotlinVersion\"")
                 .addDependencyNotation(getRuntimeLibrary(rootModel))
                 .addBuildscriptDependencyNotation(getKotlinGradlePluginClassPathSnippet())
     }
-
-    private fun RepositoryDescription.toKotlinRepositorySnippet() = "maven { setUrl(\"$url\") }"
 
     protected abstract fun getRuntimeLibrary(rootModel: ModifiableRootModel): String
 
