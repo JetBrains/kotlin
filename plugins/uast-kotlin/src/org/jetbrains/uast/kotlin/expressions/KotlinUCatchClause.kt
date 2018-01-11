@@ -27,15 +27,11 @@ class KotlinUCatchClause(
         override val psi: KtCatchClause,
         givenParent: UElement?
 ) : KotlinAbstractUElement(givenParent), UCatchClause {
-
-    override val javaPsi = null
-    override val sourcePsi = psi
-
     override val body by lz { KotlinConverter.convertOrEmpty(psi.catchBody, this) }
     
     override val parameters by lz {
         val parameter = psi.catchParameter ?: return@lz emptyList<UParameter>()
-        listOf(KotlinUParameter(UastKotlinPsiParameter.create(parameter, psi, this, 0), psi, this))
+        listOf(KotlinUParameter(UastKotlinPsiParameter.create(parameter, psi, this, 0), this))
     }
 
     override val typeReferences by lz {
