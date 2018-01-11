@@ -1,4 +1,4 @@
 public final class ParametersWithDefaultValuesKt {
-    public static final fun foo(@org.jetbrains.annotations.NotNull a: int, @org.jetbrains.annotations.NotNull b: java.lang.String, @org.jetbrains.annotations.NotNull c: int, @org.jetbrains.annotations.NotNull flag: boolean) : void {
+    public static final fun foo(@null a: int, @org.jetbrains.annotations.NotNull b: java.lang.String, @null c: int, @null flag: boolean) : void {
     }
 }

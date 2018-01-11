@@ -24,17 +24,14 @@ UFile (package = )
                             UExpressionList (when_entry)
                                 UDeclarationsExpression
                                     ULocalVariable (name = var837f1e82)
-                                        UAnnotation (fqName = null)
                                         USimpleNameReferenceExpression (identifier = arr)
                                     ULocalVariable (name = bindingContext)
-                                        UAnnotation (fqName = null)
                                         UQualifiedReferenceExpression
                                             USimpleNameReferenceExpression (identifier = var837f1e82)
                                             UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                                                 UIdentifier (Identifier (component1))
                                                 USimpleNameReferenceExpression (identifier = <anonymous class>)
                                     ULocalVariable (name = statementFilter)
-                                        UAnnotation (fqName = null)
                                         UQualifiedReferenceExpression
                                             USimpleNameReferenceExpression (identifier = var837f1e82)
                                             UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))

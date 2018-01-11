@@ -22,7 +22,6 @@ UFile (package = )
                     UVariable (name = someLocalFun)
                         ULambdaExpression
                             UParameter (name = text)
-                                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
                             ULiteralExpression (value = 42)
                 UReturnExpression
                     UBinaryExpression (operator = ==)

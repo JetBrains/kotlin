@@ -17,14 +17,12 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightGetter
 import org.jetbrains.kotlin.asJava.toLightSetter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
@@ -53,15 +51,6 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
                     parent = (parentUnwrapped as? KtProperty)?.setter
                              ?: (parentUnwrapped as? KtParameter)?.toLightSetter()
                              ?: parent
-                AnnotationUseSiteTarget.FIELD ->
-                    parent = (parentUnwrapped as? KtProperty)
-                             ?: (parentUnwrapped as? KtParameter)
-                                     ?.takeIf { it.isPropertyParameter() }
-                                     ?.let(LightClassUtil::getLightClassBackingField)
-                             ?: parent
-                AnnotationUseSiteTarget.SETTER_PARAMETER ->
-                    parent = (parentUnwrapped as? KtParameter)
-                                     ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
             }
         }
         if (psi is UastKotlinPsiVariable && parent != null) {
