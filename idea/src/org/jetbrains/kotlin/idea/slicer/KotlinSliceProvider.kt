@@ -28,11 +28,6 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 class KotlinSliceProvider : SliceLanguageSupportProvider {
     override fun createRootUsage(element: PsiElement, params: SliceAnalysisParams) = KotlinSliceUsage(element, params)
 
-    override fun transform(usage: SliceUsage): Collection<SliceUsage>? {
-        if (usage is KotlinSliceUsage) return null
-        return listOf(KotlinSliceUsage(usage.element, usage.parent, 0, false))
-    }
-
     override fun getExpressionAtCaret(atCaret: PsiElement?, dataFlowToThis: Boolean): KtExpression? {
         val element =
                 atCaret?.parentsWithSelf

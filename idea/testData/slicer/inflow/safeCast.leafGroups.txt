@@ -1,6 +1,0 @@
-3 fun test(<bold>o: Any</bold>) {
-4 	val <bold>x = o as? String</bold>
-4 		val x = <bold>o as? String</bold>
-4 			val x = <bold>o</bold> as? String
-3 				fun test(<bold>o: Any</bold>) {
-

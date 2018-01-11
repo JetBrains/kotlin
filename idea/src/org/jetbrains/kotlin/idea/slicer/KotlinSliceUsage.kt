@@ -19,13 +19,10 @@ package org.jetbrains.kotlin.idea.slicer
 import com.intellij.psi.PsiElement
 import com.intellij.slicer.SliceAnalysisParams
 import com.intellij.slicer.SliceUsage
-import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.psi.KtExpression
 
 open class KotlinSliceUsage : SliceUsage {
-    class UsageInfoLambdaWrapper(element: PsiElement) : UsageInfo(element)
-
     val lambdaLevel: Int
     val forcedExpressionMode: Boolean
 
@@ -44,18 +41,6 @@ open class KotlinSliceUsage : SliceUsage {
         if (parent == null) return KotlinSliceUsage(element, params)
         return KotlinSliceUsage(element, parent, lambdaLevel, forcedExpressionMode)
     }
-
-    override fun getUsageInfo(): UsageInfo {
-        val originalInfo = super.getUsageInfo()
-        if (lambdaLevel > 0 && forcedExpressionMode) {
-            val element = originalInfo.element ?: return originalInfo
-            // Do not let IDEA consider usages of the same anonymous function as duplicates when their levels differ
-            return UsageInfoLambdaWrapper(element)
-        }
-        return originalInfo
-    }
-
-    override fun canBeLeaf() = element != null && lambdaLevel == 0
 
     public override fun processUsagesFlownDownTo(element: PsiElement, uniqueProcessor: Processor<SliceUsage>) {
         InflowSlicer(element as? KtExpression ?: return, uniqueProcessor, this).processChildren()
