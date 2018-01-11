@@ -1,13 +1,12 @@
-// NUMBER: 3
-// EXIST: { lookupString:"lang" }
-// EXIST: { lookupString:"util" }
-// EXIST: { lookupString:"sql" }
+// NUMBER: 2
+// EXIST: { lookupString:"java" }
+// EXIST: { lookupString:"javax" }
 
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ComponentScan(basePackages = arrayOf("java.l<caret>ang"))
+@ComponentScan(basePackages = arrayOf("ja<caret>va"))
 open class App {
 
 }
