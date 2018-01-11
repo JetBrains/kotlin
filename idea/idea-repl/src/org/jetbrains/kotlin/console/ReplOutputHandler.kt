@@ -21,7 +21,6 @@ import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.w3c.dom.Element
@@ -48,7 +47,7 @@ class ReplOutputHandler(
 
     override fun isSilentlyDestroyOnClose() = true
 
-    override fun notifyTextAvailable(text: String, key: Key<*>) {
+    override fun notifyTextAvailable(text: String, key: Key<*>?) {
         // hide warning about adding test folder to classpath
         if (text.startsWith("warning: classpath entry points to a non-existent location")) return
 

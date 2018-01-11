@@ -33,7 +33,7 @@ class KtLightClassForDecompiledDeclaration(
         override val kotlinOrigin: KtClassOrObject?,
         private val file: KtClsFile
 ) : KtLightClassBase(clsDelegate.manager) {
-    val fqName = kotlinOrigin?.fqName ?: FqName(clsDelegate.qualifiedName.orEmpty())
+    val fqName = kotlinOrigin?.fqName ?: FqName(clsDelegate.qualifiedName)
 
     override fun copy() = this
 

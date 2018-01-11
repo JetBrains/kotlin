@@ -71,9 +71,8 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
 
         val problemElements = runInspection(inspectionClass, myProject).problemElements
         val actualProblems = problemElements
-            .keys()
-            .filter { it.name == "pom.xml" }
-            .map { problemElements.get(it) }
+            .filter { it.key.name == "pom.xml" }
+            .values
             .flatMap { it.toList() }
             .mapNotNull { it as? ProblemDescriptorBase }
 
