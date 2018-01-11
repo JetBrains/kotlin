@@ -33,7 +33,7 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
 abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement, JvmDeclarationUElement {
 
-    final override val uastParent: UElement? by lz {
+    override val uastParent: UElement? by lz {
         givenParent ?: convertParent()
     }
 
