@@ -1,6 +1,6 @@
 operator fun Any.get(a: Int) {
     if (a > 0) {
-        <lineMarker descr="Recursive call">this</lineMarker>[a - 1]
+        <lineMarker descr="Recursive call">this[a - 1]</lineMarker>
     }
 }
 

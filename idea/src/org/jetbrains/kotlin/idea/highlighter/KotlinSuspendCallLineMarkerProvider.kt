@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
-    private class SuspendCallMarkerInfo(callElement: PsiElement, message: String) : LineMarkerInfo<PsiElement>(
+    private class SuspendCallMarkerInfo(callElement: KtElement, message: String) : LineMarkerInfo<KtElement>(
             callElement,
             callElement.textRange,
             KotlinIcons.SUSPEND_CALL,
@@ -37,7 +37,7 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
             GutterIconRenderer.Alignment.RIGHT
     ) {
         override fun createGutterRenderer(): GutterIconRenderer? {
-            return object : LineMarkerInfo.LineMarkerGutterIconRenderer<PsiElement>(this) {
+            return object : LineMarkerInfo.LineMarkerGutterIconRenderer<KtElement>(this) {
                 override fun getClickAction(): AnAction? = null
             }
         }
@@ -61,9 +61,9 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
 
             markedLineNumbers += lineNumber
             result += if (element is KtForExpression) {
-                SuspendCallMarkerInfo(getElementForLineMark(element.loopRange!!), "Suspending iteration")
+                SuspendCallMarkerInfo(element.loopRange!!, "Suspending iteration")
             } else {
-                SuspendCallMarkerInfo(getElementForLineMark(element), "Suspend function call")
+                SuspendCallMarkerInfo(element, "Suspend function call")
             }
         }
     }
