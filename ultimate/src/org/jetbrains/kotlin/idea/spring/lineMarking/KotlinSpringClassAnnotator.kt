@@ -22,10 +22,8 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.navigation.GotoRelatedItem
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
-import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.spring.gutter.SpringClassAnnotator
 import com.intellij.util.Function
 import com.intellij.util.SmartList
@@ -40,7 +38,6 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import javax.swing.Icon
@@ -96,13 +93,6 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
     private val iconAlignmentField by lazy { LineMarkerInfo::class.java.getDeclaredField("myIconAlignment").apply { isAccessible = true } }
     private val targetsField by lazy { RelatedItemLineMarkerInfo::class.java.getDeclaredField("myTargets").apply { isAccessible = true } }
 
-    override fun getIdentifierLocal(annotation: PsiAnnotation): PsiElement? {
-        return when (annotation) {
-            is KtLightAnnotationForSourceEntry -> annotation.kotlinOrigin.getCallNameExpression()?.getIdentifier()
-            else -> super.getIdentifierLocal(annotation)
-        }
-    }
-
     override fun collectNavigationMarkers(psiElement: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
         val newItems = SmartList<RelatedItemLineMarkerInfo<PsiElement>>()
 
@@ -111,14 +101,8 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
         newItems.mapNotNullTo(result) { item ->
             val itemElement = item.element
             val elementToAnnotate = when (itemElement) {
-                is KtLightIdentifier -> itemElement.origin.let { ktElement ->
-                    when (ktElement) {
-                        is KtParameterList -> ktElement.leftParenthesis
-                        else -> ktElement
-                    }
-                }
+                is KtLightIdentifier -> itemElement.origin
                 is KtLightElement<*, *> -> itemElement.kotlinOrigin
-                is LeafPsiElement -> itemElement
                 else -> return@mapNotNullTo item
             }
             if (elementToAnnotate == null) return@mapNotNullTo null
