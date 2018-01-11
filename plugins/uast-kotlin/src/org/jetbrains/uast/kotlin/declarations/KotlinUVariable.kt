@@ -201,27 +201,9 @@ open class KotlinUParameter(
     }
 }
 
-class KotlinReceiverUParameter(
-        psi: PsiParameter,
-        private val receiver: KtTypeReference,
-        givenParent: UElement?
-) : KotlinUParameter(psi, receiver, givenParent) {
-
-    override val annotations: List<UAnnotation> by lz {
-        receiver.annotationEntries
-                .filter { it.useSiteTarget?.getAnnotationUseSiteTarget() == AnnotationUseSiteTarget.RECEIVER }
-                .map { KotlinUAnnotation(it, this) } +
-        super.annotations
-    }
-
-}
-
 class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override val uastParent: UElement) : UAnnotation, JvmDeclarationUElement {
 
     private fun getTargetType(annotatedElement: PsiElement): KotlinType? {
-        if (annotatedElement is KtTypeReference) {
-            annotatedElement.getType()?.let { return it }
-        }
         if (annotatedElement is KtCallableDeclaration) {
             annotatedElement.typeReference?.getType()?.let { return it }
         }
