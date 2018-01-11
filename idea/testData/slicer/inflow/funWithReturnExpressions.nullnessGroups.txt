@@ -1,3 +1,0 @@
-[NotNull Values]
-3 	fun <bold>foo(n: Int): Int {</bold>
-3 		fun <bold>foo(n: Int): Int {</bold>

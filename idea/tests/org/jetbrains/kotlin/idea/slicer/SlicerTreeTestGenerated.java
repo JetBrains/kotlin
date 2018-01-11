@@ -253,12 +253,6 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
         doTest(fileName);
     }
 
-    @TestMetadata("inflow/nullsAndNotNulls.kt")
-    public void testInflow_NullsAndNotNulls() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("inflow/overridingFunctionResult.kt")
     public void testInflow_OverridingFunctionResult() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/overridingFunctionResult.kt");
