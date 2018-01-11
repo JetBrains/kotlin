@@ -4,19 +4,16 @@ UFile (package = )
             UBlockExpression
                 UDeclarationsExpression
                     ULocalVariable (name = var268d4034)
-                        UAnnotation (fqName = null)
                         UBinaryExpression (operator = <other>)
                             ULiteralExpression (value = "foo")
                             ULiteralExpression (value = 1)
                     ULocalVariable (name = a)
-                        UAnnotation (fqName = null)
                         UQualifiedReferenceExpression
                             USimpleNameReferenceExpression (identifier = var268d4034)
                             UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                                 UIdentifier (Identifier (component1))
                                 USimpleNameReferenceExpression (identifier = <anonymous class>)
                     ULocalVariable (name = b)
-                        UAnnotation (fqName = null)
                         UQualifiedReferenceExpression
                             USimpleNameReferenceExpression (identifier = var268d4034)
                             UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))

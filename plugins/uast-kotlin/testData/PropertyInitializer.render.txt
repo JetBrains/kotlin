@@ -1,7 +1,7 @@
 public final class TestPropertyInitializer {
-    @org.jetbrains.annotations.NotNull private var withSetter: java.lang.String = "/sdcard"
+    private var withSetter: java.lang.String = "/sdcard"
     public final fun getWithSetter() : java.lang.String = field
-    public final fun setWithSetter(@org.jetbrains.annotations.NotNull p: java.lang.String) : void {
+    public final fun setWithSetter(p: java.lang.String) : void {
         field = p
     }
     public fun TestPropertyInitializer() = UastEmptyExpression

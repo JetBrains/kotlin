@@ -1,14 +1,14 @@
 public abstract interface Callback {
-    public abstract fun onError(@org.jetbrains.annotations.NotNull throwable: java.lang.Throwable) : void = UastEmptyExpression
+    public abstract fun onError(throwable: java.lang.Throwable) : void = UastEmptyExpression
 }
 
 public final class Model {
-    public final fun crashMe(@org.jetbrains.annotations.NotNull clazz: java.lang.Class<T>, @org.jetbrains.annotations.NotNull factory: kotlin.jvm.functions.Function0<? extends T>) : void {
+    public final fun crashMe(clazz: java.lang.Class<T>, factory: kotlin.jvm.functions.Function0<? extends T>) : void {
         throw <init>()
     }
     public fun Model() {
         {
-            crashMe(Callback.java, {
+            crashMe(Callback.java, { 
                 anonymous object : Callback {
                                 override fun onError(throwable: Throwable) {
                                     throw UnsupportedOperationException("")
