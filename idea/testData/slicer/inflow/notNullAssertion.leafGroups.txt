@@ -1,6 +1,0 @@
-3 fun test(<bold>s: String?</bold>) {
-4 	val <bold>x = s!!</bold>
-4 		val x = <bold>s!!</bold>
-4 			val x = <bold>s</bold>!!
-3 				fun test(<bold>s: String?</bold>) {
-
