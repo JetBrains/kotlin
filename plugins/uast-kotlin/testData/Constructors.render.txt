@@ -2,7 +2,7 @@ public final class A {
     @org.jetbrains.annotations.NotNull private final var str: java.lang.String
     public final fun getStr() : java.lang.String = UastEmptyExpression
     public fun A(@org.jetbrains.annotations.NotNull str: java.lang.String) = UastEmptyExpression
-    public fun A(@org.jetbrains.annotations.NotNull i: int) {
+    public fun A(@null i: int) {
         <init>(i.toString())
     }
 }
@@ -15,7 +15,7 @@ public final class AWithInit {
             println()
         }
     }
-    public fun AWithInit(@org.jetbrains.annotations.NotNull i: int) {
+    public fun AWithInit(@null i: int) {
         <init>(i.toString())
     }
 }
@@ -31,7 +31,7 @@ public final class AWith2Init {
             println(2)
         }
     }
-    public fun AWith2Init(@org.jetbrains.annotations.NotNull i: int) {
+    public fun AWith2Init(@null i: int) {
         <init>(i.toString())
     }
 }
@@ -51,7 +51,7 @@ public final class AWithSecondary {
     @org.jetbrains.annotations.NotNull public var a: java.lang.String
     public final fun getA() : java.lang.String = UastEmptyExpression
     public final fun setA(@org.jetbrains.annotations.NotNull p: java.lang.String) : void = UastEmptyExpression
-    public fun AWithSecondary(@org.jetbrains.annotations.NotNull i: int) {
+    public fun AWithSecondary(@null i: int) {
         <init>()
         a = i.toString()
     }
@@ -65,7 +65,7 @@ public final class AWithSecondaryInit {
     @org.jetbrains.annotations.NotNull public var a: java.lang.String
     public final fun getA() : java.lang.String = UastEmptyExpression
     public final fun setA(@org.jetbrains.annotations.NotNull p: java.lang.String) : void = UastEmptyExpression
-    public fun AWithSecondaryInit(@org.jetbrains.annotations.NotNull i: int) {
+    public fun AWithSecondaryInit(@null i: int) {
         <init>()
         {
             println()
