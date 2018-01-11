@@ -82,8 +82,6 @@ dependencies {
     testRuntime(project(":allopen-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
-    testRuntime(project(":plugins:uast-kotlin"))
-    testRuntime(project(":plugins:uast-kotlin-idea"))
     testRuntime(ideaUltimateSdkDeps("*.jar"))
     testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "properties"))
     testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "coverage"))
