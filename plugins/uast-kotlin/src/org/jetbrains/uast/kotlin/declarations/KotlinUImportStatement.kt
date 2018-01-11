@@ -30,11 +30,6 @@ class KotlinUImportStatement(
         override val psi: KtImportDirective,
         givenParent: UElement?
 ) : KotlinAbstractUElement(givenParent), UImportStatement {
-
-    override val javaPsi = null
-
-    override val sourcePsi = psi
-
     override val isOnDemand: Boolean
         get() = psi.isAllUnder
 

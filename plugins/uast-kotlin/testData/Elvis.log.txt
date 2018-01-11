@@ -12,11 +12,9 @@ UFile (package = )
                     UExpressionList (elvis)
                         UDeclarationsExpression
                             ULocalVariable (name = var243c51a0)
-                                UAnnotation (fqName = null)
                                 UExpressionList (elvis)
                                     UDeclarationsExpression
                                         ULocalVariable (name = varc4aef569)
-                                            UAnnotation (fqName = null)
                                             UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
                                                 UIdentifier (Identifier (foo))
                                                 USimpleNameReferenceExpression (identifier = foo)

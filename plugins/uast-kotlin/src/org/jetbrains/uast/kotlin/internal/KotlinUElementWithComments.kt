@@ -17,11 +17,10 @@
 package org.jetbrains.uast.kotlin.internal
 
 import com.intellij.psi.PsiComment
-import org.jetbrains.uast.JvmDeclarationUElement
 import org.jetbrains.uast.UComment
 import org.jetbrains.uast.UElement
 
-interface KotlinUElementWithComments : UElement, JvmDeclarationUElement {
+interface KotlinUElementWithComments : UElement {
     override val comments: List<UComment>
         get() {
             val psi = psi ?: return emptyList()

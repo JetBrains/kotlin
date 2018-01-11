@@ -9,7 +9,7 @@ public final class LocalDeclarationsKt {
         var baz: kotlin.jvm.functions.Function0<? extends kotlin.Unit> = fun () {
                 <init>()
         }
-        var someLocalFun: kotlin.jvm.functions.Function2<? super java.lang.Integer,? super java.lang.String,? extends java.lang.Integer> = fun (@org.jetbrains.annotations.NotNull var text: java.lang.String) {
+        var someLocalFun: kotlin.jvm.functions.Function2<? super java.lang.Integer,? super java.lang.String,? extends java.lang.Integer> = fun (var text: java.lang.String) {
             42
         }
         return bar() == <init>()
