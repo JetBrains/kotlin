@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.backend.common.AbstractClosureAnnotator
+import org.jetbrains.kotlin.backend.common.Closure
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.backend.common.AbstractClosureAnnotator
-import org.jetbrains.kotlin.backend.common.Closure
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -57,8 +57,7 @@ abstract class AbstractClosureAnnotatorTestCase : AbstractIrGeneratorTestCase() 
             override fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure) {
                 if (functionDescriptor is ConstructorDescriptor) {
                     actualOut.println("Closure for constructor ${functionDescriptor.containingDeclaration.name}:")
-                }
-                else {
+                } else {
                     actualOut.println("Closure for function ${functionDescriptor.name}:")
                 }
                 printClosure(closure)
