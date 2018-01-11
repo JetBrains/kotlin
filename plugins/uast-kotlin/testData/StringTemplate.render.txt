@@ -1,8 +1,8 @@
 public final class StringTemplateKt {
-    @org.jetbrains.annotations.NotNull private static final var foo: java.lang.String = "lorem"
-    @org.jetbrains.annotations.NotNull private static final var bar: java.lang.String = "ipsum"
-    @org.jetbrains.annotations.NotNull private static final var baz: java.lang.String = "dolor"
-    @org.jetbrains.annotations.NotNull private static final var foobarbaz: java.lang.String = foo + " " + bar + " " + baz
+    private static final var foo: java.lang.String = "lorem"
+    private static final var bar: java.lang.String = "ipsum"
+    private static final var baz: java.lang.String = "dolor"
+    private static final var foobarbaz: java.lang.String = foo + " " + bar + " " + baz
     public static final fun getFoo() : java.lang.String = UastEmptyExpression
     public static final fun getBar() : java.lang.String = UastEmptyExpression
     public static final fun getBaz() : java.lang.String = UastEmptyExpression
