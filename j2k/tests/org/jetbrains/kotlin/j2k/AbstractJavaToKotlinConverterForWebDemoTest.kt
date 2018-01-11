@@ -23,13 +23,15 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.lang.MetaLanguage
-import com.intellij.lang.jvm.facade.JvmElementProvider
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.*
+import com.intellij.psi.FileContextProvider
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementFinder
+import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.augment.TypeAnnotationModifier
 import com.intellij.psi.compiled.ClassFileDecompilers
@@ -70,7 +72,6 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
                 val projectArea = Extensions.getArea(project)
                 CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiTreeChangePreprocessor.EP_NAME, PsiTreeChangePreprocessor::class.java)
                 CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiElementFinder.EP_NAME, PsiElementFinder::class.java)
-                CoreApplicationEnvironment.registerExtensionPoint(projectArea, JvmElementProvider.EP_NAME, JvmElementProvider::class.java)
             }
         }
 
@@ -107,7 +108,6 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
 
         CoreApplicationEnvironment.registerExtensionPoint(area, TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier::class.java)
         CoreApplicationEnvironment.registerExtensionPoint(area, MetaLanguage.EP_NAME, MetaLanguage::class.java)
-        CoreApplicationEnvironment.registerExtensionPoint(area, JavaModuleSystem.EP_NAME, JavaModuleSystem::class.java)
     }
 
     fun findAnnotations(): File? {
