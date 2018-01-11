@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.konan.exec.runTool
 import java.lang.ProcessBuilder
 import java.lang.ProcessBuilder.Redirect
+import org.jetbrains.kotlin.konan.KonanExternalToolFailure
+import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.target.*
@@ -68,26 +69,6 @@ internal abstract class PlatformFlags(val properties: KonanProperties) {
 
 }
 
-internal open class Command(tool:String) {
-    private val opts = mutableListOf(tool)
-    val libs = mutableListOf<String>()
-    operator fun String.unaryPlus():Command {
-        opts += this
-        return this@Command
-    }
-
-    operator fun List<String>.unaryPlus():Command {
-        opts.addAll(this)
-        return this@Command
-    }
-
-    open fun execute() = runTool(*opts.toTypedArray())
-
-    fun externalLibraries(deps: List<String>) {
-        libs.addAll(deps)
-    }
-}
-
 internal open class AndroidPlatform(distribution: Distribution)
     : PlatformFlags(distribution.targetProperties) {
 
@@ -133,13 +114,7 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
         = binaries.filter { it.isUnixStaticLib }
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): Command {
-        return object : Command(linker){
-            override fun execute() {
-                super.execute()
-                if (debug)
-                    runTool(*dsymutilCommand(executable).toTypedArray())
-            }
-        }.apply {
+        return object : Command(linker) {} .apply {
             + "-demangle"
             + listOf("-object_path_lto", "temporary.o", "-lto_library", libLTO)
             + listOf("-dynamic", "-arch", propertyTargetString("arch"))
@@ -152,6 +127,42 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
             + linkerKonanFlags
             + "-lSystem"
         }
+    }
+
+    fun dsymUtilCommand(executable: ExecutableFile) = object : Command(dsymutilCommand(executable)) {
+        override fun runProcess(): Int = 
+            executeCommandWithFilter(command)
+    }
+
+    // TODO: consider introducing a better filtering directly in Command.
+    private fun executeCommandWithFilter(command: List<String>): Int {
+        val builder = ProcessBuilder(command)
+
+        // Inherit main process output streams.
+        val isDsymUtil = (command[0] == dsymutil)
+
+        builder.redirectOutput(Redirect.INHERIT)
+        builder.redirectInput(Redirect.INHERIT)
+        if (!isDsymUtil)
+            builder.redirectError(Redirect.INHERIT)
+
+        val process = builder.start()
+        if (isDsymUtil) {
+            /**
+             * llvm-lto has option -alias that lets tool to know which symbol we use instead of _main,
+             * llvm-dsym doesn't have such a option, so we ignore annoying warning manually.
+             */
+            val errorStream = process.errorStream
+            val outputStream = bufferedReader(errorStream)
+            while (true) {
+                val line = outputStream.readLine() ?: break
+                if (!line.contains("warning: could not find object file symbol for symbol _main"))
+                    System.err.println(line)
+            }
+            outputStream.close()
+        }
+        val exitCode = process.waitFor()
+        return exitCode
     }
 
     open fun dsymutilCommand(executable: ExecutableFile): List<String> = listOf(dsymutil, executable)
@@ -253,7 +264,7 @@ internal open class WasmPlatform(distribution: Distribution)
     override val useCompilerDriverAsLinker: Boolean get() = false
 
     override fun filterStaticLibraries(binaries: List<String>) 
-        = emptyList<String>()
+        = binaries.filter{it.isJavaScript}
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): Command {
         return object: Command("") {
@@ -261,7 +272,7 @@ internal open class WasmPlatform(distribution: Distribution)
                 val src = File(objectFiles.single())
                 val dst = File(executable)
                 src.recursiveCopyTo(dst)
-                javaScriptLink(libs.filter{it.isJavaScript}, executable)
+                javaScriptLink(args, executable)
             }
 
             private fun javaScriptLink(jsFiles: List<String>, executable: String): String {
@@ -312,6 +323,12 @@ internal class LinkStage(val context: Context) {
         addAll(elements.filter { !it.isEmpty() })
     }
 
+    private fun runTool(command: List<String>) = runTool(*command.toTypedArray())
+    private fun runTool(vararg command: String) = 
+        Command(*command)
+            .logWith(context::log)
+            .execute()
+
     private fun llvmLto(files: List<BitcodeFile>): ObjectFile {
         val combined = temporary("combined", ".o")
 
@@ -325,7 +342,7 @@ internal class LinkStage(val context: Context) {
         }
         command.addNonEmpty(platform.llvmLtoDynamicFlags)
         command.addNonEmpty(files)
-        runTool(*command.toTypedArray())
+        runTool(command)
 
         return combined
     }
@@ -344,7 +361,7 @@ internal class LinkStage(val context: Context) {
     private fun hostLlvmTool(tool: String, args: List<String>) {
         val absoluteToolName = "${distribution.llvmBin}/$tool"
         val command = listOf(absoluteToolName) + args
-        runTool(*command.toTypedArray())
+        runTool(command)
     }
 
     private fun bitcodeToWasm(bitcodeFiles: List<BitcodeFile>): String {
@@ -422,58 +439,22 @@ internal class LinkStage(val context: Context) {
                 + platform.linkCommandSuffix()
                 + platform.linkStaticLibraries(includedBinaries)
                 + libraryProvidedLinkerFlags
-                externalLibraries(includedBinaries)
+                logger = context::log
             }.execute()
+
+            if (debug && platform is MacOSBasedPlatform) {
+                platform.dsymUtilCommand(executable)
+                    .logWith(context::log)
+                    .execute()
+            }
         } catch (e: KonanExternalToolFailure) {
-            context.reportCompilationError("linker invocation reported errors")
+            context.reportCompilationError("${e.toolName} invocation reported errors")
             return null
         }
         return executable
     }
 
-    private fun executeCommand(vararg command: String): Int {
-
-        context.log{""}
-        context.log{command.asList<String>().joinToString(" ")}
-
-        val builder = ProcessBuilder(command.asList())
-
-        // Inherit main process output streams.
-        val isDsymUtil = platform is MacOSBasedPlatform && command[0] == platform.dsymutil
-
-        builder.redirectOutput(Redirect.INHERIT)
-        builder.redirectInput(Redirect.INHERIT)
-        if (!isDsymUtil)
-            builder.redirectError(Redirect.INHERIT)
-
-
-        val process = builder.start()
-        if (isDsymUtil) {
-            /**
-             * llvm-lto has option -alias that lets tool to know which symbol we use instead of _main,
-             * llvm-dsym doesn't have such a option, so we ignore annoying warning manually.
-             */
-            val errorStream = process.errorStream
-            val outputStream = bufferedReader(errorStream)
-            while (true) {
-                val line = outputStream.readLine() ?: break
-                if (!line.contains("warning: could not find object file symbol for symbol _main"))
-                    System.err.println(line)
-            }
-            outputStream.close()
-        }
-        val exitCode = process.waitFor()
-        return exitCode
-    }
-
-    private fun runTool(vararg command: String) {
-        val code = executeCommand(*command)
-        if (code != 0) throw KonanExternalToolFailure("The ${command[0]} command returned non-zero exit code: $code.")
-    }
-
     fun linkStage() {
-        context.log{"# Compiler root: ${distribution.konanHome}"}
-
         val bitcodeFiles = listOf(emitted) +
             libraries.map{it -> it.bitcodePaths}.flatten()
 

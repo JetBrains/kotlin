@@ -22,5 +22,5 @@ import org.jetbrains.kotlin.konan.file.*
 
 fun produceCAdapterBitcode(clang: TargetClang, cppFileName: String, bitcodeFileName: String) {
     val clangCommand = clang.clangCXX("-std=c++11", cppFileName, "-emit-llvm", "-c", "-o", bitcodeFileName)
-    runTool(clangCommand)
+    Command(clangCommand).execute()
 }

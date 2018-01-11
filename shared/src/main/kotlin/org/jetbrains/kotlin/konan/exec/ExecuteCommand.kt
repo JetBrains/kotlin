@@ -18,29 +18,51 @@ package org.jetbrains.kotlin.konan.exec
 
 import java.lang.ProcessBuilder
 import java.lang.ProcessBuilder.Redirect
+import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 
-fun executeCommand(command: List<String>) =
-    executeCommand(*command.toTypedArray())
 
-fun executeCommand(vararg command: String): Int {
-    // TODO: need a verbose logger here.
+open class Command(initialCommand: List<String>) {
 
-    val builder = ProcessBuilder(command.asList())
+    constructor(tool: String) : this(listOf(tool)) 
+    constructor(vararg command: String) : this(command.toList<String>()) 
+    protected val command = initialCommand.toMutableList()
 
-    builder.redirectOutput(Redirect.INHERIT)
-    builder.redirectInput(Redirect.INHERIT)
-    builder.redirectError(Redirect.INHERIT)
+    val args: List<String> 
+        get() = command.drop(1)
 
-    val process = builder.start()
-    val exitCode = process.waitFor()
-    return exitCode
+    operator fun String.unaryPlus(): Command {
+        command += this
+        return this@Command
+    }
+
+    operator fun List<String>.unaryPlus(): Command {
+        command.addAll(this)
+        return this@Command
+    }
+
+    var logger: ((() -> String)->Unit)? = null
+
+    fun logWith(newLogger: ((() -> String)->Unit)): Command {
+        logger = newLogger
+        return this
+    }
+
+    open fun runProcess(): Int {
+        val builder = ProcessBuilder(command)
+
+        builder.redirectOutput(Redirect.INHERIT)
+        builder.redirectInput(Redirect.INHERIT)
+        builder.redirectError(Redirect.INHERIT)
+
+        val process = builder.start()
+        val exitCode = process.waitFor()
+        return exitCode
+    }
+
+    open fun execute() {
+        if (logger != null) logger!! { command.toList<String>().joinToString(" ") } 
+
+        val code = runProcess()
+        if (code != 0) throw KonanExternalToolFailure("The ${command[0]} command returned non-zero exit code: $code.", command[0])
+    }
 }
-
-fun runTool(command: List<String>) =
-    runTool(*command.toTypedArray())
-
-fun runTool(vararg command: String) {
-    val code = executeCommand(*command)
-    if (code != 0) error("The ${command[0]} command returned non-zero exit code: $code.")
-}
-
