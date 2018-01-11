@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.util.*
-import java.util.concurrent.ConcurrentMap
 
 fun isInlineFunctionLineNumber(file: VirtualFile, lineNumber: Int, project: Project): Boolean {
     if (ProjectRootsUtil.isProjectSourceFile(project, file)) {
@@ -119,7 +118,7 @@ class WeakBytecodeDebugInfoStorage : ConcurrentWeakFactoryMap<BinaryCacheKey, By
 
         return BytecodeDebugInfo(smapData, lineNumberMapping)
     }
-    override fun createMap(): ConcurrentMap<BinaryCacheKey, BytecodeDebugInfo?> {
+    override fun createMap(): Map<BinaryCacheKey, BytecodeDebugInfo?> {
         return ContainerUtil.createConcurrentWeakKeyWeakValueMap()
     }
 }
