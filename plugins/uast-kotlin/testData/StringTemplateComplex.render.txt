@@ -1,15 +1,15 @@
 public final class StringTemplateComplexKt {
-    @org.jetbrains.annotations.NotNull private static final var muchRecur: java.lang.String = "abc"
-    @org.jetbrains.annotations.NotNull private static final var case4: java.lang.String = "a " + "literal" + " z"
-    @org.jetbrains.annotations.NotNull private static final var case5: java.lang.String = "a " + "literal" + " " + "literal" + " z"
-    @org.jetbrains.annotations.NotNull private static final var literalInLiteral: java.lang.String = "a " + "literal" + case4 + " z"
-    @org.jetbrains.annotations.NotNull private static final var literalInLiteral2: java.lang.String = "a " + "literal" + case4.repeat(4) + " z"
+    private static final var muchRecur: java.lang.String = "abc"
+    private static final var case4: java.lang.String = "a " + "literal" + " z"
+    private static final var case5: java.lang.String = "a " + "literal" + " " + "literal" + " z"
+    private static final var literalInLiteral: java.lang.String = "a " + "literal" + case4 + " z"
+    private static final var literalInLiteral2: java.lang.String = "a " + "literal" + case4.repeat(4) + " z"
     public static final fun getMuchRecur() : java.lang.String = UastEmptyExpression
     public static final fun getCase4() : java.lang.String = UastEmptyExpression
     public static final fun getCase5() : java.lang.String = UastEmptyExpression
     public static final fun getLiteralInLiteral() : java.lang.String = UastEmptyExpression
     public static final fun getLiteralInLiteral2() : java.lang.String = UastEmptyExpression
-    public static final fun simpleForTemplate(@null i: int) : java.lang.String = i
+    public static final fun simpleForTemplate(i: int) : java.lang.String = i
     public static final fun foo() : void {
         println(baz)
         var template1: java.lang.String = simpleForTemplate()
