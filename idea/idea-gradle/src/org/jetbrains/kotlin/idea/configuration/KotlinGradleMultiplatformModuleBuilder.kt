@@ -103,7 +103,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         val buildGradle = moduleDir.createChildData(null, "build.gradle")
         val buildScriptData = BuildScriptDataBuilder(buildGradle)
         extendScript(buildScriptData, sdk ?: rootModule.rootManager.sdk)
-        VfsUtil.saveText(buildGradle, buildScriptData.buildConfigurationPart() + buildScriptData.buildMainPart())
+        VfsUtil.saveText(buildGradle, buildScriptData.build())
     }
 
     private fun setupCommonModule(
