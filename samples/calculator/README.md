@@ -23,5 +23,10 @@ The sample consists of:
     framework by invoking Gradle from custom "Run Script" build phase, and this
     framework is imported into the Xcode project.
 
-    The library can also be compiled to a `.jar` by Kotlin/JVM compiler with
-    Gradle.
+    
+The library can also be compiled to a `.jar` by Kotlin/JVM compiler with Gradle. 
+Just run from the [sample root dir](../): 
+```
+./gradlew calculator:jar
+```
+This will generate a `calculator.jar` in `build/libs/`.
