@@ -28,9 +28,6 @@ import com.intellij.lang.properties.psi.PropertiesFile
 import com.intellij.lang.properties.psi.Property
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.extensions.Extensions
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
@@ -311,13 +308,12 @@ internal fun findUsages(
                 }
             }
             else {
-                ProgressManager.getInstance().run(object : Task(project, "",false) {
-                    override fun isModal() = true
-
-                    override fun run(indicator: ProgressIndicator) {
-                        handler.processElementUsages(psiElement, processor, options)
-                    }
-                })
+                // run in another thread to test read-action assertions
+                val thread = Thread {
+                    handler.processElementUsages(psiElement, processor, options)
+                }
+                thread.start()
+                thread.join()
             }
         }
 
