@@ -1,7 +1,7 @@
 public final class DestructuringDeclarationKt {
     public static final fun foo() : void {
-        @null var var268d4034: <ErrorType> = "foo" <other> 1
-        @null var a: java.lang.String = var268d4034.<anonymous class>()
-        @null var b: int = var268d4034.<anonymous class>()
+        var var268d4034: <ErrorType> = "foo" <other> 1
+        var a: java.lang.String = var268d4034.<anonymous class>()
+        var b: int = var268d4034.<anonymous class>()
     }
 }

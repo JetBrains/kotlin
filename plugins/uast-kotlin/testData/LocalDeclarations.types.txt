@@ -18,11 +18,10 @@ UFile (package = ) [public final class LocalDeclarationsKt {...]
                                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] : PsiType:<ErrorType>
                                     UIdentifier (Identifier (Local)) [UIdentifier (Identifier (Local))]
                                     USimpleNameReferenceExpression (identifier = <init>) [<init>] : PsiType:<ErrorType>
-                UDeclarationsExpression [var someLocalFun: kotlin.jvm.functions.Function2<? super java.lang.Integer,? super java.lang.String,? extends java.lang.Integer> = fun (@org.jetbrains.annotations.NotNull var text: java.lang.String) {...}]
-                    UVariable (name = someLocalFun) [var someLocalFun: kotlin.jvm.functions.Function2<? super java.lang.Integer,? super java.lang.String,? extends java.lang.Integer> = fun (@org.jetbrains.annotations.NotNull var text: java.lang.String) {...}]
-                        ULambdaExpression [fun (@org.jetbrains.annotations.NotNull var text: java.lang.String) {...}]
-                            UParameter (name = text) [@org.jetbrains.annotations.NotNull var text: java.lang.String]
-                                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+                UDeclarationsExpression [var someLocalFun: kotlin.jvm.functions.Function2<? super java.lang.Integer,? super java.lang.String,? extends java.lang.Integer> = fun (var text: java.lang.String) {...}]
+                    UVariable (name = someLocalFun) [var someLocalFun: kotlin.jvm.functions.Function2<? super java.lang.Integer,? super java.lang.String,? extends java.lang.Integer> = fun (var text: java.lang.String) {...}]
+                        ULambdaExpression [fun (var text: java.lang.String) {...}]
+                            UParameter (name = text) [var text: java.lang.String]
                             ULiteralExpression (value = 42) [42] : PsiType:int
                 UReturnExpression [return bar() == <init>()] : PsiType:Void
                     UBinaryExpression (operator = ==) [bar() == <init>()] : PsiType:boolean

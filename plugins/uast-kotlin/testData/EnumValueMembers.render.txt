@@ -1,8 +1,6 @@
 public enum Style {
-    @null SHEET {
-        public fun getExitAnimation() : java.lang.String {
-            return "bar"
-        }
+    SHEET {
+        public fun getExitAnimation() : java.lang.String = "bar"
         fun SHEET() = UastEmptyExpression
     }
     @org.jetbrains.annotations.NotNull private final var value: java.lang.String
