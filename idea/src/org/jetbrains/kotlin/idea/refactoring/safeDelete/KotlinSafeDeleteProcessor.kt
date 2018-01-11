@@ -35,8 +35,6 @@ import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDe
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.*
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -136,15 +134,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
         fun findUsagesByJavaProcessor(element: PsiElement, forceReferencedElementUnwrapping: Boolean): NonCodeUsageSearchInfo? {
             val javaUsages = ArrayList<UsageInfo>()
-
-            val elementToPassToJava = when (element) {
-                is KtLightFieldImpl<*> -> object : KtLightField by element {
-                    // Suppress walking through initializer compiled PSI (it doesn't contain any reference expressions anyway)
-                    override fun getInitializer() = null
-                }
-                else -> element
-            }
-            val searchInfo = super.findUsages(elementToPassToJava, asLightElements(allElementsToDelete), javaUsages)
+            val searchInfo = super.findUsages(element, asLightElements(allElementsToDelete), javaUsages)
 
             javaUsages.filterIsInstance<SafeDeleteOverridingMethodUsageInfo>().mapNotNullTo(deleteSet) { it.element }
 
