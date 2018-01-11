@@ -17,7 +17,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
-          IFLE (L2)
+          IFEQ (L2)
           ICONST_1
           GOTO (L3)
         LABEL (L2)

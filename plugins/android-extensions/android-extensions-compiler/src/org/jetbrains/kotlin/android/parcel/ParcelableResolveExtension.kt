@@ -113,14 +113,14 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
                && modality != Modality.ABSTRACT
                && typeParameters.isEmpty()
                && valueParameters.isEmpty()
-               && returnType?.let { type -> KotlinBuiltIns.isInt(type) } == true
+               // Unfortunately, we can't check the return type as it's unresolved in IDE light classes
     }
 }
 
 internal fun SimpleFunctionDescriptor.isWriteToParcel(): Boolean {
     return typeParameters.isEmpty()
            && valueParameters.size == 2
-           // Unfortunately, we can't check the first parameter cause it can be unresolved
+           // Unfortunately, we can't check the first parameter type as it's unresolved in IDE light classes
            && KotlinBuiltIns.isInt(valueParameters[1].type)
            && returnType?.let { KotlinBuiltIns.isUnit(it) } == true
 }
