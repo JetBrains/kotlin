@@ -349,12 +349,14 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
                     if (filterResult == FilterResult.PROCESS) {
                         addQualifiedElementToAnalyze(userType)
+                        nextLevel()
                     }
 
                     // elements in qualifier must be under
-                    nextLevel()
                     userType.qualifier?.accept(this)
-                    prevLevel()
+                    if (filterResult == FilterResult.PROCESS) {
+                        prevLevel()
+                    }
                 }
             }
 
@@ -400,12 +402,14 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
                 if (filterResult == FilterResult.PROCESS) {
                     addQualifiedElementToAnalyze(expression)
+                    nextLevel()
                 }
 
                 // elements in receiver must be under
-                nextLevel()
                 expression.receiverExpression.accept(this)
-                prevLevel()
+                if (filterResult == FilterResult.PROCESS) {
+                    prevLevel()
+                }
             }
         }
 
