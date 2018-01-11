@@ -16,17 +16,12 @@
 
 package org.jetbrains.kotlin.psi
 
-import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.config.InjectionPlace
-import org.jetbrains.kotlin.idea.injection.KotlinLanguageInjector
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class KotlinInjectionTest : AbstractInjectionTest() {
     fun testInjectionOnJavaPredefinedMethodWithAnnotation() = doInjectionPresentTest(
@@ -270,7 +265,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             fun other() { foo(v) }
             """,
             languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
-
+    
     fun testInjectionOfCustomParameterWithAnnotation() = doInjectionPresentTest(
             """
             import org.intellij.lang.annotations.Language
@@ -417,133 +412,80 @@ class KotlinInjectionTest : AbstractInjectionTest() {
     )
 
     fun testJavaAnnotationsPattern() {
-        myFixture.addClass("""
-                @interface Matches { String value(); }
-                """)
-
-        doAnnotationInjectionTest(
-                injectedLanguage = RegExpLanguage.INSTANCE.id,
-                pattern = """psiMethod().withName("value").withParameters().definedInClass("Matches")""",
-                kotlinCode = """
-                                        @Matches("[A-Z]<caret>[a-z]+")
-                                        val name = "John"
-                                    """
-        )
-    }
-
-    fun testKotlinAnnotationsPattern() {
-        doAnnotationInjectionTest(
-                patternLanguage = "kotlin",
-                injectedLanguage = RegExpLanguage.INSTANCE.id,
-                pattern = """kotlinParameter().ofFunction(0, kotlinFunction().withName("Matches").definedInClass("Matches"))""",
-                kotlinCode = """
-                        annotation class Matches(val pattern: String)
-
-                        @Matches("[A-Z]<caret>[a-z]+")
-                        val name = "John"
-                                    """
-        )
-    }
-
-    fun testKotlinAnnotationsPatternNamed() {
-        doAnnotationInjectionTest(
-                patternLanguage = "kotlin",
-                injectedLanguage = RegExpLanguage.INSTANCE.id,
-                pattern = """kotlinParameter().ofFunction(0, kotlinFunction().withName("Matches").definedInClass("Matches"))""",
-                kotlinCode = """
-                        annotation class Matches(val pattern: String)
-
-                        @Matches(pattern = "[A-Z]<caret>[a-z]+")
-                        val name = "John"
-                                    """
-            )
-        }
-
-
-    fun testInjectionInJavaAnnotation() {
-
-        myFixture.addClass("""
-                @interface InHtml {
-                    String value();
-                }
-                """)
-
-        doAnnotationInjectionTest(
-                injectedLanguage = HTMLLanguage.INSTANCE.id,
-                pattern = """psiMethod().withName("value").withParameters().definedInClass("InHtml")""",
-                kotlinCode = """
-                                    @InHtml("<htm<caret>l></html>")
-                                    fun foo() {
-                                    }
-                                    """,
-                additionalAsserts = { assertSameElements(myFixture.complete(CompletionType.BASIC).flatMap { it.allLookupStrings }, "html") }
-        )
-
-    }
-
-    fun testInjectionInJavaAnnotationWithNamedParam() {
-        myFixture.addClass("""
-                            package myinjection;
-
-                            @interface InHtml {
-                            String html();
-                            }
-                            """)
-        doAnnotationInjectionTest(
-                injectedLanguage = HTMLLanguage.INSTANCE.id,
-                pattern = """psiMethod().withName("html").withParameters().definedInClass("myinjection.InHtml")""",
-                kotlinCode = """
-                                            import myinjection.InHtml
-
-                                            @InHtml(html = "<htm<caret>l></html>")
-                                            fun foo() {
-                                            }
-                                            """)
-    }
-
-    fun testInjectionInAliasedJavaAnnotation() {
-        myFixture.addClass("""
-                                @interface InHtml {
-                                String html();
-                                }
-                                """)
-        doAnnotationInjectionTest(
-                injectedLanguage = HTMLLanguage.INSTANCE.id,
-                pattern = """psiMethod().withName("html").withParameters().definedInClass("InHtml")""",
-                kotlinCode = """
-                                                import InHtml as InHtmlAliased
-
-                                                @InHtmlAliased(html = "<htm<caret>l></html>")
-                                                fun foo() {
-                                                }
-                                                """
-        )
-    }
-
-    private fun doAnnotationInjectionTest(patternLanguage: String = "java", injectedLanguage: String, pattern: String, @Language("kotlin") kotlinCode: String, additionalAsserts: () -> Unit = {}) {
-        val customInjection = BaseInjection(patternLanguage)
-        customInjection.injectedLanguageId = injectedLanguage
+        val customInjection = BaseInjection("java")
+        customInjection.injectedLanguageId = RegExpLanguage.INSTANCE.id
         val elementPattern = customInjection.compiler.createElementPattern(
-                pattern,
+                """psiMethod().withName("value").withParameters().definedInClass("Matches")""",
                 "temp rule")
         customInjection.setInjectionPlaces(InjectionPlace(elementPattern, true))
-        val kotlinLanguageInjector = MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getExtensions(project).firstIsInstance<KotlinLanguageInjector>()
-        val injectionsEnabled = kotlinLanguageInjector.annotationInjectionsEnabled
+
         try {
-            kotlinLanguageInjector.annotationInjectionsEnabled = true
             Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
 
             doInjectionPresentTest(
-                    kotlinCode, null,
-                    injectedLanguage,
+                    javaText = """
+                        @interface Matches { String value(); }
+                    """,
+                    text = """
+                        @Matches("[A-Z]<caret>[a-z]+")
+                        val name = "John"
+                    """,
+                    languageId = RegExpLanguage.INSTANCE.id,
                     unInjectShouldBePresent = false
             )
-            additionalAsserts()
+
+            doInjectionPresentTest(
+                    javaText = """
+                        @interface Matches { String value(); }
+                    """,
+                    text = """
+                        @Matches(value = "[A-Z]<caret>[a-z]+")
+                        val name = "John"
+                    """,
+                    languageId = RegExpLanguage.INSTANCE.id,
+                    unInjectShouldBePresent = false
+            )
         }
         finally {
-            kotlinLanguageInjector.annotationInjectionsEnabled = injectionsEnabled
             Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
         }
     }
 
+    fun testKotlinAnnotationsPattern() {
+        val customInjection = BaseInjection("kotlin")
+        customInjection.injectedLanguageId = RegExpLanguage.INSTANCE.id
+        val elementPattern = customInjection.compiler.createElementPattern(
+                """kotlinParameter().ofFunction(0, kotlinFunction().withName("Matches").definedInClass("Matches"))""".trimIndent(),
+                "temp rule")
+        customInjection.setInjectionPlaces(InjectionPlace(elementPattern, true))
+
+        try {
+            Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
+
+            doInjectionPresentTest(
+                    text = """
+                        annotation class Matches(val pattern: String)
+
+                        @Matches("[A-Z]<caret>[a-z]+")
+                        val name = "John"
+                    """,
+                    languageId = RegExpLanguage.INSTANCE.id,
+                    unInjectShouldBePresent = false
+            )
+
+            doInjectionPresentTest(
+                    text = """
+                        annotation class Matches(val pattern: String)
+
+                        @Matches(pattern = "[A-Z]<caret>[a-z]+")
+                        val name = "John"
+                    """,
+                    languageId = RegExpLanguage.INSTANCE.id,
+                    unInjectShouldBePresent = false
+            )
+        }
+        finally {
+            Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
+        }
+    }
 }
