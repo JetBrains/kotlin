@@ -27,26 +27,27 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 class VariableLValue(
-        val startOffset: Int,
-        val endOffset: Int,
-        val symbol: IrValueSymbol,
-        val origin: IrStatementOrigin? = null
+    val startOffset: Int,
+    val endOffset: Int,
+    val symbol: IrValueSymbol,
+    val origin: IrStatementOrigin? = null
 ) : LValue, AssignmentReceiver {
     constructor(irVariable: IrVariable, origin: IrStatementOrigin? = null) : this(
-            irVariable.startOffset, irVariable.endOffset, irVariable.symbol, origin)
+        irVariable.startOffset, irVariable.endOffset, irVariable.symbol, origin
+    )
 
     override val type: KotlinType get() = symbol.descriptor.type
 
     override fun load(): IrExpression =
-            IrGetValueImpl(startOffset, endOffset, symbol, origin)
+        IrGetValueImpl(startOffset, endOffset, symbol, origin)
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrSetVariableImpl(
-                    startOffset, endOffset,
-                    symbol.assertedCast<IrVariableSymbol> { "Not a variable: ${symbol.descriptor}" },
-                    irExpression, origin
-            )
+        IrSetVariableImpl(
+            startOffset, endOffset,
+            symbol.assertedCast<IrVariableSymbol> { "Not a variable: ${symbol.descriptor}" },
+            irExpression, origin
+        )
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
-            withLValue(this)
+        withLValue(this)
 }

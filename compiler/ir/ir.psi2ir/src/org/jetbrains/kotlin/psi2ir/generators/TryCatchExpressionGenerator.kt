@@ -38,12 +38,12 @@ class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             val catchParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktCatchParameter)
 
             val irCatch = IrCatchImpl(
-                    ktCatchClause.startOffset, ktCatchClause.endOffset,
-                    context.symbolTable.declareVariable(
-                            ktCatchParameter.startOffset, ktCatchParameter.endOffset,
-                            IrDeclarationOrigin.CATCH_PARAMETER,
-                            catchParameterDescriptor
-                    )
+                ktCatchClause.startOffset, ktCatchClause.endOffset,
+                context.symbolTable.declareVariable(
+                    ktCatchParameter.startOffset, ktCatchParameter.endOffset,
+                    IrDeclarationOrigin.CATCH_PARAMETER,
+                    catchParameterDescriptor
+                )
             ).apply {
                 result = statementGenerator.generateExpression(ktCatchBody)
             }
@@ -51,7 +51,7 @@ class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             irTryCatch.catches.add(irCatch)
         }
 
-        irTryCatch.finallyExpression = ktTry.finallyBlock?.let{ statementGenerator.generateExpression(it.finalExpression) }
+        irTryCatch.finallyExpression = ktTry.finallyBlock?.let { statementGenerator.generateExpression(it.finalExpression) }
 
         return irTryCatch
     }

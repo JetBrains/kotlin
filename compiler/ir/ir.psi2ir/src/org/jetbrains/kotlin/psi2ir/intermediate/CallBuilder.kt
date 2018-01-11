@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 
 class CallBuilder(
-        val original: ResolvedCall<*>,
-        val descriptor: CallableDescriptor,
-        val isExtensionInvokeCall: Boolean = false
+    val original: ResolvedCall<*>,
+    val descriptor: CallableDescriptor,
+    val isExtensionInvokeCall: Boolean = false
 ) {
     var superQualifier: ClassDescriptor? = null
 
@@ -39,10 +39,11 @@ class CallBuilder(
     val irValueArgumentsByIndex = arrayOfNulls<IrExpression>(descriptor.valueParameters.size)
 
     fun getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) =
-            irValueArgumentsByIndex[valueParameterDescriptor.index + parametersOffset]
+        irValueArgumentsByIndex[valueParameterDescriptor.index + parametersOffset]
 }
 
-val CallBuilder.argumentsCount: Int get() =
+val CallBuilder.argumentsCount: Int
+    get() =
         irValueArgumentsByIndex.size
 
 var CallBuilder.lastArgument: IrExpression?
@@ -52,27 +53,33 @@ var CallBuilder.lastArgument: IrExpression?
     }
 
 fun CallBuilder.getValueArgumentsInParameterOrder(): List<IrExpression?> =
-        descriptor.valueParameters.map { irValueArgumentsByIndex[it.index] }
+    descriptor.valueParameters.map { irValueArgumentsByIndex[it.index] }
 
 fun CallBuilder.isValueArgumentReorderingRequired() =
-        original.isValueArgumentReorderingRequired()
+    original.isValueArgumentReorderingRequired()
 
-val CallBuilder.hasExtensionReceiver: Boolean get() =
+val CallBuilder.hasExtensionReceiver: Boolean
+    get() =
         descriptor.extensionReceiverParameter != null
 
-val CallBuilder.hasDispatchReceiver: Boolean get() =
+val CallBuilder.hasDispatchReceiver: Boolean
+    get() =
         descriptor.dispatchReceiverParameter != null
 
-val CallBuilder.extensionReceiverType: KotlinType? get() =
+val CallBuilder.extensionReceiverType: KotlinType?
+    get() =
         descriptor.extensionReceiverParameter?.type
 
-val CallBuilder.dispatchReceiverType: KotlinType? get() =
+val CallBuilder.dispatchReceiverType: KotlinType?
+    get() =
         descriptor.dispatchReceiverParameter?.type
 
-val CallBuilder.explicitReceiverParameter: ReceiverParameterDescriptor? get() =
+val CallBuilder.explicitReceiverParameter: ReceiverParameterDescriptor?
+    get() =
         descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter
 
-val CallBuilder.explicitReceiverType: KotlinType? get() =
+val CallBuilder.explicitReceiverType: KotlinType?
+    get() =
         explicitReceiverParameter?.type
 
 fun CallBuilder.setExplicitReceiverValue(explicitReceiverValue: IntermediateValue) {

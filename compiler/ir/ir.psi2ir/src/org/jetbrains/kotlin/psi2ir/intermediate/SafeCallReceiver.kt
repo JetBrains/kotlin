@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 
 class SafeCallReceiver(
-        val generator: GeneratorWithScope,
-        val startOffset: Int,
-        val endOffset: Int,
-        val extensionReceiver: IntermediateValue?,
-        val dispatchReceiver: IntermediateValue?,
-        val isAssignmentReceiver: Boolean
+    val generator: GeneratorWithScope,
+    val startOffset: Int,
+    val endOffset: Int,
+    val extensionReceiver: IntermediateValue?,
+    val dispatchReceiver: IntermediateValue?,
+    val isAssignmentReceiver: Boolean
 ) : CallReceiver {
     override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
         val irTmp = generator.scope.createTemporaryVariable(extensionReceiver?.load() ?: dispatchReceiver!!.load(), "safe_receiver")
@@ -44,8 +44,7 @@ class SafeCallReceiver(
         if (extensionReceiver != null) {
             dispatchReceiverValue = dispatchReceiver
             extensionReceiverValue = safeReceiverValue
-        }
-        else {
+        } else {
             dispatchReceiverValue = safeReceiverValue
             extensionReceiverValue = null
         }
@@ -57,11 +56,13 @@ class SafeCallReceiver(
 
         irBlock.statements.add(irTmp)
 
-        val irIfThenElse = IrIfThenElseImpl(startOffset, endOffset, resultType,
-                                            generator.context.equalsNull(startOffset, endOffset, safeReceiverValue.load()),
-                                            generator.context.constNull(startOffset, endOffset),
-                                            irResult,
-                                            IrStatementOrigin.SAFE_CALL)
+        val irIfThenElse = IrIfThenElseImpl(
+            startOffset, endOffset, resultType,
+            generator.context.equalsNull(startOffset, endOffset, safeReceiverValue.load()),
+            generator.context.constNull(startOffset, endOffset),
+            irResult,
+            IrStatementOrigin.SAFE_CALL
+        )
         irBlock.statements.add(irIfThenElse)
 
         return irBlock

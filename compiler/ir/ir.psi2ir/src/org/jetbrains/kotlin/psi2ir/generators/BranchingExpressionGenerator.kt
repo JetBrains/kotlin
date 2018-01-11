@@ -39,7 +39,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         val irBranches = SmartList<IrBranch>()
         var irElseBranch: IrExpression? = null
 
-        whenBranches@while (true) {
+        whenBranches@ while (true) {
             val irCondition = statementGenerator.generateExpression(ktLastIf.condition!!)
             val irThenBranch = statementGenerator.generateExpression(ktLastIf.then!!)
             irBranches.add(IrBranchImpl(irCondition, irThenBranch))
@@ -60,14 +60,16 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     }
 
     private fun createIrWhen(
-            ktIf: KtIfExpression,
-            irBranches: List<IrBranch>,
-            irElseResult: IrExpression?,
-            resultType: KotlinType
+        ktIf: KtIfExpression,
+        irBranches: List<IrBranch>,
+        irElseResult: IrExpression?,
+        resultType: KotlinType
     ): IrWhen {
         if (irBranches.size == 1) {
-            return IrIfThenElseImpl(ktIf.startOffset, ktIf.endOffset, resultType,
-                                    irBranches[0].condition, irBranches[0].result, irElseResult)
+            return IrIfThenElseImpl(
+                ktIf.startOffset, ktIf.endOffset, resultType,
+                irBranches[0].condition, irBranches[0].result, irElseResult
+            )
         }
 
         val irWhen = IrWhenImpl(ktIf.startOffset, ktIf.endOffset, resultType, IrStatementOrigin.WHEN)
@@ -110,10 +112,10 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             var irBranchCondition: IrExpression? = null
             for (ktCondition in ktEntry.conditions) {
                 val irCondition =
-                        if (irSubject != null)
-                            generateWhenConditionWithSubject(ktCondition, irSubject)
-                        else
-                            generateWhenConditionNoSubject(ktCondition)
+                    if (irSubject != null)
+                        generateWhenConditionWithSubject(ktCondition, irSubject)
+                    else
+                        generateWhenConditionNoSubject(ktCondition)
                 irBranchCondition = irBranchCondition?.let { context.whenComma(it, irCondition) } ?: irCondition
 
             }
@@ -131,7 +133,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             val bindingContext = context.bindingContext
             //TODO: check condition: seems it's safe to always generate exception
             val isExhaustive = java.lang.Boolean.TRUE == bindingContext.get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, whenExpression) ||
-                               java.lang.Boolean.TRUE == bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression)
+                    java.lang.Boolean.TRUE == bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression)
 
             if (isExhaustive) {
                 val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.noWhenBranchMatchedExceptionSymbol)
@@ -146,14 +148,12 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
                 IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrStatementOrigin.WHEN)
             else
                 irWhen
-        }
-        else {
+        } else {
             if (irWhen.branches.isEmpty()) {
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrStatementOrigin.WHEN)
                 irBlock.statements.add(irSubject)
                 irBlock
-            }
-            else {
+            } else {
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irWhen.type, IrStatementOrigin.WHEN)
                 irBlock.statements.add(irSubject)
                 irBlock.statements.add(irWhen)
@@ -163,7 +163,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     }
 
     private fun generateWhenConditionNoSubject(ktCondition: KtWhenCondition): IrExpression =
-            statementGenerator.generateExpression((ktCondition as KtWhenConditionWithExpression).expression!!)
+        statementGenerator.generateExpression((ktCondition as KtWhenConditionWithExpression).expression!!)
 
     private fun generateWhenConditionWithSubject(ktCondition: KtWhenCondition, irSubject: IrVariable): IrExpression {
         return when (ktCondition) {
@@ -181,8 +181,8 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     private fun generateIsPatternCondition(irSubject: IrVariable, ktCondition: KtWhenConditionIsPattern): IrExpression {
         val isType = getOrFail(BindingContext.TYPE, ktCondition.typeReference)
         return IrTypeOperatorCallImpl(
-                ktCondition.startOffset, ktCondition.endOffset, context.builtIns.booleanType,
-                IrTypeOperator.INSTANCEOF, isType, irSubject.defaultLoad()
+            ktCondition.startOffset, ktCondition.endOffset, context.builtIns.booleanType,
+            IrTypeOperator.INSTANCEOF, isType, irSubject.defaultLoad()
         )
     }
 
@@ -196,18 +196,18 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
                 irInCall
             IrStatementOrigin.NOT_IN ->
                 IrUnaryPrimitiveImpl(
-                        ktCondition.startOffset, ktCondition.endOffset,
-                        IrStatementOrigin.EXCL, context.irBuiltIns.booleanNotSymbol,
-                        irInCall
+                    ktCondition.startOffset, ktCondition.endOffset,
+                    IrStatementOrigin.EXCL, context.irBuiltIns.booleanNotSymbol,
+                    irInCall
                 )
             else -> throw AssertionError("Expected 'in' or '!in', got $inOperator")
         }
     }
 
     private fun generateEqualsCondition(irSubject: IrVariable, ktCondition: KtWhenConditionWithExpression): IrBinaryPrimitiveImpl =
-            IrBinaryPrimitiveImpl(
-                    ktCondition.startOffset, ktCondition.endOffset,
-                    IrStatementOrigin.EQEQ, context.irBuiltIns.eqeqSymbol,
-                    irSubject.defaultLoad(), statementGenerator.generateExpression(ktCondition.expression!!)
-            )
+        IrBinaryPrimitiveImpl(
+            ktCondition.startOffset, ktCondition.endOffset,
+            IrStatementOrigin.EQEQ, context.irBuiltIns.eqeqSymbol,
+            irSubject.defaultLoad(), statementGenerator.generateExpression(ktCondition.expression!!)
+        )
 }
