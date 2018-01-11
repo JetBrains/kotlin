@@ -14,36 +14,34 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.gradle.kdsl.frameworkSupport
 
 import com.intellij.framework.FrameworkTypeEx
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
-import com.intellij.openapi.externalSystem.model.project.ProjectId
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.GSK_KOTLIN_VERSION_PROPERTY_NAME
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getCompileDependencySnippet
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getKotlinGradlePluginClassPathSnippet
 import org.jetbrains.kotlin.idea.versions.*
-import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
-import org.jetbrains.plugins.gradle.frameworkSupport.KotlinDslGradleFrameworkSupportProvider
 import javax.swing.Icon
 
-abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
+abstract class GradleKotlinDSLKotlinFrameworkSupportProvider(
         val frameworkTypeId: String,
         val displayName: String,
         val frameworkIcon: Icon
-) : KotlinDslGradleFrameworkSupportProvider() {
+) : GradleFrameworkSupportProvider() {
     override fun getFrameworkType(): FrameworkTypeEx = object : FrameworkTypeEx(frameworkTypeId) {
         override fun getIcon(): Icon = frameworkIcon
         override fun getPresentableName(): String = displayName
-        override fun createProvider(): FrameworkSupportInModuleProvider = this@KotlinDslGradleKotlinFrameworkSupportProvider
+        override fun createProvider(): FrameworkSupportInModuleProvider = this@GradleKotlinDSLKotlinFrameworkSupportProvider
     }
 
-    override fun addSupport(projectId: ProjectId,
-                            module: Module,
+    override fun addSupport(module: Module,
                             rootModel: ModifiableRootModel,
                             modifiableModelsProvider: ModifiableModelsProvider,
                             buildScriptData: BuildScriptDataBuilder) {
@@ -76,8 +74,8 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
     protected abstract fun getPluginDefinition(): String
 }
 
-class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
-        KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN", "Kotlin (Java)", KotlinIcons.SMALL_LOGO) {
+class GradleKotlinDSLKotlinJavaFrameworkSupportProvider :
+        GradleKotlinDSLKotlinFrameworkSupportProvider("KOTLIN", "Kotlin (Java)", KotlinIcons.SMALL_LOGO) {
 
     override fun getPluginDefinition() = "plugin(\"${KotlinGradleModuleConfigurator.KOTLIN}\")"
 
@@ -85,24 +83,28 @@ class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
             getCompileDependencySnippet(KOTLIN_GROUP_ID, getStdlibArtifactId(rootModel.sdk, bundledRuntimeVersion()))
 
     override fun addSupport(
-            projectId: ProjectId,
             module: Module,
             rootModel: ModifiableRootModel,
             modifiableModelsProvider: ModifiableModelsProvider,
             buildScriptData: BuildScriptDataBuilder
     ) {
-        super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
+        super.addSupport(module, rootModel, modifiableModelsProvider, buildScriptData)
         val jvmTarget = getDefaultJvmTarget(rootModel.sdk, bundledRuntimeVersion())
         if (jvmTarget != null) {
             buildScriptData
-                    .addImport("import org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
+                    .addImports("import org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
                     .addOther("tasks.withType<KotlinCompile> {\n    kotlinOptions.jvmTarget = \"1.8\"\n}\n")
         }
     }
+
+    private fun BuildScriptDataBuilder.addImports(vararg import: String): BuildScriptDataBuilder = apply {
+        val text = VfsUtil.loadText(buildScriptFile)
+        VfsUtil.saveText(buildScriptFile, import.joinToString(separator = "\n") + "\n\n" + text)
+    }
 }
 
-class KotlinDslGradleKotlinJSFrameworkSupportProvider :
-        KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin (JavaScript)", KotlinIcons.JS) {
+class GradleKotlinDSLKotlinJSFrameworkSupportProvider :
+        GradleKotlinDSLKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin (JavaScript)", KotlinIcons.JS) {
 
     override fun getPluginDefinition(): String = "plugin(\"${KotlinJsGradleModuleConfigurator.KOTLIN_JS}\")"
 
