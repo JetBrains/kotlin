@@ -54,7 +54,7 @@ abstract class AbstractGradleImportHandler<T : AnnotationBasedPluginModel> : Gra
     private fun getPluginSetupByModule(
             moduleNode: DataNode<ModuleData>
     ): AnnotationBasedCompilerPluginSetup? {
-        val pluginModel = moduleNode.getUserData(modelKey)?.takeIf { it.isEnabled } ?: return null
+        val pluginModel = moduleNode.getCopyableUserData(modelKey)?.takeIf { it.isEnabled } ?: return null
         val annotations = pluginModel.annotations
         val presets = pluginModel.presets
 
