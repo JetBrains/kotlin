@@ -253,12 +253,6 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
         doTest(fileName);
     }
 
-    @TestMetadata("nullsAndNotNulls.kt")
-    public void testNullsAndNotNulls() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("overridingFunctionResult.kt")
     public void testOverridingFunctionResult() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/overridingFunctionResult.kt");

@@ -1,3 +1,0 @@
-[NotNull Values]
-22 	val <bold>z = c.foo()</bold>
-22 		val <bold>z = c.foo()</bold>

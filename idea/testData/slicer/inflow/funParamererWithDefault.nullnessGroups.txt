@@ -1,4 +1,0 @@
-[NotNull Values]
-4 	fun foo(n: Int, <bold>s: String = "???"</bold>) {
-4 		fun foo(n: Int, <bold>s: String = "???"</bold>) {
-

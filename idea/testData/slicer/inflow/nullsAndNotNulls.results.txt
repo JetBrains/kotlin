@@ -1,6 +1,0 @@
-9 return <bold>s</bold>
-4 	var <bold>s = when {</bold>
-4 		var s = <bold>when {</bold>
-5 			n > 0 -> <bold>"+"</bold>
-6 			n < 0 -> <bold>"-"</bold>
-7 			else -> <bold>null</bold>

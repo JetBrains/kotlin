@@ -1,3 +1,0 @@
-[NotNull Values]
-8 	val <bold>x = foo(fun(n: Int): Int { return n })</bold>
-8 		val <bold>x = foo(fun(n: Int): Int { return n })</bold>
