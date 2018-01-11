@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.uast.*
+import org.jetbrains.uast.java.annotations
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
 import org.jetbrains.uast.kotlin.*
 

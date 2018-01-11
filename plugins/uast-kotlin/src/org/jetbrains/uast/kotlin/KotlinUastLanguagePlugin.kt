@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.uast.*
+import org.jetbrains.uast.java.JavaUastLanguagePlugin
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
@@ -55,6 +56,8 @@ var PsiElement.destructuringDeclarationInitializer: Boolean? by UserDataProperty
 
 class KotlinUastLanguagePlugin : UastLanguagePlugin {
     override val priority = 10
+
+    private val javaPlugin by lz { UastLanguagePlugin.getInstances().first { it is JavaUastLanguagePlugin } }
 
     override val language: Language
         get() = KotlinLanguage.INSTANCE

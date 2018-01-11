@@ -177,8 +177,7 @@ private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter):
 abstract class KotlinAbstractUExpression(givenParent: UElement?)
     : KotlinAbstractUElement(givenParent), UExpression, JvmDeclarationUElement {
 
-    override val javaPsi: PsiElement? = null
-
+    override val javaPsi = null
     override val sourcePsi
         get() = psi
 
