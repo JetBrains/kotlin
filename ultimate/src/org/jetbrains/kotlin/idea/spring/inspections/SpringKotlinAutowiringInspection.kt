@@ -16,8 +16,8 @@ import com.intellij.spring.CommonSpringModel
 import com.intellij.spring.SpringBundle
 import com.intellij.spring.model.SpringBeanPointer
 import com.intellij.spring.model.converters.SpringConverterUtil
-import com.intellij.spring.model.highlighting.autowire.SpringJavaInjectionPointsAutowiringInspection
-import com.intellij.spring.model.utils.SpringAutowireUtil
+import com.intellij.spring.model.highlighting.SpringAutowireUtil
+import com.intellij.spring.model.highlighting.SpringJavaAutowiringInspection
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 
 class SpringKotlinAutowiringInspection : AbstractKotlinInspection() {
-    // Based on SpringJavaInjectionPointsAutowiringInspection.AddSpringBeanQualifierFix
+    // Based on SpringJavaAutowiringInspection.AddSpringBeanQualifierFix
     class AddQualifierFix(
             modifierListOwner: KtModifierListOwner,
             private val beanPointers: Collection<SpringBeanPointer<*>>,
@@ -86,16 +86,16 @@ class SpringKotlinAutowiringInspection : AbstractKotlinInspection() {
         }
     }
 
-    private val javaInspection by lazy { SpringJavaInjectionPointsAutowiringInspection() }
+    private val javaInspection by lazy { SpringJavaAutowiringInspection() }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : KtVisitorVoid() {
-        // TODO: SpringJavaInjectionPointsAutowiringInspection.checkAutowiredMethod() is not accessible here
+        // TODO: SpringJavaAutowiringInspection.checkAutowiredMethod() is not accessible here
         private fun checkAutowiredMethod(psiMethod: PsiMethod, holder: ProblemsHolder, springModel: CommonSpringModel, required: Boolean) {
             val resourceAnnotation = SpringAutowireUtil.getResourceAnnotation(psiMethod)
             when {
                 resourceAnnotation != null -> {
                     val propertyType = PropertyUtil.getPropertyType(psiMethod) ?: return
-                    SpringJavaInjectionPointsAutowiringInspection.checkInjectionPoint(psiMethod, propertyType, holder, springModel, required)
+                    SpringJavaAutowiringInspection.checkAutowiredPsiMember(psiMethod, propertyType, holder, springModel, required)
                 }
                 psiMethod.parameterList.parametersCount == 0 &&
                 SpringAutowireUtil.isAutowiredByAnnotation(psiMethod) -> {
@@ -107,7 +107,7 @@ class SpringKotlinAutowiringInspection : AbstractKotlinInspection() {
                 else -> {
                     for (parameter in psiMethod.parameterList.parameters) {
                         if (AnnotationUtil.isAnnotated(parameter, "org.springframework.beans.factory.annotation.Value", true)) continue
-                        SpringJavaInjectionPointsAutowiringInspection.checkInjectionPoint(parameter, parameter.type, holder, springModel, required)
+                        SpringJavaAutowiringInspection.checkAutowiredPsiMember(parameter, parameter.type, holder, springModel, required)
                     }
                 }
             }
@@ -153,7 +153,7 @@ class SpringKotlinAutowiringInspection : AbstractKotlinInspection() {
         private fun PsiField.processLightField() {
             if (!SpringAutowireUtil.isAutowiredByAnnotation(this)) return
             processLightMember { holder, model, required ->
-                SpringJavaInjectionPointsAutowiringInspection.checkInjectionPoint(this, type, holder, model, required)
+                SpringJavaAutowiringInspection.checkAutowiredPsiMember(this, type, holder, model, required)
             }
         }
 
