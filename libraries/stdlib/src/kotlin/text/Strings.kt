@@ -807,12 +807,25 @@ private fun CharSequence.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase
         return if (index < 0) -1 else index
     }
 
-    val indices = if (!last) startIndex.coerceAtLeast(0)..lastIndex else startIndex.coerceAtMost(lastIndex) downTo 0
-    for (index in indices) {
-        val charAtIndex = get(index)
-        val matchingCharIndex = chars.indexOfFirst { it.equals(charAtIndex, ignoreCase) }
-        if (matchingCharIndex >= 0)
-            return index
+    // Split it to two loops to avoid implicit IntRange allocation
+    when (last) {
+        true -> {
+            for (index in startIndex.coerceAtMost(lastIndex) downTo 0) {
+                val charAtIndex = get(index)
+                val matchingCharIndex = chars.indexOfFirst { it.equals(charAtIndex, ignoreCase) }
+                if (matchingCharIndex >= 0)
+                    return index
+            }
+        }
+
+        false -> {
+            for (index in startIndex.coerceAtLeast(0)..lastIndex) {
+                val charAtIndex = get(index)
+                val matchingCharIndex = chars.indexOfFirst { it.equals(charAtIndex, ignoreCase) }
+                if (matchingCharIndex >= 0)
+                    return index
+            }
+        }
     }
 
     return -1
