@@ -18,7 +18,6 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForLocalDeclaration
 import org.jetbrains.kotlin.asJava.toLightGetter
 import org.jetbrains.kotlin.asJava.toLightSetter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -40,14 +39,6 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
     protected open fun convertParent(): UElement? {
         val psi = psi
         var parent = psi?.parent ?: psi?.containingFile
-
-        if (psi is KtLightClassForLocalDeclaration) {
-            val originParent = psi.kotlinOrigin.parent
-            parent = when (originParent) {
-                is KtClassBody -> originParent.parent
-                else -> originParent
-            }
-        }
 
         if (psi is KtAnnotationEntry) {
             val parentUnwrapped = KotlinConverter.unwrapElements(parent) ?: return null
