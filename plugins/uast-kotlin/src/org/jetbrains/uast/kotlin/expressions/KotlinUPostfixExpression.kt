@@ -20,6 +20,7 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPostfixExpression
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinUPostfixExpression(
         override val psi: KtPostfixExpression,
@@ -35,7 +36,7 @@ class KotlinUPostfixExpression(
     }
 
     override val operatorIdentifier: UIdentifier?
-        get() = UIdentifier(psi.operationReference, this)
+        get() = KotlinUIdentifier(psi.operationReference, this)
 
     override fun resolveOperator() = psi.operationReference.resolveCallToDeclaration(context = this) as? PsiMethod
 
