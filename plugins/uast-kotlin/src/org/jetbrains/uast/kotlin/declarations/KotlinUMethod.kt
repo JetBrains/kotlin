@@ -16,10 +16,7 @@
 
 package org.jetbrains.uast.kotlin.declarations
 
-import com.intellij.psi.PsiCodeBlock
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiMethod
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isGetter
@@ -76,7 +73,11 @@ open class KotlinUMethod(
     }
 
     override val uastAnchor: UElement
-        get() = UIdentifier(nameIdentifier, this)
+        get() = KotlinUIdentifier(
+            nameIdentifier,
+            (sourcePsi as? PsiNameIdentifierOwner)?.nameIdentifier ?: sourcePsi?.navigationElement,
+            this
+        )
 
 
     override val uastBody by lz {

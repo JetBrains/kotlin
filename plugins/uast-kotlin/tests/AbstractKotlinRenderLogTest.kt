@@ -3,6 +3,7 @@ package org.jetbrains.uast.test.kotlin
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
@@ -103,12 +104,18 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
         accept(object : UastVisitor {
             override fun visitElement(node: UElement): Boolean {
 
+                if (node is UDeclaration) {// visitDeclaration hasn't come yet
+                    node.uastAnchor?.let { visitElement(it) }
+                }
+
                 val jvmDeclaration = node as? JvmDeclarationUElement
                                      ?: throw AssertionError("${node.javaClass} should implement 'JvmDeclarationUElement'")
 
                 jvmDeclaration.sourcePsi?.let {
                     assertTrue("sourcePsi should be physical but ${it.javaClass} found for [${it.text}] " +
-                               "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}", it is KtElement)
+                                       "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}",
+                               it is LeafPsiElement || it is KtElement
+                    )
                 }
                 jvmDeclaration.javaPsi?.let {
                     assertTrue("javaPsi should be light but ${it.javaClass} found for [${it.text}] " +
