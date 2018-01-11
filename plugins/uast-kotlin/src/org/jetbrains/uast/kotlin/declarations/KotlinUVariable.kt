@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.types.typeUtil.nullability
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
@@ -95,7 +96,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
     override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
 
     override val uastAnchor: UElement?
-        get() = UIdentifier(nameIdentifier, this)
+        get() = KotlinUIdentifier(nameIdentifier, sourcePsi, this)
 
     override fun equals(other: Any?) = other is AbstractKotlinUVariable && psi == other.psi
 
