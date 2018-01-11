@@ -1235,18 +1235,63 @@ public fun CharArray.getOrNull(index: Int): Char? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
 }
 
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.indexOf(element: T): Int {
+    return indexOf(element, 0)
+}
+
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun ByteArray.indexOf(element: Byte): Int {
+    return indexOf(element, 0)
+}
+
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun ShortArray.indexOf(element: Short): Int {
+    return indexOf(element, 0)
+}
+
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun IntArray.indexOf(element: Int): Int {
+    return indexOf(element, 0)
+}
+
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun LongArray.indexOf(element: Long): Int {
+    return indexOf(element, 0)
+}
+
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun FloatArray.indexOf(element: Float): Int {
+    return indexOf(element, 0)
+}
+
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun DoubleArray.indexOf(element: Double): Int {
+    return indexOf(element, 0)
+}
+
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun BooleanArray.indexOf(element: Boolean): Int {
+    return indexOf(element, 0)
+}
+
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun CharArray.indexOf(element: Char): Int {
+    return indexOf(element, 0)
+}
+
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.indexOf(element: T): Int {
+public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.indexOf(element: T, startIndex: Int = 0): Int {
     if (element == null) {
-        for (index in indices) {
+        for (index in startIndex until size) {
             if (this[index] == null) {
                 return index
             }
         }
     } else {
-        for (index in indices) {
+        for (index in startIndex until size) {
             if (element == this[index]) {
                 return index
             }
@@ -1258,8 +1303,8 @@ public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.indexOf(element: T):
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public fun ByteArray.indexOf(element: Byte): Int {
-    for (index in indices) {
+public fun ByteArray.indexOf(element: Byte, startIndex: Int = 0): Int {
+    for (index in startIndex until size) {
         if (element == this[index]) {
             return index
         }
@@ -1270,8 +1315,8 @@ public fun ByteArray.indexOf(element: Byte): Int {
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public fun ShortArray.indexOf(element: Short): Int {
-    for (index in indices) {
+public fun ShortArray.indexOf(element: Short, startIndex: Int = 0): Int {
+    for (index in startIndex until size) {
         if (element == this[index]) {
             return index
         }
@@ -1282,8 +1327,8 @@ public fun ShortArray.indexOf(element: Short): Int {
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public fun IntArray.indexOf(element: Int): Int {
-    for (index in indices) {
+public fun IntArray.indexOf(element: Int, startIndex: Int = 0): Int {
+    for (index in startIndex until size) {
         if (element == this[index]) {
             return index
         }
@@ -1294,8 +1339,8 @@ public fun IntArray.indexOf(element: Int): Int {
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public fun LongArray.indexOf(element: Long): Int {
-    for (index in indices) {
+public fun LongArray.indexOf(element: Long, startIndex: Int = 0): Int {
+    for (index in startIndex until size) {
         if (element == this[index]) {
             return index
         }
@@ -1306,8 +1351,8 @@ public fun LongArray.indexOf(element: Long): Int {
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public fun FloatArray.indexOf(element: Float): Int {
-    for (index in indices) {
+public fun FloatArray.indexOf(element: Float, startIndex: Int = 0): Int {
+    for (index in startIndex until size) {
         if (element == this[index]) {
             return index
         }
@@ -1318,8 +1363,8 @@ public fun FloatArray.indexOf(element: Float): Int {
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public fun DoubleArray.indexOf(element: Double): Int {
-    for (index in indices) {
+public fun DoubleArray.indexOf(element: Double, startIndex: Int = 0): Int {
+    for (index in startIndex until size) {
         if (element == this[index]) {
             return index
         }
@@ -1330,8 +1375,8 @@ public fun DoubleArray.indexOf(element: Double): Int {
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public fun BooleanArray.indexOf(element: Boolean): Int {
-    for (index in indices) {
+public fun BooleanArray.indexOf(element: Boolean, startIndex: Int = 0): Int {
+    for (index in startIndex until size) {
         if (element == this[index]) {
             return index
         }
@@ -1342,8 +1387,8 @@ public fun BooleanArray.indexOf(element: Boolean): Int {
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public fun CharArray.indexOf(element: Char): Int {
-    for (index in indices) {
+public fun CharArray.indexOf(element: Char, startIndex: Int = 0): Int {
+    for (index in startIndex until size) {
         if (element == this[index]) {
             return index
         }
@@ -1765,18 +1810,63 @@ public inline fun CharArray.last(predicate: (Char) -> Boolean): Char {
     throw NoSuchElementException("Array contains no element matching the predicate.")
 }
 
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.lastIndexOf(element: T): Int {
+    return lastIndexOf(element, 0)
+}
+
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun ByteArray.lastIndexOf(element: Byte): Int {
+    return lastIndexOf(element, 0)
+}
+
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun ShortArray.lastIndexOf(element: Short): Int {
+    return lastIndexOf(element, 0)
+}
+
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun IntArray.lastIndexOf(element: Int): Int {
+    return lastIndexOf(element, 0)
+}
+
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun LongArray.lastIndexOf(element: Long): Int {
+    return lastIndexOf(element, 0)
+}
+
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun FloatArray.lastIndexOf(element: Float): Int {
+    return lastIndexOf(element, 0)
+}
+
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun DoubleArray.lastIndexOf(element: Double): Int {
+    return lastIndexOf(element, 0)
+}
+
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun BooleanArray.lastIndexOf(element: Boolean): Int {
+    return lastIndexOf(element, 0)
+}
+
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun CharArray.lastIndexOf(element: Char): Int {
+    return lastIndexOf(element, 0)
+}
+
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.lastIndexOf(element: T): Int {
+public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.lastIndexOf(element: T, startIndex: Int = 0): Int {
     if (element == null) {
-        for (index in indices.reversed()) {
+        for (index in size - 1 downTo startIndex) {
             if (this[index] == null) {
                 return index
             }
         }
     } else {
-        for (index in indices.reversed()) {
+        for (index in size - 1 downTo startIndex) {
             if (element == this[index]) {
                 return index
             }
@@ -1788,8 +1878,8 @@ public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.lastIndexOf(element:
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public fun ByteArray.lastIndexOf(element: Byte): Int {
-    for (index in indices.reversed()) {
+public fun ByteArray.lastIndexOf(element: Byte, startIndex: Int = 0): Int {
+    for (index in size - 1 downTo startIndex) {
         if (element == this[index]) {
             return index
         }
@@ -1800,8 +1890,8 @@ public fun ByteArray.lastIndexOf(element: Byte): Int {
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public fun ShortArray.lastIndexOf(element: Short): Int {
-    for (index in indices.reversed()) {
+public fun ShortArray.lastIndexOf(element: Short, startIndex: Int = 0): Int {
+    for (index in size - 1 downTo startIndex) {
         if (element == this[index]) {
             return index
         }
@@ -1812,8 +1902,8 @@ public fun ShortArray.lastIndexOf(element: Short): Int {
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public fun IntArray.lastIndexOf(element: Int): Int {
-    for (index in indices.reversed()) {
+public fun IntArray.lastIndexOf(element: Int, startIndex: Int = 0): Int {
+    for (index in size - 1 downTo startIndex) {
         if (element == this[index]) {
             return index
         }
@@ -1824,8 +1914,8 @@ public fun IntArray.lastIndexOf(element: Int): Int {
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public fun LongArray.lastIndexOf(element: Long): Int {
-    for (index in indices.reversed()) {
+public fun LongArray.lastIndexOf(element: Long, startIndex: Int = 0): Int {
+    for (index in size - 1 downTo startIndex) {
         if (element == this[index]) {
             return index
         }
@@ -1836,8 +1926,8 @@ public fun LongArray.lastIndexOf(element: Long): Int {
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public fun FloatArray.lastIndexOf(element: Float): Int {
-    for (index in indices.reversed()) {
+public fun FloatArray.lastIndexOf(element: Float, startIndex: Int = 0): Int {
+    for (index in size - 1 downTo startIndex) {
         if (element == this[index]) {
             return index
         }
@@ -1848,8 +1938,8 @@ public fun FloatArray.lastIndexOf(element: Float): Int {
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public fun DoubleArray.lastIndexOf(element: Double): Int {
-    for (index in indices.reversed()) {
+public fun DoubleArray.lastIndexOf(element: Double, startIndex: Int = 0): Int {
+    for (index in size - 1 downTo startIndex) {
         if (element == this[index]) {
             return index
         }
@@ -1860,8 +1950,8 @@ public fun DoubleArray.lastIndexOf(element: Double): Int {
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public fun BooleanArray.lastIndexOf(element: Boolean): Int {
-    for (index in indices.reversed()) {
+public fun BooleanArray.lastIndexOf(element: Boolean, startIndex: Int = 0): Int {
+    for (index in size - 1 downTo startIndex) {
         if (element == this[index]) {
             return index
         }
@@ -1872,8 +1962,8 @@ public fun BooleanArray.lastIndexOf(element: Boolean): Int {
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public fun CharArray.lastIndexOf(element: Char): Int {
-    for (index in indices.reversed()) {
+public fun CharArray.lastIndexOf(element: Char, startIndex: Int = 0): Int {
+    for (index in size - 1 downTo startIndex) {
         if (element == this[index]) {
             return index
         }

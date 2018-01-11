@@ -52,6 +52,19 @@ object Elements : TemplateGroupBase() {
     val f_indexOf = fn("indexOf(element: T)") {
         include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
     } builder {
+        typeParam("@kotlin.internal.OnlyInputTypes T")
+        specialFor(Lists) {
+            annotation("""@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases""")
+        }
+        annotation("""@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)""")
+        returns("Int")
+        body { "return indexOf(element, 0)" }
+        body(Lists) { "return indexOf(element)" }
+    }
+
+    val f_indexOfWithStartIndex = fn("indexOf(element: T, startIndex: Int = 0)") {
+        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
+    } builder {
         doc { "Returns first index of [element], or -1 if the ${f.collection} does not contain element." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
         specialFor(Lists) {
@@ -60,10 +73,10 @@ object Elements : TemplateGroupBase() {
         returns("Int")
         body {
             """
-            ${if (f == Iterables) "if (this is List) return this.indexOf(element)" else ""}
+            ${if (f == Iterables) "if (this is List) return this.indexOf(element, startIndex)" else ""}
             var index = 0
             for (item in this) {
-                if (element == item)
+                if (element == item && index >= startIndex)
                     return index
                 index++
             }
@@ -74,13 +87,13 @@ object Elements : TemplateGroupBase() {
         body(ArraysOfObjects) {
             """
             if (element == null) {
-                for (index in indices) {
+                for (index in startIndex until size) {
                     if (this[index] == null) {
                         return index
                     }
                 }
             } else {
-                for (index in indices) {
+                for (index in startIndex until size) {
                     if (element == this[index]) {
                         return index
                     }
@@ -89,9 +102,9 @@ object Elements : TemplateGroupBase() {
             return -1
            """
         }
-        body(ArraysOfPrimitives) {
+        body(Lists, ArraysOfPrimitives) {
             """
-            for (index in indices) {
+            for (index in startIndex until size) {
                 if (element == this[index]) {
                     return index
                 }
@@ -99,10 +112,22 @@ object Elements : TemplateGroupBase() {
             return -1
            """
         }
-        body(Lists) { "return indexOf(element)" }
     }
 
     val f_lastIndexOf = fn("lastIndexOf(element: T)") {
+        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
+    } builder {
+        typeParam("@kotlin.internal.OnlyInputTypes T")
+        specialFor(Lists) {
+            annotation("""@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases""")
+        }
+        annotation("""@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)""")
+        returns("Int")
+        body { "return lastIndexOf(element, 0)" }
+        body(Lists) { "return lastIndexOf(element)" }
+    }
+
+    val f_lastIndexOfWithStartIndex = fn("lastIndexOf(element: T, startIndex: Int = 0)") {
         include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
     } builder {
         doc { "Returns last index of [element], or -1 if the ${f.collection} does not contain element." }
@@ -113,11 +138,11 @@ object Elements : TemplateGroupBase() {
         returns("Int")
         body {
             """
-            ${if (f == Iterables) "if (this is List) return this.lastIndexOf(element)" else ""}
+            ${if (f == Iterables) "if (this is List) return this.lastIndexOf(element, startIndex)" else ""}
             var lastIndex = -1
             var index = 0
             for (item in this) {
-                if (element == item)
+                if (element == item && index >= startIndex)
                     lastIndex = index
                 index++
             }
@@ -128,13 +153,13 @@ object Elements : TemplateGroupBase() {
         body(ArraysOfObjects) {
             """
             if (element == null) {
-                for (index in indices.reversed()) {
+                for (index in size - 1 downTo startIndex) {
                     if (this[index] == null) {
                         return index
                     }
                 }
             } else {
-                for (index in indices.reversed()) {
+                for (index in size - 1 downTo startIndex) {
                     if (element == this[index]) {
                         return index
                     }
@@ -145,7 +170,7 @@ object Elements : TemplateGroupBase() {
         }
         body(ArraysOfPrimitives) {
             """
-            for (index in indices.reversed()) {
+            for (index in size - 1 downTo startIndex) {
                 if (element == this[index]) {
                     return index
                 }
@@ -153,7 +178,6 @@ object Elements : TemplateGroupBase() {
             return -1
            """
         }
-        body(Lists) { "return lastIndexOf(element)" }
     }
 
     val f_indexOfFirst = fn("indexOfFirst(predicate: (T) -> Boolean)") {

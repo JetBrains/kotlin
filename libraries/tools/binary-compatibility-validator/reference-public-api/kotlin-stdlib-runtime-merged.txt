@@ -782,15 +782,33 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun groupByTo ([ZLjava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupByTo ([ZLjava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupingBy ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Lkotlin/collections/Grouping;
-	public static final fun indexOf ([BB)I
-	public static final fun indexOf ([CC)I
-	public static final fun indexOf ([DD)I
-	public static final fun indexOf ([FF)I
-	public static final fun indexOf ([II)I
-	public static final fun indexOf ([JJ)I
-	public static final fun indexOf ([Ljava/lang/Object;Ljava/lang/Object;)I
-	public static final fun indexOf ([SS)I
-	public static final fun indexOf ([ZZ)I
+	public static final synthetic fun indexOf ([BB)I
+	public static final fun indexOf ([BBI)I
+	public static final synthetic fun indexOf ([CC)I
+	public static final fun indexOf ([CCI)I
+	public static final synthetic fun indexOf ([DD)I
+	public static final fun indexOf ([DDI)I
+	public static final synthetic fun indexOf ([FF)I
+	public static final fun indexOf ([FFI)I
+	public static final synthetic fun indexOf ([II)I
+	public static final fun indexOf ([III)I
+	public static final synthetic fun indexOf ([JJ)I
+	public static final fun indexOf ([JJI)I
+	public static final synthetic fun indexOf ([Ljava/lang/Object;Ljava/lang/Object;)I
+	public static final fun indexOf ([Ljava/lang/Object;Ljava/lang/Object;I)I
+	public static final synthetic fun indexOf ([SS)I
+	public static final fun indexOf ([SSI)I
+	public static final synthetic fun indexOf ([ZZ)I
+	public static final fun indexOf ([ZZI)I
+	public static synthetic fun indexOf$default ([BBIILjava/lang/Object;)I
+	public static synthetic fun indexOf$default ([CCIILjava/lang/Object;)I
+	public static synthetic fun indexOf$default ([DDIILjava/lang/Object;)I
+	public static synthetic fun indexOf$default ([FFIILjava/lang/Object;)I
+	public static synthetic fun indexOf$default ([IIIILjava/lang/Object;)I
+	public static synthetic fun indexOf$default ([JJIILjava/lang/Object;)I
+	public static synthetic fun indexOf$default ([Ljava/lang/Object;Ljava/lang/Object;IILjava/lang/Object;)I
+	public static synthetic fun indexOf$default ([SSIILjava/lang/Object;)I
+	public static synthetic fun indexOf$default ([ZZIILjava/lang/Object;)I
 	public static final fun indexOfFirst ([BLkotlin/jvm/functions/Function1;)I
 	public static final fun indexOfFirst ([CLkotlin/jvm/functions/Function1;)I
 	public static final fun indexOfFirst ([DLkotlin/jvm/functions/Function1;)I
@@ -872,15 +890,33 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun last ([SLkotlin/jvm/functions/Function1;)S
 	public static final fun last ([Z)Z
 	public static final fun last ([ZLkotlin/jvm/functions/Function1;)Z
-	public static final fun lastIndexOf ([BB)I
-	public static final fun lastIndexOf ([CC)I
-	public static final fun lastIndexOf ([DD)I
-	public static final fun lastIndexOf ([FF)I
-	public static final fun lastIndexOf ([II)I
-	public static final fun lastIndexOf ([JJ)I
-	public static final fun lastIndexOf ([Ljava/lang/Object;Ljava/lang/Object;)I
-	public static final fun lastIndexOf ([SS)I
-	public static final fun lastIndexOf ([ZZ)I
+	public static final synthetic fun lastIndexOf ([BB)I
+	public static final fun lastIndexOf ([BBI)I
+	public static final synthetic fun lastIndexOf ([CC)I
+	public static final fun lastIndexOf ([CCI)I
+	public static final synthetic fun lastIndexOf ([DD)I
+	public static final fun lastIndexOf ([DDI)I
+	public static final synthetic fun lastIndexOf ([FF)I
+	public static final fun lastIndexOf ([FFI)I
+	public static final synthetic fun lastIndexOf ([II)I
+	public static final fun lastIndexOf ([III)I
+	public static final synthetic fun lastIndexOf ([JJ)I
+	public static final fun lastIndexOf ([JJI)I
+	public static final synthetic fun lastIndexOf ([Ljava/lang/Object;Ljava/lang/Object;)I
+	public static final fun lastIndexOf ([Ljava/lang/Object;Ljava/lang/Object;I)I
+	public static final synthetic fun lastIndexOf ([SS)I
+	public static final fun lastIndexOf ([SSI)I
+	public static final synthetic fun lastIndexOf ([ZZ)I
+	public static final fun lastIndexOf ([ZZI)I
+	public static synthetic fun lastIndexOf$default ([BBIILjava/lang/Object;)I
+	public static synthetic fun lastIndexOf$default ([CCIILjava/lang/Object;)I
+	public static synthetic fun lastIndexOf$default ([DDIILjava/lang/Object;)I
+	public static synthetic fun lastIndexOf$default ([FFIILjava/lang/Object;)I
+	public static synthetic fun lastIndexOf$default ([IIIILjava/lang/Object;)I
+	public static synthetic fun lastIndexOf$default ([JJIILjava/lang/Object;)I
+	public static synthetic fun lastIndexOf$default ([Ljava/lang/Object;Ljava/lang/Object;IILjava/lang/Object;)I
+	public static synthetic fun lastIndexOf$default ([SSIILjava/lang/Object;)I
+	public static synthetic fun lastIndexOf$default ([ZZIILjava/lang/Object;)I
 	public static final fun lastOrNull ([B)Ljava/lang/Byte;
 	public static final fun lastOrNull ([BLkotlin/jvm/functions/Function1;)Ljava/lang/Byte;
 	public static final fun lastOrNull ([C)Ljava/lang/Character;
@@ -1616,8 +1652,12 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun groupByTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupByTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupingBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Lkotlin/collections/Grouping;
-	public static final fun indexOf (Ljava/lang/Iterable;Ljava/lang/Object;)I
-	public static final fun indexOf (Ljava/util/List;Ljava/lang/Object;)I
+	public static final synthetic fun indexOf (Ljava/lang/Iterable;Ljava/lang/Object;)I
+	public static final fun indexOf (Ljava/lang/Iterable;Ljava/lang/Object;I)I
+	public static final synthetic fun indexOf (Ljava/util/List;Ljava/lang/Object;)I
+	public static final fun indexOf (Ljava/util/List;Ljava/lang/Object;I)I
+	public static synthetic fun indexOf$default (Ljava/lang/Iterable;Ljava/lang/Object;IILjava/lang/Object;)I
+	public static synthetic fun indexOf$default (Ljava/util/List;Ljava/lang/Object;IILjava/lang/Object;)I
 	public static final fun indexOfFirst (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)I
 	public static final fun indexOfFirst (Ljava/util/List;Lkotlin/jvm/functions/Function1;)I
 	public static final fun indexOfLast (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)I
@@ -1632,8 +1672,12 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun last (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun last (Ljava/util/List;)Ljava/lang/Object;
 	public static final fun last (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun lastIndexOf (Ljava/lang/Iterable;Ljava/lang/Object;)I
-	public static final fun lastIndexOf (Ljava/util/List;Ljava/lang/Object;)I
+	public static final synthetic fun lastIndexOf (Ljava/lang/Iterable;Ljava/lang/Object;)I
+	public static final fun lastIndexOf (Ljava/lang/Iterable;Ljava/lang/Object;I)I
+	public static final synthetic fun lastIndexOf (Ljava/util/List;Ljava/lang/Object;)I
+	public static final fun lastIndexOf (Ljava/util/List;Ljava/lang/Object;I)I
+	public static synthetic fun lastIndexOf$default (Ljava/lang/Iterable;Ljava/lang/Object;IILjava/lang/Object;)I
+	public static synthetic fun lastIndexOf$default (Ljava/util/List;Ljava/lang/Object;IILjava/lang/Object;)I
 	public static final fun lastOrNull (Ljava/lang/Iterable;)Ljava/lang/Object;
 	public static final fun lastOrNull (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun lastOrNull (Ljava/util/List;)Ljava/lang/Object;
@@ -3556,7 +3600,9 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun groupByTo (Lkotlin/sequences/Sequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupByTo (Lkotlin/sequences/Sequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupingBy (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Lkotlin/collections/Grouping;
-	public static final fun indexOf (Lkotlin/sequences/Sequence;Ljava/lang/Object;)I
+	public static final synthetic fun indexOf (Lkotlin/sequences/Sequence;Ljava/lang/Object;)I
+	public static final fun indexOf (Lkotlin/sequences/Sequence;Ljava/lang/Object;I)I
+	public static synthetic fun indexOf$default (Lkotlin/sequences/Sequence;Ljava/lang/Object;IILjava/lang/Object;)I
 	public static final fun indexOfFirst (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
 	public static final fun indexOfLast (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
 	public static final fun joinTo (Lkotlin/sequences/Sequence;Ljava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Appendable;
@@ -3565,7 +3611,9 @@ public final class kotlin/sequences/SequencesKt {
 	public static synthetic fun joinToString$default (Lkotlin/sequences/Sequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/String;
 	public static final fun last (Lkotlin/sequences/Sequence;)Ljava/lang/Object;
 	public static final fun last (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun lastIndexOf (Lkotlin/sequences/Sequence;Ljava/lang/Object;)I
+	public static final synthetic fun lastIndexOf (Lkotlin/sequences/Sequence;Ljava/lang/Object;)I
+	public static final fun lastIndexOf (Lkotlin/sequences/Sequence;Ljava/lang/Object;I)I
+	public static synthetic fun lastIndexOf$default (Lkotlin/sequences/Sequence;Ljava/lang/Object;IILjava/lang/Object;)I
 	public static final fun lastOrNull (Lkotlin/sequences/Sequence;)Ljava/lang/Object;
 	public static final fun lastOrNull (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun map (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;

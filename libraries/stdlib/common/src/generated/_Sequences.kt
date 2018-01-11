@@ -84,12 +84,23 @@ public expect fun <T> Sequence<T>.firstOrNull(): T?
  */
 public expect inline fun <T> Sequence<T>.firstOrNull(predicate: (T) -> Boolean): T?
 
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public expect fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.indexOf(element: T): Int
+
 /**
  * Returns first index of [element], or -1 if the sequence does not contain element.
  *
  * The operation is _terminal_.
  */
-public expect fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.indexOf(element: T): Int
+public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.indexOf(element: T, startIndex: Int = 0): Int {
+    var index = 0
+    for (item in this) {
+        if (element == item && index >= startIndex)
+            return index
+        index++
+    }
+    return -1
+}
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the sequence does not contain such element.
@@ -121,12 +132,24 @@ public expect fun <T> Sequence<T>.last(): T
  */
 public expect inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T
 
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public expect fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.lastIndexOf(element: T): Int
+
 /**
  * Returns last index of [element], or -1 if the sequence does not contain element.
  *
  * The operation is _terminal_.
  */
-public expect fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.lastIndexOf(element: T): Int
+public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.lastIndexOf(element: T, startIndex: Int = 0): Int {
+    var lastIndex = -1
+    var index = 0
+    for (item in this) {
+        if (element == item && index >= startIndex)
+            lastIndex = index
+        index++
+    }
+    return lastIndex
+}
 
 /**
  * Returns the last element, or `null` if the sequence is empty.

@@ -479,6 +479,130 @@ class ArraysTest {
         expect(-1) { booleanArrayOf(true).indexOf(false) }
     }
 
+    @Test fun indexOfInPrimitiveArraysWithStart() {
+        expect(-1) { byteArrayOf(1, 2, 1).indexOf(0, 0) }
+        expect(0) { byteArrayOf(1, 2, 1).indexOf(1, 0) }
+        expect(2) { byteArrayOf(1, 2, 1).indexOf(1, 1) }
+        expect(-1) { byteArrayOf(1, 2, 1).indexOf(1, 3) }
+
+        expect(-1) { shortArrayOf(1, 2, 1).indexOf(0, 0) }
+        expect(0) { shortArrayOf(1, 2, 1).indexOf(1, 0) }
+        expect(2) { shortArrayOf(1, 2, 1).indexOf(1, 1) }
+        expect(-1) { shortArrayOf(1, 2, 1).indexOf(1, 3) }
+
+        expect(-1) { intArrayOf(1, 2, 1).indexOf(0, 0) }
+        expect(0) { intArrayOf(1, 2, 1).indexOf(1, 0) }
+        expect(2) { intArrayOf(1, 2, 1).indexOf(1, 1) }
+        expect(-1) { intArrayOf(1, 2, 1).indexOf(1, 3) }
+
+        expect(-1) { longArrayOf(1, 2, 1).indexOf(0, 0) }
+        expect(0) { longArrayOf(1, 2, 1).indexOf(1, 0) }
+        expect(2) { longArrayOf(1, 2, 1).indexOf(1, 1) }
+        expect(-1) { longArrayOf(1, 2, 1).indexOf(1, 3) }
+
+        expect(-1) { floatArrayOf(1.0f, 2.0f, 1.0f).indexOf(0f, 0) }
+        expect(0) { floatArrayOf(1.0f, 2.0f, 1.0f).indexOf(1.0f, 0) }
+        expect(2) { floatArrayOf(1.0f, 2.0f, 1.0f).indexOf(1.0f, 1) }
+        expect(-1) { floatArrayOf(1.0f, 2.0f, 1.0f).indexOf(3.0f, 3) }
+
+        expect(-1) { doubleArrayOf(1.0, 2.0, 1.0).indexOf(0.0, 0) }
+        expect(0) { doubleArrayOf(1.0, 2.0, 1.0).indexOf(1.0, 0) }
+        expect(2) { doubleArrayOf(1.0, 2.0, 1.0).indexOf(1.0, 1) }
+        expect(-1) { doubleArrayOf(1.0, 2.0, 1.0).indexOf(1.0, 3) }
+
+        expect(-1) { charArrayOf('a', 'b', 'a').indexOf('z', 0) }
+        expect(0) { charArrayOf('a', 'b', 'a').indexOf('a', 0) }
+        expect(2) { charArrayOf('a', 'b', 'a').indexOf('a', 1) }
+        expect(-1) { charArrayOf('a', 'b', 'a').indexOf('a', 3) }
+
+        expect(0) { booleanArrayOf(true, false, true).indexOf(true, 0) }
+        expect(2) { booleanArrayOf(true, false, true).indexOf(true, 1) }
+        expect(-1) { booleanArrayOf(true, false).indexOf(true, 1) }
+    }
+
+    @Test fun lastIndexOfInPrimitiveArrays() {
+        expect(-1) { byteArrayOf(1, 2, 3).lastIndexOf(0) }
+        expect(0) { byteArrayOf(1, 2, 3).lastIndexOf(1) }
+        expect(2) { byteArrayOf(1, 2, 1).lastIndexOf(1) }
+
+        expect(-1) { shortArrayOf(1, 2, 3).lastIndexOf(0) }
+        expect(0) { shortArrayOf(1, 2, 3).lastIndexOf(1) }
+        expect(2) { shortArrayOf(1, 2, 1).lastIndexOf(1) }
+
+        expect(-1) { intArrayOf(1, 2, 3).lastIndexOf(0) }
+        expect(0) { intArrayOf(1, 2, 3).lastIndexOf(1) }
+        expect(2) { intArrayOf(1, 2, 1).lastIndexOf(1) }
+
+        expect(-1) { longArrayOf(1, 2, 3).lastIndexOf(0) }
+        expect(0) { longArrayOf(1, 2, 3).lastIndexOf(1) }
+        expect(2) { longArrayOf(1, 2, 1).lastIndexOf(1) }
+
+        expect(-1) { floatArrayOf(1.0f, 2.0f, 1.0f).lastIndexOf(0f) }
+        expect(0) { floatArrayOf(1.0f, 2.0f, 3.0f).lastIndexOf(1.0f) }
+        expect(2) { floatArrayOf(1.0f, 2.0f, 1.0f).lastIndexOf(1.0f) }
+
+        expect(-1) { doubleArrayOf(1.0, 2.0, 3.0).lastIndexOf(0.0) }
+        expect(0) { doubleArrayOf(1.0, 2.0, 3.0).lastIndexOf(1.0) }
+        expect(2) { doubleArrayOf(1.0, 2.0, 1.0).lastIndexOf(1.0) }
+
+        expect(-1) { charArrayOf('a', 'b', 'c').lastIndexOf('z') }
+        expect(0) { charArrayOf('a', 'b', 'c').lastIndexOf('a') }
+        expect(2) { charArrayOf('a', 'b', 'a').lastIndexOf('a') }
+
+        expect(2) { booleanArrayOf(true, false, true).lastIndexOf(true) }
+        expect(2) { booleanArrayOf(false, true, false).lastIndexOf(false) }
+        expect(-1) { booleanArrayOf(true).lastIndexOf(false) }
+    }
+
+    @Test fun lastIndexOfInPrimitiveArraysWithStart() {
+        expect(-1) { byteArrayOf(1, 2, 1).lastIndexOf(0, 0) }
+        expect(2) { byteArrayOf(1, 2, 1).lastIndexOf(1, 0) }
+        expect(2) { byteArrayOf(1, 2, 1).lastIndexOf(1, 2) }
+        expect(-1) { byteArrayOf(1, 2, 1).lastIndexOf(1, 3) }
+        expect(-1) { byteArrayOf(1, 2, 1).lastIndexOf(2, 2) }
+
+        expect(-1) { shortArrayOf(1, 2, 1).lastIndexOf(0, 0) }
+        expect(2) { shortArrayOf(1, 2, 1).lastIndexOf(1, 0) }
+        expect(2) { shortArrayOf(1, 2, 1).lastIndexOf(1, 2) }
+        expect(-1) { shortArrayOf(1, 2, 1).lastIndexOf(1, 3) }
+        expect(-1) { shortArrayOf(1, 2, 1).lastIndexOf(2, 2) }
+
+        expect(-1) { intArrayOf(1, 2, 1).lastIndexOf(0, 0) }
+        expect(2) { intArrayOf(1, 2, 1).lastIndexOf(1, 0) }
+        expect(2) { intArrayOf(1, 2, 1).lastIndexOf(1, 2) }
+        expect(-1) { intArrayOf(1, 2, 1).lastIndexOf(1, 3) }
+        expect(-1) { intArrayOf(1, 2, 1).lastIndexOf(2, 2) }
+
+        expect(-1) { longArrayOf(1, 2, 1).lastIndexOf(0, 0) }
+        expect(2) { longArrayOf(1, 2, 1).lastIndexOf(1, 0) }
+        expect(2) { longArrayOf(1, 2, 1).lastIndexOf(1, 2) }
+        expect(-1) { longArrayOf(1, 2, 1).lastIndexOf(1, 3) }
+        expect(-1) { longArrayOf(1, 2, 1).lastIndexOf(2, 2) }
+
+        expect(-1) { floatArrayOf(1.0f, 2.0f, 1.0f).lastIndexOf(0f, 0) }
+        expect(2) { floatArrayOf(1.0f, 2.0f, 1.0f).lastIndexOf(1.0f, 0) }
+        expect(2) { floatArrayOf(1.0f, 2.0f, 1.0f).lastIndexOf(1.0f, 2) }
+        expect(-1) { floatArrayOf(1.0f, 2.0f, 1.0f).lastIndexOf(1.0f, 3) }
+        expect(-1) { floatArrayOf(1.0f, 2.0f, 1.0f).lastIndexOf(2.0f, 2) }
+
+        expect(-1) { doubleArrayOf(1.0, 2.0, 1.0).lastIndexOf(0.0, 0) }
+        expect(2) { doubleArrayOf(1.0, 2.0, 1.0).lastIndexOf(1.0, 0) }
+        expect(2) { doubleArrayOf(1.0, 2.0, 1.0).lastIndexOf(1.0, 2) }
+        expect(-1) { doubleArrayOf(1.0, 2.0, 1.0).lastIndexOf(1.0, 3) }
+        expect(-1) { doubleArrayOf(1.0, 2.0, 1.0).lastIndexOf(2.0, 2) }
+
+        expect(-1) { charArrayOf('a', 'b', 'a').lastIndexOf('z', 0) }
+        expect(2) { charArrayOf('a', 'b', 'a').lastIndexOf('a', 0) }
+        expect(2) { charArrayOf('a', 'b', 'a').lastIndexOf('a', 2) }
+        expect(-1) { charArrayOf('a', 'b', 'a').lastIndexOf('a', 3) }
+        expect(-1) { charArrayOf('a', 'b', 'a').lastIndexOf('b', 2) }
+
+        expect(2) { booleanArrayOf(true, false, true).lastIndexOf(true, 0) }
+        expect(2) { booleanArrayOf(true, false, true).lastIndexOf(true, 2) }
+        expect(-1) { booleanArrayOf(true, false, true).lastIndexOf(true, 3) }
+        expect(-1) { booleanArrayOf(true, false, true).lastIndexOf(false, 2) }
+    }
+
     @Test fun indexOf() {
         expect(-1) { arrayOf("cat", "dog", "bird").indexOf("mouse") }
         expect(0) { arrayOf("cat", "dog", "bird").indexOf("cat") }
@@ -495,6 +619,14 @@ class ArraysTest {
         expect(0) { sequenceOf("cat", "dog", "bird").indexOfFirst { it.startsWith('c') } }
         expect(1) { sequenceOf("cat", "dog", "bird").indexOfFirst { it.startsWith('d') } }
         expect(2) { sequenceOf("cat", "dog", "bird").indexOfFirst { it.endsWith('d') } }
+    }
+
+    @Test fun indexOfWithStart() {
+        expect(-1) { arrayOf("cat", "dog", "cat").indexOf("mouse", 0) }
+        expect(0) { arrayOf("cat", "dog", "cat").indexOf("cat", 0) }
+        expect(2) { arrayOf("cat", "dog", "cat").indexOf("cat", 1) }
+        expect(-1) { arrayOf("cat", "dog", "cat").indexOf("cat", 3) }
+        expect(2) { arrayOf(null, "dog", null).indexOf(null as String?, 1)}
     }
 
     @Test fun lastIndexOf() {
@@ -515,6 +647,15 @@ class ArraysTest {
         expect(2) { sequenceOf("cat", "dog", "cap", "bird").indexOfLast { it.startsWith('c') } }
         expect(2) { sequenceOf("cat", "dog", "bird").indexOfLast { it.endsWith('d') } }
         expect(3) { sequenceOf("cat", "dog", "bird", "red").indexOfLast { it.endsWith('d') } }
+    }
+
+    @Test fun lastIndexOfWithStart() {
+        expect(-1) { arrayOf("cat", "dog", "cat").lastIndexOf("mouse", 0) }
+        expect(2) { arrayOf("cat", "dog", "cat").lastIndexOf("cat", 0) }
+        expect(2) { arrayOf("cat", "dog", "cat").lastIndexOf("cat", 2) }
+        expect(-1) { arrayOf("cat", "dog", "cat").lastIndexOf("cat", 3) }
+        expect(-1) { arrayOf("cat", "dog", "cat").lastIndexOf("dog", 2) }
+        expect(2) { arrayOf(null, "dog", null).lastIndexOf(null as String?, 1)}
     }
 
     @Test fun isEmpty() {

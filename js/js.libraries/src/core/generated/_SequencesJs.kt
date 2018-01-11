@@ -132,15 +132,20 @@ public inline fun <T> Sequence<T>.firstOrNull(predicate: (T) -> Boolean): T? {
     return null
 }
 
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.indexOf(element: T): Int {
+    return indexOf(element, 0)
+}
+
 /**
  * Returns first index of [element], or -1 if the sequence does not contain element.
  *
  * The operation is _terminal_.
  */
-public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.indexOf(element: T): Int {
+public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.indexOf(element: T, startIndex: Int = 0): Int {
     var index = 0
     for (item in this) {
-        if (element == item)
+        if (element == item && index >= startIndex)
             return index
         index++
     }
@@ -214,16 +219,21 @@ public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
     return last as T
 }
 
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.lastIndexOf(element: T): Int {
+    return lastIndexOf(element, 0)
+}
+
 /**
  * Returns last index of [element], or -1 if the sequence does not contain element.
  *
  * The operation is _terminal_.
  */
-public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.lastIndexOf(element: T): Int {
+public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.lastIndexOf(element: T, startIndex: Int = 0): Int {
     var lastIndex = -1
     var index = 0
     for (item in this) {
-        if (element == item)
+        if (element == item && index >= startIndex)
             lastIndex = index
         index++
     }

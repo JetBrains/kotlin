@@ -140,16 +140,39 @@ public expect inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -
  */
 public expect fun <T> List<T>.getOrNull(index: Int): T?
 
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public expect fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T): Int
+
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public expect fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int
+
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-public expect fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T): Int
+public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T, startIndex: Int = 0): Int {
+    if (this is List) return this.indexOf(element, startIndex)
+    var index = 0
+    for (item in this) {
+        if (element == item && index >= startIndex)
+            return index
+        index++
+    }
+    return -1
+}
 
 /**
  * Returns first index of [element], or -1 if the list does not contain element.
  */
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
-public expect fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int
+public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T, startIndex: Int = 0): Int {
+    for (index in startIndex until size) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
@@ -195,16 +218,42 @@ public expect inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T
  */
 public expect inline fun <T> List<T>.last(predicate: (T) -> Boolean): T
 
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public expect fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: T): Int
+
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public expect fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int
+
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-public expect fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: T): Int
+public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: T, startIndex: Int = 0): Int {
+    if (this is List) return this.lastIndexOf(element, startIndex)
+    var lastIndex = -1
+    var index = 0
+    for (item in this) {
+        if (element == item && index >= startIndex)
+            lastIndex = index
+        index++
+    }
+    return lastIndex
+}
 
 /**
  * Returns last index of [element], or -1 if the list does not contain element.
  */
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
-public expect fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int
+public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T, startIndex: Int = 0): Int {
+    var lastIndex = -1
+    var index = 0
+    for (item in this) {
+        if (element == item && index >= startIndex)
+            lastIndex = index
+        index++
+    }
+    return lastIndex
+}
 
 /**
  * Returns the last element, or `null` if the collection is empty.

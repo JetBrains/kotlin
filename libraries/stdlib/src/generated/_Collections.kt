@@ -238,14 +238,25 @@ public fun <T> List<T>.getOrNull(index: Int): T? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
 }
 
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T): Int {
+    return indexOf(element, 0)
+}
+
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
+@Deprecated("Use indexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int {
+    return indexOf(element)
+}
+
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T): Int {
-    if (this is List) return this.indexOf(element)
+public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T, startIndex: Int = 0): Int {
+    if (this is List) return this.indexOf(element, startIndex)
     var index = 0
     for (item in this) {
-        if (element == item)
+        if (element == item && index >= startIndex)
             return index
         index++
     }
@@ -256,8 +267,13 @@ public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T): 
  * Returns first index of [element], or -1 if the list does not contain element.
  */
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
-public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int {
-    return indexOf(element)
+public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T, startIndex: Int = 0): Int {
+    for (index in startIndex until size) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
 }
 
 /**
@@ -373,15 +389,26 @@ public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
     throw NoSuchElementException("List contains no element matching the predicate.")
 }
 
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: T): Int {
+    return lastIndexOf(element, 0)
+}
+
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
+@Deprecated("Use lastIndexOf(T, Int)", level = DeprecationLevel.HIDDEN)
+public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int {
+    return lastIndexOf(element)
+}
+
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: T): Int {
-    if (this is List) return this.lastIndexOf(element)
+public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: T, startIndex: Int = 0): Int {
+    if (this is List) return this.lastIndexOf(element, startIndex)
     var lastIndex = -1
     var index = 0
     for (item in this) {
-        if (element == item)
+        if (element == item && index >= startIndex)
             lastIndex = index
         index++
     }
@@ -392,8 +419,15 @@ public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: 
  * Returns last index of [element], or -1 if the list does not contain element.
  */
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
-public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int {
-    return lastIndexOf(element)
+public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T, startIndex: Int = 0): Int {
+    var lastIndex = -1
+    var index = 0
+    for (item in this) {
+        if (element == item && index >= startIndex)
+            lastIndex = index
+        index++
+    }
+    return lastIndex
 }
 
 /**
