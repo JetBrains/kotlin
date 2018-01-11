@@ -71,11 +71,10 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
 
         val problemElements = runInspection(inspectionClass, myProject).problemElements
         val actualProblems = problemElements
-            .keys()
-            .filter { it.name == "pom.xml" }
-            .map { problemElements.get(it) }
-            .flatMap { it.toList() }
-            .mapNotNull { it as? ProblemDescriptorBase }
+                .filter { it.key.name == "pom.xml" }
+                .values
+                .flatMap { it.toList() }
+                .mapNotNull { it as? ProblemDescriptorBase }
 
         val actual = actualProblems
             .map { SimplifiedProblemDescription(it.descriptionTemplate, it.psiElement.text.replace("\\s+".toRegex(), "")) to it }
