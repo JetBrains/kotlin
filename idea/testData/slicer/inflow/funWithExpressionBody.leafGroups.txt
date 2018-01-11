@@ -1,4 +1,0 @@
-3 fun foo(n: Int) = <bold>n + 1</bold>
-3 	fun <bold>foo(n: Int) = n + 1</bold>
-3 		fun foo(n: Int) = <bold>n + 1</bold>
-
