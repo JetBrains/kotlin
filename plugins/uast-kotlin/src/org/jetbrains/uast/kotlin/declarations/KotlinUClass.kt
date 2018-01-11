@@ -263,8 +263,8 @@ class KotlinScriptUClass(
     class KotlinScriptConstructorUMethod(
             script: KtScript,
             override val psi: KtLightMethod,
-            givenParent: UElement?
-    ) : KotlinUMethod(psi, givenParent) {
+            override val uastParent: UElement?
+    ) : KotlinUMethod(psi, uastParent) {
         override val uastBody: UExpression? by lz {
             val initializers = script.declarations.filterIsInstance<KtScriptInitializer>()
             KotlinUBlockExpression.create(initializers, this)
