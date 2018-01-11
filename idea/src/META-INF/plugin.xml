@@ -574,6 +574,8 @@
     <copyPastePreProcessor implementation="org.jetbrains.kotlin.idea.editor.KotlinLiteralCopyPasteProcessor"/>
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsCopyPasteProcessor"/>
 
+    <filePasteProvider implementation="org.jetbrains.kotlin.idea.conversion.copy.KotlinFilePasteProvider" order="first"/>
+
     <breadcrumbsInfoProvider implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinBreadcrumbsInfoProvider"/>
 
     <lang.documentationProvider language="JAVA" implementationClass="org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider" order="first"/>
