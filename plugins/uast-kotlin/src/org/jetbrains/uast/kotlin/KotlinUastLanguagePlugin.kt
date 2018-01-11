@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
@@ -338,7 +339,7 @@ internal object KotlinConverter {
             else -> {
                 if (element is LeafPsiElement) {
                     if (element.elementType == KtTokens.IDENTIFIER)
-                    el<UIdentifier>(build(::UIdentifier))
+                    el<UIdentifier>(build(::KotlinUIdentifier))
                     else if (element.elementType == KtTokens.LBRACKET && element.parent is KtCollectionLiteralExpression)
                         el<UIdentifier> {
                             UIdentifier(
