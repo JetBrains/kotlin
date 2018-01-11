@@ -1,5 +1,5 @@
 public final class SuperCallsKt {
-    @org.jetbrains.annotations.NotNull private static final var anon: A = anonymous object : A("textForAnon") {
+    private static final var anon: A = anonymous object : A("textForAnon") {
         fun bar() {
             cons(object : A("inner literal"))
         }
@@ -9,42 +9,42 @@ public final class SuperCallsKt {
         inner class InnerClass : A("inner class")
     }
     public static final fun getAnon() : A = UastEmptyExpression
-    public static final fun cons(@org.jetbrains.annotations.NotNull a: A) : void {
+    public static final fun cons(a: A) : void {
     }
 }
 
 public class A {
-    @org.jetbrains.annotations.NotNull private final var str: java.lang.String
-    public fun foo(@null a: long) : void {
+    private final var str: java.lang.String
+    public fun foo(a: long) : void {
     }
     public final fun getStr() : java.lang.String = UastEmptyExpression
-    public fun A(@org.jetbrains.annotations.NotNull str: java.lang.String) = UastEmptyExpression
-    public fun A(@null i: int) {
+    public fun A(str: java.lang.String) = UastEmptyExpression
+    public fun A(i: int) {
         <init>(i.toString())
     }
 }
 
 public final class B : A {
-    public fun B(@org.jetbrains.annotations.NotNull param: java.lang.String) {
+    public fun B(param: java.lang.String) {
         <init>(param)
     }
 }
 
 public final class C : A {
-    public fun foo(@null a: long) : void {
+    public fun foo(a: long) : void {
         super.foo(a)
     }
-    public fun C(@org.jetbrains.annotations.NotNull p: java.lang.String) {
+    public fun C(p: java.lang.String) {
         <init>(p)
     }
-    public fun C(@null i: int) {
+    public fun C(i: int) {
         <init>(i)
         println()
     }
 }
 
 public final class O : A {
-    @null public static final var INSTANCE: O
+    public static final var INSTANCE: O
     private fun O() {
         <init>("text")
     }
