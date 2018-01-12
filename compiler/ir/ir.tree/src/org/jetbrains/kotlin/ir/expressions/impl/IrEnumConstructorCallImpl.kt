@@ -24,22 +24,21 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class IrEnumConstructorCallImpl(
-        startOffset: Int,
-        endOffset: Int,
-        override val symbol: IrConstructorSymbol
+    startOffset: Int,
+    endOffset: Int,
+    override val symbol: IrConstructorSymbol
 ) : IrEnumConstructorCall,
-        IrCallWithIndexedArgumentsBase(
-                startOffset, endOffset,
-                symbol.descriptor.builtIns.unitType,
-                symbol.descriptor.valueParameters.size,
-                null
-        )
-{
+    IrCallWithIndexedArgumentsBase(
+        startOffset, endOffset,
+        symbol.descriptor.builtIns.unitType,
+        symbol.descriptor.valueParameters.size,
+        null
+    ) {
     @Deprecated("Creates unbound symbols")
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            descriptor: ClassConstructorDescriptor
+        startOffset: Int,
+        endOffset: Int,
+        descriptor: ClassConstructorDescriptor
     ) : this(startOffset, endOffset, IrConstructorSymbolImpl(descriptor))
 
     override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor

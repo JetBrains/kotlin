@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -36,7 +39,7 @@ interface IrMemberAccessExpression : IrExpression {
 }
 
 fun IrMemberAccessExpression.getTypeArgumentOrDefault(typeParameterDescriptor: TypeParameterDescriptor) =
-        getTypeArgument(typeParameterDescriptor) ?: typeParameterDescriptor.defaultType
+    getTypeArgument(typeParameterDescriptor) ?: typeParameterDescriptor.defaultType
 
 interface IrFunctionAccessExpression : IrMemberAccessExpression, IrDeclarationReference {
     override val descriptor: FunctionDescriptor
@@ -44,7 +47,7 @@ interface IrFunctionAccessExpression : IrMemberAccessExpression, IrDeclarationRe
 }
 
 fun IrMemberAccessExpression.getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) =
-        getValueArgument(valueParameterDescriptor.index)
+    getValueArgument(valueParameterDescriptor.index)
 
 fun IrMemberAccessExpression.putValueArgument(valueParameterDescriptor: ValueParameterDescriptor, valueArgument: IrExpression?) {
     putValueArgument(valueParameterDescriptor.index, valueArgument)

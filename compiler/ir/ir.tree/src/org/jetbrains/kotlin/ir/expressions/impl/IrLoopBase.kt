@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrLoopBase(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val origin: IrStatementOrigin?
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    override val origin: IrStatementOrigin?
 ) : IrExpressionBase(startOffset, endOffset, type), IrLoop {
     override var label: String? = null
 

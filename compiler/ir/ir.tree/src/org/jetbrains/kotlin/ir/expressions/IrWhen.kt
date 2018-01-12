@@ -31,17 +31,17 @@ interface IrBranch : IrElement {
     var result: IrExpression
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBranch =
-            transformer.visitBranch(this, data)
+        transformer.visitBranch(this, data)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitBranch(this, data)
+        visitor.visitBranch(this, data)
 }
 
 interface IrElseBranch : IrBranch {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElseBranch =
-            transformer.visitElseBranch(this, data)
+        transformer.visitElseBranch(this, data)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitElseBranch(this, data)
+        visitor.visitElseBranch(this, data)
 }
 

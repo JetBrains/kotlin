@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 interface IrTry : IrExpression {
@@ -29,7 +26,7 @@ interface IrTry : IrExpression {
 
     val catches: List<IrCatch>
 
-    var finallyExpression : IrExpression?
+    var finallyExpression: IrExpression?
 }
 
 interface IrCatch : IrElement {
@@ -38,5 +35,5 @@ interface IrCatch : IrElement {
     var result: IrExpression
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrCatch =
-            super.transform(transformer, data) as IrCatch
+        super.transform(transformer, data) as IrCatch
 }

@@ -30,54 +30,53 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class IrSetFieldImpl(
+    startOffset: Int, endOffset: Int,
+    symbol: IrFieldSymbol,
+    origin: IrStatementOrigin? = null,
+    superQualifierSymbol: IrClassSymbol? = null
+) : IrSetField,
+    IrFieldExpressionBase(
+        startOffset, endOffset,
+        symbol,
+        symbol.descriptor.type.builtIns.unitType,
+        origin,
+        superQualifierSymbol
+    ) {
+    @Deprecated("Creates unbound symbol")
+    constructor(
+        startOffset: Int, endOffset: Int,
+        propertyDescriptor: PropertyDescriptor,
+        origin: IrStatementOrigin? = null,
+        superQualifier: ClassDescriptor? = null
+    ) : this(
+        startOffset, endOffset,
+        IrFieldSymbolImpl(propertyDescriptor),
+        origin,
+        createClassSymbolOrNull(superQualifier)
+    )
+
+    @Deprecated("Creates unbound symbol")
+    constructor(
+        startOffset: Int, endOffset: Int,
+        propertyDescriptor: PropertyDescriptor,
+        receiver: IrExpression?,
+        value: IrExpression,
+        origin: IrStatementOrigin? = null,
+        superQualifier: ClassDescriptor? = null
+    ) : this(
+        startOffset, endOffset,
+        IrFieldSymbolImpl(propertyDescriptor),
+        receiver, value, origin,
+        createClassSymbolOrNull(superQualifier)
+    )
+
+    constructor(
         startOffset: Int, endOffset: Int,
         symbol: IrFieldSymbol,
+        receiver: IrExpression?,
+        value: IrExpression,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
-) : IrSetField,
-        IrFieldExpressionBase(
-                startOffset, endOffset,
-                symbol,
-                symbol.descriptor.type.builtIns.unitType,
-                origin,
-                superQualifierSymbol
-        )
-{
-    @Deprecated("Creates unbound symbol")
-    constructor(
-            startOffset: Int, endOffset: Int,
-            propertyDescriptor: PropertyDescriptor,
-            origin: IrStatementOrigin? = null,
-            superQualifier: ClassDescriptor? = null
-    ) : this(
-            startOffset, endOffset,
-            IrFieldSymbolImpl(propertyDescriptor),
-            origin,
-            createClassSymbolOrNull(superQualifier)
-    )
-
-    @Deprecated("Creates unbound symbol")
-    constructor(
-            startOffset: Int, endOffset: Int,
-            propertyDescriptor: PropertyDescriptor,
-            receiver: IrExpression?,
-            value: IrExpression,
-            origin: IrStatementOrigin? = null,
-            superQualifier: ClassDescriptor? = null
-    ) : this(
-            startOffset, endOffset,
-            IrFieldSymbolImpl(propertyDescriptor),
-            receiver, value, origin,
-            createClassSymbolOrNull(superQualifier)
-    )
-
-    constructor(
-            startOffset: Int, endOffset: Int,
-            symbol: IrFieldSymbol,
-            receiver: IrExpression?,
-            value: IrExpression,
-            origin: IrStatementOrigin? = null,
-            superQualifierSymbol: IrClassSymbol? = null
     ) : this(startOffset, endOffset, symbol, origin, superQualifierSymbol) {
         this.receiver = receiver
         this.value = value

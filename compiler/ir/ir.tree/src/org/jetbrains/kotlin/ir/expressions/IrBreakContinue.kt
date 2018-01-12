@@ -21,6 +21,6 @@ interface IrBreakContinue : IrExpression {
     val label: String?
 }
 
-interface IrBreak: IrBreakContinue
+interface IrBreak : IrBreakContinue
 
-interface IrContinue: IrBreakContinue
+interface IrContinue : IrBreakContinue

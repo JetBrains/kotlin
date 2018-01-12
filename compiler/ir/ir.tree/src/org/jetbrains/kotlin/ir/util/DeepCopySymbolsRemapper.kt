@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 open class DeepCopySymbolsRemapper(
-        private val descriptorsRemapper: DescriptorsRemapper = DescriptorsRemapper.DEFAULT
+    private val descriptorsRemapper: DescriptorsRemapper = DescriptorsRemapper.DEFAULT
 ) : IrElementVisitorVoid, SymbolRemapper {
     private val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
     private val constructors = hashMapOf<IrConstructorSymbol, IrConstructorSymbol>()
@@ -119,12 +119,12 @@ open class DeepCopySymbolsRemapper(
     }
 
     private fun <T : IrSymbol> Map<T, T>.getDeclared(symbol: T) =
-            getOrElse(symbol) {
-                throw IllegalArgumentException("Non-remapped symbol $symbol ${symbol.descriptor}")
-            }
+        getOrElse(symbol) {
+            throw IllegalArgumentException("Non-remapped symbol $symbol ${symbol.descriptor}")
+        }
 
     private fun <T : IrSymbol> Map<T, T>.getReferenced(symbol: T) =
-            getOrElse(symbol) { symbol }
+        getOrElse(symbol) { symbol }
 
     override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol = classes.getDeclared(symbol)
     override fun getDeclaredFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getDeclared(symbol)
@@ -132,7 +132,9 @@ open class DeepCopySymbolsRemapper(
     override fun getDeclaredFile(symbol: IrFileSymbol): IrFileSymbol = files.getDeclared(symbol)
     override fun getDeclaredConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol = constructors.getDeclared(symbol)
     override fun getDeclaredEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol = enumEntries.getDeclared(symbol)
-    override fun getDeclaredExternalPackageFragment(symbol: IrExternalPackageFragmentSymbol): IrExternalPackageFragmentSymbol = externalPackageFragments.getDeclared(symbol)
+    override fun getDeclaredExternalPackageFragment(symbol: IrExternalPackageFragmentSymbol): IrExternalPackageFragmentSymbol =
+        externalPackageFragments.getDeclared(symbol)
+
     override fun getDeclaredVariable(symbol: IrVariableSymbol): IrVariableSymbol = variables.getDeclared(symbol)
     override fun getDeclaredTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol = typeParameters.getDeclared(symbol)
     override fun getDeclaredValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol = valueParameters.getDeclared(symbol)
@@ -145,23 +147,23 @@ open class DeepCopySymbolsRemapper(
     override fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol = constructors.getReferenced(symbol)
 
     override fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol =
-            when (symbol) {
-                is IrValueParameterSymbol -> valueParameters.getReferenced(symbol)
-                is IrVariableSymbol -> variables.getReferenced(symbol)
-                else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
-            }
+        when (symbol) {
+            is IrValueParameterSymbol -> valueParameters.getReferenced(symbol)
+            is IrVariableSymbol -> variables.getReferenced(symbol)
+            else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
+        }
 
     override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol =
-            when (symbol) {
-                is IrSimpleFunctionSymbol -> functions.getReferenced(symbol)
-                is IrConstructorSymbol -> constructors.getReferenced(symbol)
-                else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
-            }
+        when (symbol) {
+            is IrSimpleFunctionSymbol -> functions.getReferenced(symbol)
+            is IrConstructorSymbol -> constructors.getReferenced(symbol)
+            else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
+        }
 
     override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
-            when (symbol) {
-                is IrClassSymbol -> classes.getReferenced(symbol)
-                is IrTypeParameterSymbol -> typeParameters.getReferenced(symbol)
-                else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
-            }
+        when (symbol) {
+            is IrClassSymbol -> classes.getReferenced(symbol)
+            is IrTypeParameterSymbol -> typeParameters.getReferenced(symbol)
+            else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
+        }
 }

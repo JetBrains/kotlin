@@ -31,10 +31,10 @@ class DependenciesCollector {
     val dependencyModules: Collection<ModuleDescriptor> get() = modulesForDependencyDescriptors
 
     fun getPackageFragments(moduleDescriptor: ModuleDescriptor): Collection<PackageFragmentDescriptor> =
-            packageFragmentsForDependencyDescriptors[moduleDescriptor] ?: emptyList()
+        packageFragmentsForDependencyDescriptors[moduleDescriptor] ?: emptyList()
 
     fun getTopLevelDescriptors(packageFragmentDescriptor: PackageFragmentDescriptor): Collection<DeclarationDescriptor> =
-            topLevelDescriptors[packageFragmentDescriptor] ?: emptyList()
+        topLevelDescriptors[packageFragmentDescriptor] ?: emptyList()
 
     fun collectTopLevelDescriptorsForUnboundSymbols(symbolTable: SymbolTable) {
         assert(symbolTable.unboundTypeParameters.isEmpty()) { "Unbound type parameters: ${symbolTable.unboundTypeParameters}" }
