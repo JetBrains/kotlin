@@ -18,11 +18,15 @@
 package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtilRt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind;
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -74,6 +78,9 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
         if (withRuntime && !isJsLibrary) {
             libraryModel.addRoot(getJarUrl(PathUtil.getKotlinPathsForDistDirectory().getStdlibPath()), OrderRootType.CLASSES);
         }
+        if (isJsLibrary && libraryModel instanceof LibraryEx.ModifiableModelEx) {
+            ((LibraryEx.ModifiableModelEx) libraryModel).setKind(JSLibraryKind.INSTANCE);
+        }
         if (withSources) {
             libraryModel.addRoot(jarUrl + "src/", OrderRootType.SOURCES);
         }
@@ -83,6 +90,11 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
         if (withRuntime && isJsLibrary) {
             KotlinStdJSProjectDescriptor.INSTANCE.configureModule(module, model);
         }
+    }
+
+    @Override
+    public Sdk getSdk() {
+        return isJsLibrary ? new KotlinSdkType().newSdk(KotlinSdkType.DEFAULT_SDK_NAME) : PluginTestCaseBase.mockJdk();
     }
 
     @NotNull
