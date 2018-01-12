@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class GotoSuperActionHandler : CodeInsightActionHandler {
@@ -42,7 +41,7 @@ class GotoSuperActionHandler : CodeInsightActionHandler {
 
         val descriptor = declaration.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL)
 
-        val superDeclarations = findSuperDeclarations(descriptor)
+        val superDeclarations = findSuperDeclarations(project, descriptor)
 
         if (superDeclarations == null || superDeclarations.isEmpty()) return
         if (superDeclarations.size == 1) {
@@ -72,7 +71,7 @@ class GotoSuperActionHandler : CodeInsightActionHandler {
             else -> null
         }
 
-    private fun findSuperDeclarations(descriptor: DeclarationDescriptor): List<PsiElement>? {
+    private fun findSuperDeclarations(project: Project, descriptor: DeclarationDescriptor): List<PsiElement>? {
         val superDescriptors: Collection<DeclarationDescriptor> = when (descriptor) {
             is ClassDescriptor -> {
                 val supertypes = descriptor.typeConstructor.supertypes
@@ -90,7 +89,7 @@ class GotoSuperActionHandler : CodeInsightActionHandler {
             if (descriptor is ClassDescriptor && isAny(descriptor)) {
                 null
             } else
-                DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
+                DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
         }
     }
 
