@@ -31,7 +31,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2C3F38411FD1738300151601 /* calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = calculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C3F38411FD1738300151601 /* KotlinCalculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KotlinCalculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C3F38441FD1738300151601 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2C3F38461FD1738300151601 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		2C3F38491FD1738300151601 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -65,7 +65,7 @@
 		2C3F38421FD1738300151601 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2C3F38411FD1738300151601 /* calculator.app */,
+				2C3F38411FD1738300151601 /* KotlinCalculator.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -86,9 +86,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2C3F38401FD1738300151601 /* calculator */ = {
+		2C3F38401FD1738300151601 /* KotlinCalculator */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2C3F38531FD1738300151601 /* Build configuration list for PBXNativeTarget "calculator" */;
+			buildConfigurationList = 2C3F38531FD1738300151601 /* Build configuration list for PBXNativeTarget "KotlinCalculator" */;
 			buildPhases = (
 				2C3F38561FD1754800151601 /* Compile Kotlin Framework */,
 				2C3F383D1FD1738300151601 /* Sources */,
@@ -100,9 +100,9 @@
 			);
 			dependencies = (
 			);
-			name = calculator;
+			name = KotlinCalculator;
 			productName = calculator;
-			productReference = 2C3F38411FD1738300151601 /* calculator.app */;
+			productReference = 2C3F38411FD1738300151601 /* KotlinCalculator.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -134,7 +134,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2C3F38401FD1738300151601 /* calculator */,
+				2C3F38401FD1738300151601 /* KotlinCalculator */,
 			);
 		};
 /* End PBXProject section */
@@ -326,6 +326,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
 			};
 			name = Debug;
 		};
@@ -347,6 +348,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
 			};
 			name = Release;
 		};
@@ -362,7 +364,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2C3F38531FD1738300151601 /* Build configuration list for PBXNativeTarget "calculator" */ = {
+		2C3F38531FD1738300151601 /* Build configuration list for PBXNativeTarget "KotlinCalculator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2C3F38541FD1738300151601 /* Debug */,
