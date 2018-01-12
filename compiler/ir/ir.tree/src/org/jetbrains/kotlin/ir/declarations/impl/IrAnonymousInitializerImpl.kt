@@ -26,17 +26,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrAnonymousInitializerImpl(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val symbol: IrAnonymousInitializerSymbol
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrAnonymousInitializerSymbol
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrAnonymousInitializer {
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor) :
             this(startOffset, endOffset, origin, IrAnonymousInitializerSymbolImpl(descriptor))
 
     constructor(
-            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
-            body: IrBlockBody
+        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
+        body: IrBlockBody
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.body = body
     }

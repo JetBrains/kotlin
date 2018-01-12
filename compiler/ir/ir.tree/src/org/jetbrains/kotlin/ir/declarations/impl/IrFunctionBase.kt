@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
@@ -24,12 +25,16 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 
 abstract class IrFunctionBase(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val visibility: Visibility,
+    override val isInline: Boolean,
+    override val returnType: KotlinType
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrFunction {
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()
 

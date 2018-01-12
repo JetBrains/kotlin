@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.ir.declarations.impl
+package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.name.Name
 
-abstract class IrDeclarationBase(
-    startOffset: Int,
-    endOffset: Int,
-    override val origin: IrDeclarationOrigin
-) : IrElementBase(startOffset, endOffset), IrDeclaration
+interface IrSimpleFunction : IrFunction, IrSymbolDeclaration<IrSimpleFunctionSymbol> {
+    val name: Name
+    val modality: Modality
+    val isTailrec: Boolean
+    val isSuspend: Boolean
+
+    override val declarationKind: IrDeclarationKind
+        get() = IrDeclarationKind.FUNCTION
+}

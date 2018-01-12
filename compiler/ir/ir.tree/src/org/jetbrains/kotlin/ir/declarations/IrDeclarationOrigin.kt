@@ -38,6 +38,6 @@ interface IrDeclarationOrigin {
     object IR_BUILTINS_STUB : IrDeclarationOriginImpl("IR_BUILTINS_STUB")
 }
 
-abstract class IrDeclarationOriginImpl(val name: String): IrDeclarationOrigin {
+abstract class IrDeclarationOriginImpl(val name: String) : IrDeclarationOrigin {
     override fun toString(): String = name
 }

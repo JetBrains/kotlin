@@ -32,7 +32,7 @@ interface IrDeclaration : IrStatement {
     val origin: IrDeclarationOrigin
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrStatement =
-            accept(transformer, data) as IrStatement
+        accept(transformer, data) as IrStatement
 }
 
 interface IrSymbolDeclaration<out S : IrSymbol> : IrDeclaration, IrSymbolOwner {

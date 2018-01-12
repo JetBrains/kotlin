@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
@@ -26,19 +25,26 @@ import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 class IrEnumEntryImpl(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val symbol: IrEnumEntrySymbol
-) : IrDeclarationBase(startOffset, endOffset, origin), IrEnumEntry {
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrEnumEntrySymbol,
+    override val name: Name
+) : IrDeclarationBase(startOffset, endOffset, origin),
+    IrEnumEntry {
+
+    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrEnumEntrySymbol) :
+            this(startOffset, endOffset, origin, symbol, symbol.descriptor.name)
+
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor) :
             this(startOffset, endOffset, origin, IrEnumEntrySymbolImpl(descriptor))
 
     constructor(
-            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
-            correspondingClass: IrClass?, initializerExpression: IrExpression?
+        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
+        correspondingClass: IrClass?, initializerExpression: IrExpression?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.correspondingClass = correspondingClass
         this.initializerExpression = initializerExpression
