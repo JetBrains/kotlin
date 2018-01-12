@@ -232,7 +232,7 @@ fun hasKotlinFilesInSources(module: Module): Boolean {
 }
 
 fun isEap(version: String): Boolean {
-    return version.contains("rc") || version.contains("eap")
+    return version.contains("rc") || version.contains("eap") || version.contains("-M")
 }
 
 private class LibraryKindSearchScope(val module: Module,
