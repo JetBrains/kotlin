@@ -683,7 +683,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun evaluateExpression(value: IrExpression): LLVMValueRef {
-        debugLocation(value)
+        updateBuilderDebugLocation(value)
         when (value) {
             is IrTypeOperatorCall    -> return evaluateTypeOperator           (value)
             is IrCall                -> return evaluateCall                   (value)
@@ -1101,12 +1101,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
     private fun debugInfoIfNeeded(function: IrFunction?, element: IrElement): VariableDebugLocation? {
-        if (function == null || !context.shouldContainDebugInfo()) return null
+        if (function == null || element.startLocation == null || !context.shouldContainDebugInfo()) return null
         val functionScope = function.scope()
         if (functionScope == null || !element.needDebugInfo(context)) return null
-        val location = debugLocation(element)
+        val locationInfo = element.startLocation!!
+        val location = codegen.generateLocationInfo(locationInfo)
         val file = (currentCodeContext.fileScope() as FileScope).file.file()
-        val line = element.startLine()
         return when (element) {
             is IrVariable -> debugInfoLocalVariableLocation(
                     builder       = context.debugInfo.builder,
@@ -1114,7 +1114,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
                     name          = element.descriptor.name,
                     file          = file,
-                    line          = line,
+                    line          = locationInfo.line,
                     location      = location)
             is IrValueParameter -> debugInfoParameterLocation(
                     builder       = context.debugInfo.builder,
@@ -1123,7 +1123,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     name          = element.descriptor.name,
                     argNo         = (element.descriptor as? ValueParameterDescriptor)?.index ?: 0,
                     file          = file,
-                    line          = line,
+                    line          = locationInfo.line,
                     location      = location)
             else -> throw Error("Unsupported element type: ${ir2string(element)}")
         }
@@ -1616,7 +1616,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         compileTimeEvaluate(value, args)?.let { return it }
 
-        debugLocation(value)
+        updateBuilderDebugLocation(value)
         when {
             value is IrDelegatingConstructorCall   ->
                 return delegatingConstructorCall(value.descriptor, args)
@@ -1630,7 +1630,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun file() = (currentCodeContext.fileScope() as FileScope).file
 
     //-------------------------------------------------------------------------//
-    private fun debugLocation(element: IrElement?):DILocationRef? {
+    private fun updateBuilderDebugLocation(element: IrElement?):DILocationRef? {
         if (!context.shouldContainDebugInfo() || element == null) return null
         @Suppress("UNCHECKED_CAST")
         return element.startLocation?.let{functionGenerationContext.debugLocation(it)}
@@ -2429,6 +2429,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 }
 
-internal data class LocationInfo(val scope:DIScopeOpaqueRef?, val line:Int, val column:Int)
-
-private fun IrFunction.hasNotReceiver() = this.extensionReceiverParameter == null && this.dispatchReceiverParameter == null
+internal data class LocationInfo(val scope:DIScopeOpaqueRef?,
+                                 val line:Int,
+                                 val column:Int)

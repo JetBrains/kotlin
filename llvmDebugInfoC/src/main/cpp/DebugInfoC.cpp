@@ -241,13 +241,20 @@ void DIInsertDeclaration(DIBuilderRef builder, LLVMValueRef value, DILocalVariab
                             llvm::unwrap(bb));
 }
 
-DILocationRef LLVMBuilderSetDebugLocation(LLVMBuilderRef builder, unsigned line,
+DILocationRef LLVMCreateLocation(LLVMContextRef contextRef, unsigned line,
                                  unsigned col, DIScopeOpaqueRef scope) {
-  auto sp = llvm::unwrap(scope);
-  auto llvmBuilder = llvm::unwrap(builder);
-  auto location = llvm::DILocation::get(llvmBuilder->getContext(), line, col, sp, nullptr);
-  llvmBuilder->SetCurrentDebugLocation(location);
+  auto location = llvm::DILocation::get(*llvm::unwrap(contextRef), line, col, llvm::unwrap(scope), nullptr);
   return llvm::wrap(location);
+}
+
+DILocationRef LLVMCreateLocationInlinedAt(LLVMContextRef contextRef, unsigned line,
+                                 unsigned col, DIScopeOpaqueRef scope, DILocationRef refLocationInlinedAt) {
+  auto location = llvm::DILocation::get(*llvm::unwrap(contextRef), line, col, llvm::unwrap(scope), llvm::unwrap(refLocationInlinedAt));
+  return llvm::wrap(location);
+}
+
+void LLVMBuilderSetDebugLocation(LLVMBuilderRef builder, DILocationRef refLocation) {
+  llvm::unwrap(builder)->SetCurrentDebugLocation(llvm::unwrap(refLocation));
 }
 
 void LLVMBuilderResetDebugLocation(LLVMBuilderRef builder) {

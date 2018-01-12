@@ -77,6 +77,11 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         }
         return typeInfoValue(descriptorForTypeInfo)
     }
+
+    fun generateLocationInfo(locationInfo: LocationInfo): DILocationRef? {
+        return LLVMCreateLocation(LLVMGetModuleContext(context.llvmModule), locationInfo.line, locationInfo.line, locationInfo.scope)
+    }
+
 }
 
 internal sealed class ExceptionHandler {
@@ -507,11 +512,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     internal fun debugLocation(locationInfo: LocationInfo): DILocationRef? {
         if (!context.shouldContainDebugInfo()) return null
         update(currentBlock, locationInfo)
-        return LLVMBuilderSetDebugLocation(
-                builder,
-                locationInfo.line,
-                locationInfo.column,
-                locationInfo.scope)
+        val debugLocation = codegen.generateLocationInfo(locationInfo)
+        currentPositionHolder.setBuilderDebugLocation(debugLocation)
+        return debugLocation
     }
 
     fun indirectBr(address: LLVMValueRef, destinations: Collection<LLVMBasicBlockRef>): LLVMValueRef? {
@@ -624,8 +627,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     fun resetDebugLocation() {
         if (!context.shouldContainDebugInfo()) return
-        if (!currentPositionHolder.isAfterTerminator)
-            LLVMBuilderResetDebugLocation(builder)
+        currentPositionHolder.resetBuilderDebugLocation()
     }
 
     private fun position() = basicBlockToLastLocation[currentBlock]
@@ -791,7 +793,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         fun positionAtEnd(block: LLVMBasicBlockRef) {
             LLVMPositionBuilderAtEnd(builder, block)
-            basicBlockToLastLocation[block]?.let(this@PositionHolder::debugLocation)
+            basicBlockToLastLocation[block]?.let{ debugLocation(it) }
             val lastInstr = LLVMGetLastInstruction(block)
             isAfterTerminator = lastInstr != null && (LLVMIsATerminatorInst(lastInstr) != null)
         }
@@ -800,18 +802,14 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             LLVMDisposeBuilder(builder)
         }
 
-        fun debugLocation(locationInfo: LocationInfo): DILocationRef? {
-            if (!context.shouldContainDebugInfo()) return null
-            return LLVMBuilderSetDebugLocation(
-                    builder,
-                    locationInfo.line,
-                    locationInfo.column,
-                    locationInfo.scope)
-        }
-
-        fun resetDebugLocation() {
+        fun resetBuilderDebugLocation() {
             if (!context.shouldContainDebugInfo()) return
             LLVMBuilderResetDebugLocation(builder)
+        }
+
+        fun setBuilderDebugLocation(debugLocation: DILocationRef?) {
+            if (!context.shouldContainDebugInfo()) return
+            LLVMBuilderSetDebugLocation(builder, debugLocation)
         }
     }
 
