@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addToStdlib.constant
@@ -190,8 +191,9 @@ data class IfThenToSelectData(
         }
     }
 
-    internal fun hasImplicitReceiver(): Boolean =
-            baseClause.getResolvedCall(context)?.getImplicitReceiverValue() != null
+    internal fun getImplicitReceiver(): ImplicitReceiver? = baseClause.getResolvedCall(context)?.getImplicitReceiverValue()
+
+    internal fun hasImplicitReceiver(): Boolean = getImplicitReceiver() != null
 }
 
 internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData? {

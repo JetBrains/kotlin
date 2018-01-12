@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
 class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
 
@@ -84,6 +85,6 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
         negatedClause == null && baseClause.isUsedAsExpression(context) -> false
         negatedClause != null && !negatedClause.isNullExpression() -> false
         else -> baseClause.evaluatesTo(receiverExpression) || baseClause.hasFirstReceiverOf(receiverExpression) ||
-                receiverExpression is KtThisExpression && hasImplicitReceiver()
+                receiverExpression is KtThisExpression && getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true
     }
 }

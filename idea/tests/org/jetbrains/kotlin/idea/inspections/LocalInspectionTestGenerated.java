@@ -140,6 +140,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("implicitReceiverInApply.kt")
+            public void testImplicitReceiverInApply() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/implicitReceiverInApply.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("isCheckSimple.kt")
             public void testIsCheckSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/isCheckSimple.kt");
