@@ -43,7 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDefaultArgument;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
@@ -84,7 +83,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             if (!valueParameter.declaresDefaultValue()) continue;
 
             JsExpression jsNameRef = ReferenceTranslator.translateAsValueReference(valueParameter, functionBodyContext);
-            KtExpression defaultArgument = getDefaultArgument(valueParameter);
+            KtExpression defaultArgument = BindingUtils.getDefaultArgument(valueParameter);
             JsBlock defaultArgBlock = new JsBlock();
             JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
             PsiElement psi = KotlinSourceElementKt.getPsi(valueParameter.getSource());
