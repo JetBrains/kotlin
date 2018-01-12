@@ -28,7 +28,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.ui.Gray
+import com.intellij.ui.Colors
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
@@ -141,19 +141,20 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
 
         companion object {
             private val normalAttributes = TextAttributes(
-                JBColor(Gray._135, Color(0x3d8065)),
+                JBColor.GRAY,
                 null, null, null,
                 Font.ITALIC
             )
 
             private val errorAttributes = TextAttributes(
-                JBColor(Color.RED, Color.RED),
+                JBColor(Colors.DARK_RED, Colors.DARK_RED),
                 null, null, null,
                 Font.ITALIC
             )
 
+            private val userOutputColor = Color(0x5C5CFF)
             private val userOutputAttributes = TextAttributes(
-                JBColor(Color.GREEN, Color.GREEN),
+                JBColor(userOutputColor, userOutputColor),
                 null, null, null,
                 Font.ITALIC
             )
