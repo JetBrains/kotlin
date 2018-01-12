@@ -48,6 +48,11 @@ import javax.swing.JButton
 import javax.swing.JCheckBox
 import javax.swing.JPanel
 
+sealed class BytecodeGenerationResult {
+    data class Bytecode(val text: String) : BytecodeGenerationResult()
+    data class Error(val text: String) : BytecodeGenerationResult()
+}
+
 class KotlinBytecodeToolWindow(private val myProject: Project, private val toolWindow: ToolWindow) : JPanel(BorderLayout()), Disposable {
     private val LOG = Logger.getInstance(KotlinBytecodeToolWindow::class.java)
 
@@ -59,7 +64,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
     private val jvm8Target: JCheckBox
     private val ir: JCheckBox
 
-    private inner class UpdateBytecodeToolWindowTask : LongRunningReadTask<Location, String>() {
+    private inner class UpdateBytecodeToolWindowTask : LongRunningReadTask<Location, BytecodeGenerationResult>() {
         override fun prepareRequestInfo(): Location? {
             if (!toolWindow.isVisible) {
                 return null
@@ -87,7 +92,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             setText(DEFAULT_TEXT)
         }
 
-        override fun processRequest(location: Location): String {
+        override fun processRequest(location: Location): BytecodeGenerationResult {
             val ktFile = location.kFile!!
 
             val configuration = CompilerConfiguration()
@@ -115,39 +120,48 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             return getBytecodeForFile(ktFile, configuration)
         }
 
-        override fun onResultReady(requestInfo: Location, resultText: String?) {
+        override fun onResultReady(requestInfo: Location, result: BytecodeGenerationResult?) {
             val editor = requestInfo.getEditor()!!
 
-            if (resultText == null) {
+            if (result == null) {
                 return
             }
 
-            setText(resultText)
+            when (result) {
+                is BytecodeGenerationResult.Error -> {
+                    decompile.isEnabled = false
+                    setText(result.text)
+                }
+                is BytecodeGenerationResult.Bytecode -> {
+                    decompile.isEnabled = true
+                    setText(result.text)
 
-            val fileStartOffset = requestInfo.getStartOffset()
-            val fileEndOffset = requestInfo.getEndOffset()
+                    val fileStartOffset = requestInfo.getStartOffset()
+                    val fileEndOffset = requestInfo.getEndOffset()
 
-            val document = editor.document
-            val startLine = document.getLineNumber(fileStartOffset)
-            var endLine = document.getLineNumber(fileEndOffset)
-            if (endLine > startLine && fileEndOffset > 0 && document.charsSequence[fileEndOffset - 1] == '\n') {
-                endLine--
+                    val document = editor.document
+                    val startLine = document.getLineNumber(fileStartOffset)
+                    var endLine = document.getLineNumber(fileEndOffset)
+                    if (endLine > startLine && fileEndOffset > 0 && document.charsSequence[fileEndOffset - 1] == '\n') {
+                        endLine--
+                    }
+
+                    val byteCodeDocument = myEditor.document
+
+                    val linesRange = mapLines(byteCodeDocument.text, startLine, endLine)
+                    val endSelectionLineIndex = Math.min(linesRange.second + 1, byteCodeDocument.lineCount)
+
+                    val startOffset = byteCodeDocument.getLineStartOffset(linesRange.first)
+                    val endOffset = Math.min(byteCodeDocument.getLineStartOffset(endSelectionLineIndex), byteCodeDocument.textLength)
+
+                    myEditor.caretModel.moveToOffset(endOffset)
+                    myEditor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
+                    myEditor.caretModel.moveToOffset(startOffset)
+                    myEditor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
+
+                    myEditor.selectionModel.setSelection(startOffset, endOffset)
+                }
             }
-
-            val byteCodeDocument = myEditor.document
-
-            val linesRange = mapLines(byteCodeDocument.text, startLine, endLine)
-            val endSelectionLineIndex = Math.min(linesRange.second + 1, byteCodeDocument.lineCount)
-
-            val startOffset = byteCodeDocument.getLineStartOffset(linesRange.first)
-            val endOffset = Math.min(byteCodeDocument.getLineStartOffset(endSelectionLineIndex), byteCodeDocument.textLength)
-
-            myEditor.caretModel.moveToOffset(endOffset)
-            myEditor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
-            myEditor.caretModel.moveToOffset(startOffset)
-            myEditor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
-
-            myEditor.selectionModel.setSelection(startOffset, endOffset)
         }
     }
 
@@ -217,14 +231,14 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 "*/"
 
         // public for tests
-        fun getBytecodeForFile(ktFile: KtFile, configuration: CompilerConfiguration): String {
+        fun getBytecodeForFile(ktFile: KtFile, configuration: CompilerConfiguration): BytecodeGenerationResult {
             val state: GenerationState
             try {
                 state = compileSingleFile(ktFile, configuration)
             } catch (e: ProcessCanceledException) {
                 throw e
             } catch (e: Exception) {
-                return printStackTraceToString(e)
+                return BytecodeGenerationResult.Error(printStackTraceToString(e))
             }
 
             val answer = StringBuilder()
@@ -252,7 +266,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 answer.append(outputFile.asText()).append("\n\n")
             }
 
-            return answer.toString()
+            return BytecodeGenerationResult.Bytecode(answer.toString())
         }
 
         fun compileSingleFile(
