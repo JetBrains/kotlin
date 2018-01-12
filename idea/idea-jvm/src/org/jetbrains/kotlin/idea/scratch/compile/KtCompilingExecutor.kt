@@ -25,6 +25,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
@@ -166,18 +167,18 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             val diagnostics = bindingContext.diagnostics.filter { it.severity == Severity.ERROR }
             if (diagnostics.isNotEmpty()) {
                 diagnostics.forEach { diagnostic ->
-                    if (diagnostic.psiElement.containingFile == psiFile) {
-                        val scratchExpression = file.findExpression(
-                            diagnostic.psiElement.getLineNumber(true),
-                            diagnostic.psiElement.getLineNumber(false)
-                        )
-                        handlers.forEach {
-                            it.handle(
-                                file,
-                                scratchExpression,
-                                ScratchOutput(DefaultErrorMessages.render(diagnostic), ScratchOutputType.ERROR)
-                            )
+                    val errorText = DefaultErrorMessages.render(diagnostic)
+                    if (psiFile == file.psiFile) {
+                        if (diagnostic.psiElement.containingFile == psiFile) {
+                            val scratchExpression = file.findExpression(diagnostic.psiElement)
+                            handlers.forEach {
+                                it.handle(file, scratchExpression, ScratchOutput(errorText, ScratchOutputType.ERROR))
+                            }
+                        } else {
+                            handlers.forEach { it.error(file, errorText) }
                         }
+                    } else {
+                        handlers.forEach { it.error(file, errorText) }
                     }
                 }
                 return@runReadAction false
@@ -189,6 +190,10 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
     private fun error(message: String) {
         handlers.forEach { it.error(file, message) }
         handlers.forEach { it.onFinish(file) }
+    }
+
+    private fun ScratchFile.findExpression(psiElement: PsiElement): ScratchExpression {
+        return findExpression(psiElement.getLineNumber(true), psiElement.getLineNumber(false))
     }
 
     private fun ScratchFile.findExpression(lineStart: Int, lineEnd: Int): ScratchExpression {
