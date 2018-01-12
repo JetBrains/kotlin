@@ -1,29 +1,29 @@
-FILE /tryCatch.kt
-  FUN public fun test1(): kotlin.Unit
+FILE fqName:<root> fileName:/tryCatch.kt
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       TRY type=kotlin.Unit
         try: BLOCK type=kotlin.Unit origin=null
           CALL 'println(): Unit' type=kotlin.Unit origin=null
         CATCH parameter=e: Throwable
-          VAR CATCH_PARAMETER val e: kotlin.Throwable
+          VAR CATCH_PARAMETER name:e type:kotlin.Throwable flags:val
           BLOCK type=kotlin.Unit origin=null
             CALL 'println(): Unit' type=kotlin.Unit origin=null
         finally: BLOCK type=kotlin.Unit origin=null
           CALL 'println(): Unit' type=kotlin.Unit origin=null
-  FUN public fun test2(): kotlin.Int
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(): Int'
+      RETURN type=kotlin.Nothing from=test2(): Int'
         TRY type=kotlin.Int
           try: BLOCK type=kotlin.Int origin=null
             CALL 'println(): Unit' type=kotlin.Unit origin=null
-            CONST Int type=kotlin.Int value='42'
+            CONST Int type=kotlin.Int value=42
           CATCH parameter=e: Throwable
-            VAR CATCH_PARAMETER val e: kotlin.Throwable
+            VAR CATCH_PARAMETER name:e type:kotlin.Throwable flags:val
             BLOCK type=kotlin.Int origin=null
               CALL 'println(): Unit' type=kotlin.Unit origin=null
-              CONST Int type=kotlin.Int value='24'
+              CONST Int type=kotlin.Int value=24
           finally: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
             BLOCK type=kotlin.Int origin=null
               CALL 'println(): Unit' type=kotlin.Unit origin=null
-              CONST Int type=kotlin.Int value='555'
+              CONST Int type=kotlin.Int value=555
 

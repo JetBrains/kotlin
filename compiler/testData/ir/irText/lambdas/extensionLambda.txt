@@ -1,16 +1,16 @@
-FILE /extensionLambda.kt
-  FUN public fun test1(): kotlin.Int
+FILE fqName:<root> fileName:/extensionLambda.kt
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(): Int'
+      RETURN type=kotlin.Nothing from=test1(): Int'
         CALL 'run(String.() -> Int) on String: Int' type=kotlin.Int origin=null
           <T>: String
           <R>: Int
-          $receiver: CONST String type=kotlin.String value='42'
+          $receiver: CONST String type=kotlin.String value=42
           block: BLOCK type=kotlin.String.() -> kotlin.Int origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun kotlin.String.<anonymous>(): kotlin.Int
-              $receiver: VALUE_PARAMETER this@<anonymous>: String
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:Int flags:
+              $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='<anonymous>() on String: Int'
+                RETURN type=kotlin.Nothing from=<anonymous>() on String: Int'
                   CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
                     $this: GET_VAR 'this@<anonymous>: String' type=kotlin.String origin=null
             FUNCTION_REFERENCE '<anonymous>() on String: Int' type=kotlin.String.() -> kotlin.Int origin=LAMBDA

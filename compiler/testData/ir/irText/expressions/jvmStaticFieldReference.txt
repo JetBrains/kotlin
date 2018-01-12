@@ -1,48 +1,48 @@
-FILE /jvmStaticFieldReference.kt
-  FUN public fun testFun(): kotlin.Unit
+FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
+  FUN name:testFun visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       CALL 'println(String!): Unit' type=kotlin.Unit origin=null
         $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
           GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
-        x: CONST String type=kotlin.String value='testFun'
-  PROPERTY public var testProp: kotlin.Any
-    FUN public fun <get-testProp>(): kotlin.Any
+        x: CONST String type=kotlin.String value=testFun
+  PROPERTY name:testProp type:kotlin.Any visibility:public modality:FINAL flags:var
+    FUN name:<get-testProp> visibility:public modality:FINAL <> () returnType:Any flags:
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
-          x: CONST String type=kotlin.String value='testProp/get'
-        RETURN type=kotlin.Nothing from='<get-testProp>(): Any'
-          CONST Int type=kotlin.Int value='42'
-    FUN public fun <set-testProp>(value: kotlin.Any): kotlin.Unit
-      VALUE_PARAMETER value-parameter value: kotlin.Any
+          x: CONST String type=kotlin.String value=testProp/get
+        RETURN type=kotlin.Nothing from=<get-testProp>(): Any'
+          CONST Int type=kotlin.Int value=42
+    FUN name:<set-testProp> visibility:public modality:FINAL <> (value:kotlin.Any) returnType:Unit flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.Any flags:
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
-          x: CONST String type=kotlin.String value='testProp/set'
-  CLASS CLASS TestClass
-    $this: VALUE_PARAMETER this@TestClass: TestClass
-    CONSTRUCTOR public constructor TestClass()
+          x: CONST String type=kotlin.String value=testProp/set
+  CLASS CLASS name:TestClass modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestClass flags:
+    CONSTRUCTOR visibility:public <> () returnType:TestClass flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestClass'
-    PROPERTY public final val test: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final val test: kotlin.Int
+    PROPERTY name:test type:kotlin.Int visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:public
         EXPRESSION_BODY
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: BLOCK type=kotlin.Int origin=null
                 CALL 'println(String!): Unit' type=kotlin.Unit origin=null
                   $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
                     GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
-                  x: CONST String type=kotlin.String value='TestClass/test'
-                CONST Int type=kotlin.Int value='42'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test>(): kotlin.Int
-        $this: VALUE_PARAMETER this@TestClass: TestClass
+                  x: CONST String type=kotlin.String value=TestClass/test
+                CONST Int type=kotlin.Int value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> ($this:TestClass) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:TestClass flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-test>(): Int'
+          RETURN type=kotlin.Nothing from=<get-test>(): Int'
             GET_FIELD 'test: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@TestClass: TestClass' type=TestClass origin=null
     ANONYMOUS_INITIALIZER TestClass
@@ -50,12 +50,12 @@ FILE /jvmStaticFieldReference.kt
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
-          x: CONST String type=kotlin.String value='TestClass/init'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+          x: CONST String type=kotlin.String value=TestClass/init
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

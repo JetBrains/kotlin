@@ -2,11 +2,11 @@
 // FUN: foo
 BB 0
 CONTENT
-      1 FUN public fun foo(): kotlin.Unit
+      1 FUN name:foo visibility:public modality:FINAL <> () returnType:Unit flags:
       2 GET_OBJECT 'Unit' type=kotlin.Unit
-      3 RETURN type=kotlin.Nothing from='foo(): Unit'
+      3 RETURN type=kotlin.Nothing from=foo(): Unit'
 OUTGOING -> NONE
-    Function exit: FUN public fun foo(): kotlin.Unit
+    Function exit: FUN name:foo visibility:public modality:FINAL <> () returnType:Unit flags:
 
 // END FUN: foo
 

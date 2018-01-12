@@ -1,86 +1,86 @@
-FILE /reflectionLiterals.kt
-  CLASS CLASS A
-    $this: VALUE_PARAMETER this@A: A
-    CONSTRUCTOR public constructor A()
+FILE fqName:<root> fileName:/reflectionLiterals.kt
+  CLASS CLASS name:A modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    CONSTRUCTOR visibility:public <> () returnType:A flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    FUN public final fun foo(): kotlin.Unit
-      $this: VALUE_PARAMETER this@A: A
+    FUN name:foo visibility:public modality:FINAL <> ($this:A) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun bar(): kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:bar visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-  PROPERTY public val qux: kotlin.Int = 42
-    FIELD PROPERTY_BACKING_FIELD public val qux: kotlin.Int = 42
+  PROPERTY name:qux type:kotlin.Int visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:qux type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-qux>(): kotlin.Int
+        CONST Int type=kotlin.Int value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-qux> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-qux>(): Int'
+        RETURN type=kotlin.Nothing from=<get-qux>(): Int'
           GET_FIELD 'qux: Int' type=kotlin.Int origin=null
-  PROPERTY public val test1: kotlin.reflect.KClass<A>
-    FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.reflect.KClass<A>
+  PROPERTY name:test1 type:kotlin.reflect.KClass<A> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KClass<A> visibility:public
       EXPRESSION_BODY
         CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.reflect.KClass<A>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:KClass<A> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1>(): KClass<A>'
+        RETURN type=kotlin.Nothing from=<get-test1>(): KClass<A>'
           GET_FIELD 'test1: KClass<A>' type=kotlin.reflect.KClass<A> origin=null
-  PROPERTY public val test2: kotlin.reflect.KClass<out kotlin.Int>
-    FIELD PROPERTY_BACKING_FIELD public val test2: kotlin.reflect.KClass<out kotlin.Int>
+  PROPERTY name:test2 type:kotlin.reflect.KClass<out kotlin.Int> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KClass<out kotlin.Int> visibility:public
       EXPRESSION_BODY
         GET_CLASS type=kotlin.reflect.KClass<out kotlin.Int>
           CALL '<get-qux>(): Int' type=kotlin.Int origin=GET_PROPERTY
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): kotlin.reflect.KClass<out kotlin.Int>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:KClass<out Int> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2>(): KClass<out Int>'
+        RETURN type=kotlin.Nothing from=<get-test2>(): KClass<out Int>'
           GET_FIELD 'test2: KClass<out Int>' type=kotlin.reflect.KClass<out kotlin.Int> origin=null
-  PROPERTY public val test3: kotlin.reflect.KFunction1<A, kotlin.Unit>
-    FIELD PROPERTY_BACKING_FIELD public val test3: kotlin.reflect.KFunction1<A, kotlin.Unit>
+  PROPERTY name:test3 type:kotlin.reflect.KFunction1<A, kotlin.Unit> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction1<A, kotlin.Unit> visibility:public
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction1<A, kotlin.Unit> origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test3>(): kotlin.reflect.KFunction1<A, kotlin.Unit>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:KFunction1<A, Unit> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test3>(): KFunction1<A, Unit>'
+        RETURN type=kotlin.Nothing from=<get-test3>(): KFunction1<A, Unit>'
           GET_FIELD 'test3: KFunction1<A, Unit>' type=kotlin.reflect.KFunction1<A, kotlin.Unit> origin=null
-  PROPERTY public val test4: kotlin.reflect.KFunction0<A>
-    FIELD PROPERTY_BACKING_FIELD public val test4: kotlin.reflect.KFunction0<A>
+  PROPERTY name:test4 type:kotlin.reflect.KFunction0<A> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.reflect.KFunction0<A> visibility:public
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'constructor A()' type=kotlin.reflect.KFunction0<A> origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test4>(): kotlin.reflect.KFunction0<A>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:KFunction0<A> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test4>(): KFunction0<A>'
+        RETURN type=kotlin.Nothing from=<get-test4>(): KFunction0<A>'
           GET_FIELD 'test4: KFunction0<A>' type=kotlin.reflect.KFunction0<A> origin=null
-  PROPERTY public val test5: kotlin.reflect.KFunction0<kotlin.Unit>
-    FIELD PROPERTY_BACKING_FIELD public val test5: kotlin.reflect.KFunction0<kotlin.Unit>
+  PROPERTY name:test5 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
           $this: CALL 'constructor A()' type=A origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test5>(): kotlin.reflect.KFunction0<kotlin.Unit>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:KFunction0<Unit> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test5>(): KFunction0<Unit>'
+        RETURN type=kotlin.Nothing from=<get-test5>(): KFunction0<Unit>'
           GET_FIELD 'test5: KFunction0<Unit>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
-  PROPERTY public val test6: kotlin.reflect.KFunction0<kotlin.Unit>
-    FIELD PROPERTY_BACKING_FIELD public val test6: kotlin.reflect.KFunction0<kotlin.Unit>
+  PROPERTY name:test6 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'bar(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test6>(): kotlin.reflect.KFunction0<kotlin.Unit>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:KFunction0<Unit> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test6>(): KFunction0<Unit>'
+        RETURN type=kotlin.Nothing from=<get-test6>(): KFunction0<Unit>'
           GET_FIELD 'test6: KFunction0<Unit>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
-  PROPERTY public val test7: kotlin.reflect.KProperty0<kotlin.Int>
-    FIELD PROPERTY_BACKING_FIELD public val test7: kotlin.reflect.KProperty0<kotlin.Int>
+  PROPERTY name:test7 type:kotlin.reflect.KProperty0<kotlin.Int> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test7 type:kotlin.reflect.KProperty0<kotlin.Int> visibility:public
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'qux: Int' field=null getter='<get-qux>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test7>(): kotlin.reflect.KProperty0<kotlin.Int>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> () returnType:KProperty0<Int> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test7>(): KProperty0<Int>'
+        RETURN type=kotlin.Nothing from=<get-test7>(): KProperty0<Int>'
           GET_FIELD 'test7: KProperty0<Int>' type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
 

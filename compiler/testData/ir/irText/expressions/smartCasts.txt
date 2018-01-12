@@ -1,28 +1,28 @@
-FILE /smartCasts.kt
-  FUN public fun expectsString(s: kotlin.String): kotlin.Unit
-    VALUE_PARAMETER value-parameter s: kotlin.String
+FILE fqName:<root> fileName:/smartCasts.kt
+  FUN name:expectsString visibility:public modality:FINAL <> (s:kotlin.String) returnType:Unit flags:
+    VALUE_PARAMETER name:s index:0 type:kotlin.String flags:
     BLOCK_BODY
-  FUN public fun expectsInt(i: kotlin.Int): kotlin.Unit
-    VALUE_PARAMETER value-parameter i: kotlin.Int
+  FUN name:expectsInt visibility:public modality:FINAL <> (i:kotlin.Int) returnType:Unit flags:
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
     BLOCK_BODY
-  FUN public fun overloaded(s: kotlin.String): kotlin.String
-    VALUE_PARAMETER value-parameter s: kotlin.String
+  FUN name:overloaded visibility:public modality:FINAL <> (s:kotlin.String) returnType:String flags:
+    VALUE_PARAMETER name:s index:0 type:kotlin.String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='overloaded(String): String'
+      RETURN type=kotlin.Nothing from=overloaded(String): String'
         GET_VAR 'value-parameter s: String' type=kotlin.String origin=null
-  FUN public fun overloaded(x: kotlin.Any): kotlin.Any
-    VALUE_PARAMETER value-parameter x: kotlin.Any
+  FUN name:overloaded visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Any flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='overloaded(Any): Any'
+      RETURN type=kotlin.Nothing from=overloaded(Any): Any'
         GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-  FUN public fun test1(x: kotlin.Any): kotlin.Unit
-    VALUE_PARAMETER value-parameter x: kotlin.Any
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Unit flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from='test1(Any): Unit'
+          then: RETURN type=kotlin.Nothing from=test1(Any): Unit'
             GET_OBJECT 'Unit' type=kotlin.Unit
       CALL 'println(Int): Unit' type=kotlin.Unit origin=null
         message: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
@@ -39,29 +39,29 @@ FILE /smartCasts.kt
         s: CALL 'overloaded(String): String' type=kotlin.String origin=null
           s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-  FUN public fun test2(x: kotlin.Any): kotlin.String
-    VALUE_PARAMETER value-parameter x: kotlin.Any
+  FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:String flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from='test2(Any): String'
-            CONST String type=kotlin.String value=''
-      RETURN type=kotlin.Nothing from='test2(Any): String'
+          then: RETURN type=kotlin.Nothing from=test2(Any): String'
+            CONST String type=kotlin.String value=
+      RETURN type=kotlin.Nothing from=test2(Any): String'
         CALL 'overloaded(String): String' type=kotlin.String origin=null
           s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-  FUN public fun test3(x: kotlin.Any): kotlin.String
-    VALUE_PARAMETER value-parameter x: kotlin.Any
+  FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:String flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from='test3(Any): String'
-            CONST String type=kotlin.String value=''
-      RETURN type=kotlin.Nothing from='test3(Any): String'
+          then: RETURN type=kotlin.Nothing from=test3(Any): String'
+            CONST String type=kotlin.String value=
+      RETURN type=kotlin.Nothing from=test3(Any): String'
         TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
 

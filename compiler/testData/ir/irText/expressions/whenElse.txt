@@ -1,9 +1,9 @@
-FILE /whenElse.kt
-  FUN public fun test(): kotlin.Int
+FILE fqName:<root> fileName:/whenElse.kt
+  FUN name:test visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(): Int'
+      RETURN type=kotlin.Nothing from=test(): Int'
         WHEN type=kotlin.Int origin=WHEN
           BRANCH
-            if: CONST Boolean type=kotlin.Boolean value='true'
-            then: CONST Int type=kotlin.Int value='42'
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Int type=kotlin.Int value=42
 

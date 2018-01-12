@@ -1,104 +1,104 @@
-@0:0..4:1 FILE /synthesizedDataClassMembers.kt
-  @0:0..4:1 CLASS CLASS C
-    @0:0..4:1 VALUE_PARAMETER this@C: C
-    @0:0..4:1 CONSTRUCTOR public constructor C(x: kotlin.Int, y: kotlin.String, z: kotlin.Any)
-      @1:8..18 VALUE_PARAMETER value-parameter x: kotlin.Int
-      @2:8..21 VALUE_PARAMETER value-parameter y: kotlin.String
-      @3:8..18 VALUE_PARAMETER value-parameter z: kotlin.Any
+@0:0..4:1 FILE fqName:<root> fileName:/synthesizedDataClassMembers.kt
+  @0:0..4:1 CLASS CLASS name:C modality:FINAL visibility:public flags:data
+    @0:0..4:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+    @0:0..4:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:C flags:
+      @1:8..18 VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
+      @2:8..21 VALUE_PARAMETER name:y index:1 type:kotlin.String flags:
+      @3:8..18 VALUE_PARAMETER name:z index:2 type:kotlin.Any flags:
       @0:0..4:1 BLOCK_BODY
         @0:0..4:1 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         @0:0..4:1 INSTANCE_INITIALIZER_CALL classDescriptor='C'
-    @1:8..18 PROPERTY public final val x: kotlin.Int
-      @1:8..18 FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
+    @1:8..18 PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
+      @1:8..18 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
         @1:8..18 EXPRESSION_BODY
           @1:8..18 GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      @1:8..18 FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        @-1:-1..-1 VALUE_PARAMETER this@C: C
+      @1:8..18 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        @-1:-1..-1 VALUE_PARAMETER name:<this> type:C flags:
         @1:8..18 BLOCK_BODY
-          @1:8..18 RETURN type=kotlin.Nothing from='<get-x>(): Int'
+          @1:8..18 RETURN type=kotlin.Nothing from=<get-x>(): Int'
             @1:8..18 GET_FIELD 'x: Int' type=kotlin.Int origin=null
               @1:8..18 GET_VAR 'this@C: C' type=C origin=null
-    @2:8..21 PROPERTY public final val y: kotlin.String
-      @2:8..21 FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.String
+    @2:8..21 PROPERTY name:y type:kotlin.String visibility:public modality:FINAL flags:val
+      @2:8..21 FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:public
         @2:8..21 EXPRESSION_BODY
           @2:8..21 GET_VAR 'value-parameter y: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      @2:8..21 FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.String
-        @-1:-1..-1 VALUE_PARAMETER this@C: C
+      @2:8..21 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:C) returnType:String flags:
+        @-1:-1..-1 VALUE_PARAMETER name:<this> type:C flags:
         @2:8..21 BLOCK_BODY
-          @2:8..21 RETURN type=kotlin.Nothing from='<get-y>(): String'
+          @2:8..21 RETURN type=kotlin.Nothing from=<get-y>(): String'
             @2:8..21 GET_FIELD 'y: String' type=kotlin.String origin=null
               @2:8..21 GET_VAR 'this@C: C' type=C origin=null
-    @3:8..18 PROPERTY public final val z: kotlin.Any
-      @3:8..18 FIELD PROPERTY_BACKING_FIELD public final val z: kotlin.Any
+    @3:8..18 PROPERTY name:z type:kotlin.Any visibility:public modality:FINAL flags:val
+      @3:8..18 FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:public
         @3:8..18 EXPRESSION_BODY
           @3:8..18 GET_VAR 'value-parameter z: Any' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      @3:8..18 FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-z>(): kotlin.Any
-        @-1:-1..-1 VALUE_PARAMETER this@C: C
+      @3:8..18 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:C) returnType:Any flags:
+        @-1:-1..-1 VALUE_PARAMETER name:<this> type:C flags:
         @3:8..18 BLOCK_BODY
-          @3:8..18 RETURN type=kotlin.Nothing from='<get-z>(): Any'
+          @3:8..18 RETURN type=kotlin.Nothing from=<get-z>(): Any'
             @3:8..18 GET_FIELD 'z: Any' type=kotlin.Any origin=null
               @3:8..18 GET_VAR 'this@C: C' type=C origin=null
-    @1:8..18 FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Int
-      @-1:-1..-1 VALUE_PARAMETER this@C: C
+    @1:8..18 FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+      @-1:-1..-1 VALUE_PARAMETER name:<this> type:C flags:
       @1:8..18 BLOCK_BODY
-        @1:8..18 RETURN type=kotlin.Nothing from='component1(): Int'
+        @1:8..18 RETURN type=kotlin.Nothing from=component1(): Int'
           @1:8..18 CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
             @1:8..18 GET_VAR 'this@C: C' type=C origin=null
-    @2:8..21 FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component2(): kotlin.String
-      @-1:-1..-1 VALUE_PARAMETER this@C: C
+    @2:8..21 FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:C) returnType:String flags:
+      @-1:-1..-1 VALUE_PARAMETER name:<this> type:C flags:
       @2:8..21 BLOCK_BODY
-        @2:8..21 RETURN type=kotlin.Nothing from='component2(): String'
+        @2:8..21 RETURN type=kotlin.Nothing from=component2(): String'
           @2:8..21 CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
             @2:8..21 GET_VAR 'this@C: C' type=C origin=null
-    @3:8..18 FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component3(): kotlin.Any
-      @-1:-1..-1 VALUE_PARAMETER this@C: C
+    @3:8..18 FUN GENERATED_DATA_CLASS_MEMBER name:component3 visibility:public modality:FINAL <> ($this:C) returnType:Any flags:
+      @-1:-1..-1 VALUE_PARAMETER name:<this> type:C flags:
       @3:8..18 BLOCK_BODY
-        @3:8..18 RETURN type=kotlin.Nothing from='component3(): Any'
+        @3:8..18 RETURN type=kotlin.Nothing from=component3(): Any'
           @3:8..18 CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
             @3:8..18 GET_VAR 'this@C: C' type=C origin=null
-    @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(x: kotlin.Int = ..., y: kotlin.String = ..., z: kotlin.Any = ...): C
-      @-1:-1..-1 VALUE_PARAMETER this@C: C
-      @1:8..18 VALUE_PARAMETER value-parameter x: kotlin.Int = ...
+    @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:C, x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:C flags:
+      @-1:-1..-1 VALUE_PARAMETER name:<this> type:C flags:
+      @1:8..18 VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         @0:0..4:1 EXPRESSION_BODY
           @0:0..4:1 CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
             @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
-      @2:8..21 VALUE_PARAMETER value-parameter y: kotlin.String = ...
+      @2:8..21 VALUE_PARAMETER name:y index:1 type:kotlin.String flags:
         @0:0..4:1 EXPRESSION_BODY
           @0:0..4:1 CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
             @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
-      @3:8..18 VALUE_PARAMETER value-parameter z: kotlin.Any = ...
+      @3:8..18 VALUE_PARAMETER name:z index:2 type:kotlin.Any flags:
         @0:0..4:1 EXPRESSION_BODY
           @0:0..4:1 CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
             @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
       @0:0..4:1 BLOCK_BODY
-        @0:0..4:1 RETURN type=kotlin.Nothing from='copy(Int = ..., String = ..., Any = ...): C'
+        @0:0..4:1 RETURN type=kotlin.Nothing from=copy(Int = ..., String = ..., Any = ...): C'
           @0:0..4:1 CALL 'constructor C(Int, String, Any)' type=C origin=null
             @0:0..4:1 GET_VAR 'value-parameter x: Int = ...' type=kotlin.Int origin=null
             @0:0..4:1 GET_VAR 'value-parameter y: String = ...' type=kotlin.String origin=null
             @0:0..4:1 GET_VAR 'value-parameter z: Any = ...' type=kotlin.Any origin=null
-    @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
-      @-1:-1..-1 VALUE_PARAMETER this@C: C
+    @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:C) returnType:String flags:
+      @-1:-1..-1 VALUE_PARAMETER name:<this> type:C flags:
       @0:0..4:1 BLOCK_BODY
-        @0:0..4:1 RETURN type=kotlin.Nothing from='toString(): String'
+        @0:0..4:1 RETURN type=kotlin.Nothing from=toString(): String'
           @0:0..4:1 STRING_CONCATENATION type=kotlin.String
-            @0:0..4:1 CONST String type=kotlin.String value='C('
-            @0:0..4:1 CONST String type=kotlin.String value='x='
+            @0:0..4:1 CONST String type=kotlin.String value=C(
+            @0:0..4:1 CONST String type=kotlin.String value=x=
             @0:0..4:1 CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
               @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
-            @0:0..4:1 CONST String type=kotlin.String value=', '
-            @0:0..4:1 CONST String type=kotlin.String value='y='
+            @0:0..4:1 CONST String type=kotlin.String value=,
+            @0:0..4:1 CONST String type=kotlin.String value=y=
             @0:0..4:1 CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
               @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
-            @0:0..4:1 CONST String type=kotlin.String value=', '
-            @0:0..4:1 CONST String type=kotlin.String value='z='
+            @0:0..4:1 CONST String type=kotlin.String value=,
+            @0:0..4:1 CONST String type=kotlin.String value=z=
             @0:0..4:1 CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
               @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
-            @0:0..4:1 CONST String type=kotlin.String value=')'
-    @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
-      @-1:-1..-1 VALUE_PARAMETER this@C: C
+            @0:0..4:1 CONST String type=kotlin.String value=)
+    @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:C) returnType:Int flags:
+      @-1:-1..-1 VALUE_PARAMETER name:<this> type:C flags:
       @0:0..4:1 BLOCK_BODY
-        @0:0..4:1 VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
-          @0:0..4:1 CONST Int type=kotlin.Int value='0'
+        @0:0..4:1 VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
+          @0:0..4:1 CONST Int type=kotlin.Int value=0
         @0:0..4:1 SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
           @0:0..4:1 CALL 'hashCode(): Int' type=kotlin.Int origin=null
             @0:0..4:1 CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
@@ -107,7 +107,7 @@
           @0:0..4:1 CALL 'plus(Int): Int' type=kotlin.Int origin=null
             @0:0..4:1 CALL 'times(Int): Int' type=kotlin.Int origin=null
               @0:0..4:1 GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
-              @0:0..4:1 CONST Int type=kotlin.Int value='31'
+              @0:0..4:1 CONST Int type=kotlin.Int value=31
             @0:0..4:1 CALL 'hashCode(): Int' type=kotlin.Int origin=null
               @0:0..4:1 CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
                 @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
@@ -115,30 +115,30 @@
           @0:0..4:1 CALL 'plus(Int): Int' type=kotlin.Int origin=null
             @0:0..4:1 CALL 'times(Int): Int' type=kotlin.Int origin=null
               @0:0..4:1 GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
-              @0:0..4:1 CONST Int type=kotlin.Int value='31'
+              @0:0..4:1 CONST Int type=kotlin.Int value=31
             @0:0..4:1 CALL 'hashCode(): Int' type=kotlin.Int origin=null
               @0:0..4:1 CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
                 @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
-        @0:0..4:1 RETURN type=kotlin.Nothing from='hashCode(): Int'
+        @0:0..4:1 RETURN type=kotlin.Nothing from=hashCode(): Int'
           @0:0..4:1 GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
-    @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      @-1:-1..-1 VALUE_PARAMETER this@C: C
-      @-1:-1..-1 VALUE_PARAMETER value-parameter other: kotlin.Any?
+    @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:C, other:kotlin.Any?) returnType:Boolean flags:
+      @-1:-1..-1 VALUE_PARAMETER name:<this> type:C flags:
+      @-1:-1..-1 VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
       @0:0..4:1 BLOCK_BODY
         @0:0..4:1 WHEN type=kotlin.Unit origin=null
           @0:0..4:1 BRANCH
             @0:0..4:1 CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
               @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
               @0:0..4:1 GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
-            @0:0..4:1 RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              @0:0..4:1 CONST Boolean type=kotlin.Boolean value='true'
+            @0:0..4:1 RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              @0:0..4:1 CONST Boolean type=kotlin.Boolean value=true
         @0:0..4:1 WHEN type=kotlin.Unit origin=null
           @0:0..4:1 BRANCH
             @0:0..4:1 TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=C
               @0:0..4:1 GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
-            @0:0..4:1 RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              @0:0..4:1 CONST Boolean type=kotlin.Boolean value='false'
-        @0:0..4:1 VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: C
+            @0:0..4:1 RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              @0:0..4:1 CONST Boolean type=kotlin.Boolean value=false
+        @0:0..4:1 VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:C flags:val
           @0:0..4:1 TYPE_OP type=C origin=CAST typeOperand=C
             @0:0..4:1 GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         @0:0..4:1 WHEN type=kotlin.Unit origin=null
@@ -149,8 +149,8 @@
                   @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
                 @0:0..4:1 CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
                   @0:0..4:1 GET_VAR 'tmp0_other_with_cast: C' type=C origin=null
-            @0:0..4:1 RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              @0:0..4:1 CONST Boolean type=kotlin.Boolean value='false'
+            @0:0..4:1 RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              @0:0..4:1 CONST Boolean type=kotlin.Boolean value=false
         @0:0..4:1 WHEN type=kotlin.Unit origin=null
           @0:0..4:1 BRANCH
             @0:0..4:1 CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -159,8 +159,8 @@
                   @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
                 @0:0..4:1 CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
                   @0:0..4:1 GET_VAR 'tmp0_other_with_cast: C' type=C origin=null
-            @0:0..4:1 RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              @0:0..4:1 CONST Boolean type=kotlin.Boolean value='false'
+            @0:0..4:1 RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              @0:0..4:1 CONST Boolean type=kotlin.Boolean value=false
         @0:0..4:1 WHEN type=kotlin.Unit origin=null
           @0:0..4:1 BRANCH
             @0:0..4:1 CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -169,7 +169,7 @@
                   @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
                 @0:0..4:1 CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
                   @0:0..4:1 GET_VAR 'tmp0_other_with_cast: C' type=C origin=null
-            @0:0..4:1 RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              @0:0..4:1 CONST Boolean type=kotlin.Boolean value='false'
-        @0:0..4:1 RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-          @0:0..4:1 CONST Boolean type=kotlin.Boolean value='true'
+            @0:0..4:1 RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              @0:0..4:1 CONST Boolean type=kotlin.Boolean value=false
+        @0:0..4:1 RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+          @0:0..4:1 CONST Boolean type=kotlin.Boolean value=true

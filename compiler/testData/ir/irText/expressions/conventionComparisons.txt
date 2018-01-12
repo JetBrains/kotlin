@@ -1,65 +1,65 @@
-FILE /conventionComparisons.kt
-  CLASS INTERFACE IA
-    $this: VALUE_PARAMETER this@IA: IA
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS INTERFACE IB
-    $this: VALUE_PARAMETER this@IB: IB
-    FUN public abstract operator fun IA.compareTo(other: IA): kotlin.Int
-      $this: VALUE_PARAMETER this@IB: IB
-      $receiver: VALUE_PARAMETER this@compareTo: IA
-      VALUE_PARAMETER value-parameter other: IA
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun IB.test1(a1: IA, a2: IA): kotlin.Boolean
-    $receiver: VALUE_PARAMETER this@test1: IB
-    VALUE_PARAMETER value-parameter a1: IA
-    VALUE_PARAMETER value-parameter a2: IA
+FILE fqName:<root> fileName:/conventionComparisons.kt
+  CLASS INTERFACE name:IA modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IA flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS INTERFACE name:IB modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IB flags:
+    FUN name:compareTo visibility:public modality:ABSTRACT <> ($this:IB, $receiver:IA, other:IA) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:IB flags:
+      $receiver: VALUE_PARAMETER name:<this> type:IA flags:
+      VALUE_PARAMETER name:other index:0 type:IA flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:test1 visibility:public modality:FINAL <> ($receiver:IB, a1:IA, a2:IA) returnType:Boolean flags:
+    $receiver: VALUE_PARAMETER name:<this> type:IB flags:
+    VALUE_PARAMETER name:a1 index:0 type:IA flags:
+    VALUE_PARAMETER name:a2 index:1 type:IA flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(IA, IA) on IB: Boolean'
+      RETURN type=kotlin.Nothing from=test1(IA, IA) on IB: Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
           arg0: CALL 'compareTo(IA) on IA: Int' type=kotlin.Int origin=GT
             $this: GET_VAR 'this@test1: IB' type=IB origin=null
             $receiver: GET_VAR 'value-parameter a1: IA' type=IA origin=null
             other: GET_VAR 'value-parameter a2: IA' type=IA origin=null
-  FUN public fun IB.test2(a1: IA, a2: IA): kotlin.Boolean
-    $receiver: VALUE_PARAMETER this@test2: IB
-    VALUE_PARAMETER value-parameter a1: IA
-    VALUE_PARAMETER value-parameter a2: IA
+  FUN name:test2 visibility:public modality:FINAL <> ($receiver:IB, a1:IA, a2:IA) returnType:Boolean flags:
+    $receiver: VALUE_PARAMETER name:<this> type:IB flags:
+    VALUE_PARAMETER name:a1 index:0 type:IA flags:
+    VALUE_PARAMETER name:a2 index:1 type:IA flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(IA, IA) on IB: Boolean'
+      RETURN type=kotlin.Nothing from=test2(IA, IA) on IB: Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
           arg0: CALL 'compareTo(IA) on IA: Int' type=kotlin.Int origin=GTEQ
             $this: GET_VAR 'this@test2: IB' type=IB origin=null
             $receiver: GET_VAR 'value-parameter a1: IA' type=IA origin=null
             other: GET_VAR 'value-parameter a2: IA' type=IA origin=null
-  FUN public fun IB.test3(a1: IA, a2: IA): kotlin.Boolean
-    $receiver: VALUE_PARAMETER this@test3: IB
-    VALUE_PARAMETER value-parameter a1: IA
-    VALUE_PARAMETER value-parameter a2: IA
+  FUN name:test3 visibility:public modality:FINAL <> ($receiver:IB, a1:IA, a2:IA) returnType:Boolean flags:
+    $receiver: VALUE_PARAMETER name:<this> type:IB flags:
+    VALUE_PARAMETER name:a1 index:0 type:IA flags:
+    VALUE_PARAMETER name:a2 index:1 type:IA flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test3(IA, IA) on IB: Boolean'
+      RETURN type=kotlin.Nothing from=test3(IA, IA) on IB: Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
           arg0: CALL 'compareTo(IA) on IA: Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'this@test3: IB' type=IB origin=null
             $receiver: GET_VAR 'value-parameter a1: IA' type=IA origin=null
             other: GET_VAR 'value-parameter a2: IA' type=IA origin=null
-  FUN public fun IB.test4(a1: IA, a2: IA): kotlin.Boolean
-    $receiver: VALUE_PARAMETER this@test4: IB
-    VALUE_PARAMETER value-parameter a1: IA
-    VALUE_PARAMETER value-parameter a2: IA
+  FUN name:test4 visibility:public modality:FINAL <> ($receiver:IB, a1:IA, a2:IA) returnType:Boolean flags:
+    $receiver: VALUE_PARAMETER name:<this> type:IB flags:
+    VALUE_PARAMETER name:a1 index:0 type:IA flags:
+    VALUE_PARAMETER name:a2 index:1 type:IA flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test4(IA, IA) on IB: Boolean'
+      RETURN type=kotlin.Nothing from=test4(IA, IA) on IB: Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
           arg0: CALL 'compareTo(IA) on IA: Int' type=kotlin.Int origin=LTEQ
             $this: GET_VAR 'this@test4: IB' type=IB origin=null

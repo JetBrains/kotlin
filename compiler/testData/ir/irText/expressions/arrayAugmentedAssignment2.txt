@@ -1,39 +1,39 @@
-FILE /arrayAugmentedAssignment2.kt
-  CLASS INTERFACE IA
-    $this: VALUE_PARAMETER this@IA: IA
-    FUN public abstract operator fun get(index: kotlin.String): kotlin.Int
-      $this: VALUE_PARAMETER this@IA: IA
-      VALUE_PARAMETER value-parameter index: kotlin.String
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS INTERFACE IB
-    $this: VALUE_PARAMETER this@IB: IB
-    FUN public abstract operator fun IA.set(index: kotlin.String, value: kotlin.Int): kotlin.Unit
-      $this: VALUE_PARAMETER this@IB: IB
-      $receiver: VALUE_PARAMETER this@set: IA
-      VALUE_PARAMETER value-parameter index: kotlin.String
-      VALUE_PARAMETER value-parameter value: kotlin.Int
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun IB.test(a: IA): kotlin.Unit
-    $receiver: VALUE_PARAMETER this@test: IB
-    VALUE_PARAMETER value-parameter a: IA
+FILE fqName:<root> fileName:/arrayAugmentedAssignment2.kt
+  CLASS INTERFACE name:IA modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IA flags:
+    FUN name:get visibility:public modality:ABSTRACT <> ($this:IA, index:kotlin.String) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:IA flags:
+      VALUE_PARAMETER name:index index:0 type:kotlin.String flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS INTERFACE name:IB modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IB flags:
+    FUN name:set visibility:public modality:ABSTRACT <> ($this:IB, $receiver:IA, index:kotlin.String, value:kotlin.Int) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:IB flags:
+      $receiver: VALUE_PARAMETER name:<this> type:IA flags:
+      VALUE_PARAMETER name:index index:0 type:kotlin.String flags:
+      VALUE_PARAMETER name:value index:1 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:test visibility:public modality:FINAL <> ($receiver:IB, a:IA) returnType:Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:IB flags:
+    VALUE_PARAMETER name:a index:0 type:IA flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=PLUSEQ
-        VAR IR_TEMPORARY_VARIABLE val tmp0_array: IA
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:IA flags:val
           GET_VAR 'value-parameter a: IA' type=IA origin=null
-        VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.String
-          CONST String type=kotlin.String value=''
+        VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.String flags:val
+          CONST String type=kotlin.String value=
         CALL 'set(String, Int) on IA: Unit' type=kotlin.Unit origin=PLUSEQ
           $this: GET_VAR 'this@test: IB' type=IB origin=null
           $receiver: GET_VAR 'tmp0_array: IA' type=IA origin=null
@@ -42,5 +42,5 @@ FILE /arrayAugmentedAssignment2.kt
             $this: CALL 'get(String): Int' type=kotlin.Int origin=PLUSEQ
               $this: GET_VAR 'tmp0_array: IA' type=IA origin=null
               index: GET_VAR 'tmp1_index0: String' type=kotlin.String origin=null
-            other: CONST Int type=kotlin.Int value='42'
+            other: CONST Int type=kotlin.Int value=42
 

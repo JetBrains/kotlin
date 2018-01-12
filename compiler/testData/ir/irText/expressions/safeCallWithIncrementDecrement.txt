@@ -1,76 +1,76 @@
-FILE /safeCallWithIncrementDecrement.kt
-  CLASS CLASS C
-    $this: VALUE_PARAMETER this@C: C
-    CONSTRUCTOR public constructor C()
+FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
+  CLASS CLASS name:C modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C flags:
+    CONSTRUCTOR visibility:public <> () returnType:test.C flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  PROPERTY public var test.C?.p: kotlin.Int
-    FUN public fun test.C?.<get-p>(): kotlin.Int
-      $receiver: VALUE_PARAMETER this@p: C?
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
+    FUN name:<get-p> visibility:public modality:FINAL <> ($receiver:test.C?) returnType:Int flags:
+      $receiver: VALUE_PARAMETER name:<this> type:test.C? flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-p>() on C?: Int'
-          CONST Int type=kotlin.Int value='42'
-    FUN public fun test.C?.<set-p>(value: kotlin.Int): kotlin.Unit
-      $receiver: VALUE_PARAMETER this@p: C?
-      VALUE_PARAMETER value-parameter value: kotlin.Int
+        RETURN type=kotlin.Nothing from=<get-p>() on C?: Int'
+          CONST Int type=kotlin.Int value=42
+    FUN name:<set-p> visibility:public modality:FINAL <> ($receiver:test.C?, value:kotlin.Int) returnType:Unit flags:
+      $receiver: VALUE_PARAMETER name:<this> type:test.C? flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
-  FUN public operator fun kotlin.Int?.inc(): kotlin.Int?
-    $receiver: VALUE_PARAMETER this@inc: Int?
+  FUN name:inc visibility:public modality:FINAL <> ($receiver:kotlin.Int?) returnType:Int? flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='inc() on Int?: Int?'
+      RETURN type=kotlin.Nothing from=inc() on Int?: Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.Int?
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Int? flags:val
             GET_VAR 'this@inc: Int?' type=kotlin.Int? origin=null
           WHEN type=kotlin.Int? origin=SAFE_CALL
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_safe_receiver: Int?' type=kotlin.Int? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
-              then: CONST Null type=kotlin.Nothing? value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'inc(): Int' type=kotlin.Int origin=null
                 $this: GET_VAR 'tmp0_safe_receiver: Int?' type=kotlin.Int? origin=null
-  FUN public operator fun kotlin.Int?.get(index: kotlin.Int): kotlin.Int
-    $receiver: VALUE_PARAMETER this@get: Int?
-    VALUE_PARAMETER value-parameter index: kotlin.Int
+  FUN name:get visibility:public modality:FINAL <> ($receiver:kotlin.Int?, index:kotlin.Int) returnType:Int flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int? flags:
+    VALUE_PARAMETER name:index index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='get(Int) on Int?: Int'
-        CONST Int type=kotlin.Int value='42'
-  FUN public operator fun kotlin.Int?.set(index: kotlin.Int, value: kotlin.Int): kotlin.Unit
-    $receiver: VALUE_PARAMETER this@set: Int?
-    VALUE_PARAMETER value-parameter index: kotlin.Int
-    VALUE_PARAMETER value-parameter value: kotlin.Int
+      RETURN type=kotlin.Nothing from=get(Int) on Int?: Int'
+        CONST Int type=kotlin.Int value=42
+  FUN name:set visibility:public modality:FINAL <> ($receiver:kotlin.Int?, index:kotlin.Int, value:kotlin.Int) returnType:Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int? flags:
+    VALUE_PARAMETER name:index index:0 type:kotlin.Int flags:
+    VALUE_PARAMETER name:value index:1 type:kotlin.Int flags:
     BLOCK_BODY
-  FUN public fun testProperty(nc: test.C?): kotlin.Unit
-    VALUE_PARAMETER value-parameter nc: test.C?
+  FUN name:testProperty visibility:public modality:FINAL <> (nc:test.C?) returnType:Unit flags:
+    VALUE_PARAMETER name:nc index:0 type:test.C? flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=SAFE_CALL
-        VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: test.C?
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:test.C? flags:val
           GET_VAR 'value-parameter nc: C?' type=test.C? origin=null
         WHEN type=kotlin.Unit origin=SAFE_CALL
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
-              arg1: CONST Null type=kotlin.Nothing? value='null'
+              arg1: CONST Null type=kotlin.Nothing? value=null
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              CONST Null type=kotlin.Nothing? value='null'
+              CONST Null type=kotlin.Nothing? value=null
           BRANCH
-            if: CONST Boolean type=kotlin.Boolean value='true'
+            if: CONST Boolean type=kotlin.Boolean value=true
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               BLOCK type=kotlin.Int origin=POSTFIX_INCR
-                VAR IR_TEMPORARY_VARIABLE val tmp1_receiver: test.C?
+                VAR IR_TEMPORARY_VARIABLE name:tmp1_receiver type:test.C? flags:val
                   GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
-                  VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
+                  VAR IR_TEMPORARY_VARIABLE name:tmp2 type:kotlin.Int flags:val
                     CALL '<get-p>() on C?: Int' type=kotlin.Int origin=POSTFIX_INCR
                       $receiver: GET_VAR 'tmp1_receiver: C?' type=test.C? origin=null
                   CALL '<set-p>(Int) on C?: Unit' type=kotlin.Unit origin=POSTFIX_INCR
@@ -78,28 +78,28 @@ FILE /safeCallWithIncrementDecrement.kt
                     value: CALL 'inc() on Int?: Int?' type=kotlin.Int? origin=POSTFIX_INCR
                       $receiver: GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
                   GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
-  FUN public fun testArrayAccess(nc: test.C?): kotlin.Unit
-    VALUE_PARAMETER value-parameter nc: test.C?
+  FUN name:testArrayAccess visibility:public modality:FINAL <> (nc:test.C?) returnType:Unit flags:
+    VALUE_PARAMETER name:nc index:0 type:test.C? flags:
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE val tmp1_array: kotlin.Int?
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_array type:kotlin.Int? flags:val
             BLOCK type=kotlin.Int? origin=SAFE_CALL
-              VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: test.C?
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:test.C? flags:val
                 GET_VAR 'value-parameter nc: C?' type=test.C? origin=null
               WHEN type=kotlin.Int? origin=SAFE_CALL
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
-                    arg1: CONST Null type=kotlin.Nothing? value='null'
-                  then: CONST Null type=kotlin.Nothing? value='null'
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value='true'
+                  if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL '<get-p>() on C?: Int' type=kotlin.Int origin=GET_PROPERTY
                     $receiver: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
-          VAR IR_TEMPORARY_VARIABLE val tmp2_index0: kotlin.Int
-            CONST Int type=kotlin.Int value='0'
-          VAR IR_TEMPORARY_VARIABLE val tmp3: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE name:tmp2_index0 type:kotlin.Int flags:val
+            CONST Int type=kotlin.Int value=0
+          VAR IR_TEMPORARY_VARIABLE name:tmp3 type:kotlin.Int flags:val
             CALL 'get(Int) on Int?: Int' type=kotlin.Int origin=POSTFIX_INCR
               $receiver: GET_VAR 'tmp1_array: Int?' type=kotlin.Int? origin=null
               index: GET_VAR 'tmp2_index0: Int' type=kotlin.Int origin=null

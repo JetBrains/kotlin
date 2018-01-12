@@ -1,28 +1,28 @@
-FILE /justLambda.kt
-  PROPERTY public val test1: () -> kotlin.Int
-    FIELD PROPERTY_BACKING_FIELD public val test1: () -> kotlin.Int
+FILE fqName:<root> fileName:/justLambda.kt
+  PROPERTY name:test1 type:() -> kotlin.Int visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:() -> kotlin.Int visibility:public
       EXPRESSION_BODY
         BLOCK type=() -> kotlin.Int origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Int
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Int flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='<anonymous>(): Int'
-                CONST Int type=kotlin.Int value='42'
+              RETURN type=kotlin.Nothing from=<anonymous>(): Int'
+                CONST Int type=kotlin.Int value=42
           FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): () -> kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Function0<Int> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1>(): () -> Int'
+        RETURN type=kotlin.Nothing from=<get-test1>(): () -> Int'
           GET_FIELD 'test1: () -> Int' type=() -> kotlin.Int origin=null
-  PROPERTY public val test2: () -> kotlin.Unit
-    FIELD PROPERTY_BACKING_FIELD public val test2: () -> kotlin.Unit
+  PROPERTY name:test2 type:() -> kotlin.Unit visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:() -> kotlin.Unit visibility:public
       EXPRESSION_BODY
         BLOCK type=() -> kotlin.Unit origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Unit flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+              RETURN type=kotlin.Nothing from=<anonymous>(): Unit'
                 GET_OBJECT 'Unit' type=kotlin.Unit
           FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): () -> kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Function0<Unit> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2>(): () -> Unit'
+        RETURN type=kotlin.Nothing from=<get-test2>(): () -> Unit'
           GET_FIELD 'test2: () -> Unit' type=() -> kotlin.Unit origin=null
 

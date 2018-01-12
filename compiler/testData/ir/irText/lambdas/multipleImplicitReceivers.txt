@@ -1,64 +1,64 @@
-FILE /multipleImplicitReceivers.kt
-  CLASS OBJECT A
-    $this: VALUE_PARAMETER this@A: A
-    CONSTRUCTOR private constructor A()
+FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
+  CLASS OBJECT name:A modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    CONSTRUCTOR visibility:private <> () returnType:A flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS OBJECT B
-    $this: VALUE_PARAMETER this@B: B
-    CONSTRUCTOR private constructor B()
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS OBJECT name:B modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B flags:
+    CONSTRUCTOR visibility:private <> () returnType:B flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS INTERFACE IFoo
-    $this: VALUE_PARAMETER this@IFoo: IFoo
-    PROPERTY public open val A.foo: B
-      FUN public open fun A.<get-foo>(): B
-        $this: VALUE_PARAMETER this@IFoo: IFoo
-        $receiver: VALUE_PARAMETER this@foo: A
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IFoo flags:
+    PROPERTY name:foo type:B visibility:public modality:OPEN flags:val
+      FUN name:<get-foo> visibility:public modality:OPEN <> ($this:IFoo, $receiver:A) returnType:B flags:
+        $this: VALUE_PARAMETER name:<this> type:IFoo flags:
+        $receiver: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-foo>() on A: B'
+          RETURN type=kotlin.Nothing from=<get-foo>() on A: B'
             GET_OBJECT 'B' type=B
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS INTERFACE IInvoke
-    $this: VALUE_PARAMETER this@IInvoke: IInvoke
-    FUN public open operator fun B.invoke(): kotlin.Int
-      $this: VALUE_PARAMETER this@IInvoke: IInvoke
-      $receiver: VALUE_PARAMETER this@invoke: B
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS INTERFACE name:IInvoke modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IInvoke flags:
+    FUN name:invoke visibility:public modality:OPEN <> ($this:IInvoke, $receiver:B) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:IInvoke flags:
+      $receiver: VALUE_PARAMETER name:<this> type:B flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='invoke() on B: Int'
-          CONST Int type=kotlin.Int value='42'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun test(fooImpl: IFoo, invokeImpl: IInvoke): kotlin.Unit
-    VALUE_PARAMETER value-parameter fooImpl: IFoo
-    VALUE_PARAMETER value-parameter invokeImpl: IInvoke
+        RETURN type=kotlin.Nothing from=invoke() on B: Int'
+          CONST Int type=kotlin.Int value=42
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:test visibility:public modality:FINAL <> (fooImpl:IFoo, invokeImpl:IInvoke) returnType:Unit flags:
+    VALUE_PARAMETER name:fooImpl index:0 type:IFoo flags:
+    VALUE_PARAMETER name:invokeImpl index:1 type:IInvoke flags:
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'with(A, A.() -> Int): Int' type=kotlin.Int origin=null
@@ -66,28 +66,28 @@ FILE /multipleImplicitReceivers.kt
           <R>: Int
           receiver: GET_OBJECT 'A' type=A
           block: BLOCK type=A.() -> kotlin.Int origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun A.<anonymous>(): kotlin.Int
-              $receiver: VALUE_PARAMETER this@<anonymous>: A
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:A) returnType:Int flags:
+              $receiver: VALUE_PARAMETER name:<this> type:A flags:
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='<anonymous>() on A: Int'
+                RETURN type=kotlin.Nothing from=<anonymous>() on A: Int'
                   CALL 'with(IFoo, IFoo.() -> Int): Int' type=kotlin.Int origin=null
                     <T>: IFoo
                     <R>: Int
                     receiver: GET_VAR 'value-parameter fooImpl: IFoo' type=IFoo origin=null
                     block: BLOCK type=IFoo.() -> kotlin.Int origin=LAMBDA
-                      FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun IFoo.<anonymous>(): kotlin.Int
-                        $receiver: VALUE_PARAMETER this@<anonymous>: IFoo
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:IFoo) returnType:Int flags:
+                        $receiver: VALUE_PARAMETER name:<this> type:IFoo flags:
                         BLOCK_BODY
-                          RETURN type=kotlin.Nothing from='<anonymous>() on IFoo: Int'
+                          RETURN type=kotlin.Nothing from=<anonymous>() on IFoo: Int'
                             CALL 'with(IInvoke, IInvoke.() -> Int): Int' type=kotlin.Int origin=null
                               <T>: IInvoke
                               <R>: Int
                               receiver: GET_VAR 'value-parameter invokeImpl: IInvoke' type=IInvoke origin=null
                               block: BLOCK type=IInvoke.() -> kotlin.Int origin=LAMBDA
-                                FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun IInvoke.<anonymous>(): kotlin.Int
-                                  $receiver: VALUE_PARAMETER this@<anonymous>: IInvoke
+                                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:IInvoke) returnType:Int flags:
+                                  $receiver: VALUE_PARAMETER name:<this> type:IInvoke flags:
                                   BLOCK_BODY
-                                    RETURN type=kotlin.Nothing from='<anonymous>() on IInvoke: Int'
+                                    RETURN type=kotlin.Nothing from=<anonymous>() on IInvoke: Int'
                                       CALL 'invoke() on B: Int' type=kotlin.Int origin=INVOKE
                                         $this: GET_VAR 'this@<anonymous>: IInvoke' type=IInvoke origin=null
                                         $receiver: CALL '<get-foo>() on A: B' type=B origin=GET_PROPERTY

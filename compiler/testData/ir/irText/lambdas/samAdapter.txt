@@ -1,14 +1,14 @@
-FILE /samAdapter.kt
-  FUN public fun test1(): kotlin.Unit
+FILE fqName:<root> fileName:/samAdapter.kt
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      VAR val hello: java.lang.Runnable
+      VAR name:hello type:java.lang.Runnable flags:val
         CALL 'Runnable(() -> Unit): Runnable' type=java.lang.Runnable origin=null
           function: BLOCK type=() -> kotlin.Unit origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Unit flags:
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                RETURN type=kotlin.Nothing from=<anonymous>(): Unit'
                   CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-                    message: CONST String type=kotlin.String value='Hello, world!'
+                    message: CONST String type=kotlin.String value=Hello, world!
             FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
       CALL 'run(): Unit' type=kotlin.Unit origin=null
         $this: GET_VAR 'hello: Runnable' type=java.lang.Runnable origin=null

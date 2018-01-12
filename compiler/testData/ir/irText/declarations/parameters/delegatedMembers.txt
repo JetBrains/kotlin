@@ -1,41 +1,41 @@
-FILE /delegatedMembers.kt
-  CLASS INTERFACE IBase
-    $this: VALUE_PARAMETER this@IBase: IBase<T>
-    TYPE_PARAMETER <T>
-    FUN public abstract fun foo(x: kotlin.Int): kotlin.Unit
-      $this: VALUE_PARAMETER this@IBase: IBase<T>
-      VALUE_PARAMETER value-parameter x: kotlin.Int
-    PROPERTY public abstract val bar: kotlin.Int
-      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-bar>(): kotlin.Int
-        $this: VALUE_PARAMETER this@IBase: IBase<T>
-    FUN public abstract fun <X> qux(t: T, x: X): kotlin.Unit
-      TYPE_PARAMETER <X>
-      $this: VALUE_PARAMETER this@IBase: IBase<T>
-      VALUE_PARAMETER value-parameter t: T
-      VALUE_PARAMETER value-parameter x: X
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS CLASS Test
-    $this: VALUE_PARAMETER this@Test: Test<TT>
-    TYPE_PARAMETER <TT>
-    CONSTRUCTOR public constructor Test<TT>(impl: IBase<TT>)
-      VALUE_PARAMETER value-parameter impl: IBase<TT>
+FILE fqName:<root> fileName:/delegatedMembers.kt
+  CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IBase<T> flags:
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+    FUN name:foo visibility:public modality:ABSTRACT <> ($this:IBase<T>, x:kotlin.Int) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:IBase<T> flags:
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
+    PROPERTY name:bar type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:IBase<T>) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:IBase<T> flags:
+    FUN name:qux visibility:public modality:ABSTRACT <X> ($this:IBase<T>, t:T, x:X) returnType:Unit flags:
+      TYPE_PARAMETER name:X index:0 variance: upperBounds:[kotlin.Any?]
+      $this: VALUE_PARAMETER name:<this> type:IBase<T> flags:
+      VALUE_PARAMETER name:t index:0 type:T flags:
+      VALUE_PARAMETER name:x index:1 type:X flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:Test modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test<TT> flags:
+    TYPE_PARAMETER name:TT index:0 variance: upperBounds:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (impl:IBase<TT>) returnType:Test<TT> flags:
+      VALUE_PARAMETER name:impl index:0 type:IBase<TT> flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
-    FIELD DELEGATE val `Test$IBase$delegate`: IBase<TT>
+    FIELD DELEGATE name:Test$IBase$delegate type:IBase<TT> visibility:private
       EXPRESSION_BODY
         GET_VAR 'value-parameter impl: IBase<TT>' type=IBase<TT> origin=null
-    FUN DELEGATED_MEMBER public open override fun <X> qux(t: TT, x: X): kotlin.Unit
-      TYPE_PARAMETER <X>
-      $this: VALUE_PARAMETER this@Test: Test<TT>
-      VALUE_PARAMETER value-parameter t: TT
-      VALUE_PARAMETER value-parameter x: X
+    FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <X> ($this:Test<TT>, t:TT, x:X) returnType:Unit flags:
+      TYPE_PARAMETER name:X index:0 variance: upperBounds:[kotlin.Any?]
+      $this: VALUE_PARAMETER name:<this> type:Test<TT> flags:
+      VALUE_PARAMETER name:t index:0 type:TT flags:
+      VALUE_PARAMETER name:x index:1 type:X flags:
       BLOCK_BODY
         CALL 'qux(TT, X): Unit' type=kotlin.Unit origin=null
           <X>: null
@@ -44,27 +44,27 @@ FILE /delegatedMembers.kt
           t: GET_VAR 'value-parameter t: TT' type=TT origin=null
           x: TYPE_OP type=X origin=IMPLICIT_CAST typeOperand=X
             GET_VAR 'value-parameter x: X' type=X origin=null
-    FUN DELEGATED_MEMBER public open override fun foo(x: kotlin.Int): kotlin.Unit
-      $this: VALUE_PARAMETER this@Test: Test<TT>
-      VALUE_PARAMETER value-parameter x: kotlin.Int
+    FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:Test<TT>, x:kotlin.Int) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:Test<TT> flags:
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         CALL 'foo(Int): Unit' type=kotlin.Unit origin=null
           $this: GET_FIELD '`Test$IBase$delegate`: IBase<TT>' type=IBase<TT> origin=null
             receiver: GET_VAR 'this@Test: Test<TT>' type=Test<TT> origin=null
           x: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
-    PROPERTY DELEGATED_MEMBER public open override val bar: kotlin.Int
-      FUN DELEGATED_MEMBER public open override fun <get-bar>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Test: Test<TT>
+    PROPERTY DELEGATED_MEMBER name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
+      FUN DELEGATED_MEMBER name:<get-bar> visibility:public modality:OPEN <> ($this:Test<TT>) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Test<TT> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
+          RETURN type=kotlin.Nothing from=<get-bar>(): Int'
             CALL '<get-bar>(): Int' type=kotlin.Int origin=null
               $this: GET_FIELD '`Test$IBase$delegate`: IBase<TT>' type=IBase<TT> origin=null
                 receiver: GET_VAR 'this@Test: Test<TT>' type=Test<TT> origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

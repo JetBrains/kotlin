@@ -1,148 +1,148 @@
-FILE /classMembers.kt
-  CLASS CLASS C
-    $this: VALUE_PARAMETER this@C: C
-    CONSTRUCTOR public constructor C(x: kotlin.Int, y: kotlin.Int, z: kotlin.Int = ...)
-      VALUE_PARAMETER value-parameter x: kotlin.Int
-      VALUE_PARAMETER value-parameter y: kotlin.Int
-      VALUE_PARAMETER value-parameter z: kotlin.Int = ...
+FILE fqName:<root> fileName:/classMembers.kt
+  CLASS CLASS name:C modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int, z:kotlin.Int) returnType:C flags:
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
+      VALUE_PARAMETER name:y index:1 type:kotlin.Int flags:
+      VALUE_PARAMETER name:z index:2 type:kotlin.Int flags:
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='1'
+          CONST Int type=kotlin.Int value=1
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
-    PROPERTY public final val y: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
+    PROPERTY name:y type:kotlin.Int visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-y>(): Int'
+          RETURN type=kotlin.Nothing from=<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
-    PROPERTY public final var z: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final var z: kotlin.Int
+    PROPERTY name:z type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter z: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-z>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-z>(): Int'
+          RETURN type=kotlin.Nothing from=<get-z>(): Int'
             GET_FIELD 'z: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-z>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@C: C
-        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-z> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
           SET_FIELD 'z: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR 'this@C: C' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-    CONSTRUCTOR public constructor C()
+    CONSTRUCTOR visibility:public <> () returnType:C flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor C(Int, Int, Int = ...)'
-          x: CONST Int type=kotlin.Int value='0'
-          y: CONST Int type=kotlin.Int value='0'
-          z: CONST Int type=kotlin.Int value='0'
-    PROPERTY public final val property: kotlin.Int = 0
-      FIELD PROPERTY_BACKING_FIELD public final val property: kotlin.Int = 0
+          x: CONST Int type=kotlin.Int value=0
+          y: CONST Int type=kotlin.Int value=0
+          z: CONST Int type=kotlin.Int value=0
+    PROPERTY name:property type:kotlin.Int visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:property type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='0'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-property>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-property> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-property>(): Int'
+          RETURN type=kotlin.Nothing from=<get-property>(): Int'
             GET_FIELD 'property: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
-    PROPERTY public final val propertyWithGet: kotlin.Int
-      FUN public final fun <get-propertyWithGet>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+    PROPERTY name:propertyWithGet type:kotlin.Int visibility:public modality:FINAL flags:val
+      FUN name:<get-propertyWithGet> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-propertyWithGet>(): Int'
-            CONST Int type=kotlin.Int value='42'
-    PROPERTY public final var propertyWithGetAndSet: kotlin.Int
-      FUN public final fun <get-propertyWithGetAndSet>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+          RETURN type=kotlin.Nothing from=<get-propertyWithGet>(): Int'
+            CONST Int type=kotlin.Int value=42
+    PROPERTY name:propertyWithGetAndSet type:kotlin.Int visibility:public modality:FINAL flags:var
+      FUN name:<get-propertyWithGetAndSet> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-propertyWithGetAndSet>(): Int'
+          RETURN type=kotlin.Nothing from=<get-propertyWithGetAndSet>(): Int'
             CALL '<get-z>(): Int' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'this@C: C' type=C origin=null
-      FUN public final fun <set-propertyWithGetAndSet>(value: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@C: C
-        VALUE_PARAMETER value-parameter value: kotlin.Int
+      FUN name:<set-propertyWithGetAndSet> visibility:public modality:FINAL <> ($this:C, value:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
         BLOCK_BODY
           CALL '<set-z>(Int): Unit' type=kotlin.Unit origin=EQ
             $this: GET_VAR 'this@C: C' type=C origin=null
             <set-?>: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
-    FUN public final fun function(): kotlin.Unit
-      $this: VALUE_PARAMETER this@C: C
+    FUN name:function visibility:public modality:FINAL <> ($this:C) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:C flags:
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-          message: CONST String type=kotlin.String value='1'
-    FUN public final fun kotlin.Int.memberExtensionFunction(): kotlin.Unit
-      $this: VALUE_PARAMETER this@C: C
-      $receiver: VALUE_PARAMETER this@memberExtensionFunction: Int
+          message: CONST String type=kotlin.String value=1
+    FUN name:memberExtensionFunction visibility:public modality:FINAL <> ($this:C, $receiver:kotlin.Int) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:C flags:
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-          message: CONST String type=kotlin.String value='2'
-    CLASS CLASS NestedClass
-      $this: VALUE_PARAMETER this@NestedClass: NestedClass
-      CONSTRUCTOR public constructor NestedClass()
+          message: CONST String type=kotlin.String value=2
+    CLASS CLASS name:NestedClass modality:FINAL visibility:public flags:
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C.NestedClass flags:
+      CONSTRUCTOR visibility:public <> () returnType:C.NestedClass flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='NestedClass'
-      FUN public final fun function(): kotlin.Unit
-        $this: VALUE_PARAMETER this@NestedClass: NestedClass
+      FUN name:function visibility:public modality:FINAL <> ($this:C.NestedClass) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:C.NestedClass flags:
         BLOCK_BODY
           CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-            message: CONST String type=kotlin.String value='3'
-      FUN public final fun kotlin.Int.memberExtensionFunction(): kotlin.Unit
-        $this: VALUE_PARAMETER this@NestedClass: NestedClass
-        $receiver: VALUE_PARAMETER this@memberExtensionFunction: Int
+            message: CONST String type=kotlin.String value=3
+      FUN name:memberExtensionFunction visibility:public modality:FINAL <> ($this:C.NestedClass, $receiver:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:C.NestedClass flags:
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
         BLOCK_BODY
           CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-            message: CONST String type=kotlin.String value='4'
-      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        $this: VALUE_PARAMETER this@Any: Any
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-        $this: VALUE_PARAMETER this@Any: Any
-      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-        $this: VALUE_PARAMETER this@Any: Any
-    CLASS INTERFACE NestedInterface
-      $this: VALUE_PARAMETER this@NestedInterface: NestedInterface
-      FUN public abstract fun foo(): kotlin.Unit
-        $this: VALUE_PARAMETER this@NestedInterface: NestedInterface
-      FUN public open fun bar(): kotlin.Unit
-        $this: VALUE_PARAMETER this@NestedInterface: NestedInterface
+            message: CONST String type=kotlin.String value=4
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    CLASS INTERFACE name:NestedInterface modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C.NestedInterface flags:
+      FUN name:foo visibility:public modality:ABSTRACT <> ($this:C.NestedInterface) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:C.NestedInterface flags:
+      FUN name:bar visibility:public modality:OPEN <> ($this:C.NestedInterface) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:C.NestedInterface flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='bar(): Unit'
+          RETURN type=kotlin.Nothing from=bar(): Unit'
             CALL 'foo(): Unit' type=kotlin.Unit origin=null
               $this: GET_VAR 'this@NestedInterface: NestedInterface' type=C.NestedInterface origin=null
-      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        $this: VALUE_PARAMETER this@Any: Any
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-        $this: VALUE_PARAMETER this@Any: Any
-      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-        $this: VALUE_PARAMETER this@Any: Any
-    CLASS OBJECT companion object of C
-      $this: VALUE_PARAMETER this@Companion: Companion
-      CONSTRUCTOR private constructor Companion()
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    CLASS OBJECT name:Companion modality:FINAL visibility:public flags:companion
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C.Companion flags:
+      CONSTRUCTOR visibility:private <> () returnType:C.Companion flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='companion object of C'
-      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        $this: VALUE_PARAMETER this@Any: Any
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-        $this: VALUE_PARAMETER this@Any: Any
-      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-        $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

@@ -1,13 +1,13 @@
-FILE /Derived.kt
-  CLASS CLASS Derived
-    $this: VALUE_PARAMETER this@Derived: Derived
-    CONSTRUCTOR public constructor Derived()
+FILE fqName:<root> fileName:/Derived.kt
+  CLASS CLASS name:Derived modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Derived flags:
+    CONSTRUCTOR visibility:public <> () returnType:Derived flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Derived'
-    FUN public final fun setValue(v: kotlin.Any): kotlin.Unit
-      $this: VALUE_PARAMETER this@Derived: Derived
-      VALUE_PARAMETER value-parameter v: kotlin.Any
+    FUN name:setValue visibility:public modality:FINAL <> ($this:Derived, v:kotlin.Any) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:Derived flags:
+      VALUE_PARAMETER name:v index:0 type:kotlin.Any flags:
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -18,13 +18,13 @@ FILE /Derived.kt
                 receiver: GET_VAR 'this@Derived: Derived' type=Derived origin=null
                 value: TYPE_OP type=kotlin.String! origin=IMPLICIT_CAST typeOperand=kotlin.String!
                   GET_VAR 'value-parameter v: Any' type=kotlin.Any origin=null
-    PROPERTY FAKE_OVERRIDE public final override var value: kotlin.String!
-      FIELD FAKE_OVERRIDE public final override var value: kotlin.String!
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    PROPERTY FAKE_OVERRIDE name:value type:kotlin.String! visibility:public modality:FINAL flags:var
+      FIELD FAKE_OVERRIDE name:value type:kotlin.String! visibility:public
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

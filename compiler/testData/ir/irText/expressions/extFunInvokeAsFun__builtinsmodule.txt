@@ -1,11 +1,11 @@
-MODULE_FRAGMENT <built-ins module>
-  EXTERNAL_PACKAGE_FRAGMENT kotlin
-    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE Function1
-      TYPE_PARAMETER <in P1>
-      TYPE_PARAMETER <out R>
-      FUN IR_EXTERNAL_DECLARATION_STUB public abstract operator fun invoke(p1: P1): R
-        VALUE_PARAMETER value-parameter p1: P1
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+MODULE_FRAGMENT name:<built-ins module>
+  EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Function1 modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:P1 index:0 variance:in upperBounds:[kotlin.Any?]
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:R index:1 variance:out upperBounds:[kotlin.Any?]
+      FUN IR_EXTERNAL_DECLARATION_STUB name:invoke visibility:public modality:ABSTRACT <> (p1:P1) returnType:R flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:0 type:P1 flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:

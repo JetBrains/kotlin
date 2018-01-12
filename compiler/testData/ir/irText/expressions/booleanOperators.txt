@@ -1,41 +1,41 @@
-FILE /booleanOperators.kt
-  FUN public fun test1(a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Boolean
-    VALUE_PARAMETER value-parameter b: kotlin.Boolean
+FILE fqName:<root> fileName:/booleanOperators.kt
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(Boolean, Boolean): Boolean'
+      RETURN type=kotlin.Nothing from=test1(Boolean, Boolean): Boolean'
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
             then: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
           BRANCH
-            if: CONST Boolean type=kotlin.Boolean value='true'
-            then: CONST Boolean type=kotlin.Boolean value='false'
-  FUN public fun test2(a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Boolean
-    VALUE_PARAMETER value-parameter b: kotlin.Boolean
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(Boolean, Boolean): Boolean'
+      RETURN type=kotlin.Nothing from=test2(Boolean, Boolean): Boolean'
         WHEN type=kotlin.Boolean origin=OROR
           BRANCH
             if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
-            then: CONST Boolean type=kotlin.Boolean value='true'
+            then: CONST Boolean type=kotlin.Boolean value=true
           BRANCH
-            if: CONST Boolean type=kotlin.Boolean value='true'
+            if: CONST Boolean type=kotlin.Boolean value=true
             then: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
-  FUN public fun test1x(a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Boolean
-    VALUE_PARAMETER value-parameter b: kotlin.Boolean
+  FUN name:test1x visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1x(Boolean, Boolean): Boolean'
+      RETURN type=kotlin.Nothing from=test1x(Boolean, Boolean): Boolean'
         CALL 'and(Boolean): Boolean' type=kotlin.Boolean origin=null
           $this: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
           other: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
-  FUN public fun test2x(a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Boolean
-    VALUE_PARAMETER value-parameter b: kotlin.Boolean
+  FUN name:test2x visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2x(Boolean, Boolean): Boolean'
+      RETURN type=kotlin.Nothing from=test2x(Boolean, Boolean): Boolean'
         CALL 'or(Boolean): Boolean' type=kotlin.Boolean origin=null
           $this: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
           other: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null

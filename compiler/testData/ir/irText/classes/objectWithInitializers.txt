@@ -1,39 +1,39 @@
-FILE /objectWithInitializers.kt
-  CLASS CLASS Base
-    $this: VALUE_PARAMETER this@Base: Base
-    CONSTRUCTOR public constructor Base()
+FILE fqName:<root> fileName:/objectWithInitializers.kt
+  CLASS CLASS name:Base modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Base flags:
+    CONSTRUCTOR visibility:public <> () returnType:Base flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Base'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS OBJECT Test
-    $this: VALUE_PARAMETER this@Test: Test
-    CONSTRUCTOR private constructor Test()
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS OBJECT name:Test modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test flags:
+    CONSTRUCTOR visibility:private <> () returnType:Test flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
-    PROPERTY public final val x: kotlin.Int = 1
-      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int = 1
+    PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='1'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Test: Test
+          CONST Int type=kotlin.Int value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Test flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+          RETURN type=kotlin.Nothing from=<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Test: Test' type=Test origin=null
-    PROPERTY public final val y: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Test: Test
+    PROPERTY name:y type:kotlin.Int visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Test flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-y>(): Int'
+          RETURN type=kotlin.Nothing from=<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Test: Test' type=Test origin=null
     ANONYMOUS_INITIALIZER Test
@@ -42,11 +42,11 @@ FILE /objectWithInitializers.kt
           receiver: GET_VAR 'this@Test: Test' type=Test origin=null
           value: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'this@Test: Test' type=Test origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

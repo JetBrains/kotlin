@@ -2,12 +2,12 @@
 // FUN: toString
 BB 0
 CONTENT
-      1 FUN public fun toString(grade: kotlin.String): kotlin.String
+      1 FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
       2 GET_VAR 'value-parameter grade: String' type=kotlin.String origin=null
-      3 VAR IR_TEMPORARY_VARIABLE val tmp0_subject: kotlin.String
+      3 VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.String flags:val
       4 WHEN type=kotlin.Nothing origin=WHEN
       5 GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-      6 CONST String type=kotlin.String value='A'
+      6 CONST String type=kotlin.String value=A
 OUTGOING -> BB 1, 5
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 1
@@ -15,7 +15,7 @@ INCOMING <- BB 0
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
       1 GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-      2 CONST String type=kotlin.String value='B'
+      2 CONST String type=kotlin.String value=B
 OUTGOING -> BB 2, 6
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 2
@@ -23,7 +23,7 @@ INCOMING <- BB 1
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
       1 GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-      2 CONST String type=kotlin.String value='C'
+      2 CONST String type=kotlin.String value=C
 OUTGOING -> BB 3, 7
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 3
@@ -31,7 +31,7 @@ INCOMING <- BB 2
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
       1 GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-      2 CONST String type=kotlin.String value='D'
+      2 CONST String type=kotlin.String value=D
 OUTGOING -> BB 4, 8
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 4
@@ -39,55 +39,55 @@ INCOMING <- BB 3
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
 OUTGOING -> BB 9, 10
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 BB 5
 INCOMING <- BB 0
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
-      1 CONST String type=kotlin.String value='Excellent'
-      2 RETURN type=kotlin.Nothing from='toString(String): String'
+      1 CONST String type=kotlin.String value=Excellent
+      2 RETURN type=kotlin.Nothing from=toString(String): String'
 OUTGOING -> NONE
-    Function exit: FUN public fun toString(grade: kotlin.String): kotlin.String
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 BB 6
 INCOMING <- BB 1
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
-      1 CONST String type=kotlin.String value='Good'
-      2 RETURN type=kotlin.Nothing from='toString(String): String'
+      1 CONST String type=kotlin.String value=Good
+      2 RETURN type=kotlin.Nothing from=toString(String): String'
 OUTGOING -> NONE
-    Function exit: FUN public fun toString(grade: kotlin.String): kotlin.String
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 BB 7
 INCOMING <- BB 2
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
-      1 CONST String type=kotlin.String value='Mediocre'
-      2 RETURN type=kotlin.Nothing from='toString(String): String'
+      1 CONST String type=kotlin.String value=Mediocre
+      2 RETURN type=kotlin.Nothing from=toString(String): String'
 OUTGOING -> NONE
-    Function exit: FUN public fun toString(grade: kotlin.String): kotlin.String
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 BB 8
 INCOMING <- BB 3
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
-      1 CONST String type=kotlin.String value='Fair'
-      2 RETURN type=kotlin.Nothing from='toString(String): String'
+      1 CONST String type=kotlin.String value=Fair
+      2 RETURN type=kotlin.Nothing from=toString(String): String'
 OUTGOING -> NONE
-    Function exit: FUN public fun toString(grade: kotlin.String): kotlin.String
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 BB 9
 INCOMING <- BB 4
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 CONTENT
-      1 CONST String type=kotlin.String value='Failure'
-      2 RETURN type=kotlin.Nothing from='toString(String): String'
+      1 CONST String type=kotlin.String value=Failure
+      2 RETURN type=kotlin.Nothing from=toString(String): String'
 OUTGOING -> NONE
-    Function exit: FUN public fun toString(grade: kotlin.String): kotlin.String
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 BB 10
 INCOMING <- BB 4
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 CONTENT
-      1 CONST String type=kotlin.String value='???'
-      2 RETURN type=kotlin.Nothing from='toString(String): String'
+      1 CONST String type=kotlin.String value=???
+      2 RETURN type=kotlin.Nothing from=toString(String): String'
 OUTGOING -> NONE
-    Function exit: FUN public fun toString(grade: kotlin.String): kotlin.String
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 
 // END FUN: toString
 

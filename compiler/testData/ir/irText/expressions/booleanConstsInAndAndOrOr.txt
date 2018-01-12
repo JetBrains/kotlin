@@ -1,26 +1,26 @@
-FILE /booleanConstsInAndAndOrOr.kt
-  FUN public fun test1(b: kotlin.Boolean): kotlin.Unit
-    VALUE_PARAMETER value-parameter b: kotlin.Boolean
+FILE fqName:<root> fileName:/booleanConstsInAndAndOrOr.kt
+  FUN name:test1 visibility:public modality:FINAL <> (b:kotlin.Boolean) returnType:Unit flags:
+    VALUE_PARAMETER name:b index:0 type:kotlin.Boolean flags:
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
-            then: RETURN type=kotlin.Nothing from='test1(Boolean): Unit'
+            then: RETURN type=kotlin.Nothing from=test1(Boolean): Unit'
               GET_OBJECT 'Unit' type=kotlin.Unit
           BRANCH
-            if: CONST Boolean type=kotlin.Boolean value='true'
-            then: CONST Boolean type=kotlin.Boolean value='false'
-  FUN public fun test2(b: kotlin.Boolean): kotlin.Unit
-    VALUE_PARAMETER value-parameter b: kotlin.Boolean
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:test2 visibility:public modality:FINAL <> (b:kotlin.Boolean) returnType:Unit flags:
+    VALUE_PARAMETER name:b index:0 type:kotlin.Boolean flags:
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         WHEN type=kotlin.Boolean origin=OROR
           BRANCH
             if: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
-            then: CONST Boolean type=kotlin.Boolean value='true'
+            then: CONST Boolean type=kotlin.Boolean value=true
           BRANCH
-            if: CONST Boolean type=kotlin.Boolean value='true'
-            then: RETURN type=kotlin.Nothing from='test2(Boolean): Unit'
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: RETURN type=kotlin.Nothing from=test2(Boolean): Unit'
               GET_OBJECT 'Unit' type=kotlin.Unit
 

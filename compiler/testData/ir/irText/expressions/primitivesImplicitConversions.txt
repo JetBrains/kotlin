@@ -1,113 +1,113 @@
-FILE /primitivesImplicitConversions.kt
-  PROPERTY public val test1: kotlin.Long = 42.toLong()
-    FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Long = 42.toLong()
+FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
+  PROPERTY name:test1 type:kotlin.Long visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Long visibility:public
       EXPRESSION_BODY
-        CONST Long type=kotlin.Long value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.Long
+        CONST Long type=kotlin.Long value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Long flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1>(): Long'
+        RETURN type=kotlin.Nothing from=<get-test1>(): Long'
           GET_FIELD 'test1: Long' type=kotlin.Long origin=null
-  PROPERTY public val test2: kotlin.Short = 42.toShort()
-    FIELD PROPERTY_BACKING_FIELD public val test2: kotlin.Short = 42.toShort()
+  PROPERTY name:test2 type:kotlin.Short visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Short visibility:public
       EXPRESSION_BODY
-        CONST Short type=kotlin.Short value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): kotlin.Short
+        CONST Short type=kotlin.Short value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Short flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2>(): Short'
+        RETURN type=kotlin.Nothing from=<get-test2>(): Short'
           GET_FIELD 'test2: Short' type=kotlin.Short origin=null
-  PROPERTY public val test3: kotlin.Byte = 42.toByte()
-    FIELD PROPERTY_BACKING_FIELD public val test3: kotlin.Byte = 42.toByte()
+  PROPERTY name:test3 type:kotlin.Byte visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Byte visibility:public
       EXPRESSION_BODY
-        CONST Byte type=kotlin.Byte value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test3>(): kotlin.Byte
+        CONST Byte type=kotlin.Byte value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:Byte flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test3>(): Byte'
+        RETURN type=kotlin.Nothing from=<get-test3>(): Byte'
           GET_FIELD 'test3: Byte' type=kotlin.Byte origin=null
-  PROPERTY public val test4: kotlin.Long = -42.toLong()
-    FIELD PROPERTY_BACKING_FIELD public val test4: kotlin.Long = -42.toLong()
+  PROPERTY name:test4 type:kotlin.Long visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Long visibility:public
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
-            $this: CONST Int type=kotlin.Int value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test4>(): kotlin.Long
+            $this: CONST Int type=kotlin.Int value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:Long flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test4>(): Long'
+        RETURN type=kotlin.Nothing from=<get-test4>(): Long'
           GET_FIELD 'test4: Long' type=kotlin.Long origin=null
-  PROPERTY public val test5: kotlin.Short = -42.toShort()
-    FIELD PROPERTY_BACKING_FIELD public val test5: kotlin.Short = -42.toShort()
+  PROPERTY name:test5 type:kotlin.Short visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Short visibility:public
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Short origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
-            $this: CONST Int type=kotlin.Int value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test5>(): kotlin.Short
+            $this: CONST Int type=kotlin.Int value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:Short flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test5>(): Short'
+        RETURN type=kotlin.Nothing from=<get-test5>(): Short'
           GET_FIELD 'test5: Short' type=kotlin.Short origin=null
-  PROPERTY public val test6: kotlin.Byte = -42.toByte()
-    FIELD PROPERTY_BACKING_FIELD public val test6: kotlin.Byte = -42.toByte()
+  PROPERTY name:test6 type:kotlin.Byte visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Byte visibility:public
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Byte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
-            $this: CONST Int type=kotlin.Int value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test6>(): kotlin.Byte
+            $this: CONST Int type=kotlin.Int value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:Byte flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test6>(): Byte'
+        RETURN type=kotlin.Nothing from=<get-test6>(): Byte'
           GET_FIELD 'test6: Byte' type=kotlin.Byte origin=null
-  FUN public fun test(): kotlin.Unit
+  FUN name:test visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      VAR val test1: kotlin.Int? = 42
-        CONST Int type=kotlin.Int value='42'
-      VAR val test2: kotlin.Long = 42.toLong()
-        CONST Long type=kotlin.Long value='42'
-      VAR val test3: kotlin.Long? = 42.toLong()
-        CONST Long type=kotlin.Long value='42'
-      VAR val test4: kotlin.Long? = -1.toLong()
-        CONST Long type=kotlin.Long value='-1'
-      VAR val test5: kotlin.Long? = -1.toLong()
+      VAR name:test1 type:kotlin.Int? flags:val
+        CONST Int type=kotlin.Int value=42
+      VAR name:test2 type:kotlin.Long flags:val
+        CONST Long type=kotlin.Long value=42
+      VAR name:test3 type:kotlin.Long? flags:val
+        CONST Long type=kotlin.Long value=42
+      VAR name:test4 type:kotlin.Long? flags:val
+        CONST Long type=kotlin.Long value=-1
+      VAR name:test5 type:kotlin.Long? flags:val
         TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
-            $this: CONST Int type=kotlin.Int value='1'
-      VAR val test6: kotlin.Short? = -1.toShort()
+            $this: CONST Int type=kotlin.Int value=1
+      VAR name:test6 type:kotlin.Short? flags:val
         TYPE_OP type=kotlin.Short origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
-            $this: CONST Int type=kotlin.Int value='1'
-      VAR val test7: kotlin.Byte? = -1.toByte()
+            $this: CONST Int type=kotlin.Int value=1
+      VAR name:test7 type:kotlin.Byte? flags:val
         TYPE_OP type=kotlin.Byte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
-            $this: CONST Int type=kotlin.Int value='1'
-  FUN public fun testImplicitArguments(x: kotlin.Long = ...): kotlin.Unit
-    VALUE_PARAMETER value-parameter x: kotlin.Long = ...
+            $this: CONST Int type=kotlin.Int value=1
+  FUN name:testImplicitArguments visibility:public modality:FINAL <> (x:kotlin.Long) returnType:Unit flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Long flags:
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
-            $this: CONST Int type=kotlin.Int value='1'
+            $this: CONST Int type=kotlin.Int value=1
     BLOCK_BODY
-  CLASS CLASS TestImplicitArguments
-    $this: VALUE_PARAMETER this@TestImplicitArguments: TestImplicitArguments
-    CONSTRUCTOR public constructor TestImplicitArguments(x: kotlin.Long = ...)
-      VALUE_PARAMETER value-parameter x: kotlin.Long = ...
+  CLASS CLASS name:TestImplicitArguments modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestImplicitArguments flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Long) returnType:TestImplicitArguments flags:
+      VALUE_PARAMETER name:x index:0 type:kotlin.Long flags:
         EXPRESSION_BODY
           TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
             CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
-              $this: CONST Int type=kotlin.Int value='1'
+              $this: CONST Int type=kotlin.Int value=1
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestImplicitArguments'
-    PROPERTY public final val x: kotlin.Long
-      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Long
+    PROPERTY name:x type:kotlin.Long visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Long visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Long = ...' type=kotlin.Long origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Long
-        $this: VALUE_PARAMETER this@TestImplicitArguments: TestImplicitArguments
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestImplicitArguments) returnType:Long flags:
+        $this: VALUE_PARAMETER name:<this> type:TestImplicitArguments flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-x>(): Long'
+          RETURN type=kotlin.Nothing from=<get-x>(): Long'
             GET_FIELD 'x: Long' type=kotlin.Long origin=null
               receiver: GET_VAR 'this@TestImplicitArguments: TestImplicitArguments' type=TestImplicitArguments origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

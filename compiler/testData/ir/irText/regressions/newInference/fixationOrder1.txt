@@ -1,44 +1,45 @@
-FILE /fixationOrder1.kt
-  FUN public fun <X, Y> foo(): (X) -> Y
-    TYPE_PARAMETER <X>
-    TYPE_PARAMETER <Y>
+FILE fqName:<root> fileName:/fixationOrder1.kt
+  FUN name:foo visibility:public modality:FINAL <X, Y> () returnType:Function1<X, Y> flags:
+    TYPE_PARAMETER name:X index:0 variance: upperBounds:[kotlin.Any?]
+    TYPE_PARAMETER name:Y index:1 variance: upperBounds:[kotlin.Any?]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='foo(): (X) -> Y'
+      RETURN type=kotlin.Nothing from=foo(): (X) -> Y'
         CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
-  CLASS INTERFACE Inv2
-    $this: VALUE_PARAMETER this@Inv2: Inv2<A, B>
-    TYPE_PARAMETER <A>
-    TYPE_PARAMETER <B>
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun <T, R> check(x: T, y: R, f: (T) -> R): Inv2<T, R>
-    TYPE_PARAMETER <T>
-    TYPE_PARAMETER <R>
-    VALUE_PARAMETER value-parameter x: T
-    VALUE_PARAMETER value-parameter y: R
-    VALUE_PARAMETER value-parameter f: (T) -> R
+  CLASS INTERFACE name:Inv2 modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Inv2<A, B> flags:
+    TYPE_PARAMETER name:A index:0 variance: upperBounds:[kotlin.Any?]
+    TYPE_PARAMETER name:B index:1 variance: upperBounds:[kotlin.Any?]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:check visibility:public modality:FINAL <T, R> (x:T, y:R, f:(T) -> R) returnType:Inv2<T, R> flags:
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+    TYPE_PARAMETER name:R index:1 variance: upperBounds:[kotlin.Any?]
+    VALUE_PARAMETER name:x index:0 type:T flags:
+    VALUE_PARAMETER name:y index:1 type:R flags:
+    VALUE_PARAMETER name:f index:2 type:(T) -> R flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='check(T, R, (T) -> R): Inv2<T, R>'
+      RETURN type=kotlin.Nothing from=check(T, R, (T) -> R): Inv2<T, R>'
         CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
-  FUN public fun test(): Inv2<kotlin.String, kotlin.Int>
+  FUN name:test visibility:public modality:FINAL <> () returnType:Inv2<String, Int> flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(): Inv2<String, Int>'
+      RETURN type=kotlin.Nothing from=test(): Inv2<String, Int>'
         CALL 'check(String, Int, (String) -> Int): Inv2<String, Int>' type=Inv2<kotlin.String, kotlin.Int> origin=null
           <T>: String
           <R>: Int
-          x: CONST String type=kotlin.String value=''
-          y: CONST Int type=kotlin.Int value='1'
+          x: CONST String type=kotlin.String value=
+          y: CONST Int type=kotlin.Int value=1
           f: CALL 'foo(): (String) -> Int' type=(kotlin.String) -> kotlin.Int origin=null
             <X>: String
             <Y>: Int
-  FUN public fun box(): kotlin.String
+  FUN name:box visibility:public modality:FINAL <> () returnType:String flags:
     BLOCK_BODY
-      VAR val x: Inv2<kotlin.String, kotlin.Int>
+      VAR name:x type:Inv2<kotlin.String, kotlin.Int> flags:val
         CALL 'test(): Inv2<String, Int>' type=Inv2<kotlin.String, kotlin.Int> origin=null
-      RETURN type=kotlin.Nothing from='box(): String'
-        CONST String type=kotlin.String value='OK'
+      RETURN type=kotlin.Nothing from=box(): String'
+        CONST String type=kotlin.String value=OK
+

@@ -1,17 +1,17 @@
-FILE /genericPropertyCall.kt
-  PROPERTY public val <T> T.id: T
-    FUN public fun T.<get-id>(): T
-      $receiver: VALUE_PARAMETER this@id: T
+FILE fqName:<root> fileName:/genericPropertyCall.kt
+  PROPERTY name:id type:T visibility:public modality:FINAL flags:val
+    FUN name:<get-id> visibility:public modality:FINAL <> ($receiver:T) returnType:T flags:
+      $receiver: VALUE_PARAMETER name:<this> type:T flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-id>() on T: T'
+        RETURN type=kotlin.Nothing from=<get-id>() on T: T'
           GET_VAR 'this@id: T' type=T origin=null
-  PROPERTY public val test: kotlin.String
-    FIELD PROPERTY_BACKING_FIELD public val test: kotlin.String
+  PROPERTY name:test type:kotlin.String visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:public
       EXPRESSION_BODY
         CALL '<get-id>() on String: String' type=kotlin.String origin=GET_PROPERTY
-          $receiver: CONST String type=kotlin.String value='abc'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test>(): kotlin.String
+          $receiver: CONST String type=kotlin.String value=abc
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test>(): String'
+        RETURN type=kotlin.Nothing from=<get-test>(): String'
           GET_FIELD 'test: String' type=kotlin.String origin=null
 

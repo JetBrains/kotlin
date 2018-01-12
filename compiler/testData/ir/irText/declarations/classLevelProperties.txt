@@ -1,118 +1,118 @@
-FILE /classLevelProperties.kt
-  CLASS CLASS C
-    $this: VALUE_PARAMETER this@C: C
-    CONSTRUCTOR public constructor C()
+FILE fqName:<root> fileName:/classLevelProperties.kt
+  CLASS CLASS name:C modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+    CONSTRUCTOR visibility:public <> () returnType:C flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
-    PROPERTY public final val test1: kotlin.Int = 0
-      FIELD PROPERTY_BACKING_FIELD public final val test1: kotlin.Int = 0
+    PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='0'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test1>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-test1>(): Int'
+          RETURN type=kotlin.Nothing from=<get-test1>(): Int'
             GET_FIELD 'test1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
-    PROPERTY public final val test2: kotlin.Int
-      FUN public final fun <get-test2>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+    PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:val
+      FUN name:<get-test2> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-test2>(): Int'
-            CONST Int type=kotlin.Int value='0'
-    PROPERTY public final var test3: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final var test3: kotlin.Int
+          RETURN type=kotlin.Nothing from=<get-test2>(): Int'
+            CONST Int type=kotlin.Int value=0
+    PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='0'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test3>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-test3>(): Int'
+          RETURN type=kotlin.Nothing from=<get-test3>(): Int'
             GET_FIELD 'test3: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-test3>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@C: C
-        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
           SET_FIELD 'test3: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR 'this@C: C' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-    PROPERTY public final var test4: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final var test4: kotlin.Int
+    PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='1'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test4>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+          CONST Int type=kotlin.Int value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-test4>(): Int'
+          RETURN type=kotlin.Nothing from=<get-test4>(): Int'
             GET_FIELD 'test4: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
-      FUN public final fun <set-test4>(value: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@C: C
-        VALUE_PARAMETER value-parameter value: kotlin.Int
+      FUN name:<set-test4> visibility:public modality:FINAL <> ($this:C, value:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
         BLOCK_BODY
           SET_FIELD 'test4: Int' type=kotlin.Unit origin=EQ
             receiver: GET_VAR 'this@C: C' type=C origin=null
             value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
-    PROPERTY public final var test5: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final var test5: kotlin.Int
+    PROPERTY name:test5 type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='1'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test5>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+          CONST Int type=kotlin.Int value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-test5>(): Int'
+          RETURN type=kotlin.Nothing from=<get-test5>(): Int'
             GET_FIELD 'test5: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
-      FUN private final fun <set-test5>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@C: C
-        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+      FUN name:<set-test5> visibility:private modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
           SET_FIELD 'test5: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR 'this@C: C' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-    PROPERTY public final val test6: kotlin.Int = 1
-      FIELD PROPERTY_BACKING_FIELD public final val test6: kotlin.Int = 1
+    PROPERTY name:test6 type:kotlin.Int visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='1'
-      FUN public final fun <get-test6>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+          CONST Int type=kotlin.Int value=1
+      FUN name:<get-test6> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-test6>(): Int'
+          RETURN type=kotlin.Nothing from=<get-test6>(): Int'
             GET_FIELD 'test6: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
-    PROPERTY public final val test7: kotlin.Int
-      FIELD DELEGATE val `test7$delegate`: kotlin.Lazy<kotlin.Int>
+    PROPERTY name:test7 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmval
+      FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private
         EXPRESSION_BODY
           CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
             <T>: Int
             initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Int
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Int flags:
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='<anonymous>(): Int'
-                    CONST Int type=kotlin.Int value='42'
+                  RETURN type=kotlin.Nothing from=<anonymous>(): Int'
+                    CONST Int type=kotlin.Int value=42
               FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
-      FUN DELEGATED_PROPERTY_ACCESSOR public final fun <get-test7>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-test7>(): Int'
+          RETURN type=kotlin.Nothing from=<get-test7>(): Int'
             CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
               <T>: Int
               $receiver: GET_FIELD '`test7$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
                 receiver: GET_VAR 'this@C: C' type=C origin=null
               thisRef: GET_VAR 'this@C: C' type=C origin=null
               property: PROPERTY_REFERENCE 'test7: Int' field=null getter='<get-test7>(): Int' setter=null type=kotlin.reflect.KProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-    PROPERTY public final var test8: kotlin.Int
-      FIELD DELEGATE val `test8$delegate`: kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */
+    PROPERTY name:test8 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmvar
+      FIELD DELEGATE name:test8$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ visibility:private
         EXPRESSION_BODY
           CALL 'hashMapOf(): HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
             <K>: String
             <V>: Int
-      FUN DELEGATED_PROPERTY_ACCESSOR public final fun <get-test8>(): kotlin.Int
-        $this: VALUE_PARAMETER this@C: C
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-test8>(): Int'
+          RETURN type=kotlin.Nothing from=<get-test8>(): Int'
             CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out Int>: Int' type=kotlin.Int origin=null
               <V>: Int
               <V1 : V>: Int
@@ -120,11 +120,11 @@ FILE /classLevelProperties.kt
                 receiver: GET_VAR 'this@C: C' type=C origin=null
               thisRef: GET_VAR 'this@C: C' type=C origin=null
               property: PROPERTY_REFERENCE 'test8: Int' field=null getter='<get-test8>(): Int' setter='<set-test8>(Int): Unit' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-      FUN DELEGATED_PROPERTY_ACCESSOR public final fun <set-test8>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@C: C
-        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<set-test8>(Int): Unit'
+          RETURN type=kotlin.Nothing from=<set-test8>(Int): Unit'
             CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
               <V>: Int
               $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
@@ -132,11 +132,11 @@ FILE /classLevelProperties.kt
               thisRef: GET_VAR 'this@C: C' type=C origin=null
               property: PROPERTY_REFERENCE 'test8: Int' field=null getter='<get-test8>(): Int' setter='<set-test8>(Int): Unit' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

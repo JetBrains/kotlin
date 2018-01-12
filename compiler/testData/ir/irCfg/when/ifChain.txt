@@ -2,10 +2,10 @@
 // FUN: minBiRoot
 BB 0
 CONTENT
-      1 FUN public fun minBiRoot(a: kotlin.Double, b: kotlin.Double, c: kotlin.Double): kotlin.Double
+      1 FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:Double flags:
       2 WHEN type=kotlin.Unit origin=null
       3 GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
-      4 CONST Double type=kotlin.Double value='0.0'
+      4 CONST Double type=kotlin.Double value=0.0
 OUTGOING -> BB 1, 6
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 1
@@ -14,17 +14,17 @@ INCOMING <- BB 0
 CONTENT
       1 WHEN type=kotlin.Unit origin=null
       2 GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
-      3 CONST Double type=kotlin.Double value='0.0'
+      3 CONST Double type=kotlin.Double value=0.0
 OUTGOING -> BB 2, 3
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 2
 INCOMING <- BB 1
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
-      1 CONST Double type=kotlin.Double value='1.0'
-      2 RETURN type=kotlin.Nothing from='minBiRoot(Double, Double, Double): Double'
+      1 CONST Double type=kotlin.Double value=1.0
+      2 RETURN type=kotlin.Nothing from=minBiRoot(Double, Double, Double): Double'
 OUTGOING -> NONE
-    Function exit: FUN public fun minBiRoot(a: kotlin.Double, b: kotlin.Double, c: kotlin.Double): kotlin.Double
+    Function exit: FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:Double flags:
 BB 3
 INCOMING <- BB 1
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
@@ -33,10 +33,10 @@ CONTENT
       2 CALL 'unaryMinus(): Double' type=kotlin.Double origin=UMINUS
       3 GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
       4 CALL 'div(Double): Double' type=kotlin.Double origin=DIV
-      5 VAR val bc: kotlin.Double
+      5 VAR name:bc type:kotlin.Double flags:val
       6 WHEN type=kotlin.Unit origin=null
       7 GET_VAR 'bc: Double' type=kotlin.Double origin=null
-      8 CONST Double type=kotlin.Double value='0.0'
+      8 CONST Double type=kotlin.Double value=0.0
       9 CALL 'compareTo(Double): Int' type=kotlin.Int origin=LT
 OUTGOING -> BB 4, 5
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -44,19 +44,19 @@ BB 4
 INCOMING <- BB 3
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
 CONTENT
-      1 CONST Double type=kotlin.Double value='2.0'
-      2 RETURN type=kotlin.Nothing from='minBiRoot(Double, Double, Double): Double'
+      1 CONST Double type=kotlin.Double value=2.0
+      2 RETURN type=kotlin.Nothing from=minBiRoot(Double, Double, Double): Double'
 OUTGOING -> NONE
-    Function exit: FUN public fun minBiRoot(a: kotlin.Double, b: kotlin.Double, c: kotlin.Double): kotlin.Double
+    Function exit: FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:Double flags:
 BB 5
 INCOMING <- BB 3
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
 CONTENT
       1 GET_VAR 'bc: Double' type=kotlin.Double origin=null
       2 CALL 'unaryMinus(): Double' type=kotlin.Double origin=UMINUS
-      3 RETURN type=kotlin.Nothing from='minBiRoot(Double, Double, Double): Double'
+      3 RETURN type=kotlin.Nothing from=minBiRoot(Double, Double, Double): Double'
 OUTGOING -> NONE
-    Function exit: FUN public fun minBiRoot(a: kotlin.Double, b: kotlin.Double, c: kotlin.Double): kotlin.Double
+    Function exit: FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:Double flags:
 BB 6
 INCOMING <- BB 0
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
@@ -64,16 +64,16 @@ CONTENT
       1 GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
       2 GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
       3 CALL 'times(Double): Double' type=kotlin.Double origin=MUL
-      4 CONST Int type=kotlin.Int value='4'
+      4 CONST Int type=kotlin.Int value=4
       5 GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
       6 CALL 'times(Double): Double' type=kotlin.Double origin=MUL
       7 GET_VAR 'value-parameter c: Double' type=kotlin.Double origin=null
       8 CALL 'times(Double): Double' type=kotlin.Double origin=MUL
       9 CALL 'minus(Double): Double' type=kotlin.Double origin=MINUS
-     10 VAR val d: kotlin.Double
+     10 VAR name:d type:kotlin.Double flags:val
      11 WHEN type=kotlin.Unit origin=null
      12 GET_VAR 'd: Double' type=kotlin.Double origin=null
-     13 CONST Double type=kotlin.Double value='0.0'
+     13 CONST Double type=kotlin.Double value=0.0
      14 CALL 'compareTo(Double): Int' type=kotlin.Int origin=LT
 OUTGOING -> BB 7, 8
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -81,10 +81,10 @@ BB 7
 INCOMING <- BB 6
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
 CONTENT
-      1 CONST Double type=kotlin.Double value='3.0'
-      2 RETURN type=kotlin.Nothing from='minBiRoot(Double, Double, Double): Double'
+      1 CONST Double type=kotlin.Double value=3.0
+      2 RETURN type=kotlin.Nothing from=minBiRoot(Double, Double, Double): Double'
 OUTGOING -> NONE
-    Function exit: FUN public fun minBiRoot(a: kotlin.Double, b: kotlin.Double, c: kotlin.Double): kotlin.Double
+    Function exit: FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:Double flags:
 BB 8
 INCOMING <- BB 6
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -93,20 +93,20 @@ CONTENT
       2 CALL 'unaryMinus(): Double' type=kotlin.Double origin=UMINUS
       3 GET_VAR 'd: Double' type=kotlin.Double origin=null
       4 CALL 'plus(Double): Double' type=kotlin.Double origin=PLUS
-      5 CONST Int type=kotlin.Int value='2'
+      5 CONST Int type=kotlin.Int value=2
       6 GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
       7 CALL 'times(Double): Double' type=kotlin.Double origin=MUL
       8 CALL 'div(Double): Double' type=kotlin.Double origin=DIV
-      9 VAR val y1: kotlin.Double
+      9 VAR name:y1 type:kotlin.Double flags:val
      10 GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
      11 CALL 'unaryMinus(): Double' type=kotlin.Double origin=UMINUS
      12 GET_VAR 'd: Double' type=kotlin.Double origin=null
      13 CALL 'minus(Double): Double' type=kotlin.Double origin=MINUS
-     14 CONST Int type=kotlin.Int value='2'
+     14 CONST Int type=kotlin.Int value=2
      15 GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
      16 CALL 'times(Double): Double' type=kotlin.Double origin=MUL
      17 CALL 'div(Double): Double' type=kotlin.Double origin=DIV
-     18 VAR val y2: kotlin.Double
+     18 VAR name:y2 type:kotlin.Double flags:val
      19 WHEN type=kotlin.Double origin=null
      20 GET_VAR 'y1: Double' type=kotlin.Double origin=null
      21 GET_VAR 'y2: Double' type=kotlin.Double origin=null
@@ -118,7 +118,7 @@ INCOMING <- BB 8
     CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
 OUTGOING -> BB 11
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 BB 10
 INCOMING <- BB 8
     CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -128,7 +128,7 @@ OUTGOING -> BB 12
     When exit: WHEN type=kotlin.Double origin=null
 BB 11
 INCOMING <- BB 9
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 CONTENT
       1 GET_VAR 'y2: Double' type=kotlin.Double origin=null
 OUTGOING -> BB 12
@@ -137,10 +137,10 @@ BB 12
 INCOMING <- BB 10, 11
     When exit: WHEN type=kotlin.Double origin=null
 CONTENT
-      1 VAR val y3: kotlin.Double
+      1 VAR name:y3 type:kotlin.Double flags:val
       2 WHEN type=kotlin.Double origin=null
       3 GET_VAR 'y3: Double' type=kotlin.Double origin=null
-      4 CONST Double type=kotlin.Double value='0.0'
+      4 CONST Double type=kotlin.Double value=0.0
       5 CALL 'compareTo(Double): Int' type=kotlin.Int origin=LT
 OUTGOING -> BB 13, 14
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -149,17 +149,17 @@ INCOMING <- BB 12
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
 CONTENT
 OUTGOING -> BB 15
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 BB 14
 INCOMING <- BB 12
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
 CONTENT
-      1 CONST Double type=kotlin.Double value='4.0'
+      1 CONST Double type=kotlin.Double value=4.0
 OUTGOING -> BB 16
     When exit: WHEN type=kotlin.Double origin=null
 BB 15
 INCOMING <- BB 13
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 CONTENT
       1 GET_VAR 'y3: Double' type=kotlin.Double origin=null
       2 CALL 'unaryMinus(): Double' type=kotlin.Double origin=UMINUS
@@ -169,9 +169,9 @@ BB 16
 INCOMING <- BB 14, 15
     When exit: WHEN type=kotlin.Double origin=null
 CONTENT
-      1 RETURN type=kotlin.Nothing from='minBiRoot(Double, Double, Double): Double'
+      1 RETURN type=kotlin.Nothing from=minBiRoot(Double, Double, Double): Double'
 OUTGOING -> NONE
-    Function exit: FUN public fun minBiRoot(a: kotlin.Double, b: kotlin.Double, c: kotlin.Double): kotlin.Double
+    Function exit: FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:Double flags:
 
 // END FUN: minBiRoot
 

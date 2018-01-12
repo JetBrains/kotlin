@@ -1,22 +1,23 @@
-FILE /extFunSafeInvoke.kt
-  FUN public fun test(receiver: kotlin.Any?, fn: kotlin.Any.(kotlin.Int, kotlin.String) -> kotlin.Unit): kotlin.Unit?
-    VALUE_PARAMETER value-parameter receiver: kotlin.Any?
-    VALUE_PARAMETER value-parameter fn: kotlin.Any.(kotlin.Int, kotlin.String) -> kotlin.Unit
+FILE fqName:<root> fileName:/extFunSafeInvoke.kt
+  FUN name:test visibility:public modality:FINAL <> (receiver:kotlin.Any?, fn:kotlin.Any.(kotlin.Int, kotlin.String) -> kotlin.Unit) returnType:Unit? flags:
+    VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? flags:
+    VALUE_PARAMETER name:fn index:1 type:kotlin.Any.(kotlin.Int, kotlin.String) -> kotlin.Unit flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(Any?, Any.(Int, String) -> Unit): Unit?'
+      RETURN type=kotlin.Nothing from=test(Any?, Any.(Int, String) -> Unit): Unit?'
         BLOCK type=kotlin.Unit? origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:val
             GET_VAR 'value-parameter receiver: Any?' type=kotlin.Any? origin=null
           WHEN type=kotlin.Unit? origin=SAFE_CALL
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
-              then: CONST Null type=kotlin.Nothing? value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'invoke(Any, Int, String): Unit' type=kotlin.Unit origin=INVOKE
                 $this: GET_VAR 'value-parameter fn: Any.(Int, String) -> Unit' type=kotlin.Any.(kotlin.Int, kotlin.String) -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
                 p1: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
-                p2: CONST Int type=kotlin.Int value='42'
-                p3: CONST String type=kotlin.String value='Hello'
+                p2: CONST Int type=kotlin.Int value=42
+                p3: CONST String type=kotlin.String value=Hello
+

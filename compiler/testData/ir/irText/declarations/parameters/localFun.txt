@@ -1,26 +1,26 @@
-FILE /localFun.kt
-  FUN public fun <TT> outer(): kotlin.Unit
-    TYPE_PARAMETER <TT>
+FILE fqName:<root> fileName:/localFun.kt
+  FUN name:outer visibility:public modality:FINAL <TT> () returnType:Unit flags:
+    TYPE_PARAMETER name:TT index:0 variance: upperBounds:[kotlin.Any?]
     BLOCK_BODY
-      FUN local final fun <T> test1(i: kotlin.Int, j: T): kotlin.Unit
-        TYPE_PARAMETER <T>
-        VALUE_PARAMETER value-parameter i: kotlin.Int
-        VALUE_PARAMETER value-parameter j: T
+      FUN name:test1 visibility:local modality:FINAL <T> (i:kotlin.Int, j:T) returnType:Unit flags:
+        TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+        VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
+        VALUE_PARAMETER name:j index:1 type:T flags:
         BLOCK_BODY
-      FUN local final fun test2(i: kotlin.Int = ..., j: kotlin.String = ...): kotlin.Unit
-        VALUE_PARAMETER value-parameter i: kotlin.Int = ...
+      FUN name:test2 visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.String) returnType:Unit flags:
+        VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
           EXPRESSION_BODY
-            CONST Int type=kotlin.Int value='0'
-        VALUE_PARAMETER value-parameter j: kotlin.String = ...
+            CONST Int type=kotlin.Int value=0
+        VALUE_PARAMETER name:j index:1 type:kotlin.String flags:
           EXPRESSION_BODY
-            CONST String type=kotlin.String value=''
+            CONST String type=kotlin.String value=
         BLOCK_BODY
-      FUN local final fun test3(vararg args: kotlin.String): kotlin.Unit
-        VALUE_PARAMETER value-parameter vararg args: kotlin.String
+      FUN name:test3 visibility:local modality:FINAL <> (args:kotlin.Array<out kotlin.String>) returnType:Unit flags:
+        VALUE_PARAMETER name:args index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String flags:vararg
         BLOCK_BODY
-      FUN local final fun kotlin.String.textExt1(i: kotlin.Int, j: TT): kotlin.Unit
-        $receiver: VALUE_PARAMETER this@textExt1: String
-        VALUE_PARAMETER value-parameter i: kotlin.Int
-        VALUE_PARAMETER value-parameter j: TT
+      FUN name:textExt1 visibility:local modality:FINAL <> ($receiver:kotlin.String, i:kotlin.Int, j:TT) returnType:Unit flags:
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
+        VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
+        VALUE_PARAMETER name:j index:1 type:TT flags:
         BLOCK_BODY
 

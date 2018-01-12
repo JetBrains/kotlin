@@ -2,15 +2,15 @@
 // FUN: foo
 BB 0
 CONTENT
-      1 FUN public fun foo(arg: kotlin.Int): kotlin.Int
+      1 FUN name:foo visibility:public modality:FINAL <> (arg:kotlin.Int) returnType:Int flags:
       2 GET_VAR 'value-parameter arg: Int' type=kotlin.Int origin=null
-      3 CONST Int type=kotlin.Int value='2'
+      3 CONST Int type=kotlin.Int value=2
       4 CALL 'times(Int): Int' type=kotlin.Int origin=MUL
-      5 VAR val dbl: kotlin.Int
+      5 VAR name:dbl type:kotlin.Int flags:val
       6 GET_VAR 'dbl: Int' type=kotlin.Int origin=null
-      7 RETURN type=kotlin.Nothing from='foo(Int): Int'
+      7 RETURN type=kotlin.Nothing from=foo(Int): Int'
 OUTGOING -> NONE
-    Function exit: FUN public fun foo(arg: kotlin.Int): kotlin.Int
+    Function exit: FUN name:foo visibility:public modality:FINAL <> (arg:kotlin.Int) returnType:Int flags:
 
 // END FUN: foo
 

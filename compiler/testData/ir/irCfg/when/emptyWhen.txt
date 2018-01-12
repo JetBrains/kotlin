@@ -2,24 +2,24 @@
 // FUN: empty
 BB 0
 CONTENT
-      1 FUN public fun empty(): kotlin.Int
+      1 FUN name:empty visibility:public modality:FINAL <> () returnType:Int flags:
       2 WHEN type=kotlin.Int origin=WHEN
 OUTGOING -> BB 1
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 BB 1
 INCOMING <- BB 0
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 CONTENT
-      1 CONST Int type=kotlin.Int value='42'
+      1 CONST Int type=kotlin.Int value=42
 OUTGOING -> BB 2
     When exit: WHEN type=kotlin.Int origin=WHEN
 BB 2
 INCOMING <- BB 1
     When exit: WHEN type=kotlin.Int origin=WHEN
 CONTENT
-      1 RETURN type=kotlin.Nothing from='empty(): Int'
+      1 RETURN type=kotlin.Nothing from=empty(): Int'
 OUTGOING -> NONE
-    Function exit: FUN public fun empty(): kotlin.Int
+    Function exit: FUN name:empty visibility:public modality:FINAL <> () returnType:Int flags:
 
 // END FUN: empty
 

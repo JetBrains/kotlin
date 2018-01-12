@@ -1,78 +1,78 @@
-FILE /destructuringInLambda.kt
-  CLASS CLASS A
-    $this: VALUE_PARAMETER this@A: A
-    CONSTRUCTOR public constructor A(x: kotlin.Int, y: kotlin.Int)
-      VALUE_PARAMETER value-parameter x: kotlin.Int
-      VALUE_PARAMETER value-parameter y: kotlin.Int
+FILE fqName:<root> fileName:/destructuringInLambda.kt
+  CLASS CLASS name:A modality:FINAL visibility:public flags:data
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int) returnType:A flags:
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
+      VALUE_PARAMETER name:y index:1 type:kotlin.Int flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    PROPERTY public final val x: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
+    PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER this@A: A
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+          RETURN type=kotlin.Nothing from=<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
-    PROPERTY public final val y: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
+    PROPERTY name:y type:kotlin.Int visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
-        $this: VALUE_PARAMETER this@A: A
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-y>(): Int'
+          RETURN type=kotlin.Nothing from=<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Int
-      $this: VALUE_PARAMETER this@A: A
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='component1(): Int'
+        RETURN type=kotlin.Nothing from=component1(): Int'
           CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'this@A: A' type=A origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component2(): kotlin.Int
-      $this: VALUE_PARAMETER this@A: A
+    FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='component2(): Int'
+        RETURN type=kotlin.Nothing from=component2(): Int'
           CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'this@A: A' type=A origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(x: kotlin.Int = ..., y: kotlin.Int = ...): A
-      $this: VALUE_PARAMETER this@A: A
-      VALUE_PARAMETER value-parameter x: kotlin.Int = ...
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:A, x:kotlin.Int, y:kotlin.Int) returnType:A flags:
+      $this: VALUE_PARAMETER name:<this> type:A flags:
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         EXPRESSION_BODY
           CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'this@A: A' type=A origin=null
-      VALUE_PARAMETER value-parameter y: kotlin.Int = ...
+      VALUE_PARAMETER name:y index:1 type:kotlin.Int flags:
         EXPRESSION_BODY
           CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'this@A: A' type=A origin=null
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='copy(Int = ..., Int = ...): A'
+        RETURN type=kotlin.Nothing from=copy(Int = ..., Int = ...): A'
           CALL 'constructor A(Int, Int)' type=A origin=null
             x: GET_VAR 'value-parameter x: Int = ...' type=kotlin.Int origin=null
             y: GET_VAR 'value-parameter y: Int = ...' type=kotlin.Int origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@A: A
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:A) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='toString(): String'
+        RETURN type=kotlin.Nothing from=toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value='A('
-            CONST String type=kotlin.String value='x='
+            CONST String type=kotlin.String value=A(
+            CONST String type=kotlin.String value=x=
             CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'this@A: A' type=A origin=null
-            CONST String type=kotlin.String value=', '
-            CONST String type=kotlin.String value='y='
+            CONST String type=kotlin.String value=, 
+            CONST String type=kotlin.String value=y=
             CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'this@A: A' type=A origin=null
-            CONST String type=kotlin.String value=')'
-    FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@A: A
+            CONST String type=kotlin.String value=)
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:A) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
-        VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
-          CONST Int type=kotlin.Int value='0'
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
+          CONST Int type=kotlin.Int value=0
         SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
           CALL 'hashCode(): Int' type=kotlin.Int origin=null
             $this: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
@@ -81,30 +81,30 @@ FILE /destructuringInLambda.kt
           CALL 'plus(Int): Int' type=kotlin.Int origin=null
             $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
               $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
-              other: CONST Int type=kotlin.Int value='31'
+              other: CONST Int type=kotlin.Int value=31
             other: CALL 'hashCode(): Int' type=kotlin.Int origin=null
               $this: CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_VAR 'this@A: A' type=A origin=null
-        RETURN type=kotlin.Nothing from='hashCode(): Int'
+        RETURN type=kotlin.Nothing from=hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@A: A
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:A, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:A flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
               arg0: GET_VAR 'this@A: A' type=A origin=null
               arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              CONST Boolean type=kotlin.Boolean value='true'
+            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=true
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=A
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              CONST Boolean type=kotlin.Boolean value='false'
-        VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: A
+            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:A flags:val
           TYPE_OP type=A origin=CAST typeOperand=A
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -115,8 +115,8 @@ FILE /destructuringInLambda.kt
                   $this: GET_VAR 'this@A: A' type=A origin=null
                 arg1: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
                   $this: GET_VAR 'tmp0_other_with_cast: A' type=A origin=null
-            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              CONST Boolean type=kotlin.Boolean value='false'
+            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -125,31 +125,31 @@ FILE /destructuringInLambda.kt
                   $this: GET_VAR 'this@A: A' type=A origin=null
                 arg1: CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
                   $this: GET_VAR 'tmp0_other_with_cast: A' type=A origin=null
-            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              CONST Boolean type=kotlin.Boolean value='false'
-        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-          CONST Boolean type=kotlin.Boolean value='true'
-  PROPERTY public var fn: (A) -> kotlin.Int
-    FIELD PROPERTY_BACKING_FIELD public var fn: (A) -> kotlin.Int
+            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+          CONST Boolean type=kotlin.Boolean value=true
+  PROPERTY name:fn type:(A) -> kotlin.Int visibility:public modality:FINAL flags:var
+    FIELD PROPERTY_BACKING_FIELD name:fn type:(A) -> kotlin.Int visibility:public
       EXPRESSION_BODY
         BLOCK type=(A) -> kotlin.Int origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(<name for destructuring parameter 0>: A): kotlin.Int
-            VALUE_PARAMETER value-parameter <name for destructuring parameter 0>: A
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<name for destructuring parameter 0>:A) returnType:Int flags:
+            VALUE_PARAMETER name:<name for destructuring parameter 0> index:0 type:A flags:
             BLOCK_BODY
-              VAR val y: kotlin.Int
+              VAR name:y type:kotlin.Int flags:val
                 CALL 'component2(): Int' type=kotlin.Int origin=COMPONENT_N(index=2)
                   $this: GET_VAR 'value-parameter <name for destructuring parameter 0>: A' type=A origin=DESTRUCTURING_DECLARATION
-              RETURN type=kotlin.Nothing from='<anonymous>(A): Int'
+              RETURN type=kotlin.Nothing from=<anonymous>(A): Int'
                 CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
-                  $this: CONST Int type=kotlin.Int value='42'
+                  $this: CONST Int type=kotlin.Int value=42
                   other: GET_VAR 'y: Int' type=kotlin.Int origin=null
           FUNCTION_REFERENCE '<anonymous>(A): Int' type=(A) -> kotlin.Int origin=LAMBDA
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-fn>(): (A) -> kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fn> visibility:public modality:FINAL <> () returnType:Function1<A, Int> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-fn>(): (A) -> Int'
+        RETURN type=kotlin.Nothing from=<get-fn>(): (A) -> Int'
           GET_FIELD 'fn: (A) -> Int' type=(A) -> kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <set-fn>(<set-?>: (A) -> kotlin.Int): kotlin.Unit
-      VALUE_PARAMETER value-parameter <set-?>: (A) -> kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fn> visibility:public modality:FINAL <> (<set-?>:(A) -> kotlin.Int) returnType:Unit flags:
+      VALUE_PARAMETER name:<set-?> index:0 type:(A) -> kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'fn: (A) -> Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: (A) -> Int' type=(A) -> kotlin.Int origin=null

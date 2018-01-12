@@ -1,7 +1,8 @@
-FILE /implicitCastOnPlatformType.kt
-  FUN public fun test(): kotlin.String
+FILE fqName:<root> fileName:/implicitCastOnPlatformType.kt
+  FUN name:test visibility:public modality:FINAL <> () returnType:String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(): String'
+      RETURN type=kotlin.Nothing from=test(): String'
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
           CALL 'getProperty(String!): String!' type=kotlin.String! origin=null
-            key: CONST String type=kotlin.String value='test'
+            key: CONST String type=kotlin.String value=test
+

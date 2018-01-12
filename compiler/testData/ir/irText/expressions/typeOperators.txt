@@ -1,35 +1,35 @@
-FILE /typeOperators.kt
-  CLASS INTERFACE IThing
-    $this: VALUE_PARAMETER this@IThing: IThing
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun test1(x: kotlin.Any): kotlin.Boolean
-    VALUE_PARAMETER value-parameter x: kotlin.Any
+FILE fqName:<root> fileName:/typeOperators.kt
+  CLASS INTERFACE name:IThing modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IThing flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(Any): Boolean'
+      RETURN type=kotlin.Nothing from=test1(Any): Boolean'
         TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=IThing
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-  FUN public fun test2(x: kotlin.Any): kotlin.Boolean
-    VALUE_PARAMETER value-parameter x: kotlin.Any
+  FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(Any): Boolean'
+      RETURN type=kotlin.Nothing from=test2(Any): Boolean'
         TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=IThing
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-  FUN public fun test3(x: kotlin.Any): IThing
-    VALUE_PARAMETER value-parameter x: kotlin.Any
+  FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:IThing flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test3(Any): IThing'
+      RETURN type=kotlin.Nothing from=test3(Any): IThing'
         TYPE_OP type=IThing origin=CAST typeOperand=IThing
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-  FUN public fun test4(x: kotlin.Any): IThing?
-    VALUE_PARAMETER value-parameter x: kotlin.Any
+  FUN name:test4 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:IThing? flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test4(Any): IThing?'
+      RETURN type=kotlin.Nothing from=test4(Any): IThing?'
         TYPE_OP type=IThing? origin=SAFE_CAST typeOperand=IThing
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
 

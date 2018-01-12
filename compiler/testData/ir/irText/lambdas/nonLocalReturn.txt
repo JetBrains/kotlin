@@ -1,90 +1,91 @@
-FILE /nonLocalReturn.kt
-  FUN public fun test0(): kotlin.Unit
+FILE fqName:<root> fileName:/nonLocalReturn.kt
+  FUN name:test0 visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       CALL 'run(() -> Nothing): Nothing' type=kotlin.Nothing origin=null
         <R>: Nothing
         block: BLOCK type=() -> kotlin.Nothing origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Nothing
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Nothing flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='test0(): Unit'
+              RETURN type=kotlin.Nothing from=test0(): Unit'
                 GET_OBJECT 'Unit' type=kotlin.Unit
           FUNCTION_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
-  FUN public fun test1(): kotlin.Unit
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
         <R>: Unit
         block: BLOCK type=() -> kotlin.Unit origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Unit flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+              RETURN type=kotlin.Nothing from=<anonymous>(): Unit'
                 GET_OBJECT 'Unit' type=kotlin.Unit
           FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
-  FUN public fun test2(): kotlin.Unit
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
         <R>: Unit
         block: BLOCK type=() -> kotlin.Unit origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Unit flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+              RETURN type=kotlin.Nothing from=<anonymous>(): Unit'
                 GET_OBJECT 'Unit' type=kotlin.Unit
           FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
-  FUN public fun test3(): kotlin.Unit
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
         <R>: Unit
         block: BLOCK type=() -> kotlin.Unit origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Unit flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+              RETURN type=kotlin.Nothing from=<anonymous>(): Unit'
                 CALL 'run(() -> Nothing): Nothing' type=kotlin.Nothing origin=null
                   <R>: Nothing
                   block: BLOCK type=() -> kotlin.Nothing origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Nothing
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Nothing flags:
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                        RETURN type=kotlin.Nothing from=<anonymous>(): Unit'
                           GET_OBJECT 'Unit' type=kotlin.Unit
                     FUNCTION_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
           FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
-  FUN public fun testLrmFoo1(ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
-    VALUE_PARAMETER value-parameter ints: kotlin.collections.List<kotlin.Int>
+  FUN name:testLrmFoo1 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:Unit flags:
+    VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int> flags:
     BLOCK_BODY
       CALL 'forEach((Int) -> Unit) on Iterable<Int>: Unit' type=kotlin.Unit origin=null
         <T>: Int
         $receiver: GET_VAR 'value-parameter ints: List<Int>' type=kotlin.collections.List<kotlin.Int> origin=null
         action: BLOCK type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
-            VALUE_PARAMETER value-parameter it: kotlin.Int
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:Unit flags:
+            VALUE_PARAMETER name:it index:0 type:kotlin.Int flags:
             BLOCK_BODY
               WHEN type=kotlin.Unit origin=null
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.Int value='0'
-                  then: RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+                    arg1: CONST Int type=kotlin.Int value=0
+                  then: RETURN type=kotlin.Nothing from=<anonymous>(Int): Unit'
                     GET_OBJECT 'Unit' type=kotlin.Unit
-              RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+              RETURN type=kotlin.Nothing from=<anonymous>(Int): Unit'
                 CALL 'print(Int): Unit' type=kotlin.Unit origin=null
                   message: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
           FUNCTION_REFERENCE '<anonymous>(Int): Unit' type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
-  FUN public fun testLrmFoo2(ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
-    VALUE_PARAMETER value-parameter ints: kotlin.collections.List<kotlin.Int>
+  FUN name:testLrmFoo2 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:Unit flags:
+    VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int> flags:
     BLOCK_BODY
       CALL 'forEach((Int) -> Unit) on Iterable<Int>: Unit' type=kotlin.Unit origin=null
         <T>: Int
         $receiver: GET_VAR 'value-parameter ints: List<Int>' type=kotlin.collections.List<kotlin.Int> origin=null
         action: BLOCK type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
-            VALUE_PARAMETER value-parameter it: kotlin.Int
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:Unit flags:
+            VALUE_PARAMETER name:it index:0 type:kotlin.Int flags:
             BLOCK_BODY
               WHEN type=kotlin.Unit origin=null
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.Int value='0'
-                  then: RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+                    arg1: CONST Int type=kotlin.Int value=0
+                  then: RETURN type=kotlin.Nothing from=<anonymous>(Int): Unit'
                     GET_OBJECT 'Unit' type=kotlin.Unit
-              RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+              RETURN type=kotlin.Nothing from=<anonymous>(Int): Unit'
                 CALL 'print(Int): Unit' type=kotlin.Unit origin=null
                   message: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
           FUNCTION_REFERENCE '<anonymous>(Int): Unit' type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
+

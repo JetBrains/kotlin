@@ -1,47 +1,47 @@
-FILE /augmentedAssignmentWithExpression.kt
-  CLASS CLASS Host
-    $this: VALUE_PARAMETER this@Host: Host
-    CONSTRUCTOR public constructor Host()
+FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
+  CLASS CLASS name:Host modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host flags:
+    CONSTRUCTOR visibility:public <> () returnType:Host flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
-    FUN public final operator fun plusAssign(x: kotlin.Int): kotlin.Unit
-      $this: VALUE_PARAMETER this@Host: Host
-      VALUE_PARAMETER value-parameter x: kotlin.Int
+    FUN name:plusAssign visibility:public modality:FINAL <> ($this:Host, x:kotlin.Int) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:Host flags:
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
-    FUN public final fun test1(): kotlin.Unit
-      $this: VALUE_PARAMETER this@Host: Host
+    FUN name:test1 visibility:public modality:FINAL <> ($this:Host) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:Host flags:
       BLOCK_BODY
         CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
           $this: GET_VAR 'this@Host: Host' type=Host origin=PLUSEQ
-          x: CONST Int type=kotlin.Int value='1'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun foo(): Host
+          x: CONST Int type=kotlin.Int value=1
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:foo visibility:public modality:FINAL <> () returnType:Host flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='foo(): Host'
+      RETURN type=kotlin.Nothing from=foo(): Host'
         CALL 'constructor Host()' type=Host origin=null
-  FUN public fun Host.test2(): kotlin.Unit
-    $receiver: VALUE_PARAMETER this@test2: Host
+  FUN name:test2 visibility:public modality:FINAL <> ($receiver:Host) returnType:Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:Host flags:
     BLOCK_BODY
       CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
         $this: GET_VAR 'this@test2: Host' type=Host origin=PLUSEQ
-        x: CONST Int type=kotlin.Int value='1'
-  FUN public fun test3(): kotlin.Unit
+        x: CONST Int type=kotlin.Int value=1
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
         $this: CALL 'foo(): Host' type=Host origin=null
-        x: CONST Int type=kotlin.Int value='1'
-  FUN public fun test4(a: () -> Host): kotlin.Unit
-    VALUE_PARAMETER value-parameter a: () -> Host
+        x: CONST Int type=kotlin.Int value=1
+  FUN name:test4 visibility:public modality:FINAL <> (a:() -> Host) returnType:Unit flags:
+    VALUE_PARAMETER name:a index:0 type:() -> Host flags:
     BLOCK_BODY
       CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
         $this: CALL 'invoke(): Host' type=Host origin=INVOKE
           $this: GET_VAR 'value-parameter a: () -> Host' type=() -> Host origin=VARIABLE_AS_FUNCTION
-        x: CONST Int type=kotlin.Int value='1'
+        x: CONST Int type=kotlin.Int value=1
 

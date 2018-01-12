@@ -1,14 +1,14 @@
-FILE /anonymousFunction.kt
-  PROPERTY public val anonymous: () -> kotlin.Unit
-    FIELD PROPERTY_BACKING_FIELD public val anonymous: () -> kotlin.Unit
+FILE fqName:<root> fileName:/anonymousFunction.kt
+  PROPERTY name:anonymous type:() -> kotlin.Unit visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:anonymous type:() -> kotlin.Unit visibility:public
       EXPRESSION_BODY
         BLOCK type=() -> kotlin.Unit origin=ANONYMOUS_FUNCTION
-          FUN local final fun <no name provided>(): kotlin.Unit
+          FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:Unit flags:
             BLOCK_BODY
               CALL 'println(): Unit' type=kotlin.Unit origin=null
           FUNCTION_REFERENCE '<no name provided>(): Unit' type=() -> kotlin.Unit origin=ANONYMOUS_FUNCTION
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-anonymous>(): () -> kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anonymous> visibility:public modality:FINAL <> () returnType:Function0<Unit> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-anonymous>(): () -> Unit'
+        RETURN type=kotlin.Nothing from=<get-anonymous>(): () -> Unit'
           GET_FIELD 'anonymous: () -> Unit' type=() -> kotlin.Unit origin=null
 

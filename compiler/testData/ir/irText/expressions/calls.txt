@@ -1,44 +1,44 @@
-FILE /calls.kt
-  FUN public fun foo(x: kotlin.Int, y: kotlin.Int): kotlin.Int
-    VALUE_PARAMETER value-parameter x: kotlin.Int
-    VALUE_PARAMETER value-parameter y: kotlin.Int
+FILE fqName:<root> fileName:/calls.kt
+  FUN name:foo visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='foo(Int, Int): Int'
+      RETURN type=kotlin.Nothing from=foo(Int, Int): Int'
         GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
-  FUN public fun bar(x: kotlin.Int): kotlin.Int
-    VALUE_PARAMETER value-parameter x: kotlin.Int
+  FUN name:bar visibility:public modality:FINAL <> (x:kotlin.Int) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='bar(Int): Int'
+      RETURN type=kotlin.Nothing from=bar(Int): Int'
         CALL 'foo(Int, Int): Int' type=kotlin.Int origin=null
           x: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
-          y: CONST Int type=kotlin.Int value='1'
-  FUN public fun qux(x: kotlin.Int): kotlin.Int
-    VALUE_PARAMETER value-parameter x: kotlin.Int
+          y: CONST Int type=kotlin.Int value=1
+  FUN name:qux visibility:public modality:FINAL <> (x:kotlin.Int) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='qux(Int): Int'
+      RETURN type=kotlin.Nothing from=qux(Int): Int'
         CALL 'foo(Int, Int): Int' type=kotlin.Int origin=null
           x: CALL 'foo(Int, Int): Int' type=kotlin.Int origin=null
             x: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
             y: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
           y: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
-  FUN public fun kotlin.Int.ext1(): kotlin.Int
-    $receiver: VALUE_PARAMETER this@ext1: Int
+  FUN name:ext1 visibility:public modality:FINAL <> ($receiver:kotlin.Int) returnType:Int flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ext1() on Int: Int'
+      RETURN type=kotlin.Nothing from=ext1() on Int: Int'
         GET_VAR 'this@ext1: Int' type=kotlin.Int origin=null
-  FUN public fun kotlin.Int.ext2(x: kotlin.Int): kotlin.Int
-    $receiver: VALUE_PARAMETER this@ext2: Int
-    VALUE_PARAMETER value-parameter x: kotlin.Int
+  FUN name:ext2 visibility:public modality:FINAL <> ($receiver:kotlin.Int, x:kotlin.Int) returnType:Int flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ext2(Int) on Int: Int'
+      RETURN type=kotlin.Nothing from=ext2(Int) on Int: Int'
         CALL 'foo(Int, Int): Int' type=kotlin.Int origin=null
           x: GET_VAR 'this@ext2: Int' type=kotlin.Int origin=null
           y: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
-  FUN public fun kotlin.Int.ext3(x: kotlin.Int): kotlin.Int
-    $receiver: VALUE_PARAMETER this@ext3: Int
-    VALUE_PARAMETER value-parameter x: kotlin.Int
+  FUN name:ext3 visibility:public modality:FINAL <> ($receiver:kotlin.Int, x:kotlin.Int) returnType:Int flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ext3(Int) on Int: Int'
+      RETURN type=kotlin.Nothing from=ext3(Int) on Int: Int'
         CALL 'foo(Int, Int): Int' type=kotlin.Int origin=null
           x: CALL 'ext1() on Int: Int' type=kotlin.Int origin=null
             $receiver: GET_VAR 'this@ext3: Int' type=kotlin.Int origin=null

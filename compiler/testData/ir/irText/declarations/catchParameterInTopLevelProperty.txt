@@ -1,13 +1,14 @@
-FILE /catchParameterInTopLevelProperty.kt
-  PROPERTY public val test: kotlin.Unit
-    FIELD PROPERTY_BACKING_FIELD public val test: kotlin.Unit
+FILE fqName:<root> fileName:/catchParameterInTopLevelProperty.kt
+  PROPERTY name:test type:kotlin.Unit visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Unit visibility:public
       EXPRESSION_BODY
         TRY type=kotlin.Unit
           try: BLOCK type=kotlin.Unit origin=null
           CATCH parameter=e: Throwable
-            VAR CATCH_PARAMETER val e: kotlin.Throwable
+            VAR CATCH_PARAMETER name:e type:kotlin.Throwable flags:val
             BLOCK type=kotlin.Unit origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test>(): kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:Unit flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test>(): Unit'
+        RETURN type=kotlin.Nothing from=<get-test>(): Unit'
           GET_FIELD 'test: Unit' type=kotlin.Unit origin=null
+

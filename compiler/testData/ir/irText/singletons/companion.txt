@@ -1,36 +1,36 @@
-FILE /companion.kt
-  CLASS CLASS Z
-    $this: VALUE_PARAMETER this@Z: Z
-    CONSTRUCTOR public constructor Z()
+FILE fqName:<root> fileName:/companion.kt
+  CLASS CLASS name:Z modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z flags:
+    CONSTRUCTOR visibility:public <> () returnType:Z flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Z'
-    FUN public final fun test2(): kotlin.Unit
-      $this: VALUE_PARAMETER this@Z: Z
+    FUN name:test2 visibility:public modality:FINAL <> ($this:Z) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:Z flags:
       BLOCK_BODY
         CALL 'test(): Unit' type=kotlin.Unit origin=null
           $this: GET_OBJECT 'companion object of Z' type=Z.Companion
-    CLASS OBJECT companion object of Z
-      $this: VALUE_PARAMETER this@Companion: Companion
-      CONSTRUCTOR private constructor Companion()
+    CLASS OBJECT name:Companion modality:FINAL visibility:public flags:companion
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z.Companion flags:
+      CONSTRUCTOR visibility:private <> () returnType:Z.Companion flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='companion object of Z'
-      FUN public final fun test(): kotlin.Unit
-        $this: VALUE_PARAMETER this@Companion: Companion
+      FUN name:test visibility:public modality:FINAL <> ($this:Z.Companion) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:Z.Companion flags:
         BLOCK_BODY
-      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        $this: VALUE_PARAMETER this@Any: Any
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-        $this: VALUE_PARAMETER this@Any: Any
-      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-        $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

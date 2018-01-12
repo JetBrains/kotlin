@@ -2,11 +2,11 @@
 // FUN: digitCountInNumber
 BB 0
 CONTENT
-      1 FUN public fun digitCountInNumber(n: kotlin.Int, m: kotlin.Int): kotlin.Int
-      2 CONST Int type=kotlin.Int value='0'
-      3 VAR var count: kotlin.Int
+      1 FUN name:digitCountInNumber visibility:public modality:FINAL <> (n:kotlin.Int, m:kotlin.Int) returnType:Int flags:
+      2 CONST Int type=kotlin.Int value=0
+      3 VAR name:count type:kotlin.Int flags:var
       4 GET_VAR 'value-parameter n: Int' type=kotlin.Int origin=null
-      5 VAR var number: kotlin.Int
+      5 VAR name:number type:kotlin.Int flags:var
       6 DO_WHILE label=null origin=DO_WHILE_LOOP
 OUTGOING -> BB 1
     Do..while entry: DO_WHILE label=null origin=DO_WHILE_LOOP
@@ -17,7 +17,7 @@ CONTENT
       1 WHEN type=kotlin.Unit origin=null
       2 GET_VAR 'value-parameter m: Int' type=kotlin.Int origin=null
       3 GET_VAR 'number: Int' type=kotlin.Int origin=null
-      4 CONST Int type=kotlin.Int value='10'
+      4 CONST Int type=kotlin.Int value=10
       5 CALL 'rem(Int): Int' type=kotlin.Int origin=PERC
 OUTGOING -> BB 2
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
@@ -26,7 +26,7 @@ INCOMING <- BB 1
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
       1 GET_VAR 'count: Int' type=kotlin.Int origin=POSTFIX_INCR
-      2 VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
+      2 VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:val
       3 SET_VAR 'count: Int' type=kotlin.Unit origin=POSTFIX_INCR
       4 GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
       5 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -38,7 +38,7 @@ INCOMING <- BB 2
 CONTENT
       1 SET_VAR 'number: Int' type=kotlin.Unit origin=DIVEQ
       2 GET_VAR 'number: Int' type=kotlin.Int origin=null
-      3 CONST Int type=kotlin.Int value='0'
+      3 CONST Int type=kotlin.Int value=0
       4 CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
 OUTGOING -> BB 4, 5
     CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -59,9 +59,9 @@ INCOMING <- BB 5
     Do..while exit: DO_WHILE label=null origin=DO_WHILE_LOOP
 CONTENT
       1 GET_VAR 'count: Int' type=kotlin.Int origin=null
-      2 RETURN type=kotlin.Nothing from='digitCountInNumber(Int, Int): Int'
+      2 RETURN type=kotlin.Nothing from=digitCountInNumber(Int, Int): Int'
 OUTGOING -> NONE
-    Function exit: FUN public fun digitCountInNumber(n: kotlin.Int, m: kotlin.Int): kotlin.Int
+    Function exit: FUN name:digitCountInNumber visibility:public modality:FINAL <> (n:kotlin.Int, m:kotlin.Int) returnType:Int flags:
 
 // END FUN: digitCountInNumber
 

@@ -1,14 +1,14 @@
-FILE /coercionInLoop.kt
-  FUN public fun box(): kotlin.String
+FILE fqName:<root> fileName:/coercionInLoop.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:String flags:
     BLOCK_BODY
-      VAR val a: kotlin.DoubleArray
+      VAR name:a type:kotlin.DoubleArray flags:val
         CALL 'constructor DoubleArray(Int)' type=kotlin.DoubleArray origin=null
-          size: CONST Int type=kotlin.Int value='5'
-      VAR val x: kotlin.collections.DoubleIterator
+          size: CONST Int type=kotlin.Int value=5
+      VAR name:x type:kotlin.collections.DoubleIterator flags:val
         CALL 'iterator(): DoubleIterator' type=kotlin.collections.DoubleIterator origin=null
           $this: GET_VAR 'a: DoubleArray' type=kotlin.DoubleArray origin=null
-      VAR var i: kotlin.Int
-        CONST Int type=kotlin.Int value='0'
+      VAR name:i type:kotlin.Int flags:var
+        CONST Int type=kotlin.Int value=0
       WHILE label=null origin=WHILE_LOOP
         condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean origin=null
           $this: GET_VAR 'x: DoubleIterator' type=kotlin.collections.DoubleIterator origin=null
@@ -22,18 +22,18 @@ FILE /coercionInLoop.kt
                     index: GET_VAR 'i: Int' type=kotlin.Int origin=null
                   arg1: CALL 'next(): Double' type=kotlin.Double origin=null
                     $this: GET_VAR 'x: DoubleIterator' type=kotlin.collections.DoubleIterator origin=null
-              then: RETURN type=kotlin.Nothing from='box(): String'
+              then: RETURN type=kotlin.Nothing from=box(): String'
                 STRING_CONCATENATION type=kotlin.String
-                  CONST String type=kotlin.String value='Fail '
+                  CONST String type=kotlin.String value=Fail 
                   GET_VAR 'i: Int' type=kotlin.Int origin=null
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
             BLOCK type=kotlin.Int origin=POSTFIX_INCR
-              VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
+              VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:val
                 GET_VAR 'i: Int' type=kotlin.Int origin=POSTFIX_INCR
               SET_VAR 'i: Int' type=kotlin.Unit origin=POSTFIX_INCR
                 CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
                   $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
               GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
-      RETURN type=kotlin.Nothing from='box(): String'
-        CONST String type=kotlin.String value='OK'
+      RETURN type=kotlin.Nothing from=box(): String'
+        CONST String type=kotlin.String value=OK
 

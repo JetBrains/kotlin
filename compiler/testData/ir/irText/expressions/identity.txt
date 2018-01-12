@@ -1,26 +1,26 @@
-FILE /identity.kt
-  FUN public fun test1(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Int
-    VALUE_PARAMETER value-parameter b: kotlin.Int
+FILE fqName:<root> fileName:/identity.kt
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(Int, Int): Boolean'
+      RETURN type=kotlin.Nothing from=test1(Int, Int): Boolean'
         CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
           arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN public fun test2(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Int
-    VALUE_PARAMETER value-parameter b: kotlin.Int
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(Int, Int): Boolean'
+      RETURN type=kotlin.Nothing from=test2(Int, Int): Boolean'
         CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQEQ
           arg0: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQEQ
             arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
             arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN public fun test3(a: kotlin.Any?, b: kotlin.Any?): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Any?
-    VALUE_PARAMETER value-parameter b: kotlin.Any?
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Any?, b:kotlin.Any?) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Any? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test3(Any?, Any?): Boolean'
+      RETURN type=kotlin.Nothing from=test3(Any?, Any?): Boolean'
         CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
           arg0: GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
           arg1: GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null

@@ -1,34 +1,34 @@
-FILE /stringPlus.kt
-  FUN public fun test1(a: kotlin.String, b: kotlin.Any): kotlin.String
-    VALUE_PARAMETER value-parameter a: kotlin.String
-    VALUE_PARAMETER value-parameter b: kotlin.Any
+FILE fqName:<root> fileName:/stringPlus.kt
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Any) returnType:String flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(String, Any): String'
+      RETURN type=kotlin.Nothing from=test1(String, Any): String'
         CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
           $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
           other: GET_VAR 'value-parameter b: Any' type=kotlin.Any origin=null
-  FUN public fun test2(a: kotlin.String, b: kotlin.Int): kotlin.String
-    VALUE_PARAMETER value-parameter a: kotlin.String
-    VALUE_PARAMETER value-parameter b: kotlin.Int
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:String flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(String, Int): String'
+      RETURN type=kotlin.Nothing from=test2(String, Int): String'
         CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
           $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
-            other: CONST String type=kotlin.String value='+'
+            other: CONST String type=kotlin.String value=+
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN public fun test3(a: kotlin.String, b: kotlin.Int): kotlin.String
-    VALUE_PARAMETER value-parameter a: kotlin.String
-    VALUE_PARAMETER value-parameter b: kotlin.Int
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:String flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test3(String, Int): String'
+      RETURN type=kotlin.Nothing from=test3(String, Int): String'
         CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
           $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
             $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
               $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
-              other: CONST String type=kotlin.String value='+'
+              other: CONST String type=kotlin.String value=+
             other: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
               $this: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-              other: CONST Int type=kotlin.Int value='1'
+              other: CONST Int type=kotlin.Int value=1
           other: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
 

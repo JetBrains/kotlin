@@ -1,20 +1,20 @@
-FILE /tryCatchWithImplicitCast.kt
-  FUN public fun testImplicitCast(a: kotlin.Any): kotlin.Unit
-    VALUE_PARAMETER value-parameter a: kotlin.Any
+FILE fqName:<root> fileName:/tryCatchWithImplicitCast.kt
+  FUN name:testImplicitCast visibility:public modality:FINAL <> (a:kotlin.Any) returnType:Unit flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from='testImplicitCast(Any): Unit'
+          then: RETURN type=kotlin.Nothing from=testImplicitCast(Any): Unit'
             GET_OBJECT 'Unit' type=kotlin.Unit
-      VAR val t: kotlin.String
+      VAR name:t type:kotlin.String flags:val
         TRY type=kotlin.String
           try: BLOCK type=kotlin.String origin=null
             TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
               GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
           CATCH parameter=e: Throwable
-            VAR CATCH_PARAMETER val e: kotlin.Throwable
+            VAR CATCH_PARAMETER name:e type:kotlin.Throwable flags:val
             BLOCK type=kotlin.String origin=null
-              CONST String type=kotlin.String value=''
+              CONST String type=kotlin.String value=
 

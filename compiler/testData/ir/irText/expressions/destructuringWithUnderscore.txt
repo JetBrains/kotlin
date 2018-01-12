@@ -1,59 +1,59 @@
-FILE /destructuringWithUnderscore.kt
-  CLASS OBJECT A
-    $this: VALUE_PARAMETER this@A: A
-    CONSTRUCTOR private constructor A()
+FILE fqName:<root> fileName:/destructuringWithUnderscore.kt
+  CLASS OBJECT name:A modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    CONSTRUCTOR visibility:private <> () returnType:A flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS OBJECT B
-    $this: VALUE_PARAMETER this@B: B
-    CONSTRUCTOR private constructor B()
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS OBJECT name:B modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B flags:
+    CONSTRUCTOR visibility:private <> () returnType:B flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
-    FUN public final operator fun A.component1(): kotlin.Int
-      $this: VALUE_PARAMETER this@B: B
-      $receiver: VALUE_PARAMETER this@component1: A
+    FUN name:component1 visibility:public modality:FINAL <> ($this:B, $receiver:A) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:B flags:
+      $receiver: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='component1() on A: Int'
-          CONST Int type=kotlin.Int value='1'
-    FUN public final operator fun A.component2(): kotlin.Int
-      $this: VALUE_PARAMETER this@B: B
-      $receiver: VALUE_PARAMETER this@component2: A
+        RETURN type=kotlin.Nothing from=component1() on A: Int'
+          CONST Int type=kotlin.Int value=1
+    FUN name:component2 visibility:public modality:FINAL <> ($this:B, $receiver:A) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:B flags:
+      $receiver: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='component2() on A: Int'
-          CONST Int type=kotlin.Int value='2'
-    FUN public final operator fun A.component3(): kotlin.Int
-      $this: VALUE_PARAMETER this@B: B
-      $receiver: VALUE_PARAMETER this@component3: A
+        RETURN type=kotlin.Nothing from=component2() on A: Int'
+          CONST Int type=kotlin.Int value=2
+    FUN name:component3 visibility:public modality:FINAL <> ($this:B, $receiver:A) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:B flags:
+      $receiver: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='component3() on A: Int'
-          CONST Int type=kotlin.Int value='3'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun B.test(): kotlin.Unit
-    $receiver: VALUE_PARAMETER this@test: B
+        RETURN type=kotlin.Nothing from=component3() on A: Int'
+          CONST Int type=kotlin.Int value=3
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:test visibility:public modality:FINAL <> ($receiver:B) returnType:Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:B flags:
     BLOCK_BODY
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
-        VAR IR_TEMPORARY_VARIABLE val tmp0_container: A
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_container type:A flags:val
           GET_OBJECT 'A' type=A
-        VAR val x: kotlin.Int
+        VAR name:x type:kotlin.Int flags:val
           CALL 'component1() on A: Int' type=kotlin.Int origin=COMPONENT_N(index=1)
             $this: GET_VAR 'this@test: B' type=B origin=null
             $receiver: GET_VAR 'tmp0_container: A' type=A origin=null
-        VAR val z: kotlin.Int
+        VAR name:z type:kotlin.Int flags:val
           CALL 'component3() on A: Int' type=kotlin.Int origin=COMPONENT_N(index=3)
             $this: GET_VAR 'this@test: B' type=B origin=null
             $receiver: GET_VAR 'tmp0_container: A' type=A origin=null

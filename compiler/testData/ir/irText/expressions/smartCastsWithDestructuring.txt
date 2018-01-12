@@ -1,48 +1,48 @@
-FILE /smartCastsWithDestructuring.kt
-  CLASS INTERFACE I1
-    $this: VALUE_PARAMETER this@I1: I1
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS INTERFACE I2
-    $this: VALUE_PARAMETER this@I2: I2
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public operator fun I1.component1(): kotlin.Int
-    $receiver: VALUE_PARAMETER this@component1: I1
+FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
+  CLASS INTERFACE name:I1 modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:I1 flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS INTERFACE name:I2 modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:I2 flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:component1 visibility:public modality:FINAL <> ($receiver:I1) returnType:Int flags:
+    $receiver: VALUE_PARAMETER name:<this> type:I1 flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='component1() on I1: Int'
-        CONST Int type=kotlin.Int value='1'
-  FUN public operator fun I2.component2(): kotlin.String
-    $receiver: VALUE_PARAMETER this@component2: I2
+      RETURN type=kotlin.Nothing from=component1() on I1: Int'
+        CONST Int type=kotlin.Int value=1
+  FUN name:component2 visibility:public modality:FINAL <> ($receiver:I2) returnType:String flags:
+    $receiver: VALUE_PARAMETER name:<this> type:I2 flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='component2() on I2: String'
-        CONST String type=kotlin.String value=''
-  FUN public fun test(x: I1): kotlin.Unit
-    VALUE_PARAMETER value-parameter x: I1
+      RETURN type=kotlin.Nothing from=component2() on I2: String'
+        CONST String type=kotlin.String value=
+  FUN name:test visibility:public modality:FINAL <> (x:I1) returnType:Unit flags:
+    VALUE_PARAMETER name:x index:0 type:I1 flags:
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=I2
             GET_VAR 'value-parameter x: I1' type=I1 origin=null
-          then: RETURN type=kotlin.Nothing from='test(I1): Unit'
+          then: RETURN type=kotlin.Nothing from=test(I1): Unit'
             GET_OBJECT 'Unit' type=kotlin.Unit
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
-        VAR IR_TEMPORARY_VARIABLE val tmp0_container: I1
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_container type:I1 flags:val
           GET_VAR 'value-parameter x: I1' type=I1 origin=null
-        VAR val c1: kotlin.Int
+        VAR name:c1 type:kotlin.Int flags:val
           CALL 'component1() on I1: Int' type=kotlin.Int origin=COMPONENT_N(index=1)
             $receiver: GET_VAR 'tmp0_container: I1' type=I1 origin=null
-        VAR val c2: kotlin.String
+        VAR name:c2 type:kotlin.String flags:val
           CALL 'component2() on I2: String' type=kotlin.String origin=COMPONENT_N(index=2)
             $receiver: TYPE_OP type=I2 origin=IMPLICIT_CAST typeOperand=I2
               GET_VAR 'tmp0_container: I1' type=I1 origin=null

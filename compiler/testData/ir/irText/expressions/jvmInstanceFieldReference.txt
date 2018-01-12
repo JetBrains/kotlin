@@ -1,7 +1,7 @@
-FILE /Derived.kt
-  CLASS CLASS Derived
-    $this: VALUE_PARAMETER this@Derived: Derived
-    CONSTRUCTOR public constructor Derived()
+FILE fqName:<root> fileName:/Derived.kt
+  CLASS CLASS name:Derived modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Derived flags:
+    CONSTRUCTOR visibility:public <> () returnType:Derived flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Derived'
@@ -9,27 +9,27 @@ FILE /Derived.kt
       BLOCK_BODY
         SET_FIELD 'value: Int' type=kotlin.Unit origin=EQ
           receiver: GET_VAR 'this@Derived: Derived' type=Derived origin=null
-          value: CONST Int type=kotlin.Int value='0'
-    FUN public final fun getValue(): kotlin.Int
-      $this: VALUE_PARAMETER this@Derived: Derived
+          value: CONST Int type=kotlin.Int value=0
+    FUN name:getValue visibility:public modality:FINAL <> ($this:Derived) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:Derived flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='getValue(): Int'
+        RETURN type=kotlin.Nothing from=getValue(): Int'
           GET_FIELD 'value: Int' type=kotlin.Int origin=GET_PROPERTY
             receiver: GET_VAR 'this@Derived: Derived' type=Derived origin=null
-    FUN public final fun setValue(value: kotlin.Int): kotlin.Unit
-      $this: VALUE_PARAMETER this@Derived: Derived
-      VALUE_PARAMETER value-parameter value: kotlin.Int
+    FUN name:setValue visibility:public modality:FINAL <> ($this:Derived, value:kotlin.Int) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:Derived flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'value: Int' type=kotlin.Unit origin=EQ
           receiver: GET_VAR 'this@Derived: Derived' type=Derived origin=null
           value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
-    PROPERTY FAKE_OVERRIDE public final override var value: kotlin.Int
-      FIELD FAKE_OVERRIDE public final override var value: kotlin.Int
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    PROPERTY FAKE_OVERRIDE name:value type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD FAKE_OVERRIDE name:value type:kotlin.Int visibility:public
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

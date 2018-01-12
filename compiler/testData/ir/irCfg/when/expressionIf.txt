@@ -2,7 +2,7 @@
 // FUN: max
 BB 0
 CONTENT
-      1 FUN public fun max(x: kotlin.Int, y: kotlin.Int): kotlin.Int
+      1 FUN name:max visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:Int flags:
       2 WHEN type=kotlin.Int origin=null
       3 GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
       4 GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=null
@@ -14,7 +14,7 @@ INCOMING <- BB 0
     CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
 OUTGOING -> BB 3
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 BB 2
 INCOMING <- BB 0
     CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -24,7 +24,7 @@ OUTGOING -> BB 4
     When exit: WHEN type=kotlin.Int origin=null
 BB 3
 INCOMING <- BB 1
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 CONTENT
       1 GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=null
 OUTGOING -> BB 4
@@ -33,9 +33,9 @@ BB 4
 INCOMING <- BB 2, 3
     When exit: WHEN type=kotlin.Int origin=null
 CONTENT
-      1 RETURN type=kotlin.Nothing from='max(Int, Int): Int'
+      1 RETURN type=kotlin.Nothing from=max(Int, Int): Int'
 OUTGOING -> NONE
-    Function exit: FUN public fun max(x: kotlin.Int, y: kotlin.Int): kotlin.Int
+    Function exit: FUN name:max visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:Int flags:
 
 // END FUN: max
 

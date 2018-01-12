@@ -1,102 +1,102 @@
-FILE /kt16904.kt
-  CLASS CLASS A
-    $this: VALUE_PARAMETER this@A: A
-    CONSTRUCTOR public constructor A()
+FILE fqName:<root> fileName:/kt16904.kt
+  CLASS CLASS name:A modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    CONSTRUCTOR visibility:public <> () returnType:A flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    PROPERTY public final val x: B
-      FIELD PROPERTY_BACKING_FIELD public final val x: B
+    PROPERTY name:x type:B visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:B visibility:public
         EXPRESSION_BODY
           CALL 'constructor B()' type=B origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): B
-        $this: VALUE_PARAMETER this@A: A
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:B flags:
+        $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-x>(): B'
+          RETURN type=kotlin.Nothing from=<get-x>(): B'
             GET_FIELD 'x: B' type=B origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
-    PROPERTY public final var y: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final var y: kotlin.Int
+    PROPERTY name:y type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='0'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
-        $this: VALUE_PARAMETER this@A: A
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-y>(): Int'
+          RETURN type=kotlin.Nothing from=<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@A: A
-        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-y> visibility:public modality:FINAL <> ($this:A, <set-?>:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:A flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
           SET_FIELD 'y: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR 'this@A: A' type=A origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS CLASS B
-    $this: VALUE_PARAMETER this@B: B
-    CONSTRUCTOR public constructor B()
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:B modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B flags:
+    CONSTRUCTOR visibility:public <> () returnType:B flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
-    FUN public final operator fun plusAssign(x: kotlin.Int): kotlin.Unit
-      $this: VALUE_PARAMETER this@B: B
-      VALUE_PARAMETER value-parameter x: kotlin.Int
+    FUN name:plusAssign visibility:public modality:FINAL <> ($this:B, x:kotlin.Int) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:B flags:
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS CLASS Test1
-    $this: VALUE_PARAMETER this@Test1: Test1
-    CONSTRUCTOR public constructor Test1()
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:Test1 modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test1 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor A()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
         BLOCK type=kotlin.Unit origin=PLUSEQ
-          VAR IR_TEMPORARY_VARIABLE val tmp0_this: Test1
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_this type:Test1 flags:val
             GET_VAR 'this@Test1: Test1' type=Test1 origin=null
           CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
             $this: CALL '<get-x>(): B' type=B origin=PLUSEQ
               $this: GET_VAR 'tmp0_this: Test1' type=Test1 origin=null
-            x: CONST Int type=kotlin.Int value='42'
+            x: CONST Int type=kotlin.Int value=42
         BLOCK type=kotlin.Unit origin=PLUSEQ
-          VAR IR_TEMPORARY_VARIABLE val tmp1_this: Test1
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_this type:Test1 flags:val
             GET_VAR 'this@Test1: Test1' type=Test1 origin=null
           CALL '<set-y>(Int): Unit' type=kotlin.Unit origin=PLUSEQ
             $this: GET_VAR 'tmp1_this: Test1' type=Test1 origin=null
             <set-?>: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
               $this: CALL '<get-y>(): Int' type=kotlin.Int origin=PLUSEQ
                 $this: GET_VAR 'tmp1_this: Test1' type=Test1 origin=null
-              other: CONST Int type=kotlin.Int value='42'
-    PROPERTY FAKE_OVERRIDE public final override val x: B
-      FUN FAKE_OVERRIDE public final override fun <get-x>(): B
-        $this: VALUE_PARAMETER this@A: A
-    PROPERTY FAKE_OVERRIDE public final override var y: kotlin.Int
-      FUN FAKE_OVERRIDE public final override fun <get-y>(): kotlin.Int
-        $this: VALUE_PARAMETER this@A: A
-      FUN FAKE_OVERRIDE public final override fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@A: A
-        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS CLASS Test2
-    $this: VALUE_PARAMETER this@Test2: Test2
-    CONSTRUCTOR public constructor Test2()
+              other: CONST Int type=kotlin.Int value=42
+    PROPERTY FAKE_OVERRIDE name:x type:B visibility:public modality:FINAL flags:val
+      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:B flags:
+        $this: VALUE_PARAMETER name:<this> type:A flags:
+    PROPERTY FAKE_OVERRIDE name:y type:kotlin.Int visibility:public modality:FINAL flags:var
+      FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:A flags:
+      FUN FAKE_OVERRIDE name:<set-y> visibility:public modality:FINAL <> ($this:A, <set-?>:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:A flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:Test2 modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test2 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor J()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
@@ -104,14 +104,14 @@ FILE /kt16904.kt
       BLOCK_BODY
         SET_FIELD 'field: Int' type=kotlin.Unit origin=EQ
           receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
-          value: CONST Int type=kotlin.Int value='42'
-    PROPERTY FAKE_OVERRIDE public final override var field: kotlin.Int
-      FIELD FAKE_OVERRIDE public final override var field: kotlin.Int
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+          value: CONST Int type=kotlin.Int value=42
+    PROPERTY FAKE_OVERRIDE name:field type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD FAKE_OVERRIDE name:field type:kotlin.Int visibility:public
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

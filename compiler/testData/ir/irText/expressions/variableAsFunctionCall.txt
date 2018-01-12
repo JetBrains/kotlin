@@ -1,60 +1,60 @@
-FILE /variableAsFunctionCall.kt
-  FUN public fun kotlin.String.k(): () -> kotlin.String
-    $receiver: VALUE_PARAMETER this@k: String
+FILE fqName:<root> fileName:/variableAsFunctionCall.kt
+  FUN name:k visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:Function0<String> flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='k() on String: () -> String'
+      RETURN type=kotlin.Nothing from=k() on String: () -> String'
         BLOCK type=() -> kotlin.String origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.String
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:String flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='<anonymous>(): String'
+              RETURN type=kotlin.Nothing from=<anonymous>(): String'
                 GET_VAR 'this@k: String' type=kotlin.String origin=null
           FUNCTION_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
-  FUN public fun test1(f: () -> kotlin.Unit): kotlin.Unit
-    VALUE_PARAMETER value-parameter f: () -> kotlin.Unit
+  FUN name:test1 visibility:public modality:FINAL <> (f:() -> kotlin.Unit) returnType:Unit flags:
+    VALUE_PARAMETER name:f index:0 type:() -> kotlin.Unit flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(() -> Unit): Unit'
+      RETURN type=kotlin.Nothing from=test1(() -> Unit): Unit'
         CALL 'invoke(): Unit' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'value-parameter f: () -> Unit' type=() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
-  FUN public fun test2(f: kotlin.String.() -> kotlin.Unit): kotlin.Unit
-    VALUE_PARAMETER value-parameter f: kotlin.String.() -> kotlin.Unit
+  FUN name:test2 visibility:public modality:FINAL <> (f:kotlin.String.() -> kotlin.Unit) returnType:Unit flags:
+    VALUE_PARAMETER name:f index:0 type:kotlin.String.() -> kotlin.Unit flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(String.() -> Unit): Unit'
+      RETURN type=kotlin.Nothing from=test2(String.() -> Unit): Unit'
         CALL 'invoke(String): Unit' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'value-parameter f: String.() -> Unit' type=kotlin.String.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
-          p1: CONST String type=kotlin.String value='hello'
-  FUN public fun test3(): kotlin.String
+          p1: CONST String type=kotlin.String value=hello
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test3(): String'
+      RETURN type=kotlin.Nothing from=test3(): String'
         CALL 'invoke(): String' type=kotlin.String origin=null
           $this: CALL 'k() on String: () -> String' type=() -> kotlin.String origin=null
-            $receiver: CONST String type=kotlin.String value='hello'
-  FUN public fun test4(ns: kotlin.String?): kotlin.String?
-    VALUE_PARAMETER value-parameter ns: kotlin.String?
+            $receiver: CONST String type=kotlin.String value=hello
+  FUN name:test4 visibility:public modality:FINAL <> (ns:kotlin.String?) returnType:String? flags:
+    VALUE_PARAMETER name:ns index:0 type:kotlin.String? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test4(String?): String?'
+      RETURN type=kotlin.Nothing from=test4(String?): String?'
         BLOCK type=kotlin.String? origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE val tmp1_safe_receiver: (() -> kotlin.String)?
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:(() -> kotlin.String)? flags:val
             BLOCK type=(() -> kotlin.String)? origin=SAFE_CALL
-              VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.String?
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
                 GET_VAR 'value-parameter ns: String?' type=kotlin.String? origin=null
               WHEN type=(() -> kotlin.String)? origin=SAFE_CALL
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
-                    arg1: CONST Null type=kotlin.Nothing? value='null'
-                  then: CONST Null type=kotlin.Nothing? value='null'
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value='true'
+                  if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'k() on String: () -> String' type=() -> kotlin.String origin=null
                     $receiver: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
           WHEN type=kotlin.String? origin=SAFE_CALL
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp1_safe_receiver: (() -> String)?' type=(() -> kotlin.String)? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
-              then: CONST Null type=kotlin.Nothing? value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'invoke(): String' type=kotlin.String origin=null
                 $this: GET_VAR 'tmp1_safe_receiver: (() -> String)?' type=(() -> kotlin.String)? origin=null
 

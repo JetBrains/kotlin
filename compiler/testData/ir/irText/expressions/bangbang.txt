@@ -1,46 +1,46 @@
-FILE /bangbang.kt
-  FUN public fun test1(a: kotlin.Any?): kotlin.Any
-    VALUE_PARAMETER value-parameter a: kotlin.Any?
+FILE fqName:<root> fileName:/bangbang.kt
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:Any flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(Any?): Any'
+      RETURN type=kotlin.Nothing from=test1(Any?): Any'
         BLOCK type=kotlin.Any origin=EXCLEXCL
-          VAR IR_TEMPORARY_VARIABLE val tmp0_notnull: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Any? flags:val
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
           WHEN type=kotlin.Any origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? origin=null
-  FUN public fun test2(a: kotlin.Any?): kotlin.Int
-    VALUE_PARAMETER value-parameter a: kotlin.Any?
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:Int flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(Any?): Int'
+      RETURN type=kotlin.Nothing from=test2(Any?): Int'
         BLOCK type=kotlin.Int origin=EXCLEXCL
-          VAR IR_TEMPORARY_VARIABLE val tmp1_notnull: kotlin.Int?
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_notnull type:kotlin.Int? flags:val
             BLOCK type=kotlin.Int? origin=SAFE_CALL
-              VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.Any?
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:val
                 GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
               WHEN type=kotlin.Int? origin=SAFE_CALL
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
-                    arg1: CONST Null type=kotlin.Nothing? value='null'
-                  then: CONST Null type=kotlin.Nothing? value='null'
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value='true'
+                  if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'hashCode(): Int' type=kotlin.Int origin=null
                     $this: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
           WHEN type=kotlin.Int origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? origin=null
 

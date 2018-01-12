@@ -1,78 +1,78 @@
-FILE /chainOfSafeCalls.kt
-  CLASS CLASS C
-    $this: VALUE_PARAMETER this@C: C
-    CONSTRUCTOR public constructor C()
+FILE fqName:<root> fileName:/chainOfSafeCalls.kt
+  CLASS CLASS name:C modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+    CONSTRUCTOR visibility:public <> () returnType:C flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
-    FUN public final fun foo(): C
-      $this: VALUE_PARAMETER this@C: C
+    FUN name:foo visibility:public modality:FINAL <> ($this:C) returnType:C flags:
+      $this: VALUE_PARAMETER name:<this> type:C flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='foo(): C'
+        RETURN type=kotlin.Nothing from=foo(): C'
           GET_VAR 'this@C: C' type=C origin=null
-    FUN public final fun bar(): C?
-      $this: VALUE_PARAMETER this@C: C
+    FUN name:bar visibility:public modality:FINAL <> ($this:C) returnType:C? flags:
+      $this: VALUE_PARAMETER name:<this> type:C flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='bar(): C?'
+        RETURN type=kotlin.Nothing from=bar(): C?'
           GET_VAR 'this@C: C' type=C origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun test(nc: C?): C?
-    VALUE_PARAMETER value-parameter nc: C?
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:test visibility:public modality:FINAL <> (nc:C?) returnType:C? flags:
+    VALUE_PARAMETER name:nc index:0 type:C? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(C?): C?'
+      RETURN type=kotlin.Nothing from=test(C?): C?'
         BLOCK type=C? origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE val tmp3_safe_receiver: C?
+          VAR IR_TEMPORARY_VARIABLE name:tmp3_safe_receiver type:C? flags:val
             BLOCK type=C? origin=SAFE_CALL
-              VAR IR_TEMPORARY_VARIABLE val tmp2_safe_receiver: C?
+              VAR IR_TEMPORARY_VARIABLE name:tmp2_safe_receiver type:C? flags:val
                 BLOCK type=C? origin=SAFE_CALL
-                  VAR IR_TEMPORARY_VARIABLE val tmp1_safe_receiver: C?
+                  VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:C? flags:val
                     BLOCK type=C? origin=SAFE_CALL
-                      VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: C?
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:C? flags:val
                         GET_VAR 'value-parameter nc: C?' type=C? origin=null
                       WHEN type=C? origin=SAFE_CALL
                         BRANCH
                           if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                             arg0: GET_VAR 'tmp0_safe_receiver: C?' type=C? origin=null
-                            arg1: CONST Null type=kotlin.Nothing? value='null'
-                          then: CONST Null type=kotlin.Nothing? value='null'
+                            arg1: CONST Null type=kotlin.Nothing? value=null
+                          then: CONST Null type=kotlin.Nothing? value=null
                         BRANCH
-                          if: CONST Boolean type=kotlin.Boolean value='true'
+                          if: CONST Boolean type=kotlin.Boolean value=true
                           then: CALL 'foo(): C' type=C origin=null
                             $this: GET_VAR 'tmp0_safe_receiver: C?' type=C? origin=null
                   WHEN type=C? origin=SAFE_CALL
                     BRANCH
                       if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'tmp1_safe_receiver: C?' type=C? origin=null
-                        arg1: CONST Null type=kotlin.Nothing? value='null'
-                      then: CONST Null type=kotlin.Nothing? value='null'
+                        arg1: CONST Null type=kotlin.Nothing? value=null
+                      then: CONST Null type=kotlin.Nothing? value=null
                     BRANCH
-                      if: CONST Boolean type=kotlin.Boolean value='true'
+                      if: CONST Boolean type=kotlin.Boolean value=true
                       then: CALL 'bar(): C?' type=C? origin=null
                         $this: GET_VAR 'tmp1_safe_receiver: C?' type=C? origin=null
               WHEN type=C? origin=SAFE_CALL
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp2_safe_receiver: C?' type=C? origin=null
-                    arg1: CONST Null type=kotlin.Nothing? value='null'
-                  then: CONST Null type=kotlin.Nothing? value='null'
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value='true'
+                  if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'foo(): C' type=C origin=null
                     $this: GET_VAR 'tmp2_safe_receiver: C?' type=C? origin=null
           WHEN type=C? origin=SAFE_CALL
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp3_safe_receiver: C?' type=C? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
-              then: CONST Null type=kotlin.Nothing? value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'foo(): C' type=C origin=null
                 $this: GET_VAR 'tmp3_safe_receiver: C?' type=C? origin=null
 

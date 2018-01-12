@@ -1,32 +1,32 @@
-FILE /simpleUnaryOperators.kt
-  FUN public fun test1(x: kotlin.Int): kotlin.Int
-    VALUE_PARAMETER value-parameter x: kotlin.Int
+FILE fqName:<root> fileName:/simpleUnaryOperators.kt
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(Int): Int'
+      RETURN type=kotlin.Nothing from=test1(Int): Int'
         CALL 'unaryMinus(): Int' type=kotlin.Int origin=UMINUS
           $this: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
-  FUN public fun test2(): kotlin.Int
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(): Int'
-        CONST Int type=kotlin.Int value='-42'
-  FUN public fun test3(x: kotlin.Int): kotlin.Int
-    VALUE_PARAMETER value-parameter x: kotlin.Int
+      RETURN type=kotlin.Nothing from=test2(): Int'
+        CONST Int type=kotlin.Int value=-42
+  FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test3(Int): Int'
+      RETURN type=kotlin.Nothing from=test3(Int): Int'
         CALL 'unaryPlus(): Int' type=kotlin.Int origin=UPLUS
           $this: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
-  FUN public fun test4(): kotlin.Int
+  FUN name:test4 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test4(): Int'
-        CONST Int type=kotlin.Int value='42'
-  FUN public fun test5(x: kotlin.Boolean): kotlin.Boolean
-    VALUE_PARAMETER value-parameter x: kotlin.Boolean
+      RETURN type=kotlin.Nothing from=test4(): Int'
+        CONST Int type=kotlin.Int value=42
+  FUN name:test5 visibility:public modality:FINAL <> (x:kotlin.Boolean) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Boolean flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test5(Boolean): Boolean'
+      RETURN type=kotlin.Nothing from=test5(Boolean): Boolean'
         CALL 'not(): Boolean' type=kotlin.Boolean origin=EXCL
           $this: GET_VAR 'value-parameter x: Boolean' type=kotlin.Boolean origin=null
-  FUN public fun test6(): kotlin.Boolean
+  FUN name:test6 visibility:public modality:FINAL <> () returnType:Boolean flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test6(): Boolean'
-        CONST Boolean type=kotlin.Boolean value='false'
+      RETURN type=kotlin.Nothing from=test6(): Boolean'
+        CONST Boolean type=kotlin.Boolean value=false
 

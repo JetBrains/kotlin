@@ -1,71 +1,71 @@
-FILE /fakeOverrides.kt
-  CLASS INTERFACE IFooStr
-    $this: VALUE_PARAMETER this@IFooStr: IFooStr
-    FUN public abstract fun foo(x: kotlin.String): kotlin.Unit
-      $this: VALUE_PARAMETER this@IFooStr: IFooStr
-      VALUE_PARAMETER value-parameter x: kotlin.String
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS INTERFACE IBar
-    $this: VALUE_PARAMETER this@IBar: IBar
-    PROPERTY public abstract val bar: kotlin.Int
-      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-bar>(): kotlin.Int
-        $this: VALUE_PARAMETER this@IBar: IBar
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS CLASS CFoo
-    $this: VALUE_PARAMETER this@CFoo: CFoo<T>
-    TYPE_PARAMETER <T>
-    CONSTRUCTOR public constructor CFoo<T>()
+FILE fqName:<root> fileName:/fakeOverrides.kt
+  CLASS INTERFACE name:IFooStr modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IFooStr flags:
+    FUN name:foo visibility:public modality:ABSTRACT <> ($this:IFooStr, x:kotlin.String) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:IFooStr flags:
+      VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS INTERFACE name:IBar modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IBar flags:
+    PROPERTY name:bar type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:IBar) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:IBar flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:CFoo modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:CFoo<T> flags:
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> () returnType:CFoo<T> flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='CFoo'
-    FUN public final fun foo(x: T): kotlin.Unit
-      $this: VALUE_PARAMETER this@CFoo: CFoo<T>
-      VALUE_PARAMETER value-parameter x: T
+    FUN name:foo visibility:public modality:FINAL <> ($this:CFoo<T>, x:T) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:CFoo<T> flags:
+      VALUE_PARAMETER name:x index:0 type:T flags:
       BLOCK_BODY
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS CLASS Test1
-    $this: VALUE_PARAMETER this@Test1: Test1
-    CONSTRUCTOR public constructor Test1()
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:Test1 modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test1 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor CFoo()'
           <T>: String
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
-    PROPERTY public open override val bar: kotlin.Int = 42
-      FIELD PROPERTY_BACKING_FIELD public open override val bar: kotlin.Int = 42
+    PROPERTY name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
+      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='42'
-      FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <get-bar>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Test1: Test1
+          CONST Int type=kotlin.Int value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:Test1) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Test1 flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
+          RETURN type=kotlin.Nothing from=<get-bar>(): Int'
             GET_FIELD 'bar: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-    FUN FAKE_OVERRIDE public final override fun foo(x: kotlin.String): kotlin.Unit
-      $this: VALUE_PARAMETER this@CFoo: CFoo<String>
-      VALUE_PARAMETER value-parameter x: kotlin.String
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:CFoo<kotlin.String>, x:kotlin.String) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:CFoo<kotlin.String> flags:
+      VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

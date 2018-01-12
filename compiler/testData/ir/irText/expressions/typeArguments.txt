@@ -1,8 +1,8 @@
-FILE /typeArguments.kt
-  FUN public fun test1(x: kotlin.Any): kotlin.Boolean
-    VALUE_PARAMETER value-parameter x: kotlin.Any
+FILE fqName:<root> fileName:/typeArguments.kt
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(Any): Boolean'
+      RETURN type=kotlin.Nothing from=test1(Any): Boolean'
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
@@ -12,6 +12,6 @@ FILE /typeArguments.kt
               $receiver: TYPE_OP type=kotlin.Array<*> origin=IMPLICIT_CAST typeOperand=kotlin.Array<*>
                 GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
           BRANCH
-            if: CONST Boolean type=kotlin.Boolean value='true'
-            then: CONST Boolean type=kotlin.Boolean value='false'
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
 

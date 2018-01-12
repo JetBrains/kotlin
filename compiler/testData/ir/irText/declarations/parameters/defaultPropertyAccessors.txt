@@ -1,108 +1,108 @@
-FILE /defaultPropertyAccessors.kt
-  PROPERTY public val test1: kotlin.Int = 42
-    FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Int = 42
+FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
+  PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.Int
+        CONST Int type=kotlin.Int value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1>(): Int'
+        RETURN type=kotlin.Nothing from=<get-test1>(): Int'
           GET_FIELD 'test1: Int' type=kotlin.Int origin=null
-  PROPERTY public var test2: kotlin.Int
-    FIELD PROPERTY_BACKING_FIELD public var test2: kotlin.Int
+  PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): kotlin.Int
+        CONST Int type=kotlin.Int value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2>(): Int'
+        RETURN type=kotlin.Nothing from=<get-test2>(): Int'
           GET_FIELD 'test2: Int' type=kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <set-test2>(<set-?>: kotlin.Int): kotlin.Unit
-      VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test2> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'test2: Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-  CLASS CLASS Host
-    $this: VALUE_PARAMETER this@Host: Host
-    CONSTRUCTOR public constructor Host()
+  CLASS CLASS name:Host modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host flags:
+    CONSTRUCTOR visibility:public <> () returnType:Host flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
-    PROPERTY public final val testMember1: kotlin.Int = 42
-      FIELD PROPERTY_BACKING_FIELD public final val testMember1: kotlin.Int = 42
+    PROPERTY name:testMember1 type:kotlin.Int visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:testMember1 type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='42'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-testMember1>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Host: Host
+          CONST Int type=kotlin.Int value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testMember1> visibility:public modality:FINAL <> ($this:Host) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Host flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-testMember1>(): Int'
+          RETURN type=kotlin.Nothing from=<get-testMember1>(): Int'
             GET_FIELD 'testMember1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Host: Host' type=Host origin=null
-    PROPERTY public final var testMember2: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final var testMember2: kotlin.Int
+    PROPERTY name:testMember2 type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:testMember2 type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='42'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-testMember2>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Host: Host
+          CONST Int type=kotlin.Int value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testMember2> visibility:public modality:FINAL <> ($this:Host) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Host flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-testMember2>(): Int'
+          RETURN type=kotlin.Nothing from=<get-testMember2>(): Int'
             GET_FIELD 'testMember2: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Host: Host' type=Host origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-testMember2>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@Host: Host
-        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testMember2> visibility:public modality:FINAL <> ($this:Host, <set-?>:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:Host flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
           SET_FIELD 'testMember2: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR 'this@Host: Host' type=Host origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS CLASS InPrimaryCtor
-    $this: VALUE_PARAMETER this@InPrimaryCtor: InPrimaryCtor<T>
-    TYPE_PARAMETER <T>
-    CONSTRUCTOR public constructor InPrimaryCtor<T>(testInPrimaryCtor1: T, testInPrimaryCtor2: kotlin.Int = ...)
-      VALUE_PARAMETER value-parameter testInPrimaryCtor1: T
-      VALUE_PARAMETER value-parameter testInPrimaryCtor2: kotlin.Int = ...
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:InPrimaryCtor modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:InPrimaryCtor<T> flags:
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (testInPrimaryCtor1:T, testInPrimaryCtor2:kotlin.Int) returnType:InPrimaryCtor<T> flags:
+      VALUE_PARAMETER name:testInPrimaryCtor1 index:0 type:T flags:
+      VALUE_PARAMETER name:testInPrimaryCtor2 index:1 type:kotlin.Int flags:
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='42'
+          CONST Int type=kotlin.Int value=42
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='InPrimaryCtor'
-    PROPERTY public final val testInPrimaryCtor1: T
-      FIELD PROPERTY_BACKING_FIELD public final val testInPrimaryCtor1: T
+    PROPERTY name:testInPrimaryCtor1 type:T visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor1 type:T visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter testInPrimaryCtor1: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-testInPrimaryCtor1>(): T
-        $this: VALUE_PARAMETER this@InPrimaryCtor: InPrimaryCtor<T>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testInPrimaryCtor1> visibility:public modality:FINAL <> ($this:InPrimaryCtor<T>) returnType:T flags:
+        $this: VALUE_PARAMETER name:<this> type:InPrimaryCtor<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-testInPrimaryCtor1>(): T'
+          RETURN type=kotlin.Nothing from=<get-testInPrimaryCtor1>(): T'
             GET_FIELD 'testInPrimaryCtor1: T' type=T origin=null
               receiver: GET_VAR 'this@InPrimaryCtor: InPrimaryCtor<T>' type=InPrimaryCtor<T> origin=null
-    PROPERTY public final var testInPrimaryCtor2: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final var testInPrimaryCtor2: kotlin.Int
+    PROPERTY name:testInPrimaryCtor2 type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor2 type:kotlin.Int visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter testInPrimaryCtor2: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-testInPrimaryCtor2>(): kotlin.Int
-        $this: VALUE_PARAMETER this@InPrimaryCtor: InPrimaryCtor<T>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testInPrimaryCtor2> visibility:public modality:FINAL <> ($this:InPrimaryCtor<T>) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:InPrimaryCtor<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-testInPrimaryCtor2>(): Int'
+          RETURN type=kotlin.Nothing from=<get-testInPrimaryCtor2>(): Int'
             GET_FIELD 'testInPrimaryCtor2: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@InPrimaryCtor: InPrimaryCtor<T>' type=InPrimaryCtor<T> origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-testInPrimaryCtor2>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@InPrimaryCtor: InPrimaryCtor<T>
-        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testInPrimaryCtor2> visibility:public modality:FINAL <> ($this:InPrimaryCtor<T>, <set-?>:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:InPrimaryCtor<T> flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
           SET_FIELD 'testInPrimaryCtor2: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR 'this@InPrimaryCtor: InPrimaryCtor<T>' type=InPrimaryCtor<T> origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

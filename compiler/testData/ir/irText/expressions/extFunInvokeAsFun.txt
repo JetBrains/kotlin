@@ -1,17 +1,18 @@
-FILE /extFunInvokeAsFun.kt
-  FUN public fun with1(receiver: kotlin.Any?, block: kotlin.Any?.() -> kotlin.Unit): kotlin.Unit
-    VALUE_PARAMETER value-parameter receiver: kotlin.Any?
-    VALUE_PARAMETER value-parameter block: kotlin.Any?.() -> kotlin.Unit
+FILE fqName:<root> fileName:/extFunInvokeAsFun.kt
+  FUN name:with1 visibility:public modality:FINAL <> (receiver:kotlin.Any?, block:kotlin.Any?.() -> kotlin.Unit) returnType:Unit flags:
+    VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? flags:
+    VALUE_PARAMETER name:block index:1 type:kotlin.Any?.() -> kotlin.Unit flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='with1(Any?, Any?.() -> Unit): Unit'
+      RETURN type=kotlin.Nothing from=with1(Any?, Any?.() -> Unit): Unit'
         CALL 'invoke(Any?): Unit' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'value-parameter block: Any?.() -> Unit' type=kotlin.Any?.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
           p1: GET_VAR 'value-parameter receiver: Any?' type=kotlin.Any? origin=null
-  FUN public fun with2(receiver: kotlin.Any?, block: kotlin.Any?.() -> kotlin.Unit): kotlin.Unit
-    VALUE_PARAMETER value-parameter receiver: kotlin.Any?
-    VALUE_PARAMETER value-parameter block: kotlin.Any?.() -> kotlin.Unit
+  FUN name:with2 visibility:public modality:FINAL <> (receiver:kotlin.Any?, block:kotlin.Any?.() -> kotlin.Unit) returnType:Unit flags:
+    VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? flags:
+    VALUE_PARAMETER name:block index:1 type:kotlin.Any?.() -> kotlin.Unit flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='with2(Any?, Any?.() -> Unit): Unit'
+      RETURN type=kotlin.Nothing from=with2(Any?, Any?.() -> Unit): Unit'
         CALL 'invoke(Any?): Unit' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'value-parameter block: Any?.() -> Unit' type=kotlin.Any?.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
           p1: GET_VAR 'value-parameter receiver: Any?' type=kotlin.Any? origin=null
+

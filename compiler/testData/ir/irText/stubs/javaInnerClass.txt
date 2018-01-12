@@ -1,29 +1,30 @@
-FILE /javaInnerClass.kt
-  CLASS CLASS Test1
-    $this: VALUE_PARAMETER this@Test1: Test1
-    CONSTRUCTOR public constructor Test1()
+FILE fqName:<root> fileName:/javaInnerClass.kt
+  CLASS CLASS name:Test1 modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test1 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor J()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
-    PROPERTY public final val test: J.JInner
-      FIELD PROPERTY_BACKING_FIELD public final val test: J.JInner
+    PROPERTY name:test type:J.JInner visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:test type:J.JInner visibility:public
         EXPRESSION_BODY
           CALL 'constructor JInner()' type=J.JInner origin=null
             $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test>(): J.JInner
-        $this: VALUE_PARAMETER this@Test1: Test1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> ($this:Test1) returnType:JInner flags:
+        $this: VALUE_PARAMETER name:<this> type:Test1 flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-test>(): J.JInner'
+          RETURN type=kotlin.Nothing from=<get-test>(): J.JInner'
             GET_FIELD 'test: J.JInner' type=J.JInner origin=null
               receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-    PROPERTY FAKE_OVERRIDE public final override var x: kotlin.Int
-      FIELD FAKE_OVERRIDE public final override var x: kotlin.Int
-    FUN FAKE_OVERRIDE public open override fun bar(): kotlin.Unit
-      $this: VALUE_PARAMETER this@J: J
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    PROPERTY FAKE_OVERRIDE name:x type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD FAKE_OVERRIDE name:x type:kotlin.Int visibility:public
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:J) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:J flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+

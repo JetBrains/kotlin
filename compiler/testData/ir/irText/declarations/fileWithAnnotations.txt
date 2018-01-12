@@ -1,14 +1,14 @@
-FILE /fileWithAnnotations.kt
+FILE fqName:<root> fileName:/fileWithAnnotations.kt
   fileAnnotations:
     @kotlin.jvm.JvmName(name = "FileWithAnnotations")
-  FUN public fun foo(): kotlin.Unit
+  FUN name:foo visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-  PROPERTY public val bar: kotlin.Int = 42
-    FIELD PROPERTY_BACKING_FIELD public val bar: kotlin.Int = 42
+  PROPERTY name:bar type:kotlin.Int visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-bar>(): kotlin.Int
+        CONST Int type=kotlin.Int value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-bar>(): Int'
+        RETURN type=kotlin.Nothing from=<get-bar>(): Int'
           GET_FIELD 'bar: Int' type=kotlin.Int origin=null
 

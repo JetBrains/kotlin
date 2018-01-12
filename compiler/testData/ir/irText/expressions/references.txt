@@ -1,54 +1,54 @@
-FILE /references.kt
-  PROPERTY public val ok: kotlin.String = "OK"
-    FIELD PROPERTY_BACKING_FIELD public val ok: kotlin.String = "OK"
+FILE fqName:<root> fileName:/references.kt
+  PROPERTY name:ok type:kotlin.String visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public
       EXPRESSION_BODY
-        CONST String type=kotlin.String value='OK'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-ok>(): kotlin.String
+        CONST String type=kotlin.String value=OK
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> () returnType:String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-ok>(): String'
+        RETURN type=kotlin.Nothing from=<get-ok>(): String'
           GET_FIELD 'ok: String' type=kotlin.String origin=null
-  PROPERTY public val ok2: kotlin.String = "OK"
-    FIELD PROPERTY_BACKING_FIELD public val ok2: kotlin.String = "OK"
+  PROPERTY name:ok2 type:kotlin.String visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:ok2 type:kotlin.String visibility:public
       EXPRESSION_BODY
         CALL '<get-ok>(): String' type=kotlin.String origin=GET_PROPERTY
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-ok2>(): kotlin.String
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok2> visibility:public modality:FINAL <> () returnType:String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-ok2>(): String'
+        RETURN type=kotlin.Nothing from=<get-ok2>(): String'
           GET_FIELD 'ok2: String' type=kotlin.String origin=null
-  PROPERTY public val ok3: kotlin.String
-    FUN public fun <get-ok3>(): kotlin.String
+  PROPERTY name:ok3 type:kotlin.String visibility:public modality:FINAL flags:val
+    FUN name:<get-ok3> visibility:public modality:FINAL <> () returnType:String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-ok3>(): String'
-          CONST String type=kotlin.String value='OK'
-  FUN public fun test1(): kotlin.String
+        RETURN type=kotlin.Nothing from=<get-ok3>(): String'
+          CONST String type=kotlin.String value=OK
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(): String'
+      RETURN type=kotlin.Nothing from=test1(): String'
         CALL '<get-ok>(): String' type=kotlin.String origin=GET_PROPERTY
-  FUN public fun test2(x: kotlin.String): kotlin.String
-    VALUE_PARAMETER value-parameter x: kotlin.String
+  FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.String) returnType:String flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(String): String'
+      RETURN type=kotlin.Nothing from=test2(String): String'
         GET_VAR 'value-parameter x: String' type=kotlin.String origin=null
-  FUN public fun test3(): kotlin.String
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:String flags:
     BLOCK_BODY
-      VAR val x: kotlin.String = "OK"
-        CONST String type=kotlin.String value='OK'
-      RETURN type=kotlin.Nothing from='test3(): String'
+      VAR name:x type:kotlin.String flags:val
+        CONST String type=kotlin.String value=OK
+      RETURN type=kotlin.Nothing from=test3(): String'
         GET_VAR 'x: String' type=kotlin.String origin=null
-  FUN public fun test4(): kotlin.String
+  FUN name:test4 visibility:public modality:FINAL <> () returnType:String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test4(): String'
+      RETURN type=kotlin.Nothing from=test4(): String'
         CALL '<get-ok3>(): String' type=kotlin.String origin=GET_PROPERTY
-  PROPERTY public val kotlin.String.okext: kotlin.String
-    FUN public fun kotlin.String.<get-okext>(): kotlin.String
-      $receiver: VALUE_PARAMETER this@okext: String
+  PROPERTY name:okext type:kotlin.String visibility:public modality:FINAL flags:val
+    FUN name:<get-okext> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:String flags:
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-okext>() on String: String'
-          CONST String type=kotlin.String value='OK'
-  FUN public fun kotlin.String.test5(): kotlin.String
-    $receiver: VALUE_PARAMETER this@test5: String
+        RETURN type=kotlin.Nothing from=<get-okext>() on String: String'
+          CONST String type=kotlin.String value=OK
+  FUN name:test5 visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:String flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test5() on String: String'
+      RETURN type=kotlin.Nothing from=test5() on String: String'
         CALL '<get-okext>() on String: String' type=kotlin.String origin=GET_PROPERTY
           $receiver: GET_VAR 'this@test5: String' type=kotlin.String origin=null
 

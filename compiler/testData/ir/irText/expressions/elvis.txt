@@ -1,111 +1,111 @@
-FILE /elvis.kt
-  PROPERTY public val p: kotlin.Any? = null
-    FIELD PROPERTY_BACKING_FIELD public val p: kotlin.Any? = null
+FILE fqName:<root> fileName:/elvis.kt
+  PROPERTY name:p type:kotlin.Any? visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Any? visibility:public
       EXPRESSION_BODY
-        CONST Null type=kotlin.Nothing? value='null'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-p>(): kotlin.Any?
+        CONST Null type=kotlin.Nothing? value=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Any? flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-p>(): Any?'
+        RETURN type=kotlin.Nothing from=<get-p>(): Any?'
           GET_FIELD 'p: Any?' type=kotlin.Any? origin=null
-  FUN public fun foo(): kotlin.Any?
+  FUN name:foo visibility:public modality:FINAL <> () returnType:Any? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='foo(): Any?'
-        CONST Null type=kotlin.Nothing? value='null'
-  FUN public fun test1(a: kotlin.Any?, b: kotlin.Any): kotlin.Any
-    VALUE_PARAMETER value-parameter a: kotlin.Any?
-    VALUE_PARAMETER value-parameter b: kotlin.Any
+      RETURN type=kotlin.Nothing from=foo(): Any?'
+        CONST Null type=kotlin.Nothing? value=null
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?, b:kotlin.Any) returnType:Any flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(Any?, Any): Any'
+      RETURN type=kotlin.Nothing from=test1(Any?, Any): Any'
         BLOCK type=kotlin.Any origin=ELVIS
-          VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Any? flags:val
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
           WHEN type=kotlin.Any origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: GET_VAR 'value-parameter b: Any' type=kotlin.Any origin=null
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-  FUN public fun test2(a: kotlin.String?, b: kotlin.Any): kotlin.Any
-    VALUE_PARAMETER value-parameter a: kotlin.String?
-    VALUE_PARAMETER value-parameter b: kotlin.Any
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String?, b:kotlin.Any) returnType:Any flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.String? flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(String?, Any): Any'
+      RETURN type=kotlin.Nothing from=test2(String?, Any): Any'
         BLOCK type=kotlin.Any origin=ELVIS
-          VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.String?
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.String? flags:val
             GET_VAR 'value-parameter a: String?' type=kotlin.String? origin=null
           WHEN type=kotlin.Any origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_elvis_lhs: String?' type=kotlin.String? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: GET_VAR 'value-parameter b: Any' type=kotlin.Any origin=null
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'tmp0_elvis_lhs: String?' type=kotlin.String? origin=null
-  FUN public fun test3(a: kotlin.Any?, b: kotlin.Any?): kotlin.String
-    VALUE_PARAMETER value-parameter a: kotlin.Any?
-    VALUE_PARAMETER value-parameter b: kotlin.Any?
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Any?, b:kotlin.Any?) returnType:String flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Any? flags:
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null
-          then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
-            CONST String type=kotlin.String value=''
+          then: RETURN type=kotlin.Nothing from=test3(Any?, Any?): String'
+            CONST String type=kotlin.String value=
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
-          then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
-            CONST String type=kotlin.String value=''
-      RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
+          then: RETURN type=kotlin.Nothing from=test3(Any?, Any?): String'
+            CONST String type=kotlin.String value=
+      RETURN type=kotlin.Nothing from=test3(Any?, Any?): String'
         BLOCK type=kotlin.String origin=ELVIS
-          VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Any? flags:val
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
           WHEN type=kotlin.String origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
                 GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
                 GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-  FUN public fun test4(x: kotlin.Any): kotlin.Any
-    VALUE_PARAMETER value-parameter x: kotlin.Any
+  FUN name:test4 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Any flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test4(Any): Any'
+      RETURN type=kotlin.Nothing from=test4(Any): Any'
         BLOCK type=kotlin.Any origin=ELVIS
-          VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Any? flags:val
             CALL '<get-p>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
           WHEN type=kotlin.Any origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-  FUN public fun test5(x: kotlin.Any): kotlin.Any
-    VALUE_PARAMETER value-parameter x: kotlin.Any
+  FUN name:test5 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Any flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test5(Any): Any'
+      RETURN type=kotlin.Nothing from=test5(Any): Any'
         BLOCK type=kotlin.Any origin=ELVIS
-          VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Any? flags:val
             CALL 'foo(): Any?' type=kotlin.Any? origin=null
           WHEN type=kotlin.Any origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
+              if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
 

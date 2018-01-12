@@ -1,216 +1,216 @@
-FILE /primitiveComparisons.kt
-  FUN public fun btest1(a: kotlin.Byte, b: kotlin.Byte): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Byte
-    VALUE_PARAMETER value-parameter b: kotlin.Byte
+FILE fqName:<root> fileName:/primitiveComparisons.kt
+  FUN name:btest1 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='btest1(Byte, Byte): Boolean'
+      RETURN type=kotlin.Nothing from=btest1(Byte, Byte): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
           arg0: CALL 'compareTo(Byte): Int' type=kotlin.Int origin=GT
             $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
             other: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
-  FUN public fun btest2(a: kotlin.Byte, b: kotlin.Byte): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Byte
-    VALUE_PARAMETER value-parameter b: kotlin.Byte
+  FUN name:btest2 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='btest2(Byte, Byte): Boolean'
+      RETURN type=kotlin.Nothing from=btest2(Byte, Byte): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
           arg0: CALL 'compareTo(Byte): Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
             other: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
-  FUN public fun btest3(a: kotlin.Byte, b: kotlin.Byte): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Byte
-    VALUE_PARAMETER value-parameter b: kotlin.Byte
+  FUN name:btest3 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='btest3(Byte, Byte): Boolean'
+      RETURN type=kotlin.Nothing from=btest3(Byte, Byte): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
           arg0: CALL 'compareTo(Byte): Int' type=kotlin.Int origin=GTEQ
             $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
             other: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
-  FUN public fun btest4(a: kotlin.Byte, b: kotlin.Byte): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Byte
-    VALUE_PARAMETER value-parameter b: kotlin.Byte
+  FUN name:btest4 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='btest4(Byte, Byte): Boolean'
+      RETURN type=kotlin.Nothing from=btest4(Byte, Byte): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
           arg0: CALL 'compareTo(Byte): Int' type=kotlin.Int origin=LTEQ
             $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
             other: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
-  FUN public fun stest1(a: kotlin.Short, b: kotlin.Short): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Short
-    VALUE_PARAMETER value-parameter b: kotlin.Short
+  FUN name:stest1 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='stest1(Short, Short): Boolean'
+      RETURN type=kotlin.Nothing from=stest1(Short, Short): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
           arg0: CALL 'compareTo(Short): Int' type=kotlin.Int origin=GT
             $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
             other: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
-  FUN public fun stest2(a: kotlin.Short, b: kotlin.Short): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Short
-    VALUE_PARAMETER value-parameter b: kotlin.Short
+  FUN name:stest2 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='stest2(Short, Short): Boolean'
+      RETURN type=kotlin.Nothing from=stest2(Short, Short): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
           arg0: CALL 'compareTo(Short): Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
             other: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
-  FUN public fun stest3(a: kotlin.Short, b: kotlin.Short): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Short
-    VALUE_PARAMETER value-parameter b: kotlin.Short
+  FUN name:stest3 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='stest3(Short, Short): Boolean'
+      RETURN type=kotlin.Nothing from=stest3(Short, Short): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
           arg0: CALL 'compareTo(Short): Int' type=kotlin.Int origin=GTEQ
             $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
             other: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
-  FUN public fun stest4(a: kotlin.Short, b: kotlin.Short): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Short
-    VALUE_PARAMETER value-parameter b: kotlin.Short
+  FUN name:stest4 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='stest4(Short, Short): Boolean'
+      RETURN type=kotlin.Nothing from=stest4(Short, Short): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
           arg0: CALL 'compareTo(Short): Int' type=kotlin.Int origin=LTEQ
             $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
             other: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
-  FUN public fun itest1(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Int
-    VALUE_PARAMETER value-parameter b: kotlin.Int
+  FUN name:itest1 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='itest1(Int, Int): Boolean'
+      RETURN type=kotlin.Nothing from=itest1(Int, Int): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
           arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
             $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
             other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN public fun itest2(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Int
-    VALUE_PARAMETER value-parameter b: kotlin.Int
+  FUN name:itest2 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='itest2(Int, Int): Boolean'
+      RETURN type=kotlin.Nothing from=itest2(Int, Int): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
           arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
             other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN public fun itest3(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Int
-    VALUE_PARAMETER value-parameter b: kotlin.Int
+  FUN name:itest3 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='itest3(Int, Int): Boolean'
+      RETURN type=kotlin.Nothing from=itest3(Int, Int): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
           arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=GTEQ
             $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
             other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN public fun itest4(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Int
-    VALUE_PARAMETER value-parameter b: kotlin.Int
+  FUN name:itest4 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='itest4(Int, Int): Boolean'
+      RETURN type=kotlin.Nothing from=itest4(Int, Int): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
           arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=LTEQ
             $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
             other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN public fun ltest1(a: kotlin.Long, b: kotlin.Long): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Long
-    VALUE_PARAMETER value-parameter b: kotlin.Long
+  FUN name:ltest1 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ltest1(Long, Long): Boolean'
+      RETURN type=kotlin.Nothing from=ltest1(Long, Long): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
           arg0: CALL 'compareTo(Long): Int' type=kotlin.Int origin=GT
             $this: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
             other: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
-  FUN public fun ltest2(a: kotlin.Long, b: kotlin.Long): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Long
-    VALUE_PARAMETER value-parameter b: kotlin.Long
+  FUN name:ltest2 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ltest2(Long, Long): Boolean'
+      RETURN type=kotlin.Nothing from=ltest2(Long, Long): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
           arg0: CALL 'compareTo(Long): Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
             other: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
-  FUN public fun ltest3(a: kotlin.Long, b: kotlin.Long): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Long
-    VALUE_PARAMETER value-parameter b: kotlin.Long
+  FUN name:ltest3 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ltest3(Long, Long): Boolean'
+      RETURN type=kotlin.Nothing from=ltest3(Long, Long): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
           arg0: CALL 'compareTo(Long): Int' type=kotlin.Int origin=GTEQ
             $this: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
             other: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
-  FUN public fun ltest4(a: kotlin.Long, b: kotlin.Long): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Long
-    VALUE_PARAMETER value-parameter b: kotlin.Long
+  FUN name:ltest4 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ltest4(Long, Long): Boolean'
+      RETURN type=kotlin.Nothing from=ltest4(Long, Long): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
           arg0: CALL 'compareTo(Long): Int' type=kotlin.Int origin=LTEQ
             $this: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
             other: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
-  FUN public fun ftest1(a: kotlin.Float, b: kotlin.Float): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Float
-    VALUE_PARAMETER value-parameter b: kotlin.Float
+  FUN name:ftest1 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ftest1(Float, Float): Boolean'
+      RETURN type=kotlin.Nothing from=ftest1(Float, Float): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
           arg0: CALL 'compareTo(Float): Int' type=kotlin.Int origin=GT
             $this: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
             other: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
-  FUN public fun ftest2(a: kotlin.Float, b: kotlin.Float): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Float
-    VALUE_PARAMETER value-parameter b: kotlin.Float
+  FUN name:ftest2 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ftest2(Float, Float): Boolean'
+      RETURN type=kotlin.Nothing from=ftest2(Float, Float): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
           arg0: CALL 'compareTo(Float): Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
             other: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
-  FUN public fun ftest3(a: kotlin.Float, b: kotlin.Float): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Float
-    VALUE_PARAMETER value-parameter b: kotlin.Float
+  FUN name:ftest3 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ftest3(Float, Float): Boolean'
+      RETURN type=kotlin.Nothing from=ftest3(Float, Float): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
           arg0: CALL 'compareTo(Float): Int' type=kotlin.Int origin=GTEQ
             $this: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
             other: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
-  FUN public fun ftest4(a: kotlin.Float, b: kotlin.Float): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Float
-    VALUE_PARAMETER value-parameter b: kotlin.Float
+  FUN name:ftest4 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ftest4(Float, Float): Boolean'
+      RETURN type=kotlin.Nothing from=ftest4(Float, Float): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
           arg0: CALL 'compareTo(Float): Int' type=kotlin.Int origin=LTEQ
             $this: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
             other: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
-  FUN public fun dtest1(a: kotlin.Double, b: kotlin.Double): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Double
-    VALUE_PARAMETER value-parameter b: kotlin.Double
+  FUN name:dtest1 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='dtest1(Double, Double): Boolean'
+      RETURN type=kotlin.Nothing from=dtest1(Double, Double): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
           arg0: CALL 'compareTo(Double): Int' type=kotlin.Int origin=GT
             $this: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
             other: GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
-  FUN public fun dtest2(a: kotlin.Double, b: kotlin.Double): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Double
-    VALUE_PARAMETER value-parameter b: kotlin.Double
+  FUN name:dtest2 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='dtest2(Double, Double): Boolean'
+      RETURN type=kotlin.Nothing from=dtest2(Double, Double): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
           arg0: CALL 'compareTo(Double): Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
             other: GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
-  FUN public fun dtest3(a: kotlin.Double, b: kotlin.Double): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Double
-    VALUE_PARAMETER value-parameter b: kotlin.Double
+  FUN name:dtest3 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='dtest3(Double, Double): Boolean'
+      RETURN type=kotlin.Nothing from=dtest3(Double, Double): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
           arg0: CALL 'compareTo(Double): Int' type=kotlin.Int origin=GTEQ
             $this: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
             other: GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
-  FUN public fun dtest4(a: kotlin.Double, b: kotlin.Double): kotlin.Boolean
-    VALUE_PARAMETER value-parameter a: kotlin.Double
-    VALUE_PARAMETER value-parameter b: kotlin.Double
+  FUN name:dtest4 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:Boolean flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='dtest4(Double, Double): Boolean'
+      RETURN type=kotlin.Nothing from=dtest4(Double, Double): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
           arg0: CALL 'compareTo(Double): Int' type=kotlin.Int origin=LTEQ
             $this: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null

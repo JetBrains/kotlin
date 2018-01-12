@@ -1,27 +1,27 @@
-FILE /field.kt
-  PROPERTY public var testSimple: kotlin.Int
-    FIELD PROPERTY_BACKING_FIELD public var testSimple: kotlin.Int
+FILE fqName:<root> fileName:/field.kt
+  PROPERTY name:testSimple type:kotlin.Int visibility:public modality:FINAL flags:var
+    FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-testSimple>(): kotlin.Int
+        CONST Int type=kotlin.Int value=0
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testSimple> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-testSimple>(): Int'
+        RETURN type=kotlin.Nothing from=<get-testSimple>(): Int'
           GET_FIELD 'testSimple: Int' type=kotlin.Int origin=null
-    FUN public fun <set-testSimple>(value: kotlin.Int): kotlin.Unit
-      VALUE_PARAMETER value-parameter value: kotlin.Int
+    FUN name:<set-testSimple> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'testSimple: Int' type=kotlin.Unit origin=EQ
           value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
-  PROPERTY public var testAugmented: kotlin.Int
-    FIELD PROPERTY_BACKING_FIELD public var testAugmented: kotlin.Int
+  PROPERTY name:testAugmented type:kotlin.Int visibility:public modality:FINAL flags:var
+    FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-testAugmented>(): kotlin.Int
+        CONST Int type=kotlin.Int value=0
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testAugmented> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-testAugmented>(): Int'
+        RETURN type=kotlin.Nothing from=<get-testAugmented>(): Int'
           GET_FIELD 'testAugmented: Int' type=kotlin.Int origin=null
-    FUN public fun <set-testAugmented>(value: kotlin.Int): kotlin.Unit
-      VALUE_PARAMETER value-parameter value: kotlin.Int
+    FUN name:<set-testAugmented> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'testAugmented: Int' type=kotlin.Unit origin=PLUSEQ
           value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ

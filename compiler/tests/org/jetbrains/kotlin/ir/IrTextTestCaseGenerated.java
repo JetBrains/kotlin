@@ -882,12 +882,6 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
-        @TestMetadata("smoke.kt")
-        public void testSmoke() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/smoke.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("stringComparisons.kt")
         public void testStringComparisons() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/stringComparisons.kt");

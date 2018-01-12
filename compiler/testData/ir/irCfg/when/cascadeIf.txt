@@ -2,7 +2,7 @@
 // FUN: compare
 BB 0
 CONTENT
-      1 FUN public fun compare(x: kotlin.Int, y: kotlin.Int): kotlin.Int
+      1 FUN name:compare visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:Int flags:
       2 WHEN type=kotlin.Int origin=WHEN
       3 GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
       4 GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=null
@@ -23,35 +23,35 @@ INCOMING <- BB 1
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
 CONTENT
 OUTGOING -> BB 5
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 BB 3
 INCOMING <- BB 0
     CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
-      1 CONST Int type=kotlin.Int value='1'
+      1 CONST Int type=kotlin.Int value=1
 OUTGOING -> BB 6
     When exit: WHEN type=kotlin.Int origin=WHEN
 BB 4
 INCOMING <- BB 1
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
 CONTENT
-      1 CONST Int type=kotlin.Int value='-1'
+      1 CONST Int type=kotlin.Int value=-1
 OUTGOING -> BB 6
     When exit: WHEN type=kotlin.Int origin=WHEN
 BB 5
 INCOMING <- BB 2
-    CONST Boolean type=kotlin.Boolean value='true'
+    CONST Boolean type=kotlin.Boolean value=true
 CONTENT
-      1 CONST Int type=kotlin.Int value='0'
+      1 CONST Int type=kotlin.Int value=0
 OUTGOING -> BB 6
     When exit: WHEN type=kotlin.Int origin=WHEN
 BB 6
 INCOMING <- BB 3, 4, 5
     When exit: WHEN type=kotlin.Int origin=WHEN
 CONTENT
-      1 RETURN type=kotlin.Nothing from='compare(Int, Int): Int'
+      1 RETURN type=kotlin.Nothing from=compare(Int, Int): Int'
 OUTGOING -> NONE
-    Function exit: FUN public fun compare(x: kotlin.Int, y: kotlin.Int): kotlin.Int
+    Function exit: FUN name:compare visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:Int flags:
 
 // END FUN: compare
 

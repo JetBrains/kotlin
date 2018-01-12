@@ -1,28 +1,28 @@
-FILE /varargWithImplicitCast.kt
-  FUN public fun testScalar(a: kotlin.Any): kotlin.IntArray
-    VALUE_PARAMETER value-parameter a: kotlin.Any
+FILE fqName:<root> fileName:/varargWithImplicitCast.kt
+  FUN name:testScalar visibility:public modality:FINAL <> (a:kotlin.Any) returnType:IntArray flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Int
             GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from='testScalar(Any): IntArray'
+          then: RETURN type=kotlin.Nothing from=testScalar(Any): IntArray'
             CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
-      RETURN type=kotlin.Nothing from='testScalar(Any): IntArray'
+      RETURN type=kotlin.Nothing from=testScalar(Any): IntArray'
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int
             TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
               GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
-  FUN public fun testSpread(a: kotlin.Any): kotlin.IntArray
-    VALUE_PARAMETER value-parameter a: kotlin.Any
+  FUN name:testSpread visibility:public modality:FINAL <> (a:kotlin.Any) returnType:IntArray flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.IntArray
             GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from='testSpread(Any): IntArray'
+          then: RETURN type=kotlin.Nothing from=testSpread(Any): IntArray'
             CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
-      RETURN type=kotlin.Nothing from='testSpread(Any): IntArray'
+      RETURN type=kotlin.Nothing from=testSpread(Any): IntArray'
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int
             SPREAD_ELEMENT

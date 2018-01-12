@@ -1,23 +1,23 @@
-MODULE_FRAGMENT <test-module>
-  EXTERNAL_PACKAGE_FRAGMENT <root>
-    CLASS IR_EXTERNAL_DECLARATION_STUB ENUM_CLASS JEnum
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor JEnum()
-      ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB enum entry ONE
-      ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB enum entry THREE
-      ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB enum entry TWO
-      FUN IR_EXTERNAL_DECLARATION_STUB protected final override fun clone(): kotlin.Any
-      FUN IR_EXTERNAL_DECLARATION_STUB protected/*protected and package*/ final override fun finalize(): kotlin.Unit
-      FUN IR_EXTERNAL_DECLARATION_STUB public final override fun getDeclaringClass(): java.lang.Class<JEnum!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB public final override fun compareTo(other: JEnum!): kotlin.Int
-        VALUE_PARAMETER value-parameter other: JEnum!
-      FUN IR_EXTERNAL_DECLARATION_STUB public final override fun equals(other: kotlin.Any?): kotlin.Boolean
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN IR_EXTERNAL_DECLARATION_STUB public final override fun hashCode(): kotlin.Int
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val name: kotlin.String
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-name>(): kotlin.String
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val ordinal: kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-ordinal>(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-      FUN IR_EXTERNAL_DECLARATION_STUB public final fun valueOf(value: kotlin.String): JEnum
-        VALUE_PARAMETER value-parameter value: kotlin.String
-      FUN IR_EXTERNAL_DECLARATION_STUB public final fun values(): kotlin.Array<JEnum>
+MODULE_FRAGMENT name:<test-module>
+  EXTERNAL_PACKAGE_FRAGMENT fqName:<root>
+    CLASS IR_EXTERNAL_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL visibility:public flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:JEnum flags:
+      ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:ONE
+      ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:THREE
+      ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TWO
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clone visibility:protected modality:FINAL <> () returnType:Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:finalize visibility:protected/*protected and package*/ modality:FINAL <> () returnType:Unit flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> () returnType:(java.lang.Class<(JEnum..JEnum?)>..java.lang.Class<(JEnum..JEnum?)>?) flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> (other:JEnum!) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:JEnum! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:FINAL <> (other:kotlin.Any?) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:FINAL <> () returnType:Int flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:name type:kotlin.String visibility:public modality:FINAL flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-name> visibility:public modality:FINAL <> () returnType:String flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ordinal type:kotlin.Int visibility:public modality:FINAL flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-ordinal> visibility:public modality:FINAL <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:JEnum flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:kotlin.String flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:values visibility:public modality:FINAL <> () returnType:Array<JEnum> flags:

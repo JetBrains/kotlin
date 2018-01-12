@@ -1,22 +1,22 @@
-FILE /ifElseIf.kt
-  FUN public fun test(i: kotlin.Int): kotlin.Int
-    VALUE_PARAMETER value-parameter i: kotlin.Int
+FILE fqName:<root> fileName:/ifElseIf.kt
+  FUN name:test visibility:public modality:FINAL <> (i:kotlin.Int) returnType:Int flags:
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(Int): Int'
+      RETURN type=kotlin.Nothing from=test(Int): Int'
         WHEN type=kotlin.Int origin=WHEN
           BRANCH
             if: CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
               arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
                 $this: GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
-                other: CONST Int type=kotlin.Int value='0'
-            then: CONST Int type=kotlin.Int value='1'
+                other: CONST Int type=kotlin.Int value=0
+            then: CONST Int type=kotlin.Int value=1
           BRANCH
             if: CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
               arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=LT
                 $this: GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
-                other: CONST Int type=kotlin.Int value='0'
-            then: CONST Int type=kotlin.Int value='-1'
+                other: CONST Int type=kotlin.Int value=0
+            then: CONST Int type=kotlin.Int value=-1
           BRANCH
-            if: CONST Boolean type=kotlin.Boolean value='true'
-            then: CONST Int type=kotlin.Int value='0'
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Int type=kotlin.Int value=0
 

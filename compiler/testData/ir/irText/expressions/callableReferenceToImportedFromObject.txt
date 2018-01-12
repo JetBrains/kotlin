@@ -1,65 +1,66 @@
-FILE /callableReferenceToImportedFromObject.kt
-  CLASS OBJECT Foo
-    $this: VALUE_PARAMETER this@Foo: Foo
-    CONSTRUCTOR private constructor Foo()
+FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
+  CLASS OBJECT name:Foo modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Foo flags:
+    CONSTRUCTOR visibility:private <> () returnType:test.Foo flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Foo'
-    PROPERTY public final val a: kotlin.String = ""
-      FIELD PROPERTY_BACKING_FIELD public final val a: kotlin.String = ""
+    PROPERTY name:a type:kotlin.String visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:public
         EXPRESSION_BODY
-          CONST String type=kotlin.String value=''
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-a>(): kotlin.String
-        $this: VALUE_PARAMETER this@Foo: Foo
+          CONST String type=kotlin.String value=
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL <> ($this:test.Foo) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:test.Foo flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-a>(): String'
+          RETURN type=kotlin.Nothing from=<get-a>(): String'
             GET_FIELD 'a: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Foo: Foo' type=test.Foo origin=null
-    FUN public final fun foo(): kotlin.String
-      $this: VALUE_PARAMETER this@Foo: Foo
+    FUN name:foo visibility:public modality:FINAL <> ($this:test.Foo) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:test.Foo flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='foo(): String'
-          CONST String type=kotlin.String value=''
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  PROPERTY public val test1: kotlin.reflect.KProperty0<kotlin.String>
-    FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.reflect.KProperty0<kotlin.String>
+        RETURN type=kotlin.Nothing from=foo(): String'
+          CONST String type=kotlin.String value=
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  PROPERTY name:test1 type:kotlin.reflect.KProperty0<kotlin.String> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KProperty0<kotlin.String> visibility:public
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'a: String' field=null getter='<get-a>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
           $this: GET_OBJECT 'Foo' type=test.Foo
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.reflect.KProperty0<kotlin.String>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:KProperty0<String> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1>(): KProperty0<String>'
+        RETURN type=kotlin.Nothing from=<get-test1>(): KProperty0<String>'
           GET_FIELD 'test1: KProperty0<String>' type=kotlin.reflect.KProperty0<kotlin.String> origin=null
-  PROPERTY public val test1a: kotlin.reflect.KProperty0<kotlin.String>
-    FIELD PROPERTY_BACKING_FIELD public val test1a: kotlin.reflect.KProperty0<kotlin.String>
+  PROPERTY name:test1a type:kotlin.reflect.KProperty0<kotlin.String> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test1a type:kotlin.reflect.KProperty0<kotlin.String> visibility:public
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'a: String' field=null getter='<get-a>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
           $this: GET_OBJECT 'Foo' type=test.Foo
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1a>(): kotlin.reflect.KProperty0<kotlin.String>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1a> visibility:public modality:FINAL <> () returnType:KProperty0<String> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1a>(): KProperty0<String>'
+        RETURN type=kotlin.Nothing from=<get-test1a>(): KProperty0<String>'
           GET_FIELD 'test1a: KProperty0<String>' type=kotlin.reflect.KProperty0<kotlin.String> origin=null
-  PROPERTY public val test2: kotlin.reflect.KFunction0<kotlin.String>
-    FIELD PROPERTY_BACKING_FIELD public val test2: kotlin.reflect.KFunction0<kotlin.String>
+  PROPERTY name:test2 type:kotlin.reflect.KFunction0<kotlin.String> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KFunction0<kotlin.String> visibility:public
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'foo(): String' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
           $this: GET_OBJECT 'Foo' type=test.Foo
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): kotlin.reflect.KFunction0<kotlin.String>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:KFunction0<String> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2>(): KFunction0<String>'
+        RETURN type=kotlin.Nothing from=<get-test2>(): KFunction0<String>'
           GET_FIELD 'test2: KFunction0<String>' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
-  PROPERTY public val test2a: kotlin.reflect.KFunction0<kotlin.String>
-    FIELD PROPERTY_BACKING_FIELD public val test2a: kotlin.reflect.KFunction0<kotlin.String>
+  PROPERTY name:test2a type:kotlin.reflect.KFunction0<kotlin.String> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test2a type:kotlin.reflect.KFunction0<kotlin.String> visibility:public
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'foo(): String' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
           $this: GET_OBJECT 'Foo' type=test.Foo
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2a>(): kotlin.reflect.KFunction0<kotlin.String>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2a> visibility:public modality:FINAL <> () returnType:KFunction0<String> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2a>(): KFunction0<String>'
+        RETURN type=kotlin.Nothing from=<get-test2a>(): KFunction0<String>'
           GET_FIELD 'test2a: KFunction0<String>' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
+

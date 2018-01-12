@@ -1,28 +1,28 @@
-FILE /arrayAssignment.kt
-  FUN public fun test(): kotlin.Unit
+FILE fqName:<root> fileName:/arrayAssignment.kt
+  FUN name:test visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      VAR val x: kotlin.IntArray
+      VAR name:x type:kotlin.IntArray flags:val
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int
-            CONST Int type=kotlin.Int value='1'
-            CONST Int type=kotlin.Int value='2'
-            CONST Int type=kotlin.Int value='3'
+            CONST Int type=kotlin.Int value=1
+            CONST Int type=kotlin.Int value=2
+            CONST Int type=kotlin.Int value=3
       CALL 'set(Int, Int): Unit' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'x: IntArray' type=kotlin.IntArray origin=null
-        index: CONST Int type=kotlin.Int value='1'
-        value: CONST Int type=kotlin.Int value='0'
-  FUN public fun foo(): kotlin.Int
+        index: CONST Int type=kotlin.Int value=1
+        value: CONST Int type=kotlin.Int value=0
+  FUN name:foo visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='foo(): Int'
-        CONST Int type=kotlin.Int value='1'
-  FUN public fun test2(): kotlin.Unit
+      RETURN type=kotlin.Nothing from=foo(): Int'
+        CONST Int type=kotlin.Int value=1
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       CALL 'set(Int, Int): Unit' type=kotlin.Unit origin=EQ
         $this: CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int
-            CONST Int type=kotlin.Int value='1'
-            CONST Int type=kotlin.Int value='2'
-            CONST Int type=kotlin.Int value='3'
+            CONST Int type=kotlin.Int value=1
+            CONST Int type=kotlin.Int value=2
+            CONST Int type=kotlin.Int value=3
         index: CALL 'foo(): Int' type=kotlin.Int origin=null
-        value: CONST Int type=kotlin.Int value='1'
+        value: CONST Int type=kotlin.Int value=1
 

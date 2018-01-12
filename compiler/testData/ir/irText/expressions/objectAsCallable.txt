@@ -1,82 +1,83 @@
-FILE /objectAsCallable.kt
-  CLASS OBJECT A
-    $this: VALUE_PARAMETER this@A: A
-    CONSTRUCTOR private constructor A()
+FILE fqName:<root> fileName:/objectAsCallable.kt
+  CLASS OBJECT name:A modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    CONSTRUCTOR visibility:private <> () returnType:A flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS ENUM_CLASS En
-    $this: VALUE_PARAMETER this@En: En
-    CONSTRUCTOR private constructor En()
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS ENUM_CLASS name:En modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:En flags:
+    CONSTRUCTOR visibility:private <> () returnType:En flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='En'
-    ENUM_ENTRY enum entry X
+    ENUM_ENTRY name:X
       init: ENUM_CONSTRUCTOR_CALL 'constructor En()'
-    FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
-      $this: VALUE_PARAMETER this@Enum: Enum<En>
-    FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
-      $this: VALUE_PARAMETER this@Enum: Enum<En>
-    FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<En!>!
-      $this: VALUE_PARAMETER this@Enum: Enum<En>
-    FUN FAKE_OVERRIDE public final override fun compareTo(other: En): kotlin.Int
-      $this: VALUE_PARAMETER this@Enum: Enum<En>
-      VALUE_PARAMETER value-parameter other: En
-    FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Enum: Enum<En>
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Enum: Enum<En>
-    PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
-      FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
-        $this: VALUE_PARAMETER this@Enum: Enum<En>
-    PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
-      FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Enum: Enum<En>
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Enum: Enum<En>
-    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<En>
+    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<En>) returnType:Any flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<En>) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<En>) returnType:(java.lang.Class<(En..En?)>..java.lang.Class<(En..En?)>?) flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<En>, other:En) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+      VALUE_PARAMETER name:other index:0 type:En flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<En>, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<En>) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    PROPERTY FAKE_OVERRIDE name:name type:kotlin.String visibility:public modality:FINAL flags:val
+      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<En>) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    PROPERTY FAKE_OVERRIDE name:ordinal type:kotlin.Int visibility:public modality:FINAL flags:val
+      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<En>) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<En>) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:Array<En> flags:
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): En
-      VALUE_PARAMETER value-parameter value: kotlin.String
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:En flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-  FUN public operator fun A.invoke(i: kotlin.Int): kotlin.Int
-    $receiver: VALUE_PARAMETER this@invoke: A
-    VALUE_PARAMETER value-parameter i: kotlin.Int
+  FUN name:invoke visibility:public modality:FINAL <> ($receiver:A, i:kotlin.Int) returnType:Int flags:
+    $receiver: VALUE_PARAMETER name:<this> type:A flags:
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='invoke(Int) on A: Int'
+      RETURN type=kotlin.Nothing from=invoke(Int) on A: Int'
         GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
-  FUN public operator fun En.invoke(i: kotlin.Int): kotlin.Int
-    $receiver: VALUE_PARAMETER this@invoke: En
-    VALUE_PARAMETER value-parameter i: kotlin.Int
+  FUN name:invoke visibility:public modality:FINAL <> ($receiver:En, i:kotlin.Int) returnType:Int flags:
+    $receiver: VALUE_PARAMETER name:<this> type:En flags:
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='invoke(Int) on En: Int'
+      RETURN type=kotlin.Nothing from=invoke(Int) on En: Int'
         GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
-  PROPERTY public val test1: kotlin.Int
-    FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Int
+  PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public
       EXPRESSION_BODY
         CALL 'invoke(Int) on A: Int' type=kotlin.Int origin=INVOKE
           $receiver: GET_OBJECT 'A' type=A
-          i: CONST Int type=kotlin.Int value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.Int
+          i: CONST Int type=kotlin.Int value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1>(): Int'
+        RETURN type=kotlin.Nothing from=<get-test1>(): Int'
           GET_FIELD 'test1: Int' type=kotlin.Int origin=null
-  PROPERTY public val test2: kotlin.Int
-    FIELD PROPERTY_BACKING_FIELD public val test2: kotlin.Int
+  PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public
       EXPRESSION_BODY
         CALL 'invoke(Int) on En: Int' type=kotlin.Int origin=INVOKE
           $receiver: GET_ENUM 'X' type=En
-          i: CONST Int type=kotlin.Int value='42'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): kotlin.Int
+          i: CONST Int type=kotlin.Int value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2>(): Int'
+        RETURN type=kotlin.Nothing from=<get-test2>(): Int'
           GET_FIELD 'test2: Int' type=kotlin.Int origin=null
+

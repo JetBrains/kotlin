@@ -1,41 +1,41 @@
-FILE /callWithReorderedArguments.kt
-  FUN public fun foo(a: kotlin.Int, b: kotlin.Int): kotlin.Unit
-    VALUE_PARAMETER value-parameter a: kotlin.Int
-    VALUE_PARAMETER value-parameter b: kotlin.Int
+FILE fqName:<root> fileName:/callWithReorderedArguments.kt
+  FUN name:foo visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Unit flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-  FUN public fun noReorder1(): kotlin.Int
+  FUN name:noReorder1 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='noReorder1(): Int'
-        CONST Int type=kotlin.Int value='1'
-  FUN public fun noReorder2(): kotlin.Int
+      RETURN type=kotlin.Nothing from=noReorder1(): Int'
+        CONST Int type=kotlin.Int value=1
+  FUN name:noReorder2 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='noReorder2(): Int'
-        CONST Int type=kotlin.Int value='2'
-  FUN public fun reordered1(): kotlin.Int
+      RETURN type=kotlin.Nothing from=noReorder2(): Int'
+        CONST Int type=kotlin.Int value=2
+  FUN name:reordered1 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='reordered1(): Int'
-        CONST Int type=kotlin.Int value='1'
-  FUN public fun reordered2(): kotlin.Int
+      RETURN type=kotlin.Nothing from=reordered1(): Int'
+        CONST Int type=kotlin.Int value=1
+  FUN name:reordered2 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='reordered2(): Int'
-        CONST Int type=kotlin.Int value='2'
-  FUN public fun test(): kotlin.Unit
+      RETURN type=kotlin.Nothing from=reordered2(): Int'
+        CONST Int type=kotlin.Int value=2
+  FUN name:test visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       CALL 'foo(Int, Int): Unit' type=kotlin.Unit origin=null
         a: CALL 'noReorder1(): Int' type=kotlin.Int origin=null
         b: CALL 'noReorder2(): Int' type=kotlin.Int origin=null
       BLOCK type=kotlin.Unit origin=ARGUMENTS_REORDERING_FOR_CALL
-        VAR IR_TEMPORARY_VARIABLE val tmp0_b: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_b type:kotlin.Int flags:val
           CALL 'reordered1(): Int' type=kotlin.Int origin=null
-        VAR IR_TEMPORARY_VARIABLE val tmp1_a: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE name:tmp1_a type:kotlin.Int flags:val
           CALL 'reordered2(): Int' type=kotlin.Int origin=null
         CALL 'foo(Int, Int): Unit' type=kotlin.Unit origin=null
           a: GET_VAR 'tmp1_a: Int' type=kotlin.Int origin=null
           b: GET_VAR 'tmp0_b: Int' type=kotlin.Int origin=null
       BLOCK type=kotlin.Unit origin=ARGUMENTS_REORDERING_FOR_CALL
-        VAR IR_TEMPORARY_VARIABLE val tmp2_b: kotlin.Int
-          CONST Int type=kotlin.Int value='1'
-        VAR IR_TEMPORARY_VARIABLE val tmp3_a: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE name:tmp2_b type:kotlin.Int flags:val
+          CONST Int type=kotlin.Int value=1
+        VAR IR_TEMPORARY_VARIABLE name:tmp3_a type:kotlin.Int flags:val
           CALL 'reordered2(): Int' type=kotlin.Int origin=null
         CALL 'foo(Int, Int): Unit' type=kotlin.Unit origin=null
           a: GET_VAR 'tmp3_a: Int' type=kotlin.Int origin=null

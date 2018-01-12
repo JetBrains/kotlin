@@ -1,107 +1,107 @@
-FILE /incrementDecrement.kt
-  PROPERTY public var p: kotlin.Int
-    FIELD PROPERTY_BACKING_FIELD public var p: kotlin.Int
+FILE fqName:<root> fileName:/incrementDecrement.kt
+  PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-p>(): kotlin.Int
+        CONST Int type=kotlin.Int value=0
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-p>(): Int'
+        RETURN type=kotlin.Nothing from=<get-p>(): Int'
           GET_FIELD 'p: Int' type=kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <set-p>(<set-?>: kotlin.Int): kotlin.Unit
-      VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'p: Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-  PROPERTY public val arr: kotlin.IntArray
-    FIELD PROPERTY_BACKING_FIELD public val arr: kotlin.IntArray
+  PROPERTY name:arr type:kotlin.IntArray visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:arr type:kotlin.IntArray visibility:public
       EXPRESSION_BODY
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int
-            CONST Int type=kotlin.Int value='1'
-            CONST Int type=kotlin.Int value='2'
-            CONST Int type=kotlin.Int value='3'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-arr>(): kotlin.IntArray
+            CONST Int type=kotlin.Int value=1
+            CONST Int type=kotlin.Int value=2
+            CONST Int type=kotlin.Int value=3
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arr> visibility:public modality:FINAL <> () returnType:IntArray flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-arr>(): IntArray'
+        RETURN type=kotlin.Nothing from=<get-arr>(): IntArray'
           GET_FIELD 'arr: IntArray' type=kotlin.IntArray origin=null
-  FUN public fun testVarPrefix(): kotlin.Unit
+  FUN name:testVarPrefix visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      VAR var x: kotlin.Int
-        CONST Int type=kotlin.Int value='0'
-      VAR val x1: kotlin.Int
+      VAR name:x type:kotlin.Int flags:var
+        CONST Int type=kotlin.Int value=0
+      VAR name:x1 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=PREFIX_INCR
           SET_VAR 'x: Int' type=kotlin.Unit origin=PREFIX_INCR
             CALL 'inc(): Int' type=kotlin.Int origin=PREFIX_INCR
               $this: GET_VAR 'x: Int' type=kotlin.Int origin=PREFIX_INCR
           GET_VAR 'x: Int' type=kotlin.Int origin=PREFIX_INCR
-      VAR val x2: kotlin.Int
+      VAR name:x2 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           SET_VAR 'x: Int' type=kotlin.Unit origin=PREFIX_DECR
             CALL 'dec(): Int' type=kotlin.Int origin=PREFIX_DECR
               $this: GET_VAR 'x: Int' type=kotlin.Int origin=PREFIX_DECR
           GET_VAR 'x: Int' type=kotlin.Int origin=PREFIX_DECR
-  FUN public fun testVarPostfix(): kotlin.Unit
+  FUN name:testVarPostfix visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      VAR var x: kotlin.Int
-        CONST Int type=kotlin.Int value='0'
-      VAR val x1: kotlin.Int
+      VAR name:x type:kotlin.Int flags:var
+        CONST Int type=kotlin.Int value=0
+      VAR name:x1 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:val
             GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
           SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
             CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
           GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
-      VAR val x2: kotlin.Int
+      VAR name:x2 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
-          VAR IR_TEMPORARY_VARIABLE val tmp1: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE name:tmp1 type:kotlin.Int flags:val
             GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_DECR
           SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_DECR
             CALL 'dec(): Int' type=kotlin.Int origin=POSTFIX_DECR
               $this: GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
           GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
-  FUN public fun testPropPrefix(): kotlin.Unit
+  FUN name:testPropPrefix visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      VAR val p1: kotlin.Int
+      VAR name:p1 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=PREFIX_INCR
           BLOCK type=kotlin.Int origin=PREFIX_INCR
             CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=PREFIX_INCR
               <set-?>: CALL 'inc(): Int' type=kotlin.Int origin=PREFIX_INCR
                 $this: CALL '<get-p>(): Int' type=kotlin.Int origin=PREFIX_INCR
             CALL '<get-p>(): Int' type=kotlin.Int origin=PREFIX_INCR
-      VAR val p2: kotlin.Int
+      VAR name:p2 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           BLOCK type=kotlin.Int origin=PREFIX_DECR
             CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=PREFIX_DECR
               <set-?>: CALL 'dec(): Int' type=kotlin.Int origin=PREFIX_DECR
                 $this: CALL '<get-p>(): Int' type=kotlin.Int origin=PREFIX_DECR
             CALL '<get-p>(): Int' type=kotlin.Int origin=PREFIX_DECR
-  FUN public fun testPropPostfix(): kotlin.Unit
+  FUN name:testPropPostfix visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      VAR val p1: kotlin.Int
+      VAR name:p1 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
+            VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:val
               CALL '<get-p>(): Int' type=kotlin.Int origin=POSTFIX_INCR
             CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=POSTFIX_INCR
               <set-?>: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
             GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
-      VAR val p2: kotlin.Int
+      VAR name:p2 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           BLOCK type=kotlin.Int origin=PREFIX_DECR
             CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=PREFIX_DECR
               <set-?>: CALL 'dec(): Int' type=kotlin.Int origin=PREFIX_DECR
                 $this: CALL '<get-p>(): Int' type=kotlin.Int origin=PREFIX_DECR
             CALL '<get-p>(): Int' type=kotlin.Int origin=PREFIX_DECR
-  FUN public fun testArrayPrefix(): kotlin.Unit
+  FUN name:testArrayPrefix visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      VAR val a1: kotlin.Int
+      VAR name:a1 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=PREFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE val tmp0_array: kotlin.IntArray
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:kotlin.IntArray flags:val
             CALL '<get-arr>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
-          VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.Int
-            CONST Int type=kotlin.Int value='0'
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.Int flags:val
+            CONST Int type=kotlin.Int value=0
           CALL 'set(Int, Int): Unit' type=kotlin.Unit origin=PREFIX_INCR
             $this: GET_VAR 'tmp0_array: IntArray' type=kotlin.IntArray origin=null
             index: GET_VAR 'tmp1_index0: Int' type=kotlin.Int origin=null
@@ -112,12 +112,12 @@ FILE /incrementDecrement.kt
           CALL 'get(Int): Int' type=kotlin.Int origin=PREFIX_INCR
             $this: GET_VAR 'tmp0_array: IntArray' type=kotlin.IntArray origin=null
             index: GET_VAR 'tmp1_index0: Int' type=kotlin.Int origin=null
-      VAR val a2: kotlin.Int
+      VAR name:a2 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=PREFIX_DECR
-          VAR IR_TEMPORARY_VARIABLE val tmp2_array: kotlin.IntArray
+          VAR IR_TEMPORARY_VARIABLE name:tmp2_array type:kotlin.IntArray flags:val
             CALL '<get-arr>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
-          VAR IR_TEMPORARY_VARIABLE val tmp3_index0: kotlin.Int
-            CONST Int type=kotlin.Int value='0'
+          VAR IR_TEMPORARY_VARIABLE name:tmp3_index0 type:kotlin.Int flags:val
+            CONST Int type=kotlin.Int value=0
           CALL 'set(Int, Int): Unit' type=kotlin.Unit origin=PREFIX_DECR
             $this: GET_VAR 'tmp2_array: IntArray' type=kotlin.IntArray origin=null
             index: GET_VAR 'tmp3_index0: Int' type=kotlin.Int origin=null
@@ -128,15 +128,15 @@ FILE /incrementDecrement.kt
           CALL 'get(Int): Int' type=kotlin.Int origin=PREFIX_DECR
             $this: GET_VAR 'tmp2_array: IntArray' type=kotlin.IntArray origin=null
             index: GET_VAR 'tmp3_index0: Int' type=kotlin.Int origin=null
-  FUN public fun testArrayPostfix(): kotlin.Unit
+  FUN name:testArrayPostfix visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      VAR val a1: kotlin.Int
+      VAR name:a1 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE val tmp0_array: kotlin.IntArray
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:kotlin.IntArray flags:val
             CALL '<get-arr>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
-          VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.Int
-            CONST Int type=kotlin.Int value='0'
-          VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.Int flags:val
+            CONST Int type=kotlin.Int value=0
+          VAR IR_TEMPORARY_VARIABLE name:tmp2 type:kotlin.Int flags:val
             CALL 'get(Int): Int' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'tmp0_array: IntArray' type=kotlin.IntArray origin=null
               index: GET_VAR 'tmp1_index0: Int' type=kotlin.Int origin=null
@@ -146,13 +146,13 @@ FILE /incrementDecrement.kt
             value: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
           GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
-      VAR val a2: kotlin.Int
+      VAR name:a2 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
-          VAR IR_TEMPORARY_VARIABLE val tmp3_array: kotlin.IntArray
+          VAR IR_TEMPORARY_VARIABLE name:tmp3_array type:kotlin.IntArray flags:val
             CALL '<get-arr>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
-          VAR IR_TEMPORARY_VARIABLE val tmp4_index0: kotlin.Int
-            CONST Int type=kotlin.Int value='0'
-          VAR IR_TEMPORARY_VARIABLE val tmp5: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE name:tmp4_index0 type:kotlin.Int flags:val
+            CONST Int type=kotlin.Int value=0
+          VAR IR_TEMPORARY_VARIABLE name:tmp5 type:kotlin.Int flags:val
             CALL 'get(Int): Int' type=kotlin.Int origin=POSTFIX_DECR
               $this: GET_VAR 'tmp3_array: IntArray' type=kotlin.IntArray origin=null
               index: GET_VAR 'tmp4_index0: Int' type=kotlin.Int origin=null

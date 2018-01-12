@@ -1,38 +1,38 @@
-FILE /outerClassInstanceReference.kt
-  CLASS CLASS Outer
-    $this: VALUE_PARAMETER this@Outer: Outer
-    CONSTRUCTOR public constructor Outer()
+FILE fqName:<root> fileName:/outerClassInstanceReference.kt
+  CLASS CLASS name:Outer modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer flags:
+    CONSTRUCTOR visibility:public <> () returnType:Outer flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
-    FUN public final fun outer(): kotlin.Unit
-      $this: VALUE_PARAMETER this@Outer: Outer
+    FUN name:outer visibility:public modality:FINAL <> ($this:Outer) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:Outer flags:
       BLOCK_BODY
-    CLASS CLASS Inner
-      $this: VALUE_PARAMETER this@Inner: Inner
-      CONSTRUCTOR public constructor Inner()
-        $outer: VALUE_PARAMETER this@Outer: Outer
+    CLASS CLASS name:Inner modality:FINAL visibility:public flags:
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.Inner flags:
+      CONSTRUCTOR visibility:public <> ($this:Outer) returnType:Outer.Inner flags:
+        $outer: VALUE_PARAMETER name:<this> type:Outer flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
-      FUN public final fun inner(): kotlin.Unit
-        $this: VALUE_PARAMETER this@Inner: Inner
+      FUN name:inner visibility:public modality:FINAL <> ($this:Outer.Inner) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:Outer.Inner flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='inner(): Unit'
+          RETURN type=kotlin.Nothing from=inner(): Unit'
             CALL 'outer(): Unit' type=kotlin.Unit origin=null
               $this: GET_VAR 'this@Outer: Outer' type=Outer origin=null
-      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        $this: VALUE_PARAMETER this@Any: Any
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-        $this: VALUE_PARAMETER this@Any: Any
-      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-        $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

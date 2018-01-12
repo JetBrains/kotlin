@@ -1,46 +1,46 @@
-@0:0..23:0 FILE /augmentedAssignmentWithExpression.kt
-  @2:0..8:1 CLASS CLASS Host
-    @2:0..8:1 VALUE_PARAMETER this@Host: Host
-    @2:0..8:1 CONSTRUCTOR public constructor Host()
+@0:0..23:0 FILE fqName:test fileName:/augmentedAssignmentWithExpression.kt
+  @2:0..8:1 CLASS CLASS name:Host modality:FINAL visibility:public flags:
+    @2:0..8:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Host flags:
+    @2:0..8:1 CONSTRUCTOR visibility:public <> () returnType:test.Host flags:
       @2:0..8:1 BLOCK_BODY
         @2:0..8:1 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         @2:0..8:1 INSTANCE_INITIALIZER_CALL classDescriptor='Host'
-    @3:4..38 FUN public final operator fun plusAssign(x: kotlin.Int): kotlin.Unit
-      @3:4..38 VALUE_PARAMETER this@Host: Host
-      @3:28..34 VALUE_PARAMETER value-parameter x: kotlin.Int
+    @3:4..38 FUN name:plusAssign visibility:public modality:FINAL <> ($this:test.Host, x:kotlin.Int) returnType:Unit flags:
+      @3:4..38 VALUE_PARAMETER name:<this> type:test.Host flags:
+      @3:28..34 VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       @3:36..38 BLOCK_BODY
-    @5:4..7:5 FUN public final fun test1(): kotlin.Unit
-      @5:4..7:5 VALUE_PARAMETER this@Host: Host
+    @5:4..7:5 FUN name:test1 visibility:public modality:FINAL <> ($this:test.Host) returnType:Unit flags:
+      @5:4..7:5 VALUE_PARAMETER name:<this> type:test.Host flags:
       @5:16..7:5 BLOCK_BODY
         @6:8..17 CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
           @6:8..12 GET_VAR 'this@Host: Host' type=test.Host origin=PLUSEQ
-          @6:16..17 CONST Int type=kotlin.Int value='1'
-    @2:0..8:1 FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      @2:0..8:1 VALUE_PARAMETER this@Any: Any
-      @-1:-1..-1 VALUE_PARAMETER value-parameter other: kotlin.Any?
-    @2:0..8:1 FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      @2:0..8:1 VALUE_PARAMETER this@Any: Any
-    @2:0..8:1 FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      @2:0..8:1 VALUE_PARAMETER this@Any: Any
-  @10:0..18 FUN public fun foo(): test.Host
+          @6:16..17 CONST Int type=kotlin.Int value=1
+    @2:0..8:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      @2:0..8:1 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      @-1:-1..-1 VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    @2:0..8:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      @2:0..8:1 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    @2:0..8:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      @2:0..8:1 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  @10:0..18 FUN name:foo visibility:public modality:FINAL <> () returnType:Host flags:
     @10:12..18 BLOCK_BODY
-      @10:12..18 RETURN type=kotlin.Nothing from='foo(): Host'
+      @10:12..18 RETURN type=kotlin.Nothing from=foo(): Host'
         @10:12..18 CALL 'constructor Host()' type=test.Host origin=null
-  @12:0..14:1 FUN public fun test.Host.test2(): kotlin.Unit
-    @12:4..8 VALUE_PARAMETER this@test2: Host
+  @12:0..14:1 FUN name:test2 visibility:public modality:FINAL <> ($receiver:test.Host) returnType:Unit flags:
+    @12:4..8 VALUE_PARAMETER name:<this> type:test.Host flags:
     @12:17..14:1 BLOCK_BODY
       @13:4..13 CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
         @13:4..8 GET_VAR 'this@test2: Host' type=test.Host origin=PLUSEQ
-        @13:12..13 CONST Int type=kotlin.Int value='1'
-  @16:0..18:1 FUN public fun test3(): kotlin.Unit
+        @13:12..13 CONST Int type=kotlin.Int value=1
+  @16:0..18:1 FUN name:test3 visibility:public modality:FINAL <> () returnType:Unit flags:
     @16:12..18:1 BLOCK_BODY
       @17:4..14 CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
         @17:4..9 CALL 'foo(): Host' type=test.Host origin=null
-        @17:13..14 CONST Int type=kotlin.Int value='1'
-  @20:0..22:1 FUN public fun test4(a: () -> test.Host): kotlin.Unit
-    @20:10..23 VALUE_PARAMETER value-parameter a: () -> test.Host
+        @17:13..14 CONST Int type=kotlin.Int value=1
+  @20:0..22:1 FUN name:test4 visibility:public modality:FINAL <> (a:() -> test.Host) returnType:Unit flags:
+    @20:10..23 VALUE_PARAMETER name:a index:0 type:() -> test.Host flags:
     @20:25..22:1 BLOCK_BODY
       @21:4..12 CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
         @21:4..7 CALL 'invoke(): Host' type=test.Host origin=INVOKE
           @21:4..5 GET_VAR 'value-parameter a: () -> Host' type=() -> test.Host origin=VARIABLE_AS_FUNCTION
-        @21:11..12 CONST Int type=kotlin.Int value='1'
+        @21:11..12 CONST Int type=kotlin.Int value=1

@@ -1,6 +1,6 @@
-FILE /boxOk.kt
-  FUN public fun box(): kotlin.String
+FILE fqName:<root> fileName:/boxOk.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='box(): String'
-        CONST String type=kotlin.String value='OK'
+      RETURN type=kotlin.Nothing from=box(): String'
+        CONST String type=kotlin.String value=OK
 

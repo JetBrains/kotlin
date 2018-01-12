@@ -1,115 +1,115 @@
-FILE /propertyAccessors.kt
-  PROPERTY public val test1: kotlin.Int
-    FUN public fun <get-test1>(): kotlin.Int
+FILE fqName:<root> fileName:/propertyAccessors.kt
+  PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FUN name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1>(): Int'
-          CONST Int type=kotlin.Int value='42'
-  PROPERTY public var test2: kotlin.Int
-    FUN public fun <get-test2>(): kotlin.Int
+        RETURN type=kotlin.Nothing from=<get-test1>(): Int'
+          CONST Int type=kotlin.Int value=42
+  PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
+    FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2>(): Int'
-          CONST Int type=kotlin.Int value='42'
-    FUN public fun <set-test2>(value: kotlin.Int): kotlin.Unit
-      VALUE_PARAMETER value-parameter value: kotlin.Int
+        RETURN type=kotlin.Nothing from=<get-test2>(): Int'
+          CONST Int type=kotlin.Int value=42
+    FUN name:<set-test2> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
-  PROPERTY public val kotlin.String.testExt1: kotlin.Int
-    FUN public fun kotlin.String.<get-testExt1>(): kotlin.Int
-      $receiver: VALUE_PARAMETER this@testExt1: String
+  PROPERTY name:testExt1 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FUN name:<get-testExt1> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:Int flags:
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-testExt1>() on String: Int'
-          CONST Int type=kotlin.Int value='42'
-  PROPERTY public var kotlin.String.testExt2: kotlin.Int
-    FUN public fun kotlin.String.<get-testExt2>(): kotlin.Int
-      $receiver: VALUE_PARAMETER this@testExt2: String
+        RETURN type=kotlin.Nothing from=<get-testExt1>() on String: Int'
+          CONST Int type=kotlin.Int value=42
+  PROPERTY name:testExt2 type:kotlin.Int visibility:public modality:FINAL flags:var
+    FUN name:<get-testExt2> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:Int flags:
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-testExt2>() on String: Int'
-          CONST Int type=kotlin.Int value='42'
-    FUN public fun kotlin.String.<set-testExt2>(value: kotlin.Int): kotlin.Unit
-      $receiver: VALUE_PARAMETER this@testExt2: String
-      VALUE_PARAMETER value-parameter value: kotlin.Int
+        RETURN type=kotlin.Nothing from=<get-testExt2>() on String: Int'
+          CONST Int type=kotlin.Int value=42
+    FUN name:<set-testExt2> visibility:public modality:FINAL <> ($receiver:kotlin.String, value:kotlin.Int) returnType:Unit flags:
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
-  PROPERTY public val <T> T.testExt3: kotlin.Int
-    FUN public fun T.<get-testExt3>(): kotlin.Int
-      $receiver: VALUE_PARAMETER this@testExt3: T
+  PROPERTY name:testExt3 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FUN name:<get-testExt3> visibility:public modality:FINAL <> ($receiver:T) returnType:Int flags:
+      $receiver: VALUE_PARAMETER name:<this> type:T flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-testExt3>() on T: Int'
-          CONST Int type=kotlin.Int value='42'
-  PROPERTY public var <T> T.testExt4: kotlin.Int
-    FUN public fun T.<get-testExt4>(): kotlin.Int
-      $receiver: VALUE_PARAMETER this@testExt4: T
+        RETURN type=kotlin.Nothing from=<get-testExt3>() on T: Int'
+          CONST Int type=kotlin.Int value=42
+  PROPERTY name:testExt4 type:kotlin.Int visibility:public modality:FINAL flags:var
+    FUN name:<get-testExt4> visibility:public modality:FINAL <> ($receiver:T) returnType:Int flags:
+      $receiver: VALUE_PARAMETER name:<this> type:T flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-testExt4>() on T: Int'
-          CONST Int type=kotlin.Int value='42'
-    FUN public fun T.<set-testExt4>(value: kotlin.Int): kotlin.Unit
-      $receiver: VALUE_PARAMETER this@testExt4: T
-      VALUE_PARAMETER value-parameter value: kotlin.Int
+        RETURN type=kotlin.Nothing from=<get-testExt4>() on T: Int'
+          CONST Int type=kotlin.Int value=42
+    FUN name:<set-testExt4> visibility:public modality:FINAL <> ($receiver:T, value:kotlin.Int) returnType:Unit flags:
+      $receiver: VALUE_PARAMETER name:<this> type:T flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
-  CLASS CLASS Host
-    $this: VALUE_PARAMETER this@Host: Host<T>
-    TYPE_PARAMETER <T>
-    CONSTRUCTOR public constructor Host<T>()
+  CLASS CLASS name:Host modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host<T> flags:
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> () returnType:Host<T> flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
-    PROPERTY public final val testMem1: kotlin.Int
-      FUN public final fun <get-testMem1>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Host: Host<T>
+    PROPERTY name:testMem1 type:kotlin.Int visibility:public modality:FINAL flags:val
+      FUN name:<get-testMem1> visibility:public modality:FINAL <> ($this:Host<T>) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-testMem1>(): Int'
-            CONST Int type=kotlin.Int value='42'
-    PROPERTY public final var testMem2: kotlin.Int
-      FUN public final fun <get-testMem2>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Host: Host<T>
+          RETURN type=kotlin.Nothing from=<get-testMem1>(): Int'
+            CONST Int type=kotlin.Int value=42
+    PROPERTY name:testMem2 type:kotlin.Int visibility:public modality:FINAL flags:var
+      FUN name:<get-testMem2> visibility:public modality:FINAL <> ($this:Host<T>) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-testMem2>(): Int'
-            CONST Int type=kotlin.Int value='42'
-      FUN public final fun <set-testMem2>(value: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@Host: Host<T>
-        VALUE_PARAMETER value-parameter value: kotlin.Int
+          RETURN type=kotlin.Nothing from=<get-testMem2>(): Int'
+            CONST Int type=kotlin.Int value=42
+      FUN name:<set-testMem2> visibility:public modality:FINAL <> ($this:Host<T>, value:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
         BLOCK_BODY
-    PROPERTY public final val kotlin.String.testMemExt1: kotlin.Int
-      FUN public final fun kotlin.String.<get-testMemExt1>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Host: Host<T>
-        $receiver: VALUE_PARAMETER this@testMemExt1: String
+    PROPERTY name:testMemExt1 type:kotlin.Int visibility:public modality:FINAL flags:val
+      FUN name:<get-testMemExt1> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.String) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-testMemExt1>() on String: Int'
-            CONST Int type=kotlin.Int value='42'
-    PROPERTY public final var kotlin.String.testMemExt2: kotlin.Int
-      FUN public final fun kotlin.String.<get-testMemExt2>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Host: Host<T>
-        $receiver: VALUE_PARAMETER this@testMemExt2: String
+          RETURN type=kotlin.Nothing from=<get-testMemExt1>() on String: Int'
+            CONST Int type=kotlin.Int value=42
+    PROPERTY name:testMemExt2 type:kotlin.Int visibility:public modality:FINAL flags:var
+      FUN name:<get-testMemExt2> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.String) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-testMemExt2>() on String: Int'
-            CONST Int type=kotlin.Int value='42'
-      FUN public final fun kotlin.String.<set-testMemExt2>(value: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@Host: Host<T>
-        $receiver: VALUE_PARAMETER this@testMemExt2: String
-        VALUE_PARAMETER value-parameter value: kotlin.Int
+          RETURN type=kotlin.Nothing from=<get-testMemExt2>() on String: Int'
+            CONST Int type=kotlin.Int value=42
+      FUN name:<set-testMemExt2> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.String, value:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
         BLOCK_BODY
-    PROPERTY public final val <TT> TT.testMemExt3: kotlin.Int
-      FUN public final fun TT.<get-testMemExt3>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Host: Host<T>
-        $receiver: VALUE_PARAMETER this@testMemExt3: TT
+    PROPERTY name:testMemExt3 type:kotlin.Int visibility:public modality:FINAL flags:val
+      FUN name:<get-testMemExt3> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:TT) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
+        $receiver: VALUE_PARAMETER name:<this> type:TT flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-testMemExt3>() on TT: Int'
-            CONST Int type=kotlin.Int value='42'
-    PROPERTY public final var <TT> TT.testMemExt4: kotlin.Int
-      FUN public final fun TT.<get-testMemExt4>(): kotlin.Int
-        $this: VALUE_PARAMETER this@Host: Host<T>
-        $receiver: VALUE_PARAMETER this@testMemExt4: TT
+          RETURN type=kotlin.Nothing from=<get-testMemExt3>() on TT: Int'
+            CONST Int type=kotlin.Int value=42
+    PROPERTY name:testMemExt4 type:kotlin.Int visibility:public modality:FINAL flags:var
+      FUN name:<get-testMemExt4> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:TT) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
+        $receiver: VALUE_PARAMETER name:<this> type:TT flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-testMemExt4>() on TT: Int'
-            CONST Int type=kotlin.Int value='42'
-      FUN public final fun TT.<set-testMemExt4>(value: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@Host: Host<T>
-        $receiver: VALUE_PARAMETER this@testMemExt4: TT
-        VALUE_PARAMETER value-parameter value: kotlin.Int
+          RETURN type=kotlin.Nothing from=<get-testMemExt4>() on TT: Int'
+            CONST Int type=kotlin.Int value=42
+      FUN name:<set-testMemExt4> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:TT, value:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
+        $receiver: VALUE_PARAMETER name:<this> type:TT flags:
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
         BLOCK_BODY
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

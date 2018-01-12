@@ -1,106 +1,106 @@
-FILE /packageLevelProperties.kt
-  PROPERTY public val test1: kotlin.Int = 0
-    FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Int = 0
+FILE fqName:<root> fileName:/packageLevelProperties.kt
+  PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.Int
+        CONST Int type=kotlin.Int value=0
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1>(): Int'
+        RETURN type=kotlin.Nothing from=<get-test1>(): Int'
           GET_FIELD 'test1: Int' type=kotlin.Int origin=null
-  PROPERTY public val test2: kotlin.Int
-    FUN public fun <get-test2>(): kotlin.Int
+  PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2>(): Int'
-          CONST Int type=kotlin.Int value='0'
-  PROPERTY public var test3: kotlin.Int
-    FIELD PROPERTY_BACKING_FIELD public var test3: kotlin.Int
+        RETURN type=kotlin.Nothing from=<get-test2>(): Int'
+          CONST Int type=kotlin.Int value=0
+  PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:var
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test3>(): kotlin.Int
+        CONST Int type=kotlin.Int value=0
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test3>(): Int'
+        RETURN type=kotlin.Nothing from=<get-test3>(): Int'
           GET_FIELD 'test3: Int' type=kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <set-test3>(<set-?>: kotlin.Int): kotlin.Unit
-      VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'test3: Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-  PROPERTY public var test4: kotlin.Int
-    FIELD PROPERTY_BACKING_FIELD public var test4: kotlin.Int
+  PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:var
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='1'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test4>(): kotlin.Int
+        CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test4>(): Int'
+        RETURN type=kotlin.Nothing from=<get-test4>(): Int'
           GET_FIELD 'test4: Int' type=kotlin.Int origin=null
-    FUN public fun <set-test4>(value: kotlin.Int): kotlin.Unit
-      VALUE_PARAMETER value-parameter value: kotlin.Int
+    FUN name:<set-test4> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'test4: Int' type=kotlin.Unit origin=EQ
           value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
-  PROPERTY public var test5: kotlin.Int
-    FIELD PROPERTY_BACKING_FIELD public var test5: kotlin.Int
+  PROPERTY name:test5 type:kotlin.Int visibility:public modality:FINAL flags:var
+    FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='1'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test5>(): kotlin.Int
+        CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test5>(): Int'
+        RETURN type=kotlin.Nothing from=<get-test5>(): Int'
           GET_FIELD 'test5: Int' type=kotlin.Int origin=null
-    FUN private fun <set-test5>(<set-?>: kotlin.Int): kotlin.Unit
-      VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+    FUN name:<set-test5> visibility:private modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'test5: Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-  PROPERTY public val test6: kotlin.Int = 1
-    FIELD PROPERTY_BACKING_FIELD public val test6: kotlin.Int = 1
+  PROPERTY name:test6 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:public
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='1'
-    FUN public fun <get-test6>(): kotlin.Int
+        CONST Int type=kotlin.Int value=1
+    FUN name:<get-test6> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test6>(): Int'
+        RETURN type=kotlin.Nothing from=<get-test6>(): Int'
           GET_FIELD 'test6: Int' type=kotlin.Int origin=null
-  PROPERTY public val test7: kotlin.Int
-    FIELD DELEGATE val `test7$delegate`: kotlin.Lazy<kotlin.Int>
+  PROPERTY name:test7 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmval
+    FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private
       EXPRESSION_BODY
         CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
           <T>: Int
           initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Int
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Int flags:
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='<anonymous>(): Int'
-                  CONST Int type=kotlin.Int value='42'
+                RETURN type=kotlin.Nothing from=<anonymous>(): Int'
+                  CONST Int type=kotlin.Int value=42
             FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
-    FUN DELEGATED_PROPERTY_ACCESSOR public fun <get-test7>(): kotlin.Int
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test7>(): Int'
+        RETURN type=kotlin.Nothing from=<get-test7>(): Int'
           CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
             <T>: Int
             $receiver: GET_FIELD '`test7$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
-            thisRef: CONST Null type=kotlin.Nothing? value='null'
+            thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'test7: Int' field=null getter='<get-test7>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-  PROPERTY public var test8: kotlin.Int
-    FIELD DELEGATE val `test8$delegate`: kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */
+  PROPERTY name:test8 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmvar
+    FIELD DELEGATE name:test8$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ visibility:private
       EXPRESSION_BODY
         CALL 'hashMapOf(): HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
           <K>: String
           <V>: Int
-    FUN DELEGATED_PROPERTY_ACCESSOR public fun <get-test8>(): kotlin.Int
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test8>(): Int'
+        RETURN type=kotlin.Nothing from=<get-test8>(): Int'
           CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out Int>: Int' type=kotlin.Int origin=null
             <V>: Int
             <V1 : V>: Int
             $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
-            thisRef: CONST Null type=kotlin.Nothing? value='null'
+            thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'test8: Int' field=null getter='<get-test8>(): Int' setter='<set-test8>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-    FUN DELEGATED_PROPERTY_ACCESSOR public fun <set-test8>(<set-?>: kotlin.Int): kotlin.Unit
-      VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<set-test8>(Int): Unit'
+        RETURN type=kotlin.Nothing from=<set-test8>(Int): Unit'
           CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
             <V>: Int
             $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
-            thisRef: CONST Null type=kotlin.Nothing? value='null'
+            thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'test8: Int' field=null getter='<get-test8>(): Int' setter='<set-test8>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
 

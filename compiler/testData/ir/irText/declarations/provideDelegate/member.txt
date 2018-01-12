@@ -1,97 +1,97 @@
-FILE /member.kt
-  CLASS CLASS Delegate
-    $this: VALUE_PARAMETER this@Delegate: Delegate
-    CONSTRUCTOR public constructor Delegate(value: kotlin.String)
-      VALUE_PARAMETER value-parameter value: kotlin.String
+FILE fqName:<root> fileName:/member.kt
+  CLASS CLASS name:Delegate modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Delegate flags:
+    CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:Delegate flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Delegate'
-    PROPERTY public final val value: kotlin.String
-      FIELD PROPERTY_BACKING_FIELD public final val value: kotlin.String
+    PROPERTY name:value type:kotlin.String visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.String
-        $this: VALUE_PARAMETER this@Delegate: Delegate
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Delegate) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:Delegate flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-value>(): String'
+          RETURN type=kotlin.Nothing from=<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Delegate: Delegate' type=Delegate origin=null
-    FUN public final operator fun getValue(thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String
-      $this: VALUE_PARAMETER this@Delegate: Delegate
-      VALUE_PARAMETER value-parameter thisRef: kotlin.Any?
-      VALUE_PARAMETER value-parameter property: kotlin.Any?
+    FUN name:getValue visibility:public modality:FINAL <> ($this:Delegate, thisRef:kotlin.Any?, property:kotlin.Any?) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:Delegate flags:
+      VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any? flags:
+      VALUE_PARAMETER name:property index:1 type:kotlin.Any? flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='getValue(Any?, Any?): String'
+        RETURN type=kotlin.Nothing from=getValue(Any?, Any?): String'
           CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Delegate: Delegate' type=Delegate origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS CLASS DelegateProvider
-    $this: VALUE_PARAMETER this@DelegateProvider: DelegateProvider
-    CONSTRUCTOR public constructor DelegateProvider(value: kotlin.String)
-      VALUE_PARAMETER value-parameter value: kotlin.String
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:DelegateProvider modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:DelegateProvider flags:
+    CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:DelegateProvider flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='DelegateProvider'
-    PROPERTY public final val value: kotlin.String
-      FIELD PROPERTY_BACKING_FIELD public final val value: kotlin.String
+    PROPERTY name:value type:kotlin.String visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.String
-        $this: VALUE_PARAMETER this@DelegateProvider: DelegateProvider
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:DelegateProvider) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:DelegateProvider flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-value>(): String'
+          RETURN type=kotlin.Nothing from=<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@DelegateProvider: DelegateProvider' type=DelegateProvider origin=null
-    FUN public final operator fun provideDelegate(thisRef: kotlin.Any?, property: kotlin.Any?): Delegate
-      $this: VALUE_PARAMETER this@DelegateProvider: DelegateProvider
-      VALUE_PARAMETER value-parameter thisRef: kotlin.Any?
-      VALUE_PARAMETER value-parameter property: kotlin.Any?
+    FUN name:provideDelegate visibility:public modality:FINAL <> ($this:DelegateProvider, thisRef:kotlin.Any?, property:kotlin.Any?) returnType:Delegate flags:
+      $this: VALUE_PARAMETER name:<this> type:DelegateProvider flags:
+      VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any? flags:
+      VALUE_PARAMETER name:property index:1 type:kotlin.Any? flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any?): Delegate'
+        RETURN type=kotlin.Nothing from=provideDelegate(Any?, Any?): Delegate'
           CALL 'constructor Delegate(String)' type=Delegate origin=null
             value: CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR 'this@DelegateProvider: DelegateProvider' type=DelegateProvider origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS CLASS Host
-    $this: VALUE_PARAMETER this@Host: Host
-    CONSTRUCTOR public constructor Host()
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:Host modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host flags:
+    CONSTRUCTOR visibility:public <> () returnType:Host flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
-    PROPERTY public final val testMember: kotlin.String
-      FIELD DELEGATE val `testMember$delegate`: Delegate
+    PROPERTY name:testMember type:kotlin.String visibility:public modality:FINAL flags:delegatedmval
+      FIELD DELEGATE name:testMember$delegate type:Delegate visibility:private
         EXPRESSION_BODY
           CALL 'provideDelegate(Any?, Any?): Delegate' type=Delegate origin=null
             $this: CALL 'constructor DelegateProvider(String)' type=DelegateProvider origin=null
-              value: CONST String type=kotlin.String value='OK'
+              value: CONST String type=kotlin.String value=OK
             thisRef: GET_VAR 'this@Host: Host' type=Host origin=null
             property: PROPERTY_REFERENCE 'testMember: String' field=null getter='<get-testMember>(): String' setter=null type=kotlin.reflect.KProperty1<Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-      FUN DELEGATED_PROPERTY_ACCESSOR public final fun <get-testMember>(): kotlin.String
-        $this: VALUE_PARAMETER this@Host: Host
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:public modality:FINAL <> ($this:Host) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:Host flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-testMember>(): String'
+          RETURN type=kotlin.Nothing from=<get-testMember>(): String'
             CALL 'getValue(Any?, Any?): String' type=kotlin.String origin=null
               $this: GET_FIELD '`testMember$delegate`: Delegate' type=Delegate origin=null
                 receiver: GET_VAR 'this@Host: Host' type=Host origin=null
               thisRef: GET_VAR 'this@Host: Host' type=Host origin=null
               property: PROPERTY_REFERENCE 'testMember: String' field=null getter='<get-testMember>(): String' setter=null type=kotlin.reflect.KProperty1<Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

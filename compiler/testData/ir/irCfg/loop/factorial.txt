@@ -2,14 +2,14 @@
 // FUN: factorial
 BB 0
 CONTENT
-      1 FUN public fun factorial(i: kotlin.Int): kotlin.Int
-      2 CONST Int type=kotlin.Int value='1'
-      3 VAR var result: kotlin.Int
-      4 CONST Int type=kotlin.Int value='2'
+      1 FUN name:factorial visibility:public modality:FINAL <> (i:kotlin.Int) returnType:Int flags:
+      2 CONST Int type=kotlin.Int value=1
+      3 VAR name:result type:kotlin.Int flags:var
+      4 CONST Int type=kotlin.Int value=2
       5 GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
       6 CALL 'rangeTo(Int): IntRange' type=kotlin.ranges.IntRange origin=RANGE
       7 CALL 'iterator(): IntIterator' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
-      8 VAR FOR_LOOP_ITERATOR val tmp0_iterator: kotlin.collections.IntIterator
+      8 VAR FOR_LOOP_ITERATOR name:tmp0_iterator type:kotlin.collections.IntIterator flags:val
       9 WHILE label=null origin=FOR_LOOP_INNER_WHILE
 OUTGOING -> BB 1
     While entry: WHILE label=null origin=FOR_LOOP_INNER_WHILE
@@ -26,7 +26,7 @@ INCOMING <- BB 1
 CONTENT
       1 GET_VAR 'tmp0_iterator: IntIterator' type=kotlin.collections.IntIterator origin=null
       2 CALL 'next(): Int' type=kotlin.Int origin=FOR_LOOP_NEXT
-      3 VAR FOR_LOOP_VARIABLE val j: kotlin.Int
+      3 VAR FOR_LOOP_VARIABLE name:j type:kotlin.Int flags:val
       4 SET_VAR 'result: Int' type=kotlin.Unit origin=MULTEQ
 OUTGOING -> BB 1
     While entry: WHILE label=null origin=FOR_LOOP_INNER_WHILE
@@ -41,9 +41,9 @@ INCOMING <- BB 3
     While exit: WHILE label=null origin=FOR_LOOP_INNER_WHILE
 CONTENT
       1 GET_VAR 'result: Int' type=kotlin.Int origin=null
-      2 RETURN type=kotlin.Nothing from='factorial(Int): Int'
+      2 RETURN type=kotlin.Nothing from=factorial(Int): Int'
 OUTGOING -> NONE
-    Function exit: FUN public fun factorial(i: kotlin.Int): kotlin.Int
+    Function exit: FUN name:factorial visibility:public modality:FINAL <> (i:kotlin.Int) returnType:Int flags:
 
 // END FUN: factorial
 

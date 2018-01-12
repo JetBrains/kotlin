@@ -1,65 +1,65 @@
-FILE /delegatingConstructorCallToTypeAliasConstructor.kt
-  CLASS CLASS Cell
-    $this: VALUE_PARAMETER this@Cell: Cell<T>
-    TYPE_PARAMETER <T>
-    CONSTRUCTOR public constructor Cell<T>(value: T)
-      VALUE_PARAMETER value-parameter value: T
+FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
+  CLASS CLASS name:Cell modality:OPEN visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Cell<T> flags:
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (value:T) returnType:Cell<T> flags:
+      VALUE_PARAMETER name:value index:0 type:T flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Cell'
-    PROPERTY public final val value: T
-      FIELD PROPERTY_BACKING_FIELD public final val value: T
+    PROPERTY name:value type:T visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:value type:T visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): T
-        $this: VALUE_PARAMETER this@Cell: Cell<T>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Cell<T>) returnType:T flags:
+        $this: VALUE_PARAMETER name:<this> type:Cell<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-value>(): T'
+          RETURN type=kotlin.Nothing from=<get-value>(): T'
             GET_FIELD 'value: T' type=T origin=null
               receiver: GET_VAR 'this@Cell: Cell<T>' type=Cell<T> origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   TYPEALIAS typealias CT = Cell<T> type=Cell<T>
   TYPEALIAS typealias CStr = Cell<String> type=Cell<kotlin.String>
-  CLASS CLASS C1
-    $this: VALUE_PARAMETER this@C1: C1
-    CONSTRUCTOR public constructor C1()
+  CLASS CLASS name:C1 modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C1 flags:
+    CONSTRUCTOR visibility:public <> () returnType:C1 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
           <T>: null
-          value: CONST String type=kotlin.String value='O'
+          value: CONST String type=kotlin.String value=O
         INSTANCE_INITIALIZER_CALL classDescriptor='C1'
-    PROPERTY FAKE_OVERRIDE public final override val value: kotlin.String
-      FUN FAKE_OVERRIDE public final override fun <get-value>(): kotlin.String
-        $this: VALUE_PARAMETER this@Cell: Cell<String>
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS CLASS C2
-    $this: VALUE_PARAMETER this@C2: C2
-    CONSTRUCTOR public constructor C2()
+    PROPERTY FAKE_OVERRIDE name:value type:kotlin.String visibility:public modality:FINAL flags:val
+      FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:Cell<kotlin.String>) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:Cell<kotlin.String> flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:C2 modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C2 flags:
+    CONSTRUCTOR visibility:public <> () returnType:C2 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
           <T>: null
-          value: CONST String type=kotlin.String value='K'
+          value: CONST String type=kotlin.String value=K
         INSTANCE_INITIALIZER_CALL classDescriptor='C2'
-    PROPERTY FAKE_OVERRIDE public final override val value: kotlin.String
-      FUN FAKE_OVERRIDE public final override fun <get-value>(): kotlin.String
-        $this: VALUE_PARAMETER this@Cell: Cell<String>
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    PROPERTY FAKE_OVERRIDE name:value type:kotlin.String visibility:public modality:FINAL flags:val
+      FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:Cell<kotlin.String>) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:Cell<kotlin.String> flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

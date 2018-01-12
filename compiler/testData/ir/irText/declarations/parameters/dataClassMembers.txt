@@ -1,95 +1,95 @@
-FILE /dataClassMembers.kt
-  CLASS CLASS Test
-    $this: VALUE_PARAMETER this@Test: Test<T>
-    TYPE_PARAMETER <T>
-    CONSTRUCTOR public constructor Test<T>(x: T, y: kotlin.String = ...)
-      VALUE_PARAMETER value-parameter x: T
-      VALUE_PARAMETER value-parameter y: kotlin.String = ...
+FILE fqName:<root> fileName:/dataClassMembers.kt
+  CLASS CLASS name:Test modality:FINAL visibility:public flags:data
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test<T> flags:
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (x:T, y:kotlin.String) returnType:Test<T> flags:
+      VALUE_PARAMETER name:x index:0 type:T flags:
+      VALUE_PARAMETER name:y index:1 type:kotlin.String flags:
         EXPRESSION_BODY
-          CONST String type=kotlin.String value=''
+          CONST String type=kotlin.String value=
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
-    PROPERTY public final val x: T
-      FIELD PROPERTY_BACKING_FIELD public final val x: T
+    PROPERTY name:x type:T visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:T visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): T
-        $this: VALUE_PARAMETER this@Test: Test<T>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test<T>) returnType:T flags:
+        $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-x>(): T'
+          RETURN type=kotlin.Nothing from=<get-x>(): T'
             GET_FIELD 'x: T' type=T origin=null
               receiver: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
-    PROPERTY public final val y: kotlin.String
-      FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.String
+    PROPERTY name:y type:kotlin.String visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: String = ...' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.String
-        $this: VALUE_PARAMETER this@Test: Test<T>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test<T>) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-y>(): String'
+          RETURN type=kotlin.Nothing from=<get-y>(): String'
             GET_FIELD 'y: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): T
-      $this: VALUE_PARAMETER this@Test: Test<T>
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:Test<T>) returnType:T flags:
+      $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='component1(): T'
+        RETURN type=kotlin.Nothing from=component1(): T'
           CALL '<get-x>(): T' type=T origin=GET_PROPERTY
             $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component2(): kotlin.String
-      $this: VALUE_PARAMETER this@Test: Test<T>
+    FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:Test<T>) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='component2(): String'
+        RETURN type=kotlin.Nothing from=component2(): String'
           CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(x: T = ..., y: kotlin.String = ...): Test<T>
-      $this: VALUE_PARAMETER this@Test: Test<T>
-      VALUE_PARAMETER value-parameter x: T = ...
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:Test<T>, x:T, y:kotlin.String) returnType:Test<T> flags:
+      $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
+      VALUE_PARAMETER name:x index:0 type:T flags:
         EXPRESSION_BODY
           CALL '<get-x>(): T' type=T origin=GET_PROPERTY
             $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
-      VALUE_PARAMETER value-parameter y: kotlin.String = ...
+      VALUE_PARAMETER name:y index:1 type:kotlin.String flags:
         EXPRESSION_BODY
           CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='copy(T = ..., String = ...): Test<T>'
+        RETURN type=kotlin.Nothing from=copy(T = ..., String = ...): Test<T>'
           CALL 'constructor Test(T, String = ...)' type=Test<T> origin=null
             <T>: null
             x: GET_VAR 'value-parameter x: T = ...' type=T origin=null
             y: GET_VAR 'value-parameter y: String = ...' type=kotlin.String origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Test: Test<T>
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:Test<T>) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='toString(): String'
+        RETURN type=kotlin.Nothing from=toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value='Test('
-            CONST String type=kotlin.String value='x='
+            CONST String type=kotlin.String value=Test(
+            CONST String type=kotlin.String value=x=
             CALL '<get-x>(): T' type=T origin=GET_PROPERTY
               $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
-            CONST String type=kotlin.String value=', '
-            CONST String type=kotlin.String value='y='
+            CONST String type=kotlin.String value=, 
+            CONST String type=kotlin.String value=y=
             CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
-            CONST String type=kotlin.String value=')'
-    FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Test: Test<T>
+            CONST String type=kotlin.String value=)
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test<T>) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
       BLOCK_BODY
-        VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
-          CONST Int type=kotlin.Int value='0'
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
+          CONST Int type=kotlin.Int value=0
         SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
           BLOCK type=kotlin.Int origin=null
-            VAR IR_TEMPORARY_VARIABLE val tmp1: T
+            VAR IR_TEMPORARY_VARIABLE name:tmp1 type:T flags:val
               CALL '<get-x>(): T' type=T origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
             WHEN type=kotlin.Int origin=null
               BRANCH
                 if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                   arg0: GET_VAR 'tmp1: T' type=T origin=null
-                  arg1: CONST Null type=kotlin.Nothing? value='null'
-                then: CONST Int type=kotlin.Int value='0'
+                  arg1: CONST Null type=kotlin.Nothing? value=null
+                then: CONST Int type=kotlin.Int value=0
               BRANCH
-                if: CONST Boolean type=kotlin.Boolean value='true'
+                if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'hashCode(): Int' type=kotlin.Int origin=null
                   $this: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
                     GET_VAR 'tmp1: T' type=T origin=null
@@ -97,30 +97,30 @@ FILE /dataClassMembers.kt
           CALL 'plus(Int): Int' type=kotlin.Int origin=null
             $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
               $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
-              other: CONST Int type=kotlin.Int value='31'
+              other: CONST Int type=kotlin.Int value=31
             other: CALL 'hashCode(): Int' type=kotlin.Int origin=null
               $this: CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
-        RETURN type=kotlin.Nothing from='hashCode(): Int'
+        RETURN type=kotlin.Nothing from=hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Test: Test<T>
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:Test<T>, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
               arg0: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
               arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              CONST Boolean type=kotlin.Boolean value='true'
+            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=true
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test<T>
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              CONST Boolean type=kotlin.Boolean value='false'
-        VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: Test<T>
+            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test<T> flags:val
           TYPE_OP type=Test<T> origin=CAST typeOperand=Test<T>
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -131,8 +131,8 @@ FILE /dataClassMembers.kt
                   $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
                 arg1: CALL '<get-x>(): T' type=T origin=GET_PROPERTY
                   $this: GET_VAR 'tmp0_other_with_cast: Test<T>' type=Test<T> origin=null
-            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              CONST Boolean type=kotlin.Boolean value='false'
+            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -141,8 +141,8 @@ FILE /dataClassMembers.kt
                   $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
                 arg1: CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
                   $this: GET_VAR 'tmp0_other_with_cast: Test<T>' type=Test<T> origin=null
-            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-              CONST Boolean type=kotlin.Boolean value='false'
-        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-          CONST Boolean type=kotlin.Boolean value='true'
+            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+          CONST Boolean type=kotlin.Boolean value=true
 

@@ -1,112 +1,112 @@
-FILE /complexAugmentedAssignment.kt
-  CLASS OBJECT X1
-    $this: VALUE_PARAMETER this@X1: X1
-    CONSTRUCTOR private constructor X1()
+FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
+  CLASS OBJECT name:X1 modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X1 flags:
+    CONSTRUCTOR visibility:private <> () returnType:X1 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='X1'
-    PROPERTY public final var x1: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final var x1: kotlin.Int
+    PROPERTY name:x1 type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:public
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='0'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x1>(): kotlin.Int
-        $this: VALUE_PARAMETER this@X1: X1
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x1> visibility:public modality:FINAL <> ($this:X1) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:X1 flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-x1>(): Int'
+          RETURN type=kotlin.Nothing from=<get-x1>(): Int'
             GET_FIELD 'x1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@X1: X1' type=X1 origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x1>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@X1: X1
-        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x1> visibility:public modality:FINAL <> ($this:X1, <set-?>:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:X1 flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
           SET_FIELD 'x1: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR 'this@X1: X1' type=X1 origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-    CLASS OBJECT X2
-      $this: VALUE_PARAMETER this@X2: X2
-      CONSTRUCTOR private constructor X2()
+    CLASS OBJECT name:X2 modality:FINAL visibility:public flags:
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X1.X2 flags:
+      CONSTRUCTOR visibility:private <> () returnType:X1.X2 flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='X2'
-      PROPERTY public final var x2: kotlin.Int
-        FIELD PROPERTY_BACKING_FIELD public final var x2: kotlin.Int
+      PROPERTY name:x2 type:kotlin.Int visibility:public modality:FINAL flags:var
+        FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:public
           EXPRESSION_BODY
-            CONST Int type=kotlin.Int value='0'
-        FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x2>(): kotlin.Int
-          $this: VALUE_PARAMETER this@X2: X2
+            CONST Int type=kotlin.Int value=0
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x2> visibility:public modality:FINAL <> ($this:X1.X2) returnType:Int flags:
+          $this: VALUE_PARAMETER name:<this> type:X1.X2 flags:
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='<get-x2>(): Int'
+            RETURN type=kotlin.Nothing from=<get-x2>(): Int'
               GET_FIELD 'x2: Int' type=kotlin.Int origin=null
                 receiver: GET_VAR 'this@X2: X2' type=X1.X2 origin=null
-        FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x2>(<set-?>: kotlin.Int): kotlin.Unit
-          $this: VALUE_PARAMETER this@X2: X2
-          VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x2> visibility:public modality:FINAL <> ($this:X1.X2, <set-?>:kotlin.Int) returnType:Unit flags:
+          $this: VALUE_PARAMETER name:<this> type:X1.X2 flags:
+          VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
           BLOCK_BODY
             SET_FIELD 'x2: Int' type=kotlin.Unit origin=null
               receiver: GET_VAR 'this@X2: X2' type=X1.X2 origin=null
               value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-      CLASS OBJECT X3
-        $this: VALUE_PARAMETER this@X3: X3
-        CONSTRUCTOR private constructor X3()
+      CLASS OBJECT name:X3 modality:FINAL visibility:public flags:
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X1.X2.X3 flags:
+        CONSTRUCTOR visibility:private <> () returnType:X1.X2.X3 flags:
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
             INSTANCE_INITIALIZER_CALL classDescriptor='X3'
-        PROPERTY public final var x3: kotlin.Int
-          FIELD PROPERTY_BACKING_FIELD public final var x3: kotlin.Int
+        PROPERTY name:x3 type:kotlin.Int visibility:public modality:FINAL flags:var
+          FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:public
             EXPRESSION_BODY
-              CONST Int type=kotlin.Int value='0'
-          FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x3>(): kotlin.Int
-            $this: VALUE_PARAMETER this@X3: X3
+              CONST Int type=kotlin.Int value=0
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x3> visibility:public modality:FINAL <> ($this:X1.X2.X3) returnType:Int flags:
+            $this: VALUE_PARAMETER name:<this> type:X1.X2.X3 flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='<get-x3>(): Int'
+              RETURN type=kotlin.Nothing from=<get-x3>(): Int'
                 GET_FIELD 'x3: Int' type=kotlin.Int origin=null
                   receiver: GET_VAR 'this@X3: X3' type=X1.X2.X3 origin=null
-          FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x3>(<set-?>: kotlin.Int): kotlin.Unit
-            $this: VALUE_PARAMETER this@X3: X3
-            VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x3> visibility:public modality:FINAL <> ($this:X1.X2.X3, <set-?>:kotlin.Int) returnType:Unit flags:
+            $this: VALUE_PARAMETER name:<this> type:X1.X2.X3 flags:
+            VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
             BLOCK_BODY
               SET_FIELD 'x3: Int' type=kotlin.Unit origin=null
                 receiver: GET_VAR 'this@X3: X3' type=X1.X2.X3 origin=null
                 value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-        FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          $this: VALUE_PARAMETER this@Any: Any
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-          $this: VALUE_PARAMETER this@Any: Any
-        FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-          $this: VALUE_PARAMETER this@Any: Any
-      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        $this: VALUE_PARAMETER this@Any: Any
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-        $this: VALUE_PARAMETER this@Any: Any
-      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-        $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun test1(a: kotlin.IntArray): kotlin.Unit
-    VALUE_PARAMETER value-parameter a: kotlin.IntArray
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+          VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:Unit flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.IntArray flags:
     BLOCK_BODY
-      VAR var i: kotlin.Int
-        CONST Int type=kotlin.Int value='0'
+      VAR name:i type:kotlin.Int flags:var
+        CONST Int type=kotlin.Int value=0
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE val tmp1_array: kotlin.IntArray
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_array type:kotlin.IntArray flags:val
             GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
-          VAR IR_TEMPORARY_VARIABLE val tmp2_index0: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE name:tmp2_index0 type:kotlin.Int flags:val
             BLOCK type=kotlin.Int origin=POSTFIX_INCR
-              VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
+              VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:val
                 GET_VAR 'i: Int' type=kotlin.Int origin=POSTFIX_INCR
               SET_VAR 'i: Int' type=kotlin.Unit origin=POSTFIX_INCR
                 CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
                   $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
               GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
-          VAR IR_TEMPORARY_VARIABLE val tmp3: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE name:tmp3 type:kotlin.Int flags:val
             CALL 'get(Int): Int' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'tmp1_array: IntArray' type=kotlin.IntArray origin=null
               index: GET_VAR 'tmp2_index0: Int' type=kotlin.Int origin=null
@@ -116,14 +116,14 @@ FILE /complexAugmentedAssignment.kt
             value: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
           GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
-  FUN public fun test2(): kotlin.Unit
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE val tmp0_this: X1
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_this type:X1 flags:val
             GET_OBJECT 'X1' type=X1
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            VAR IR_TEMPORARY_VARIABLE val tmp1: kotlin.Int
+            VAR IR_TEMPORARY_VARIABLE name:tmp1 type:kotlin.Int flags:val
               CALL '<get-x1>(): Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'tmp0_this: X1' type=X1 origin=null
             CALL '<set-x1>(Int): Unit' type=kotlin.Unit origin=POSTFIX_INCR
@@ -133,10 +133,10 @@ FILE /complexAugmentedAssignment.kt
             GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE val tmp2_this: X1.X2
+          VAR IR_TEMPORARY_VARIABLE name:tmp2_this type:X1.X2 flags:val
             GET_OBJECT 'X2' type=X1.X2
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            VAR IR_TEMPORARY_VARIABLE val tmp3: kotlin.Int
+            VAR IR_TEMPORARY_VARIABLE name:tmp3 type:kotlin.Int flags:val
               CALL '<get-x2>(): Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'tmp2_this: X1.X2' type=X1.X2 origin=null
             CALL '<set-x2>(Int): Unit' type=kotlin.Unit origin=POSTFIX_INCR
@@ -146,10 +146,10 @@ FILE /complexAugmentedAssignment.kt
             GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE val tmp4_this: X1.X2.X3
+          VAR IR_TEMPORARY_VARIABLE name:tmp4_this type:X1.X2.X3 flags:val
             GET_OBJECT 'X3' type=X1.X2.X3
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            VAR IR_TEMPORARY_VARIABLE val tmp5: kotlin.Int
+            VAR IR_TEMPORARY_VARIABLE name:tmp5 type:kotlin.Int flags:val
               CALL '<get-x3>(): Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'tmp4_this: X1.X2.X3' type=X1.X2.X3 origin=null
             CALL '<set-x3>(Int): Unit' type=kotlin.Unit origin=POSTFIX_INCR
@@ -157,52 +157,52 @@ FILE /complexAugmentedAssignment.kt
               <set-?>: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'tmp5: Int' type=kotlin.Int origin=null
             GET_VAR 'tmp5: Int' type=kotlin.Int origin=null
-  CLASS CLASS B
-    $this: VALUE_PARAMETER this@B: B
-    CONSTRUCTOR public constructor B(s: kotlin.Int = ...)
-      VALUE_PARAMETER value-parameter s: kotlin.Int = ...
+  CLASS CLASS name:B modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B flags:
+    CONSTRUCTOR visibility:public <> (s:kotlin.Int) returnType:B flags:
+      VALUE_PARAMETER name:s index:0 type:kotlin.Int flags:
         EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='0'
+          CONST Int type=kotlin.Int value=0
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
-    PROPERTY public final var s: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final var s: kotlin.Int
+    PROPERTY name:s type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.Int visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter s: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-s>(): kotlin.Int
-        $this: VALUE_PARAMETER this@B: B
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:B) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:B flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-s>(): Int'
+          RETURN type=kotlin.Nothing from=<get-s>(): Int'
             GET_FIELD 's: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@B: B' type=B origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-s>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER this@B: B
-        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-s> visibility:public modality:FINAL <> ($this:B, <set-?>:kotlin.Int) returnType:Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:B flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
           SET_FIELD 's: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR 'this@B: B' type=B origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  CLASS OBJECT Host
-    $this: VALUE_PARAMETER this@Host: Host
-    CONSTRUCTOR private constructor Host()
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS OBJECT name:Host modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host flags:
+    CONSTRUCTOR visibility:private <> () returnType:Host flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
-    FUN public final operator fun B.plusAssign(b: B): kotlin.Unit
-      $this: VALUE_PARAMETER this@Host: Host
-      $receiver: VALUE_PARAMETER this@plusAssign: B
-      VALUE_PARAMETER value-parameter b: B
+    FUN name:plusAssign visibility:public modality:FINAL <> ($this:Host, $receiver:B, b:B) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:Host flags:
+      $receiver: VALUE_PARAMETER name:<this> type:B flags:
+      VALUE_PARAMETER name:b index:0 type:B flags:
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=PLUSEQ
-          VAR IR_TEMPORARY_VARIABLE val tmp0_this: B
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_this type:B flags:val
             GET_VAR 'this@plusAssign: B' type=B origin=null
           CALL '<set-s>(Int): Unit' type=kotlin.Unit origin=PLUSEQ
             $this: GET_VAR 'tmp0_this: B' type=B origin=null
@@ -211,20 +211,20 @@ FILE /complexAugmentedAssignment.kt
                 $this: GET_VAR 'tmp0_this: B' type=B origin=null
               other: CALL '<get-s>(): Int' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_VAR 'value-parameter b: B' type=B origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun Host.test3(v: B): kotlin.Unit
-    $receiver: VALUE_PARAMETER this@test3: Host
-    VALUE_PARAMETER value-parameter v: B
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:test3 visibility:public modality:FINAL <> ($receiver:Host, v:B) returnType:Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:Host flags:
+    VALUE_PARAMETER name:v index:0 type:B flags:
     BLOCK_BODY
       CALL 'plusAssign(B) on B: Unit' type=kotlin.Unit origin=PLUSEQ
         $this: GET_VAR 'this@test3: Host' type=Host origin=null
         $receiver: GET_VAR 'value-parameter v: B' type=B origin=PLUSEQ
         b: CALL 'constructor B(Int = ...)' type=B origin=null
-          s: CONST Int type=kotlin.Int value='1000'
+          s: CONST Int type=kotlin.Int value=1000
 

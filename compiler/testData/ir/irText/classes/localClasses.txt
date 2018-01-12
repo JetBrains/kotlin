@@ -1,22 +1,22 @@
-FILE /localClasses.kt
-  FUN public fun outer(): kotlin.Unit
+FILE fqName:<root> fileName:/localClasses.kt
+  FUN name:outer visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      CLASS CLASS LocalClass
-        $this: VALUE_PARAMETER this@LocalClass: LocalClass
-        CONSTRUCTOR public constructor LocalClass()
+      CLASS CLASS name:LocalClass modality:FINAL visibility:local flags:
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:outer.LocalClass flags:
+        CONSTRUCTOR visibility:public <> () returnType:outer.LocalClass flags:
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
             INSTANCE_INITIALIZER_CALL classDescriptor='LocalClass'
-        FUN public final fun foo(): kotlin.Unit
-          $this: VALUE_PARAMETER this@LocalClass: LocalClass
+        FUN name:foo visibility:public modality:FINAL <> ($this:outer.LocalClass) returnType:Unit flags:
+          $this: VALUE_PARAMETER name:<this> type:outer.LocalClass flags:
           BLOCK_BODY
-        FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          $this: VALUE_PARAMETER this@Any: Any
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-          $this: VALUE_PARAMETER this@Any: Any
-        FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-          $this: VALUE_PARAMETER this@Any: Any
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+          VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       CALL 'foo(): Unit' type=kotlin.Unit origin=null
         $this: CALL 'constructor LocalClass()' type=outer.LocalClass origin=null
 

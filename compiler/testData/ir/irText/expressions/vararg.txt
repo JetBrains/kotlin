@@ -1,40 +1,40 @@
-FILE /vararg.kt
-  PROPERTY public val test1: kotlin.Array<kotlin.String>
-    FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Array<kotlin.String>
+FILE fqName:<root> fileName:/vararg.kt
+  PROPERTY name:test1 type:kotlin.Array<kotlin.String> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Array<kotlin.String> visibility:public
       EXPRESSION_BODY
         CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> origin=null
           <reified T>: String
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.Array<kotlin.String>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Array<String> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1>(): Array<String>'
+        RETURN type=kotlin.Nothing from=<get-test1>(): Array<String>'
           GET_FIELD 'test1: Array<String>' type=kotlin.Array<kotlin.String> origin=null
-  PROPERTY public val test2: kotlin.Array<kotlin.String>
-    FIELD PROPERTY_BACKING_FIELD public val test2: kotlin.Array<kotlin.String>
+  PROPERTY name:test2 type:kotlin.Array<kotlin.String> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Array<kotlin.String> visibility:public
       EXPRESSION_BODY
         CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> origin=null
           <reified T>: String
           elements: VARARG type=Array<out String> varargElementType=String
-            CONST String type=kotlin.String value='1'
-            CONST String type=kotlin.String value='2'
-            CONST String type=kotlin.String value='3'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): kotlin.Array<kotlin.String>
+            CONST String type=kotlin.String value=1
+            CONST String type=kotlin.String value=2
+            CONST String type=kotlin.String value=3
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Array<String> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2>(): Array<String>'
+        RETURN type=kotlin.Nothing from=<get-test2>(): Array<String>'
           GET_FIELD 'test2: Array<String>' type=kotlin.Array<kotlin.String> origin=null
-  PROPERTY public val test3: kotlin.Array<kotlin.String>
-    FIELD PROPERTY_BACKING_FIELD public val test3: kotlin.Array<kotlin.String>
+  PROPERTY name:test3 type:kotlin.Array<kotlin.String> visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Array<kotlin.String> visibility:public
       EXPRESSION_BODY
         CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> origin=null
           <reified T>: String
           elements: VARARG type=Array<out String> varargElementType=String
-            CONST String type=kotlin.String value='0'
+            CONST String type=kotlin.String value=0
             SPREAD_ELEMENT
               CALL '<get-test2>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
             SPREAD_ELEMENT
               CALL '<get-test1>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
-            CONST String type=kotlin.String value='4'
-    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test3>(): kotlin.Array<kotlin.String>
+            CONST String type=kotlin.String value=4
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:Array<String> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test3>(): Array<String>'
+        RETURN type=kotlin.Nothing from=<get-test3>(): Array<String>'
           GET_FIELD 'test3: Array<String>' type=kotlin.Array<kotlin.String> origin=null
 

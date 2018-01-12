@@ -1,39 +1,39 @@
-FILE /whenReturn.kt
-  FUN public fun toString(grade: kotlin.String): kotlin.String
-    VALUE_PARAMETER value-parameter grade: kotlin.String
+FILE fqName:<root> fileName:/whenReturn.kt
+  FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
+    VALUE_PARAMETER name:grade index:0 type:kotlin.String flags:
     BLOCK_BODY
       BLOCK type=kotlin.Nothing origin=WHEN
-        VAR IR_TEMPORARY_VARIABLE val tmp0_subject: kotlin.String
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.String flags:val
           GET_VAR 'value-parameter grade: String' type=kotlin.String origin=null
         WHEN type=kotlin.Nothing origin=WHEN
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value='A'
-            then: RETURN type=kotlin.Nothing from='toString(String): String'
-              CONST String type=kotlin.String value='Excellent'
+              arg1: CONST String type=kotlin.String value=A
+            then: RETURN type=kotlin.Nothing from=toString(String): String'
+              CONST String type=kotlin.String value=Excellent
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value='B'
-            then: RETURN type=kotlin.Nothing from='toString(String): String'
-              CONST String type=kotlin.String value='Good'
+              arg1: CONST String type=kotlin.String value=B
+            then: RETURN type=kotlin.Nothing from=toString(String): String'
+              CONST String type=kotlin.String value=Good
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value='C'
-            then: RETURN type=kotlin.Nothing from='toString(String): String'
-              CONST String type=kotlin.String value='Mediocre'
+              arg1: CONST String type=kotlin.String value=C
+            then: RETURN type=kotlin.Nothing from=toString(String): String'
+              CONST String type=kotlin.String value=Mediocre
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value='D'
-            then: RETURN type=kotlin.Nothing from='toString(String): String'
-              CONST String type=kotlin.String value='Fair'
+              arg1: CONST String type=kotlin.String value=D
+            then: RETURN type=kotlin.Nothing from=toString(String): String'
+              CONST String type=kotlin.String value=Fair
           BRANCH
-            if: CONST Boolean type=kotlin.Boolean value='true'
-            then: RETURN type=kotlin.Nothing from='toString(String): String'
-              CONST String type=kotlin.String value='Failure'
-      RETURN type=kotlin.Nothing from='toString(String): String'
-        CONST String type=kotlin.String value='???'
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: RETURN type=kotlin.Nothing from=toString(String): String'
+              CONST String type=kotlin.String value=Failure
+      RETURN type=kotlin.Nothing from=toString(String): String'
+        CONST String type=kotlin.String value=???
 

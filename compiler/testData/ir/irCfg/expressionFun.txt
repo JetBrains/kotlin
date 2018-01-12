@@ -2,11 +2,11 @@
 // FUN: foo
 BB 0
 CONTENT
-      1 FUN public fun foo(arg: kotlin.Int): kotlin.Int
+      1 FUN name:foo visibility:public modality:FINAL <> (arg:kotlin.Int) returnType:Int flags:
       2 GET_VAR 'value-parameter arg: Int' type=kotlin.Int origin=null
-      3 RETURN type=kotlin.Nothing from='foo(Int): Int'
+      3 RETURN type=kotlin.Nothing from=foo(Int): Int'
 OUTGOING -> NONE
-    Function exit: FUN public fun foo(arg: kotlin.Int): kotlin.Int
+    Function exit: FUN name:foo visibility:public modality:FINAL <> (arg:kotlin.Int) returnType:Int flags:
 
 // END FUN: foo
 

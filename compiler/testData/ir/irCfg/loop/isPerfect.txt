@@ -2,16 +2,16 @@
 // FUN: isPerfect
 BB 0
 CONTENT
-      1 FUN public fun isPerfect(n: kotlin.Int): kotlin.Boolean
-      2 CONST Int type=kotlin.Int value='1'
-      3 VAR var sum: kotlin.Int
-      4 CONST Int type=kotlin.Int value='2'
+      1 FUN name:isPerfect visibility:public modality:FINAL <> (n:kotlin.Int) returnType:Boolean flags:
+      2 CONST Int type=kotlin.Int value=1
+      3 VAR name:sum type:kotlin.Int flags:var
+      4 CONST Int type=kotlin.Int value=2
       5 GET_VAR 'value-parameter n: Int' type=kotlin.Int origin=null
-      6 CONST Int type=kotlin.Int value='2'
+      6 CONST Int type=kotlin.Int value=2
       7 CALL 'div(Int): Int' type=kotlin.Int origin=DIV
       8 CALL 'rangeTo(Int): IntRange' type=kotlin.ranges.IntRange origin=RANGE
       9 CALL 'iterator(): IntIterator' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
-     10 VAR FOR_LOOP_ITERATOR val tmp0_iterator: kotlin.collections.IntIterator
+     10 VAR FOR_LOOP_ITERATOR name:tmp0_iterator type:kotlin.collections.IntIterator flags:val
      11 WHILE label=null origin=FOR_LOOP_INNER_WHILE
 OUTGOING -> BB 1
     While entry: WHILE label=null origin=FOR_LOOP_INNER_WHILE
@@ -28,12 +28,12 @@ INCOMING <- BB 1
 CONTENT
       1 GET_VAR 'tmp0_iterator: IntIterator' type=kotlin.collections.IntIterator origin=null
       2 CALL 'next(): Int' type=kotlin.Int origin=FOR_LOOP_NEXT
-      3 VAR FOR_LOOP_VARIABLE val m: kotlin.Int
+      3 VAR FOR_LOOP_VARIABLE name:m type:kotlin.Int flags:val
       4 WHEN type=kotlin.Unit origin=null
       5 GET_VAR 'value-parameter n: Int' type=kotlin.Int origin=null
       6 GET_VAR 'm: Int' type=kotlin.Int origin=null
       7 CALL 'rem(Int): Int' type=kotlin.Int origin=PERC
-      8 CONST Int type=kotlin.Int value='0'
+      8 CONST Int type=kotlin.Int value=0
       9 CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
 OUTGOING -> BB 3, 4
     CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -81,9 +81,9 @@ CONTENT
       1 GET_VAR 'sum: Int' type=kotlin.Int origin=null
       2 GET_VAR 'value-parameter n: Int' type=kotlin.Int origin=null
       3 CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-      4 RETURN type=kotlin.Nothing from='isPerfect(Int): Boolean'
+      4 RETURN type=kotlin.Nothing from=isPerfect(Int): Boolean'
 OUTGOING -> NONE
-    Function exit: FUN public fun isPerfect(n: kotlin.Int): kotlin.Boolean
+    Function exit: FUN name:isPerfect visibility:public modality:FINAL <> (n:kotlin.Int) returnType:Boolean flags:
 
 // END FUN: isPerfect
 

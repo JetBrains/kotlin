@@ -1,71 +1,71 @@
-FILE /integerCoercionToT.kt
-  CLASS INTERFACE CPointed
-    $this: VALUE_PARAMETER this@CPointed: CPointed
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public inline fun <reified T : CPointed> CPointed.reinterpret(): T
-    TYPE_PARAMETER <reified T : CPointed>
-    $receiver: VALUE_PARAMETER this@reinterpret: CPointed
+FILE fqName:<root> fileName:/integerCoercionToT.kt
+  CLASS INTERFACE name:CPointed modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:CPointed flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:reinterpret visibility:public modality:FINAL <T> ($receiver:CPointed) returnType:T flags:inline
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[CPointed]
+    $receiver: VALUE_PARAMETER name:<this> type:CPointed flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='reinterpret() on CPointed: T'
+      RETURN type=kotlin.Nothing from=reinterpret() on CPointed: T'
         CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
-  CLASS CLASS CInt32VarX
-    $this: VALUE_PARAMETER this@CInt32VarX: CInt32VarX<T>
-    TYPE_PARAMETER <T>
-    CONSTRUCTOR public constructor CInt32VarX<T>()
+  CLASS CLASS name:CInt32VarX modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:CInt32VarX<T> flags:
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> () returnType:CInt32VarX<T> flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='CInt32VarX'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   TYPEALIAS typealias CInt32Var = CInt32VarX<Int> type=CInt32VarX<kotlin.Int>
-  PROPERTY public var <T_INT : kotlin.Int> CInt32VarX<T_INT>.value: T_INT
-    FUN public fun CInt32VarX<T_INT>.<get-value>(): T_INT
-      $receiver: VALUE_PARAMETER this@value: CInt32VarX<T_INT>
+  PROPERTY name:value type:T_INT visibility:public modality:FINAL flags:var
+    FUN name:<get-value> visibility:public modality:FINAL <> ($receiver:CInt32VarX<T_INT>) returnType:T_INT flags:
+      $receiver: VALUE_PARAMETER name:<this> type:CInt32VarX<T_INT> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-value>() on CInt32VarX<T_INT>: T_INT'
+        RETURN type=kotlin.Nothing from=<get-value>() on CInt32VarX<T_INT>: T_INT'
           CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
-    FUN public fun CInt32VarX<T_INT>.<set-value>(value: T_INT): kotlin.Unit
-      $receiver: VALUE_PARAMETER this@value: CInt32VarX<T_INT>
-      VALUE_PARAMETER value-parameter value: T_INT
+    FUN name:<set-value> visibility:public modality:FINAL <> ($receiver:CInt32VarX<T_INT>, value:T_INT) returnType:Unit flags:
+      $receiver: VALUE_PARAMETER name:<this> type:CInt32VarX<T_INT> flags:
+      VALUE_PARAMETER name:value index:0 type:T_INT flags:
       BLOCK_BODY
-  CLASS CLASS IdType
-    $this: VALUE_PARAMETER this@IdType: IdType
-    CONSTRUCTOR public constructor IdType(value: kotlin.Int)
-      VALUE_PARAMETER value-parameter value: kotlin.Int
+  CLASS CLASS name:IdType modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IdType flags:
+    CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:IdType flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='IdType'
-    PROPERTY public final val value: kotlin.Int
-      FIELD PROPERTY_BACKING_FIELD public final val value: kotlin.Int
+    PROPERTY name:value type:kotlin.Int visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.Int
-        $this: VALUE_PARAMETER this@IdType: IdType
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:IdType) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:IdType flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-value>(): Int'
+          RETURN type=kotlin.Nothing from=<get-value>(): Int'
             GET_FIELD 'value: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@IdType: IdType' type=IdType origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun foo(value: IdType, cv: CInt32Var /* = CInt32VarX<kotlin.Int> */): kotlin.Unit
-    VALUE_PARAMETER value-parameter value: IdType
-    VALUE_PARAMETER value-parameter cv: CInt32Var /* = CInt32VarX<kotlin.Int> */
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:foo visibility:public modality:FINAL <> (value:IdType, cv:CInt32Var /* = CInt32VarX<kotlin.Int> */) returnType:Unit flags:
+    VALUE_PARAMETER name:value index:0 type:IdType flags:
+    VALUE_PARAMETER name:cv index:1 type:CInt32Var /* = CInt32VarX<kotlin.Int> */ flags:
     BLOCK_BODY
       CALL '<set-value>(Int) on CInt32VarX<Int>: Unit' type=kotlin.Unit origin=EQ
         $receiver: GET_VAR 'value-parameter cv: CInt32Var /* = CInt32VarX<Int> */' type=CInt32Var /* = CInt32VarX<kotlin.Int> */ origin=null

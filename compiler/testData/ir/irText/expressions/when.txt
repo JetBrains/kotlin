@@ -1,84 +1,84 @@
-FILE /when.kt
-  CLASS OBJECT A
-    $this: VALUE_PARAMETER this@A: A
-    CONSTRUCTOR private constructor A()
+FILE fqName:<root> fileName:/when.kt
+  CLASS OBJECT name:A modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    CONSTRUCTOR visibility:private <> () returnType:A flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
-  FUN public fun testWithSubject(x: kotlin.Any?): kotlin.String
-    VALUE_PARAMETER value-parameter x: kotlin.Any?
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:testWithSubject visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:String flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='testWithSubject(Any?): String'
+      RETURN type=kotlin.Nothing from=testWithSubject(Any?): String'
         BLOCK type=kotlin.String origin=WHEN
-          VAR IR_TEMPORARY_VARIABLE val tmp0_subject: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any? flags:val
             GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
           WHEN type=kotlin.String origin=WHEN
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
-              then: CONST String type=kotlin.String value='null'
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST String type=kotlin.String value=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
                 arg1: GET_OBJECT 'A' type=A
-              then: CONST String type=kotlin.String value='A'
+              then: CONST String type=kotlin.String value=A
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
                 GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
-              then: CONST String type=kotlin.String value='String'
+              then: CONST String type=kotlin.String value=String
             BRANCH
               if: CALL 'contains(Any) on Iterable<Any>: Boolean' type=kotlin.Boolean origin=IN
                 <T>: Any
                 $receiver: CALL 'setOf(): Set<Nothing>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
                   <T>: Nothing
                 element: GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
-              then: CONST String type=kotlin.String value='nothingness?'
+              then: CONST String type=kotlin.String value=nothingness?
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
-              then: CONST String type=kotlin.String value='something'
-  FUN public fun test(x: kotlin.Any?): kotlin.String
-    VALUE_PARAMETER value-parameter x: kotlin.Any?
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST String type=kotlin.String value=something
+  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:String flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(Any?): String'
+      RETURN type=kotlin.Nothing from=test(Any?): String'
         WHEN type=kotlin.String origin=WHEN
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
-              arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: CONST String type=kotlin.String value='null'
+              arg1: CONST Null type=kotlin.Nothing? value=null
+            then: CONST String type=kotlin.String value=null
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
               arg1: GET_OBJECT 'A' type=A
-            then: CONST String type=kotlin.String value='A'
+            then: CONST String type=kotlin.String value=A
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
               GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
-            then: CONST String type=kotlin.String value='String'
+            then: CONST String type=kotlin.String value=String
           BRANCH
             if: CALL 'contains(Any) on Iterable<Any>: Boolean' type=kotlin.Boolean origin=IN
               <T>: Any
               $receiver: CALL 'setOf(): Set<Nothing>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
                 <T>: Nothing
               element: GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
-            then: CONST String type=kotlin.String value='nothingness?'
+            then: CONST String type=kotlin.String value=nothingness?
           BRANCH
-            if: CONST Boolean type=kotlin.Boolean value='true'
-            then: CONST String type=kotlin.String value='something'
-  FUN public fun testComma(x: kotlin.Int): kotlin.String
-    VALUE_PARAMETER value-parameter x: kotlin.Int
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST String type=kotlin.String value=something
+  FUN name:testComma visibility:public modality:FINAL <> (x:kotlin.Int) returnType:String flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='testComma(Int): String'
+      RETURN type=kotlin.Nothing from=testComma(Int): String'
         BLOCK type=kotlin.String origin=WHEN
-          VAR IR_TEMPORARY_VARIABLE val tmp0_subject: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:val
             GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
           WHEN type=kotlin.String origin=WHEN
             BRANCH
@@ -90,26 +90,26 @@ FILE /when.kt
                         BRANCH
                           if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                             arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
-                            arg1: CONST Int type=kotlin.Int value='1'
-                          then: CONST Boolean type=kotlin.Boolean value='true'
+                            arg1: CONST Int type=kotlin.Int value=1
+                          then: CONST Boolean type=kotlin.Boolean value=true
                         BRANCH
-                          if: CONST Boolean type=kotlin.Boolean value='true'
+                          if: CONST Boolean type=kotlin.Boolean value=true
                           then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                             arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
-                            arg1: CONST Int type=kotlin.Int value='2'
-                      then: CONST Boolean type=kotlin.Boolean value='true'
+                            arg1: CONST Int type=kotlin.Int value=2
+                      then: CONST Boolean type=kotlin.Boolean value=true
                     BRANCH
-                      if: CONST Boolean type=kotlin.Boolean value='true'
+                      if: CONST Boolean type=kotlin.Boolean value=true
                       then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
-                        arg1: CONST Int type=kotlin.Int value='3'
-                  then: CONST Boolean type=kotlin.Boolean value='true'
+                        arg1: CONST Int type=kotlin.Int value=3
+                  then: CONST Boolean type=kotlin.Boolean value=true
                 BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value='true'
+                  if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.Int value='4'
-              then: CONST String type=kotlin.String value='1234'
+                    arg1: CONST Int type=kotlin.Int value=4
+              then: CONST String type=kotlin.String value=1234
             BRANCH
               if: WHEN type=kotlin.Boolean origin=WHEN_COMMA
                 BRANCH
@@ -117,34 +117,34 @@ FILE /when.kt
                     BRANCH
                       if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
-                        arg1: CONST Int type=kotlin.Int value='5'
-                      then: CONST Boolean type=kotlin.Boolean value='true'
+                        arg1: CONST Int type=kotlin.Int value=5
+                      then: CONST Boolean type=kotlin.Boolean value=true
                     BRANCH
-                      if: CONST Boolean type=kotlin.Boolean value='true'
+                      if: CONST Boolean type=kotlin.Boolean value=true
                       then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
-                        arg1: CONST Int type=kotlin.Int value='6'
-                  then: CONST Boolean type=kotlin.Boolean value='true'
+                        arg1: CONST Int type=kotlin.Int value=6
+                  then: CONST Boolean type=kotlin.Boolean value=true
                 BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value='true'
+                  if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.Int value='7'
-              then: CONST String type=kotlin.String value='567'
+                    arg1: CONST Int type=kotlin.Int value=7
+              then: CONST String type=kotlin.String value=567
             BRANCH
               if: WHEN type=kotlin.Boolean origin=WHEN_COMMA
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.Int value='8'
-                  then: CONST Boolean type=kotlin.Boolean value='true'
+                    arg1: CONST Int type=kotlin.Int value=8
+                  then: CONST Boolean type=kotlin.Boolean value=true
                 BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value='true'
+                  if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.Int value='9'
-              then: CONST String type=kotlin.String value='89'
+                    arg1: CONST Int type=kotlin.Int value=9
+              then: CONST String type=kotlin.String value=89
             BRANCH
-              if: CONST Boolean type=kotlin.Boolean value='true'
-              then: CONST String type=kotlin.String value='?'
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST String type=kotlin.String value=?
 

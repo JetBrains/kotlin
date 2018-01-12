@@ -1,88 +1,88 @@
-FILE /memberExtension.kt
-  CLASS OBJECT Host
-    $this: VALUE_PARAMETER this@Host: Host
-    CONSTRUCTOR private constructor Host()
+FILE fqName:<root> fileName:/memberExtension.kt
+  CLASS OBJECT name:Host modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host flags:
+    CONSTRUCTOR visibility:private <> () returnType:Host flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
-    CLASS CLASS StringDelegate
-      $this: VALUE_PARAMETER this@StringDelegate: StringDelegate
-      CONSTRUCTOR public constructor StringDelegate(s: kotlin.String)
-        VALUE_PARAMETER value-parameter s: kotlin.String
+    CLASS CLASS name:StringDelegate modality:FINAL visibility:public flags:
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host.StringDelegate flags:
+      CONSTRUCTOR visibility:public <> (s:kotlin.String) returnType:Host.StringDelegate flags:
+        VALUE_PARAMETER name:s index:0 type:kotlin.String flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='StringDelegate'
-      PROPERTY public final val s: kotlin.String
-        FIELD PROPERTY_BACKING_FIELD public final val s: kotlin.String
+      PROPERTY name:s type:kotlin.String visibility:public modality:FINAL flags:val
+        FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:public
           EXPRESSION_BODY
             GET_VAR 'value-parameter s: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-        FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-s>(): kotlin.String
-          $this: VALUE_PARAMETER this@StringDelegate: StringDelegate
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:Host.StringDelegate) returnType:String flags:
+          $this: VALUE_PARAMETER name:<this> type:Host.StringDelegate flags:
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='<get-s>(): String'
+            RETURN type=kotlin.Nothing from=<get-s>(): String'
               GET_FIELD 's: String' type=kotlin.String origin=null
                 receiver: GET_VAR 'this@StringDelegate: StringDelegate' type=Host.StringDelegate origin=null
-      FUN public final operator fun getValue(receiver: kotlin.String, p: kotlin.Any): kotlin.String
-        $this: VALUE_PARAMETER this@StringDelegate: StringDelegate
-        VALUE_PARAMETER value-parameter receiver: kotlin.String
-        VALUE_PARAMETER value-parameter p: kotlin.Any
+      FUN name:getValue visibility:public modality:FINAL <> ($this:Host.StringDelegate, receiver:kotlin.String, p:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:Host.StringDelegate flags:
+        VALUE_PARAMETER name:receiver index:0 type:kotlin.String flags:
+        VALUE_PARAMETER name:p index:1 type:kotlin.Any flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='getValue(String, Any): String'
+          RETURN type=kotlin.Nothing from=getValue(String, Any): String'
             CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
               $this: GET_VAR 'value-parameter receiver: String' type=kotlin.String origin=null
               other: CALL '<get-s>(): String' type=kotlin.String origin=GET_PROPERTY
                 $this: GET_VAR 'this@StringDelegate: StringDelegate' type=Host.StringDelegate origin=null
-      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        $this: VALUE_PARAMETER this@Any: Any
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-        $this: VALUE_PARAMETER this@Any: Any
-      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-        $this: VALUE_PARAMETER this@Any: Any
-    FUN public final operator fun kotlin.String.provideDelegate(host: kotlin.Any?, p: kotlin.Any): Host.StringDelegate
-      $this: VALUE_PARAMETER this@Host: Host
-      $receiver: VALUE_PARAMETER this@provideDelegate: String
-      VALUE_PARAMETER value-parameter host: kotlin.Any?
-      VALUE_PARAMETER value-parameter p: kotlin.Any
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN name:provideDelegate visibility:public modality:FINAL <> ($this:Host, $receiver:kotlin.String, host:kotlin.Any?, p:kotlin.Any) returnType:StringDelegate flags:
+      $this: VALUE_PARAMETER name:<this> type:Host flags:
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
+      VALUE_PARAMETER name:host index:0 type:kotlin.Any? flags:
+      VALUE_PARAMETER name:p index:1 type:kotlin.Any flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any) on String: Host.StringDelegate'
+        RETURN type=kotlin.Nothing from=provideDelegate(Any?, Any) on String: Host.StringDelegate'
           CALL 'constructor StringDelegate(String)' type=Host.StringDelegate origin=null
             s: GET_VAR 'this@provideDelegate: String' type=kotlin.String origin=null
-    PROPERTY public final val kotlin.String.plusK: kotlin.String
-      FIELD DELEGATE val `plusK$delegate`: Host.StringDelegate
+    PROPERTY name:plusK type:kotlin.String visibility:public modality:FINAL flags:delegatedmval
+      FIELD DELEGATE name:plusK$delegate type:Host.StringDelegate visibility:private
         EXPRESSION_BODY
           CALL 'provideDelegate(Any?, Any) on String: Host.StringDelegate' type=Host.StringDelegate origin=null
             $this: GET_VAR 'this@Host: Host' type=Host origin=null
-            $receiver: CONST String type=kotlin.String value='K'
+            $receiver: CONST String type=kotlin.String value=K
             host: GET_VAR 'this@Host: Host' type=Host origin=null
             p: PROPERTY_REFERENCE 'plusK: String on String' field=null getter='<get-plusK>() on String: String' setter=null type=kotlin.reflect.KProperty2<kotlin.String, Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-      FUN DELEGATED_PROPERTY_ACCESSOR public final fun kotlin.String.<get-plusK>(): kotlin.String
-        $this: VALUE_PARAMETER this@Host: Host
-        $receiver: VALUE_PARAMETER this@plusK: String
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-plusK> visibility:public modality:FINAL <> ($this:Host, $receiver:kotlin.String) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:Host flags:
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-plusK>() on String: String'
+          RETURN type=kotlin.Nothing from=<get-plusK>() on String: String'
             CALL 'getValue(String, Any): String' type=kotlin.String origin=null
               $this: GET_FIELD '`plusK$delegate`: Host.StringDelegate' type=Host.StringDelegate origin=null
                 receiver: GET_VAR 'this@Host: Host' type=Host origin=null
               receiver: GET_VAR 'this@plusK: String' type=kotlin.String origin=null
               p: PROPERTY_REFERENCE 'plusK: String on String' field=null getter='<get-plusK>() on String: String' setter=null type=kotlin.reflect.KProperty2<kotlin.String, Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-    PROPERTY public final val ok: kotlin.String
-      FIELD PROPERTY_BACKING_FIELD public final val ok: kotlin.String
+    PROPERTY name:ok type:kotlin.String visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public
         EXPRESSION_BODY
           CALL '<get-plusK>() on String: String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Host: Host' type=Host origin=null
-            $receiver: CONST String type=kotlin.String value='O'
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-ok>(): kotlin.String
-        $this: VALUE_PARAMETER this@Host: Host
+            $receiver: CONST String type=kotlin.String value=O
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> ($this:Host) returnType:String flags:
+        $this: VALUE_PARAMETER name:<this> type:Host flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-ok>(): String'
+          RETURN type=kotlin.Nothing from=<get-ok>(): String'
             GET_FIELD 'ok: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Host: Host' type=Host origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

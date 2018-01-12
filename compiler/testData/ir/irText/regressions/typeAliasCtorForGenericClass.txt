@@ -1,38 +1,38 @@
-FILE /typeAliasCtorForGenericClass.kt
-  CLASS CLASS A
-    $this: VALUE_PARAMETER this@A: A<Q>
-    TYPE_PARAMETER <Q>
-    CONSTRUCTOR public constructor A<Q>(q: Q)
-      VALUE_PARAMETER value-parameter q: Q
+FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
+  CLASS CLASS name:A modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A<Q> flags:
+    TYPE_PARAMETER name:Q index:0 variance: upperBounds:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (q:Q) returnType:A<Q> flags:
+      VALUE_PARAMETER name:q index:0 type:Q flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    PROPERTY public final val q: Q
-      FIELD PROPERTY_BACKING_FIELD public final val q: Q
+    PROPERTY name:q type:Q visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:q type:Q visibility:public
         EXPRESSION_BODY
           GET_VAR 'value-parameter q: Q' type=Q origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-q>(): Q
-        $this: VALUE_PARAMETER this@A: A<Q>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-q> visibility:public modality:FINAL <> ($this:A<Q>) returnType:Q flags:
+        $this: VALUE_PARAMETER name:<this> type:A<Q> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-q>(): Q'
+          RETURN type=kotlin.Nothing from=<get-q>(): Q'
             GET_FIELD 'q: Q' type=Q origin=null
               receiver: GET_VAR 'this@A: A<Q>' type=A<Q> origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   TYPEALIAS typealias B = A<X> type=A<X>
   TYPEALIAS typealias B2 = A<A<T>> type=A<A<T>>
-  FUN public fun bar(): kotlin.Unit
+  FUN name:bar visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      VAR val b: B<kotlin.Int> /* = A<kotlin.Int> */
+      VAR name:b type:B<kotlin.Int> /* = A<kotlin.Int> */ flags:val
         CALL 'constructor A(Int)' type=A<kotlin.Int> origin=null
           <Q>: null
-          q: CONST Int type=kotlin.Int value='2'
-      VAR val b2: B2<kotlin.Int> /* = A<A<kotlin.Int>> */
+          q: CONST Int type=kotlin.Int value=2
+      VAR name:b2 type:B2<kotlin.Int> /* = A<A<kotlin.Int>> */ flags:val
         CALL 'constructor A(A<Int>)' type=A<A<kotlin.Int>> origin=null
           <Q>: null
           q: GET_VAR 'b: B<Int> /* = A<Int> */' type=B<kotlin.Int> /* = A<kotlin.Int> */ origin=null
