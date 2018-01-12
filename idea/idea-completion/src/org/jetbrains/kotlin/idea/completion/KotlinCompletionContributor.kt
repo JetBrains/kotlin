@@ -232,8 +232,9 @@ class KotlinCompletionContributor : CompletionContributor() {
 
     private fun performCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
         val position = parameters.position
-        if (position.containingFile !is KtFile) return
-        if ((parameters.originalFile as KtFile).doNotComplete ?: false) return
+        val parametersOriginFile = parameters.originalFile
+        if (position.containingFile !is KtFile || parametersOriginFile !is KtFile) return
+        if (parametersOriginFile.doNotComplete == true) return
 
         val toFromOriginalFileMapper = ToFromOriginalFileMapper.create(parameters)
 
