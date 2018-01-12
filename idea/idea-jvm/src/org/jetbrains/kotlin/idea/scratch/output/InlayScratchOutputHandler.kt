@@ -40,14 +40,15 @@ import java.awt.Graphics
 import java.awt.Rectangle
 
 object InlayScratchOutputHandler : ScratchOutputHandler {
+    private const val maxInsertOffset = 60
+    private const val minSpaceCount = 4
+
     override fun onStart(file: ScratchFile) {
         clear(file)
     }
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
-        val document = PsiDocumentManager.getInstance(file.psiFile.project).getDocument(file.psiFile) ?: return
-        val lineEndOffset = document.getLineEndOffset(expression.lineStart)
-        createInlay(file.psiFile.project, file.psiFile.virtualFile, lineEndOffset, output.text.substringBefore("\n"), output.type)
+        createInlay(file, expression.lineStart, output.text.substringBefore("\n"), output.type)
 
         if (output.type == ScratchOutputType.ERROR) {
             error(file, output.text)
@@ -67,28 +68,40 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
         ScratchToolWindow.clearToolWindow(file.psiFile.project)
     }
 
-    private fun createInlay(project: Project, file: VirtualFile, offset: Int, inlayText: String, outputType: ScratchOutputType) {
+    private fun createInlay(file: ScratchFile, line: Int, inlayText: String, outputType: ScratchOutputType) {
         UIUtil.invokeLaterIfNeeded {
-            val textEditor = FileEditorManager.getInstance(project).getSelectedEditor(file) as? TextEditor ?: return@invokeLaterIfNeeded
+            val project = file.psiFile.project
+            val textEditor = FileEditorManager.getInstance(project).getSelectedEditor(file.psiFile.virtualFile) as? TextEditor ?: return@invokeLaterIfNeeded
             val editor = textEditor.editor
 
-            val text = editor.document.immutableCharSequence
-            var insertOffset = offset
-            while (insertOffset < text.length && Character.isJavaIdentifierPart(text[insertOffset])) insertOffset++
+            val lineStartOffset = editor.document.getLineStartOffset(line)
+            val lineEndOffset = editor.document.getLineEndOffset(line)
+            val lineLength = lineEndOffset - lineStartOffset
+            var spaceCount = maxLineLength(file) - lineLength + minSpaceCount
+
+            while(spaceCount + lineLength > maxInsertOffset && spaceCount > minSpaceCount) spaceCount--
 
             val existing = editor.inlayModel
-                .getInlineElementsInRange(insertOffset, insertOffset)
+                .getInlineElementsInRange(lineEndOffset, lineEndOffset)
                 .singleOrNull { it.renderer is ScratchFileRenderer }
             if (existing != null) {
                 existing.dispose()
                 editor.inlayModel.addInlineElement(
-                    insertOffset,
+                    lineEndOffset,
                     ScratchFileRenderer((existing.renderer as ScratchFileRenderer).text + "; " + inlayText, outputType)
                 )
             } else {
-                editor.inlayModel.addInlineElement(insertOffset, ScratchFileRenderer("    $inlayText", outputType))
+                editor.inlayModel.addInlineElement(lineEndOffset, ScratchFileRenderer(" ".repeat(spaceCount) + inlayText, outputType))
             }
         }
+    }
+
+    fun maxLineLength(file: ScratchFile): Int {
+        val doc = PsiDocumentManager.getInstance(file.psiFile.project).getDocument(file.psiFile) ?: return -1
+        return (0 until doc.lineCount)
+            .map { doc.getLineEndOffset(it) - doc.getLineStartOffset(it) }
+            .max()
+                ?: -1
     }
 
     private fun clearInlays(project: Project, file: VirtualFile) {
