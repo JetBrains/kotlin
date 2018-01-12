@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -98,7 +97,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                     compatibility is Compatible || (compatibility is Incompatible && compatibility.kind != Compatibility.IncompatibilityKind.STRONG)
                 }.flatMap { it.value.asSequence() }
 
-            expectActualTracker?.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
+            expectActualTracker.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
         }
     }
 
@@ -129,19 +128,19 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             is CallableMemberDescriptor -> {
                 expected.findNamesakesFromModule(platformModule).filter { actual ->
                     expected != actual && !actual.isExpect &&
-                            // TODO: support non-source definitions (e.g. from Java)
-                            DescriptorToSourceUtils.getSourceFromDescriptor(actual) is KtElement
+                    // TODO: support non-source definitions (e.g. from Java)
+                    actual.source.containingFile != SourceFile.NO_SOURCE_FILE
                 }.groupBy { actual ->
-                        areCompatibleCallables(expected, actual)
-                    }
+                    areCompatibleCallables(expected, actual)
+                }
             }
             is ClassDescriptor -> {
                 expected.findClassifiersFromModule(platformModule).filter { actual ->
                     expected != actual && !actual.isExpect &&
-                            DescriptorToSourceUtils.getSourceFromDescriptor(actual) is KtElement
+                    actual.source.containingFile != SourceFile.NO_SOURCE_FILE
                 }.groupBy { actual ->
-                        areCompatibleClassifiers(expected, actual)
-                    }
+                    areCompatibleClassifiers(expected, actual)
+                }
             }
             else -> null
         }
