@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
@@ -57,10 +58,18 @@ abstract class KotlinCommonBlock(
     private val node: ASTNode,
     private val settings: CodeStyleSettings,
     private val spacingBuilder: KotlinSpacingBuilder,
-    private val alignmentStrategy: CommonAlignmentStrategy
+    private val alignmentStrategy: CommonAlignmentStrategy,
+    private val overrideChildren: Sequence<ASTNode>? = null
 ) {
     @Volatile
     private var mySubBlocks: List<ASTBlock>? = null
+
+    fun getTextRange(): TextRange {
+        if (overrideChildren != null) {
+            return TextRange(overrideChildren.first().startOffset, overrideChildren.last().textRange.endOffset)
+        }
+        return node.textRange
+    }
 
     protected abstract fun createBlock(
         node: ASTNode,
@@ -68,7 +77,8 @@ abstract class KotlinCommonBlock(
         indent: Indent?,
         wrap: Wrap?,
         settings: CodeStyleSettings,
-        spacingBuilder: KotlinSpacingBuilder
+        spacingBuilder: KotlinSpacingBuilder,
+        overrideChildren: Sequence<ASTNode>? = null
     ): ASTBlock
 
     protected abstract fun createSyntheticSpacingNodeBlock(node: ASTNode): ASTBlock
@@ -355,7 +365,12 @@ abstract class KotlinCommonBlock(
     }
 
 
-    private fun buildSubBlock(child: ASTNode, alignmentStrategy: CommonAlignmentStrategy, wrappingStrategy: WrappingStrategy): ASTBlock {
+    private fun buildSubBlock(
+        child: ASTNode,
+        alignmentStrategy: CommonAlignmentStrategy,
+        wrappingStrategy: WrappingStrategy,
+        overrideChildren: Sequence<ASTNode>? = null
+    ): ASTBlock {
         val childWrap = wrappingStrategy(child)
 
         // Skip one sub-level for operators, so type of block node is an element type of operator
@@ -368,30 +383,58 @@ abstract class KotlinCommonBlock(
                     createChildIndent(child),
                     childWrap,
                     settings,
-                    spacingBuilder
+                    spacingBuilder,
+                    overrideChildren
                 )
             }
         }
 
-        return createBlock(child, alignmentStrategy, createChildIndent(child), childWrap, settings, spacingBuilder)
+        return createBlock(child, alignmentStrategy, createChildIndent(child), childWrap, settings, spacingBuilder, overrideChildren)
     }
 
     private fun buildSubBlocks(): List<ASTBlock> {
         val childrenAlignmentStrategy = getChildrenAlignmentStrategy()
         val wrappingStrategy = getWrappingStrategy()
 
-        val childNodes = if (node.elementType == KtNodeTypes.BINARY_EXPRESSION) {
-            val binaryExpressionChildren = mutableListOf<ASTNode>()
-            collectBinaryExpressionChildren(node, binaryExpressionChildren)
-            binaryExpressionChildren.asSequence()
-        } else {
-            node.children()
+        val childNodes = when {
+            overrideChildren != null -> overrideChildren.asSequence()
+            node.elementType == KtNodeTypes.BINARY_EXPRESSION -> {
+                val binaryExpressionChildren = mutableListOf<ASTNode>()
+                collectBinaryExpressionChildren(node, binaryExpressionChildren)
+                binaryExpressionChildren.asSequence()
+            }
+            else -> node.children()
         }
 
         return childNodes
             .filter { it.textRange.length > 0 && it.elementType != TokenType.WHITE_SPACE }
-            .map { buildSubBlock(it, childrenAlignmentStrategy, wrappingStrategy) }
+            .flatMap { buildSubBlocksForChildNode(it, childrenAlignmentStrategy, wrappingStrategy) }
             .toList()
+    }
+
+    private fun buildSubBlocksForChildNode(
+        node: ASTNode,
+        childrenAlignmentStrategy: CommonAlignmentStrategy,
+        wrappingStrategy: WrappingStrategy
+    ): Sequence<ASTBlock> {
+        if (node.elementType == KtNodeTypes.FUN) {
+            val filteredChildren = node.children().filter {
+                it.textRange.length > 0 && it.elementType != TokenType.WHITE_SPACE
+            }
+            val significantChildren = filteredChildren.dropWhile { it.elementType == KtTokens.EOL_COMMENT }
+            val funIndent = extractIndent(significantChildren.first())
+            val eolComments = filteredChildren.takeWhile {
+                it.elementType == KtTokens.EOL_COMMENT && extractIndent(it) != funIndent
+            }.toList()
+            val remainingChildren = filteredChildren.drop(eolComments.size)
+
+            val blocks = eolComments.map { buildSubBlock(it, childrenAlignmentStrategy, wrappingStrategy) } +
+                    sequenceOf(buildSubBlock(node, childrenAlignmentStrategy, wrappingStrategy, remainingChildren))
+            val blockList = blocks.toList()
+            return blockList.asSequence()
+        }
+
+        return sequenceOf(buildSubBlock(node, childrenAlignmentStrategy, wrappingStrategy))
     }
 
     private fun collectBinaryExpressionChildren(node: ASTNode, result: MutableList<ASTNode>) {
@@ -641,7 +684,10 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Indent for parts")
         .within(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
-        .notForType(KtNodeTypes.BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, CONSTRUCTOR_KEYWORD, KtTokens.RPAR)
+        .notForType(
+            KtNodeTypes.BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, CONSTRUCTOR_KEYWORD, KtTokens.RPAR,
+            KtTokens.EOL_COMMENT
+        )
         .set(Indent.getContinuationWithoutFirstIndent()),
 
     strategy("Chained calls")
@@ -813,4 +859,11 @@ private fun getWrappingStrategyForItemList(wrapType: Int, itemTypes: TokenSet, w
 
 private fun List<ASTBlock>.indexOfBlockWithType(tokenSet: TokenSet): Int {
     return indexOfFirst { block -> block.node?.elementType in tokenSet }
+}
+
+private fun extractIndent(node: ASTNode): String {
+    val prevNode = node.treePrev
+    if (prevNode?.elementType != TokenType.WHITE_SPACE)
+        return ""
+    return prevNode.text.substringAfterLast("\n", prevNode.text)
 }

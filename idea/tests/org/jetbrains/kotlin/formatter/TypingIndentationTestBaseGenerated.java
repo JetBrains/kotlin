@@ -261,6 +261,12 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             doNewlineTest(fileName);
         }
 
+        @TestMetadata("KT20783.after.kt")
+        public void testKT20783() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/KT20783.after.kt");
+            doNewlineTest(fileName);
+        }
+
         @TestMetadata("MultideclarationAfterEq.after.kt")
         public void testMultideclarationAfterEq() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/MultideclarationAfterEq.after.kt");

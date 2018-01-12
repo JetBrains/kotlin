@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.formatter
@@ -31,14 +20,18 @@ import org.jetbrains.kotlin.lexer.KtTokens.ARROW
  * @see Block for good JavaDoc documentation
  */
 class KotlinBlock(
-        node: ASTNode,
-        private val myAlignmentStrategy: CommonAlignmentStrategy,
-        private val myIndent: Indent?,
-        wrap: Wrap?,
-        mySettings: CodeStyleSettings,
-        private val mySpacingBuilder: KotlinSpacingBuilder) : AbstractBlock(node, wrap, myAlignmentStrategy.getAlignment(node)) {
+    node: ASTNode,
+    private val myAlignmentStrategy: CommonAlignmentStrategy,
+    private val myIndent: Indent?,
+    wrap: Wrap?,
+    mySettings: CodeStyleSettings,
+    private val mySpacingBuilder: KotlinSpacingBuilder,
+    overrideChildren: Sequence<ASTNode>? = null
+) : AbstractBlock(node, wrap, myAlignmentStrategy.getAlignment(node)) {
 
-    private val kotlinDelegationBlock = object : KotlinCommonBlock(node, mySettings, mySpacingBuilder, myAlignmentStrategy) {
+    private val kotlinDelegationBlock = object : KotlinCommonBlock(
+        node, mySettings, mySpacingBuilder, myAlignmentStrategy, overrideChildren
+    ) {
         override fun getNullAlignmentStrategy(): CommonAlignmentStrategy = NodeAlignmentStrategy.getNullStrategy()
 
         override fun createAlignmentStrategy(alignOption: Boolean, defaultAlignment: Alignment?): CommonAlignmentStrategy {
@@ -48,9 +41,9 @@ class KotlinBlock(
         override fun getAlignmentForCaseBranch(shouldAlignInColumns: Boolean): CommonAlignmentStrategy {
             return if (shouldAlignInColumns) {
                 NodeAlignmentStrategy.fromTypes(
-                        AlignmentStrategy.createAlignmentPerTypeStrategy(listOf(ARROW as IElementType), WHEN_ENTRY, true))
-            }
-            else {
+                    AlignmentStrategy.createAlignmentPerTypeStrategy(listOf(ARROW as IElementType), WHEN_ENTRY, true)
+                )
+            } else {
                 NodeAlignmentStrategy.getNullStrategy()
             }
         }
@@ -63,14 +56,24 @@ class KotlinBlock(
 
         override fun getSubBlocks(): List<Block> = subBlocks
 
-        override fun createBlock(node: ASTNode, alignmentStrategy: CommonAlignmentStrategy, indent: Indent?, wrap: Wrap?, settings: CodeStyleSettings, spacingBuilder: KotlinSpacingBuilder): ASTBlock {
+        override fun createBlock(
+            node: ASTNode,
+            alignmentStrategy: CommonAlignmentStrategy,
+            indent: Indent?,
+            wrap: Wrap?,
+            settings: CodeStyleSettings,
+            spacingBuilder: KotlinSpacingBuilder,
+            overrideChildren: Sequence<ASTNode>?
+        ): ASTBlock {
             return KotlinBlock(
-                    node,
-                    alignmentStrategy,
-                    indent,
-                    wrap,
-                    mySettings,
-                    mySpacingBuilder)
+                node,
+                alignmentStrategy,
+                indent,
+                wrap,
+                mySettings,
+                mySpacingBuilder,
+                overrideChildren
+            )
         }
 
         override fun createSyntheticSpacingNodeBlock(node: ASTNode): ASTBlock {
@@ -91,6 +94,8 @@ class KotlinBlock(
     override fun getChildAttributes(newChildIndex: Int): ChildAttributes = kotlinDelegationBlock.getChildAttributes(newChildIndex)
 
     override fun isLeaf(): Boolean = kotlinDelegationBlock.isLeaf()
+
+    override fun getTextRange() = kotlinDelegationBlock.getTextRange()
 }
 
 object KotlinSpacingBuilderUtilImpl : KotlinSpacingBuilderUtil {
@@ -103,13 +108,14 @@ object KotlinSpacingBuilderUtilImpl : KotlinSpacingBuilderUtil {
     }
 
     override fun createLineFeedDependentSpacing(
-            minSpaces: Int,
-            maxSpaces: Int,
-            minimumLineFeeds: Int,
-            keepLineBreaks: Boolean,
-            keepBlankLines: Int,
-            dependency: TextRange,
-            rule: DependentSpacingRule): Spacing {
+        minSpaces: Int,
+        maxSpaces: Int,
+        minimumLineFeeds: Int,
+        keepLineBreaks: Boolean,
+        keepBlankLines: Int,
+        dependency: TextRange,
+        rule: DependentSpacingRule
+    ): Spacing {
         return object : DependantSpacingImpl(minSpaces, maxSpaces, dependency, keepLineBreaks, keepBlankLines, rule) {
             override fun getMinLineFeeds(): Int {
                 val superMin = super.getMinLineFeeds()
