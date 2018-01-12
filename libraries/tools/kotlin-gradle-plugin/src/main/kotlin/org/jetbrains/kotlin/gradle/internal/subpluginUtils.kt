@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.gradle.internal
 
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.CompositeSubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.FilesSubpluginOption
+import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.ObjectOutputStream
 import java.util.*
 
@@ -38,6 +41,25 @@ fun encodePluginOptions(options: Map<String, List<String>>): String {
 
     oos.flush()
     return Base64.getEncoder().encodeToString(os.toByteArray())
+}
+
+internal fun CompilerPluginOptions.withWrappedKaptOptions(withApClasspath: Iterable<File>): CompilerPluginOptions {
+    val resultOptionsByPluginId: MutableMap<String, List<SubpluginOption>> =
+        subpluginOptionsByPluginId.toMutableMap()
+
+    resultOptionsByPluginId.compute(Kapt3KotlinGradleSubplugin.KAPT_SUBPLUGIN_ID) { _, kaptOptions ->
+        val kaptOptionsWithClasspath =
+            kaptOptions.orEmpty() + withApClasspath.map { FilesSubpluginOption("apclasspath", listOf(it)) }
+
+        wrapPluginOptions(kaptOptionsWithClasspath, "configuration")
+    }
+
+    val result = CompilerPluginOptions()
+    classpath.forEach { result.addClasspathEntry(File(it)) }
+    resultOptionsByPluginId.forEach { pluginId, options ->
+        options.forEach { option -> result.addPluginArgument(pluginId, option) }
+    }
+    return result
 }
 
 fun wrapPluginOptions(options: List<SubpluginOption>, newOptionName: String): List<SubpluginOption> {

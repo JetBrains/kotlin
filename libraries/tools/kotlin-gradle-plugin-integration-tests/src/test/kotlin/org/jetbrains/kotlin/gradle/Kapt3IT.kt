@@ -324,4 +324,17 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertContains("Additional warning message from AP")
         }
     }
+
+    @Test
+    fun testKaptConfigurationLazyResolution() = with(Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")) {
+        setupWorkingDir()
+        File(projectDir, "build.gradle").appendText(
+            "\ndependencies { kapt project.files { throw new GradleException(\"Resolved!\") } }"
+        )
+        // Check that the kapt configuration does not get resolved during the project evaluation:
+        build("tasks") {
+            assertSuccessful()
+            assertNotContains("Resolved!")
+        }
+    }
 }

@@ -80,6 +80,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val KAPT_GROUP_NAME = "org.jetbrains.kotlin"
         val KAPT_ARTIFACT_NAME = "kotlin-annotation-processing-gradle"
+        val KAPT_SUBPLUGIN_ID = "org.jetbrains.kotlin.kapt3"
 
         fun getKaptConfigurationName(sourceSetName: String): String {
             return if (sourceSetName != "main")
@@ -110,14 +111,15 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     private inner class Kapt3SubpluginContext(
-            val project: Project,
-            val kotlinCompile: KotlinCompile,
-            val javaCompile: AbstractCompile,
-            val kaptVariantData: KaptVariantData<*>?,
-            val sourceSetName: String,
-            val javaSourceSet: SourceSet?,
-            val kaptExtension: KaptExtension,
-            val kaptClasspath: MutableList<File>) {
+        val project: Project,
+        val kotlinCompile: KotlinCompile,
+        val javaCompile: AbstractCompile,
+        val kaptVariantData: KaptVariantData<*>?,
+        val sourceSetName: String,
+        val javaSourceSet: SourceSet?,
+        val kaptExtension: KaptExtension,
+        val kaptClasspathConfigurations: List<Configuration>
+    ) {
         val sourcesOutputDir = getKaptGeneratedSourcesDir(project, sourceSetName)
         val kotlinSourcesOutputDir = getKaptGeneratedKotlinSourcesDir(project, sourceSetName)
         val classesOutputDir = getKaptGeneratedClassesDir(project, sourceSetName)
@@ -137,23 +139,13 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     ): List<SubpluginOption> {
         assert((variantData != null) xor (javaSourceSet != null))
 
-        val kaptClasspath = arrayListOf<File>()
         val buildDependencies = arrayListOf<TaskDependency>()
         val kaptConfigurations = arrayListOf<Configuration>()
 
         fun handleSourceSet(sourceSetName: String) {
-            val kaptConfiguration = project.findKaptConfiguration(sourceSetName)
-            val filteredDependencies = kaptConfiguration?.dependencies?.filter {
-                it.group != getGroupName() || it.name != getArtifactName()
-            } ?: emptyList()
-
-            if (kaptConfiguration != null) {
+            project.findKaptConfiguration(sourceSetName)?.let { kaptConfiguration ->
                 kaptConfigurations += kaptConfiguration
                 buildDependencies += kaptConfiguration.buildDependencies
-
-                if (filteredDependencies.isNotEmpty()) {
-                    kaptClasspath.addAll(kaptConfiguration.resolve())
-                }
             }
         }
 
@@ -175,8 +167,14 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
 
-        val context = Kapt3SubpluginContext(project, kotlinCompile, javaCompile,
-                kaptVariantData, sourceSetName, javaSourceSet, kaptExtension, kaptClasspath)
+        val nonEmptyKaptConfigurations = kaptConfigurations.filter { configuration ->
+            configuration.dependencies.any { it.group != getGroupName() || it.name != getArtifactName() }
+        }
+
+        val context = Kapt3SubpluginContext(
+            project, kotlinCompile, javaCompile,
+            kaptVariantData, sourceSetName, javaSourceSet, kaptExtension, nonEmptyKaptConfigurations
+        )
 
         val kaptGenerateStubsTask = context.createKaptGenerateStubsTask()
         val kaptTask = context.createKaptKotlinTask()
@@ -207,8 +205,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         pluginOptions += SubpluginOption("aptMode", aptMode)
         disableAnnotationProcessingInJavaTask()
-
-        kaptClasspath.forEach { pluginOptions += FilesSubpluginOption("apclasspath", listOf(it)) }
 
         javaCompile.source(generatedFilesDir)
 
@@ -246,7 +242,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private fun Kapt3SubpluginContext.buildAndAddOptionsTo(task: Task, container: CompilerPluginOptions, aptMode: String) {
         val compilerPluginId = getCompilerPluginId()
-        val kaptSubpluginOptions = wrapPluginOptions(buildOptions(aptMode), "configuration")
+        val kaptSubpluginOptions = buildOptions(aptMode)
         task.registerSubpluginOptionsAsInputs(compilerPluginId, kaptSubpluginOptions)
 
         for (option in kaptSubpluginOptions) {
@@ -320,7 +316,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             registerGeneratedJavaSource(kaptTask, javaCompile)
         }
 
-        kaptTask.kaptClasspath = kaptClasspath
+        kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
 
         buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "apt")
 
@@ -344,7 +340,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.generatedSourcesDir = sourcesOutputDir
         mapKotlinTaskProperties(project, kaptTask)
 
-        kaptTask.kaptClasspath = kaptClasspath
+        kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
         buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "stubs")
 
         return kaptTask
@@ -372,7 +368,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
     }
 
-    override fun getCompilerPluginId() = "org.jetbrains.kotlin.kapt3"
+    override fun getCompilerPluginId() = KAPT_SUBPLUGIN_ID
     override fun getGroupName() = KAPT_GROUP_NAME
     override fun getArtifactName() = KAPT_ARTIFACT_NAME
 }

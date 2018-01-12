@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.internal
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
 import org.gradle.api.GradleException
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.*
@@ -41,7 +42,11 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
     }
 
     @get:Classpath @get:InputFiles
-    lateinit var kaptClasspath: List<File>
+    val kaptClasspath: FileCollection
+        get() = project.files(*kaptClasspathConfigurations.toTypedArray())
+
+    @get:Internal
+    internal lateinit var kaptClasspathConfigurations: List<Configuration>
 
     @get:OutputDirectory
     internal lateinit var classesDir: File
@@ -58,7 +63,10 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
         kotlinCompileTask.setupCompilerArgs(args)
 
         args.pluginClasspaths = (pluginClasspath + args.pluginClasspaths!!).toSet().toTypedArray()
-        args.pluginOptions = (pluginOptions.arguments + args.pluginOptions!!).toTypedArray()
+
+        val pluginOptionsWithKapt: CompilerPluginOptions = pluginOptions.withWrappedKaptOptions(withApClasspath = kaptClasspath)
+        args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()
+
         args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
     }
 
