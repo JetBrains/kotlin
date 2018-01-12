@@ -20,11 +20,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.psi.KtProperty;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
@@ -32,7 +30,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.TestUtilsKt.*;
+import static org.jetbrains.kotlin.codegen.TestUtilsKt.clearReflectionCache;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
@@ -120,8 +118,8 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
     @Nullable
     private static String getFacadeFqName(@NotNull KtFile firstFile) {
-        for (KtDeclaration declaration : firstFile.getDeclarations()) {
-            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction) {
+        for (KtDeclaration declaration : CodegenUtil.getActualDeclarations(firstFile)) {
+            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
                 return JvmFileClassUtil.getFileClassInfoNoResolve(firstFile).getFacadeClassFqName().asString();
             }
         }
