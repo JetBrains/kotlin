@@ -65,31 +65,56 @@ class ScratchToolWindowFactory : ToolWindowFactory {
     }
 }
 
-fun showToolWindow(
+object ScratchToolWindow {
+
+    fun addMessageToToolWindow(
         project: Project,
         message: String,
         type: ConsoleViewContentType
-) {
-    if (ApplicationManager.getApplication().isUnitTestMode) return
+    ) {
+        if (ApplicationManager.getApplication().isUnitTestMode) return
 
-    ApplicationManager.getApplication().invokeLater {
-        val toolWindowManager = ToolWindowManager.getInstance(project)
-        var window: ToolWindow? = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
-        if (window == null) {
-            toolWindowManager.registerToolWindow(ScratchToolWindowFactory.ID, true, ToolWindowAnchor.BOTTOM)
-            window = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
-            ScratchToolWindowFactory().createToolWindowContent(project, window!!)
-        }
-
-        val contents = window.contentManager.contents
-        for (content in contents) {
-            val component = content.component
-            if (component is ConsoleViewImpl) {
-                component.clear()
-                component.print(message, type)
-                window.setAvailable(true, null)
-                window.show(null)
+        ApplicationManager.getApplication().invokeLater {
+                val toolWindow = getToolWindow(project) ?: createToolWindow(project)
+                val contents = toolWindow.contentManager.contents
+                for (content in contents) {
+                    val component = content.component
+                    if (component is ConsoleViewImpl) {
+                        component.print("$message\n", type)
+                    }
+                }
+                toolWindow.setAvailable(true, null)
+                toolWindow.show(null)
             }
-        }
+    }
+
+    fun clearToolWindow(project: Project) {
+        if (ApplicationManager.getApplication().isUnitTestMode) return
+
+        ApplicationManager.getApplication().invokeLater {
+                val toolWindow = getToolWindow(project) ?: return@invokeLater
+                val contents = toolWindow.contentManager.contents
+                for (content in contents) {
+                    val component = content.component
+                    if (component is ConsoleViewImpl) {
+                        component.clear()
+                    }
+                }
+                toolWindow.setAvailable(false, null)
+                toolWindow.hide(null)
+            }
+    }
+
+    private fun getToolWindow(project: Project): ToolWindow? {
+        val toolWindowManager = ToolWindowManager.getInstance(project)
+        return toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
+    }
+
+    private fun createToolWindow(project: Project): ToolWindow {
+        val toolWindowManager = ToolWindowManager.getInstance(project)
+        toolWindowManager.registerToolWindow(ScratchToolWindowFactory.ID, true, ToolWindowAnchor.BOTTOM)
+        val window = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
+        ScratchToolWindowFactory().createToolWindowContent(project, window)
+        return window
     }
 }

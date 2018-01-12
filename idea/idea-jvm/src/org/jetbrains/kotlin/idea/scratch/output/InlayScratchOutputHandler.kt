@@ -33,7 +33,7 @@ import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
-import org.jetbrains.kotlin.idea.scratch.ui.showToolWindow
+import org.jetbrains.kotlin.idea.scratch.ui.ScratchToolWindow
 import java.awt.Color
 import java.awt.Font
 import java.awt.Graphics
@@ -41,7 +41,7 @@ import java.awt.Rectangle
 
 object InlayScratchOutputHandler : ScratchOutputHandler {
     override fun onStart(file: ScratchFile) {
-        clearInlays(file.psiFile.project, file.psiFile.virtualFile)
+        clear(file)
     }
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
@@ -55,8 +55,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     }
 
     override fun error(file: ScratchFile, message: String) {
-        // todo multiple errors, clear, close
-        showToolWindow(file.psiFile.project, message, ConsoleViewContentType.ERROR_OUTPUT)
+        ScratchToolWindow.addMessageToToolWindow(file.psiFile.project, message, ConsoleViewContentType.ERROR_OUTPUT)
     }
 
     override fun onFinish(file: ScratchFile) {
@@ -65,6 +64,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
 
     override fun clear(file: ScratchFile) {
         clearInlays(file.psiFile.project, file.psiFile.virtualFile)
+        ScratchToolWindow.clearToolWindow(file.psiFile.project)
     }
 
     private fun createInlay(project: Project, file: VirtualFile, offset: Int, inlayText: String, outputType: ScratchOutputType) {
