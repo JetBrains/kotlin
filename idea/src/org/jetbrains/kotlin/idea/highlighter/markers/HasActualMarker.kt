@@ -27,16 +27,16 @@ import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import java.awt.event.MouseEvent
 
 fun ModuleDescriptor.hasActualsFor(descriptor: MemberDescriptor) =
         actualsFor(descriptor).isNotEmpty()
 
 fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: Boolean = true): List<DeclarationDescriptor> =
-        with(ExpectedActualDeclarationChecker) {
+        with(ExpectedActualResolver) {
             if (checkCompatible) {
                 descriptor.findCompatibleActualForExpected(this@actualsFor)
             }
