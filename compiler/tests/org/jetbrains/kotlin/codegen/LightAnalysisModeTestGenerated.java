@@ -11637,6 +11637,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("nameWithWhitespace.kt")
+        public void testNameWithWhitespace() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/nameWithWhitespace.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noclosure.kt")
         public void testNoclosure() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/noclosure.kt");

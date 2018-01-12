@@ -12837,6 +12837,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nameWithWhitespace.kt")
+        public void testNameWithWhitespace() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/nameWithWhitespace.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+
         @TestMetadata("noclosure.kt")
         public void testNoclosure() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/noclosure.kt");
