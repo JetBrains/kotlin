@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.AbstractJavaUClass
@@ -140,9 +139,8 @@ open class KotlinConstructorUMethod(
                 delegationCall?.let {
                     add(KotlinUFunctionCallExpression(it, uastParent))
                 }
-                val languagePlugin = uastParent.getLanguagePlugin()
                 bodyExpressions.forEach {
-                    addIfNotNull(languagePlugin.convertOpt(it, uastParent))
+                    add(KotlinConverter.convertOrEmpty(it, uastParent))
                 }
             }
         }
