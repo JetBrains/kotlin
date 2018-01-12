@@ -17,12 +17,15 @@
 package org.jetbrains.kotlin.js.translate.utils;
 
 import com.intellij.psi.PsiElement;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
@@ -35,6 +38,7 @@ import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.psi.KtBlockExpression;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -74,18 +78,36 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public static List<JsStatement> setDefaultValueForArguments(@NotNull FunctionDescriptor descriptor,
-            @NotNull TranslationContext functionBodyContext) {
-        List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
+    public static List<JsStatement> setDefaultValueForArguments(
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
+        List<ValueParameterDescriptor> originalParameters = descriptor.getValueParameters();
+        List<ValueParameterDescriptor> valueParameters;
+        if (descriptor.isActual() && CollectionsKt.none(originalParameters, ValueParameterDescriptor::declaresDefaultValue)) {
+            FunctionDescriptor expected = CodegenUtil.findExpectedFunctionForActual(descriptor);
+            if (expected != null) {
+                valueParameters = expected.getValueParameters();
+            }
+            else {
+                PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
+                assert element != null : "No element found for descriptor: " + descriptor;
+                context.bindingTrace().report(Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND.on(element));
+                valueParameters = originalParameters;
+            }
+        }
+        else {
+            valueParameters = originalParameters;
+        }
 
         List<JsStatement> result = new ArrayList<>(valueParameters.size());
         for (ValueParameterDescriptor valueParameter : valueParameters) {
             if (!valueParameter.declaresDefaultValue()) continue;
 
-            JsExpression jsNameRef = ReferenceTranslator.translateAsValueReference(valueParameter, functionBodyContext);
+            JsExpression jsNameRef = ReferenceTranslator.translateAsValueReference(valueParameter, context);
             KtExpression defaultArgument = BindingUtils.getDefaultArgument(valueParameter);
             JsBlock defaultArgBlock = new JsBlock();
-            JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
+            JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, context, defaultArgBlock);
             PsiElement psi = KotlinSourceElementKt.getPsi(valueParameter.getSource());
             JsStatement assignStatement = assignment(jsNameRef, defaultValue).source(psi).makeStmt();
             JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);

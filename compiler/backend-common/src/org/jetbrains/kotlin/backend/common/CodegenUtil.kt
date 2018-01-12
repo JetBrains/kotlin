@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.types.KotlinType
 
 object CodegenUtil {
@@ -166,4 +167,12 @@ object CodegenUtil {
     @JvmStatic
     fun getActualDeclarations(file: KtFile): List<KtDeclaration> =
             file.declarations.filterNot(KtDeclaration::hasExpectModifier)
+
+    @JvmStatic
+    fun findExpectedFunctionForActual(descriptor: FunctionDescriptor): FunctionDescriptor? {
+        val compatibleExpectedFunctions = with(ExpectedActualResolver) {
+            descriptor.findCompatibleExpectedForActual(DescriptorUtils.getContainingModule(descriptor))
+        }
+        return compatibleExpectedFunctions.firstOrNull() as FunctionDescriptor?
+    }
 }

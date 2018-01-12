@@ -19,16 +19,19 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
-import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal fun unexpectedArgument(argument: KotlinCallArgument): Nothing =
@@ -59,11 +62,28 @@ val ValueParameterDescriptor.isVararg: Boolean get() = varargElementType != null
 val ParameterDescriptor.isVararg: Boolean get() = this.safeAs<ValueParameterDescriptor>()?.isVararg ?: false
 
 /**
- * @return `true` iff the parameter has a default value, i.e. declares it or inherits by overriding a parameter which has a default value.
+ * @return `true` iff the parameter has a default value, i.e. declares it, inherits it by overriding a parameter which has a default value,
+ * or is a parameter of an 'actual' declaration, such that the corresponding 'expect' parameter has a default value.
  */
 fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
-    return declaresOrInheritsDefaultValue()
+    return DFS.ifAny(
+        listOf(this),
+        { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
+        { it.declaresDefaultValue() || it.isActualParameterWithExpectedDefault }
+    )
 }
+
+private val ValueParameterDescriptor.isActualParameterWithExpectedDefault: Boolean
+    get() {
+        val function = containingDeclaration
+        if (function is FunctionDescriptor && function.isActual) {
+            with(ExpectedActualResolver) {
+                val expected = function.findCompatibleExpectedForActual(function.module).firstOrNull()
+                return expected is FunctionDescriptor && expected.valueParameters[index].hasDefaultValue()
+            }
+        }
+        return false
+    }
 
 private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInAnnotation(
     parameter: ParameterDescriptor,

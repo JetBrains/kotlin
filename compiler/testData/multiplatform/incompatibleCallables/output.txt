@@ -164,12 +164,9 @@ The following declaration is incompatible because some type parameter is reified
 
 actual inline fun <reified X> f14() {}
                   ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:26:15: error: actual function 'f16' has no corresponding expected declaration
-The following declaration is incompatible because some parameters have default values:
-    public expect fun f16(s: String): Unit
-
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:26:16: error: actual function cannot have default argument values, they should be declared in the expected function
 actual fun f16(s: String = "") {}
-              ^
+               ^
 compiler/testData/multiplatform/incompatibleCallables/jvm.kt:28:15: error: actual function 'f17' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is vararg in one declaration and non-vararg in the other:
     public expect fun f17(vararg s: String): Unit

@@ -157,8 +157,7 @@ object PositioningStrategies {
                     callableDeclaration?.let { it.receiverTypeReference ?: it.valueParameterList }
                 }
                 ParameterCount, ParameterTypes, ParameterNames,
-                ValueParameterHasDefault, ValueParameterVararg,
-                ValueParameterNoinline, ValueParameterCrossinline -> {
+                ValueParameterVararg, ValueParameterNoinline, ValueParameterCrossinline -> {
                     callableDeclaration?.valueParameterList
                 }
                 ReturnType -> {

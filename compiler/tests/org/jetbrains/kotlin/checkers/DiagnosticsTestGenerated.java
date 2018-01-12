@@ -14228,6 +14228,39 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class DefaultArguments extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInDefaultArguments() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("constructor.kt")
+                public void testConstructor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/constructor.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("expectedDeclaresDefaultArguments.kt")
+                public void testExpectedDeclaresDefaultArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/expectedDeclaresDefaultArguments.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("expectedInheritsDefaultArguments.kt")
+                public void testExpectedInheritsDefaultArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/expectedInheritsDefaultArguments.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("expectedVsNonExpectedWithDefaults.kt")
+                public void testExpectedVsNonExpectedWithDefaults() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/expectedVsNonExpectedWithDefaults.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/deprecated")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -14542,12 +14575,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("conflictingImplDeclarations.kt")
                 public void testConflictingImplDeclarations() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/conflictingImplDeclarations.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("defaultArguments.kt")
-                public void testDefaultArguments() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/defaultArguments.kt");
                     doTest(fileName);
                 }
 

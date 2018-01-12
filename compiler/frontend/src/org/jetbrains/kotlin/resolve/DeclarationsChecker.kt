@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.*
@@ -246,6 +247,10 @@ class DeclarationsChecker(
         checkVarargParameters(trace, constructorDescriptor)
         checkConstructorVisibility(constructorDescriptor, declaration)
         checkExpectedClassConstructor(constructorDescriptor, declaration)
+
+        if (constructorDescriptor.isActual) {
+            checkActualFunction(declaration, constructorDescriptor)
+        }
     }
 
     private fun checkExpectedClassConstructor(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
@@ -765,6 +770,9 @@ class DeclarationsChecker(
         if (functionDescriptor.isExpect) {
             checkExpectedFunction(function, functionDescriptor)
         }
+        if (functionDescriptor.isActual) {
+            checkActualFunction(function, functionDescriptor)
+        }
 
         shadowedExtensionChecker.checkDeclaration(function, functionDescriptor)
     }
@@ -774,13 +782,17 @@ class DeclarationsChecker(
             trace.report(EXPECTED_DECLARATION_WITH_BODY.on(function))
         }
 
-        for (parameter in function.valueParameters) {
-            if (parameter.hasDefaultValue()) {
-                trace.report(EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER.on(parameter))
+        checkPrivateExpectedDeclaration(function, functionDescriptor)
+    }
+
+    private fun checkActualFunction(element: KtDeclaration, functionDescriptor: FunctionDescriptor) {
+        for (valueParameter in functionDescriptor.valueParameters) {
+            if (valueParameter.declaresDefaultValue()) {
+                trace.report(
+                    ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS.on(DescriptorToSourceUtils.descriptorToDeclaration(valueParameter) ?: element)
+                )
             }
         }
-
-        checkPrivateExpectedDeclaration(function, functionDescriptor)
     }
 
     private fun checkImplicitCallableType(declaration: KtCallableDeclaration, descriptor: CallableDescriptor) {

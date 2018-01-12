@@ -172,7 +172,6 @@ object ExpectedActualResolver {
             object ParameterNames : Incompatible("parameter names are different")
             object TypeParameterNames : Incompatible("names of type parameters are different")
 
-            object ValueParameterHasDefault : Incompatible("some parameters have default values")
             object ValueParameterVararg : Incompatible("some value parameter is vararg in one declaration and non-vararg in the other")
             object ValueParameterNoinline : Incompatible("some value parameter is noinline in one declaration and not noinline in the other")
             object ValueParameterCrossinline : Incompatible("some value parameter is crossinline in one declaration and not crossinline in the other")
@@ -257,7 +256,6 @@ object ExpectedActualResolver {
 
         areCompatibleTypeParameters(aTypeParams, bTypeParams, platformModule, substitutor).let { if (it != Compatible) return it }
 
-        if (!equalsBy(aParams, bParams, ValueParameterDescriptor::declaresDefaultValue)) return Incompatible.ValueParameterHasDefault
         if (!equalsBy(aParams, bParams, { p -> listOf(p.varargElementType != null) })) return Incompatible.ValueParameterVararg
 
         // Adding noinline/crossinline to parameters is disallowed, except if the expected declaration was not inline at all

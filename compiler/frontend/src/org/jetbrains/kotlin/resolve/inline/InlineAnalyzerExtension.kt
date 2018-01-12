@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.AnalyzerExtensions
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 
 class InlineAnalyzerExtension(
     private val reasonableInlineRules: Iterable<ReasonableInlineRule>,
@@ -95,9 +96,9 @@ class InlineAnalyzerExtension(
             if (parameter.hasDefaultValue()) {
                 val ktParameter = ktParameters[parameter.index]
                 //Always report unsupported error on functional parameter with inherited default (there are some problems with inlining)
-                val inheritDefaultValues = !parameter.declaresDefaultValue()
-                if (checkInlinableParameter(parameter, ktParameter, functionDescriptor, null) || inheritDefaultValues) {
-                    if (inheritDefaultValues || !languageVersionSettings.supportsFeature(LanguageFeature.InlineDefaultFunctionalParameters)) {
+                val inheritsDefaultValue = !parameter.declaresDefaultValue() && parameter.declaresOrInheritsDefaultValue()
+                if (checkInlinableParameter(parameter, ktParameter, functionDescriptor, null) || inheritsDefaultValue) {
+                    if (inheritsDefaultValue || !languageVersionSettings.supportsFeature(LanguageFeature.InlineDefaultFunctionalParameters)) {
                         trace.report(
                             Errors.NOT_YET_SUPPORTED_IN_INLINE.on(
                                 ktParameter,
