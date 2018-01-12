@@ -1,419 +1,367 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.internal;
+package org.jetbrains.kotlin.idea.internal
 
-import com.intellij.ide.highlighter.JavaFileType;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.util.Alarm;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory;
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
-import org.jetbrains.kotlin.codegen.DefaultCodegenFactory;
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.*;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.debugger.DebuggerUtils;
-import org.jetbrains.kotlin.idea.project.PlatformKt;
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
-import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask;
-import org.jetbrains.kotlin.idea.util.LongRunningReadTask;
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtScript;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.utils.StringsKt;
+import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.Pair
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.wm.ToolWindow
+import com.intellij.util.Alarm
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.CompilationErrorHandler
+import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask
+import org.jetbrains.kotlin.idea.util.LongRunningReadTask
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.utils.join
+import java.awt.BorderLayout
+import java.awt.FlowLayout
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.util.*
+import javax.swing.JButton
+import javax.swing.JCheckBox
+import javax.swing.JPanel
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.*;
-import java.util.List;
+class KotlinBytecodeToolWindow(private val myProject: Project, private val toolWindow: ToolWindow) : JPanel(BorderLayout()), Disposable {
+    private val LOG = Logger.getInstance(KotlinBytecodeToolWindow::class.java)
 
-public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
-    private final Logger LOG = Logger.getInstance(KotlinBytecodeToolWindow.class);
+    private val myEditor: Editor
+    private val enableInline: JCheckBox
+    private val enableOptimization: JCheckBox
+    private val enableAssertions: JCheckBox
+    private val decompile: JButton
+    private val jvm8Target: JCheckBox
+    private val ir: JCheckBox
 
-    private static final int UPDATE_DELAY = 1000;
-    private static final String DEFAULT_TEXT = "/*\n" +
-                                               "Generated bytecode for Kotlin source file.\n" +
-                                               "No Kotlin source file is opened.\n" +
-                                               "*/";
-
-    private class UpdateBytecodeToolWindowTask extends LongRunningReadTask<Location, String> {
-        @Override
-        protected Location prepareRequestInfo() {
-            if (!toolWindow.isVisible()) {
-                return null;
+    private inner class UpdateBytecodeToolWindowTask : LongRunningReadTask<Location, String>() {
+        override fun prepareRequestInfo(): Location? {
+            if (!toolWindow.isVisible) {
+                return null
             }
 
-            Location location = Location.fromEditor(FileEditorManager.getInstance(myProject).getSelectedTextEditor(), myProject);
+            val location = Location.fromEditor(FileEditorManager.getInstance(myProject).selectedTextEditor, myProject)
             if (location.getEditor() == null) {
-                return null;
+                return null
             }
 
-            KtFile file = location.getKFile();
-            if (file == null || !ProjectRootsUtil.isInProjectSource(file)) {
-                return null;
-            }
+            val file = location.kFile
+            return if (file == null || !ProjectRootsUtil.isInProjectSource(file)) {
+                null
+            } else location
 
-            return location;
         }
 
-        @NotNull
-        @Override
-        protected Location cloneRequestInfo(@NotNull Location location) {
-            Location newLocation = super.cloneRequestInfo(location);
-            assert location.equals(newLocation) : "cloneRequestInfo should generate same location object";
-            return newLocation;
+        override fun cloneRequestInfo(location: Location): Location {
+            val newLocation = super.cloneRequestInfo(location)
+            assert(location == newLocation) { "cloneRequestInfo should generate same location object" }
+            return newLocation
         }
 
-        @Override
-        protected void hideResultOnInvalidLocation() {
-            setText(DEFAULT_TEXT);
+        override fun hideResultOnInvalidLocation() {
+            setText(DEFAULT_TEXT)
         }
 
-        @NotNull
-        @Override
-        protected String processRequest(@NotNull Location location) {
-            KtFile ktFile = location.getKFile();
-            assert ktFile != null;
+        override fun processRequest(location: Location): String {
+            val ktFile = location.kFile!!
 
-            CompilerConfiguration configuration = new CompilerConfiguration();
-            if (!enableInline.isSelected()) {
-                configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
+            val configuration = CompilerConfiguration()
+            if (!enableInline.isSelected) {
+                configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true)
             }
-            if (!enableAssertions.isSelected()) {
-                configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, true);
-                configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, true);
+            if (!enableAssertions.isSelected) {
+                configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, true)
+                configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, true)
             }
-            if (!enableOptimization.isSelected()) {
-                configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, true);
+            if (!enableOptimization.isSelected) {
+                configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, true)
             }
 
-            if (jvm8Target.isSelected()) {
-                configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8);
+            if (jvm8Target.isSelected) {
+                configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
             }
 
-            if (ir.isSelected()) {
-                configuration.put(JVMConfigurationKeys.IR, true);
+            if (ir.isSelected) {
+                configuration.put(JVMConfigurationKeys.IR, true)
             }
 
-            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, PlatformKt.getLanguageVersionSettings(ktFile));
+            configuration.languageVersionSettings = ktFile.languageVersionSettings
 
-            return getBytecodeForFile(ktFile, configuration);
+            return getBytecodeForFile(ktFile, configuration)
         }
 
-        @Override
-        protected void onResultReady(@NotNull Location requestInfo, String resultText) {
-            Editor editor = requestInfo.getEditor();
-            assert editor != null;
+        override fun onResultReady(requestInfo: Location, resultText: String?) {
+            val editor = requestInfo.getEditor()!!
 
             if (resultText == null) {
-                return;
+                return
             }
 
-            setText(resultText);
+            setText(resultText)
 
-            int fileStartOffset = requestInfo.getStartOffset();
-            int fileEndOffset = requestInfo.getEndOffset();
+            val fileStartOffset = requestInfo.getStartOffset()
+            val fileEndOffset = requestInfo.getEndOffset()
 
-            Document document = editor.getDocument();
-            int startLine = document.getLineNumber(fileStartOffset);
-            int endLine = document.getLineNumber(fileEndOffset);
-            if (endLine > startLine && fileEndOffset > 0 && document.getCharsSequence().charAt(fileEndOffset - 1) == '\n') {
-                endLine--;
+            val document = editor.document
+            val startLine = document.getLineNumber(fileStartOffset)
+            var endLine = document.getLineNumber(fileEndOffset)
+            if (endLine > startLine && fileEndOffset > 0 && document.charsSequence[fileEndOffset - 1] == '\n') {
+                endLine--
             }
 
-            Document byteCodeDocument = myEditor.getDocument();
+            val byteCodeDocument = myEditor.document
 
-            Pair<Integer, Integer> linesRange = mapLines(byteCodeDocument.getText(), startLine, endLine);
-            int endSelectionLineIndex = Math.min(linesRange.second + 1, byteCodeDocument.getLineCount());
+            val linesRange = mapLines(byteCodeDocument.text, startLine, endLine)
+            val endSelectionLineIndex = Math.min(linesRange.second + 1, byteCodeDocument.lineCount)
 
-            int startOffset = byteCodeDocument.getLineStartOffset(linesRange.first);
-            int endOffset = Math.min(byteCodeDocument.getLineStartOffset(endSelectionLineIndex), byteCodeDocument.getTextLength());
+            val startOffset = byteCodeDocument.getLineStartOffset(linesRange.first)
+            val endOffset = Math.min(byteCodeDocument.getLineStartOffset(endSelectionLineIndex), byteCodeDocument.textLength)
 
-            myEditor.getCaretModel().moveToOffset(endOffset);
-            myEditor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
-            myEditor.getCaretModel().moveToOffset(startOffset);
-            myEditor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
+            myEditor.caretModel.moveToOffset(endOffset)
+            myEditor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
+            myEditor.caretModel.moveToOffset(startOffset)
+            myEditor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
 
-            myEditor.getSelectionModel().setSelection(startOffset, endOffset);
+            myEditor.selectionModel.setSelection(startOffset, endOffset)
         }
     }
 
-    private final Editor myEditor;
-    private final Project myProject;
-    private final ToolWindow toolWindow;
-    private final JCheckBox enableInline;
-    private final JCheckBox enableOptimization;
-    private final JCheckBox enableAssertions;
-    private final JButton decompile;
-    private final JCheckBox jvm8Target;
-    private final JCheckBox ir;
-
-    public KotlinBytecodeToolWindow(Project project, ToolWindow toolWindow) {
-        super(new BorderLayout());
-        myProject = project;
-        this.toolWindow = toolWindow;
+    init {
 
         myEditor = EditorFactory.getInstance().createEditor(
-                EditorFactory.getInstance().createDocument(""), project, JavaFileType.INSTANCE, true);
-        add(myEditor.getComponent());
+            EditorFactory.getInstance().createDocument(""), myProject, JavaFileType.INSTANCE, true
+        )
+        add(myEditor.component)
 
-        JPanel optionPanel = new JPanel(new FlowLayout());
-        add(optionPanel, BorderLayout.NORTH);
+        val optionPanel = JPanel(FlowLayout())
+        add(optionPanel, BorderLayout.NORTH)
 
-        decompile = new JButton("Decompile");
-        if (KotlinDecompilerService.Companion.getInstance() != null) {
-            optionPanel.add(decompile);
-            decompile.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Location location = Location.fromEditor(FileEditorManager.getInstance(myProject).getSelectedTextEditor(), myProject);
-                    KtFile file = location.getKFile();
-                    if (file != null) {
-                        try {
-                            KotlinDecompilerAdapterKt.showDecompiledCode(file);
-                        }
-                        catch (DecompileFailedException ex) {
-                            LOG.info(ex);
-                            Messages.showErrorDialog(myProject, "Failed to decompile " + file.getName() + ": " + ex, "Kotlin Bytecode Decompiler");
-                        }
+        decompile = JButton("Decompile")
+        if (KotlinDecompilerService.getInstance() != null) {
+            optionPanel.add(decompile)
+            decompile.addActionListener {
+                val location = Location.fromEditor(FileEditorManager.getInstance(myProject).selectedTextEditor, myProject)
+                val file = location.kFile
+                if (file != null) {
+                    try {
+                        showDecompiledCode(file)
+                    } catch (ex: DecompileFailedException) {
+                        LOG.info(ex)
+                        Messages.showErrorDialog(myProject, "Failed to decompile " + file.name + ": " + ex, "Kotlin Bytecode Decompiler")
                     }
+
                 }
-            });
+            }
         }
 
         /*TODO: try to extract default parameter from compiler options*/
-        enableInline = new JCheckBox("Inline", true);
-        enableOptimization = new JCheckBox("Optimization", true);
-        enableAssertions = new JCheckBox("Assertions", true);
-        jvm8Target = new JCheckBox("JVM 8 target", false);
-        ir = new JCheckBox("IR", false);
-        optionPanel.add(enableInline);
-        optionPanel.add(enableOptimization);
-        optionPanel.add(enableAssertions);
-        optionPanel.add(ir);
-        optionPanel.add(jvm8Target);
+        enableInline = JCheckBox("Inline", true)
+        enableOptimization = JCheckBox("Optimization", true)
+        enableAssertions = JCheckBox("Assertions", true)
+        jvm8Target = JCheckBox("JVM 8 target", false)
+        ir = JCheckBox("IR", false)
+        optionPanel.add(enableInline)
+        optionPanel.add(enableOptimization)
+        optionPanel.add(enableAssertions)
+        optionPanel.add(ir)
+        optionPanel.add(jvm8Target)
 
-        new InfinitePeriodicalTask(UPDATE_DELAY, Alarm.ThreadToUse.SWING_THREAD, this, new Computable<LongRunningReadTask>() {
-            @Override
-            public LongRunningReadTask compute() {
-                return new UpdateBytecodeToolWindowTask();
-            }
-        }).start();
+        InfinitePeriodicalTask(
+            UPDATE_DELAY.toLong(),
+            Alarm.ThreadToUse.SWING_THREAD,
+            this,
+            Computable<LongRunningReadTask<*, *>> { UpdateBytecodeToolWindowTask() }).start()
 
-        setText(DEFAULT_TEXT);
+        setText(DEFAULT_TEXT)
     }
 
-    // public for tests
-    @NotNull
-    public static String getBytecodeForFile(@NotNull KtFile ktFile, @NotNull CompilerConfiguration configuration) {
-        GenerationState state;
-        try {
-            state = compileSingleFile(ktFile, configuration);
-        }
-        catch (ProcessCanceledException e) {
-            throw e;
-        }
-        catch (Exception e) {
-            return printStackTraceToString(e);
-        }
+    private fun setText(resultText: String) {
+        ApplicationManager.getApplication().runWriteAction { myEditor.document.setText(StringUtil.convertLineSeparators(resultText)) }
+    }
 
-        StringBuilder answer = new StringBuilder();
+    override fun dispose() {
+        EditorFactory.getInstance().releaseEditor(myEditor)
+    }
 
-        Collection<Diagnostic> diagnostics = state.getCollectedExtraJvmDiagnostics().all();
-        if (!diagnostics.isEmpty()) {
-            answer.append("// Backend Errors: \n");
-            answer.append("// ================\n");
-            for (Diagnostic diagnostic : diagnostics) {
-                answer.append("// Error at ")
-                        .append(diagnostic.getPsiFile().getName())
-                        .append(StringsKt.join(diagnostic.getTextRanges(), ","))
+    companion object {
+
+        private val UPDATE_DELAY = 1000
+        private val DEFAULT_TEXT = "/*\n" +
+                "Generated bytecode for Kotlin source file.\n" +
+                "No Kotlin source file is opened.\n" +
+                "*/"
+
+        // public for tests
+        fun getBytecodeForFile(ktFile: KtFile, configuration: CompilerConfiguration): String {
+            val state: GenerationState
+            try {
+                state = compileSingleFile(ktFile, configuration)
+            } catch (e: ProcessCanceledException) {
+                throw e
+            } catch (e: Exception) {
+                return printStackTraceToString(e)
+            }
+
+            val answer = StringBuilder()
+
+            val diagnostics = state.collectedExtraJvmDiagnostics.all()
+            if (!diagnostics.isEmpty()) {
+                answer.append("// Backend Errors: \n")
+                answer.append("// ================\n")
+                for (diagnostic in diagnostics) {
+                    answer.append("// Error at ")
+                        .append(diagnostic.psiFile.name)
+                        .append(join(diagnostic.textRanges, ","))
                         .append(": ")
                         .append(DefaultErrorMessages.render(diagnostic))
-                        .append("\n");
+                        .append("\n")
+                }
+                answer.append("// ================\n\n")
             }
-            answer.append("// ================\n\n");
+
+            val outputFiles = state.factory
+            for (outputFile in outputFiles.asList()) {
+                answer.append("// ================")
+                answer.append(outputFile.relativePath)
+                answer.append(" =================\n")
+                answer.append(outputFile.asText()).append("\n\n")
+            }
+
+            return answer.toString()
         }
 
-        OutputFileCollection outputFiles = state.getFactory();
-        for (OutputFile outputFile : outputFiles.asList()) {
-            answer.append("// ================");
-            answer.append(outputFile.getRelativePath());
-            answer.append(" =================\n");
-            answer.append(outputFile.asText()).append("\n\n");
-        }
+        fun compileSingleFile(
+            ktFile: KtFile,
+            configuration: CompilerConfiguration
+        ): GenerationState {
+            val resolutionFacade = ktFile.getResolutionFacade()
 
-        return answer.toString();
-    }
+            val bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(listOf(ktFile)).bindingContext
 
-    @NotNull
-    public static GenerationState compileSingleFile(
-            @NotNull final KtFile ktFile,
-            @NotNull CompilerConfiguration configuration
-    ) {
-        ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(ktFile);
-
-        BindingContext bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(ktFile)).getBindingContext();
-
-        kotlin.Pair<BindingContext, List<KtFile>> result = DebuggerUtils.INSTANCE.analyzeInlinedFunctions(
+            val (bindingContext, toProcess) = DebuggerUtils.analyzeInlinedFunctions(
                 resolutionFacade, ktFile, configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE),
                 bindingContextForFile
-        );
+            )
 
-        BindingContext bindingContext = result.getFirst();
-        List<KtFile> toProcess = result.getSecond();
+            val generateClassFilter = object : GenerationState.GenerateClassFilter() {
+                override fun shouldGeneratePackagePart(file: KtFile): Boolean {
+                    return file === ktFile
+                }
 
-        GenerationState.GenerateClassFilter generateClassFilter = new GenerationState.GenerateClassFilter() {
-            @Override
-            public boolean shouldGeneratePackagePart(@NotNull KtFile file) {
-                return file == ktFile;
+                override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean {
+                    return true
+                }
+
+                override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean {
+                    return processingClassOrObject.containingKtFile === ktFile
+                }
+
+                override fun shouldGenerateScript(script: KtScript): Boolean {
+                    return script.containingKtFile === ktFile
+                }
             }
 
-            @Override
-            public boolean shouldAnnotateClass(@NotNull KtClassOrObject processingClassOrObject) {
-                return true;
-            }
-
-            @Override
-            public boolean shouldGenerateClass(@NotNull KtClassOrObject processingClassOrObject) {
-                return processingClassOrObject.getContainingKtFile() == ktFile;
-            }
-
-            @Override
-            public boolean shouldGenerateScript(@NotNull KtScript script) {
-                return script.getContainingKtFile() == ktFile;
-            }
-        };
-
-        GenerationState state = new GenerationState.Builder(
-                ktFile.getProject(), ClassBuilderFactories.TEST, resolutionFacade.getModuleDescriptor(), bindingContext, toProcess,
+            val state = GenerationState.Builder(
+                ktFile.project, ClassBuilderFactories.TEST, resolutionFacade.moduleDescriptor, bindingContext, toProcess,
                 configuration
-        )
+            )
                 .generateDeclaredClassFilter(generateClassFilter)
-                .codegenFactory(configuration.getBoolean(JVMConfigurationKeys.IR)
-                                ? JvmIrCodegenFactory.INSTANCE
-                                : DefaultCodegenFactory.INSTANCE)
-                .build();
+                .codegenFactory(
+                    if (configuration.getBoolean(JVMConfigurationKeys.IR))
+                        JvmIrCodegenFactory
+                    else
+                        DefaultCodegenFactory
+                )
+                .build()
 
-        KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+            KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
 
-        return state;
-    }
-
-    private static Pair<Integer, Integer> mapLines(String text, int startLine, int endLine) {
-        int byteCodeLine = 0;
-        int byteCodeStartLine = -1;
-        int byteCodeEndLine = -1;
-
-        List<Integer> lines = new ArrayList<Integer>();
-        for (String line : text.split("\n")) {
-            line = line.trim();
-
-            if (line.startsWith("LINENUMBER")) {
-                int ktLineNum = new Scanner(line.substring("LINENUMBER".length())).nextInt() - 1;
-                lines.add(ktLineNum);
-            }
-        }
-        Collections.sort(lines);
-
-        for (Integer line : lines) {
-            if (line >= startLine) {
-                startLine = line;
-                break;
-            }
+            return state
         }
 
-        for (String line : text.split("\n")) {
-            line = line.trim();
+        private fun mapLines(text: String, startLine: Int, endLine: Int): Pair<Int, Int> {
+            var startLine = startLine
+            var byteCodeLine = 0
+            var byteCodeStartLine = -1
+            var byteCodeEndLine = -1
 
-            if (line.startsWith("LINENUMBER")) {
-                int ktLineNum = new Scanner(line.substring("LINENUMBER".length())).nextInt() - 1;
-
-                if (byteCodeStartLine < 0 && ktLineNum == startLine) {
-                    byteCodeStartLine = byteCodeLine;
+            val lines = ArrayList<Int>()
+            for (line in text.split("\n").dropLastWhile { it.isEmpty() }.map { line -> line.trim { it <= ' ' } }) {
+                if (line.startsWith("LINENUMBER")) {
+                    val ktLineNum = Scanner(line.substring("LINENUMBER".length)).nextInt() - 1
+                    lines.add(ktLineNum)
                 }
+            }
+            Collections.sort(lines)
 
-                if (byteCodeStartLine > 0 && ktLineNum > endLine) {
-                    byteCodeEndLine = byteCodeLine - 1;
-                    break;
+            for (line in lines) {
+                if (line >= startLine) {
+                    startLine = line
+                    break
                 }
             }
 
-            if (byteCodeStartLine >= 0 && (line.startsWith("MAXSTACK") || line.startsWith("LOCALVARIABLE") || line.isEmpty())) {
-                byteCodeEndLine = byteCodeLine - 1;
-                break;
+            for (line in text.split("\n").dropLastWhile { it.isEmpty() }.map { line -> line.trim { it <= ' ' } }) {
+                if (line.startsWith("LINENUMBER")) {
+                    val ktLineNum = Scanner(line.substring("LINENUMBER".length)).nextInt() - 1
+
+                    if (byteCodeStartLine < 0 && ktLineNum == startLine) {
+                        byteCodeStartLine = byteCodeLine
+                    }
+
+                    if (byteCodeStartLine > 0 && ktLineNum > endLine) {
+                        byteCodeEndLine = byteCodeLine - 1
+                        break
+                    }
+                }
+
+                if (byteCodeStartLine >= 0 && (line.startsWith("MAXSTACK") || line.startsWith("LOCALVARIABLE") || line.isEmpty())) {
+                    byteCodeEndLine = byteCodeLine - 1
+                    break
+                }
+
+
+                byteCodeLine++
             }
 
-
-            byteCodeLine++;
-        }
-
-        if (byteCodeStartLine == -1 || byteCodeEndLine == -1) {
-            return new Pair<Integer, Integer>(0, 0);
-        }
-        else {
-            return new Pair<Integer, Integer>(byteCodeStartLine, byteCodeEndLine);
-        }
-    }
-
-    private static String printStackTraceToString(Throwable e) {
-        StringWriter out = new StringWriter(1024);
-        try (PrintWriter printWriter = new PrintWriter(out)) {
-            e.printStackTrace(printWriter);
-            return out.toString().replace("\r", "");
-        }
-    }
-
-    private void setText(@NotNull final String resultText) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                myEditor.getDocument().setText(StringUtil.convertLineSeparators(resultText));
+            return if (byteCodeStartLine == -1 || byteCodeEndLine == -1) {
+                Pair(0, 0)
+            } else {
+                Pair(byteCodeStartLine, byteCodeEndLine)
             }
-        });
-    }
+        }
 
-    @Override
-    public void dispose() {
-        EditorFactory.getInstance().releaseEditor(myEditor);
+        private fun printStackTraceToString(e: Throwable): String {
+            val out = StringWriter(1024)
+            PrintWriter(out).use { printWriter ->
+                e.printStackTrace(printWriter)
+                return out.toString().replace("\r", "")
+            }
+        }
     }
 }
