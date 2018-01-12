@@ -33,18 +33,11 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
 
     override fun execImpl(messageCollector: MessageCollector, services: Services, arguments: K2JSDceArguments): ExitCode {
         val baseDir = File(arguments.outputDirectory ?: "min")
-        var hasErrors = false
         val files = arguments.freeArgs.flatMap { arg ->
-            val files = collectInputFiles(baseDir, arg, messageCollector)
-            if (files != null) {
-                files
-            } else {
-                hasErrors = true
-                emptyList()
-            }
+            collectInputFiles(baseDir, arg, messageCollector)
         }
 
-        if (hasErrors) return ExitCode.COMPILATION_ERROR
+        if (messageCollector.hasErrors()) return ExitCode.COMPILATION_ERROR
 
         if (files.isEmpty() && !arguments.version) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "no source files")
@@ -163,7 +156,7 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
         return true
     }
 
-    private fun collectInputFiles(baseDir: File, fileName: String, messageCollector: MessageCollector): List<InputFile>? {
+    private fun collectInputFiles(baseDir: File, fileName: String, messageCollector: MessageCollector): List<InputFile> {
         val file = File(fileName)
         return when {
             file.isDirectory -> {
@@ -179,16 +172,16 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
                     }
                     else -> {
                         messageCollector.report(
-                            CompilerMessageSeverity.ERROR,
-                            "invalid file name '$fileName'; must end either with '.js', '.zip' or '.jar'"
+                            CompilerMessageSeverity.WARNING,
+                            "invalid file name '${file.absolutePath}'; must end either with '.js', '.zip' or '.jar'"
                         )
-                        null
+                        emptyList()
                     }
                 }
             }
             else -> {
                 messageCollector.report(CompilerMessageSeverity.ERROR, "source file or directory not found: $fileName")
-                null
+                emptyList()
             }
         }
     }
