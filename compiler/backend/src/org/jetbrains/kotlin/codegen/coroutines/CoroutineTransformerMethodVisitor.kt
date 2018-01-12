@@ -41,6 +41,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 
@@ -689,13 +690,15 @@ private fun allSuspensionPointsAreTailCalls(
     methodNode: MethodNode,
     suspensionPoints: List<SuspensionPoint>
 ): Boolean {
-    val safelyReachableReturns = findSafelyReachableReturns(methodNode)
     val sourceFrames = MethodTransformer.analyze(thisName, methodNode, IgnoringCopyOperationSourceInterpreter())
+    val safelyReachableReturns = findSafelyReachableReturns(methodNode, sourceFrames)
 
     val instructions = methodNode.instructions
     return suspensionPoints.all { suspensionPoint ->
         val beginIndex = instructions.indexOf(suspensionPoint.suspensionCallBegin)
         val endIndex = instructions.indexOf(suspensionPoint.suspensionCallEnd)
+
+        if (isUnreachable(beginIndex, sourceFrames)) return@all true
 
         val insideTryBlock = methodNode.tryCatchBlocks.any { block ->
             val tryBlockStartIndex = instructions.indexOf(block.start)
@@ -728,7 +731,7 @@ internal class IgnoringCopyOperationSourceInterpreter : SourceInterpreter() {
  *
  * @return indices of safely reachable returns for each instruction in the method node
  */
-private fun findSafelyReachableReturns(methodNode: MethodNode): Array<Set<Int>?> {
+private fun findSafelyReachableReturns(methodNode: MethodNode, sourceFrames: Array<Frame<SourceValue?>?>): Array<Set<Int>?> {
     val controlFlowGraph = ControlFlowGraph.build(methodNode)
 
     val insns = methodNode.instructions
@@ -736,6 +739,7 @@ private fun findSafelyReachableReturns(methodNode: MethodNode): Array<Set<Int>?>
         val insn = insns[index]
 
         if (insn.opcode == Opcodes.ARETURN) {
+            if (isUnreachable(index, sourceFrames)) return@init null
             return@init setOf(index)
         }
 
@@ -769,6 +773,9 @@ private fun findSafelyReachableReturns(methodNode: MethodNode): Array<Set<Int>?>
 
     return reachableReturnsIndices
 }
+
+// Check whether this instruction is unreachable, i.e. there is no path leading to this instruction
+internal fun isUnreachable(index: Int, sourceFrames: Array<Frame<SourceValue?>?>) = sourceFrames[index] == null
 
 private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode): Boolean {
     val insns = methodNode.instructions

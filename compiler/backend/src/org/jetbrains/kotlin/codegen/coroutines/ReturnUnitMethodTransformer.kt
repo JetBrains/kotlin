@@ -112,7 +112,9 @@ object ReturnUnitMethodTransformer : MethodTransformer() {
     ): Map<AbstractInsnNode, Collection<AbstractInsnNode>> {
         val frames = analyze(internalClassName, methodNode, IgnoringCopyOperationSourceInterpreter())
         return pops.keysToMap {
-            frames[methodNode.instructions.indexOf(it)].getStack(0).insns
+            val index = methodNode.instructions.indexOf(it)
+            if (isUnreachable(index, frames)) return@keysToMap emptySet<AbstractInsnNode>()
+            frames[index].getStack(0).insns
         }
     }
 
