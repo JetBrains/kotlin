@@ -723,7 +723,10 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Type aliases")
         .within(KtNodeTypes.TYPEALIAS)
-        .notForType(KtTokens.TYPE_ALIAS_KEYWORD, KtTokens.EOL_COMMENT, KtNodeTypes.MODIFIER_LIST)
+        .notForType(
+            KtTokens.TYPE_ALIAS_KEYWORD, KtTokens.EOL_COMMENT, KtNodeTypes.MODIFIER_LIST, KtTokens.BLOCK_COMMENT,
+            KtTokens.DOC_COMMENT
+        )
         .set(Indent.getContinuationIndent())
 )
 
