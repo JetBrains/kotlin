@@ -58,21 +58,21 @@ object ReturnUnitMethodTransformer : MethodTransformer() {
 
     // Return list of POPs, which can be safely replaced by ARETURNs
     private fun filterOutUnsafes(
-            popSuccessors: Map<AbstractInsnNode, Collection<AbstractInsnNode>>,
-            units: Collection<AbstractInsnNode>,
-            sourceInsns: Map<AbstractInsnNode, Collection<AbstractInsnNode>>
+        popSuccessors: Map<AbstractInsnNode, Collection<AbstractInsnNode>>,
+        units: Collection<AbstractInsnNode>,
+        sourceInsns: Map<AbstractInsnNode, Collection<AbstractInsnNode>>
     ): Collection<AbstractInsnNode> {
         return popSuccessors.filter { (pop, successors) ->
             successors.all { it in units } &&
-            sourceInsns[pop].sure { "Sources of $pop cannot be null" }.all(::isSuspendingCallReturningUnit)
+                    sourceInsns[pop].sure { "Sources of $pop cannot be null" }.all(::isSuspendingCallReturningUnit)
         }.keys
     }
 
     // Find instructions which do something on stack, ignoring markers
     // Return map {insn => list of found instructions}
     private fun findSuccessors(
-            methodNode: MethodNode,
-            insns: List<AbstractInsnNode>
+        methodNode: MethodNode,
+        insns: List<AbstractInsnNode>
     ): Map<AbstractInsnNode, Collection<AbstractInsnNode>> {
         val cfg = ControlFlowGraph.build(methodNode)
         return insns.keysToMap { findSuccessors(cfg, it, methodNode) }
@@ -103,12 +103,12 @@ object ReturnUnitMethodTransformer : MethodTransformer() {
     }
 
     private fun isSuspendingCallReturningUnit(node: AbstractInsnNode): Boolean =
-            node.safeAs<MethodInsnNode>()?.next?.next?.let(::isReturnsUnitMarker) == true
+        node.safeAs<MethodInsnNode>()?.next?.next?.let(::isReturnsUnitMarker) == true
 
     private fun findSourceInstructions(
-            internalClassName: String,
-            methodNode: MethodNode,
-            pops: Collection<AbstractInsnNode>
+        internalClassName: String,
+        methodNode: MethodNode,
+        pops: Collection<AbstractInsnNode>
     ): Map<AbstractInsnNode, Collection<AbstractInsnNode>> {
         val frames = analyze(internalClassName, methodNode, IgnoringCopyOperationSourceInterpreter())
         return pops.keysToMap {
@@ -119,10 +119,10 @@ object ReturnUnitMethodTransformer : MethodTransformer() {
     // Find { GETSTATIC kotlin/Unit.INSTANCE, ARETURN } sequences
     // Result is list of GETSTATIC kotlin/Unit.INSTANCE instructions
     private fun findReturnUnitSequences(methodNode: MethodNode): Collection<AbstractInsnNode> =
-            methodNode.instructions.asSequence().filter { it.isUnitInstance() && it.next?.opcode == Opcodes.ARETURN }.toList()
+        methodNode.instructions.asSequence().filter { it.isUnitInstance() && it.next?.opcode == Opcodes.ARETURN }.toList()
 
     private fun findReturnsUnitMarks(methodNode: MethodNode): Collection<AbstractInsnNode> =
-            methodNode.instructions.asSequence().filter(::isReturnsUnitMarker).toList()
+        methodNode.instructions.asSequence().filter(::isReturnsUnitMarker).toList()
 
     private fun cleanUpReturnsUnitMarkers(methodNode: MethodNode, unitMarks: Collection<AbstractInsnNode>) {
         unitMarks.forEach { methodNode.instructions.removeAll(listOf(it.previous, it)) }
