@@ -166,8 +166,7 @@ object SourceNavigationHelper {
             navigationKind: NavigationKind,
             index: StringStubIndexExtension<T>
     ): T? {
-        val classFqName = entity.fqName!!
-
+        val classFqName = entity.fqName ?: return null
         val scope = targetScope(entity, navigationKind) ?: return null
         return index.get(classFqName.asString(), entity.project, scope).firstOrNull()
     }
