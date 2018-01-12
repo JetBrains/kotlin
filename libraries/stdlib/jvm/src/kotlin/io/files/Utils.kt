@@ -435,3 +435,19 @@ public fun File.resolveSibling(relative: File): File {
  * @return concatenated this.parent and [relative] paths, or just [relative] if it's absolute or this has no parent.
  */
 public fun File.resolveSibling(relative: String): File = resolveSibling(File(relative))
+
+/**
+ * Creates the named directory including all missing parent directories without failing if any directory already exists.
+ *
+ * @throws IOException if any missing directory could not be created. Note that some directories may still have been created.
+ */
+public fun File.safeMkdirs() {
+    // Do not blindly trust mkdirs() returning "false" as it can fail for edge-cases like
+    // File(File("/tmp/parent1/parent2"), "/").mkdirs() if "parent1" does not exist, although the directory is
+    // successfully created.
+    if (this.isDirectory || this.mkdirs() || this.isDirectory) {
+        return
+    }
+
+    throw IOException("Unable to create directory '${this.absolutePath}'.")
+}
