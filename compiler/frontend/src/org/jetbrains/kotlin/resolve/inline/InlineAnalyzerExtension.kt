@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AnalyzerExtensions
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 
 class InlineAnalyzerExtension(
     private val reasonableInlineRules: Iterable<ReasonableInlineRule>,

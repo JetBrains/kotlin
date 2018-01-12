@@ -190,16 +190,11 @@ fun CallableDescriptor.getOwnerForEffectiveDispatchReceiverParameter(): Declarat
     return dispatchReceiverParameter?.containingDeclaration
 }
 
-/**
- * @return `true` iff the parameter has a default value, i.e. declares it or inherits by overriding a parameter which has a default value.
- */
-fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
+fun ValueParameterDescriptor.declaresOrInheritsDefaultValue(): Boolean {
     return DFS.ifAny(
-            listOf(this),
-            DFS.Neighbors<ValueParameterDescriptor> { current ->
-                current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal)
-            },
-            ValueParameterDescriptor::declaresDefaultValue
+        listOf(this),
+        { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
+        ValueParameterDescriptor::declaresDefaultValue
     )
 }
 
@@ -396,12 +391,6 @@ fun computeSealedSubclasses(sealedClass: ClassDescriptor): Collection<ClassDescr
     collectSubclasses(sealedClass.unsubstitutedInnerClassesScope, collectNested = true)
     return result
 }
-
-fun ClassDescriptor.getNoArgsConstructor(): ClassConstructorDescriptor? =
-        constructors.find { it.valueParameters.isEmpty() }
-
-fun ClassDescriptor.getConstructorForEmptyArgumentsList(): List<ClassConstructorDescriptor> =
-        constructors.filter { it.valueParameters.all { it.hasDefaultValue() || it.varargElementType != null } }
 
 fun DeclarationDescriptor.isPublishedApi(): Boolean {
     val descriptor = if (this is CallableMemberDescriptor) DescriptorUtils.getDirectMember(this) else this

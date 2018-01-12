@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.noarg.diagnostic
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.noarg.NO_ARG_CLASS_KEY
@@ -29,7 +26,6 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 
 class CliNoArgDeclarationChecker(val noArgAnnotationFqNames: List<String>) : AbstractNoArgDeclarationChecker() {
     override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?) = noArgAnnotationFqNames
@@ -52,5 +48,5 @@ abstract class AbstractNoArgDeclarationChecker : DeclarationChecker, AnnotationB
         }
     }
 
-    private fun ConstructorDescriptor.isNoArgConstructor() = (valueParameters.isEmpty()) || valueParameters.all { it.hasDefaultValue() }
+    private fun ConstructorDescriptor.isNoArgConstructor() = valueParameters.all(ValueParameterDescriptor::declaresDefaultValue)
 }

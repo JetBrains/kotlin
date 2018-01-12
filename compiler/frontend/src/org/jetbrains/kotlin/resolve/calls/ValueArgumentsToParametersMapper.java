@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.components.ArgumentsUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
 import java.util.Iterator;
 import java.util.List;
@@ -311,7 +311,7 @@ public class ValueArgumentsToParametersMapper {
         private void reportUnmappedParameters() {
             for (ValueParameterDescriptor valueParameter : parameters) {
                 if (!usedParameters.contains(valueParameter)) {
-                    if (DescriptorUtilsKt.hasDefaultValue(valueParameter)) {
+                    if (ArgumentsUtilsKt.hasDefaultValue(valueParameter)) {
                         candidateCall.recordValueArgument(valueParameter, DefaultValueArgument.DEFAULT);
                     }
                     else if (valueParameter.getVarargElementType() != null) {

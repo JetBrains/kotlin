@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
+import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
 
 internal fun unexpectedArgument(argument: KotlinCallArgument): Nothing =
     error("Unexpected argument type: $argument, ${argument.javaClass.canonicalName}.")
@@ -57,6 +57,13 @@ internal fun KotlinCallArgument.getExpectedType(parameter: ParameterDescriptor, 
 
 val ValueParameterDescriptor.isVararg: Boolean get() = varargElementType != null
 val ParameterDescriptor.isVararg: Boolean get() = this.safeAs<ValueParameterDescriptor>()?.isVararg ?: false
+
+/**
+ * @return `true` iff the parameter has a default value, i.e. declares it or inherits by overriding a parameter which has a default value.
+ */
+fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
+    return declaresOrInheritsDefaultValue()
+}
 
 private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInAnnotation(
     parameter: ParameterDescriptor,
