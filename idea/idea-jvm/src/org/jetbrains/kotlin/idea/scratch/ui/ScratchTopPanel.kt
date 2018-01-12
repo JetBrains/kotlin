@@ -26,7 +26,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.components.panels.HorizontalLayout
-import com.intellij.uiDesigner.core.Spacer
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
@@ -49,17 +48,24 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
 
     private val moduleChooser: ModulesComboBox
     private val isReplCheckbox: JCheckBox
+    private val isMakeBeforeRunCheckbox: JCheckBox
 
     init {
         add(createActionsToolbar())
-        add(JSeparator())
-        isReplCheckbox = JCheckBox("Use Repl", false)
+
+        isReplCheckbox = JCheckBox("Use REPL", false).customize()
         add(isReplCheckbox)
-        add(JSeparator())
-        add(JLabel("Use classpath of module:  "))
+
+        add(JSeparator(SwingConstants.VERTICAL))
+
+        isMakeBeforeRunCheckbox = JCheckBox("Make before Run", false).customize()
+        add(isMakeBeforeRunCheckbox)
+
+        add(JSeparator(SwingConstants.VERTICAL))
+
         moduleChooser = createModuleChooser(scratchFile.psiFile.project)
+        add(JLabel("Use classpath of module"))
         add(moduleChooser)
-        add(Spacer())
     }
 
     fun getModule(): Module? = moduleChooser.selectedModule
@@ -71,10 +77,16 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     }
 
     fun isRepl() = isReplCheckbox.isSelected
+    fun isMakeBeforeRun() = isMakeBeforeRunCheckbox.isSelected
 
     @TestOnly
     fun setReplMode(isSelected: Boolean) {
         isReplCheckbox.isSelected = isSelected
+    }
+
+    private fun JCheckBox.customize(): JCheckBox {
+        verticalTextPosition = SwingConstants.BOTTOM
+        return this
     }
 
     private fun createActionsToolbar(): JComponent {

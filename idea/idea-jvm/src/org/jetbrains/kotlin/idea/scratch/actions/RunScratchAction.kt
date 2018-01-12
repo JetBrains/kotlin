@@ -38,7 +38,7 @@ class RunScratchAction : AnAction(
         val scratchTopPanel = getScratchPanelFromSelectedEditor(project) ?: return
         val scratchFile = scratchTopPanel.scratchFile
 
-        val isMakeBeforeRun = false // todo use property from panel
+        val isMakeBeforeRun = scratchTopPanel.isMakeBeforeRun()
         val isRepl = scratchTopPanel.isRepl()
 
         val provider = ScratchFileLanguageProvider.get(scratchFile.psiFile.language) ?: return
