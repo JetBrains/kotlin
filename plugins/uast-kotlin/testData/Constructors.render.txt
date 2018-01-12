@@ -75,5 +75,7 @@ public final class AWithSecondaryInit {
     public fun AWithSecondaryInit(@org.jetbrains.annotations.NotNull s: java.lang.String) {
         <init>()
         a = s
+        var local: java.lang.String = s
+        local.toString()
     }
 }

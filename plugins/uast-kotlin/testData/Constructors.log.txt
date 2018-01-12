@@ -151,3 +151,11 @@ UFile (package = )
                 UBinaryExpression (operator = =)
                     USimpleNameReferenceExpression (identifier = a)
                     USimpleNameReferenceExpression (identifier = s)
+                UDeclarationsExpression
+                    ULocalVariable (name = local)
+                        USimpleNameReferenceExpression (identifier = s)
+                UQualifiedReferenceExpression
+                    USimpleNameReferenceExpression (identifier = local)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (toString))
+                        USimpleNameReferenceExpression (identifier = toString)
