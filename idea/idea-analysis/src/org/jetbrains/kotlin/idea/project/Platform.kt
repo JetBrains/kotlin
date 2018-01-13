@@ -22,6 +22,11 @@ import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.util.Key
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -95,29 +100,50 @@ fun Project.getLanguageVersionSettings(contextModule: Module? = null,
                                        extraLanguageFeatures)
 }
 
+private val LANGUAGE_VERSION_SETTINGS = Key.create<CachedValue<LanguageVersionSettings>>("LANGUAGE_VERSION_SETTINGS")
+
 val Module.languageVersionSettings: LanguageVersionSettings
     get() {
-        val facetSettingsProvider = KotlinFacetSettingsProvider.getInstance(project)
-        if (facetSettingsProvider.getSettings(this) == null) return project.getLanguageVersionSettings(this)
-        val facetSettings = facetSettingsProvider.getInitializedSettings(this)
-        if (facetSettings.useProjectSettings) return project.getLanguageVersionSettings(this)
-        val languageVersion = facetSettings.languageLevel ?: getAndCacheLanguageLevelByDependencies()
-        val apiVersion = facetSettings.apiLevel ?: languageVersion
+        val cachedValue =
+            getUserData(LANGUAGE_VERSION_SETTINGS)
+                    ?: createCachedValueForLanguageVersionSettings().also { putUserData(LANGUAGE_VERSION_SETTINGS, it) }
 
-        val extraLanguageFeatures = getExtraLanguageFeatures(
-                facetSettings.targetPlatformKind ?: TargetPlatformKind.Common,
-                facetSettings.coroutineSupport,
-                facetSettings.compilerSettings,
-                this
-        )
-
-        return LanguageVersionSettingsImpl(
-                languageVersion,
-                ApiVersion.createByLanguageVersion(apiVersion),
-                facetSettings.mergedCompilerArguments?.configureAnalysisFlags(MessageCollector.NONE).orEmpty(),
-                extraLanguageFeatures
-        )
+        return cachedValue.value
     }
+
+private fun Module.createCachedValueForLanguageVersionSettings(): CachedValue<LanguageVersionSettings> {
+    return CachedValuesManager.getManager(project).createCachedValue({
+                                                                         CachedValueProvider.Result(
+                                                                             computeLanguageVersionSettings(),
+                                                                             ProjectRootModificationTracker.getInstance(
+                                                                                 project
+                                                                             )
+                                                                         )
+                                                                     }, false)
+}
+
+private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
+    val facetSettingsProvider = KotlinFacetSettingsProvider.getInstance(project)
+    if (facetSettingsProvider.getSettings(this) == null) return project.getLanguageVersionSettings(this)
+    val facetSettings = facetSettingsProvider.getInitializedSettings(this)
+    if (facetSettings.useProjectSettings) return project.getLanguageVersionSettings(this)
+    val languageVersion = facetSettings.languageLevel ?: getAndCacheLanguageLevelByDependencies()
+    val apiVersion = facetSettings.apiLevel ?: languageVersion
+
+    val extraLanguageFeatures = getExtraLanguageFeatures(
+        facetSettings.targetPlatformKind ?: TargetPlatformKind.Common,
+        facetSettings.coroutineSupport,
+        facetSettings.compilerSettings,
+        this
+    )
+
+    return LanguageVersionSettingsImpl(
+        languageVersion,
+        ApiVersion.createByLanguageVersion(apiVersion),
+        facetSettings.mergedCompilerArguments?.configureAnalysisFlags(MessageCollector.NONE).orEmpty(),
+        extraLanguageFeatures
+    )
+}
 
 val Module.targetPlatform: TargetPlatformKind<*>?
     get() = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)?.targetPlatformKind ?: project.targetPlatform
