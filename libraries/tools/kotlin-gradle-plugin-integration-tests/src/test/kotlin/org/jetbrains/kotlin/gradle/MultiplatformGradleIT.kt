@@ -124,8 +124,9 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
     }
 
+    // todo: also make incremental compilation test
     @Test
-    fun testNonIncrementalCompileByDefault(): Unit = Project("multiplatformProject", GRADLE_VERSION).run {
+    fun testIncrementalBuild(): Unit = Project("multiplatformProject", GRADLE_VERSION).run {
         val compileCommonTask = ":lib:compileKotlinCommon"
         val compileJsTask = ":libJs:compileKotlin2Js"
         val compileJvmTask = ":libJvm:compileKotlin"

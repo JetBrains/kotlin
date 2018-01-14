@@ -82,7 +82,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
             }
         }
 
-        val incrementalMultiplatform = PropertiesProvider(project).incrementalMultiplatform ?: false
+        val incrementalMultiplatform = PropertiesProvider(project).incrementalMultiplatform ?: true
         project.afterEvaluate {
             project.tasks.withType(AbstractKotlinCompile::class.java).all {
                 if (it.incremental && !incrementalMultiplatform) {
