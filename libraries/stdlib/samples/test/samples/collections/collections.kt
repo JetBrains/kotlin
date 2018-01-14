@@ -271,6 +271,19 @@ class Collections {
             assertTrue(set == other, "Empty sets are equal")
             assertPrints(set, "[]")
         }
+
+        @Sample
+        fun readOnlySet() {
+            val set1 = setOf(1, 2, 3)
+            val set2 = setOf(3, 2, 1)
+
+            // setOf preserves the iteration order of elements
+            assertPrints(set1, "[1, 2, 3]")
+            assertPrints(set2, "[3, 2, 1]")
+
+            // but the sets with the same elements are equal no matter of order
+            assertTrue(set1 == set2)
+        }
     }
 
     class Transformations {
