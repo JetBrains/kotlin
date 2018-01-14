@@ -527,13 +527,26 @@ class StringTest {
         assertEquals(listOf("test"), (+"test").split(*arrayOf<String>()), "empty list of delimiters, none matched -> entire string returned")
 
         assertEquals(listOf("abc", "def", "123;456"), (+"abc;def,123;456").split(';', ',', limit = 3))
-        assertEquals(listOf("abc", "def", "123", "456"), (+"abc<BR>def<br>123<bR>456").split("<BR>", ignoreCase = true))
 
         assertEquals(listOf("abc", "def", "123", "456"), (+"abc=-def==123=456").split("==", "=-", "="))
 
         assertEquals(listOf("", "a", "b", "c", ""), (+"abc").split(""))
         assertEquals(listOf("", "a", "b", "b", "a", ""), (+"abba").split("", "a"))
         assertEquals(listOf("", "", "b", "b", "", ""), (+"abba").split("a", ""))
+    }
+
+    @Test fun splitSingleDelimiter() = withOneCharSequenceArg { arg1 ->
+        operator fun String.unaryPlus(): CharSequence = arg1(this)
+
+        assertEquals(listOf(""), (+"").split(";"))
+
+        assertEquals(listOf("abc", "def", "123,456"), (+"abc,def,123,456").split(',', limit = 3))
+        assertEquals(listOf("abc", "def", "123,456"), (+"abc,def,123,456").split(",", limit = 3))
+
+        assertEquals(listOf("abc", "def", "123", "456"), (+"abc<BR>def<br>123<bR>456").split("<BR>", ignoreCase = true))
+        assertEquals(listOf("abc", "def<br>123<bR>456"), (+"abc<BR>def<br>123<bR>456").split("<BR>", ignoreCase = false))
+
+        assertEquals(listOf("a", "b", "c"), (+"a*b*c").split("*"))
     }
 
     @Test fun splitToLines() = withOneCharSequenceArg { arg1 ->
@@ -545,6 +558,15 @@ class StringTest {
         assertEquals(listOf(singleLine.toString()), singleLine.lines())
     }
 
+    @Test fun splitIllegalLimit() = withOneCharSequenceArg("test string") { string ->
+        assertFailsWith<IllegalArgumentException> { string.split(*arrayOf<String>(), limit = -1) }
+        assertFailsWith<IllegalArgumentException> { string.split(*charArrayOf(), limit = -2) }
+        assertFailsWith<IllegalArgumentException> { string.split("", limit = -3) }
+        assertFailsWith<IllegalArgumentException> { string.split('3', limit = -4) }
+        assertFailsWith<IllegalArgumentException> { string.split("1", limit = -5) }
+        assertFailsWith<IllegalArgumentException> { string.split('4', '1', limit = -6) }
+        assertFailsWith<IllegalArgumentException> { string.split("5", "9", limit = -7) }
+    }
 
     @Test fun indexOfAnyChar() = withOneCharSequenceArg("abracadabra") { string ->
         val chars = charArrayOf('d', 'b')

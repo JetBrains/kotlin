@@ -1163,8 +1163,16 @@ public fun CharSequence.splitToSequence(vararg delimiters: String, ignoreCase: B
  * the beginning to the end of this string, and matches at each position the first element in [delimiters]
  * that is equal to a delimiter in this instance at that position.
  */
-public fun CharSequence.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
-        rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
+public fun CharSequence.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> {
+    if (delimiters.size == 1) {
+        val delimiter = delimiters[0]
+        if (!delimiter.isEmpty()) {
+            return split(delimiters[0], ignoreCase, limit)
+        }
+    }
+
+    return rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
+}
 
 /**
  * Splits this char sequence to a sequence of strings around occurrences of the specified [delimiters].
@@ -1183,8 +1191,56 @@ public fun CharSequence.splitToSequence(vararg delimiters: Char, ignoreCase: Boo
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return.
  */
-public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
-        rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
+public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = false, limit: Int = 0): List<String> {
+    if (delimiters.size == 1) {
+        return split(delimiters[0].toString(), ignoreCase, limit)
+    }
+
+    return rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
+}
+
+/**
+ * Splits this char sequence to a list of strings around occurrences of the specified [delimiter].
+ * This is specialized version of split which receives single non-empty delimiter and offers better performance
+ *
+ * @param delimiter String used as delimiter
+ * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
+ * @param limit The maximum number of substrings to return.
+ */
+private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: Int): List<String> {
+    require(limit >= 0, { "Limit must be non-negative, but was $limit." })
+
+    var currentOffset = 0
+    var nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
+    val isLimited = limit > 0
+    // This condition cannot be moved inside of ctor call because it will kill laziness of internal array allocation
+    val result = if (isLimited) ArrayList<String>(limit.coerceAtMost(10)) else ArrayList<String>()
+
+    while (nextIndex != -1) {
+        if (!isLimited || result.size < limit - 1) {
+            result.add(substring(currentOffset, nextIndex))
+            currentOffset = nextIndex + delimiter.length
+            nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
+        } else {
+            result.add(substring(currentOffset, length))
+            currentOffset = length
+            break
+        }
+    }
+
+    if (currentOffset == 0) {
+        // If no matches found return single element list
+        // instead of triggering allocation of underlying array in 'result'
+        // Speedup is ~15% for small string
+        return listOf(this.toString())
+    }
+
+    if (!isLimited || result.size < limit) {
+        result.add(substring(currentOffset, length))
+    }
+
+    return result
+}
 
 /**
  * Splits this char sequence around matches of the given regular expression.
