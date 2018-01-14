@@ -271,6 +271,14 @@ class Collections {
             assertTrue(set == other, "Empty sets are equal")
             assertPrints(set, "[]")
         }
+
+        @Sample
+        fun readOnlySet() {
+            val emptySet: Set<Int> = setOf()
+            assertTrue(emptySet.isEmpty())
+            val set = setOf(1, 2, 3)
+            assertPrints(set, "[1, 2, 3]")
+        }
     }
 
     class Transformations {

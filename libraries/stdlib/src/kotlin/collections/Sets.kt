@@ -31,6 +31,7 @@ public fun <T> emptySet(): Set<T> = EmptySet
  * Returns a new read-only set with the given elements.
  * Elements of the set are iterated in the order they were specified.
  * The returned set is serializable (JVM).
+ * @sample samples.collections.Collections.Sets.readOnlySet
  */
 public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elements.toSet() else emptySet()
 
