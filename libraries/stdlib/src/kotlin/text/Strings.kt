@@ -1226,8 +1226,10 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
     }
 
     if (currentOffset == 0) {
-        result.add(this.toString())
-        return result
+        // If no matches found return single element list
+        // instead of triggering allocation of underlying array in 'result'
+        // Speedup is ~15% for small string
+        return listOf(this.toString())
     }
 
     if (!isLimited || result.size < limit) {
