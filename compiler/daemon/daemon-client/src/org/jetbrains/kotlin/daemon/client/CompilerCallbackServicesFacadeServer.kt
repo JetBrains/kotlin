@@ -44,7 +44,7 @@ open class CompilerCallbackServicesFacadeServer(
         ) {
     override fun hasIncrementalCaches(): Boolean = incrementalCompilationComponents != null
 
-    override fun hasLookupTracker(): Boolean = incrementalCompilationComponents != null
+    override fun hasLookupTracker(): Boolean = lookupTracker != null
 
     override fun hasCompilationCanceledStatus(): Boolean = compilationCanceledStatus != null
 
