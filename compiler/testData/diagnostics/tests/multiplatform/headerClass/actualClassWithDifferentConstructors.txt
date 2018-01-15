@@ -43,6 +43,13 @@ public final expect class Bar6 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final expect class Bar7 {
+    public constructor Bar7(/*0*/ s: kotlin.String)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public final expect class Foo1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -100,6 +107,14 @@ public final actual class Bar5 {
 
 public final class Bar6 {
     public constructor Bar6()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final actual class Bar7 {
+    public constructor Bar7()
+    public constructor Bar7(/*0*/ s: kotlin.String)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

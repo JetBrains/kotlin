@@ -649,16 +649,17 @@ class ControlFlowInformationProvider private constructor(
     }
 
     private fun processUnusedParameter(ctxt: VariableUseContext, element: KtParameter, variableDescriptor: VariableDescriptor) {
+        val functionDescriptor = variableDescriptor.containingDeclaration as FunctionDescriptor
+
+        if (functionDescriptor.isExpect || functionDescriptor.isActual ||
+            functionDescriptor.isEffectivelyExternal() ||
+            !diagnosticSuppressor.shouldReportUnusedParameter(variableDescriptor)) return
+
         val owner = element.parent.parent
         when (owner) {
             is KtPrimaryConstructor -> if (!element.hasValOrVar()) {
-                val containingClass = owner.getContainingClassOrObject()
-                val containingClassDescriptor = trace.get(DECLARATION_TO_DESCRIPTOR, containingClass) as? ClassDescriptor
-                if (!DescriptorUtils.isAnnotationClass(containingClassDescriptor) &&
-                    containingClassDescriptor?.isExpect == false &&
-                    !containingClassDescriptor.isEffectivelyExternal() &&
-                    diagnosticSuppressor.shouldReportUnusedParameter(variableDescriptor)
-                ) {
+                val containingClass = (functionDescriptor as ConstructorDescriptor).containingDeclaration
+                if (!DescriptorUtils.isAnnotationClass(containingClass)) {
                     report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
                 }
             }
@@ -669,19 +670,13 @@ class ControlFlowInformationProvider private constructor(
                 }
                 val mainFunctionDetector = MainFunctionDetector(trace.bindingContext)
                 val isMain = owner is KtNamedFunction && mainFunctionDetector.isMain(owner)
-                val functionDescriptor =
-                    trace.get(DECLARATION_TO_DESCRIPTOR, owner) as? FunctionDescriptor
-                            ?: throw AssertionError(owner.text)
                 val functionName = functionDescriptor.name
                 if (isMain
                     || functionDescriptor.isOverridableOrOverrides
                     || owner.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-                    || functionDescriptor.isExpect || functionDescriptor.isActual
-                    || functionDescriptor.isEffectivelyExternal()
                     || OperatorNameConventions.GET_VALUE == functionName
                     || OperatorNameConventions.SET_VALUE == functionName
-                    || OperatorNameConventions.PROVIDE_DELEGATE == functionName
-                    || !diagnosticSuppressor.shouldReportUnusedParameter(variableDescriptor)) {
+                    || OperatorNameConventions.PROVIDE_DELEGATE == functionName) {
                     return
                 }
                 if (anonymous) {
