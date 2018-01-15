@@ -1213,7 +1213,8 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
     var currentOffset = 0
     var nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
     val isLimited = limit > 0
-    val result = ArrayList<String>()
+    // This condition cannot be moved inside of ctor call because it will kill laziness of internal array allocation
+    val result = if (isLimited) ArrayList<String>(limit.coerceAtMost(10)) else ArrayList<String>()
 
     while (nextIndex != -1) {
         if (!isLimited || result.size < limit - 1) {
