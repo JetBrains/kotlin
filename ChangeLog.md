@@ -332,17 +332,20 @@
 
 ### Libraries
 
-- [`KT-18789`](https://youtrack.jetbrains.com/issue/KT-18789) Delegating val to out-projected MutableMap results in cast to Nothing
-- [`KT-18869`](https://youtrack.jetbrains.com/issue/KT-18869) Generating intrinsified 'for-in-progression-with-step' loop requires exposing getProgressionLastElement functions (currently internal)
+- [`KT-20864`](https://youtrack.jetbrains.com/issue/KT-20864) Provide `ReadOnly` and `Mutable` annotations to control java collection mutability in kotlin
+- [`KT-18789`](https://youtrack.jetbrains.com/issue/KT-18789) Delegating val to out-projected `MutableMap` resulted in NPE due to cast to `Nothing`
+- [`KT-21828`](https://youtrack.jetbrains.com/issue/KT-21828) JS: The List produced by the `IntArray.asList` function caused weird results
+- [`KT-21868`](https://youtrack.jetbrains.com/issue/KT-21868) Eliminate potential data race in `SafePublicationLazyImpl`
+- [`KT-21918`](https://youtrack.jetbrains.com/issue/KT-21918) Make `toTypedArray()` implementation more efficient and thread-safe
+- [`KT-22003`](https://youtrack.jetbrains.com/issue/KT-22003) JS: Replace `Regex` constructor-like functions with secondary constructors
+- JS: `Volatile` and `Synchornized` annotations are moved to `kotlin.jvm` package with the migration type aliases provided
+- [`KT-16348`](https://youtrack.jetbrains.com/issue/KT-16348) Provide `String.toBoolean()` conversion in JS and common platforms
+- Add missing declarations to kotlin-stdlib-common, those that are already supported in both platforms
+  - [`KT-21191`](https://youtrack.jetbrains.com/issue/KT-21191) Add missing exception constructors to common and JS declarations
+  - [`KT-21861`](https://youtrack.jetbrains.com/issue/KT-21861) Provide `NumberFormatException` in common projects and make it inherit `IllegalArgumentException` in all platforms
+  - Add missing `pattern` and `options` properties to common `Regex`
 - [`KT-20968`](https://youtrack.jetbrains.com/issue/KT-20968) Improve docs for String.format and String.Companion.format
-- [`KT-21828`](https://youtrack.jetbrains.com/issue/KT-21828) JS: The List produced by the IntArray.asList function causes weird results
-- [`KT-21868`](https://youtrack.jetbrains.com/issue/KT-21868) Data race in SafePublicationLazyImpl
-- [`KT-21918`](https://youtrack.jetbrains.com/issue/KT-21918) toTypedArray() implementation is inefficient and not thread-safe
-- [`KT-22003`](https://youtrack.jetbrains.com/issue/KT-22003) Replace Regex constructor-like functions with secondary constructors
-- [`KT-16348`](https://youtrack.jetbrains.com/issue/KT-16348) KotlinJS - String.toBoolean()
-- [`KT-21191`](https://youtrack.jetbrains.com/issue/KT-21191) Can't wrap exceptions in multiplatform projects
-- [`KT-21861`](https://youtrack.jetbrains.com/issue/KT-21861) NumberFormatException in multiplatform project
-- [`KT-20864`](https://youtrack.jetbrains.com/issue/KT-20864) Provide ReadOnly and Mutable annotations to control java collection mutability in kotlin
+
 ### Reflection
 
 - [`KT-20875`](https://youtrack.jetbrains.com/issue/KT-20875) Support Void.TYPE as underlying Class object for KClass
