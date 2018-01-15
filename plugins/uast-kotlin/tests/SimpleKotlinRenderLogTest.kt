@@ -75,4 +75,10 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test
     fun testAnnotationComplex() = doTest("AnnotationComplex")
+
+    @Test
+    fun testParametersDisorder() = doTest("ParametersDisorder") { testName, file ->
+        // disabled due to inconsistent parents for 2-receivers call (KT-22344)
+        check(testName, file, false)
+    }
 }

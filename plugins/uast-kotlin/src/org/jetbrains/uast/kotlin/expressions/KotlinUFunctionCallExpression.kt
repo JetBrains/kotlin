@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -40,7 +37,7 @@ class KotlinUFunctionCallExpression(
         override val psi: KtCallElement,
         givenParent: UElement?,
         private val _resolvedCall: ResolvedCall<*>?
-) : KotlinAbstractUExpression(givenParent), UCallExpression, KotlinUElementWithType {
+) : KotlinAbstractUExpression(givenParent), UCallExpressionEx, KotlinUElementWithType {
     companion object {
         fun resolveSource(descriptor: DeclarationDescriptor, source: PsiElement?): PsiMethod? {
             if (descriptor is ConstructorDescriptor && descriptor.isPrimary
@@ -84,6 +81,29 @@ class KotlinUFunctionCallExpression(
         get() = psi.valueArguments.size
 
     override val valueArguments by lz { psi.valueArguments.map { KotlinConverter.convertOrEmpty(it.getArgumentExpression(), this) } }
+
+    override fun getArgumentForParameter(i: Int): UExpression? {
+        val resolvedCall = resolvedCall ?: return null
+        val actualParamIndex = if (resolvedCall.extensionReceiver == null) i else i - 1
+        if (actualParamIndex == -1) return receiver
+        val (parameter, resolvedArgument) = resolvedCall.valueArguments.entries.find { it.key.index == actualParamIndex } ?: return null
+        val arguments = resolvedArgument.arguments
+        if (arguments.isEmpty()) return null
+        if (arguments.size == 1) {
+            val argument = arguments.single()
+            val expression = argument.getArgumentExpression()
+            if (parameter.varargElementType != null && argument.getSpreadElement() == null) {
+                return createVarargsHolder(arguments, this)
+            }
+            return KotlinConverter.convertOrEmpty(expression, this)
+        }
+        return createVarargsHolder(arguments, this)
+    }
+
+    private fun createVarargsHolder(arguments: List<ValueArgument>, parent: UElement?): KotlinUExpressionList =
+        KotlinUExpressionList(null, VARARGS, parent).apply {
+            expressions = arguments.map { KotlinConverter.convertOrEmpty(it.getArgumentExpression(), parent) }
+        }
 
     override val typeArgumentCount: Int
         get() = psi.typeArguments.size
@@ -140,3 +160,6 @@ class KotlinUFunctionCallExpression(
     }
 
 }
+
+@Deprecated("will be replaced by one from uast api when it comes")
+val VARARGS = UastSpecialExpressionKind("varargs")

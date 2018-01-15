@@ -70,7 +70,7 @@ inline fun <reified T : UElement> UElement.findElementByTextFromPsi(refText: Str
 
 inline fun <reified T : UElement> PsiElement.findUElementByTextFromPsi(refText: String, strict: Boolean = true): T {
     val elementAtStart = this.findElementAt(this.text.indexOf(refText))
-            ?: throw AssertionError("requested text '$refText' was not found in $this")
+                         ?: throw AssertionError("requested text '$refText' was not found in $this")
     val uElementContainingText = elementAtStart.parentsWithSelf.let {
         if (strict) it.dropWhile { !it.text.contains(refText) } else it
     }.mapNotNull { it.toUElementOfType<T>() }.firstOrNull()
