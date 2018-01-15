@@ -114,7 +114,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
                 }.toMap()
 
         val kaptContext = KaptContext(logger, generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,
-                                      classBuilderFactory.origins, generationState,
+                                      classBuilderFactory.origins, generationState, mapDiagnosticLocations = true,
                                       processorOptions = emptyMap(), javacOptions = javacOptions)
 
         val javaFiles = files

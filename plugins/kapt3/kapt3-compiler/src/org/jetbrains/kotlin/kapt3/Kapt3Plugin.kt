@@ -88,6 +88,9 @@ object Kapt3ConfigurationKeys {
 
     val CORRECT_ERROR_TYPES: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("replace error types with ones from the declaration sources")
+
+    val MAP_DIAGNOSTIC_LOCATIONS: CompilerConfigurationKey<String> =
+        CompilerConfigurationKey.create<String>("map diagnostic reported on kapt stubs to original locations in Kotlin sources")
 }
 
 class Kapt3CommandLineProcessor : CommandLineProcessor {
@@ -141,6 +144,9 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 
         val CORRECT_ERROR_TYPES_OPTION: CliOption =
                 CliOption("correctErrorTypes", "true | false", "Replace generated or error types with ones from the generated sources", required = false)
+
+        val MAP_DIAGNOSTIC_LOCATIONS_OPTION: CliOption =
+            CliOption("mapDiagnosticLocations", "true | false", "Map diagnostic reported on kapt stubs to original locations in Kotlin sources", required = false)
     }
 
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
@@ -149,7 +155,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION, JAVAC_CLI_OPTIONS_OPTION,
                    CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION, APT_MODE_OPTION,
                    USE_LIGHT_ANALYSIS_OPTION, CORRECT_ERROR_TYPES_OPTION, ANNOTATION_PROCESSORS_OPTION, INCREMENTAL_DATA_OUTPUT_DIR_OPTION,
-                   CONFIGURATION)
+                   CONFIGURATION, MAP_DIAGNOSTIC_LOCATIONS_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
@@ -166,6 +172,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             APT_MODE_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_MODE, value)
             USE_LIGHT_ANALYSIS_OPTION -> configuration.put(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS, value)
             CORRECT_ERROR_TYPES_OPTION -> configuration.put(Kapt3ConfigurationKeys.CORRECT_ERROR_TYPES, value)
+            MAP_DIAGNOSTIC_LOCATIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.MAP_DIAGNOSTIC_LOCATIONS, value)
             CONFIGURATION -> configuration.applyOptionsFrom(decodePluginOptions(value), pluginOptions)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
@@ -254,12 +261,14 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val useLightAnalysis = configuration.get(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS) == "true"
         val correctErrorTypes = configuration.get(Kapt3ConfigurationKeys.CORRECT_ERROR_TYPES) == "true"
+        val mapDiagnosticLocations = configuration.get(Kapt3ConfigurationKeys.MAP_DIAGNOSTIC_LOCATIONS) == "true"
 
         if (isVerbose) {
             logger.info("Kapt3 is enabled.")
             logger.info("Annotation processing mode: $aptMode")
             logger.info("Use light analysis: $useLightAnalysis")
             logger.info("Correct error types: $correctErrorTypes")
+            logger.info("Map diagnostic locations: $mapDiagnosticLocations")
             logger.info("Source output directory: $sourcesOutputDir")
             logger.info("Classes output directory: $classFilesOutputDir")
             logger.info("Stubs output directory: $stubsOutputDir")
@@ -274,7 +283,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
                 compileClasspath, apClasspath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir,
                 stubsOutputDir, incrementalDataOutputDir, apOptions, javacCliOptions, annotationProcessors,
-                aptMode, useLightAnalysis, correctErrorTypes, System.currentTimeMillis(), logger, configuration)
+                aptMode, useLightAnalysis, correctErrorTypes, mapDiagnosticLocations, System.currentTimeMillis(), logger, configuration)
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }
 
