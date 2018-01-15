@@ -341,15 +341,15 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
         }
         val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(it.name) }
-        val file = fixture.configureByFile(mainFileName)
+        val fileText = FileUtil.loadFile(File(path), true)
 
-        val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// WITH_RUNTIME") != null
+        val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null
         if (addKotlinRuntime) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
         }
 
         try {
-            checkExtract(ExtractTestFiles(path, file, extraFilesToPsi), checkAdditionalAfterdata, action)
+            checkExtract(ExtractTestFiles(path, fixture.configureByFile(mainFileName), extraFilesToPsi), checkAdditionalAfterdata, action)
         }
         finally {
             if (addKotlinRuntime) {
