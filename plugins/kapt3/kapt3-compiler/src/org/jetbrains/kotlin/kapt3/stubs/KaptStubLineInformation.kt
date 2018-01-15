@@ -26,6 +26,11 @@ class KaptStubLineInformation {
     private val declarations = mutableMapOf<JCTree.JCCompilationUnit, List<JCTree>>()
 
     fun getPositionInKotlinFile(file: JCTree.JCCompilationUnit, element: JCTree): KotlinPosition? {
+        if (true) {
+            // TODO Remove when the line metadata is fixed
+            return null
+        }
+
         val declaration = findDeclarationFor(element, file) ?: return null
 
         val fileInfo = offsets.getOrPut(file) { KaptLineMappingCollector.parseFileInfo(file) }

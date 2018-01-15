@@ -220,4 +220,34 @@ class KaptIT: BaseGradleIT() {
             assertCompiledKotlinSources(emptyList())
         }
     }
+
+    @Test
+    fun testAnnotationProcessingShouldNotRunAfterLocalChanges() {
+        val options = defaultBuildOptions().copy(incremental = true)
+        val project = Project("kaptUpToDateLocalChanges", GRADLE_VERSION, directoryPrefix = "kapt2")
+
+        project.build("build", options = options) {
+            assertSuccessful()
+
+            assertContains(":kaptKotlin")
+            assertNotContains(":kaptKotlin UP-TO-DATE")
+            assertContains(":kaptGenerateStubsKotlin")
+            assertNotContains(":kaptGenerateStubsKotlin UP-TO-DATE")
+        }
+
+        val testKt = project.projectDir.getFileByName("test.kt")
+        testKt.modify { text ->
+            assert("/** insert here */" in text)
+            // At least one line should be added
+            text.replace("/** insert here */", "val b = 6" + SYSTEM_LINE_SEPARATOR + "val c = 7")
+        }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+
+            assertContains(":kaptKotlin UP-TO-DATE")
+            assertContains(":kaptGenerateStubsKotlin")
+            assertNotContains(":kaptGenerateStubsKotlin UP-TO-DATE")
+        }
+    }
 }

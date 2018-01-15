@@ -166,8 +166,6 @@ class ClassFileToSourceStubConverter(
             _bindings[clazz.name] = this
         }
 
-        kdocCommentKeeper.saveComment(topLevel, lineMappings.getClassMetadataCommentText())
-
         return topLevel
     }
 
