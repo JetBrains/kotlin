@@ -1,7 +1,3 @@
-/**
- * @KaptMetadata
- */
-
 import java.lang.System;
 
 @kotlin.Metadata()
@@ -18,9 +14,6 @@ public abstract class BaseClass {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 
 import java.lang.System;
 
@@ -30,9 +23,6 @@ public abstract interface Context {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 
 import java.lang.System;
 
@@ -53,9 +43,6 @@ public final class Inheritor extends BaseClass {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 
 import java.lang.System;
 

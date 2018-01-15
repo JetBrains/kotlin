@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
+import java.io.File
 import javax.lang.model.element.ElementKind
 import com.sun.tools.javac.util.List as JavacList
 
@@ -102,14 +103,14 @@ class ClassFileToSourceStubConverter(
 
     private var done = false
 
-    fun convert(): JavacList<JCCompilationUnit> {
+    fun convert(): List<KaptStub> {
         if (done) error(ClassFileToSourceStubConverter::class.java.simpleName + " can convert classes only once")
         done = true
 
-        var stubs = mapJList(kaptContext.compiledClasses) { convertTopLevelClass(it) }
+        val stubs = kaptContext.compiledClasses.mapNotNullTo(mutableListOf()) { convertTopLevelClass(it) }
 
         if (generateNonExistentClass) {
-            stubs = stubs.append(generateNonExistentClass())
+            stubs += KaptStub(generateNonExistentClass())
         }
 
         return stubs
@@ -132,7 +133,22 @@ class ClassFileToSourceStubConverter(
         return topLevel
     }
 
-    private fun convertTopLevelClass(clazz: ClassNode): JCCompilationUnit? {
+    class KaptStub(val file: JCCompilationUnit, val kaptMetadata: ByteArray? = null) {
+        fun writeMetadataIfNeeded(forSource: File) {
+            if (kaptMetadata == null) {
+                return
+            }
+
+            val metadataFile = File(
+                forSource.parentFile,
+                forSource.nameWithoutExtension + KaptLineMappingCollector.KAPT_METADATA_EXTENSION
+            )
+
+            metadataFile.writeBytes(kaptMetadata)
+        }
+    }
+
+    private fun convertTopLevelClass(clazz: ClassNode): KaptStub? {
         val origin = kaptContext.origins[clazz] ?: return null
         val ktFile = origin.element?.containingFile as? KtFile ?: return null
         val descriptor = origin.descriptor ?: return null
@@ -166,9 +182,7 @@ class ClassFileToSourceStubConverter(
             _bindings[clazz.name] = this
         }
 
-        kdocCommentKeeper.saveComment(topLevel, lineMappings.getClassMetadataCommentText())
-
-        return topLevel
+        return KaptStub(topLevel, lineMappings.serialize())
     }
 
     private fun convertImports(file: KtFile, classDeclaration: JCClassDecl): JavacList<JCTree> {

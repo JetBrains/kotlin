@@ -116,8 +116,12 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     ): JavacList<JCCompilationUnit> {
         val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass, correctErrorTypes)
 
-        val convertedTrees = converter.convert()
-        val convertedFiles = convertedTrees.map { tree -> createTempFile("stub", ".java", tree.prettyPrint(kaptContext.context)) }
+        val kaptStubs = converter.convert()
+        val convertedFiles = kaptStubs.map { stub ->
+            val sourceFile = createTempFile("stub", ".java", stub.file.prettyPrint(kaptContext.context))
+            stub.writeMetadataIfNeeded(forSource = sourceFile)
+            sourceFile
+        }
 
         val allJavaFiles = javaFiles + convertedFiles
 
@@ -129,10 +133,12 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         try {
             val parsedJavaFiles = kaptContext.parseJavaFiles(allJavaFiles)
 
-            for (file in parsedJavaFiles) {
+            for (tree in parsedJavaFiles) {
+                val actualFile = File(tree.sourceFile.toUri())
+
                 // By default, JavaFileObject.getName() returns the absolute path to the file.
                 // In our test, such a path will be temporary, so the comparision against it will lead to flaky tests.
-                file.sourcefile = KaptJavaFileObject(file, file.defs.firstIsInstance())
+                tree.sourcefile = KaptJavaFileObject(tree, tree.defs.firstIsInstance(), actualFile)
             }
 
             return parsedJavaFiles
@@ -160,13 +166,11 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
     companion object {
         private val KOTLIN_METADATA_GROUP = "[a-z0-9]+ = (\\{.+?\\}|[0-9]+)"
         private val KOTLIN_METADATA_REGEX = "@kotlin\\.Metadata\\(($KOTLIN_METADATA_GROUP)(, $KOTLIN_METADATA_GROUP)*\\)".toRegex()
-        private val KAPT_METADATA_REGEX = "\\* @KaptMetadata .+".toRegex()
 
         private val EXPECTED_ERROR = "EXPECTED_ERROR"
 
         internal fun removeMetadataAnnotationContents(s: String): String {
             return s.replace(KOTLIN_METADATA_REGEX, "@kotlin.Metadata()")
-                    .replace(KAPT_METADATA_REGEX, "* @KaptMetadata")
         }
 
         @JvmStatic

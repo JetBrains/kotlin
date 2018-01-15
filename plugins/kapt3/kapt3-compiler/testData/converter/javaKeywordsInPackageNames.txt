@@ -1,6 +1,3 @@
-/**
- * @KaptMetadata
- */
 package a.b.c;
 
 import java.lang.System;
@@ -15,9 +12,6 @@ public final class A {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 package a.b.typealias.c;
 
 import java.lang.System;

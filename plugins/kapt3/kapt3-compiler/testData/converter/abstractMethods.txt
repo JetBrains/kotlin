@@ -1,7 +1,3 @@
-/**
- * @KaptMetadata
- */
-
 import java.lang.System;
 
 @kotlin.Metadata()
@@ -20,9 +16,6 @@ public abstract class Base {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 
 import java.lang.System;
 

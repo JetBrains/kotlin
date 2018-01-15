@@ -1,7 +1,3 @@
-/**
- * @KaptMetadata
- */
-
 import java.lang.System;
 
 @kotlin.Metadata()
@@ -40,9 +36,6 @@ public abstract interface Intf {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 
 import java.lang.System;
 
@@ -65,9 +58,6 @@ public abstract interface IntfWithDefaultImpls {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 
 import java.lang.System;
 

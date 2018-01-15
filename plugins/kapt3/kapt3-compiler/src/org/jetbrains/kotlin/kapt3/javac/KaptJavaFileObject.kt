@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.kapt3.javac
 
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.kapt3.util.getPackageNameJava9Aware
+import java.io.File
 import java.net.URI
 import java.net.URL
 import javax.lang.model.element.Modifier
@@ -27,6 +28,7 @@ import javax.tools.JavaFileObject
 class KaptJavaFileObject(
         val compilationUnit: JCTree.JCCompilationUnit,
         val clazz: JCTree.JCClassDecl,
+        val file: File? = null,
         val timestamp: Long = System.currentTimeMillis()
 ) : JavaFileObject {
     override fun toString() = "${javaClass.simpleName}[$name]"
@@ -60,7 +62,7 @@ class KaptJavaFileObject(
 
     override fun getNestingKind() = NestingKind.TOP_LEVEL
 
-    override fun toUri(): URI? = URL(name).toURI()
+    override fun toUri(): URI? = file?.toURI()
 
     override fun openReader(ignoreEncodingErrors: Boolean) = getCharContent(ignoreEncodingErrors).reader()
 
