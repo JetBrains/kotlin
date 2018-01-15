@@ -36,7 +36,7 @@ interface ClassLoadingAdapter {
 
         fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderHandler? {
             val hasAdditionalClasses = classes.size > 1
-            val hasLoops = classes.isNotEmpty() && doesContainLoops(classes.first().bytes)
+            val hasLoops = classes.isNotEmpty() && doesContainLoops(classes.first { it.isMainClass() }.bytes)
 
             for (adapter in ADAPTERS) {
                 if (adapter.isApplicable(

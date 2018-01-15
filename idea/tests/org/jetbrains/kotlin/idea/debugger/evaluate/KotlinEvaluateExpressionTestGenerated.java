@@ -177,6 +177,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("inlineFunInMultiFilePackage.kt")
+        public void testInlineFunInMultiFilePackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/inlineFunInMultiFilePackage.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("inlineFunction.kt")
         public void testInlineFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/inlineFunction.kt");
