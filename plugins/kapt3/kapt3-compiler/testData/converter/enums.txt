@@ -1,7 +1,3 @@
-/**
- * @KaptMetadata
- */
-
 import java.lang.System;
 
 @kotlin.Metadata()
@@ -13,9 +9,6 @@ public abstract @interface Anno1 {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 
 import java.lang.System;
 
@@ -30,9 +23,6 @@ public enum Enum1 {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 
 import java.lang.System;
 

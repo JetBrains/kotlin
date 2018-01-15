@@ -1,5 +1,5 @@
 // CORRECT_ERROR_TYPES
-// EXPECTED_ERROR(11;5) cannot find symbol (Kotlin location: /maxErrorCount.kt: (9, 5))
+// EXPECTED_ERROR(8;5) cannot find symbol (Kotlin location: /maxErrorCount.kt: (9, 5))
 // JAVAC_OPTION -Xmaxerrs=1
 
 @file:Suppress("UNRESOLVED_REFERENCE")

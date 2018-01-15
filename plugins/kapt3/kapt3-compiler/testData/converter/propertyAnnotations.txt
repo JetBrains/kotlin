@@ -1,7 +1,3 @@
-/**
- * @KaptMetadata
- */
-
 import java.lang.System;
 
 @kotlin.Metadata()
@@ -11,9 +7,6 @@ public abstract @interface Anno {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 
 import java.lang.System;
 
@@ -26,9 +19,6 @@ public abstract @interface Anno2 {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 
 import java.lang.System;
 

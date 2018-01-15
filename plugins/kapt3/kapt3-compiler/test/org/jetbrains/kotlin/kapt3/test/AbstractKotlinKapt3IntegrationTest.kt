@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.kapt3.prettyPrint
 import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
+import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -171,13 +172,13 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
 
         override fun loadProcessors() = processors
 
-        override fun saveStubs(kaptContext: KaptContext<*>, stubs: JavacList<JCTree.JCCompilationUnit>) {
+        override fun saveStubs(kaptContext: KaptContext<*>, stubs: List<KaptStub>) {
             if (this.savedStubs != null) {
                 error("Stubs are already saved")
             }
 
             this.savedStubs = stubs
-                    .map { it.prettyPrint(kaptContext.context) }
+                    .map { it.file.prettyPrint(kaptContext.context) }
                     .sorted()
                     .joinToString(AbstractKotlinKapt3Test.FILE_SEPARATOR)
 

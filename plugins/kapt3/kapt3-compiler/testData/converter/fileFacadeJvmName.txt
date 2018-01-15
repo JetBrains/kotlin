@@ -1,6 +1,3 @@
-/**
- * @KaptMetadata
- */
 package a.b.c;
 
 import java.lang.System;
