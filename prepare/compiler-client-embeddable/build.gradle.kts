@@ -24,16 +24,13 @@ val testStdlibJar by configurations.creating
 val testScriptRuntimeJar by configurations.creating
 val archives by configurations
 
-val projectsToInclude = listOf(
-        ":compiler:cli-common",
-        ":compiler:daemon-common",
-        ":kotlin-daemon-client")
-
 dependencies {
-    projectsToInclude.forEach {
-        jarContents(project(it)) { isTransitive = false }
-        testCompile(project(it))
-    }
+    jarContents(project(":compiler:cli-common")) { isTransitive = false }
+    jarContents(project(":compiler:daemon-common")) { isTransitive = false }
+    jarContents(projectRuntimeJar(":kotlin-daemon-client"))
+    testCompile(project(":compiler:cli-common"))
+    testCompile(project(":compiler:daemon-common"))
+    testCompile(project(":kotlin-daemon-client"))
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
@@ -51,7 +48,9 @@ sourceSets {
 }
 
 projectTest {
-    dependsOnTaskIfExistsRec("dist", project = rootProject)
+    dependsOn(":kotlin-compiler:dist",
+              ":kotlin-stdlib:dist",
+              ":kotlin-script-runtime:dist")
     workingDir = File(rootDir, "libraries/tools/kotlin-compiler-client-embeddable-test/src")
     doFirst {
         systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))

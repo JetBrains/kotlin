@@ -10,8 +10,7 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     runtime(projectDist(":kotlin-stdlib"))
     runtime(projectDist(":kotlin-reflect"))
-    // TODO: find out whether it is important, and if yes - why it breaks tests and how to fix it
-//    runtime(projectRuntimeJar(":kotlin-compiler"))
+    runtime(projectRuntimeJar(":kotlin-compiler"))
 
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
