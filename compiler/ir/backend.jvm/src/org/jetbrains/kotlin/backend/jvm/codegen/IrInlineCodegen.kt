@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlineParameter
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -49,9 +50,8 @@ class IrInlineCodegen(
     }
 
     override fun genValueAndPut(valueParameterDescriptor: ValueParameterDescriptor?, argumentExpression: IrExpression, parameterType: Type, parameterIndex: Int, codegen: ExpressionCodegen, blockInfo: BlockInfo) {
-        //if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
-        if (argumentExpression is IrBlock && argumentExpression.origin == IrStatementOrigin.LAMBDA) {
-            val irReference: IrFunctionReference = argumentExpression.statements.filterIsInstance<IrFunctionReference>().single()
+        if (valueParameterDescriptor?.let { isInlineParameter(it) } == true && isInlineIrExpression(argumentExpression)) {
+            val irReference: IrFunctionReference = (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
             rememberClosure(irReference, parameterType, valueParameterDescriptor!!) as IrExpressionLambda
         }
         else {
@@ -127,3 +127,6 @@ class IrExpressionLambda(
     override val hasDispatchReceiver: Boolean
         get() = false
 }
+
+fun isInlineIrExpression(argumentExpression: IrExpression) =
+        argumentExpression is IrBlock && argumentExpression.origin == IrStatementOrigin.LAMBDA
