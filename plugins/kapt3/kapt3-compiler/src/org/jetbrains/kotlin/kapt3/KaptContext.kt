@@ -40,6 +40,7 @@ class KaptContext<out GState : GenerationState?>(
         val compiledClasses: List<ClassNode>,
         val origins: Map<Any, JvmDeclarationOrigin>,
         val generationState: GState,
+        mapDiagnosticLocations: Boolean,
         processorOptions: Map<String, String>,
         javacOptions: Map<String, String> = emptyMap()
 ) : AutoCloseable {
@@ -50,7 +51,7 @@ class KaptContext<out GState : GenerationState?>(
     val javaLog: KaptJavaLog
 
     init {
-        KaptJavaLog.preRegister(this, logger.messageCollector)
+        KaptJavaLog.preRegister(this, logger.messageCollector, mapDiagnosticLocations)
         JavacFileManager.preRegister(context)
         KaptTreeMaker.preRegister(context, this)
         KaptJavaCompiler.preRegister(context)

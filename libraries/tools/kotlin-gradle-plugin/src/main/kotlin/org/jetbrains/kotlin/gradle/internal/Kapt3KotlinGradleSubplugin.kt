@@ -282,6 +282,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         pluginOptions += SubpluginOption("useLightAnalysis", "${kaptExtension.useLightAnalysis}")
         pluginOptions += SubpluginOption("correctErrorTypes", "${kaptExtension.correctErrorTypes}")
+        pluginOptions += SubpluginOption("mapDiagnosticLocations", "${kaptExtension.mapDiagnosticLocations}")
         pluginOptions += FilesSubpluginOption("stubs", listOf(getKaptStubsDir()))
 
         if (project.hasProperty(VERBOSE_OPTION_NAME) && project.property(VERBOSE_OPTION_NAME) == "true") {

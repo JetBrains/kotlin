@@ -71,12 +71,13 @@ class ClasspathBasedKapt3Extension(
         aptMode: AptMode,
         val useLightAnalysis: Boolean,
         correctErrorTypes: Boolean,
+        mapDiagnosticLocations: Boolean,
         pluginInitializedTime: Long,
         logger: KaptLogger,
         compilerConfiguration: CompilerConfiguration
 ) : AbstractKapt3Extension(compileClasspath, annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
                            classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, javacOptions, annotationProcessors,
-                           aptMode, pluginInitializedTime, logger, correctErrorTypes, compilerConfiguration) {
+                           aptMode, pluginInitializedTime, logger, correctErrorTypes, mapDiagnosticLocations, compilerConfiguration) {
     override val analyzePartially: Boolean
         get() = useLightAnalysis
 
@@ -129,6 +130,7 @@ abstract class AbstractKapt3Extension(
         val pluginInitializedTime: Long,
         val logger: KaptLogger,
         val correctErrorTypes: Boolean,
+        val mapDiagnosticLocations: Boolean,
         val compilerConfiguration: CompilerConfiguration
 ) : PartialAnalysisHandlerExtension() {
     val compileClasspath = compileClasspath.distinct()
@@ -204,7 +206,8 @@ abstract class AbstractKapt3Extension(
 
     private fun generateStubs(project: Project, module: ModuleDescriptor, context: BindingContext, files: Collection<KtFile>): KaptContext<*> {
         if (!aptMode.generateStubs) {
-            return KaptContext(logger, project, BindingContext.EMPTY, emptyList(), emptyMap(), null, options, javacOptions)
+            return KaptContext(logger, project, BindingContext.EMPTY, emptyList(), emptyMap(), null,
+                               mapDiagnosticLocations, options, javacOptions)
         }
 
         logger.info { "Kotlin files to compile: " + files.map { it.virtualFile?.name ?: "<in memory ${it.hashCode()}>" } }
@@ -259,7 +262,8 @@ abstract class AbstractKapt3Extension(
         logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
         logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-        return KaptContext(logger, project, bindingContext, compiledClasses, origins, generationState, options, javacOptions)
+        return KaptContext(logger, project, bindingContext, compiledClasses, origins, generationState,
+                           mapDiagnosticLocations, options, javacOptions)
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContext<GenerationState>) {

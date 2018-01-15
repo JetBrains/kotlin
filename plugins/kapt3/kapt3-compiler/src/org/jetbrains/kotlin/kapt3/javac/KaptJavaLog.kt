@@ -41,7 +41,8 @@ class KaptJavaLog(
         errWriter: PrintWriter,
         warnWriter: PrintWriter,
         noticeWriter: PrintWriter,
-        val interceptorData: DiagnosticInterceptorData
+        val interceptorData: DiagnosticInterceptorData,
+        val mapDiagnosticLocations: Boolean
     ) : Log(context, errWriter, warnWriter, noticeWriter) {
     private val stubLineInfo = KaptStubLineInformation()
     private val javacMessages = JavacMessages.instance(context)
@@ -97,7 +98,7 @@ class KaptJavaLog(
             }
         }
 
-        if (sourceFile != null && targetElement.tree != null) {
+        if (mapDiagnosticLocations && sourceFile != null && targetElement.tree != null) {
             val kotlinPosition = stubLineInfo.getPositionInKotlinFile(sourceFile, targetElement.tree)
             val kotlinFile = kotlinPosition?.let { getKotlinSourceFile(it) }
             if (kotlinPosition != null && kotlinFile != null) {
@@ -229,14 +230,18 @@ class KaptJavaLog(
                 "compiler.err.annotation.type.not.applicable",
                 "compiler.err.doesnt.exist")
 
-        internal fun preRegister(kaptContext: KaptContext<*>, messageCollector: MessageCollector) {
+        internal fun preRegister(kaptContext: KaptContext<*>, messageCollector: MessageCollector, mapDiagnosticLocations: Boolean) {
             val interceptorData = DiagnosticInterceptorData()
             kaptContext.context.put(Log.logKey, Context.Factory<Log> { newContext ->
                 fun makeWriter(severity: CompilerMessageSeverity) = PrintWriter(MessageCollectorBackedWriter(messageCollector, severity))
+
                 val errWriter = makeWriter(ERROR)
                 val warnWriter = makeWriter(STRONG_WARNING)
                 val noticeWriter = makeWriter(WARNING)
-                KaptJavaLog(kaptContext.project, newContext, errWriter, warnWriter, noticeWriter, interceptorData)
+
+                KaptJavaLog(
+                    kaptContext.project, newContext, errWriter, warnWriter, noticeWriter,
+                    interceptorData, mapDiagnosticLocations)
             })
         }
     }
