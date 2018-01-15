@@ -558,6 +558,15 @@ class StringTest {
         assertEquals(listOf(singleLine.toString()), singleLine.lines())
     }
 
+    @Test fun splitIllegalLimit() = withOneCharSequenceArg("test string") { string ->
+        assertFailsWith<IllegalArgumentException> { string.split(*arrayOf<String>(), limit = -1) }
+        assertFailsWith<IllegalArgumentException> { string.split(*charArrayOf(), limit = -2) }
+        assertFailsWith<IllegalArgumentException> { string.split("", limit = -3) }
+        assertFailsWith<IllegalArgumentException> { string.split('3', limit = -4) }
+        assertFailsWith<IllegalArgumentException> { string.split("1", limit = -5) }
+        assertFailsWith<IllegalArgumentException> { string.split('4', '1', limit = -6) }
+        assertFailsWith<IllegalArgumentException> { string.split("5", "9", limit = -7) }
+    }
 
     @Test fun indexOfAnyChar() = withOneCharSequenceArg("abracadabra") { string ->
         val chars = charArrayOf('d', 'b')

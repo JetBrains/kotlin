@@ -1208,6 +1208,8 @@ public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = fal
  * @param limit The maximum number of substrings to return.
  */
 private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: Int): List<String> {
+    require(limit >= 0, { "Limit must be non-negative, but was $limit." })
+
     var currentOffset = 0
     var nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
     val isLimited = limit > 0
