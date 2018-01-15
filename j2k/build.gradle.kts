@@ -1,22 +1,6 @@
 
 apply { plugin("kotlin") }
 
-val usedIntellijPlugins = arrayOf(
-        "properties",
-        "gradle",
-        "Groovy",
-        "coverage",
-        "maven",
-        "android",
-        "junit",
-        "testng",
-        "IntelliLang",
-        "testng",
-        "copyright",
-        "properties",
-        "java-i18n",
-        "java-decompiler")
-
 dependencies {
     testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep())
@@ -41,9 +25,20 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
-    usedIntellijPlugins.forEach {
-        testRuntime(intellijPluginDep(it))
-    }
+    testRuntime(intellijPluginDep("properties"))
+    testRuntime(intellijPluginDep("gradle"))
+    testRuntime(intellijPluginDep("Groovy"))
+    testRuntime(intellijPluginDep("coverage"))
+    testRuntime(intellijPluginDep("maven"))
+    testRuntime(intellijPluginDep("android"))
+    testRuntime(intellijPluginDep("junit"))
+    testRuntime(intellijPluginDep("testng"))
+    testRuntime(intellijPluginDep("IntelliLang"))
+    testRuntime(intellijPluginDep("testng"))
+    testRuntime(intellijPluginDep("copyright"))
+    testRuntime(intellijPluginDep("properties"))
+    testRuntime(intellijPluginDep("java-i18n"))
+    testRuntime(intellijPluginDep("java-decompiler"))
 }
 
 sourceSets {

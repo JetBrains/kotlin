@@ -25,14 +25,14 @@ public abstract class AbstractAntTaskTest extends KotlinIntegrationTestBase {
     protected void doTest(String testFile) throws Exception {
         String testDataDir = new File(testFile).getAbsolutePath();
 
-        String antClasspath = System.getProperty("ant.classpath");
+        String antClasspath = System.getProperty("kotlin.ant.classpath");
         if (antClasspath == null) {
-            throw new RuntimeException("Unable to get a valid classpath from 'ant.classpath' property, please set it accordingly");
+            throw new RuntimeException("Unable to get a valid classpath from 'kotlin.ant.classpath' property, please set it accordingly");
         }
 
-        String antLauncherClass = System.getProperty("ant.launcher.class");
+        String antLauncherClass = System.getProperty("kotlin.ant.launcher.class");
         if (antLauncherClass == null) {
-            throw new RuntimeException("Unable to get a valid class FQN from 'ant.launcher.class' property, please set it accordingly");
+            throw new RuntimeException("Unable to get a valid class FQN from 'kotlin.ant.launcher.class' property, please set it accordingly");
         }
 
         runJava(

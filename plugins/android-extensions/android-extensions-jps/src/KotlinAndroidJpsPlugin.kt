@@ -62,7 +62,6 @@ class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
         val module = moduleBuildTarget.module
         if (!hasAndroidJpsPlugin() || !isAndroidModuleWithoutGradle(module)) return emptyList()
 
-        val inJar = File(PathUtil.getJarPathForClass(this::class.java)).isFile
         val manifestFile = getAndroidManifest(moduleBuildTarget.module)
 
         return if (manifestFile != null) {
@@ -74,7 +73,7 @@ class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
                 compilerPluginJar = File("dist/kotlinc/lib/$JAR_FILE_NAME")
             } else {
                 // Inside Kotlin/jps directory (Kotlin plugin)
-                val libDirectory = File(PathUtil.getJarPathForClass(this::class.java)).parentFile.parentFile
+                val libDirectory = jpsPluginJar.parentFile.parentFile
                 compilerPluginJar = File(libDirectory, JAR_FILE_NAME)
             }
 

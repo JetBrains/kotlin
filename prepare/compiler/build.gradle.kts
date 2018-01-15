@@ -90,7 +90,6 @@ val packCompiler by task<ShadowJar> {
     configurations = listOf(fatJar)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDir = File(buildDir, "libs")
-    dependsOn(protobufFullTask)
 
     setupPublicJar("before-proguard")
     from(fatJarContents)

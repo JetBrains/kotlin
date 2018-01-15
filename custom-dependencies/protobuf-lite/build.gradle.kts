@@ -21,10 +21,7 @@ dependencies {
 }
 
 task("prepare") {
-    // TODO: find out why it doesn't work without explicit dependsOn
-    dependsOn(":custom-dependencies:protobuf-relocated:prepare")
-    val inputJar = relocatedProtobuf.files.single()
-    inputs.files(inputJar)
+    inputs.files(relocatedProtobuf) // this also adds a dependency
     outputs.file(outputJarPath)
     doFirst {
         File(outputJarPath).parentFile.mkdirs()
@@ -49,7 +46,7 @@ task("prepare") {
             return result
         }
 
-        val allFiles = loadAllFromJar(File(inputJar))
+        val allFiles = loadAllFromJar(File(relocatedProtobuf.singleFile))
 
         val keepClasses = arrayListOf<String>()
 

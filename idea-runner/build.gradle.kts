@@ -58,8 +58,10 @@ afterEvaluate {
                 "-Dapple.laf.useScreenMenuBar=true",
                 "-Dapple.awt.graphics.UseQuartz=true",
                 "-Dsun.io.useCanonCaches=false",
-                "-Dkotlin.internal.mode.enabled=true",
-                "-Didea.ProcessCanceledException=disabled"
+                "-Dkotlin.internal.mode.enabled=true"
         )
+        if (project.hasProperty("noPCE")) {
+            jvmArgs("-Didea.ProcessCanceledException=disabled")
+        }
     }
 }

@@ -86,8 +86,8 @@ projectTest {
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
     doFirst {
-        systemProperty("ant.classpath", antLauncherJar.asPath)
-        systemProperty("ant.launcher.class", "org.apache.tools.ant.Main")
+        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
+        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }
 }

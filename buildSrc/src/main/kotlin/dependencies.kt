@@ -69,7 +69,6 @@ val protobufLiteTask = "$protobufLiteProject:prepare"
 
 fun DependencyHandler.protobufFull(): ProjectDependency =
         project(protobufRelocatedProject, configuration = "default").apply { isTransitive = false }
-val protobufFullTask = "$protobufLiteProject:prepare"
 
 fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
 

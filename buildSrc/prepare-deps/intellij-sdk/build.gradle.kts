@@ -12,8 +12,8 @@ val intellijUltimateEnabled: Boolean by rootProject.extra
 val intellijRepo: String by rootProject.extra
 val intellijReleaseType: String by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
-val androidStudioRelease = if (rootProject.extra.has("versions.androidStudioRelease")) rootProject.extra["versions.androidStudioRelease"] as String else null
-val androidStudioBuild = if (rootProject.extra.has("versions.androidStudioBuild")) rootProject.extra["versions.androidStudioBuild"] as String else null
+val androidStudioRelease = rootProject.findProperty("versions.androidStudioRelease") as String?
+val androidStudioBuild = rootProject.findProperty("versions.androidStudioBuild") as String?
 val intellijSeparateSdks: Boolean by rootProject.extra
 val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
 val installIntellijUltimate = intellijUltimateEnabled

@@ -1,7 +1,7 @@
 <project name="KotlinLexer" default="lexer">
     <property name="home" value="${basedir}"/>
     <property name="builddir" value="${basedir}/build"/>
-    <property name="flex.classpath" value="${home}/../../dependencies/jflex/JFlex.jar"/>
+    <property name="flex.classpath" value=""/>
     <property name="out.dir" value="${builddir}/tmpout"/>
 
     <macrodef name="flex">

@@ -51,7 +51,6 @@ extra["intellijRepo"] = "https://www.jetbrains.com/intellij-repository"
 extra["intellijReleaseType"] = "releases" // or "snapshots"
 extra["versions.androidDxSources"] = "5.0.0_r2"
 
-extra["customDepsRepo"] = "$rootDir/repo"
 extra["customDepsOrg"] = "kotlin.build.custom.deps"
 
 repositories {

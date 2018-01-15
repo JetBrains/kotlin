@@ -97,7 +97,6 @@ val extractAndroidJar by tasks.creating {
     inputs.files(androidPlatform)
     val targetFile = File(libsDestDir, "android.jar")
     outputs.files(targetFile)
-    outputs.upToDateWhen { targetFile.exists() } // TODO: consider more precise check, e.g. hash-based
     doFirst {
         project.copy {
             from(zipTree(androidPlatform.singleFile).matching { include("**/android.jar") }.files.first())

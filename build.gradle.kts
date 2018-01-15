@@ -80,8 +80,8 @@ dependencies {
 }
 
 val commonBuildDir = File(rootDir, "build")
-val distDir = "$rootDir/dist"
-val distKotlinHomeDir = "$distDir/kotlinc"
+val distDir by extra("$rootDir/dist")
+val distKotlinHomeDir by extra("$distDir/kotlinc")
 val distLibDir = "$distKotlinHomeDir/lib"
 val commonLocalDataDir = "$rootDir/local"
 val ideaSandboxDir = "$commonLocalDataDir/ideaSandbox"
@@ -89,8 +89,7 @@ val ideaUltimateSandboxDir = "$commonLocalDataDir/ideaUltimateSandbox"
 val ideaPluginDir = "$distDir/artifacts/ideaPlugin/Kotlin"
 val ideaUltimatePluginDir = "$distDir/artifacts/ideaUltimatePlugin/Kotlin"
 
-extra["distDir"] = distDir
-extra["distKotlinHomeDir"] = distKotlinHomeDir
+// TODO: use "by extra()" syntax where possible
 extra["distLibDir"] = project.file(distLibDir)
 extra["libsDir"] = project.file(distLibDir)
 extra["commonLocalDataDir"] = project.file(commonLocalDataDir)
@@ -139,7 +138,7 @@ extra["versions.jflex"] = "1.7.0"
 val markdownVer =  "4054 - Kotlin 1.0.2-dev-566".replace(" ", "%20") // fixed here, was last with "status:SUCCESS,tag:forKotlin"
 extra["markdownParserRepo"] = "https://teamcity.jetbrains.com/guestAuth/repository/download/IntelliJMarkdownParser_Build/$markdownVer/([artifact]_[ext]/)[artifact](.[ext])"
 
-fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty("intellijUltimateEnabled")?.let {
+fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
     val v = it.toString()
     if (v.isBlank()) true
     else v.toBoolean()
