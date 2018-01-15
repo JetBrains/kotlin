@@ -13,7 +13,11 @@ int main(void) {
     T_(Base) casted_child = { .pinned = child.pinned };
     T_(I) casted_impl1 = { .pinned = impl1.pinned };
     T_(I) casted_impl2 = { .pinned = impl2.pinned };
+    T_(Enum) enum1 = __ kotlin.root.Enum.HUNDRED.get();
+    T_(Codeable) object1 = __ kotlin.root.get_an_object();
+
     const char* string = __ kotlin.root.getString();
+
 
     __ kotlin.root.hello();
     __ kotlin.root.Base.foo(base);
@@ -29,11 +33,17 @@ int main(void) {
      __ kotlin.root.Child.set_rwProperty(child, 238);
     printf("RW property is %d\n", __ kotlin.root.Child.get_rwProperty(child));
 
+    printf("enum100 = %d\n",  __ kotlin.root.Enum.get_code(enum1));
+
+    printf("object = %d\n",  __ kotlin.root.Codeable.asCode(object1));
+
     __ DisposeString(string);
     __ DisposeStablePointer(base.pinned);
     __ DisposeStablePointer(child.pinned);
     __ DisposeStablePointer(impl1.pinned);
     __ DisposeStablePointer(impl2.pinned);
+    __ DisposeStablePointer(enum1.pinned);
+    __ DisposeStablePointer(object1.pinned);
 
     return 0;
 }

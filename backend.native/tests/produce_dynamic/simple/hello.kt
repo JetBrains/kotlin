@@ -14,6 +14,22 @@ open class Base {
 
 }
 
+// Enum.
+enum class Enum(val code: Int) {
+    ONE(1),
+    TWO(2),
+    HUNDRED(100)
+}
+
+// Object.
+interface Codeable {
+    fun asCode(): Int
+}
+
+val an_object = object : Codeable {
+    override fun asCode() = 42
+}
+
 class Child : Base() {
     override fun fooParam(arg0: String, arg1: Int) = println("Child.fooParam: $arg0 $arg1")
 

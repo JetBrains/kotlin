@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import kotlinx.cinterop.cValuesOf
 import java.io.PrintWriter
 import llvm.*
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.types.KotlinType
 
 private enum class ScopeKind {
     TOP,
@@ -183,7 +185,6 @@ private class ExportedElement(val kind: ElementKind,
                         val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                         ret(result)
                     }
-
                 } else {
                     LLVMAddAlias(context.llvmModule, llvmFunction.type, llvmFunction, cname)!!
                 }
@@ -199,13 +200,23 @@ private class ExportedElement(val kind: ElementKind,
                 LLVMBuildRet(builder, (declaration as ClassDescriptor).typeInfoPtr.llvm)
                 LLVMDisposeBuilder(builder)
             }
+            isEnumEntry -> {
+                // Produce entry getter.
+                cname = "_konan_function_${owner.nextFunctionIndex()}"
+                generateFunction(owner.codegen, owner.kGetObjectFuncType, cname) {
+                    val value = getEnumEntry(declaration as ClassDescriptor, ExceptionHandler.Caller)
+                    ret(value)
+                }
+            }
         }
     }
 
     fun uniqueName(descriptor: DeclarationDescriptor) = scope.scopeUniqueName(descriptor)
 
     val isFunction = declaration is FunctionDescriptor
-    val isClass = declaration is ClassDescriptor
+    val isClass = declaration is ClassDescriptor && declaration.kind != ClassKind.ENUM_ENTRY
+    val isEnumClass = declaration is ClassDescriptor && declaration.kind == ClassKind.ENUM_CLASS
+    val isEnumEntry = declaration is ClassDescriptor && declaration.kind == ClassKind.ENUM_ENTRY
 
     fun makeCFunctionSignature(): List<Pair<String, ClassDescriptor>> {
         if (!isFunction) {
@@ -215,7 +226,7 @@ private class ExportedElement(val kind: ElementKind,
         val original = descriptor.original as FunctionDescriptor
         val returned = when {
             original is ConstructorDescriptor -> uniqueName(original) to original.constructedClass
-            // Suspend functions actually return Any?.
+            // Suspend functions actually return 'Any?'.
             original.isSuspend -> uniqueName(original) to
                     TypeUtils.getClassDescriptor(owner.context.builtIns.nullableAnyType)!!
             else -> uniqueName(original) to TypeUtils.getClassDescriptor(original.returnType!!)!!
@@ -269,6 +280,21 @@ private class ExportedElement(val kind: ElementKind,
     fun makeClassDeclaration(): String {
         assert(isClass)
         return "extern \"C\" ${owner.prefix}_KType* $cname(void);"
+    }
+
+    fun makeEnumEntryDeclaration(): String {
+        assert(isEnumEntry)
+        val enumClass = declaration.containingDeclaration as ClassDescriptor
+        val enumClassC = owner.translateType(enumClass)
+
+        return """
+              |extern "C" KObjHeader* $cname(KObjHeader**);
+              |static $enumClassC ${cname}_impl(void) {
+              |  KObjHolder result_holder;
+              |  KObjHeader* result = $cname(result_holder.slot());
+              |  return $enumClassC { .pinned = CreateStablePointer(result)};
+              |}
+              """.trimMargin()
     }
 
     private fun translateArgument(name: String, clazz: ClassDescriptor, direction: Direction,
@@ -509,6 +535,14 @@ internal class CAdapterGenerator(
     fun generateBindings() {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))
         context.moduleDescriptor.accept(this, null)
+        // TODO: add few predefined types.
+        listOf<KotlinType>(
+                // context.builtIns.anyType,
+                // context.builtIns.getPrimitiveArrayKotlinType(PrimitiveType.INT)
+        ).forEach {
+            TypeUtils.getClassDescriptor(it)!!.accept(this@CAdapterGenerator, null)
+        }
+
         val top = scopes.pop()
         assert(scopes.isEmpty() && top.kind == ScopeKind.TOP)
 
@@ -532,6 +566,10 @@ internal class CAdapterGenerator(
                         output(element.makeFunctionPointerString(), indent)
                     element.isClass ->
                         output("${prefix}_KType* (*_type)(void);", indent)
+                    element.isEnumEntry -> {
+                        val enumClass = element.declaration.containingDeclaration as ClassDescriptor
+                        output("${translateType(enumClass)} (*get)(); /* enum entry for ${element.name}. */", indent)
+                    }
                 // TODO: handle properties.
                 }
             }
@@ -542,6 +580,8 @@ internal class CAdapterGenerator(
                         output(element.makeFunctionDeclaration(), 0)
                     element.isClass ->
                         output(element.makeClassDeclaration(), 0)
+                    element.isEnumEntry ->
+                        output(element.makeEnumEntryDeclaration(), 0)
                 // TODO: handle properties.
                 }
             }
@@ -552,6 +592,8 @@ internal class CAdapterGenerator(
                         output("/* ${element.name} = */ ${element.cname}_impl, ", indent)
                     element.isClass ->
                         output("/* Type for ${element.name} = */  ${element.cname}, ", indent)
+                    element.isEnumEntry ->
+                        output("/* enum entry getter ${element.name} = */  ${element.cname}_impl", indent)
                 // TODO: handle properties.
                 }
             }
@@ -775,4 +817,7 @@ internal class CAdapterGenerator(
 
     internal val kGetTypeFuncType =
             LLVMFunctionType(codegen.kTypeInfoPtr, null, 0, 0)!!
+    // Abstraction leak for slot :(.
+    internal val kGetObjectFuncType =
+            LLVMFunctionType(codegen.kObjHeaderPtr, cValuesOf(codegen.kObjHeaderPtrPtr), 1, 0)!!
 }
