@@ -23,10 +23,6 @@ val buildTools by configurations.creating
 val libsDestDir = File(buildDir, "libs")
 val sdkDestDir = File(buildDir, "androidSdk")
 
-data class LocMap(val name: String, val ver: String, val dest: String, val suffix: String,
-                  val additionalConfig: Configuration? = null, val dirLevelsToSkit: Int = 0, val ext: String = "zip",
-                  val filter: CopySpec.() -> Unit = {})
-
 val toolsOs = when {
     OperatingSystem.current().isWindows -> "windows"
     OperatingSystem.current().isMacOsX -> "macosx"
@@ -37,45 +33,36 @@ val toolsOs = when {
     }
 }
 
-val sdkLocMaps = listOf(
-        LocMap("platform", "26_r02", "platforms/android-26", "", androidPlatform, 1),
-        LocMap("android_m2repository", "r44", "extras/android", ""),
-        LocMap("platform-tools", "r25.0.3", "", toolsOs),
-        LocMap("tools", "r24.3.4", "", toolsOs),
-        LocMap("build-tools", "r23.0.1", "build-tools/23.0.1", toolsOs, buildTools, 1))
-
 val prepareSdk by task<DefaultTask> {
-    outputs.dir(sdkDestDir)
     doLast {}
 }
 
-fun LocMap.toDependency(): String =
-        "google:$name:$ver${suffix?.takeIf{ it.isNotEmpty() }?.let { ":$it" } ?: ""}@$ext"
-
-sdkLocMaps.forEach { locMap ->
-    val id = "${locMap.name}_${locMap.ver}"
+fun unzipSdkTask(
+    sdkName: String, sdkVer: String, destinationSubdir: String, coordinatesSuffix: String,
+    additionalConfig: Configuration? = null, dirLevelsToSkipOnUnzip: Int = 0, ext: String = "zip",
+    unzipFilter: CopySpec.() -> Unit = {}
+): DefaultTask {
+    val id = "${sdkName}_$sdkVer"
     val cfg = configurations.create(id)
-    val dependency = locMap.toDependency()
+    val dependency = "google:$sdkName:$sdkVer${coordinatesSuffix.takeIf{ it.isNotEmpty() }?.let { ":$it" } ?: ""}@$ext"
     dependencies.add(cfg.name, dependency)
 
     val unzipTask = task("unzip_$id") {
         dependsOn(cfg)
         inputs.files(cfg)
-        val targetDir = file("$sdkDestDir/${locMap.dest}")
-        val targetFlagFile = File(targetDir, "$id.prepared")
-        outputs.files(targetFlagFile)
-        outputs.upToDateWhen { targetFlagFile.exists() } // TODO: consider more precise check, e.g. hash-based
+        val targetDir = file("$sdkDestDir/$destinationSubdir")
+        outputs.dirs(targetDir)
         doFirst {
             project.copy {
-                when (locMap.ext) {
+                when (ext) {
                     "zip" -> from(zipTree(cfg.singleFile))
                     "tar.gz" -> from(tarTree(resources.gzip(cfg.singleFile)))
-                    else -> throw GradleException("Don't know how to handle the extension \"${locMap.ext}\"")
+                    else -> throw GradleException("Don't know how to handle the extension \"$ext\"")
                 }
-                locMap.filter.invoke(this)
-                if (locMap.dirLevelsToSkit > 0) {
+                unzipFilter.invoke(this)
+                if (dirLevelsToSkipOnUnzip > 0) {
                     eachFile {
-                        path = path.split("/").drop(locMap.dirLevelsToSkit).joinToString("/")
+                        path = path.split("/").drop(dirLevelsToSkipOnUnzip).joinToString("/")
                         if (path.isBlank()) {
                             exclude()
                         }
@@ -83,16 +70,23 @@ sdkLocMaps.forEach { locMap ->
                 }
                 into(targetDir)
             }
-            
-            targetFlagFile.writeText("prepared")
         }
     }
     prepareSdk.dependsOn(unzipTask)
 
-    locMap.additionalConfig?.also {
+    additionalConfig?.also {
         dependencies.add(it.name, dependency)
     }
+    
+    return unzipTask
 }
+
+unzipSdkTask("platform", "26_r02", "platforms/android-26", "", androidPlatform, 1)
+unzipSdkTask("android_m2repository", "r44", "extras/android", "")
+unzipSdkTask("platform-tools", "r25.0.3", "", toolsOs)
+unzipSdkTask("tools", "r24.3.4", "", toolsOs)
+unzipSdkTask("build-tools", "r23.0.1", "build-tools/23.0.1", toolsOs, buildTools, 1)
+
 
 val clean by task<Delete> {
     delete(buildDir)
@@ -119,4 +113,3 @@ artifacts.add(androidSdk.name, file("$sdkDestDir")) {
 artifacts.add(androidJar.name, file("$libsDestDir/android.jar")) {
     builtBy(extractAndroidJar)
 }
-
