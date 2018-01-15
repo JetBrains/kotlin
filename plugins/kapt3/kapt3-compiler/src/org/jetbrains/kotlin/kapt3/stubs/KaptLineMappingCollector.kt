@@ -19,15 +19,13 @@ package org.jetbrains.kotlin.kapt3.stubs
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.*
-import java.util.*
 
-data class KotlinPosition(val path: String, val isRelativePath: Boolean, val line: Int, val column: Int)
+data class KotlinPosition(val path: String, val isRelativePath: Boolean, val pos: Int)
 
 private typealias LineInfoMap = MutableMap<String, KotlinPosition>
 
@@ -67,10 +65,9 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
                 val fqName = ois.readUTF()
                 val path = ois.readUTF()
                 val isRelative = ois.readBoolean()
-                val line = ois.readInt()
-                val column = ois.readInt()
+                val pos = ois.readInt()
 
-                lineInfo[fqName] = KotlinPosition(path, isRelative, line, column)
+                lineInfo[fqName] = KotlinPosition(path, isRelative, pos)
             }
 
             val signatureCount = ois.readInt()
@@ -119,13 +116,9 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
 
     private fun register(fqName: String, psiElement: PsiElement) {
         val textRange = psiElement.textRange ?: return
-        val psiFile = psiElement.containingFile
-        val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(psiFile, textRange)
 
-        if (lineAndColumn.line >= 0 && lineAndColumn.column >= 0) {
-            val (path, isRelative) = getFilePathRelativePreferred(psiFile)
-            lineInfo[fqName] = KotlinPosition(path, isRelative, lineAndColumn.line, lineAndColumn.column)
-        }
+        val (path, isRelative) = getFilePathRelativePreferred(psiElement.containingFile)
+        lineInfo[fqName] = KotlinPosition(path, isRelative, textRange.startOffset)
     }
 
     private fun getFilePathRelativePreferred(file: PsiFile): Pair<String, Boolean> {
@@ -156,8 +149,7 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
             oos.writeUTF(fqName)
             oos.writeUTF(kotlinPosition.path)
             oos.writeBoolean(kotlinPosition.isRelativePath)
-            oos.writeInt(kotlinPosition.line)
-            oos.writeInt(kotlinPosition.column)
+            oos.writeInt(kotlinPosition.pos)
         }
 
         oos.writeInt(signatureInfo.size)

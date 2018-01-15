@@ -1,5 +1,5 @@
-// EXPECTED_ERROR(-1;-1) 'WHI-TE' is an invalid Java enum value name
-// EXPECTED_ERROR(6;20) cannot find symbol (Kotlin location: /invalidFieldName.kt: (8, 1))
+// EXPECTED_ERROR(kotlin:8:1) cannot find symbol
+// EXPECTED_ERROR(other:-1:-1) 'WHI-TE' is an invalid Java enum value name
 
 enum class Color {
     BLACK, `WHI-TE`

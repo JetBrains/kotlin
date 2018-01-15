@@ -17,16 +17,20 @@
 package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.psi.PsiManager
 import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
 import junit.framework.TestCase
+import org.jetbrains.kotlin.checkers.CheckerTestUtil
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.CodegenTestCase
+import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
@@ -38,6 +42,7 @@ import org.jetbrains.kotlin.kapt3.parseJavaFiles
 import org.jetbrains.kotlin.kapt3.prettyPrint
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -63,6 +68,26 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
             writeText(text)
             tempFiles += this
         }
+    }
+
+    override fun loadMultiFiles(files: List<TestFile>) {
+        val project = myEnvironment.project
+        val psiManager = PsiManager.getInstance(project)
+
+        val tmpDir = Files.createTempDirectory("kaptTest").toFile()
+        tempFiles += tmpDir
+
+        val ktFiles = ArrayList<KtFile>(files.size)
+        for (file in files.sorted()) {
+            if (file.name.endsWith(".kt")) {
+                val content = CheckerTestUtil.parseDiagnosedRanges(file.content, ArrayList<CheckerTestUtil.DiagnosedRange>(0))
+                val tmpKtFile = File(tmpDir, file.name).apply { writeText(content) }
+                val virtualFile = StandardFileSystems.local().findFileByPath(tmpKtFile.path) ?: error("Can't find ${file.name}")
+                ktFiles.add(psiManager.findFile(virtualFile) as? KtFile ?: error("Can't load ${file.name}"))
+            }
+        }
+
+        myFiles = CodegenTestFiles.create(ktFiles)
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
@@ -102,7 +127,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
             throw RuntimeException(e)
         } finally {
             javaFiles.forEach { it.delete() }
-            tempFiles.forEach { it.delete() }
+            tempFiles.forEach { if (it.isFile) it.delete() else it.deleteRecursively() }
             tempFiles.clear()
             kaptContext.close()
         }
@@ -213,13 +238,16 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
             val actualErrors = log.reportedDiagnostics
                     .filter { it.type == JCDiagnostic.DiagnosticType.ERROR }
                     .map {
-                        val location = it.subdiagnostics
-                                .firstOrNull { it.getMessage(Locale.US).startsWith("Kotlin location:") }
-                                ?.getMessage(Locale.US)
+                        // Unfortunately, we can't use the file name as it can contain temporary prefix
+                        val name = it.source?.name?.substringAfterLast("/") ?: ""
+                        val kind = when (name.substringAfterLast(".").toLowerCase()) {
+                            "kt" -> "kotlin"
+                            "java" -> "java"
+                            else -> "other"
+                        }
 
-                        val javaLocation = "(${it.lineNumber};${it.columnNumber}) "
-                        val message = javaLocation + it.getMessage(Locale.US).lines().first()
-                        if (location != null) "$message ($location)" else message
+                        val javaLocation = "($kind:${it.lineNumber}:${it.columnNumber}) "
+                        javaLocation + it.getMessage(Locale.US).lines().first()
                     }
                     .map { "// " + EXPECTED_ERROR + it }
                     .sorted()
