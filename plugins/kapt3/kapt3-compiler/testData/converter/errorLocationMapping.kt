@@ -1,21 +1,14 @@
 // CORRECT_ERROR_TYPES
 
-// EXPECTED_ERROR(11;12) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (34, 5))
-// EXPECTED_ERROR(11;34) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (26, 62))
-// EXPECTED_ERROR(19;18) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (26, 50))
-// EXPECTED_ERROR(23;18) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (33, 5))
-// EXPECTED_ERROR(24;33) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (26, 62))
-// EXPECTED_ERROR(28;5) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (33, 5))
-// EXPECTED_ERROR(30;5) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (26, 34))
-// EXPECTED_ERROR(31;30) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (26, 34))
-// EXPECTED_ERROR(32;18) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (34, 5))
-// EXPECTED_ERROR(37;5) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (34, 5))
-// EXPECTED_ERROR(45;5) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (37, 5))
-// EXPECTED_ERROR(50;5) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (39, 5))
-// EXPECTED_ERROR(5;11) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (23, 1))
-// EXPECTED_ERROR(60;18) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (42, 5))
-// EXPECTED_ERROR(9;12) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (33, 5))
-// EXPECTED_ERROR(9;19) cannot find symbol (Kotlin location: /errorLocationMapping.kt: (26, 50))
+// EXPECTED_ERROR(kotlin:16:1) cannot find symbol
+// EXPECTED_ERROR(kotlin:19:34) cannot find symbol
+// EXPECTED_ERROR(kotlin:19:50) cannot find symbol
+// EXPECTED_ERROR(kotlin:19:62) cannot find symbol
+// EXPECTED_ERROR(kotlin:26:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:27:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:30:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:32:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:35:5) cannot find symbol
 
 @file:Suppress("UNRESOLVED_REFERENCE", "ANNOTATION_PARAMETER_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION")
 import kotlin.reflect.KClass

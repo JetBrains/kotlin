@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.kapt3.javac
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.*
 import com.sun.tools.javac.util.JCDiagnostic.DiagnosticType
@@ -29,10 +28,11 @@ import org.jetbrains.kotlin.kapt3.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt3.stubs.KotlinPosition
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedWriter
 import org.jetbrains.kotlin.kapt3.util.isJava9OrLater
-import java.io.File
-import java.io.PrintWriter
+import java.io.*
 import javax.tools.Diagnostic
 import javax.tools.JavaFileObject
+import javax.tools.JavaFileObject.Kind
+import javax.tools.SimpleJavaFileObject
 import com.sun.tools.javac.util.List as JavacList
 
 class KaptJavaLog(
@@ -101,16 +101,37 @@ class KaptJavaLog(
             val kotlinPosition = stubLineInfo.getPositionInKotlinFile(sourceFile, targetElement.tree)
             val kotlinFile = kotlinPosition?.let { getKotlinSourceFile(it) }
             if (kotlinPosition != null && kotlinFile != null) {
-                val locationMessage = "$KOTLIN_LOCATION_PREFIX${kotlinFile.absolutePath}: (${kotlinPosition.line}, ${kotlinPosition.column})"
-                val locationDiagnostic = diags.note(null as DiagnosticSource?, null, "proc.messager", locationMessage)
-                val wrappedDiagnostic = JCDiagnostic.MultilineDiagnostic(diagnostic, JavacList.of(locationDiagnostic))
+                val flags = JCDiagnostic.DiagnosticFlag.values().filterTo(mutableSetOf(), diagnostic::isFlagSet)
 
-                reportDiagnostic(wrappedDiagnostic)
-                return // Avoid reporting the diagnostic twice
+                val kotlinDiagnostic = diags.create(
+                    diagnostic.type,
+                    diagnostic.lintCategory,
+                    flags,
+                    DiagnosticSource(KotlinFileObject(kotlinFile), this),
+                    JCDiagnostic.SimpleDiagnosticPosition(kotlinPosition.pos),
+                    diagnostic.code.stripCompilerKeyPrefix(),
+                    *diagnostic.args
+                )
+
+                reportDiagnostic(kotlinDiagnostic)
+
+                // Avoid reporting the diagnostic twice
+                return
             }
         }
 
         reportDiagnostic(diagnostic)
+    }
+
+    private fun String.stripCompilerKeyPrefix(): String {
+        for (kind in listOf("err", "warn", "misc", "note")) {
+            val prefix = "compiler.$kind."
+            if (startsWith(prefix)) {
+                return drop(prefix.length)
+            }
+        }
+
+        return this
     }
 
     private fun reportDiagnostic(diagnostic: JCDiagnostic) {
@@ -249,4 +270,14 @@ private fun JCDiagnostic.Factory.errorJava9Aware(
     else {
         this.error(source, pos, key, *args)
     }
+}
+
+private data class KotlinFileObject(val file: File) : SimpleJavaFileObject(file.toURI(), Kind.SOURCE) {
+    override fun openOutputStream() = file.outputStream()
+    override fun openWriter() = file.writer()
+    override fun openInputStream() = file.inputStream()
+    override fun getCharContent(ignoreEncodingErrors: Boolean) = file.readText()
+    override fun getLastModified() = file.lastModified()
+    override fun openReader(ignoreEncodingErrors: Boolean) = file.reader()
+    override fun delete() = file.delete()
 }
