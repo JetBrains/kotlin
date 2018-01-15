@@ -102,7 +102,7 @@ open class KotlinUSimpleReferenceExpression(
             private val resolvedCall: ResolvedCall<*>,
             private val accessorDescriptor: DeclarationDescriptor,
             val setterValue: KtExpression?
-    ) : UCallExpression, JvmDeclarationUElement {
+    ) : UCallExpressionEx, JvmDeclarationUElement {
         override val methodName: String?
             get() = accessorDescriptor.name.asString()
 
@@ -141,6 +141,8 @@ open class KotlinUSimpleReferenceExpression(
             else
                 emptyList()
         }
+
+        override fun getArgumentForParameter(i: Int): UExpression? = valueArguments.getOrNull(i)
 
         override val typeArgumentCount: Int
             get() = resolvedCall.typeArguments.size
