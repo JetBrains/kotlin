@@ -551,7 +551,7 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
         list = ArrayList<T>(resultSize)
         if (this is List<T>) {
             if (this is RandomAccess) {
-                for (index in n..size - 1)
+                for (index in n until size)
                     list.add(this[index])
             } else {
                 for (item in listIterator(n))
@@ -742,7 +742,7 @@ public fun <T> List<T>.takeLast(n: Int): List<T> {
     if (n == 1) return listOf(last())
     val list = ArrayList<T>(n)
     if (this is RandomAccess) {
-        for (index in size - n .. size - 1)
+        for (index in size - n until size)
             list.add(this[index])
     } else {
         for (item in listIterator(size - n))
