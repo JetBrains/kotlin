@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 
 class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtilExtender {
     companion object {
-        val DO_NOT_UNWRAP_LABELED_EXPRESSION = 0x100
-        val BYPASS_IMPORT_ALIAS = 0x200
+        const val DO_NOT_UNWRAP_LABELED_EXPRESSION = 0x100
+        const val BYPASS_IMPORT_ALIAS = 0x200
 
         // Place caret after the open curly brace in lambda for generated 'it'
         fun findLambdaOpenLBraceForGeneratedIt(ref: PsiReference): PsiElement? {
@@ -105,8 +105,8 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtil
         }
 
         if (BitUtil.isSet(flags, TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)) {
-            return findLambdaOpenLBraceForGeneratedIt(ref) ?:
-                   findReceiverForThisInExtensionFunction(ref)
+            return findLambdaOpenLBraceForGeneratedIt(ref)
+                    ?: findReceiverForThisInExtensionFunction(ref)
         }
 
         return null
