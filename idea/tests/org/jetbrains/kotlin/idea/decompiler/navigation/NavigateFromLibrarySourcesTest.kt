@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -55,7 +55,13 @@ class NavigateFromLibrarySourcesTest: AbstractNavigateFromLibrarySourcesTest() {
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/fromLibSource", true, true, false, false)
+        return SdkAndMockLibraryProjectDescriptor(
+            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/fromLibSource",
+            true,
+            true,
+            false,
+            false
+        )
     }
 
     private fun navigationElementForReferenceInLibrarySource(referenceText: String) =

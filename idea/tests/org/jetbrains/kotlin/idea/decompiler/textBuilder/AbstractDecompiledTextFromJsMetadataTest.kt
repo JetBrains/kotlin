@@ -20,7 +20,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import kotlin.test.assertTrue
@@ -39,6 +39,6 @@ abstract class AbstractJsDecompiledTextFromJsMetadataTest : AbstractDecompiledTe
 fun getKjsmFile(packageName: String, module: Module): VirtualFile {
     val root = findTestLibraryRoot(module)!!
     root.refresh(false, true)
-    val packageDir = root.findFileByRelativePath(JdkAndMockLibraryProjectDescriptor.LIBRARY_NAME + "/" + packageName.replace(".", "/"))!!
+    val packageDir = root.findFileByRelativePath(SdkAndMockLibraryProjectDescriptor.LIBRARY_NAME + "/" + packageName.replace(".", "/"))!!
     return packageDir.findChild(JsSerializerProtocol.getKjsmFilePath(FqName(packageName)).substringAfterLast('/'))!!
 }

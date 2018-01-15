@@ -34,7 +34,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescriptor {
+public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescriptor {
     public static final String LIBRARY_NAME = "myKotlinLib";
 
     private final String sourcesPath;
@@ -44,16 +44,16 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
     private final boolean allowKotlinPackage;
     private final List<String> classpath;
 
-    public JdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources) {
+    public SdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources) {
         this(sourcesPath, withSources, false, false, false);
     }
 
-    public JdkAndMockLibraryProjectDescriptor(
+    public SdkAndMockLibraryProjectDescriptor(
             String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage) {
         this(sourcesPath, withSources, withRuntime, isJsLibrary, allowKotlinPackage, Collections.emptyList());
     }
 
-    public JdkAndMockLibraryProjectDescriptor(
+    public SdkAndMockLibraryProjectDescriptor(
             String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage, List<String> classpath
     ) {
         this.sourcesPath = sourcesPath;
@@ -107,7 +107,7 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JdkAndMockLibraryProjectDescriptor that = (JdkAndMockLibraryProjectDescriptor) o;
+        SdkAndMockLibraryProjectDescriptor that = (SdkAndMockLibraryProjectDescriptor) o;
 
         if (withSources != that.withSources) return false;
         if (withRuntime != that.withRuntime) return false;

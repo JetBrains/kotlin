@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
 class NavigateFromJSLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() {
@@ -30,7 +30,7 @@ class NavigateFromJSLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest(
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JdkAndMockLibraryProjectDescriptor(
+        return SdkAndMockLibraryProjectDescriptor(
             PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/fromJSLibSource",
             true,
             true,

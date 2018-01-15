@@ -20,7 +20,7 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.testFramework.LightProjectDescriptor
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
@@ -55,8 +55,9 @@ class KotlinLibInjectionTest : AbstractInjectionTest() {
 
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JdkAndMockLibraryProjectDescriptor(
-                PluginTestCaseBase.getTestDataPathBase() + "/injection/lib/", false, false, false, true,
-                listOf(KotlinTestUtils.getHomeDirectory() + "/ideaSDK/lib/annotations.jar"))
+        return SdkAndMockLibraryProjectDescriptor(
+            PluginTestCaseBase.getTestDataPathBase() + "/injection/lib/", false, false, false, true,
+            listOf(KotlinTestUtils.getHomeDirectory() + "/ideaSDK/lib/annotations.jar")
+        )
     }
 }
