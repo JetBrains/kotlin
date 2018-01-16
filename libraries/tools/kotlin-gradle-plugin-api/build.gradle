@@ -12,7 +12,7 @@ repositories {
 dependencies {
     compile project(':kotlin-stdlib')
     
-    compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
+    compileOnly gradleApi()
     compileOnly 'com.android.tools.build:gradle:0.4.2'
 }
 
