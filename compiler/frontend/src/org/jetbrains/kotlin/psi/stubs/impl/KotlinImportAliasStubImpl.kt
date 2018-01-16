@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinImportAliasStubImpl(
-        parent: StubElement<PsiElement>?,
-        private val name: StringRef?
+    parent: StubElement<PsiElement>?,
+    private val name: StringRef?
 ) : KotlinStubBaseImpl<KtImportAlias>(parent, KtStubElementTypes.IMPORT_ALIAS), KotlinImportAliasStub {
     override fun getName(): String? = StringRef.toString(name)
 }

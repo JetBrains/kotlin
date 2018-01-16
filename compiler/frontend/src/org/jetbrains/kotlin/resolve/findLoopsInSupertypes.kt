@@ -15,6 +15,7 @@
  */
 
 @file:JvmName("FindLoopsInSupertypes")
+
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
@@ -26,10 +27,10 @@ import org.jetbrains.kotlin.utils.SmartList
 
 class SupertypeLoopCheckerImpl : SupertypeLoopChecker {
     override fun findLoopsInSupertypesAndDisconnect(
-            currentTypeConstructor: TypeConstructor,
-            superTypes: Collection<KotlinType>,
-            neighbors: (TypeConstructor) -> Iterable<KotlinType>,
-            reportLoop: (KotlinType) -> Unit
+        currentTypeConstructor: TypeConstructor,
+        superTypes: Collection<KotlinType>,
+        neighbors: (TypeConstructor) -> Iterable<KotlinType>,
+        reportLoop: (KotlinType) -> Unit
     ): Collection<KotlinType> {
         val graph = DFS.Neighbors<TypeConstructor> { node -> neighbors(node).map { it.constructor } }
 
@@ -53,8 +54,8 @@ class SupertypeLoopCheckerImpl : SupertypeLoopChecker {
 }
 
 private fun isReachable(
-        from: TypeConstructor, to: TypeConstructor,
-        neighbors: DFS.Neighbors<TypeConstructor>
+    from: TypeConstructor, to: TypeConstructor,
+    neighbors: DFS.Neighbors<TypeConstructor>
 ): Boolean {
     var result = false
     DFS.dfs(listOf(from), neighbors, DFS.VisitedWithSet(), object : DFS.AbstractNodeHandler<TypeConstructor, Unit>() {

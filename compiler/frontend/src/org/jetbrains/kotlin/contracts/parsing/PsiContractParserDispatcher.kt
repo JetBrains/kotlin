@@ -46,10 +46,10 @@ internal class PsiContractParserDispatcher(val trace: BindingTrace, val contract
     private val conditionParser = PsiConditionParser(trace, this)
     private val constantParser = PsiConstantParser(trace)
     private val effectsParsers: Map<Name, PsiEffectParser> = mapOf(
-            RETURNS_EFFECT to PsiReturnsEffectParser(trace, this),
-            RETURNS_NOT_NULL_EFFECT to PsiReturnsEffectParser(trace, this),
-            CALLS_IN_PLACE_EFFECT to PsiCallsEffectParser(trace, this),
-            CONDITIONAL_EFFECT to PsiConditionalEffectParser(trace, this)
+        RETURNS_EFFECT to PsiReturnsEffectParser(trace, this),
+        RETURNS_NOT_NULL_EFFECT to PsiReturnsEffectParser(trace, this),
+        CALLS_IN_PLACE_EFFECT to PsiCallsEffectParser(trace, this),
+        CONDITIONAL_EFFECT to PsiConditionalEffectParser(trace, this)
     )
 
     fun parseContract(expression: KtExpression?, ownerDescriptor: FunctionDescriptor): ContractDescription? {
@@ -89,12 +89,22 @@ internal class PsiContractParserDispatcher(val trace: BindingTrace, val contract
         if (expression == null) return null
         val descriptor = expression.getResolvedCall(trace.bindingContext)?.resultingDescriptor ?: return null
         if (descriptor !is ParameterDescriptor) {
-            trace.report(Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(expression, "only references to parameters are allowed in contract description"))
+            trace.report(
+                Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(
+                    expression,
+                    "only references to parameters are allowed in contract description"
+                )
+            )
             return null
         }
 
         if (descriptor is ReceiverParameterDescriptor && descriptor.type.constructor.declarationDescriptor?.isFromContractDsl() == true) {
-            trace.report(Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(expression, "only references to parameters are allowed. Did you miss label on <this>?"))
+            trace.report(
+                Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(
+                    expression,
+                    "only references to parameters are allowed. Did you miss label on <this>?"
+                )
+            )
         }
 
         return if (KotlinBuiltIns.isBoolean(descriptor.type))

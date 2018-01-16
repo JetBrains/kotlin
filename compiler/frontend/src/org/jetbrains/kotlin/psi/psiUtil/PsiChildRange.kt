@@ -22,8 +22,7 @@ data class PsiChildRange(val first: PsiElement?, val last: PsiElement?) : Sequen
     init {
         if (first == null) {
             assert(last == null)
-        }
-        else {
+        } else {
             assert(first.parent == last!!.parent)
         }
     }
@@ -34,8 +33,7 @@ data class PsiChildRange(val first: PsiElement?, val last: PsiElement?) : Sequen
     override fun iterator(): Iterator<PsiElement> {
         val sequence = if (first == null) {
             emptySequence<PsiElement>()
-        }
-        else {
+        } else {
             val afterLast = last!!.nextSibling
             first.siblings().takeWhile { it != afterLast }
         }

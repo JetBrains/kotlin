@@ -50,8 +50,8 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * about effects of that call.
  */
 class EffectsExtractingVisitor(
-        private val trace: BindingTrace,
-        private val moduleDescriptor: ModuleDescriptor
+    private val trace: BindingTrace,
+    private val moduleDescriptor: ModuleDescriptor
 ) : KtVisitor<Computation, Unit>() {
     fun extractOrGetCached(element: KtElement): Computation {
         trace[BindingContext.EXPRESSION_EFFECTS, element]?.let { return it }
@@ -66,9 +66,18 @@ class EffectsExtractingVisitor(
 
         val descriptor = resolvedCall.resultingDescriptor
         return when {
-            descriptor.isEqualsDescriptor() -> CallComputation(DefaultBuiltIns.Instance.booleanType, EqualsFunctor(false).invokeWithArguments(arguments))
-            descriptor is ValueDescriptor -> ESDataFlowValue(descriptor, (element as KtExpression).createDataFlowValue() ?: return UNKNOWN_COMPUTATION)
-            descriptor is FunctionDescriptor -> CallComputation(descriptor.returnType, descriptor.getFunctor()?.invokeWithArguments(arguments) ?: emptyList())
+            descriptor.isEqualsDescriptor() -> CallComputation(
+                DefaultBuiltIns.Instance.booleanType,
+                EqualsFunctor(false).invokeWithArguments(arguments)
+            )
+            descriptor is ValueDescriptor -> ESDataFlowValue(
+                descriptor,
+                (element as KtExpression).createDataFlowValue() ?: return UNKNOWN_COMPUTATION
+            )
+            descriptor is FunctionDescriptor -> CallComputation(
+                descriptor.returnType,
+                descriptor.getFunctor()?.invokeWithArguments(arguments) ?: emptyList()
+            )
             else -> UNKNOWN_COMPUTATION
         }
     }
@@ -78,15 +87,15 @@ class EffectsExtractingVisitor(
     override fun visitLambdaExpression(expression: KtLambdaExpression, data: Unit?): Computation = UNKNOWN_COMPUTATION
 
     override fun visitParenthesizedExpression(expression: KtParenthesizedExpression, data: Unit): Computation =
-            KtPsiUtil.deparenthesize(expression)?.accept(this, data) ?: UNKNOWN_COMPUTATION
+        KtPsiUtil.deparenthesize(expression)?.accept(this, data) ?: UNKNOWN_COMPUTATION
 
     override fun visitConstantExpression(expression: KtConstantExpression, data: Unit): Computation {
         val bindingContext = trace.bindingContext
 
         val type: KotlinType = bindingContext.getType(expression) ?: return UNKNOWN_COMPUTATION
 
-        val compileTimeConstant: CompileTimeConstant<*>
-                = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression) ?: return UNKNOWN_COMPUTATION
+        val compileTimeConstant: CompileTimeConstant<*> =
+            bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression) ?: return UNKNOWN_COMPUTATION
         val value: Any? = compileTimeConstant.getValue(type)
 
         return when (value) {
@@ -99,7 +108,10 @@ class EffectsExtractingVisitor(
     override fun visitIsExpression(expression: KtIsExpression, data: Unit): Computation {
         val rightType: KotlinType = trace[BindingContext.TYPE, expression.typeReference] ?: return UNKNOWN_COMPUTATION
         val arg = extractOrGetCached(expression.leftHandSide)
-        return CallComputation(DefaultBuiltIns.Instance.booleanType, IsFunctor(rightType, expression.isNegated).invokeWithArguments(listOf(arg)))
+        return CallComputation(
+            DefaultBuiltIns.Instance.booleanType,
+            IsFunctor(rightType, expression.isNegated).invokeWithArguments(listOf(arg))
+        )
     }
 
     override fun visitBinaryExpression(expression: KtBinaryExpression, data: Unit): Computation {
@@ -132,10 +144,10 @@ class EffectsExtractingVisitor(
 
     private fun KtExpression.createDataFlowValue(): DataFlowValue? {
         return DataFlowValueFactory.createDataFlowValue(
-                expression = this,
-                type = trace.getType(this) ?: return null,
-                bindingContext = trace.bindingContext,
-                containingDeclarationOrModule = moduleDescriptor
+            expression = this,
+            type = trace.getType(this) ?: return null,
+            bindingContext = trace.bindingContext,
+            containingDeclarationOrModule = moduleDescriptor
         )
     }
 
@@ -148,9 +160,9 @@ class EffectsExtractingVisitor(
     }
 
     private fun ResolvedCall<*>.isCallWithUnsupportedReceiver(): Boolean =
-            (extensionReceiver as? ExpressionReceiver)?.expression?.getResolvedCall(trace.bindingContext) == this ||
-            (dispatchReceiver as? ExpressionReceiver)?.expression?.getResolvedCall(trace.bindingContext) == this ||
-            (explicitReceiverKind == ExplicitReceiverKind.BOTH_RECEIVERS)
+        (extensionReceiver as? ExpressionReceiver)?.expression?.getResolvedCall(trace.bindingContext) == this ||
+                (dispatchReceiver as? ExpressionReceiver)?.expression?.getResolvedCall(trace.bindingContext) == this ||
+                (explicitReceiverKind == ExplicitReceiverKind.BOTH_RECEIVERS)
 
     private fun ResolvedCall<*>.getCallArgumentsAsComputations(): List<Computation>? {
         val arguments = mutableListOf<Computation>()

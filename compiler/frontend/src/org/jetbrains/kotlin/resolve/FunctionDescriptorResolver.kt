@@ -67,72 +67,83 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import java.util.*
 
 class FunctionDescriptorResolver(
-        private val typeResolver: TypeResolver,
-        private val descriptorResolver: DescriptorResolver,
-        private val annotationResolver: AnnotationResolver,
-        private val builtIns: KotlinBuiltIns,
-        private val modifiersChecker: ModifiersChecker,
-        private val overloadChecker: OverloadChecker,
-        private val contractParsingServices: ContractParsingServices,
-        private val expressionTypingServices: ExpressionTypingServices,
-        private val languageVersionSettings: LanguageVersionSettings
+    private val typeResolver: TypeResolver,
+    private val descriptorResolver: DescriptorResolver,
+    private val annotationResolver: AnnotationResolver,
+    private val builtIns: KotlinBuiltIns,
+    private val modifiersChecker: ModifiersChecker,
+    private val overloadChecker: OverloadChecker,
+    private val contractParsingServices: ContractParsingServices,
+    private val expressionTypingServices: ExpressionTypingServices,
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
     fun resolveFunctionDescriptor(
-            containingDescriptor: DeclarationDescriptor,
-            scope: LexicalScope,
-            function: KtNamedFunction,
-            trace: BindingTrace,
-            dataFlowInfo: DataFlowInfo
+        containingDescriptor: DeclarationDescriptor,
+        scope: LexicalScope,
+        function: KtNamedFunction,
+        trace: BindingTrace,
+        dataFlowInfo: DataFlowInfo
     ): SimpleFunctionDescriptor {
         if (function.name == null) trace.report(FUNCTION_DECLARATION_WITH_NO_NAME.on(function))
 
         return resolveFunctionDescriptor(
-                SimpleFunctionDescriptorImpl::create, containingDescriptor, scope, function, trace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE)
+            SimpleFunctionDescriptorImpl::create, containingDescriptor, scope, function, trace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE
+        )
     }
 
 
     fun resolveFunctionExpressionDescriptor(
-            containingDescriptor: DeclarationDescriptor,
-            scope: LexicalScope,
-            function: KtNamedFunction,
-            trace: BindingTrace,
-            dataFlowInfo: DataFlowInfo,
-            expectedFunctionType: KotlinType
+        containingDescriptor: DeclarationDescriptor,
+        scope: LexicalScope,
+        function: KtNamedFunction,
+        trace: BindingTrace,
+        dataFlowInfo: DataFlowInfo,
+        expectedFunctionType: KotlinType
     ): SimpleFunctionDescriptor = resolveFunctionDescriptor(
-            ::FunctionExpressionDescriptor, containingDescriptor, scope, function, trace, dataFlowInfo, expectedFunctionType)
+        ::FunctionExpressionDescriptor, containingDescriptor, scope, function, trace, dataFlowInfo, expectedFunctionType
+    )
 
     private fun resolveFunctionDescriptor(
-            functionConstructor: (DeclarationDescriptor, Annotations, Name, CallableMemberDescriptor.Kind, SourceElement) -> SimpleFunctionDescriptorImpl,
-            containingDescriptor: DeclarationDescriptor,
-            scope: LexicalScope,
-            function: KtNamedFunction,
-            trace: BindingTrace,
-            dataFlowInfo: DataFlowInfo,
-            expectedFunctionType: KotlinType
+        functionConstructor: (DeclarationDescriptor, Annotations, Name, CallableMemberDescriptor.Kind, SourceElement) -> SimpleFunctionDescriptorImpl,
+        containingDescriptor: DeclarationDescriptor,
+        scope: LexicalScope,
+        function: KtNamedFunction,
+        trace: BindingTrace,
+        dataFlowInfo: DataFlowInfo,
+        expectedFunctionType: KotlinType
     ): SimpleFunctionDescriptor {
         val functionDescriptor = functionConstructor(
-                containingDescriptor,
-                annotationResolver.resolveAnnotationsWithoutArguments(scope, function.modifierList, trace),
-                function.nameAsSafeName,
-                CallableMemberDescriptor.Kind.DECLARATION,
-                function.toSourceElement()
+            containingDescriptor,
+            annotationResolver.resolveAnnotationsWithoutArguments(scope, function.modifierList, trace),
+            function.nameAsSafeName,
+            CallableMemberDescriptor.Kind.DECLARATION,
+            function.toSourceElement()
         )
-        initializeFunctionDescriptorAndExplicitReturnType(containingDescriptor, scope, function, functionDescriptor, trace, expectedFunctionType, dataFlowInfo)
+        initializeFunctionDescriptorAndExplicitReturnType(
+            containingDescriptor,
+            scope,
+            function,
+            functionDescriptor,
+            trace,
+            expectedFunctionType,
+            dataFlowInfo
+        )
         initializeFunctionReturnTypeBasedOnFunctionBody(scope, function, functionDescriptor, trace, dataFlowInfo)
         BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, function, functionDescriptor)
         return functionDescriptor
     }
 
     private fun initializeFunctionReturnTypeBasedOnFunctionBody(
-            scope: LexicalScope,
-            function: KtNamedFunction,
-            functionDescriptor: SimpleFunctionDescriptorImpl,
-            trace: BindingTrace,
-            dataFlowInfo: DataFlowInfo
+        scope: LexicalScope,
+        function: KtNamedFunction,
+        functionDescriptor: SimpleFunctionDescriptorImpl,
+        trace: BindingTrace,
+        dataFlowInfo: DataFlowInfo
     ) {
         if (functionDescriptor.returnType != null) return
         assert(function.typeReference == null) {
-            "Return type must be initialized early for function: " + function.text + ", at: " + DiagnosticUtils.atLocation(function) }
+            "Return type must be initialized early for function: " + function.text + ", at: " + DiagnosticUtils.atLocation(function)
+        }
 
         val inferredReturnType = when {
             function.hasBlockBody() ->
@@ -146,51 +157,55 @@ class FunctionDescriptorResolver(
     }
 
     fun initializeFunctionDescriptorAndExplicitReturnType(
-            container: DeclarationDescriptor,
-            scope: LexicalScope,
-            function: KtFunction,
-            functionDescriptor: SimpleFunctionDescriptorImpl,
-            trace: BindingTrace,
-            expectedFunctionType: KotlinType,
-            dataFlowInfo: DataFlowInfo
+        container: DeclarationDescriptor,
+        scope: LexicalScope,
+        function: KtFunction,
+        functionDescriptor: SimpleFunctionDescriptorImpl,
+        trace: BindingTrace,
+        expectedFunctionType: KotlinType,
+        dataFlowInfo: DataFlowInfo
     ) {
-        val headerScope = LexicalWritableScope(scope, functionDescriptor, true,
-                                               TraceBasedLocalRedeclarationChecker(trace, overloadChecker), LexicalScopeKind.FUNCTION_HEADER)
+        val headerScope = LexicalWritableScope(
+            scope, functionDescriptor, true,
+            TraceBasedLocalRedeclarationChecker(trace, overloadChecker), LexicalScopeKind.FUNCTION_HEADER
+        )
 
-        val typeParameterDescriptors = descriptorResolver.
-                resolveTypeParametersForDescriptor(functionDescriptor, headerScope, scope, function.typeParameters, trace)
+        val typeParameterDescriptors =
+            descriptorResolver.resolveTypeParametersForDescriptor(functionDescriptor, headerScope, scope, function.typeParameters, trace)
         descriptorResolver.resolveGenericBounds(function, functionDescriptor, headerScope, typeParameterDescriptors, trace)
 
         val receiverTypeRef = function.receiverTypeReference
         val receiverType =
-                if (receiverTypeRef != null) {
-                    typeResolver.resolveType(headerScope, receiverTypeRef, trace, true)
-                }
-                else {
-                    if (function is KtFunctionLiteral) expectedFunctionType.getReceiverType() else null
-                }
+            if (receiverTypeRef != null) {
+                typeResolver.resolveType(headerScope, receiverTypeRef, trace, true)
+            } else {
+                if (function is KtFunctionLiteral) expectedFunctionType.getReceiverType() else null
+            }
 
 
-        val valueParameterDescriptors = createValueParameterDescriptors(function, functionDescriptor, headerScope, trace, expectedFunctionType)
+        val valueParameterDescriptors =
+            createValueParameterDescriptors(function, functionDescriptor, headerScope, trace, expectedFunctionType)
 
         headerScope.freeze()
 
         val returnType = function.typeReference?.let { typeResolver.resolveType(headerScope, it, trace, true) }
 
         val visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, container))
-        val modality = resolveMemberModalityFromModifiers(function, getDefaultModality(container, visibility, function.hasBody()),
-                                                          trace.bindingContext, container)
+        val modality = resolveMemberModalityFromModifiers(
+            function, getDefaultModality(container, visibility, function.hasBody()),
+            trace.bindingContext, container
+        )
         val contractProvider = getContractProvider(functionDescriptor, trace, scope, dataFlowInfo, function)
 
         functionDescriptor.initialize(
-                receiverType,
-                getDispatchReceiverParameterIfNeeded(container),
-                typeParameterDescriptors,
-                valueParameterDescriptors,
-                returnType,
-                modality,
-                visibility,
-                mapOf(ContractProviderKey to contractProvider)
+            receiverType,
+            getDispatchReceiverParameterIfNeeded(container),
+            typeParameterDescriptors,
+            valueParameterDescriptors,
+            returnType,
+            modality,
+            visibility,
+            mapOf(ContractProviderKey to contractProvider)
         )
         functionDescriptor.isOperator = function.hasModifier(KtTokens.OPERATOR_KEYWORD)
         functionDescriptor.isInfix = function.hasModifier(KtTokens.INFIX_KEYWORD)
@@ -199,7 +214,7 @@ class FunctionDescriptorResolver(
         functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
         functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
         functionDescriptor.isExpect = container is PackageFragmentDescriptor && function.hasExpectModifier() ||
-                                      container is ClassDescriptor && container.isExpect
+                container is ClassDescriptor && container.isExpect
         functionDescriptor.isActual = function.hasActualModifier()
 
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
@@ -209,11 +224,11 @@ class FunctionDescriptorResolver(
     }
 
     private fun getContractProvider(
-            functionDescriptor: SimpleFunctionDescriptorImpl,
-            trace: BindingTrace,
-            scope: LexicalScope,
-            dataFlowInfo: DataFlowInfo,
-            function: KtFunction
+        functionDescriptor: SimpleFunctionDescriptorImpl,
+        trace: BindingTrace,
+        scope: LexicalScope,
+        dataFlowInfo: DataFlowInfo,
+        function: KtFunction
     ): LazyContractProvider {
         val provideByDeferredForceResolve = LazyContractProvider {
             expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
@@ -221,9 +236,9 @@ class FunctionDescriptorResolver(
         val emptyContract = LazyContractProvider.createInitialized(null)
 
         val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.CallsInPlaceEffect) ||
-                                 languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect) ||
-                                 // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
-                                 languageVersionSettings.getFlag(AnalysisFlag.allowKotlinPackage)
+                languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect) ||
+                // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
+                languageVersionSettings.getFlag(AnalysisFlag.allowKotlinPackage)
 
         if (!isContractsEnabled || !contractParsingServices.fastCheckIfContractPresent(function)) return emptyContract
 
@@ -231,11 +246,11 @@ class FunctionDescriptorResolver(
     }
 
     private fun createValueParameterDescriptors(
-            function: KtFunction,
-            functionDescriptor: SimpleFunctionDescriptorImpl,
-            innerScope: LexicalWritableScope,
-            trace: BindingTrace,
-            expectedFunctionType: KotlinType
+        function: KtFunction,
+        functionDescriptor: SimpleFunctionDescriptorImpl,
+        innerScope: LexicalWritableScope,
+        trace: BindingTrace,
+        expectedFunctionType: KotlinType
     ): List<ValueParameterDescriptor> {
         val expectedValueParameters = expectedFunctionType.getValueParameters(functionDescriptor)
         val expectedParameterTypes = expectedValueParameters?.map { it.type.removeParameterNameAnnotation() }
@@ -243,10 +258,12 @@ class FunctionDescriptorResolver(
             if (expectedValueParameters.size == 1 && function is KtFunctionLiteral && function.getValueParameterList() == null) {
                 // it parameter for lambda
                 val valueParameterDescriptor = expectedValueParameters.single()
-                val it = ValueParameterDescriptorImpl(functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
-                                                      expectedParameterTypes!!.single(), valueParameterDescriptor.declaresDefaultValue(),
-                                                      valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
-                                                      valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE)
+                val it = ValueParameterDescriptorImpl(
+                    functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
+                    expectedParameterTypes!!.single(), valueParameterDescriptor.declaresDefaultValue(),
+                    valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
+                    valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE
+                )
                 trace.record(BindingContext.AUTO_CREATED_IT, it)
                 return listOf(it)
             }
@@ -258,11 +275,11 @@ class FunctionDescriptorResolver(
         trace.recordScope(innerScope, function.valueParameterList)
 
         return resolveValueParameters(
-                functionDescriptor,
-                innerScope,
-                function.valueParameters,
-                trace,
-                expectedParameterTypes
+            functionDescriptor,
+            innerScope,
+            function.valueParameters,
+            trace,
+            expectedParameterTypes
         )
     }
 
@@ -274,63 +291,62 @@ class FunctionDescriptorResolver(
 
     private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && isBuiltinFunctionalType
     private fun KotlinType.getReceiverType(): KotlinType? =
-            if (functionTypeExpected()) this.getReceiverTypeFromFunctionType() else null
+        if (functionTypeExpected()) this.getReceiverTypeFromFunctionType() else null
 
     private fun KotlinType.getValueParameters(owner: FunctionDescriptor): List<ValueParameterDescriptor>? =
-            if (functionTypeExpected()) {
-                createValueParametersForInvokeInFunctionType(owner, this.getValueParameterTypesFromFunctionType())
-            }
-            else null
+        if (functionTypeExpected()) {
+            createValueParametersForInvokeInFunctionType(owner, this.getValueParameterTypesFromFunctionType())
+        } else null
 
     fun resolvePrimaryConstructorDescriptor(
-            scope: LexicalScope,
-            classDescriptor: ClassDescriptor,
-            classElement: KtPureClassOrObject,
-            trace: BindingTrace
+        scope: LexicalScope,
+        classDescriptor: ClassDescriptor,
+        classElement: KtPureClassOrObject,
+        trace: BindingTrace
     ): ClassConstructorDescriptorImpl? {
         if (classDescriptor.kind == ClassKind.ENUM_ENTRY || !classElement.hasPrimaryConstructor()) return null
         return createConstructorDescriptor(
-                scope,
-                classDescriptor,
-                true,
-                classElement.primaryConstructorModifierList,
-                classElement.primaryConstructor ?: classElement,
-                classElement.primaryConstructorParameters,
-                trace
+            scope,
+            classDescriptor,
+            true,
+            classElement.primaryConstructorModifierList,
+            classElement.primaryConstructor ?: classElement,
+            classElement.primaryConstructorParameters,
+            trace
         )
     }
 
     fun resolveSecondaryConstructorDescriptor(
-            scope: LexicalScope,
-            classDescriptor: ClassDescriptor,
-            constructor: KtSecondaryConstructor,
-            trace: BindingTrace
+        scope: LexicalScope,
+        classDescriptor: ClassDescriptor,
+        constructor: KtSecondaryConstructor,
+        trace: BindingTrace
     ): ClassConstructorDescriptorImpl {
         return createConstructorDescriptor(
-                scope,
-                classDescriptor,
-                false,
-                constructor.modifierList,
-                constructor,
-                constructor.valueParameters,
-                trace
+            scope,
+            classDescriptor,
+            false,
+            constructor.modifierList,
+            constructor,
+            constructor.valueParameters,
+            trace
         )
     }
 
     private fun createConstructorDescriptor(
-            scope: LexicalScope,
-            classDescriptor: ClassDescriptor,
-            isPrimary: Boolean,
-            modifierList: KtModifierList?,
-            declarationToTrace: KtPureElement,
-            valueParameters: List<KtParameter>,
-            trace: BindingTrace
+        scope: LexicalScope,
+        classDescriptor: ClassDescriptor,
+        isPrimary: Boolean,
+        modifierList: KtModifierList?,
+        declarationToTrace: KtPureElement,
+        valueParameters: List<KtParameter>,
+        trace: BindingTrace
     ): ClassConstructorDescriptorImpl {
         val constructorDescriptor = ClassConstructorDescriptorImpl.create(
-                classDescriptor,
-                annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace),
-                isPrimary,
-                declarationToTrace.toSourceElement()
+            classDescriptor,
+            annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace),
+            isPrimary,
+            declarationToTrace.toSourceElement()
         )
         if (classDescriptor.isExpect) {
             constructorDescriptor.isExpect = true
@@ -341,18 +357,18 @@ class FunctionDescriptorResolver(
         if (declarationToTrace is PsiElement)
             trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         val parameterScope = LexicalWritableScope(
-                scope,
-                constructorDescriptor,
-                false,
-                TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
-                LexicalScopeKind.CONSTRUCTOR_HEADER
+            scope,
+            constructorDescriptor,
+            false,
+            TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
+            LexicalScopeKind.CONSTRUCTOR_HEADER
         )
         val constructor = constructorDescriptor.initialize(
-                resolveValueParameters(constructorDescriptor, parameterScope, valueParameters, trace, null),
-                resolveVisibilityFromModifiers(
-                        modifierList,
-                        DescriptorUtils.getDefaultConstructorVisibility(classDescriptor)
-                )
+            resolveValueParameters(constructorDescriptor, parameterScope, valueParameters, trace, null),
+            resolveVisibilityFromModifiers(
+                modifierList,
+                DescriptorUtils.getDefaultConstructorVisibility(classDescriptor)
+            )
         )
         constructor.returnType = classDescriptor.defaultType
         if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
@@ -362,11 +378,11 @@ class FunctionDescriptorResolver(
     }
 
     private fun resolveValueParameters(
-            functionDescriptor: FunctionDescriptor,
-            parameterScope: LexicalWritableScope,
-            valueParameters: List<KtParameter>,
-            trace: BindingTrace,
-            expectedParameterTypes: List<KotlinType>?
+        functionDescriptor: FunctionDescriptor,
+        parameterScope: LexicalWritableScope,
+        valueParameters: List<KtParameter>,
+        trace: BindingTrace,
+        expectedParameterTypes: List<KotlinType>?
     ): List<ValueParameterDescriptor> {
         val result = ArrayList<ValueParameterDescriptor>()
 
@@ -383,8 +399,7 @@ class FunctionDescriptorResolver(
                         trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(valueParameter, expectedType))
                     }
                 }
-            }
-            else {
+            } else {
                 type = if (isFunctionLiteral(functionDescriptor) || isFunctionExpression(functionDescriptor)) {
                     val containsUninferredParameter = TypeUtils.contains(expectedType) {
                         TypeUtils.isDontCarePlaceholder(it) || ErrorUtils.isUninferredParameter(it)
@@ -394,8 +409,7 @@ class FunctionDescriptorResolver(
                     }
 
                     expectedType ?: TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
-                }
-                else {
+                } else {
                     trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter))
                     ErrorUtils.createErrorType("Type annotation was missing for parameter ${valueParameter.nameAsSafeName}")
                 }
@@ -403,16 +417,18 @@ class FunctionDescriptorResolver(
 
             if (functionDescriptor !is ConstructorDescriptor || !functionDescriptor.isPrimary) {
                 val isConstructor = functionDescriptor is ConstructorDescriptor
-                with (modifiersChecker.withTrace(trace)) {
+                with(modifiersChecker.withTrace(trace)) {
                     checkParameterHasNoValOrVar(
-                            valueParameter,
-                            if (isConstructor) VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER else VAL_OR_VAR_ON_FUN_PARAMETER
+                        valueParameter,
+                        if (isConstructor) VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER else VAL_OR_VAR_ON_FUN_PARAMETER
                     )
                 }
             }
 
-            val valueParameterDescriptor = descriptorResolver.resolveValueParameterDescriptor(parameterScope, functionDescriptor,
-                                                                                              valueParameter, i, type, trace)
+            val valueParameterDescriptor = descriptorResolver.resolveValueParameterDescriptor(
+                parameterScope, functionDescriptor,
+                valueParameter, i, type, trace
+            )
 
             // Do not report NAME_SHADOWING for lambda destructured parameters as they may be not fully resolved at this time
             ExpressionTypingUtils.checkVariableShadowing(parameterScope, trace, valueParameterDescriptor)

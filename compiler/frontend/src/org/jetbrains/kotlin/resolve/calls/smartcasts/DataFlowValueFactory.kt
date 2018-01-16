@@ -54,12 +54,12 @@ object DataFlowValueFactory {
 
     @JvmStatic
     fun createDataFlowValue(
-            expression: KtExpression,
-            type: KotlinType,
-            resolutionContext: ResolutionContext<*>
+        expression: KtExpression,
+        type: KotlinType,
+        resolutionContext: ResolutionContext<*>
     ) = createDataFlowValue(expression, type, resolutionContext.trace.bindingContext, resolutionContext.scope.ownerDescriptor)
 
-    private fun isComplexExpression(expression: KtExpression): Boolean = when(expression) {
+    private fun isComplexExpression(expression: KtExpression): Boolean = when (expression) {
         is KtBlockExpression, is KtIfExpression, is KtWhenExpression -> true
         is KtBinaryExpression -> expression.operationToken === KtTokens.ELVIS
         is KtParenthesizedExpression -> {
@@ -71,10 +71,10 @@ object DataFlowValueFactory {
 
     @JvmStatic
     fun createDataFlowValue(
-            expression: KtExpression,
-            type: KotlinType,
-            bindingContext: BindingContext,
-            containingDeclarationOrModule: DeclarationDescriptor
+        expression: KtExpression,
+        type: KotlinType,
+        bindingContext: BindingContext,
+        containingDeclarationOrModule: DeclarationDescriptor
     ): DataFlowValue {
         if (expression is KtConstantExpression) {
             if (expression.node.elementType === KtNodeTypes.NULL) {
@@ -92,9 +92,11 @@ object DataFlowValueFactory {
             //
             // But there are some problem with types built on type parameters, e.g.
             // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
-            return DataFlowValue(ExpressionIdentifierInfo(expression),
-                                 type,
-                                 Nullability.NOT_NULL)
+            return DataFlowValue(
+                ExpressionIdentifierInfo(expression),
+                type,
+                Nullability.NOT_NULL
+            )
         }
 
         if (isComplexExpression(expression)) {
@@ -110,39 +112,44 @@ object DataFlowValueFactory {
 
     @JvmStatic
     fun createDataFlowValue(
-            receiverValue: ReceiverValue,
-            resolutionContext: ResolutionContext<*>
+        receiverValue: ReceiverValue,
+        resolutionContext: ResolutionContext<*>
     ) = createDataFlowValue(receiverValue, resolutionContext.trace.bindingContext, resolutionContext.scope.ownerDescriptor)
 
     @JvmStatic
     fun createDataFlowValue(
-            receiverValue: ReceiverValue,
-            bindingContext: BindingContext,
-            containingDeclarationOrModule: DeclarationDescriptor
+        receiverValue: ReceiverValue,
+        bindingContext: BindingContext,
+        containingDeclarationOrModule: DeclarationDescriptor
     ) = when (receiverValue) {
         is TransientReceiver, is ImplicitReceiver -> createDataFlowValueForStableReceiver(receiverValue)
-        is ExpressionReceiver -> createDataFlowValue(receiverValue.expression,
-                                                     receiverValue.getType(),
-                                                     bindingContext,
-                                                     containingDeclarationOrModule)
+        is ExpressionReceiver -> createDataFlowValue(
+            receiverValue.expression,
+            receiverValue.getType(),
+            bindingContext,
+            containingDeclarationOrModule
+        )
         else -> throw UnsupportedOperationException("Unsupported receiver value: " + receiverValue::class.java.name)
     }
 
     @JvmStatic
     fun createDataFlowValueForProperty(
-            property: KtProperty,
-            variableDescriptor: VariableDescriptor,
-            bindingContext: BindingContext,
-            usageContainingModule: ModuleDescriptor?
-    ) = DataFlowValue(IdentifierInfo.Variable(variableDescriptor,
-                                              variableKind(variableDescriptor, usageContainingModule,
-                                                           bindingContext, property),
-                                              bindingContext[BOUND_INITIALIZER_VALUE, variableDescriptor]),
-                                     variableDescriptor.type)
+        property: KtProperty,
+        variableDescriptor: VariableDescriptor,
+        bindingContext: BindingContext,
+        usageContainingModule: ModuleDescriptor?
+    ) = DataFlowValue(
+        IdentifierInfo.Variable(
+            variableDescriptor,
+            variableKind(variableDescriptor, usageContainingModule, bindingContext, property),
+            bindingContext[BOUND_INITIALIZER_VALUE, variableDescriptor]
+        ),
+        variableDescriptor.type
+    )
 
     private fun createDataFlowValueForComplexExpression(
-            expression: KtExpression,
-            type: KotlinType
+        expression: KtExpression,
+        type: KotlinType
     ) = DataFlowValue(ExpressionIdentifierInfo(expression, stableComplex = true), type)
 
     // For only ++ and -- postfix operations
@@ -155,7 +162,7 @@ object DataFlowValueFactory {
     class ExpressionIdentifierInfo(val expression: KtExpression, stableComplex: Boolean = false) : IdentifierInfo {
 
         override val kind = if (stableComplex) STABLE_COMPLEX_EXPRESSION else OTHER
-        
+
         override fun equals(other: Any?) = other is ExpressionIdentifierInfo && expression == other.expression
 
         override fun hashCode() = expression.hashCode()
@@ -164,17 +171,16 @@ object DataFlowValueFactory {
     }
 
     private fun postfix(argumentInfo: IdentifierInfo, op: KtToken) =
-            if (argumentInfo == IdentifierInfo.NO) {
-                IdentifierInfo.NO
-            }
-            else {
-                PostfixIdentifierInfo(argumentInfo, op)
-            }
+        if (argumentInfo == IdentifierInfo.NO) {
+            IdentifierInfo.NO
+        } else {
+            PostfixIdentifierInfo(argumentInfo, op)
+        }
 
     private fun getIdForStableIdentifier(
-            expression: KtExpression?,
-            bindingContext: BindingContext,
-            containingDeclarationOrModule: DeclarationDescriptor
+        expression: KtExpression?,
+        bindingContext: BindingContext,
+        containingDeclarationOrModule: DeclarationDescriptor
     ): IdentifierInfo {
         if (expression != null) {
             val deparenthesized = KtPsiUtil.deparenthesize(expression)
@@ -189,8 +195,10 @@ object DataFlowValueFactory {
                 val receiverInfo = getIdForStableIdentifier(receiverExpression, bindingContext, containingDeclarationOrModule)
                 val selectorInfo = getIdForStableIdentifier(selectorExpression, bindingContext, containingDeclarationOrModule)
 
-                IdentifierInfo.qualified(receiverInfo, bindingContext.getType(receiverExpression),
-                                         selectorInfo, expression.operationSign === KtTokens.SAFE_ACCESS)
+                IdentifierInfo.qualified(
+                    receiverInfo, bindingContext.getType(receiverExpression),
+                    selectorInfo, expression.operationSign === KtTokens.SAFE_ACCESS
+                )
             }
             is KtBinaryExpressionWithTypeRHS -> {
                 val subjectExpression = expression.left
@@ -198,11 +206,12 @@ object DataFlowValueFactory {
                 val operationToken = expression.operationReference.getReferencedNameElementType()
                 if (operationToken == KtTokens.IS_KEYWORD || operationToken == KtTokens.AS_KEYWORD) {
                     IdentifierInfo.NO
-                }
-                else {
-                    IdentifierInfo.SafeCast(getIdForStableIdentifier(subjectExpression, bindingContext, containingDeclarationOrModule),
-                                            bindingContext.getType(subjectExpression),
-                                            bindingContext[BindingContext.TYPE, targetTypeReference])
+                } else {
+                    IdentifierInfo.SafeCast(
+                        getIdForStableIdentifier(subjectExpression, bindingContext, containingDeclarationOrModule),
+                        bindingContext.getType(subjectExpression),
+                        bindingContext[BindingContext.TYPE, targetTypeReference]
+                    )
                 }
             }
             is KtSimpleNameExpression ->
@@ -214,10 +223,11 @@ object DataFlowValueFactory {
             is KtPostfixExpression -> {
                 val operationType = expression.operationReference.getReferencedNameElementType()
                 if (operationType === KtTokens.PLUSPLUS || operationType === KtTokens.MINUSMINUS) {
-                    postfix(getIdForStableIdentifier(expression.baseExpression, bindingContext, containingDeclarationOrModule),
-                            operationType)
-                }
-                else {
+                    postfix(
+                        getIdForStableIdentifier(expression.baseExpression, bindingContext, containingDeclarationOrModule),
+                        operationType
+                    )
+                } else {
                     IdentifierInfo.NO
                 }
             }
@@ -226,9 +236,9 @@ object DataFlowValueFactory {
     }
 
     private fun getIdForSimpleNameExpression(
-            simpleNameExpression: KtSimpleNameExpression,
-            bindingContext: BindingContext,
-            containingDeclarationOrModule: DeclarationDescriptor
+        simpleNameExpression: KtSimpleNameExpression,
+        bindingContext: BindingContext,
+        containingDeclarationOrModule: DeclarationDescriptor
     ): IdentifierInfo {
         val declarationDescriptor = bindingContext.get(REFERENCE_TARGET, simpleNameExpression)
         return when (declarationDescriptor) {
@@ -240,24 +250,25 @@ object DataFlowValueFactory {
                 // for now it fails for resolving 'invoke' convention, return it after 'invoke' algorithm changes
                 // assert resolvedCall != null : "Cannot create right identifier info if the resolved call is not known yet for
                 val usageModuleDescriptor = DescriptorUtils.getContainingModuleOrNull(containingDeclarationOrModule)
-                val selectorInfo = IdentifierInfo.Variable(declarationDescriptor,
-                                                           variableKind(declarationDescriptor, usageModuleDescriptor,
-                                                                        bindingContext, simpleNameExpression),
-                                                           bindingContext[BOUND_INITIALIZER_VALUE, declarationDescriptor])
+                val selectorInfo = IdentifierInfo.Variable(
+                    declarationDescriptor,
+                    variableKind(declarationDescriptor, usageModuleDescriptor, bindingContext, simpleNameExpression),
+                    bindingContext[BOUND_INITIALIZER_VALUE, declarationDescriptor]
+                )
 
                 val implicitReceiver = resolvedCall?.dispatchReceiver
                 if (implicitReceiver == null) {
                     selectorInfo
-                }
-                else {
+                } else {
                     val receiverInfo = getIdForImplicitReceiver(implicitReceiver, simpleNameExpression)
 
                     if (receiverInfo == null) {
                         selectorInfo
-                    }
-                    else {
-                        IdentifierInfo.qualified(receiverInfo, implicitReceiver.type,
-                                                 selectorInfo, resolvedCall.call.isSafeCall())
+                    } else {
+                        IdentifierInfo.qualified(
+                            receiverInfo, implicitReceiver.type,
+                            selectorInfo, resolvedCall.call.isSafeCall()
+                        )
                     }
                 }
             }
@@ -267,17 +278,17 @@ object DataFlowValueFactory {
     }
 
     private fun getIdForImplicitReceiver(receiverValue: ReceiverValue?, expression: KtExpression?) =
-            when (receiverValue) {
-                is ImplicitReceiver -> getIdForThisReceiver(receiverValue.declarationDescriptor)
-                is TransientReceiver ->
-                    throw AssertionError("Transient receiver is implicit for an explicit expression: $expression. Receiver: $receiverValue")
-                else -> null
-            }
+        when (receiverValue) {
+            is ImplicitReceiver -> getIdForThisReceiver(receiverValue.declarationDescriptor)
+            is TransientReceiver ->
+                throw AssertionError("Transient receiver is implicit for an explicit expression: $expression. Receiver: $receiverValue")
+            else -> null
+        }
 
     private fun getIdForThisReceiver(descriptorOfThisReceiver: DeclarationDescriptor?) = when (descriptorOfThisReceiver) {
         is CallableDescriptor -> {
             val receiverParameter = descriptorOfThisReceiver.extensionReceiverParameter
-                                    ?: error("'This' refers to the callable member without a receiver parameter: $descriptorOfThisReceiver")
+                    ?: error("'This' refers to the callable member without a receiver parameter: $descriptorOfThisReceiver")
             IdentifierInfo.Receiver(receiverParameter.value)
         }
         is ClassDescriptor -> IdentifierInfo.Receiver(descriptorOfThisReceiver.thisAsReceiverParameter.value)
@@ -285,13 +296,13 @@ object DataFlowValueFactory {
     }
 
     private fun isAccessedInsideClosure(
-            variableContainingDeclaration: DeclarationDescriptor,
-            bindingContext: BindingContext,
-            accessElement: KtElement
+        variableContainingDeclaration: DeclarationDescriptor,
+        bindingContext: BindingContext,
+        accessElement: KtElement
     ): Boolean {
         val parent = ControlFlowInformationProvider.getElementParentDeclaration(accessElement)
         return if (parent != null)
-            // Access is at the same declaration: not in closure, lower: in closure
+        // Access is at the same declaration: not in closure, lower: in closure
             ControlFlowInformationProvider.getDeclarationDescriptorIncludingConstructors(bindingContext, parent) !=
                     variableContainingDeclaration
         else
@@ -299,9 +310,9 @@ object DataFlowValueFactory {
     }
 
     private fun hasNoWritersInClosures(
-            variableContainingDeclaration: DeclarationDescriptor,
-            writers: Set<Writer>,
-            bindingContext: BindingContext
+        variableContainingDeclaration: DeclarationDescriptor,
+        writers: Set<Writer>,
+        bindingContext: BindingContext
     ): Boolean {
         return writers.none { (_, writerDeclaration) ->
             val writerDescriptor = writerDeclaration?.let {
@@ -312,24 +323,25 @@ object DataFlowValueFactory {
     }
 
     private fun isAccessedInsideClosureAfterAllWriters(
-            writers: Set<Writer>,
-            accessElement: KtElement
+        writers: Set<Writer>,
+        accessElement: KtElement
     ): Boolean {
         val parent = ControlFlowInformationProvider.getElementParentDeclaration(accessElement) ?: return false
         return writers.none { (assignment) -> !assignment.before(parent) }
     }
 
     private fun isAccessedBeforeAllClosureWriters(
-            variableContainingDeclaration: DeclarationDescriptor,
-            writers: Set<Writer>,
-            bindingContext: BindingContext,
-            accessElement: KtElement
+        variableContainingDeclaration: DeclarationDescriptor,
+        writers: Set<Writer>,
+        bindingContext: BindingContext,
+        accessElement: KtElement
     ): Boolean {
         // All writers should be before access element, with the exception:
         // writer which is the same with declaration site does not count
         writers.mapNotNull { it.declaration }.forEach { writerDeclaration ->
             val writerDescriptor = ControlFlowInformationProvider.getDeclarationDescriptorIncludingConstructors(
-                    bindingContext, writerDeclaration)
+                bindingContext, writerDeclaration
+            )
             // Access is after some writerDeclaration
             if (variableContainingDeclaration != writerDescriptor && !accessElement.before(writerDeclaration)) {
                 return false
@@ -353,10 +365,10 @@ object DataFlowValueFactory {
     }
 
     private fun variableKind(
-            variableDescriptor: VariableDescriptor,
-            usageModule: ModuleDescriptor?,
-            bindingContext: BindingContext,
-            accessElement: KtElement
+        variableDescriptor: VariableDescriptor,
+        usageModule: ModuleDescriptor?,
+        bindingContext: BindingContext,
+        accessElement: KtElement
     ): Kind {
         if (variableDescriptor is PropertyDescriptor) {
             return propertyKind(variableDescriptor, usageModule)
@@ -367,8 +379,8 @@ object DataFlowValueFactory {
 
         // Local variable classification: STABLE or CAPTURED
         val preliminaryVisitor = PreliminaryDeclarationVisitor.getVisitorByVariable(variableDescriptor, bindingContext)
-                                 // A case when we just analyse an expression alone: counts as captured
-                                 ?: return CAPTURED_VARIABLE
+                // A case when we just analyse an expression alone: counts as captured
+                ?: return CAPTURED_VARIABLE
 
         // Analyze who writes variable
         // If there is no writer: stable
@@ -380,11 +392,10 @@ object DataFlowValueFactory {
         if (isAccessedInsideClosure(variableContainingDeclaration, bindingContext, accessElement)) {
             // stable iff we have no writers in closures AND this closure is AFTER all writers
             return if (preliminaryVisitor.languageVersionSettings.supportsFeature(LanguageFeature.CapturedInClosureSmartCasts) &&
-                       hasNoWritersInClosures(variableContainingDeclaration, writers, bindingContext) &&
-                       isAccessedInsideClosureAfterAllWriters(writers, accessElement)) {
+                hasNoWritersInClosures(variableContainingDeclaration, writers, bindingContext) &&
+                isAccessedInsideClosureAfterAllWriters(writers, accessElement)) {
                 STABLE_VARIABLE
-            }
-            else {
+            } else {
                 CAPTURED_VARIABLE
             }
         }
@@ -415,8 +426,8 @@ object DataFlowValueFactory {
      * @return true if variable is stable, false otherwise
      */
     fun isStableValue(
-            variableDescriptor: VariableDescriptor,
-            usageModule: ModuleDescriptor?
+        variableDescriptor: VariableDescriptor,
+        usageModule: ModuleDescriptor?
     ): Boolean {
         if (variableDescriptor.isVar) return false
         return variableDescriptor !is PropertyDescriptor || propertyKind(variableDescriptor, usageModule) === STABLE_VALUE

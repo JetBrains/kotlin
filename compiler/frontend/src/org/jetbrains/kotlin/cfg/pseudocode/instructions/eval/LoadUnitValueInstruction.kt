@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
 class LoadUnitValueInstruction(
-        expression: KtExpression,
-        blockScope: BlockScope
+    expression: KtExpression,
+    blockScope: BlockScope
 ) : InstructionWithNext(expression, blockScope) {
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitLoadUnitValue(this)
@@ -36,8 +36,8 @@ class LoadUnitValueInstruction(
     }
 
     override fun toString(): String =
-            "read (Unit)"
+        "read (Unit)"
 
     override fun createCopy(): InstructionImpl =
-            LoadUnitValueInstruction(element as KtExpression, blockScope)
+        LoadUnitValueInstruction(element as KtExpression, blockScope)
 }

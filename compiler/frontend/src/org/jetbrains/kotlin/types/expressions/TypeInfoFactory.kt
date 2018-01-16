@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo): KotlinTypeInfo = KotlinTypeInfo(type, dataFlowInfo)
 
 fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo, jumpPossible: Boolean, jumpFlowInfo: DataFlowInfo): KotlinTypeInfo =
-        KotlinTypeInfo(type, dataFlowInfo, jumpPossible, jumpFlowInfo)
+    KotlinTypeInfo(type, dataFlowInfo, jumpPossible, jumpFlowInfo)
 
 fun createTypeInfo(type: KotlinType?): KotlinTypeInfo = createTypeInfo(type, DataFlowInfo.EMPTY)
 

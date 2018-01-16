@@ -21,7 +21,7 @@ import java.util.LinkedHashSet
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 
-abstract class InstructionImpl(override val blockScope: BlockScope): Instruction {
+abstract class InstructionImpl(override val blockScope: BlockScope) : Instruction {
     private var _owner: Pseudocode? = null
 
     override var owner: Pseudocode

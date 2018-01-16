@@ -32,13 +32,13 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.IMPORT_LIST
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 open class KotlinFileStubImpl(
-        jetFile: KtFile?,
-        private val packageName: StringRef,
-        private val isScript: Boolean
+    jetFile: KtFile?,
+    private val packageName: StringRef,
+    private val isScript: Boolean
 ) : PsiFileStubImpl<KtFile>(jetFile), KotlinFileStub, PsiClassHolderFileStub<KtFile> {
 
     constructor(jetFile: KtFile?, packageName: String, isScript: Boolean)
-        : this(jetFile, StringRef.fromString(packageName)!!, isScript)
+            : this(jetFile, StringRef.fromString(packageName)!!, isScript)
 
     override fun getPackageFqName(): FqName = FqName(StringRef.toString(packageName)!!)
     override fun isScript(): Boolean = isScript

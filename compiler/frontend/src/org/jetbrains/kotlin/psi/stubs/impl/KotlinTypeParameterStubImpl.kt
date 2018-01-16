@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import com.intellij.psi.PsiElement
 
 class KotlinTypeParameterStubImpl(
-        parent: StubElement<out PsiElement>?,
-        private val name: StringRef?,
-        private val isInVariance: Boolean,
-        private val isOutVariance: Boolean
+    parent: StubElement<out PsiElement>?,
+    private val name: StringRef?,
+    private val isInVariance: Boolean,
+    private val isOutVariance: Boolean
 ) : KotlinStubBaseImpl<KtTypeParameter>(parent, KtStubElementTypes.TYPE_PARAMETER), KotlinTypeParameterStub {
     override fun isInVariance() = isInVariance
     override fun isOutVariance() = isOutVariance

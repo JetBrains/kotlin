@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.psi.KtElement
 
 class InlinedLocalFunctionDeclarationInstruction(
-        element: KtElement,
-        body: Pseudocode,
-        blockScope: BlockScope,
-        val kind: InvocationKind
+    element: KtElement,
+    body: Pseudocode,
+    blockScope: BlockScope,
+    val kind: InvocationKind
 ) : LocalFunctionDeclarationInstruction(element, body, blockScope) {
     override fun createCopy(): InstructionImpl = InlinedLocalFunctionDeclarationInstruction(element, body, blockScope, kind)
 

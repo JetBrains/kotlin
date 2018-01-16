@@ -46,26 +46,26 @@ object AnnotationUseSiteTargetChecker {
             when (target) {
                 AnnotationUseSiteTarget.FIELD -> checkIfHasBackingField(annotated, descriptor, annotation)
                 AnnotationUseSiteTarget.PROPERTY,
-                AnnotationUseSiteTarget.PROPERTY_GETTER -> {}
+                AnnotationUseSiteTarget.PROPERTY_GETTER -> {
+                }
                 AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> checkIfDelegatedProperty(annotated, annotation)
                 AnnotationUseSiteTarget.PROPERTY_SETTER -> checkIfMutableProperty(annotated, annotation)
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> {
                     if (annotated !is KtParameter) {
                         report(INAPPLICABLE_PARAM_TARGET.on(annotation))
-                    }
-                    else {
+                    } else {
                         val containingDeclaration = bindingContext[BindingContext.VALUE_PARAMETER, annotated]?.containingDeclaration
                         if (containingDeclaration !is ConstructorDescriptor || !containingDeclaration.isPrimary) {
                             report(INAPPLICABLE_PARAM_TARGET.on(annotation))
-                        }
-                        else if (!annotated.hasValOrVar()) {
+                        } else if (!annotated.hasValOrVar()) {
                             report(REDUNDANT_ANNOTATION_TARGET.on(annotation, target.renderName))
                         }
                     }
                 }
                 AnnotationUseSiteTarget.SETTER_PARAMETER -> checkIfMutableProperty(annotated, annotation)
                 AnnotationUseSiteTarget.FILE -> reportDiagnosticOnce(INAPPLICABLE_FILE_TARGET.on(useSiteTarget))
-                AnnotationUseSiteTarget.RECEIVER -> {}
+                AnnotationUseSiteTarget.RECEIVER -> {
+                }
             }
         }
     }
@@ -76,7 +76,11 @@ object AnnotationUseSiteTargetChecker {
         }
     }
 
-    private fun BindingTrace.checkIfHasBackingField(annotated: KtAnnotated, descriptor: DeclarationDescriptor, annotation: KtAnnotationEntry) {
+    private fun BindingTrace.checkIfHasBackingField(
+        annotated: KtAnnotated,
+        descriptor: DeclarationDescriptor,
+        annotation: KtAnnotationEntry
+    ) {
         if (annotated is KtProperty && annotated.hasDelegate() &&
             descriptor is PropertyDescriptor && get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) != true) {
             report(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD.on(annotation))
@@ -84,7 +88,7 @@ object AnnotationUseSiteTargetChecker {
     }
 
     private fun KtAnnotationEntry.useSiteDescription() =
-            useSiteTarget?.getAnnotationUseSiteTarget()?.renderName ?: "unknown target" // should not happen
+        useSiteTarget?.getAnnotationUseSiteTarget()?.renderName ?: "unknown target" // should not happen
 
     private fun BindingTrace.checkIfMutableProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry) {
         if (!checkIfProperty(annotated, annotation)) return

@@ -36,7 +36,7 @@ object ApiVersionCallChecker : CallChecker {
 
         val accessible = targetDescriptor.checkSinceKotlinVersionAccessibility(context.languageVersionSettings) { version ->
             context.trace.report(
-                    API_NOT_AVAILABLE.on(element, version.versionString, context.languageVersionSettings.apiVersion.versionString)
+                API_NOT_AVAILABLE.on(element, version.versionString, context.languageVersionSettings.apiVersion.versionString)
             )
         }
 

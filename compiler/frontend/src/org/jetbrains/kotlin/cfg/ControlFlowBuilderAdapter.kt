@@ -35,42 +35,46 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
     }
 
     override fun loadConstant(expression: KtExpression, constant: CompileTimeConstant<*>?): InstructionWithValue =
-            delegateBuilder.loadConstant(expression, constant)
+        delegateBuilder.loadConstant(expression, constant)
 
     override fun createAnonymousObject(expression: KtObjectLiteralExpression): InstructionWithValue =
-            delegateBuilder.createAnonymousObject(expression)
+        delegateBuilder.createAnonymousObject(expression)
 
     override fun createLambda(expression: KtFunction): InstructionWithValue = delegateBuilder.createLambda(expression)
 
     override fun loadStringTemplate(expression: KtStringTemplateExpression, inputValues: List<PseudoValue>): InstructionWithValue =
-            delegateBuilder.loadStringTemplate(expression, inputValues)
+        delegateBuilder.loadStringTemplate(expression, inputValues)
 
     override fun magic(
-            instructionElement: KtElement,
-            valueElement: KtElement?,
-            inputValues: List<PseudoValue>,
-            kind: MagicKind): MagicInstruction = delegateBuilder.magic(instructionElement, valueElement, inputValues, kind)
+        instructionElement: KtElement,
+        valueElement: KtElement?,
+        inputValues: List<PseudoValue>,
+        kind: MagicKind
+    ): MagicInstruction = delegateBuilder.magic(instructionElement, valueElement, inputValues, kind)
 
     override fun merge(expression: KtExpression, inputValues: List<PseudoValue>): MergeInstruction =
-            delegateBuilder.merge(expression, inputValues)
+        delegateBuilder.merge(expression, inputValues)
 
     override fun readVariable(
-            expression: KtExpression,
-            resolvedCall: ResolvedCall<*>,
-            receiverValues: Map<PseudoValue, ReceiverValue>): ReadValueInstruction =
-            delegateBuilder.readVariable(expression, resolvedCall, receiverValues)
+        expression: KtExpression,
+        resolvedCall: ResolvedCall<*>,
+        receiverValues: Map<PseudoValue, ReceiverValue>
+    ): ReadValueInstruction =
+        delegateBuilder.readVariable(expression, resolvedCall, receiverValues)
 
     override fun call(
-            valueElement: KtElement,
-            resolvedCall: ResolvedCall<*>,
-            receiverValues: Map<PseudoValue, ReceiverValue>,
-            arguments: Map<PseudoValue, ValueParameterDescriptor>): CallInstruction =
-            delegateBuilder.call(valueElement, resolvedCall, receiverValues, arguments)
+        valueElement: KtElement,
+        resolvedCall: ResolvedCall<*>,
+        receiverValues: Map<PseudoValue, ReceiverValue>,
+        arguments: Map<PseudoValue, ValueParameterDescriptor>
+    ): CallInstruction =
+        delegateBuilder.call(valueElement, resolvedCall, receiverValues, arguments)
 
     override fun predefinedOperation(
-            expression: KtExpression,
-            operation: ControlFlowBuilder.PredefinedOperation,
-            inputValues: List<PseudoValue>): OperationInstruction = delegateBuilder.predefinedOperation(expression, operation, inputValues)
+        expression: KtExpression,
+        operation: ControlFlowBuilder.PredefinedOperation,
+        inputValues: List<PseudoValue>
+    ): OperationInstruction = delegateBuilder.predefinedOperation(expression, operation, inputValues)
 
     override fun createUnboundLabel(): Label = delegateBuilder.createUnboundLabel()
 
@@ -140,7 +144,7 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
     }
 
     override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode =
-            delegateBuilder.exitSubroutine(subroutine, invocationKind)
+        delegateBuilder.exitSubroutine(subroutine, invocationKind)
 
     override val currentSubroutine: KtElement
         get() = delegateBuilder.currentSubroutine
@@ -157,14 +161,15 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
     }
 
     override fun read(element: KtElement, target: AccessTarget, receiverValues: Map<PseudoValue, ReceiverValue>) =
-            delegateBuilder.read(element, target, receiverValues)
+        delegateBuilder.read(element, target, receiverValues)
 
     override fun write(
-            assignment: KtElement,
-            lValue: KtElement,
-            rValue: PseudoValue,
-            target: AccessTarget,
-            receiverValues: Map<PseudoValue, ReceiverValue>) {
+        assignment: KtElement,
+        lValue: KtElement,
+        rValue: PseudoValue,
+        target: AccessTarget,
+        receiverValues: Map<PseudoValue, ReceiverValue>
+    ) {
         delegateBuilder.write(assignment, lValue, rValue, target, receiverValues)
     }
 

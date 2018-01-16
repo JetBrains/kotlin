@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
 
     fun getDataFlowInfoForFinishedCall(
-            resolvedCall: ResolvedCall<*>,
-            bindingTrace: BindingTrace,
-            moduleDescriptor: ModuleDescriptor
+        resolvedCall: ResolvedCall<*>,
+        bindingTrace: BindingTrace,
+        moduleDescriptor: ModuleDescriptor
     ): DataFlowInfo {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect)) return DataFlowInfo.EMPTY
 
@@ -57,16 +57,18 @@ class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
     }
 
     fun getDataFlowInfoWhenEquals(
-            leftExpression: KtExpression?,
-            rightExpression: KtExpression?,
-            bindingTrace: BindingTrace,
-            moduleDescriptor: ModuleDescriptor
+        leftExpression: KtExpression?,
+        rightExpression: KtExpression?,
+        bindingTrace: BindingTrace,
+        moduleDescriptor: ModuleDescriptor
     ): ConditionalDataFlowInfo {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect)) return ConditionalDataFlowInfo.EMPTY
         if (leftExpression == null || rightExpression == null) return ConditionalDataFlowInfo.EMPTY
 
-        val leftComputation = getNonTrivialComputation(leftExpression, bindingTrace, moduleDescriptor) ?: return ConditionalDataFlowInfo.EMPTY
-        val rightComputation = getNonTrivialComputation(rightExpression, bindingTrace, moduleDescriptor) ?: return ConditionalDataFlowInfo.EMPTY
+        val leftComputation =
+            getNonTrivialComputation(leftExpression, bindingTrace, moduleDescriptor) ?: return ConditionalDataFlowInfo.EMPTY
+        val rightComputation =
+            getNonTrivialComputation(rightExpression, bindingTrace, moduleDescriptor) ?: return ConditionalDataFlowInfo.EMPTY
 
         val effects = EqualsFunctor(false).invokeWithArguments(leftComputation, rightComputation)
 
@@ -74,8 +76,8 @@ class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
         val notEqualsContextInfo = InfoCollector(ESReturns(false.lift())).collectFromSchema(effects)
 
         return ConditionalDataFlowInfo(
-                equalsContextInfo.toDataFlowInfo(languageVersionSettings),
-                notEqualsContextInfo.toDataFlowInfo(languageVersionSettings)
+            equalsContextInfo.toDataFlowInfo(languageVersionSettings),
+            notEqualsContextInfo.toDataFlowInfo(languageVersionSettings)
         )
     }
 
@@ -95,23 +97,23 @@ class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
     }
 
     fun extractDataFlowInfoFromCondition(
-            condition: KtExpression?,
-            value: Boolean,
-            bindingTrace: BindingTrace,
-            moduleDescriptor: ModuleDescriptor
+        condition: KtExpression?,
+        value: Boolean,
+        bindingTrace: BindingTrace,
+        moduleDescriptor: ModuleDescriptor
     ): DataFlowInfo {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect)) return DataFlowInfo.EMPTY
         if (condition == null) return DataFlowInfo.EMPTY
 
         return getContextInfoWhen(ESReturns(value.lift()), condition, bindingTrace, moduleDescriptor)
-                .toDataFlowInfo(languageVersionSettings)
+            .toDataFlowInfo(languageVersionSettings)
     }
 
     private fun getContextInfoWhen(
-            observedEffect: ESEffect,
-            expression: KtExpression,
-            bindingTrace: BindingTrace,
-            moduleDescriptor: ModuleDescriptor
+        observedEffect: ESEffect,
+        expression: KtExpression,
+        bindingTrace: BindingTrace,
+        moduleDescriptor: ModuleDescriptor
     ): MutableContextInfo {
         val computation = getNonTrivialComputation(expression, bindingTrace, moduleDescriptor) ?: return MutableContextInfo.EMPTY
         return InfoCollector(observedEffect).collectFromSchema(computation.effects)

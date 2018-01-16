@@ -33,39 +33,46 @@ import java.util.*
 
 interface SyntheticResolveExtension {
     companion object : ProjectExtensionDescriptor<SyntheticResolveExtension>(
-            "org.jetbrains.kotlin.syntheticResolveExtension", SyntheticResolveExtension::class.java) {
+        "org.jetbrains.kotlin.syntheticResolveExtension", SyntheticResolveExtension::class.java
+    ) {
         fun getInstance(project: Project): SyntheticResolveExtension {
             val instances = getInstances(project)
             if (instances.size == 1) return instances.single()
             // return list combiner here
             return object : SyntheticResolveExtension {
                 override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> =
-                        instances.flatMap { it.getSyntheticNestedClassNames(thisDescriptor) }
+                    instances.flatMap { it.getSyntheticNestedClassNames(thisDescriptor) }
 
                 override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> =
-                        instances.flatMap { it.getSyntheticFunctionNames(thisDescriptor) }
+                    instances.flatMap { it.getSyntheticFunctionNames(thisDescriptor) }
 
-                override fun generateSyntheticClasses(thisDescriptor: ClassDescriptor, name: Name,
-                                                      ctx: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider,
-                                                      result: MutableSet<ClassDescriptor>) =
-                        instances.forEach { it.generateSyntheticClasses(thisDescriptor, name, ctx, declarationProvider, result) }
+                override fun generateSyntheticClasses(
+                    thisDescriptor: ClassDescriptor, name: Name,
+                    ctx: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider,
+                    result: MutableSet<ClassDescriptor>
+                ) =
+                    instances.forEach { it.generateSyntheticClasses(thisDescriptor, name, ctx, declarationProvider, result) }
 
                 override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? =
-                        instances.firstNotNullResult { it.getSyntheticCompanionObjectNameIfNeeded(thisDescriptor) }
+                    instances.firstNotNullResult { it.getSyntheticCompanionObjectNameIfNeeded(thisDescriptor) }
 
                 override fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) =
-                        instances.forEach { it.addSyntheticSupertypes(thisDescriptor, supertypes) }
+                    instances.forEach { it.addSyntheticSupertypes(thisDescriptor, supertypes) }
 
                 // todo revert
-                override fun generateSyntheticMethods(thisDescriptor: ClassDescriptor, name: Name,
-                                                      fromSupertypes: List<SimpleFunctionDescriptor>,
-                                                      result: MutableCollection<SimpleFunctionDescriptor>) =
-                        instances.forEach { it.generateSyntheticMethods(thisDescriptor, name, fromSupertypes, result) }
+                override fun generateSyntheticMethods(
+                    thisDescriptor: ClassDescriptor, name: Name,
+                    fromSupertypes: List<SimpleFunctionDescriptor>,
+                    result: MutableCollection<SimpleFunctionDescriptor>
+                ) =
+                    instances.forEach { it.generateSyntheticMethods(thisDescriptor, name, fromSupertypes, result) }
 
-                override fun generateSyntheticProperties(thisDescriptor: ClassDescriptor, name: Name,
-                                                         fromSupertypes: ArrayList<PropertyDescriptor>,
-                                                         result: MutableSet<PropertyDescriptor>) =
-                        instances.forEach { it.generateSyntheticProperties(thisDescriptor, name, fromSupertypes, result) }
+                override fun generateSyntheticProperties(
+                    thisDescriptor: ClassDescriptor, name: Name,
+                    fromSupertypes: ArrayList<PropertyDescriptor>,
+                    result: MutableSet<PropertyDescriptor>
+                ) =
+                    instances.forEach { it.generateSyntheticProperties(thisDescriptor, name, fromSupertypes, result) }
             }
         }
     }
@@ -78,22 +85,28 @@ interface SyntheticResolveExtension {
 
     fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {}
 
-    fun generateSyntheticClasses(thisDescriptor: ClassDescriptor,
-                                 name: Name,
-                                 ctx: LazyClassContext,
-                                 declarationProvider: ClassMemberDeclarationProvider,
-                                 result: MutableSet<ClassDescriptor>) {
+    fun generateSyntheticClasses(
+        thisDescriptor: ClassDescriptor,
+        name: Name,
+        ctx: LazyClassContext,
+        declarationProvider: ClassMemberDeclarationProvider,
+        result: MutableSet<ClassDescriptor>
+    ) {
     }
 
-    fun generateSyntheticMethods(thisDescriptor: ClassDescriptor,
-                                 name: Name,
-                                 fromSupertypes: List<SimpleFunctionDescriptor>,
-                                 result: MutableCollection<SimpleFunctionDescriptor>) {
+    fun generateSyntheticMethods(
+        thisDescriptor: ClassDescriptor,
+        name: Name,
+        fromSupertypes: List<SimpleFunctionDescriptor>,
+        result: MutableCollection<SimpleFunctionDescriptor>
+    ) {
     }
 
-    fun generateSyntheticProperties(thisDescriptor: ClassDescriptor,
-                                    name: Name,
-                                    fromSupertypes: ArrayList<PropertyDescriptor>,
-                                    result: MutableSet<PropertyDescriptor>) {
+    fun generateSyntheticProperties(
+        thisDescriptor: ClassDescriptor,
+        name: Name,
+        fromSupertypes: ArrayList<PropertyDescriptor>,
+        result: MutableSet<PropertyDescriptor>
+    ) {
     }
 }

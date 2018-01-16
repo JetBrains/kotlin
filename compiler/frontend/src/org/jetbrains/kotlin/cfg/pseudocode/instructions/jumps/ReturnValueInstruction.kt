@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
 class ReturnValueInstruction(
-        returnExpression: KtExpression,
-        blockScope: BlockScope,
-        targetLabel: Label,
-        val returnedValue: PseudoValue,
-        val subroutine: KtElement
+    returnExpression: KtExpression,
+    blockScope: BlockScope,
+    targetLabel: Label,
+    val returnedValue: PseudoValue,
+    val subroutine: KtElement
 ) : AbstractJumpInstruction(returnExpression, targetLabel, blockScope) {
     override val inputValues: List<PseudoValue> get() = Collections.singletonList(returnedValue)
 
@@ -44,7 +44,7 @@ class ReturnValueInstruction(
     override fun toString(): String = "ret(*|$returnedValue) $targetLabel"
 
     override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction =
-            ReturnValueInstruction((element as KtExpression), blockScope, newLabel, returnedValue, subroutine)
+        ReturnValueInstruction((element as KtExpression), blockScope, newLabel, returnedValue, subroutine)
 
     val returnExpressionIfAny: KtReturnExpression? = element as? KtReturnExpression
 }

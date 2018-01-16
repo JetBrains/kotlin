@@ -40,7 +40,7 @@ interface ModuleContext : ProjectContext {
     val module: ModuleDescriptor
 }
 
-interface MutableModuleContext: ModuleContext {
+interface MutableModuleContext : ModuleContext {
     override val module: ModuleDescriptorImpl
 
     fun setDependencies(vararg dependencies: ModuleDescriptorImpl) {
@@ -57,30 +57,30 @@ interface MutableModuleContext: ModuleContext {
 }
 
 open class SimpleGlobalContext(
-        override val storageManager: StorageManager,
-        override val exceptionTracker: ExceptionTracker
+    override val storageManager: StorageManager,
+    override val exceptionTracker: ExceptionTracker
 ) : GlobalContext
 
 open class GlobalContextImpl(
-        storageManager: LockBasedStorageManager,
-        exceptionTracker: ExceptionTracker
+    storageManager: LockBasedStorageManager,
+    exceptionTracker: ExceptionTracker
 ) : SimpleGlobalContext(storageManager, exceptionTracker) {
     override val storageManager: LockBasedStorageManager = super.storageManager as LockBasedStorageManager
 }
 
 class ProjectContextImpl(
-        override val project: Project,
-        private val globalContext: GlobalContext
+    override val project: Project,
+    private val globalContext: GlobalContext
 ) : ProjectContext, GlobalContext by globalContext
 
 class ModuleContextImpl(
-        override val module: ModuleDescriptor,
-        projectContext: ProjectContext
+    override val module: ModuleDescriptor,
+    projectContext: ProjectContext
 ) : ModuleContext, ProjectContext by projectContext
 
 class MutableModuleContextImpl(
-        override val module: ModuleDescriptorImpl,
-        projectContext: ProjectContext
+    override val module: ModuleDescriptorImpl,
+    projectContext: ProjectContext
 ) : MutableModuleContext, ProjectContext by projectContext
 
 fun GlobalContext(): GlobalContextImpl {
@@ -90,16 +90,16 @@ fun GlobalContext(): GlobalContextImpl {
 
 fun ProjectContext(project: Project): ProjectContext = ProjectContextImpl(project, GlobalContext())
 fun ModuleContext(module: ModuleDescriptor, project: Project): ModuleContext =
-        ModuleContextImpl(module, ProjectContext(project))
+    ModuleContextImpl(module, ProjectContext(project))
 
 fun GlobalContext.withProject(project: Project): ProjectContext = ProjectContextImpl(project, this)
 fun ProjectContext.withModule(module: ModuleDescriptor): ModuleContext = ModuleContextImpl(module, this)
 
 fun ContextForNewModule(
-        projectContext: ProjectContext,
-        moduleName: Name,
-        builtIns: KotlinBuiltIns,
-        multiTargetPlatform: MultiTargetPlatform?
+    projectContext: ProjectContext,
+    moduleName: Name,
+    builtIns: KotlinBuiltIns,
+    multiTargetPlatform: MultiTargetPlatform?
 ): MutableModuleContext {
     val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, builtIns, multiTargetPlatform)
     return MutableModuleContextImpl(module, projectContext)

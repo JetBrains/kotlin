@@ -31,8 +31,10 @@ import java.util.*
  */
 class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher() {
 
-    fun clearDataFlowInfoForAssignedLocalVariables(dataFlowInfo: DataFlowInfo,
-                                                   languageVersionSettings: LanguageVersionSettings): DataFlowInfo {
+    fun clearDataFlowInfoForAssignedLocalVariables(
+        dataFlowInfo: DataFlowInfo,
+        languageVersionSettings: LanguageVersionSettings
+    ): DataFlowInfo {
         var resultFlowInfo = dataFlowInfo
         val nullabilityMap = resultFlowInfo.completeNullabilityInfo
         val valueSetToClear = LinkedHashSet<DataFlowValue>()

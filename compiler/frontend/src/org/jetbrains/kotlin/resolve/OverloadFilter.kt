@@ -24,6 +24,6 @@ interface OverloadFilter {
 
     object Default : OverloadFilter {
         override fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot> =
-                overloads
+            overloads
     }
 }

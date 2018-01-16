@@ -27,17 +27,19 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 sealed class AccessTarget {
-    class Declaration(val descriptor: VariableDescriptor): AccessTarget() {
+    class Declaration(val descriptor: VariableDescriptor) : AccessTarget() {
         override fun equals(other: Any?) = other is Declaration && descriptor == other.descriptor
 
         override fun hashCode() = descriptor.hashCode()
     }
-    class Call(val resolvedCall: ResolvedCall<*>): AccessTarget() {
+
+    class Call(val resolvedCall: ResolvedCall<*>) : AccessTarget() {
         override fun equals(other: Any?) = other is Call && resolvedCall == other.resolvedCall
 
         override fun hashCode() = resolvedCall.hashCode()
     }
-    object BlackBox: AccessTarget()
+
+    object BlackBox : AccessTarget()
 }
 
 val AccessTarget.accessedDescriptor: CallableDescriptor?
@@ -48,26 +50,26 @@ val AccessTarget.accessedDescriptor: CallableDescriptor?
     }
 
 abstract class AccessValueInstruction protected constructor(
-        element: KtElement,
-        blockScope: BlockScope,
-        val target: AccessTarget,
-        override val receiverValues: Map<PseudoValue, ReceiverValue>
+    element: KtElement,
+    blockScope: BlockScope,
+    val target: AccessTarget,
+    override val receiverValues: Map<PseudoValue, ReceiverValue>
 ) : InstructionWithNext(element, blockScope), InstructionWithReceivers
 
 class ReadValueInstruction private constructor(
+    element: KtElement,
+    blockScope: BlockScope,
+    target: AccessTarget,
+    receiverValues: Map<PseudoValue, ReceiverValue>,
+    private var _outputValue: PseudoValue?
+) : AccessValueInstruction(element, blockScope, target, receiverValues), InstructionWithValue {
+    constructor(
         element: KtElement,
         blockScope: BlockScope,
         target: AccessTarget,
         receiverValues: Map<PseudoValue, ReceiverValue>,
-        private var _outputValue: PseudoValue?
-) : AccessValueInstruction(element, blockScope, target, receiverValues), InstructionWithValue {
-    constructor(
-            element: KtElement,
-            blockScope: BlockScope,
-            target: AccessTarget,
-            receiverValues: Map<PseudoValue, ReceiverValue>,
-            factory: PseudoValueFactory
-    ): this(element, blockScope, target, receiverValues, null) {
+        factory: PseudoValueFactory
+    ) : this(element, blockScope, target, receiverValues, null) {
         _outputValue = factory.newValue(element, this)
     }
 
@@ -97,16 +99,16 @@ class ReadValueInstruction private constructor(
     }
 
     override fun createCopy(): InstructionImpl =
-            ReadValueInstruction(element, blockScope, target, receiverValues, outputValue)
+        ReadValueInstruction(element, blockScope, target, receiverValues, outputValue)
 }
 
 class WriteValueInstruction(
-        assignment: KtElement,
-        blockScope: BlockScope,
-        target: AccessTarget,
-        receiverValues: Map<PseudoValue, ReceiverValue>,
-        val lValue: KtElement,
-        private val rValue: PseudoValue
+    assignment: KtElement,
+    blockScope: BlockScope,
+    target: AccessTarget,
+    receiverValues: Map<PseudoValue, ReceiverValue>,
+    val lValue: KtElement,
+    private val rValue: PseudoValue
 ) : AccessValueInstruction(assignment, blockScope, target, receiverValues) {
     override val inputValues: List<PseudoValue>
         get() = (receiverValues.keys as Collection<PseudoValue>) + rValue
@@ -123,5 +125,5 @@ class WriteValueInstruction(
     }
 
     override fun createCopy(): InstructionImpl =
-            WriteValueInstruction(element, blockScope, target, receiverValues, lValue, rValue)
+        WriteValueInstruction(element, blockScope, target, receiverValues, lValue, rValue)
 }

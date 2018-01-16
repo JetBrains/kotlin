@@ -36,12 +36,12 @@ private val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
 fun DeclarationDescriptor.hasJvmSyntheticAnnotation() = findJvmSyntheticAnnotation() != null
 
 fun DeclarationDescriptor.findJvmSyntheticAnnotation() =
-        DescriptorUtils.getAnnotationByFqName(annotations, JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
+    DescriptorUtils.getAnnotationByFqName(annotations, JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
 
 private val STRICTFP_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Strictfp")
 
 fun DeclarationDescriptor.findStrictfpAnnotation() =
-        DescriptorUtils.getAnnotationByFqName(annotations, STRICTFP_ANNOTATION_FQ_NAME)
+    DescriptorUtils.getAnnotationByFqName(annotations, STRICTFP_ANNOTATION_FQ_NAME)
 
 fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
     return allValueArguments[Name.identifier(parameterName)].takeUnless { it is ErrorValue }?.value

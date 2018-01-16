@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.psi.psiUtil.allChildren
 
 fun findDocComment(declaration: KtDeclaration): KDoc? {
     return declaration.allChildren
-            .flatMap {
-                if (it is KtDeclarationModifierList) {
-                    return@flatMap it.children.asSequence()
-                }
-                sequenceOf(it)
+        .flatMap {
+            if (it is KtDeclarationModifierList) {
+                return@flatMap it.children.asSequence()
             }
-            .dropWhile { it !is KDoc }
-            .firstOrNull() as? KDoc
+            sequenceOf(it)
+        }
+        .dropWhile { it !is KDoc }
+        .firstOrNull() as? KDoc
 }

@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ContractDeserializerImpl(private val configuration: DeserializationConfiguration) : ContractDeserializer {
     override fun deserializeContractFromFunction(
-            proto: ProtoBuf.Function,
-            ownerFunction: FunctionDescriptor,
-            typeTable: TypeTable,
-            typeDeserializer: TypeDeserializer
+        proto: ProtoBuf.Function,
+        ownerFunction: FunctionDescriptor,
+        typeTable: TypeTable,
+        typeDeserializer: TypeDeserializer
     ): Pair<FunctionDescriptor.UserDataKey<*>, LazyContractProvider>? {
         if (!proto.hasContract()) return null
 
@@ -46,9 +46,9 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
     }
 
     private class ContractDeserializationWorker(
-            private val typeTable: TypeTable,
-            private val typeDeserializer: TypeDeserializer,
-            private val ownerFunction: FunctionDescriptor
+        private val typeTable: TypeTable,
+        private val typeDeserializer: TypeDeserializer,
+        private val ownerFunction: FunctionDescriptor
     ) {
 
         fun deserializeContract(proto: ProtoBuf.Contract): ContractDescription? {
@@ -71,7 +71,9 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
             return when (type!!) {
                 ProtoBuf.Effect.EffectType.RETURNS_CONSTANT -> {
                     val argument = proto.effectConstructorArgumentList.getOrNull(0)
-                    val returnValue = if (argument == null) ConstantReference.WILDCARD else deserializeExpression(argument) as? ConstantReference ?: return null
+                    val returnValue =
+                        if (argument == null) ConstantReference.WILDCARD else deserializeExpression(argument) as? ConstantReference
+                                ?: return null
                     ReturnsEffectDeclaration(returnValue)
                 }
 
@@ -225,7 +227,7 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
         private fun ProtoBuf.Expression.hasType(): Boolean = this.hasIsInstanceType() || this.hasIsInstanceTypeId()
 
         private fun ProtoBuf.Expression.hasFlag(flag: Flags.BooleanFlagField) =
-                this.hasFlags() && flag.get(this.flags)
+            this.hasFlags() && flag.get(this.flags)
 
         // Arguments of expressions with such types are never other expressions
         private enum class PrimitiveExpressionType {
