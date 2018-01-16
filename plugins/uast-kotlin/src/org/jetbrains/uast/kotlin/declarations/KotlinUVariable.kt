@@ -241,7 +241,7 @@ class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override va
         get() = emptyList()
     override val psi: PsiElement?
         get() = null
-    override val javaPsi: PsiElement?
+    override val javaPsi: PsiAnnotation?
         get() = null
     override val sourcePsi: PsiElement?
         get() = null
