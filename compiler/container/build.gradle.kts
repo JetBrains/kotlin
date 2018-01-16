@@ -24,7 +24,7 @@ sourceSets {
 testsJar {}
 
 projectTest {
-    dependsOnTaskIfExistsRec("dist", project = rootProject)
+    shouldRunAfter(":dist")
     dependsOn(":prepare:mock-runtime-for-test:dist")
     workingDir = rootDir
 }

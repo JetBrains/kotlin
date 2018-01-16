@@ -22,7 +22,7 @@ tasks.withType<KotlinCompile> {
 
 projectTest {
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
-    dependsOnTaskIfExistsRec("dist", project = rootProject)
+    shouldRunAfter(":dist")
     dependsOn(":prepare:mock-runtime-for-test:dist")
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))

@@ -37,7 +37,7 @@ testsJar {}
 
 projectTest {
     workingDir = rootDir
-    dependsOnTaskIfExistsRec("dist", project = rootProject)
+    shouldRunAfter(":dist")
 }
 
 runtimeJar()

@@ -17,6 +17,6 @@ sourceSets {
 }
 
 projectTest {
-    dependsOnTaskIfExistsRec("dist", project = rootProject)
+    shouldRunAfter(":dist")
     workingDir = rootDir
 }

@@ -355,14 +355,13 @@ task<Copy>("dist") {
 }
 
 val compilerCopyTask = task<Copy>("idea-plugin-copy-compiler") {
-    dependsOnTaskIfExistsRec("dist")
+    shouldRunAfter(":dist")
     into(ideaPluginDir)
     from(distDir) { include("kotlinc/**") }
 }
 
 task<Copy>("ideaPlugin") {
     dependsOn(compilerCopyTask)
-    dependsOnTaskIfExistsRec("idea-plugin")
     shouldRunAfter(":prepare:idea-plugin:idea-plugin")
     into("$ideaPluginDir/lib")
 }

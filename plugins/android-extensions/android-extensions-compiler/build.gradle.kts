@@ -52,7 +52,7 @@ evaluationDependsOn(":kotlin-android-extensions-runtime")
 
 projectTest {
     environment("ANDROID_EXTENSIONS_RUNTIME_CLASSES", getSourceSetsFrom(":kotlin-android-extensions-runtime")["main"].output.classesDirs.asPath)
-    dependsOnTaskIfExistsRec("dist", project = rootProject)
+    shouldRunAfter(":dist")
     workingDir = rootDir
     doFirst {
         val androidPluginPath = File(intellijRootDir(), "plugins/android").canonicalPath

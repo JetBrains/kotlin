@@ -17,5 +17,5 @@ val ideaSandboxDir: File by rootProject.extra
 
 runIdeTask("runIde", ideaPluginDir, ideaSandboxDir) {
 
-    dependsOn(":dist", ":prepare:idea-plugin:idea-plugin", ":ideaPlugin")
+    shouldRunAfter(":ideaPlugin")
 }
