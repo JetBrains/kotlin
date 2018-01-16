@@ -1,0 +1,34 @@
+apply plugin: 'konan'
+
+konan.targets = ['macbook', 'linux']
+
+def torchHome = "${System.getProperty("user.home")}/.konan/third-party/torch"
+
+task downloadTorch(type: Exec) {
+    workingDir getProjectDir()
+    commandLine './downloadTorch.sh'
+}
+
+konanArtifacts {
+    interop('TorchInterop') {
+        defFile "src/main/c_interop/torch.def"
+        includeDirs "${torchHome}/include", "${torchHome}/include/TH"
+        dependsOn 'downloadTorch'
+    }
+
+    program('Torch') {
+        libraries {
+            artifact 'TorchInterop'
+        }
+        linkerOpts "-L${torchHome}/lib -lATen"
+    }
+}
+
+run.dependsOn 'warning'
+
+task warning {
+    doLast {
+        println "Note: You may need to specify LD_LIBRARY_PATH or DYLD_LIBRARY_PATH env variables to $torchHome/lib if the ATen dynamic library cannot be found."
+
+    }
+}
