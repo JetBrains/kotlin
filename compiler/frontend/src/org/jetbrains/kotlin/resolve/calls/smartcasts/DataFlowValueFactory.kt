@@ -379,7 +379,7 @@ object DataFlowValueFactory {
 
         // Local variable classification: STABLE or CAPTURED
         val preliminaryVisitor = PreliminaryDeclarationVisitor.getVisitorByVariable(variableDescriptor, bindingContext)
-                // A case when we just analyse an expression alone: counts as captured
+        // A case when we just analyse an expression alone: counts as captured
                 ?: return CAPTURED_VARIABLE
 
         // Analyze who writes variable

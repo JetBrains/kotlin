@@ -1021,23 +1021,23 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         private fun visitInlinedFunction(lambdaFunctionLiteral: KtFunction, invocationKind: InvocationKind) {
             // Defer emitting of inlined declaration
             deferredGeneratorsStack.peek().add({ builder ->
-                val beforeDeclaration = builder.createUnboundLabel("before inlined declaration")
-                val afterDeclaration = builder.createUnboundLabel("after inlined declaration")
+                                                   val beforeDeclaration = builder.createUnboundLabel("before inlined declaration")
+                                                   val afterDeclaration = builder.createUnboundLabel("after inlined declaration")
 
-                builder.bindLabel(beforeDeclaration)
+                                                   builder.bindLabel(beforeDeclaration)
 
-                if (!invocationKind.isDefinitelyVisited()) {
-                    builder.nondeterministicJump(afterDeclaration, lambdaFunctionLiteral, null)
-                }
+                                                   if (!invocationKind.isDefinitelyVisited()) {
+                                                       builder.nondeterministicJump(afterDeclaration, lambdaFunctionLiteral, null)
+                                                   }
 
-                generate(lambdaFunctionLiteral, invocationKind)
+                                                   generate(lambdaFunctionLiteral, invocationKind)
 
-                if (invocationKind.canBeRevisited()) {
-                    builder.nondeterministicJump(beforeDeclaration, lambdaFunctionLiteral, null)
-                }
+                                                   if (invocationKind.canBeRevisited()) {
+                                                       builder.nondeterministicJump(beforeDeclaration, lambdaFunctionLiteral, null)
+                                                   }
 
-                builder.bindLabel(afterDeclaration)
-            })
+                                                   builder.bindLabel(afterDeclaration)
+                                               })
         }
 
         override fun visitNamedFunction(function: KtNamedFunction) {
@@ -1544,8 +1544,10 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                 //noinspection EnumSwitchStatementWhichMissesCases
                 when (kind) {
                     ExplicitReceiverKind.DISPATCH_RECEIVER -> explicitReceiver = resolvedCall.dispatchReceiver
-                    ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> explicitReceiver = resolvedCall.extensionReceiver
-                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> {}
+                    ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> explicitReceiver =
+                            resolvedCall.extensionReceiver
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> {
+                    }
                 }
             }
 

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 // This node represents "fake" reference expression for ENUM_ENTRY(arguments) constructor syntax
 // It uses the superclass enum node to provide access to the real constructor name
 class KtEnumEntrySuperclassReferenceExpression :
-        KtExpressionImplStub<KotlinEnumEntrySuperclassReferenceExpressionStub>, KtSimpleNameExpression {
+    KtExpressionImplStub<KotlinEnumEntrySuperclassReferenceExpressionStub>, KtSimpleNameExpression {
 
     constructor(node: ASTNode) : super(node)
 
@@ -37,7 +37,7 @@ class KtEnumEntrySuperclassReferenceExpression :
 
     // It is the owner enum class (not an enum entry but the whole enum)
     private val referencedElement: KtClass
-            get() = calcReferencedElement()!!
+        get() = calcReferencedElement()!!
 
     private fun calcReferencedElement(): KtClass? {
         val owner = this.getStrictParentOfType<KtEnumEntry>()

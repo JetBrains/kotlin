@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 private fun KtModifierListOwner.addModifierList(newModifierList: KtModifierList): KtModifierList {
     val anchor = firstChild!!
-            .siblings(forward = true)
-            .dropWhile { it is PsiComment || it is PsiWhiteSpace }
-            .first()
+        .siblings(forward = true)
+        .dropWhile { it is PsiComment || it is PsiWhiteSpace }
+        .first()
     return addBefore(newModifierList, anchor) as KtModifierList
 }
 
@@ -40,8 +40,7 @@ fun KtModifierListOwner.setModifierList(newModifierList: KtModifierList) {
     val currentModifierList = modifierList
     if (currentModifierList != null) {
         currentModifierList.replace(newModifierList)
-    }
-    else {
+    } else {
         addModifierList(newModifierList)
     }
 }
@@ -50,8 +49,7 @@ fun addModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
     val modifierList = owner.modifierList
     if (modifierList == null) {
         createModifierList(modifier.value, owner)
-    }
-    else {
+    } else {
         addModifier(modifierList, modifier)
     }
 }
@@ -60,8 +58,7 @@ fun addAnnotationEntry(owner: KtModifierListOwner, annotationEntry: KtAnnotation
     val modifierList = owner.modifierList
     return if (modifierList == null) {
         createModifierList(annotationEntry.text, owner).annotationEntries.first()
-    }
-    else {
+    } else {
         modifierList.addBefore(annotationEntry, modifierList.firstChild) as KtAnnotationEntry
     }
 }
@@ -71,8 +68,8 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
 
     val newModifier = KtPsiFactory(modifierList).createModifier(modifier)
     val modifierToReplace = MODIFIERS_TO_REPLACE[modifier]
-            ?.mapNotNull { modifierList.getModifier(it) }
-            ?.firstOrNull()
+        ?.mapNotNull { modifierList.getModifier(it) }
+        ?.firstOrNull()
 
     if (modifier == FINAL_KEYWORD && !modifierList.hasModifier(OVERRIDE_KEYWORD)) {
         if (modifierToReplace != null) {
@@ -85,8 +82,7 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
     }
     if (modifierToReplace != null && modifierList.firstChild == modifierList.lastChild) {
         modifierToReplace.replace(newModifier)
-    }
-    else {
+    } else {
         modifierToReplace?.delete()
         val newModifierOrder = MODIFIERS_ORDER.indexOf(modifier)
 
@@ -129,34 +125,36 @@ fun sortModifiers(modifiers: List<KtModifierKeywordToken>): List<KtModifierKeywo
 }
 
 private val MODIFIERS_TO_REPLACE = mapOf(
-        OVERRIDE_KEYWORD to listOf(OPEN_KEYWORD),
-        ABSTRACT_KEYWORD to listOf(OPEN_KEYWORD, FINAL_KEYWORD),
-        OPEN_KEYWORD to listOf(FINAL_KEYWORD, ABSTRACT_KEYWORD),
-        FINAL_KEYWORD to listOf(ABSTRACT_KEYWORD, OPEN_KEYWORD),
-        PUBLIC_KEYWORD to listOf(PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD),
-        PROTECTED_KEYWORD to listOf(PUBLIC_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD),
-        PRIVATE_KEYWORD to listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, INTERNAL_KEYWORD),
-        INTERNAL_KEYWORD to listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD),
-        HEADER_KEYWORD to listOf(IMPL_KEYWORD, ACTUAL_KEYWORD, EXPECT_KEYWORD),
-        IMPL_KEYWORD to listOf(HEADER_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD),
-        EXPECT_KEYWORD to listOf(IMPL_KEYWORD, ACTUAL_KEYWORD, HEADER_KEYWORD),
-        ACTUAL_KEYWORD to listOf(HEADER_KEYWORD, EXPECT_KEYWORD, IMPL_KEYWORD)
+    OVERRIDE_KEYWORD to listOf(OPEN_KEYWORD),
+    ABSTRACT_KEYWORD to listOf(OPEN_KEYWORD, FINAL_KEYWORD),
+    OPEN_KEYWORD to listOf(FINAL_KEYWORD, ABSTRACT_KEYWORD),
+    FINAL_KEYWORD to listOf(ABSTRACT_KEYWORD, OPEN_KEYWORD),
+    PUBLIC_KEYWORD to listOf(PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD),
+    PROTECTED_KEYWORD to listOf(PUBLIC_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD),
+    PRIVATE_KEYWORD to listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, INTERNAL_KEYWORD),
+    INTERNAL_KEYWORD to listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD),
+    HEADER_KEYWORD to listOf(IMPL_KEYWORD, ACTUAL_KEYWORD, EXPECT_KEYWORD),
+    IMPL_KEYWORD to listOf(HEADER_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD),
+    EXPECT_KEYWORD to listOf(IMPL_KEYWORD, ACTUAL_KEYWORD, HEADER_KEYWORD),
+    ACTUAL_KEYWORD to listOf(HEADER_KEYWORD, EXPECT_KEYWORD, IMPL_KEYWORD)
 )
 
-val MODIFIERS_ORDER = listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD,
-                             HEADER_KEYWORD, IMPL_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD,
-                             FINAL_KEYWORD, OPEN_KEYWORD, ABSTRACT_KEYWORD, SEALED_KEYWORD,
-                             CONST_KEYWORD,
-                             EXTERNAL_KEYWORD,
-                             OVERRIDE_KEYWORD,
-                             LATEINIT_KEYWORD,
-                             TAILREC_KEYWORD,
-                             VARARG_KEYWORD,
-                             SUSPEND_KEYWORD,
-                             INNER_KEYWORD,
-                             ENUM_KEYWORD, ANNOTATION_KEYWORD,
-                             COMPANION_KEYWORD,
-                             INLINE_KEYWORD,
-                             INFIX_KEYWORD,
-                             OPERATOR_KEYWORD,
-                             DATA_KEYWORD)
+val MODIFIERS_ORDER = listOf(
+    PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD,
+    HEADER_KEYWORD, IMPL_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD,
+    FINAL_KEYWORD, OPEN_KEYWORD, ABSTRACT_KEYWORD, SEALED_KEYWORD,
+    CONST_KEYWORD,
+    EXTERNAL_KEYWORD,
+    OVERRIDE_KEYWORD,
+    LATEINIT_KEYWORD,
+    TAILREC_KEYWORD,
+    VARARG_KEYWORD,
+    SUSPEND_KEYWORD,
+    INNER_KEYWORD,
+    ENUM_KEYWORD, ANNOTATION_KEYWORD,
+    COMPANION_KEYWORD,
+    INLINE_KEYWORD,
+    INFIX_KEYWORD,
+    OPERATOR_KEYWORD,
+    DATA_KEYWORD
+)

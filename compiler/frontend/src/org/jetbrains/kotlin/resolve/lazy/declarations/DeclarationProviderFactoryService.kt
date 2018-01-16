@@ -29,23 +29,24 @@ import java.util.*
 abstract class DeclarationProviderFactoryService {
 
     abstract fun create(
+        project: Project,
+        storageManager: StorageManager,
+        syntheticFiles: Collection<KtFile>,
+        filesScope: GlobalSearchScope,
+        moduleInfo: ModuleInfo
+    ): DeclarationProviderFactory
+
+    companion object {
+        @JvmStatic
+        fun createDeclarationProviderFactory(
             project: Project,
             storageManager: StorageManager,
             syntheticFiles: Collection<KtFile>,
             filesScope: GlobalSearchScope,
             moduleInfo: ModuleInfo
-    ): DeclarationProviderFactory
-
-    companion object {
-        @JvmStatic fun createDeclarationProviderFactory(
-                project: Project,
-                storageManager: StorageManager,
-                syntheticFiles: Collection<KtFile>,
-                filesScope: GlobalSearchScope,
-                moduleInfo: ModuleInfo
         ): DeclarationProviderFactory {
             return ServiceManager.getService(project, DeclarationProviderFactoryService::class.java)!!
-                    .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, filesScope), moduleInfo)
+                .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, filesScope), moduleInfo)
         }
 
         private fun filteringScope(syntheticFiles: Collection<KtFile>, baseScope: GlobalSearchScope): GlobalSearchScope {
@@ -57,8 +58,8 @@ abstract class DeclarationProviderFactoryService {
     }
 
 
-    private class SyntheticFilesFilteringScope(syntheticFiles: Collection<KtFile>, baseScope: GlobalSearchScope)
-        : DelegatingGlobalSearchScope(baseScope) {
+    private class SyntheticFilesFilteringScope(syntheticFiles: Collection<KtFile>, baseScope: GlobalSearchScope) :
+        DelegatingGlobalSearchScope(baseScope) {
 
         private val originals = syntheticFiles.mapNotNullTo(HashSet<VirtualFile>()) { it.originalFile.virtualFile }
 

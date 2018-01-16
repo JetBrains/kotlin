@@ -113,7 +113,7 @@ interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
     fun hasReturnTypeRef(): Boolean
 }
 
-interface KotlinCallableStubBase<TDeclaration: KtCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
+interface KotlinCallableStubBase<TDeclaration : KtCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
     fun isTopLevel(): Boolean
     fun isExtension(): Boolean
 }

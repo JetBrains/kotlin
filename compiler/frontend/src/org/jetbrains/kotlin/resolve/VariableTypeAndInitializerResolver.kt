@@ -114,7 +114,7 @@ class VariableTypeAndInitializerResolver(
         if (!variable.hasInitializer() || variable.isVar) return
         variableDescriptor.setCompileTimeInitializer(
             storageManager.createRecursionTolerantNullableLazyValue(
-                computeInitializer@{
+                computeInitializer@ {
                     if (!DescriptorUtils.shouldRecordInitializerForProperty(
                             variableDescriptor,
                             variableType

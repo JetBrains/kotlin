@@ -45,29 +45,29 @@ import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
 internal class DeclarationsCheckerBuilder(
-        private val descriptorResolver: DescriptorResolver,
-        private val originalModifiersChecker: ModifiersChecker,
-        private val annotationChecker: AnnotationChecker,
-        private val identifierChecker: IdentifierChecker,
-        private val languageVersionSettings: LanguageVersionSettings,
-        private val typeSpecificityComparator: TypeSpecificityComparator,
-        private val diagnosticSuppressor: PlatformDiagnosticSuppressor
+    private val descriptorResolver: DescriptorResolver,
+    private val originalModifiersChecker: ModifiersChecker,
+    private val annotationChecker: AnnotationChecker,
+    private val identifierChecker: IdentifierChecker,
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val typeSpecificityComparator: TypeSpecificityComparator,
+    private val diagnosticSuppressor: PlatformDiagnosticSuppressor
 ) {
     fun withTrace(trace: BindingTrace) = DeclarationsChecker(
-            descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace, languageVersionSettings,
-            typeSpecificityComparator, diagnosticSuppressor
+        descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace, languageVersionSettings,
+        typeSpecificityComparator, diagnosticSuppressor
     )
 }
 
 class DeclarationsChecker(
-        private val descriptorResolver: DescriptorResolver,
-        modifiersChecker: ModifiersChecker,
-        private val annotationChecker: AnnotationChecker,
-        private val identifierChecker: IdentifierChecker,
-        private val trace: BindingTrace,
-        private val languageVersionSettings: LanguageVersionSettings,
-        typeSpecificityComparator: TypeSpecificityComparator,
-        private val diagnosticSuppressor: PlatformDiagnosticSuppressor
+    private val descriptorResolver: DescriptorResolver,
+    modifiersChecker: ModifiersChecker,
+    private val annotationChecker: AnnotationChecker,
+    private val identifierChecker: IdentifierChecker,
+    private val trace: BindingTrace,
+    private val languageVersionSettings: LanguageVersionSettings,
+    typeSpecificityComparator: TypeSpecificityComparator,
+    private val diagnosticSuppressor: PlatformDiagnosticSuppressor
 ) {
 
     private val modifiersChecker = modifiersChecker.withTrace(trace)
@@ -102,9 +102,9 @@ class DeclarationsChecker(
         }
 
         val destructuringDeclarations = bodiesResolveContext.destructuringDeclarationEntries.entries
-                .map { (entry, _) -> entry.parent }
-                .filterIsInstance<KtDestructuringDeclaration>()
-                .distinct()
+            .map { (entry, _) -> entry.parent }
+            .filterIsInstance<KtDestructuringDeclaration>()
+            .distinct()
 
         for (multiDeclaration in destructuringDeclarations) {
             modifiersChecker.checkModifiersForDestructuringDeclaration(multiDeclaration)
@@ -143,7 +143,7 @@ class DeclarationsChecker(
             trace.report(TYPEALIAS_SHOULD_EXPAND_TO_CLASS.on(typeReference, expandedType))
         }
 
-        if (TypeUtils.contains(expandedType) { it.isArrayOfNothing()} ) {
+        if (TypeUtils.contains(expandedType) { it.isArrayOfNothing() }) {
             trace.report(TYPEALIAS_EXPANDED_TO_MALFORMED_TYPE.on(typeReference, expandedType, "Array<Nothing> is illegal"))
         }
 
@@ -151,7 +151,7 @@ class DeclarationsChecker(
         for (typeParameter in typeAliasDescriptor.declaredTypeParameters) {
             if (typeParameter !in usedTypeAliasParameters) {
                 val source = DescriptorToSourceUtils.descriptorToDeclaration(typeParameter) as? KtTypeParameter
-                             ?: throw AssertionError("No source element for type parameter $typeParameter of $typeAliasDescriptor")
+                        ?: throw AssertionError("No source element for type parameter $typeParameter of $typeAliasDescriptor")
                 trace.report(UNUSED_TYPEALIAS_PARAMETER.on(source, typeParameter, expandedType))
             }
         }
@@ -180,31 +180,35 @@ class DeclarationsChecker(
         }
 
         if (rhs.arguments.map { it.type.constructor.declarationDescriptor as? TypeParameterDescriptor } !=
-                typeAliasDescriptor.declaredTypeParameters) {
+            typeAliasDescriptor.declaredTypeParameters) {
             trace.report(ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION.on(declaration))
             return
         }
     }
 
     private fun getUsedTypeAliasParameters(type: KotlinType, typeAlias: TypeAliasDescriptor): Set<TypeParameterDescriptor> =
-            type.constituentTypes().mapNotNullTo(HashSet()) {
-                val descriptor = it.constructor.declarationDescriptor as? TypeParameterDescriptor
-                descriptor?.takeIf { it.containingDeclaration == typeAlias }
-            }
+        type.constituentTypes().mapNotNullTo(HashSet()) {
+            val descriptor = it.constructor.declarationDescriptor as? TypeParameterDescriptor
+            descriptor?.takeIf { it.containingDeclaration == typeAlias }
+        }
 
     private class TypeAliasDeclarationCheckingReportStrategy(
-            private val trace: BindingTrace,
-            typeAliasDescriptor: TypeAliasDescriptor,
-            declaration: KtTypeAlias
+        private val trace: BindingTrace,
+        typeAliasDescriptor: TypeAliasDescriptor,
+        declaration: KtTypeAlias
     ) : TypeAliasExpansionReportStrategy {
         private val typeReference = declaration.getTypeReference()
-                                    ?: throw AssertionError("Incorrect type alias declaration for $typeAliasDescriptor")
+                ?: throw AssertionError("Incorrect type alias declaration for $typeAliasDescriptor")
 
         override fun wrongNumberOfTypeArguments(typeAlias: TypeAliasDescriptor, numberOfParameters: Int) {
             // Do nothing: this should've been reported during type resolution.
         }
 
-        override fun conflictingProjection(typeAlias: TypeAliasDescriptor, typeParameter: TypeParameterDescriptor?, substitutedArgument: KotlinType) {
+        override fun conflictingProjection(
+            typeAlias: TypeAliasDescriptor,
+            typeParameter: TypeParameterDescriptor?,
+            substitutedArgument: KotlinType
+        ) {
             trace.report(CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION.on(typeReference, substitutedArgument))
         }
 
@@ -212,7 +216,12 @@ class DeclarationsChecker(
             trace.report(RECURSIVE_TYPEALIAS_EXPANSION.on(typeReference, typeAlias))
         }
 
-        override fun boundsViolationInSubstitution(bound: KotlinType, unsubstitutedArgument: KotlinType, argument: KotlinType, typeParameter: TypeParameterDescriptor) {
+        override fun boundsViolationInSubstitution(
+            bound: KotlinType,
+            unsubstitutedArgument: KotlinType,
+            argument: KotlinType,
+            typeParameter: TypeParameterDescriptor
+        ) {
             // TODO more precise diagnostics
             if (!argument.containsTypeAliasParameters() && !bound.containsTypeAliasParameters()) {
                 trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(typeReference, bound, argument, typeParameter))
@@ -272,8 +281,7 @@ class DeclarationsChecker(
             val classDescriptor = constructorDescriptor.containingDeclaration
             if (classDescriptor.kind == ClassKind.ENUM_CLASS) {
                 trace.report(NON_PRIVATE_CONSTRUCTOR_IN_ENUM.on(visibilityModifier))
-            }
-            else if (classDescriptor.modality == Modality.SEALED) {
+            } else if (classDescriptor.modality == Modality.SEALED) {
                 trace.report(NON_PRIVATE_CONSTRUCTOR_IN_SEALED.on(visibilityModifier))
             }
         }
@@ -301,7 +309,8 @@ class DeclarationsChecker(
             is KtClass -> {
                 checkClassButNotObject(classOrObject, classDescriptor)
                 descriptorResolver.checkNamesInConstraints(
-                        classOrObject, classDescriptor, classDescriptor.scopeForClassHeaderResolution, trace)
+                    classOrObject, classDescriptor, classDescriptor.scopeForClassHeaderResolution, trace
+                )
             }
             is KtObjectDeclaration -> {
                 checkObject(classOrObject, classDescriptor)
@@ -346,32 +355,31 @@ class DeclarationsChecker(
     }
 
     private fun checkOnlyOneTypeParameterBound(
-            descriptor: TypeParameterDescriptor, declaration: KtTypeParameter, owner: KtTypeParameterListOwner
+        descriptor: TypeParameterDescriptor, declaration: KtTypeParameter, owner: KtTypeParameterListOwner
     ) {
         val upperBounds = descriptor.upperBounds
         val (boundsWhichAreTypeParameters, otherBounds) = upperBounds
-                .map(KotlinType::constructor)
-                .partition { constructor -> constructor.declarationDescriptor is TypeParameterDescriptor }
-                .let { pair -> pair.first.toSet() to pair.second.toSet() }
+            .map(KotlinType::constructor)
+            .partition { constructor -> constructor.declarationDescriptor is TypeParameterDescriptor }
+            .let { pair -> pair.first.toSet() to pair.second.toSet() }
         if (boundsWhichAreTypeParameters.size > 1 || (boundsWhichAreTypeParameters.size == 1 && otherBounds.isNotEmpty())) {
             val reportOn = if (boundsWhichAreTypeParameters.size + otherBounds.size == 2) {
                 // If there's only one problematic bound (either 2 type parameter bounds, or 1 type parameter bound + 1 other bound),
                 // report the diagnostic on that bound
 
                 val allBounds: List<Pair<KtTypeReference, KotlinType?>> =
-                        owner.typeConstraints
-                                .filter { constraint ->
-                                    constraint.subjectTypeParameterName?.getReferencedNameAsName() == declaration.nameAsName
-                                }
-                                .mapNotNull { constraint -> constraint.boundTypeReference }
-                                .map { typeReference -> typeReference to trace.bindingContext.get(TYPE, typeReference) }
+                    owner.typeConstraints
+                        .filter { constraint ->
+                            constraint.subjectTypeParameterName?.getReferencedNameAsName() == declaration.nameAsName
+                        }
+                        .mapNotNull { constraint -> constraint.boundTypeReference }
+                        .map { typeReference -> typeReference to trace.bindingContext.get(TYPE, typeReference) }
 
                 val problematicBound =
-                        allBounds.firstOrNull { bound -> bound.second?.constructor != boundsWhichAreTypeParameters.first() }
+                    allBounds.firstOrNull { bound -> bound.second?.constructor != boundsWhichAreTypeParameters.first() }
 
                 problematicBound?.first ?: declaration
-            }
-            else {
+            } else {
                 // Otherwise report the diagnostic on the type parameter declaration
                 declaration
             }
@@ -400,17 +408,20 @@ class DeclarationsChecker(
             if (conflictingTypes.size <= 1) continue
 
             val containingDeclaration = typeParameterDescriptor.containingDeclaration as? ClassDescriptor
-                                        ?: throw AssertionError("Not a class descriptor: " + typeParameterDescriptor.containingDeclaration)
+                    ?: throw AssertionError("Not a class descriptor: " + typeParameterDescriptor.containingDeclaration)
             if (sourceElement is KtClassOrObject) {
                 val delegationSpecifierList = sourceElement.getSuperTypeList() ?: continue
-                trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(
+                trace.report(
+                    INCONSISTENT_TYPE_PARAMETER_VALUES.on(
                         delegationSpecifierList, typeParameterDescriptor, containingDeclaration, conflictingTypes
-                ))
-            }
-            else if (sourceElement is KtTypeParameter) {
-                trace.report(INCONSISTENT_TYPE_PARAMETER_BOUNDS.on(
+                    )
+                )
+            } else if (sourceElement is KtTypeParameter) {
+                trace.report(
+                    INCONSISTENT_TYPE_PARAMETER_BOUNDS.on(
                         sourceElement, typeParameterDescriptor, containingDeclaration, conflictingTypes
-                ))
+                    )
+                )
             }
         }
     }
@@ -521,8 +532,7 @@ class DeclarationsChecker(
         for (parameter in aClass.primaryConstructorParameters) {
             if (!parameter.hasValOrVar()) {
                 trace.report(MISSING_VAL_ON_ANNOTATION_PARAMETER.on(parameter))
-            }
-            else if (parameter.isMutable) {
+            } else if (parameter.isMutable) {
                 trace.report(VAR_ANNOTATION_PARAMETER.on(parameter))
             }
         }
@@ -537,8 +547,7 @@ class DeclarationsChecker(
             if (member != null && member.hasModifier(KtTokens.OPEN_KEYWORD)) {
                 if (classDescriptor.kind == ClassKind.OBJECT) {
                     trace.report(NON_FINAL_MEMBER_IN_OBJECT.on(member))
-                }
-                else {
+                } else {
                     trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member))
                 }
             }
@@ -594,9 +603,9 @@ class DeclarationsChecker(
     }
 
     private fun checkMemberProperty(
-            property: KtProperty,
-            propertyDescriptor: PropertyDescriptor,
-            classDescriptor: ClassDescriptor
+        property: KtProperty,
+        propertyDescriptor: PropertyDescriptor,
+        classDescriptor: ClassDescriptor
     ) {
         val modifierList = property.modifierList
 
@@ -607,8 +616,7 @@ class DeclarationsChecker(
                     trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, property.name ?: "", classDescriptor))
                     return
                 }
-            }
-            else if (classDescriptor.kind == ClassKind.INTERFACE &&
+            } else if (classDescriptor.kind == ClassKind.INTERFACE &&
                 modifierList.hasModifier(KtTokens.OPEN_KEYWORD) &&
                 propertyDescriptor.modality == Modality.ABSTRACT) {
                 trace.report(REDUNDANT_OPEN_IN_INTERFACE.on(property))
@@ -659,35 +667,33 @@ class DeclarationsChecker(
                 !backingFieldRequired -> trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer))
                 property.receiverTypeReference != null -> trace.report(EXTENSION_PROPERTY_WITH_BACKING_FIELD.on(initializer))
             }
-        }
-        else if (delegate != null) {
+        } else if (delegate != null) {
             if (inInterface) {
                 trace.report(DELEGATED_PROPERTY_IN_INTERFACE.on(delegate))
-            }
-            else if (isExpect) {
+            } else if (isExpect) {
                 trace.report(EXPECTED_DELEGATED_PROPERTY.on(delegate))
             }
-        }
-        else {
+        } else {
             val isUninitialized = trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false
             val isExternal = propertyDescriptor.isEffectivelyExternal()
             if (backingFieldRequired && !inInterface && !propertyDescriptor.isLateInit && !isExpect && isUninitialized && !isExternal) {
                 if (propertyDescriptor.extensionReceiverParameter != null && !hasAccessorImplementation) {
                     trace.report(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT.on(property))
-                }
-                else if (diagnosticSuppressor.shouldReportNoBody(propertyDescriptor)) {
+                } else if (diagnosticSuppressor.shouldReportNoBody(propertyDescriptor)) {
                     if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
                         trace.report(MUST_BE_INITIALIZED.on(property))
-                    }
-                    else {
+                    } else {
                         trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property))
                     }
                 }
-            }
-            else if (property.typeReference == null && !languageVersionSettings.supportsFeature(LanguageFeature.ShortSyntaxForPropertyGetters)) {
-                trace.report(Errors.UNSUPPORTED_FEATURE.on(property, LanguageFeature.ShortSyntaxForPropertyGetters to languageVersionSettings))
-            }
-            else if (noExplicitTypeOrGetterType(property)) {
+            } else if (property.typeReference == null && !languageVersionSettings.supportsFeature(LanguageFeature.ShortSyntaxForPropertyGetters)) {
+                trace.report(
+                    Errors.UNSUPPORTED_FEATURE.on(
+                        property,
+                        LanguageFeature.ShortSyntaxForPropertyGetters to languageVersionSettings
+                    )
+                )
+            } else if (noExplicitTypeOrGetterType(property)) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property))
             }
 
@@ -703,7 +709,7 @@ class DeclarationsChecker(
     }
 
     private fun noExplicitTypeOrGetterType(property: KtProperty) =
-            property.typeReference == null
+        property.typeReference == null
                 && (property.getter == null || (property.getter!!.hasBlockBody() && property.getter!!.returnTypeReference == null))
 
     fun checkFunction(function: KtNamedFunction, functionDescriptor: SimpleFunctionDescriptor) {
@@ -744,8 +750,7 @@ class DeclarationsChecker(
                 diagnosticSuppressor.shouldReportNoBody(functionDescriptor)) {
                 trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor))
             }
-        }
-        else /* top-level only */ {
+        } else /* top-level only */ {
             if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier && !functionDescriptor.isExpect &&
                 diagnosticSuppressor.shouldReportNoBody(functionDescriptor)) {
                 trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
@@ -779,16 +784,15 @@ class DeclarationsChecker(
             if (declaration.typeReference == null) {
                 if (it.isNothing() && !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
                     trace.report(
-                            (if (declaration is KtProperty) IMPLICIT_NOTHING_PROPERTY_TYPE else IMPLICIT_NOTHING_RETURN_TYPE).on(target)
+                        (if (declaration is KtProperty) IMPLICIT_NOTHING_PROPERTY_TYPE else IMPLICIT_NOTHING_RETURN_TYPE).on(target)
                     )
                 }
                 if (it.contains { type -> type.constructor is IntersectionTypeConstructor }) {
                     trace.report(IMPLICIT_INTERSECTION_TYPE.on(target, it))
                 }
-            }
-            else if (it.isNothing() && it is AbbreviatedType) {
+            } else if (it.isNothing() && it is AbbreviatedType) {
                 trace.report(
-                        (if (declaration is KtProperty) ABBREVIATED_NOTHING_PROPERTY_TYPE else ABBREVIATED_NOTHING_RETURN_TYPE).on(target)
+                    (if (declaration is KtProperty) ABBREVIATED_NOTHING_PROPERTY_TYPE else ABBREVIATED_NOTHING_RETURN_TYPE).on(target)
                 )
             }
         }
@@ -800,8 +804,7 @@ class DeclarationsChecker(
             if (accessor != null) {
                 modifiersChecker.checkModifiersForDeclaration(accessor, accessorDescriptor)
                 identifierChecker.checkDeclaration(accessor, trace)
-            }
-            else {
+            } else {
                 modifiersChecker.runDeclarationCheckers(property, accessorDescriptor)
             }
         }
@@ -816,9 +819,9 @@ class DeclarationsChecker(
     }
 
     private fun checkAccessor(
-            propertyDescriptor: PropertyDescriptor,
-            accessor: KtPropertyAccessor?,
-            accessorDescriptor: PropertyAccessorDescriptor?
+        propertyDescriptor: PropertyDescriptor,
+        accessor: KtPropertyAccessor?,
+        accessorDescriptor: PropertyAccessorDescriptor?
     ) {
         if (accessor == null || accessorDescriptor == null) return
         if (propertyDescriptor.isExpect && accessor.hasBody()) {
@@ -827,29 +830,25 @@ class DeclarationsChecker(
 
         val accessorModifierList = accessor.modifierList ?: return
         val tokens = modifiersChecker.getTokensCorrespondingToModifiers(
-                accessorModifierList,
-                setOf(KtTokens.PUBLIC_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PRIVATE_KEYWORD, KtTokens.INTERNAL_KEYWORD)
+            accessorModifierList,
+            setOf(KtTokens.PUBLIC_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PRIVATE_KEYWORD, KtTokens.INTERNAL_KEYWORD)
         )
         if (accessor.isGetter) {
             if (accessorDescriptor.visibility != propertyDescriptor.visibility) {
                 reportVisibilityModifierDiagnostics(tokens.values, Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY)
-            }
-            else {
+            } else {
                 reportVisibilityModifierDiagnostics(tokens.values, Errors.REDUNDANT_MODIFIER_IN_GETTER)
             }
-        }
-        else {
+        } else {
             if (propertyDescriptor.isOverridable
                 && accessorDescriptor.visibility == Visibilities.PRIVATE
                 && propertyDescriptor.visibility != Visibilities.PRIVATE) {
                 if (propertyDescriptor.modality == Modality.ABSTRACT) {
                     reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY)
-                }
-                else {
+                } else {
                     reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
                 }
-            }
-            else {
+            } else {
                 val compare = Visibilities.compare(accessorDescriptor.visibility, propertyDescriptor.visibility)
                 if (compare == null || compare > 0) {
                     reportVisibilityModifierDiagnostics(tokens.values, Errors.SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY)
@@ -866,8 +865,7 @@ class DeclarationsChecker(
                     trace.report(EXPECTED_ENUM_ENTRY_WITH_BODY.on(enumEntry))
                 }
             }
-        }
-        else {
+        } else {
             assert(DescriptorUtils.isInterface(enumClass)) { "Enum entry should be declared in enum class: " + enumEntryClass }
         }
     }
@@ -922,7 +920,10 @@ class DeclarationsChecker(
             return isImplementingMethodOfAnyInternal(member, HashSet<ClassDescriptor>())
         }
 
-        private fun isImplementingMethodOfAnyInternal(member: CallableMemberDescriptor, visitedClasses: MutableSet<ClassDescriptor>): Boolean {
+        private fun isImplementingMethodOfAnyInternal(
+            member: CallableMemberDescriptor,
+            visitedClasses: MutableSet<ClassDescriptor>
+        ): Boolean {
             for (overridden in member.overriddenDescriptors) {
                 val containingDeclaration = overridden.containingDeclaration
                 if (containingDeclaration !is ClassDescriptor) continue

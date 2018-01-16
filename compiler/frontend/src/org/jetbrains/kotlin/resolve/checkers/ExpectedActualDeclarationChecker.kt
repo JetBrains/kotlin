@@ -57,12 +57,12 @@ import java.io.File
 
 object ExpectedActualDeclarationChecker : DeclarationChecker {
     override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings,
-            expectActualTracker: ExpectActualTracker
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        bindingContext: BindingContext,
+        languageVersionSettings: LanguageVersionSettings,
+        expectActualTracker: ExpectActualTracker
     ) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
 
@@ -71,19 +71,18 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
         if (descriptor.isExpect) {
             checkExpectedDeclarationHasActual(declaration, descriptor, diagnosticHolder, descriptor.module, expectActualTracker)
-        }
-        else {
+        } else {
             val checkActual = !languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckActual)
             checkActualDeclarationHasExpected(declaration, descriptor, diagnosticHolder, checkActual)
         }
     }
 
     fun checkExpectedDeclarationHasActual(
-            reportOn: KtNamedDeclaration,
-            descriptor: MemberDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            platformModule: ModuleDescriptor,
-            expectActualTracker: ExpectActualTracker
+        reportOn: KtNamedDeclaration,
+        descriptor: MemberDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        platformModule: ModuleDescriptor,
+        expectActualTracker: ExpectActualTracker
     ) {
         // Only look for top level actual members; class members will be handled as a part of that expected class
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
@@ -91,23 +90,22 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         val compatibility = findActualForExpected(descriptor, platformModule) ?: return
 
         val shouldReportError =
-                compatibility.allStrongIncompatibilities() ||
-                Compatible !in compatibility && compatibility.values.flatMapTo(hashSetOf()) { it }.all { actual ->
-                    val expectedOnes = findExpectedForActual(actual, descriptor.module)
-                    expectedOnes != null && Compatible in expectedOnes.keys
-                }
+            compatibility.allStrongIncompatibilities() ||
+                    Compatible !in compatibility && compatibility.values.flatMapTo(hashSetOf()) { it }.all { actual ->
+                val expectedOnes = findExpectedForActual(actual, descriptor.module)
+                expectedOnes != null && Compatible in expectedOnes.keys
+            }
 
         if (shouldReportError) {
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
             diagnosticHolder.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, platformModule, incompatibility))
-        }
-        else {
+        } else {
             val actualMembers = compatibility.asSequence()
-                    .filter { (compatibility, _) ->
-                        compatibility is Compatible || (compatibility is Incompatible && compatibility.kind != Compatibility.IncompatibilityKind.STRONG)
-                    }.flatMap { it.value.asSequence() }
+                .filter { (compatibility, _) ->
+                    compatibility is Compatible || (compatibility is Incompatible && compatibility.kind != Compatibility.IncompatibilityKind.STRONG)
+                }.flatMap { it.value.asSequence() }
 
             expectActualTracker?.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
         }
@@ -124,39 +122,42 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     }
 
     private fun sourceFile(descriptor: MemberDescriptor): File? =
-            descriptor.source
-                    .containingFile
-                    .safeAs<PsiSourceFile>()
-                    ?.run { VfsUtilCore.virtualToIoFile(psiFile.virtualFile) }
+        descriptor.source
+            .containingFile
+            .safeAs<PsiSourceFile>()
+            ?.run { VfsUtilCore.virtualToIoFile(psiFile.virtualFile) }
 
     fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
-            this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
+        this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
 
-    private fun findActualForExpected(expected: MemberDescriptor, platformModule: ModuleDescriptor): Map<Compatibility, List<MemberDescriptor>>? {
+    private fun findActualForExpected(
+        expected: MemberDescriptor,
+        platformModule: ModuleDescriptor
+    ): Map<Compatibility, List<MemberDescriptor>>? {
         return when (expected) {
             is CallableMemberDescriptor -> {
                 expected.findNamesakesFromModule(platformModule).filter { actual ->
                     expected != actual && !actual.isExpect &&
-                    // TODO: support non-source definitions (e.g. from Java)
-                    DescriptorToSourceUtils.getSourceFromDescriptor(actual) is KtElement
+                            // TODO: support non-source definitions (e.g. from Java)
+                            DescriptorToSourceUtils.getSourceFromDescriptor(actual) is KtElement
                 }.groupBy { actual ->
-                    areCompatibleCallables(expected, actual)
-                }
+                        areCompatibleCallables(expected, actual)
+                    }
             }
             is ClassDescriptor -> {
                 expected.findClassifiersFromModule(platformModule).filter { actual ->
                     expected != actual && !actual.isExpect &&
-                    DescriptorToSourceUtils.getSourceFromDescriptor(actual) is KtElement
+                            DescriptorToSourceUtils.getSourceFromDescriptor(actual) is KtElement
                 }.groupBy { actual ->
-                    areCompatibleClassifiers(expected, actual)
-                }
+                        areCompatibleClassifiers(expected, actual)
+                    }
             }
             else -> null
         }
     }
 
     private fun checkActualDeclarationHasExpected(
-            reportOn: KtNamedDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkActual: Boolean
+        reportOn: KtNamedDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkActual: Boolean
     ) {
         // Using the platform module instead of the common module is sort of fine here because the former always depends on the latter.
         // However, it would be clearer to find the common module this platform module implements and look for expected there instead.
@@ -191,28 +192,29 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             // This is needed only to reduce the number of errors. Incompatibility errors for those members will be reported
             // later when this checker is called for them
             fun hasSingleActualSuspect(
-                    expectedWithIncompatibility: Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>
+                expectedWithIncompatibility: Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>
             ): Boolean {
                 val (expectedMember, incompatibility) = expectedWithIncompatibility
                 val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
                 return actualMember != null &&
-                       actualMember.isExplicitActualDeclaration() &&
-                       !incompatibility.allStrongIncompatibilities() &&
-                       findExpectedForActual(actualMember, expectedMember.module)?.values?.singleOrNull()?.singleOrNull() == expectedMember
+                        actualMember.isExplicitActualDeclaration() &&
+                        !incompatibility.allStrongIncompatibilities() &&
+                        findExpectedForActual(actualMember, expectedMember.module)?.values?.singleOrNull()?.singleOrNull() == expectedMember
             }
 
             val nonTrivialUnfulfilled = singleIncompatibility.unfulfilled.filterNot(::hasSingleActualSuspect)
 
             if (nonTrivialUnfulfilled.isNotEmpty()) {
                 val classDescriptor =
-                        (descriptor as? TypeAliasDescriptor)?.expandedType?.constructor?.declarationDescriptor as? ClassDescriptor
-                        ?: (descriptor as ClassDescriptor)
-                diagnosticHolder.report(Errors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS.on(
+                    (descriptor as? TypeAliasDescriptor)?.expandedType?.constructor?.declarationDescriptor as? ClassDescriptor
+                            ?: (descriptor as ClassDescriptor)
+                diagnosticHolder.report(
+                    Errors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS.on(
                         reportOn, classDescriptor, nonTrivialUnfulfilled
-                ))
+                    )
+                )
             }
-        }
-        else if (Compatible !in compatibility) {
+        } else if (Compatible !in compatibility) {
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
@@ -223,20 +225,24 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     // This should ideally be handled by CallableMemberDescriptor.Kind, but default constructors have kind DECLARATION and non-empty source.
     // Their source is the containing KtClass instance though, as opposed to explicit constructors, whose source is KtConstructor
     private fun MemberDescriptor.isExplicitActualDeclaration(): Boolean =
-            when (this) {
-                is ConstructorDescriptor -> DescriptorToSourceUtils.getSourceFromDescriptor(this) is KtConstructor<*>
-                is CallableMemberDescriptor -> kind == CallableMemberDescriptor.Kind.DECLARATION
-                else -> true
-            }
+        when (this) {
+            is ConstructorDescriptor -> DescriptorToSourceUtils.getSourceFromDescriptor(this) is KtConstructor<*>
+            is CallableMemberDescriptor -> kind == CallableMemberDescriptor.Kind.DECLARATION
+            else -> true
+        }
 
-    private fun findExpectedForActual(actual: MemberDescriptor, commonModule: ModuleDescriptor): Map<Compatibility, List<MemberDescriptor>>? {
+    private fun findExpectedForActual(
+        actual: MemberDescriptor,
+        commonModule: ModuleDescriptor
+    ): Map<Compatibility, List<MemberDescriptor>>? {
         return when (actual) {
             is CallableMemberDescriptor -> {
                 val container = actual.containingDeclaration
                 val candidates = when (container) {
                     is ClassDescriptor -> {
                         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
-                        val expectedClass = findExpectedForActual(container, commonModule)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
+                        val expectedClass =
+                            findExpectedForActual(container, commonModule)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
                         expectedClass?.getMembers(actual.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
                     }
                     is PackageFragmentDescriptor -> actual.findNamesakesFromModule(commonModule)
@@ -246,41 +252,40 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                 candidates.filter { declaration ->
                     actual != declaration && declaration.isExpect
                 }.groupBy { declaration ->
-                    // TODO: optimize by caching this per actual-expected class pair, do not create a new substitutor for each actual member
-                    val substitutor =
+                        // TODO: optimize by caching this per actual-expected class pair, do not create a new substitutor for each actual member
+                        val substitutor =
                             if (container is ClassDescriptor) {
                                 val expectedClass = declaration.containingDeclaration as ClassDescriptor
                                 // TODO: this might not work for members of inner generic classes
                                 Substitutor(expectedClass.declaredTypeParameters, container.declaredTypeParameters)
-                            }
-                            else null
-                    areCompatibleCallables(declaration, actual, parentSubstitutor = substitutor)
-                }
+                            } else null
+                        areCompatibleCallables(declaration, actual, parentSubstitutor = substitutor)
+                    }
             }
             is ClassifierDescriptorWithTypeParameters -> {
                 actual.findClassifiersFromModule(commonModule).filter { declaration ->
                     actual != declaration &&
-                    declaration is ClassDescriptor && declaration.isExpect
+                            declaration is ClassDescriptor && declaration.isExpect
                 }.groupBy { expected ->
-                    areCompatibleClassifiers(expected as ClassDescriptor, actual)
-                }
+                        areCompatibleClassifiers(expected as ClassDescriptor, actual)
+                    }
             }
             else -> null
         }
     }
 
     fun MemberDescriptor.findCompatibleActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> =
-            findActualForExpected(this, platformModule)?.get(Compatible).orEmpty()
+        findActualForExpected(this, platformModule)?.get(Compatible).orEmpty()
 
     fun MemberDescriptor.findAnyActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> {
         val actualsGroupedByCompatibility = findActualForExpected(this, platformModule)
         return actualsGroupedByCompatibility?.get(Compatible)
-               ?: actualsGroupedByCompatibility?.values?.flatten()
-               ?: emptyList()
+                ?: actualsGroupedByCompatibility?.values?.flatten()
+                ?: emptyList()
     }
 
     fun MemberDescriptor.findCompatibleExpectedForActual(commonModule: ModuleDescriptor): List<MemberDescriptor> =
-            findExpectedForActual(this, commonModule)?.get(Compatible).orEmpty()
+        findExpectedForActual(this, commonModule)?.get(Compatible).orEmpty()
 
     private fun CallableMemberDescriptor.findNamesakesFromModule(module: ModuleDescriptor): Collection<CallableMemberDescriptor> {
         val containingDeclaration = containingDeclaration
@@ -305,13 +310,13 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     }
 
     private fun ClassifierDescriptorWithTypeParameters.findClassifiersFromModule(
-            module: ModuleDescriptor
+        module: ModuleDescriptor
     ): Collection<ClassifierDescriptorWithTypeParameters> {
         val classId = classId ?: return emptyList()
 
         fun MemberScope.getAllClassifiers(name: Name): Collection<ClassifierDescriptorWithTypeParameters> =
-                getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS) { it == name }
-                        .filterIsInstance<ClassifierDescriptorWithTypeParameters>()
+            getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS) { it == name }
+                .filterIsInstance<ClassifierDescriptorWithTypeParameters>()
 
         val segments = classId.relativeClassName.pathSegments()
         var classifiers = module.getPackage(classId.packageFqName).memberScope.getAllClassifiers(segments.first())
@@ -319,7 +324,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         for (name in segments.subList(1, segments.size)) {
             classifiers = classifiers.mapNotNull { classifier ->
                 (classifier as? ClassDescriptor)?.unsubstitutedInnerClassesScope?.getContributedClassifier(
-                        name, NoLookupLocation.FOR_ALREADY_TRACKED
+                    name, NoLookupLocation.FOR_ALREADY_TRACKED
                 ) as? ClassifierDescriptorWithTypeParameters
             }
         }
@@ -350,13 +355,17 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
             object ValueParameterHasDefault : Incompatible("some parameters have default values")
             object ValueParameterVararg : Incompatible("some value parameter is vararg in one declaration and non-vararg in the other")
-            object ValueParameterNoinline : Incompatible("some value parameter is noinline in one declaration and not noinline in the other")
-            object ValueParameterCrossinline : Incompatible("some value parameter is crossinline in one declaration and not crossinline in the other")
+            object ValueParameterNoinline :
+                Incompatible("some value parameter is noinline in one declaration and not noinline in the other")
+
+            object ValueParameterCrossinline :
+                Incompatible("some value parameter is crossinline in one declaration and not crossinline in the other")
 
             // Functions
 
             object FunctionModifiersDifferent : Incompatible("modifiers are different (suspend)")
-            object FunctionModifiersNotSubset : Incompatible("some modifiers on expected declaration are missing on the actual one (external, infix, inline, operator, tailrec)")
+            object FunctionModifiersNotSubset :
+                Incompatible("some modifiers on expected declaration are missing on the actual one (external, infix, inline, operator, tailrec)")
 
             // Properties
 
@@ -372,7 +381,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             object Supertypes : Incompatible("some supertypes are missing in the actual declaration")
 
             class ClassScopes(
-                    val unfulfilled: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>
+                val unfulfilled: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>
             ) : Incompatible("some expected members have no actual ones")
 
             object EnumEntries : Incompatible("some entries from expected enum are missing in the actual enum")
@@ -394,10 +403,10 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
     // a is the declaration in common code, b is the definition in the platform-specific code
     private fun areCompatibleCallables(
-            a: CallableMemberDescriptor,
-            b: CallableMemberDescriptor,
-            platformModule: ModuleDescriptor = b.module,
-            parentSubstitutor: Substitutor? = null
+        a: CallableMemberDescriptor,
+        b: CallableMemberDescriptor,
+        platformModule: ModuleDescriptor = b.module,
+        parentSubstitutor: Substitutor? = null
     ): Compatibility {
         assert(a.name == b.name) { "This function should be invoked only for declarations with the same name: $a, $b" }
         assert(a.containingDeclaration is ClassDescriptor == b.containingDeclaration is ClassDescriptor) {
@@ -425,7 +434,11 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             return Incompatible.ParameterTypes
         if (!areCompatibleTypes(substitutor(a.returnType), b.returnType, platformModule)) return Incompatible.ReturnType
 
-        if (b.hasStableParameterNames() && !equalsBy(aParams, bParams, ValueParameterDescriptor::getName)) return Incompatible.ParameterNames
+        if (b.hasStableParameterNames() && !equalsBy(
+                aParams,
+                bParams,
+                ValueParameterDescriptor::getName
+            )) return Incompatible.ParameterNames
         if (!equalsBy(aTypeParams, bTypeParams, TypeParameterDescriptor::getName)) return Incompatible.TypeParameterNames
 
         if (!areCompatibleModalities(a.modality, b.modality)) return Incompatible.Modality
@@ -452,10 +465,10 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     }
 
     private fun valueParametersCountCompatible(
-            a: CallableMemberDescriptor,
-            b: CallableMemberDescriptor,
-            aParams: List<ValueParameterDescriptor>,
-            bParams: List<ValueParameterDescriptor>
+        a: CallableMemberDescriptor,
+        b: CallableMemberDescriptor,
+        aParams: List<ValueParameterDescriptor>,
+        bParams: List<ValueParameterDescriptor>
     ): Boolean {
         if (aParams.size == bParams.size) return true
 
@@ -466,7 +479,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     }
 
     private fun MemberDescriptor.isAnnotationConstructor(): Boolean =
-            this is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(this.constructedClass)
+        this is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(this.constructedClass)
 
     private fun areCompatibleTypes(a: KotlinType?, b: KotlinType?, platformModule: ModuleDescriptor): Boolean {
         if (a == null) return b == null
@@ -476,8 +489,8 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             val context = object : TypeCheckerContext(false) {
                 override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
                     return isExpectedClassAndActualTypeAlias(a, b, platformModule) ||
-                           isExpectedClassAndActualTypeAlias(b, a, platformModule) ||
-                           super.areEqualTypeConstructors(a, b)
+                            isExpectedClassAndActualTypeAlias(b, a, platformModule) ||
+                            super.areEqualTypeConstructors(a, b)
                 }
             }
             return context.equalTypes(a.unwrap(), b.unwrap())
@@ -489,21 +502,21 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     // Note that the case of an "actual class" works as expected though, because the actual class by definition has the same FQ name
     // as the corresponding expected class, so their type constructors are equal as per AbstractClassTypeConstructor#equals
     private fun isExpectedClassAndActualTypeAlias(
-            expectedTypeConstructor: TypeConstructor,
-            actualTypeConstructor: TypeConstructor,
-            platformModule: ModuleDescriptor
+        expectedTypeConstructor: TypeConstructor,
+        actualTypeConstructor: TypeConstructor,
+        platformModule: ModuleDescriptor
     ): Boolean {
         val expected = expectedTypeConstructor.declarationDescriptor
         val actual = actualTypeConstructor.declarationDescriptor
         return expected is ClassifierDescriptorWithTypeParameters &&
-               expected.isExpect &&
-               actual is ClassifierDescriptorWithTypeParameters &&
-               expected.findClassifiersFromModule(platformModule).any { classifier ->
-                   // Note that it's fine to only check that this "actual typealias" expands to the expected class, without checking
-                   // whether the type arguments in the expansion are in the correct order or have the correct variance, because we only
-                   // allow simple cases like "actual typealias Foo<A, B> = FooImpl<A, B>", see DeclarationsChecker#checkActualTypeAlias
-                   (classifier as? TypeAliasDescriptor)?.classDescriptor == actual
-               }
+                expected.isExpect &&
+                actual is ClassifierDescriptorWithTypeParameters &&
+                expected.findClassifiersFromModule(platformModule).any { classifier ->
+                    // Note that it's fine to only check that this "actual typealias" expands to the expected class, without checking
+                    // whether the type arguments in the expansion are in the correct order or have the correct variance, because we only
+                    // allow simple cases like "actual typealias Foo<A, B> = FooImpl<A, B>", see DeclarationsChecker#checkActualTypeAlias
+                    (classifier as? TypeAliasDescriptor)?.classDescriptor == actual
+                }
     }
 
     private fun areCompatibleTypeLists(a: List<KotlinType?>, b: List<KotlinType?>, platformModule: ModuleDescriptor): Boolean {
@@ -514,10 +527,10 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     }
 
     private fun areCompatibleTypeParameters(
-            a: List<TypeParameterDescriptor>,
-            b: List<TypeParameterDescriptor>,
-            platformModule: ModuleDescriptor,
-            substitutor: Substitutor
+        a: List<TypeParameterDescriptor>,
+        b: List<TypeParameterDescriptor>,
+        platformModule: ModuleDescriptor,
+        substitutor: Substitutor
     ): Compatibility {
         if (!areCompatibleTypeLists(a.map { substitutor(it.defaultType) }, b.map { it.defaultType }, platformModule))
             return Incompatible.TypeParameterUpperBounds
@@ -579,8 +592,8 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         val aSupertypes = a.typeConstructor.supertypes.filterNot(KotlinBuiltIns::isAny)
         val bSupertypes = b.typeConstructor.supertypes.filterNot(KotlinBuiltIns::isAny)
         if (aSupertypes.map(substitutor).any { aSupertype ->
-            bSupertypes.none { bSupertype -> areCompatibleTypes(aSupertype, bSupertype, platformModule) }
-        }) return Incompatible.Supertypes
+                bSupertypes.none { bSupertype -> areCompatibleTypes(aSupertype, bSupertype, platformModule) }
+            }) return Incompatible.Supertypes
 
         areCompatibleClassScopes(a, b, platformModule, substitutor).let { if (it != Compatible) return it }
 
@@ -589,15 +602,15 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
     private fun areCompatibleModalities(a: Modality, b: Modality): Boolean {
         return a == Modality.FINAL && b == Modality.OPEN ||
-               a == b
+                a == b
     }
 
 
     private fun areCompatibleClassScopes(
-            a: ClassDescriptor,
-            b: ClassDescriptor,
-            platformModule: ModuleDescriptor,
-            substitutor: Substitutor
+        a: ClassDescriptor,
+        b: ClassDescriptor,
+        platformModule: ModuleDescriptor,
+        substitutor: Substitutor
     ): Compatibility {
         val unfulfilled = arrayListOf<Pair<MemberDescriptor, Map<Incompatible, MutableCollection<MemberDescriptor>>>>()
 
@@ -608,15 +621,15 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
             val bMembers = bMembersByName[aMember.name]?.filter { bMember ->
                 aMember is CallableMemberDescriptor && bMember is CallableMemberDescriptor ||
-                aMember is ClassDescriptor && bMember is ClassDescriptor
+                        aMember is ClassDescriptor && bMember is ClassDescriptor
             }.orEmpty()
 
             val mapping = bMembers.keysToMap { bMember ->
                 when (aMember) {
                     is CallableMemberDescriptor ->
-                            areCompatibleCallables(aMember, bMember as CallableMemberDescriptor, platformModule, substitutor)
+                        areCompatibleCallables(aMember, bMember as CallableMemberDescriptor, platformModule, substitutor)
                     is ClassDescriptor ->
-                            areCompatibleClassifiers(aMember, bMember as ClassDescriptor)
+                        areCompatibleClassifiers(aMember, bMember as ClassDescriptor)
                     else -> throw UnsupportedOperationException("Unsupported declaration: $aMember ($bMembers)")
                 }
             }
@@ -635,7 +648,8 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
         if (a.kind == ClassKind.ENUM_CLASS) {
             fun ClassDescriptor.enumEntries() =
-                    unsubstitutedMemberScope.getDescriptorsFiltered().filter(DescriptorUtils::isEnumEntry).map { it.name }
+                unsubstitutedMemberScope.getDescriptorsFiltered().filter(DescriptorUtils::isEnumEntry).map { it.name }
+
             val aEntries = a.enumEntries()
             val bEntries = b.enumEntries()
 
@@ -652,14 +666,14 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     private fun ClassDescriptor.getMembers(name: Name? = null): Collection<MemberDescriptor> {
         val nameFilter = if (name != null) { it -> it == name } else MemberScope.ALL_NAME_FILTER
         return defaultType.memberScope
-                .getDescriptorsFiltered(nameFilter = nameFilter)
-                .filterIsInstance<MemberDescriptor>()
-                .filterNot(DescriptorUtils::isEnumEntry)
-                .plus(constructors.filter { nameFilter(it.name) })
+            .getDescriptorsFiltered(nameFilter = nameFilter)
+            .filterIsInstance<MemberDescriptor>()
+            .filterNot(DescriptorUtils::isEnumEntry)
+            .plus(constructors.filter { nameFilter(it.name) })
     }
 
     private inline fun <T, K> equalBy(first: T, second: T, selector: (T) -> K): Boolean =
-            selector(first) == selector(second)
+        selector(first) == selector(second)
 
     private inline fun <T, K> equalsBy(first: List<T>, second: List<T>, selector: (T) -> K): Boolean {
         for (i in first.indices) {
@@ -671,17 +685,17 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
     // This substitutor takes the type from A's signature and returns the type that should be in that place in B's signature
     private class Substitutor(
-            aTypeParams: List<TypeParameterDescriptor>,
-            bTypeParams: List<TypeParameterDescriptor>,
-            private val parent: Substitutor? = null
+        aTypeParams: List<TypeParameterDescriptor>,
+        bTypeParams: List<TypeParameterDescriptor>,
+        private val parent: Substitutor? = null
     ) : (KotlinType?) -> KotlinType? {
         private val typeSubstitutor = TypeSubstitutor.create(
-                TypeConstructorSubstitution.createByParametersMap(aTypeParams.keysToMap {
-                    bTypeParams[it.index].defaultType.asTypeProjection()
-                })
+            TypeConstructorSubstitution.createByParametersMap(aTypeParams.keysToMap {
+                bTypeParams[it.index].defaultType.asTypeProjection()
+            })
         )
 
         override fun invoke(type: KotlinType?): KotlinType? =
-                (parent?.invoke(type) ?: type)?.asTypeProjection()?.let(typeSubstitutor::substitute)?.type
+            (parent?.invoke(type) ?: type)?.asTypeProjection()?.let(typeSubstitutor::substitute)?.type
     }
 }

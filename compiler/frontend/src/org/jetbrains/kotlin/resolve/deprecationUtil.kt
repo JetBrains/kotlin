@@ -56,7 +56,7 @@ fun Deprecation.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedB
 fun Deprecation.deprecatedByAnnotationReplaceWithExpression(): String? {
     val annotation = (this as? DeprecatedByAnnotation)?.annotation ?: return null
     val replaceWithAnnotation = annotation.argumentValue(kotlin.Deprecated::replaceWith.name)
-                                        as? AnnotationDescriptor ?: return null
+            as? AnnotationDescriptor ?: return null
 
     return replaceWithAnnotation.argumentValue(kotlin.ReplaceWith::expression.name) as String
 }
@@ -97,12 +97,13 @@ private data class DeprecatedByOverridden(private val deprecations: Collection<D
             return "${additionalMessage()}. $message"
         }
 
-    internal fun additionalMessage() = "Overrides deprecated member in '${DescriptorUtils.getContainingClass(target)!!.fqNameSafe.asString()}'"
+    internal fun additionalMessage() =
+        "Overrides deprecated member in '${DescriptorUtils.getContainingClass(target)!!.fqNameSafe.asString()}'"
 }
 
 private data class DeprecatedByVersionRequirement(
-        val versionRequirement: VersionRequirement,
-        override val target: DeclarationDescriptor
+    val versionRequirement: VersionRequirement,
+    override val target: DeclarationDescriptor
 ) : Deprecation {
     override val deprecationLevel: DeprecationLevelValue
         get() = when (versionRequirement.level) {
@@ -123,8 +124,7 @@ private data class DeprecatedByVersionRequirement(
                     if (errorCode != null) {
                         append(" (error code $errorCode)")
                     }
-                }
-                else {
+                } else {
                     append("Error code $errorCode")
                 }
             }
@@ -132,8 +132,8 @@ private data class DeprecatedByVersionRequirement(
 }
 
 private data class DeprecatedTypealiasByAnnotation(
-        val typeAliasTarget: TypeAliasDescriptor,
-        val nested: DeprecatedByAnnotation
+    val typeAliasTarget: TypeAliasDescriptor,
+    val nested: DeprecatedByAnnotation
 ) : Deprecation {
     override val target get() = typeAliasTarget
     override val deprecationLevel get() = nested.deprecationLevel
@@ -146,7 +146,7 @@ private fun Deprecation.wrapInTypeAliasExpansion(typeAliasDescriptor: TypeAliasD
 }
 
 internal fun createDeprecationDiagnostic(
-        element: PsiElement, deprecation: Deprecation, languageVersionSettings: LanguageVersionSettings
+    element: PsiElement, deprecation: Deprecation, languageVersionSettings: LanguageVersionSettings
 ): Diagnostic {
     val targetOriginal = deprecation.target.original
     return when (deprecation) {
@@ -155,8 +155,10 @@ internal fun createDeprecationDiagnostic(
                 WARNING -> Errors.VERSION_REQUIREMENT_DEPRECATION
                 ERROR, HIDDEN -> Errors.VERSION_REQUIREMENT_DEPRECATION_ERROR
             }
-            factory.on(element, targetOriginal, deprecation.versionRequirement.version,
-                       languageVersionSettings.languageVersion to deprecation.message)
+            factory.on(
+                element, targetOriginal, deprecation.versionRequirement.version,
+                languageVersionSettings.languageVersion to deprecation.message
+            )
         }
 
         is DeprecatedTypealiasByAnnotation -> {
@@ -183,8 +185,8 @@ enum class DeprecationLevelValue {
 }
 
 class DeprecationResolver(
-        storageManager: StorageManager,
-        private val languageVersionSettings: LanguageVersionSettings
+    storageManager: StorageManager,
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
     private val deprecations = storageManager.createMemoizedFunction { descriptor: DeclarationDescriptor ->
         val deprecations = descriptor.getOwnDeprecations()
@@ -200,17 +202,17 @@ class DeprecationResolver(
     }
 
     fun getDeprecations(
-            descriptor: DeclarationDescriptor
+        descriptor: DeclarationDescriptor
     ) = deprecations(descriptor.original)
 
 
     fun isDeprecatedHidden(descriptor: DeclarationDescriptor): Boolean =
-            getDeprecations(descriptor).any { it.deprecationLevel == HIDDEN }
+        getDeprecations(descriptor).any { it.deprecationLevel == HIDDEN }
 
     @JvmOverloads
     fun isHiddenInResolution(
-            descriptor: DeclarationDescriptor,
-            isSuperCall: Boolean = false
+        descriptor: DeclarationDescriptor,
+        isSuperCall: Boolean = false
     ): Boolean {
         if (descriptor is FunctionDescriptor) {
             if (descriptor.isHiddenToOvercomeSignatureClash) return true
@@ -223,14 +225,14 @@ class DeprecationResolver(
     }
 
     private fun KotlinType.deprecationsByConstituentTypes(): List<Deprecation> =
-            SmartList<Deprecation>().also { deprecations ->
-                TypeUtils.contains(this) { type ->
-                    type.constructor.declarationDescriptor?.let {
-                        deprecations.addAll(getDeprecations(it))
-                    }
-                    false
+        SmartList<Deprecation>().also { deprecations ->
+            TypeUtils.contains(this) { type ->
+                type.constructor.declarationDescriptor?.let {
+                    deprecations.addAll(getDeprecations(it))
                 }
+                false
             }
+        }
 
     private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation? {
         val visited = HashSet<CallableMemberDescriptor>()
@@ -277,7 +279,7 @@ class DeprecationResolver(
 
         fun addDeprecationIfPresent(target: DeclarationDescriptor) {
             val annotation = target.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated)
-                             ?: target.annotations.findAnnotation(JAVA_DEPRECATED)
+                    ?: target.annotations.findAnnotation(JAVA_DEPRECATED)
             if (annotation != null) {
                 val deprecatedByAnnotation = DeprecatedByAnnotation(annotation, target)
                 val deprecation = when (target) {
@@ -288,8 +290,8 @@ class DeprecationResolver(
             }
 
             val versionRequirement =
-                    (target as? DeserializedMemberDescriptor)?.versionRequirement
-                    ?: (target as? DeserializedClassDescriptor)?.versionRequirement
+                (target as? DeserializedMemberDescriptor)?.versionRequirement
+                        ?: (target as? DeserializedClassDescriptor)?.versionRequirement
             if (versionRequirement != null) {
                 // We're using ApiVersion because it's convenient to compare versions, "-api-version" is not involved in any way
                 // TODO: usage of ApiVersion is confusing here, refactor
@@ -311,8 +313,12 @@ class DeprecationResolver(
 
         fun addUseSiteTargetedDeprecationIfPresent(annotatedDescriptor: DeclarationDescriptor, useSiteTarget: AnnotationUseSiteTarget?) {
             if (useSiteTarget != null) {
-                val annotation = Annotations.findUseSiteTargetedAnnotation(annotatedDescriptor.annotations, useSiteTarget, KotlinBuiltIns.FQ_NAMES.deprecated)
-                                 ?: Annotations.findUseSiteTargetedAnnotation(annotatedDescriptor.annotations, useSiteTarget, JAVA_DEPRECATED)
+                val annotation = Annotations.findUseSiteTargetedAnnotation(
+                    annotatedDescriptor.annotations,
+                    useSiteTarget,
+                    KotlinBuiltIns.FQ_NAMES.deprecated
+                )
+                        ?: Annotations.findUseSiteTargetedAnnotation(annotatedDescriptor.annotations, useSiteTarget, JAVA_DEPRECATED)
                 if (annotation != null) {
                     result.add(DeprecatedByAnnotation(annotation, this))
                 }
@@ -336,8 +342,8 @@ class DeprecationResolver(
                 addDeprecationIfPresent(correspondingProperty)
 
                 addUseSiteTargetedDeprecationIfPresent(
-                        correspondingProperty,
-                        if (this is PropertyGetterDescriptor) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER
+                    correspondingProperty,
+                    if (this is PropertyGetterDescriptor) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER
                 )
             }
         }

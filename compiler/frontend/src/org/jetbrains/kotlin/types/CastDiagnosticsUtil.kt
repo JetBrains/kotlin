@@ -268,12 +268,12 @@ object CastDiagnosticsUtil {
                 PsiTreeUtil.isAncestor(receiver, expression, false)
             }
 
-            // in binary expression, left argument can be a receiver and right an argument
-            // in unary expression, left argument can be a receiver
+        // in binary expression, left argument can be a receiver and right an argument
+        // in unary expression, left argument can be a receiver
             is KtBinaryExpression, is KtUnaryExpression -> true
 
-            // Previously we've checked that there is no expected type, therefore cast in property or
-            // in function has an effect on inference and thus isn't useless
+        // Previously we've checked that there is no expected type, therefore cast in property or
+        // in function has an effect on inference and thus isn't useless
             is KtProperty, is KtPropertyAccessor, is KtNamedFunction, is KtFunctionLiteral -> true
 
             else -> false

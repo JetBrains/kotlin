@@ -21,10 +21,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 
 class KtTypeCodeFragment(
-        project: Project,
-        name: String,
-        text: CharSequence,
-        context: PsiElement?
+    project: Project,
+    name: String,
+    text: CharSequence,
+    context: PsiElement?
 ) : KtCodeFragment(project, name, text, null, KtNodeTypes.TYPE_CODE_FRAGMENT, context) {
     override fun getContentElement() = findChildByClass(KtTypeReference::class.java)
 }

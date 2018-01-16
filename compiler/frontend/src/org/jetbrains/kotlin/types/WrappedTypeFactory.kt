@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 open class WrappedTypeFactory(private val storageManager: StorageManager) {
     open fun createDeferredType(trace: BindingTrace, computation: () -> KotlinType): KotlinType =
-            DeferredType.create(storageManager, trace, computation)
+        DeferredType.create(storageManager, trace, computation)
 
     open fun createRecursionIntolerantDeferredType(trace: BindingTrace, computation: () -> KotlinType): KotlinType =
-            DeferredType.createRecursionIntolerant(storageManager, trace, computation)
+        DeferredType.createRecursionIntolerant(storageManager, trace, computation)
 }

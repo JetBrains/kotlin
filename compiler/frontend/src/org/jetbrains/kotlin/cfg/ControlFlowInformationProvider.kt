@@ -624,7 +624,7 @@ class ControlFlowInformationProvider private constructor(
         if (!VariableUseState.isUsed(variableUseState)) {
             if (element.isSingleUnderscore) return
             when {
-                // KtDestructuringDeclarationEntry -> KtDestructuringDeclaration -> KtParameter -> KtParameterList
+            // KtDestructuringDeclarationEntry -> KtDestructuringDeclaration -> KtParameter -> KtParameterList
                 element is KtDestructuringDeclarationEntry && element.parent.parent?.parent is KtParameterList ->
                     report(Errors.UNUSED_DESTRUCTURED_PARAMETER_ENTRY.on(element, variableDescriptor), ctxt)
 
@@ -866,7 +866,7 @@ class ControlFlowInformationProvider private constructor(
         class KindAndCall(var kind: TailRecursionKind, internal val call: ResolvedCall<*>)
 
         val calls = HashMap<KtElement, KindAndCall>()
-        traverseCalls traverse@{ instruction, resolvedCall ->
+        traverseCalls traverse@ { instruction, resolvedCall ->
             // is this a recursive call?
             val functionDescriptor = resolvedCall.resultingDescriptor
             if (functionDescriptor.original != subroutineDescriptor) return@traverse

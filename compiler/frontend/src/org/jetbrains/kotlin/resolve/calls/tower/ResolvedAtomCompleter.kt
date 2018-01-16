@@ -47,16 +47,16 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 class ResolvedAtomCompleter(
-        private val resultSubstitutor: NewTypeSubstitutor,
-        private val trace: BindingTrace,
-        private val topLevelCallContext: BasicCallResolutionContext,
+    private val resultSubstitutor: NewTypeSubstitutor,
+    private val trace: BindingTrace,
+    private val topLevelCallContext: BasicCallResolutionContext,
 
-        private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
-        private val expressionTypingServices: ExpressionTypingServices,
-        private val argumentTypeResolver: ArgumentTypeResolver,
-        private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
-        languageVersionSettings: LanguageVersionSettings,
-        deprecationResolver: DeprecationResolver
+    private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
+    private val expressionTypingServices: ExpressionTypingServices,
+    private val argumentTypeResolver: ArgumentTypeResolver,
+    private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
+    languageVersionSettings: LanguageVersionSettings,
+    deprecationResolver: DeprecationResolver
 ) {
     private val callCheckerContext = CallCheckerContext(topLevelCallContext, languageVersionSettings, deprecationResolver)
 
@@ -79,7 +79,12 @@ class ResolvedAtomCompleter(
     fun completeResolvedCall(resolvedCallAtom: ResolvedCallAtom, diagnostics: Collection<KotlinCallDiagnostic>): ResolvedCall<*>? {
         if (resolvedCallAtom.atom.psiKotlinCall is PSIKotlinCallForVariable) return null
 
-        val resolvedCall = kotlinToResolvedCallTransformer.transformToResolvedCall<CallableDescriptor>(resolvedCallAtom, trace, resultSubstitutor, diagnostics)
+        val resolvedCall = kotlinToResolvedCallTransformer.transformToResolvedCall<CallableDescriptor>(
+            resolvedCallAtom,
+            trace,
+            resultSubstitutor,
+            diagnostics
+        )
         kotlinToResolvedCallTransformer.bindAndReport(topLevelCallContext, trace, resolvedCall, diagnostics)
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, callCheckerContext)
 
@@ -90,20 +95,20 @@ class ResolvedAtomCompleter(
     }
 
     private fun completeLambda(lambda: ResolvedLambdaAtom) {
-            val returnType = resultSubstitutor.safeSubstitute(lambda.returnType)
+        val returnType = resultSubstitutor.safeSubstitute(lambda.returnType)
 
-            updateTraceForLambdaReturnType(lambda, trace, returnType)
+        updateTraceForLambdaReturnType(lambda, trace, returnType)
 
-            for (lambdaResult in lambda.resultArguments) {
-                val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
-                val newContext =
-                        topLevelCallContext.replaceDataFlowInfo(resultValueArgument.dataFlowInfoAfterThisArgument)
-                                .replaceExpectedType(returnType)
-                                .replaceBindingTrace(trace)
+        for (lambdaResult in lambda.resultArguments) {
+            val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
+            val newContext =
+                topLevelCallContext.replaceDataFlowInfo(resultValueArgument.dataFlowInfoAfterThisArgument)
+                    .replaceExpectedType(returnType)
+                    .replaceBindingTrace(trace)
 
-                val argumentExpression = resultValueArgument.valueArgument.getArgumentExpression() ?: continue
-                kotlinToResolvedCallTransformer.updateRecordedType(argumentExpression, newContext, true)
-            }
+            val argumentExpression = resultValueArgument.valueArgument.getArgumentExpression() ?: continue
+            kotlinToResolvedCallTransformer.updateRecordedType(argumentExpression, newContext, true)
+        }
     }
 
     private fun updateTraceForLambdaReturnType(lambda: ResolvedLambdaAtom, trace: BindingTrace, returnType: UnwrappedType) {
@@ -123,8 +128,8 @@ class ResolvedAtomCompleter(
             else -> throw AssertionError("Unexpected psiCallArgument for resolved lambda argument: $psiCallArgument")
         }
 
-        val functionDescriptor = trace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? FunctionDescriptorImpl ?:
-                                 throw AssertionError("No function descriptor for resolved lambda argument")
+        val functionDescriptor = trace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? FunctionDescriptorImpl
+                ?: throw AssertionError("No function descriptor for resolved lambda argument")
         functionDescriptor.setReturnType(returnType)
 
         val existingLambdaType = trace.getType(ktArgumentExpression) ?: throw AssertionError("No type for resolved lambda argument")
@@ -132,26 +137,31 @@ class ResolvedAtomCompleter(
     }
 
     private fun completeCallableReference(
-            resolvedAtom: ResolvedCallableReferenceAtom
+        resolvedAtom: ResolvedCallableReferenceAtom
     ) {
         val callableCandidate = resolvedAtom.candidate
         if (callableCandidate == null) {
             // todo report meanfull diagnostic here
             return
         }
-        val resultTypeParameters = callableCandidate.freshSubstitutor!!.freshVariables.map { resultSubstitutor.safeSubstitute(it.defaultType) }
+        val resultTypeParameters =
+            callableCandidate.freshSubstitutor!!.freshVariables.map { resultSubstitutor.safeSubstitute(it.defaultType) }
 
 
         val psiCallArgument = resolvedAtom.atom.psiCallArgument as CallableReferenceKotlinCallArgumentImpl
         val callableReferenceExpression = psiCallArgument.ktCallableReferenceExpression
-        val resultSubstitutor = IndexedParametersSubstitution(callableCandidate.candidate.typeParameters, resultTypeParameters.map { it.asTypeProjection() }).buildSubstitutor()
+        val resultSubstitutor = IndexedParametersSubstitution(
+            callableCandidate.candidate.typeParameters,
+            resultTypeParameters.map { it.asTypeProjection() }).buildSubstitutor()
 
 
         // write down type for callable reference expression
         val resultType = resultSubstitutor.safeSubstitute(callableCandidate.reflectionCandidateType, Variance.INVARIANT)
-        argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(trace, expressionTypingServices.statementFilter,
-                                                                    resultType,
-                                                                    callableReferenceExpression)
+        argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(
+            trace, expressionTypingServices.statementFilter,
+            resultType,
+            callableReferenceExpression
+        )
         val reference = callableReferenceExpression.callableReference
 
         val explicitCallableReceiver = when (callableCandidate.explicitReceiverKind) {
@@ -166,9 +176,11 @@ class ResolvedAtomCompleter(
         val tracing = TracingStrategyImpl.create(reference, psiCall)
         val temporaryTrace = TemporaryBindingTrace.create(trace, "callable reference fake call")
 
-        val resolvedCall = ResolvedCallImpl(psiCall, callableCandidate.candidate, callableCandidate.dispatchReceiver?.receiver?.receiverValue,
-                                            callableCandidate.extensionReceiver?.receiver?.receiverValue, callableCandidate.explicitReceiverKind,
-                                            null, temporaryTrace, tracing, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY))
+        val resolvedCall = ResolvedCallImpl(
+            psiCall, callableCandidate.candidate, callableCandidate.dispatchReceiver?.receiver?.receiverValue,
+            callableCandidate.extensionReceiver?.receiver?.receiverValue, callableCandidate.explicitReceiverKind,
+            null, temporaryTrace, tracing, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
+        )
         resolvedCall.setResultingSubstitutor(resultSubstitutor)
 
         tracing.bindCall(trace, psiCall)
@@ -179,27 +191,40 @@ class ResolvedAtomCompleter(
         resolvedCall.markCallAsCompleted()
 
         when (callableCandidate.candidate) {
-            is FunctionDescriptor -> doubleColonExpressionResolver.bindFunctionReference(callableReferenceExpression, resultType, topLevelCallContext)
-            is PropertyDescriptor -> doubleColonExpressionResolver.bindPropertyReference(callableReferenceExpression, resultType, topLevelCallContext)
+            is FunctionDescriptor -> doubleColonExpressionResolver.bindFunctionReference(
+                callableReferenceExpression,
+                resultType,
+                topLevelCallContext
+            )
+            is PropertyDescriptor -> doubleColonExpressionResolver.bindPropertyReference(
+                callableReferenceExpression,
+                resultType,
+                topLevelCallContext
+            )
         }
 
         // TODO: probably we should also record key 'DATA_FLOW_INFO_BEFORE', see ExpressionTypingVisitorDispatcher.getTypeInfo
         trace.recordType(callableReferenceExpression, resultType)
         trace.record(BindingContext.PROCESSED, callableReferenceExpression)
 
-        doubleColonExpressionResolver.checkReferenceIsToAllowedMember(callableCandidate.candidate, topLevelCallContext.trace, callableReferenceExpression)
+        doubleColonExpressionResolver.checkReferenceIsToAllowedMember(
+            callableCandidate.candidate,
+            topLevelCallContext.trace,
+            callableReferenceExpression
+        )
     }
 
     private fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralAtom) {
         val psiCallArgument = collectionLiteralArgument.atom.psiCallArgument as CollectionLiteralKotlinCallArgumentImpl
         val context = psiCallArgument.outerCallContext
 
-        val expectedType = collectionLiteralArgument.expectedType?.let { resultSubstitutor.safeSubstitute(it) } ?: TypeUtils.NO_EXPECTED_TYPE
+        val expectedType =
+            collectionLiteralArgument.expectedType?.let { resultSubstitutor.safeSubstitute(it) } ?: TypeUtils.NO_EXPECTED_TYPE
 
         val actualContext = context
-                .replaceBindingTrace(trace)
-                .replaceExpectedType(expectedType)
-                .replaceContextDependency(ContextDependency.INDEPENDENT)
+            .replaceBindingTrace(trace)
+            .replaceExpectedType(expectedType)
+            .replaceContextDependency(ContextDependency.INDEPENDENT)
 
         expressionTypingServices.getTypeInfo(psiCallArgument.collectionLiteralExpression, actualContext)
     }

@@ -23,7 +23,7 @@ interface ArgumentMapping {
     fun isError(): Boolean
 }
 
-object ArgumentUnmapped: ArgumentMapping {
+object ArgumentUnmapped : ArgumentMapping {
     override fun isError(): Boolean = true
 }
 
@@ -46,7 +46,7 @@ interface ArgumentMatch : ArgumentMapping {
     override fun isError(): Boolean = status.isError
 }
 
-class ArgumentMatchImpl(override val valueParameter: ValueParameterDescriptor): ArgumentMatch {
+class ArgumentMatchImpl(override val valueParameter: ValueParameterDescriptor) : ArgumentMatch {
     private var _status: ArgumentMatchStatus? = null
 
     override val status: ArgumentMatchStatus
@@ -64,5 +64,4 @@ class ArgumentMatchImpl(override val valueParameter: ValueParameterDescriptor): 
 }
 
 //TODO: temporary hack until status.isSuccess is not always correct
-fun ResolvedCall<*>.isReallySuccess(): Boolean
-        = status.isSuccess && !ErrorUtils.isError(resultingDescriptor)
+fun ResolvedCall<*>.isReallySuccess(): Boolean = status.isSuccess && !ErrorUtils.isError(resultingDescriptor)

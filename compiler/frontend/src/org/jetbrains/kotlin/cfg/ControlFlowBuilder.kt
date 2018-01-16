@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 interface ControlFlowBuilder {
     // Subroutines
     fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind? = null)
+
     fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind? = null): Pseudocode
 
     val currentSubroutine: KtElement

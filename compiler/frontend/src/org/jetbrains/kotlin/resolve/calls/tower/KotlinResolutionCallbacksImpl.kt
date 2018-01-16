@@ -55,14 +55,14 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinResolutionCallbacksImpl(
-        topLevelCallContext: BasicCallResolutionContext,
-        val expressionTypingServices: ExpressionTypingServices,
-        val typeApproximator: TypeApproximator,
-        val argumentTypeResolver: ArgumentTypeResolver,
-        val languageVersionSettings: LanguageVersionSettings,
-        val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
-        val constantExpressionEvaluator: ConstantExpressionEvaluator
-): KotlinResolutionCallbacks {
+    topLevelCallContext: BasicCallResolutionContext,
+    val expressionTypingServices: ExpressionTypingServices,
+    val typeApproximator: TypeApproximator,
+    val argumentTypeResolver: ArgumentTypeResolver,
+    val languageVersionSettings: LanguageVersionSettings,
+    val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
+    val constantExpressionEvaluator: ConstantExpressionEvaluator
+) : KotlinResolutionCallbacks {
     val trace: BindingTrace = topLevelCallContext.trace
 
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
@@ -75,35 +75,42 @@ class KotlinResolutionCallbacksImpl(
     }
 
     override fun analyzeAndGetLambdaReturnArguments(
-            lambdaArgument: LambdaKotlinCallArgument,
-            isSuspend: Boolean,
-            receiverType: UnwrappedType?,
-            parameters: List<UnwrappedType>,
-            expectedReturnType: UnwrappedType?
+        lambdaArgument: LambdaKotlinCallArgument,
+        isSuspend: Boolean,
+        receiverType: UnwrappedType?,
+        parameters: List<UnwrappedType>,
+        expectedReturnType: UnwrappedType?
     ): List<SimpleKotlinCallArgument> {
         val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
         val outerCallContext = psiCallArgument.outerCallContext
 
         fun createCallArgument(ktExpression: KtExpression, typeInfo: KotlinTypeInfo) =
-                createSimplePSICallArgument(trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
-                                            CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo, languageVersionSettings)
+            createSimplePSICallArgument(
+                trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
+                CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo, languageVersionSettings
+            )
 
-        val lambdaInfo = LambdaInfo(expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE,
-                                    if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT)
+        val lambdaInfo = LambdaInfo(
+            expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE,
+            if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT
+        )
 
         trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, lambdaInfo)
 
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
-        val expectedType = createFunctionType(builtIns, Annotations.EMPTY, receiverType, parameters, null,
-                           lambdaInfo.expectedType, isSuspend)
+        val expectedType = createFunctionType(
+            builtIns, Annotations.EMPTY, receiverType, parameters, null,
+            lambdaInfo.expectedType, isSuspend
+        )
 
-        val approximatesExpectedType = typeApproximator.approximateToSubType(expectedType, TypeApproximatorConfiguration.LocalDeclaration) ?: expectedType
+        val approximatesExpectedType =
+            typeApproximator.approximateToSubType(expectedType, TypeApproximatorConfiguration.LocalDeclaration) ?: expectedType
 
         val actualContext = outerCallContext
-                .replaceBindingTrace(trace)
-                .replaceContextDependency(lambdaInfo.contextDependency)
-                .replaceExpectedType(approximatesExpectedType)
-                .replaceDataFlowInfo(psiCallArgument.lambdaInitialDataFlowInfo)
+            .replaceBindingTrace(trace)
+            .replaceContextDependency(lambdaInfo.contextDependency)
+            .replaceExpectedType(approximatesExpectedType)
+            .replaceDataFlowInfo(psiCallArgument.lambdaInitialDataFlowInfo)
 
         val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
         trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
@@ -113,11 +120,10 @@ class KotlinResolutionCallbacksImpl(
             val returnedExpression = expression.returnedExpression
             if (returnedExpression != null) {
                 createCallArgument(
-                        returnedExpression,
-                        typeInfo ?: throw AssertionError("typeInfo should be non-null for return with expression")
+                    returnedExpression,
+                    typeInfo ?: throw AssertionError("typeInfo should be non-null for return with expression")
                 )
-            }
-            else {
+            } else {
                 hasReturnWithoutExpression = true
                 EmptyLabeledReturn(expression, builtIns)
             }
@@ -141,8 +147,7 @@ class KotlinResolutionCallbacksImpl(
         val lastExpression: KtExpression?
         if (psiCallArgument is LambdaKotlinCallArgumentImpl) {
             lastExpression = psiCallArgument.ktLambdaExpression.bodyExpression?.statements?.lastOrNull()
-        }
-        else {
+        } else {
             lastExpression = (psiCallArgument as FunctionExpressionImpl).ktFunction.bodyExpression?.lastBlockStatementOrThis()
         }
 
@@ -159,11 +164,11 @@ class KotlinResolutionCallbacksImpl(
         val expression = psiKotlinCall.psiCall.callElement.safeAs<KtExpression>() ?: return null
 
         return transformToReceiverWithSmartCastInfo(
-                resolvedAtom.candidateDescriptor,
-                trace.bindingContext,
-                psiKotlinCall.resultDataFlowInfo,
-                ExpressionReceiver.create(expression, returnType, trace.bindingContext),
-                languageVersionSettings
+            resolvedAtom.candidateDescriptor,
+            trace.bindingContext,
+            psiKotlinCall.resultDataFlowInfo,
+            ExpressionReceiver.create(expression, returnType, trace.bindingContext),
+            languageVersionSettings
         )
     }
 
@@ -179,8 +184,8 @@ class KotlinResolutionCallbacksImpl(
         val expression = findCommonParent(callElement, resolvedAtom.atom.psiKotlinCall.explicitReceiver)
 
         val temporaryBindingTrace = TemporaryBindingTrace.create(
-                trace,
-                "Trace to check if some expression is constant, we have to avoid writing probably wrong COMPILE_TIME_VALUE slice"
+            trace,
+            "Trace to check if some expression is constant, we have to avoid writing probably wrong COMPILE_TIME_VALUE slice"
         )
         return constantExpressionEvaluator.evaluateExpression(expression, temporaryBindingTrace, expectedType) != null
     }

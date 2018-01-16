@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
 class DefaultImportProvider(
-        storageManager: StorageManager,
-        moduleDescriptor: ModuleDescriptor,
-        private val targetPlatform: TargetPlatform,
-        private val languageVersionSettings: LanguageVersionSettings
+    storageManager: StorageManager,
+    moduleDescriptor: ModuleDescriptor,
+    private val targetPlatform: TargetPlatform,
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
     companion object {
         private val PACKAGES_WITH_ALIASES = listOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.TEXT_PACKAGE_FQ_NAME)
@@ -50,12 +50,11 @@ class DefaultImportProvider(
 
                 for (packageFqName in packages) {
                     dependencyModuleDescriptor.packageFragmentProviderForContent.getPackageFragments(packageFqName)
-                            .flatMapTo(result) {
-                                packageFragmentDescriptor ->
-                                packageFragmentDescriptor.getMemberScope()
-                                        .getContributedDescriptors(DescriptorKindFilter.TYPE_ALIASES)
-                                        .filterIsInstance<TypeAliasDescriptor>()
-                            }
+                        .flatMapTo(result) { packageFragmentDescriptor ->
+                            packageFragmentDescriptor.getMemberScope()
+                                .getContributedDescriptors(DescriptorKindFilter.TYPE_ALIASES)
+                                .filterIsInstance<TypeAliasDescriptor>()
+                        }
                 }
             }
 
@@ -69,19 +68,19 @@ class DefaultImportProvider(
 
     val excludedImports: List<FqName> by storageManager.createLazyValue {
         val builtinTypeAliases =
-                moduleDescriptor.findTypeAliasesInPackages(PACKAGES_WITH_ALIASES)
-                        .filter { it.checkSinceKotlinVersionAccessibility(languageVersionSettings) }
+            moduleDescriptor.findTypeAliasesInPackages(PACKAGES_WITH_ALIASES)
+                .filter { it.checkSinceKotlinVersionAccessibility(languageVersionSettings) }
 
         val nonKotlinDefaultImportedPackages =
-                defaultImports
-                        .filter { it.isAllUnder }
-                        .mapNotNull {
-                            it.fqName.takeUnless { it.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) }
-                        }
+            defaultImports
+                .filter { it.isAllUnder }
+                .mapNotNull {
+                    it.fqName.takeUnless { it.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) }
+                }
         val nonKotlinAliasedTypeFqNames =
-                builtinTypeAliases
-                        .mapNotNull { it.expandedType.constructor.declarationDescriptor?.fqNameSafe }
-                        .filter { nonKotlinDefaultImportedPackages.any(it::isChildOf) }
+            builtinTypeAliases
+                .mapNotNull { it.expandedType.constructor.declarationDescriptor?.fqNameSafe }
+                .filter { nonKotlinDefaultImportedPackages.any(it::isChildOf) }
 
         nonKotlinAliasedTypeFqNames + targetPlatform.excludedImports
     }
