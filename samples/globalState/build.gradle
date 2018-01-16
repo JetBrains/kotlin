@@ -1,0 +1,15 @@
+apply plugin: 'konan'
+
+konan.targets = ['macbook', 'linux', 'mingw']
+
+konanArtifacts {
+    interop('global') {
+        defFile 'src/main/c_interop/global.def'
+    }
+
+    program('Globals') {
+        libraries {
+            artifact 'global'
+        }
+    }
+}

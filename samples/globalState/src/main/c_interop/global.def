@@ -1,0 +1,10 @@
+package = global
+
+---
+typedef struct {
+  int x;
+  float f;
+  char* string;
+} SharedData;
+
+SharedData sharedData;

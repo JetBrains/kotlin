@@ -3,6 +3,7 @@
 include ':calculator'
 include ':csvparser'
 include ':gitchurn'
+include ':globalState'
 include ':gtk'
 include ':libcurl'
 include ':nonBlockingEchoServer'
