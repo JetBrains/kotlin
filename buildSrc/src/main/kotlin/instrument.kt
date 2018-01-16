@@ -101,6 +101,7 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
     @TaskAction
     fun instrumentClasses() {
         logger.info("input files are: ${originalClassesDirs?.joinToString("; ", transform = { "'${it.name}'${if (it.exists()) "" else " (does not exists)" }"})}")
+        output?.deleteRecursively()
         copyOriginalClasses()
 
         val classpath = project.ideaSdkDeps("javac2.jar", "jdom.jar", "asm-all.jar", "jgoodies-forms.jar")
