@@ -20,6 +20,8 @@ sourceSets {
     }
 }
 
+sourcesJar()
+javadocJar()
 runtimeJar()
 dist()
 
