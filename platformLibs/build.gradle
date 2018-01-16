@@ -20,7 +20,7 @@ buildscript {
     }
 
     ext.konanHome = distDir.absolutePath
-    ext.jvmArgs = project.findProperty("platformLibsJvmArgs") ?: "-Xmx6G"
+    ext.jvmArgs = project.findProperty("platformLibsJvmArgs") ?: "-Xmx3G"
     ext.setProperty("konan.home", konanHome)
     ext.setProperty("konan.jvmArgs", jvmArgs)
 }
@@ -65,7 +65,7 @@ targetList.each { target ->
                 artifactName df.name
                 noDefaultLibs true
                 libraries {
-                    files df.config.depends.collect { "$konanHome/klib/platform/$target/$it" }
+                    klibs df.config.depends
                 }
                 extraOpts '--purge_user_libs'
             }
@@ -73,7 +73,7 @@ targetList.each { target ->
 
         def libTask = konanArtifacts."$libName"."$target"
         libTask.dependsOn df.config.depends.collect{ defFileToLibName(target, it) }
-        libTask.dependsOn ':cross_dist'
+        libTask.dependsOn ":${target}CrossDist"
 
         task "$libName"(type: KlibInstall) {
             klib = libTask.artifact

@@ -312,6 +312,10 @@ targetList.each { target ->
     task("${target}PlatformLibs") {
         dependsOn ":platformLibs:${target}Install"
     }
+
+    task("${target}CrossDist") {
+        dependsOn "${target}CrossDistRuntime", 'distCompiler', 'commonDistRuntime'
+    }
 }
 
 task distPlatformLibs {
