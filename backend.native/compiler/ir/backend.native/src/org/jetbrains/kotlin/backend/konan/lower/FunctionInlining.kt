@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
+import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -211,12 +211,12 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
     //-------------------------------------------------------------------------//
 
     private fun createTypeSubstitutor(irCall: IrCall): TypeSubstitutor? {
-
         val typeArgumentsMap = (irCall as IrMemberAccessExpressionBase).typeArguments
         if (typeArgumentsMap == null) return null
-        val substitutionContext = typeArgumentsMap.entries.associate {
-            (typeParameter, typeArgument) ->
-            typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
+        val descriptor = irCall.descriptor.resolveFakeOverride().original
+        val typeParameters = descriptor.propertyIfAccessor.typeParameters
+        val substitutionContext = typeArgumentsMap.entries.associate { (typeParameter, typeArgument) ->
+            typeParameters[typeParameter.index].typeConstructor to TypeProjectionImpl(typeArgument)
         }
         return TypeSubstitutor.create(substitutionContext)
     }

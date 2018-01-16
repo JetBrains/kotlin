@@ -2086,6 +2086,11 @@ task inline26(type: RunKonanTest) {
     source = "codegen/inline/inline26.kt"
 }
 
+task inline_type_substitution_in_fake_override(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/inline/typeSubstitutionInFakeOverride.kt"
+}
+
 task deserialized_inline0(type: RunKonanTest) {
     source = "serialization/deserialized_inline0.kt"
 }
