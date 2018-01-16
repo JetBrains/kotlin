@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.gradle.plugin.test
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.target.HostManager
 import spock.lang.Requires
 import spock.lang.Unroll
 
@@ -58,7 +58,7 @@ class TaskSpecification extends BaseKonanSpecification {
         "includeDirs"                  | ""
     }
 
-    @Requires({ TargetManager.host == KonanTarget.MACBOOK })
+    @Requires({ HostManager.host instanceof KonanTarget.MACBOOK })
     def 'Plugin should create framework tasks only for Apple targets'() {
         when:
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
@@ -91,7 +91,7 @@ class TaskSpecification extends BaseKonanSpecification {
             """.stripIndent())
         }
         def result = project.createRunner().withArguments('tasks', '--all').build()
-        def hostName = TargetManager.getHostName()
+        def hostName = HostManager.hostName
 
         then:
         compilationTaskExists (result, 'defaultTarget', hostName)

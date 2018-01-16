@@ -33,6 +33,9 @@ class MingwConfigurablesImpl(target: KonanTarget, properties: Properties, baseDi
 class WasmConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
     : WasmConfigurables, KonanPropertiesLoader(target, properties, baseDir)
 
+class ZephyrConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
+    : ZephyrConfigurables, KonanPropertiesLoader(target, properties, baseDir)
+
 
 fun loadConfigurables(target: KonanTarget, properties: Properties, baseDir: String?) = when (target)  {
         KonanTarget.LINUX, KonanTarget.RASPBERRYPI ->
@@ -47,5 +50,7 @@ fun loadConfigurables(target: KonanTarget, properties: Properties, baseDir: Stri
             MingwConfigurablesImpl(target, properties, baseDir)
         KonanTarget.WASM32 ->
             WasmConfigurablesImpl(target, properties, baseDir)
+        is KonanTarget.ZEPHYR ->
+            ZephyrConfigurablesImpl(target, properties, baseDir)
     }
 

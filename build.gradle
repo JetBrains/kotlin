@@ -23,24 +23,10 @@ defaultTasks 'clean', 'dist'
 convention.plugins.platformInfo = new PlatformInfo()
 
 ext {
-    konanPropertiesFile = project(':backend.native').file('konan.properties')
-    konanProperties = PropertiesKt.loadProperties(konanPropertiesFile.absolutePath)
-
-    String DEPENDENCY_PROFILES_KEY = "dependencyProfiles"
-    def dependencyProfiles = konanProperties.getProperty(DEPENDENCY_PROFILES_KEY)
-    if (dependencyProfiles != "default alt")
-        throw new Error("unexpected $DEPENDENCY_PROFILES_KEY value: expected 'default alt', got '$dependencyProfiles'")
-
-    // Force build to use only 'default' profile:
-    konanProperties.setProperty(DEPENDENCY_PROFILES_KEY, "default")
-    // Force build to use fixed Xcode version:
-    konanProperties.setProperty("useFixedXcodeVersion", "9.2")
-    // TODO: it actually affects only resolution made in :dependencies,
-    // that's why we assume that 'default' profile comes first (and check this above).
-
     distDir = file('dist')
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot
-    platformManager = new PlatformManager(konanProperties, dependenciesDir.absolutePath)
+    platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath))
+
     kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinCompilerVersion}"
     kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdLibVersion}"
     kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinReflectVersion}"
@@ -66,8 +52,9 @@ allprojects {
 }
 
 void setupHostAndTarget() {
-    ext.hostName = TargetManager.hostName
-    ext.targetList = TargetManager.enabled.collect { it.visibleName } as List
+    ext.hostName = platformManager.hostName
+    ext.targetList = platformManager.enabled.collect { it.visibleName } as List
+    ext.konanTargetList = platformManager.enabled as List
 }
 
 void setupClang(Project project) {
@@ -135,15 +122,15 @@ void loadCommandLineProperties() {
 
 class PlatformInfo {
     boolean isMac() {
-        return TargetManager.hostIsMac
+        return HostManager.hostIsMac
     }
 
     boolean isWindows() {
-        return TargetManager.hostIsMingw
+        return HostManager.hostIsMingw
     }
 
     boolean isLinux() {
-        return TargetManager.hostIsLinux
+        return HostManager.hostIsLinux
     }
 
     Throwable unsupportedPlatformException() {
@@ -243,7 +230,7 @@ task distCompiler(type: Copy) {
             exclude('**/*.bat')
         }
     }
-    from(konanPropertiesFile) {
+    from(project.file('konan')) {
         into('konan')
     }
 }
@@ -345,7 +332,7 @@ dependencies {
 task bundle(type: (isWindows()) ? Zip : Tar) {
     dependsOn('crossDistPlatformLibs')
     dependsOn('crossDist')
-    def simpleOsName = TargetManager.simpleOsName()
+    def simpleOsName = HostManager.simpleOsName()
     baseName = "kotlin-native-$simpleOsName-${project.konanVersion}"
     from("$project.rootDir/dist") {
         include '**'
@@ -399,7 +386,7 @@ task uploadBundle {
                 server: project.findProperty("cdnUrl") ?: System.getenv("CDN_URL"),
                 userid: project.findProperty("cdnUser") ?: System.getenv("CDN_USER"),
                 password: project.findProperty("cdnPass") ?: System.getenv("CDN_PASS"),
-                remoteDir: "/builds/$kind/$konanVersion/${TargetManager.simpleOsName()}"
+                remoteDir: "/builds/$kind/$konanVersion/${HostManager.simpleOsName()}"
         ]
         ant {
             taskdef(name: 'ftp',

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.konan.target
 
-import org.jetbrains.kotlin.konan.properties.*
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 class Platform(val configurables: Configurables) 
     : Configurables by configurables {
@@ -29,13 +29,19 @@ class Platform(val configurables: Configurables)
     }
 }
 
-class PlatformManager(properties: Properties, baseDir: String) {
-    private val host = TargetManager.host
-    private val platforms = TargetManager.enabled.map {
-        it to Platform(loadConfigurables(it, properties, baseDir))
+class PlatformManager(distribution: Distribution = Distribution()) : HostManager(distribution) {
+
+    private val loaders = enabled.map {
+        it to loadConfigurables(it, distribution.properties, DependencyProcessor.defaultDependenciesRoot.absolutePath)
+    }.toMap()
+
+    private val platforms = loaders.map {
+        it.key to Platform(it.value)
     }.toMap()
 
     fun platform(target: KonanTarget) = platforms[target]!!
     val hostPlatform = platforms[host]!!
+
+    fun loader(target: KonanTarget) = loaders[target]!!
 }
 

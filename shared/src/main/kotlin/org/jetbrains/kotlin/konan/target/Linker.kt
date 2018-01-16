@@ -33,7 +33,7 @@ abstract class LinkerFlags(val configurables: Configurables)
     protected val llvmBin = "${configurables.absoluteLlvmHome}/bin"
     protected val llvmLib = "${configurables.absoluteLlvmHome}/lib"
 
-    private val libLTODir = when (TargetManager.host) {
+    private val libLTODir = when (HostManager.host) {
         KonanTarget.MACBOOK, KonanTarget.LINUX -> llvmLib
         KonanTarget.MINGW -> llvmBin
         else -> error("Don't know libLTO location for this platform.")
@@ -288,7 +288,7 @@ open class WasmLinker(targetProperties: WasmConfigurables)
 open class ZephyrLinker(targetProperties: ZephyrConfigurables)
     : LinkerFlags(targetProperties), ZephyrConfigurables by targetProperties {
 
-    private val linker = "$targetToolchain/bin/ld"
+    private val linker = "$absoluteTargetToolchain/bin/ld"
 
     override val useCompilerDriverAsLinker: Boolean get() = false
 
@@ -318,5 +318,7 @@ fun linker(configurables: Configurables): LinkerFlags  =
             MingwLinker(configurables as MingwConfigurables)
         KonanTarget.WASM32 ->
             WasmLinker(configurables as WasmConfigurables)
+        is KonanTarget.ZEPHYR ->
+            ZephyrLinker(configurables as ZephyrConfigurables)
     }
 

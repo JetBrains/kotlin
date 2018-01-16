@@ -73,7 +73,7 @@ internal fun produceOutput(context: Context) {
             val neededLibraries 
                 = context.llvm.librariesForLibraryManifest
             val abiVersion = context.config.currentAbiVersion
-            val target = context.config.targetManager.target
+            val target = context.config.target
             val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
             val manifest = config.get(KonanConfigKeys.MANIFEST_FILE)
 

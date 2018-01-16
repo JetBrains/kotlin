@@ -32,7 +32,7 @@ void consoleErrorUtf8(const void* utf8, uint32_t sizeBytes);
 uint32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes);
 
 // Process control.
-void abort();
+void abort(void);
 void exit(int32_t status);
 
 // Thread control.

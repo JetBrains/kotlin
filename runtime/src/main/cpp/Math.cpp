@@ -27,13 +27,6 @@
 #define KONAN_NEED_ASINH_ACOSH 0
 #endif
 
-#if KONAN_WASM || __ZEPHYR__
-#define KONAN_NO_MATH 1
-#else
-#define KONAN_NO_MATH 0
-#endif
-
-
 #ifdef KONAN_NEED_ASINH_ACOSH
 namespace {
 
@@ -99,7 +92,7 @@ namespace {
 
 extern "C" {
 
-#if !KONAN_NO_MATH // There is a platform math library.
+#ifndef KONAN_NO_MATH // There is a platform math library.
 
 // region Double math.
 
@@ -357,6 +350,6 @@ KLong Kotlin_math_absl(KLong x) { NotImplemented(); }
 KLong Kotlin_math_minl(KLong a, KLong b) { NotImplemented(); }
 KLong Kotlin_math_maxl(KLong a, KLong b) { NotImplemented(); }
 
-#endif // #if !KONAN_NO_MATH
+#endif // #ifndef KONAN_NO_MATH
 
 } // extern "C"

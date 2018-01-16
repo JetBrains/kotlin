@@ -51,9 +51,6 @@ class CInteropArguments : CommonInteropArguments() {
     @Argument(value = "-def", valueDescription = "<file>", description = "the library definition file") 
     var def: String? = null
 
-    @Argument(value = "-properties", valueDescription = "<file>", description = "an alternative location of konan.properties file") 
-    var properties: String? = null
-
     // TODO: the short -h for -header conflicts with -h for -help.
     // The -header currently wins, but need to make it a little more sound.
     @Argument(value = "-header", shortName = "-h",  valueDescription = "<file>", description = "header file to produce kotlin bindings for") 

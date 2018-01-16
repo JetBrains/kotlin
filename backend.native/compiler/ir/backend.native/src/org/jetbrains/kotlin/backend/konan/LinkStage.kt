@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.file.*
+import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.target.*
 
 typealias BitcodeFile = String
@@ -28,7 +29,7 @@ typealias ExecutableFile = String
 internal class LinkStage(val context: Context) {
 
     private val config = context.config.configuration
-    private val target = context.config.targetManager.target
+    private val target = context.config.target
     private val platform = context.config.platform
     private val linker = platform.linker
 
@@ -117,6 +118,19 @@ internal class LinkStage(val context: Context) {
         return combinedWasm
     }
 
+    private fun llvmLinkAndLlc(bitcodeFiles: List<BitcodeFile>): String {
+        val combinedBc = temporary("combined", ".bc")
+        hostLlvmTool("llvm-link", "-o", combinedBc, *bitcodeFiles.toTypedArray())
+
+        val optimizedBc = temporary("optimized", ".bc")
+        hostLlvmTool("opt", combinedBc, "-o=$optimizedBc", "-O3")
+
+        val combinedO = temporary("combined", ".o")
+        hostLlvmTool("llc", combinedBc, "-filetype=obj", "-o", combinedO, "-function-sections", "-data-sections")
+
+        return combinedO
+    }
+
     private fun asLinkerArgs(args: List<String>): List<String> {
         if (linker.useCompilerDriverAsLinker) {
             return args
@@ -201,15 +215,19 @@ internal class LinkStage(val context: Context) {
         val libraryProvidedLinkerFlags = 
             libraries.map{it -> it.linkerOpts}.flatten()
 
-        var objectFiles: List<String> = listOf()
+        val objectFiles: MutableList<String> = mutableListOf()
 
         val phaser = PhaseManager(context)
         phaser.phase(KonanPhase.OBJECT_FILES) {
-            objectFiles = listOf( 
-                if (target == KonanTarget.WASM32)
-                    bitcodeToWasm(bitcodeFiles) 
-                else 
-                    llvmLto(bitcodeFiles)
+            objectFiles.add( 
+                when (platform.configurables) {
+                    is WasmConfigurables 
+                        -> bitcodeToWasm(bitcodeFiles) 
+                    is ZephyrConfigurables 
+                        -> llvmLinkAndLlc(bitcodeFiles) 
+                    else 
+                        -> llvmLto(bitcodeFiles)
+                }
             )
         }
         phaser.phase(KonanPhase.LINKER) {

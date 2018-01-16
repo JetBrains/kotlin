@@ -168,11 +168,11 @@ task start(dependsOn: "${hostName}Start")
 
 // These files are built before the 'dist' is complete,
 // so we provide custom values for
-// -runtime, -properties, -library and -Djava.library.path
+// konan.home, --runtime, -Djava.library.path etc
 
 targetList.each { target ->
     def konanJvmArgs = ["-ea",
-    "-Dkonan.home=$distDir",
+    "-Dkonan.home=${rootProject.projectDir}",
     "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
     "-Dfile.encoding=UTF-8"]
 
@@ -180,8 +180,7 @@ targetList.each { target ->
     if (target != "wasm32") defaultArgs += '-g'
     def konanArgs = [*defaultArgs,
                      '-target', target,
-                     '-runtime', project(':runtime').file("build/${target}/runtime.bc"),
-                     '-properties', rootProject.konanPropertiesFile.canonicalPath,
+                     '--runtime', project(':runtime').file("build/${target}/runtime.bc"),
                      *project.globalBuildArgs]
 
     task("${target}Stdlib", type: JavaExec) {

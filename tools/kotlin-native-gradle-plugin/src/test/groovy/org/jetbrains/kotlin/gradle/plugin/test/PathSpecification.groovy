@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.TaskOutcome
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.target.PlatformManager
 
 class PathSpecification extends BaseKonanSpecification {
 
@@ -9,14 +9,13 @@ class PathSpecification extends BaseKonanSpecification {
         project.konanBuildDir.toPath().resolve(path).toFile().exists()
     }
 
+    def platformManager = new PlatformManager()
+
     def 'Plugin should provide a correct path to the artifacts created'() {
         expect:
         def project = KonanProject.createEmpty(
                 projectDirectory,
-                new TargetManager('host')
-                        .getTargets()
-                        .findAll { k, v -> v.enabled }
-                        .collect { k, v -> k }
+                platformManager.enabled.collect { t -> t.visibleName }
         ) { KonanProject it ->
             it.generateSrcFile("main.kt")
             it.generateDefFile("interop.def", "")
@@ -71,9 +70,10 @@ class PathSpecification extends BaseKonanSpecification {
         def project = KonanProject.create(projectDirectory)
         project.propertiesFile.write("konan.home=fakepath")
         def result = project.createRunner().withArguments('build').buildAndFail()
+        def task = result.task(project.defaultCompilationTask())
 
         then:
-        result.task(project.defaultCompilationTask()).outcome == TaskOutcome.FAILED
+        task == null || task.outcome == TaskOutcome.FAILED
     }
 
     def 'Plugin should stop building if the stub generator classpath is empty'() {
@@ -81,9 +81,10 @@ class PathSpecification extends BaseKonanSpecification {
         def project = KonanProject.createWithInterop(projectDirectory)
         project.propertiesFile.write("konan.home=fakepath")
         def result = project.createRunner().withArguments('build').buildAndFail()
+        def task = result.task(project.compilationTask(KonanProject.DEFAULT_INTEROP_NAME))
 
         then:
-        result.task(project.compilationTask(KonanProject.DEFAULT_INTEROP_NAME)).outcome == TaskOutcome.FAILED
+        task == null || task.outcome == TaskOutcome.FAILED
     }
 
     def 'Plugin should remove custom output directories'() {

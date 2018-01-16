@@ -1007,4 +1007,4 @@ private val ReturnableTypeBridge.objCEncoding: String get() = when (this) {
     HashCodeBridge -> "L" // NSUInteger = unsigned long; // TODO: `unsigned int` on watchOS
 }
 
-internal fun Context.is64Bit(): Boolean = this.config.targetManager.target.architecture.bitness == 64
+internal fun Context.is64Bit(): Boolean = this.config.target.architecture.bitness == 64

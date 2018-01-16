@@ -205,7 +205,7 @@ internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported:
         assert(LLVMGetNamedGlobal(context.llvmModule, name) == null)
     val result = LLVMAddGlobal(context.llvmModule, type, name)!!
     if (threadLocal)
-        LLVMSetThreadLocalMode(result, runtime.tlsMode)
+        LLVMSetThreadLocalMode(result, context.llvm.tlsMode)
     return result
 }
 
@@ -219,12 +219,12 @@ internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: 
         assert (getGlobalType(found) == type)
         assert (LLVMGetInitializer(found) == null)
         if (threadLocal)
-            assert(LLVMGetThreadLocalMode(found) == runtime.tlsMode)
+            assert(LLVMGetThreadLocalMode(found) == context.llvm.tlsMode)
         return found
     } else {
         val result = LLVMAddGlobal(context.llvmModule, type, name)!!
         if (threadLocal)
-            LLVMSetThreadLocalMode(result, runtime.tlsMode)
+            LLVMSetThreadLocalMode(result, context.llvm.tlsMode)
         return result
     }
 }

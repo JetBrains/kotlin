@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.backend.konan.library
 
-import org.jetbrains.kotlin.backend.konan.Distribution
 import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
 import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.TargetManager
-import org.jetbrains.kotlin.konan.util.visibleName
 
 interface SearchPathResolver {
     val searchRoots: List<File>
@@ -32,12 +30,12 @@ interface SearchPathResolver {
 }
 
 fun defaultResolver(repositories: List<String>, target: KonanTarget): SearchPathResolver =
-        defaultResolver(repositories, Distribution(target))
+        defaultResolver(repositories, target, Distribution())
 
-fun defaultResolver(repositories: List<String>, distribution: Distribution): SearchPathResolver =
+fun defaultResolver(repositories: List<String>, target: KonanTarget, distribution: Distribution): SearchPathResolver =
         KonanLibrarySearchPathResolver(
                 repositories,
-                distribution.target,
+                target,
                 distribution.klib,
                 distribution.localKonanDir
         )

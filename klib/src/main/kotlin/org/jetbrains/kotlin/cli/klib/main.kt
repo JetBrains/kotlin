@@ -16,12 +16,15 @@
 
 package org.jetbrains.kotlin.cli.klib
 
-import kotlin.system.exitProcess
-// TODO: Extract these as a shared jar?
-import org.jetbrains.kotlin.backend.konan.library.impl.*
+// TODO: Extract `library` package as a shared jar?
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
+import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
+import org.jetbrains.kotlin.backend.konan.library.impl.UnzippedKonanLibrary
+import org.jetbrains.kotlin.backend.konan.library.impl.ZippedKonanLibrary
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.target.customerDistribution
+import kotlin.system.exitProcess
 
 fun printUsage() {
     println("Usage: klib <command> <library> <options>")
@@ -167,7 +170,7 @@ fun libraryInRepoOrCurrentDir(repository: File, name: String): File {
 fun main(args: Array<String>) {
     val command = Command(args)
 
-    val targetManager = TargetManager(command.options["-target"]?.last())
+    val targetManager = PlatformManager().targetManager(command.options["-target"]?.last())
     val target = targetManager.targetName
 
     val repository = command.options["-repository"]?.last()

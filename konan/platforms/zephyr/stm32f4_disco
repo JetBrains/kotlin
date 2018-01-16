@@ -1,0 +1,36 @@
+#
+# Copyright 2010-2018 JetBrains s.r.o.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Zephyr RTOS. 
+# STM32 F4 Discovery
+
+quadruple.zephyr_stm32f4_disco = armv7m-none-eabi
+targetSysRoot.zephyr_stm32f4_disco = target-sysroot-2-wasm
+entrySelector.zephyr_stm32f4_disco = --defsym main=Konan_main
+
+boardSpecificClangFlags.zephyr_stm32f4_disco = -mabi=aapcs -mthumb -mcpu=cortex-m4
+
+targetToolchain.linux-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-linux/arm-none-eabi
+dependencies.linux-zephyr_stm32f4_disco = \
+    clang-llvm-5.0.0-linux-x86-64 \
+    gcc-arm-none-eabi-7-2017-q4-major-linux \
+    target-sysroot-2-wasm
+
+targetToolchain.osx-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-mac/arm-none-eabi
+dependencies.osx-zephyr_stm32f4_disco = \
+    gcc-arm-none-eabi-7-2017-q4-major-mac \
+    clang-llvm-5.0.0-darwin-macos \
+    target-sysroot-2-wasm

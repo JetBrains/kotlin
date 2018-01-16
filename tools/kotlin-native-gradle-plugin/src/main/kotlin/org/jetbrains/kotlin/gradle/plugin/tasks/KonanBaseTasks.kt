@@ -28,16 +28,16 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KonanArtifactSpec
 import org.jetbrains.kotlin.gradle.plugin.KonanArtifactWithLibrariesSpec
 import org.jetbrains.kotlin.gradle.plugin.KonanLibrariesSpec
+import org.jetbrains.kotlin.gradle.plugin.konanTargets
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.TargetManager
-import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File
 
 internal val Project.host
-    get() = TargetManager.host.visibleName
+    get() = HostManager.host.visibleName
 
 internal val Project.simpleOsName
-    get() = TargetManager.simpleOsName()
+    get() = HostManager.simpleOsName()
 
 /** A task with a KonanTarget specified. */
 abstract class KonanTargetableTask: DefaultTask() {
@@ -48,11 +48,8 @@ abstract class KonanTargetableTask: DefaultTask() {
         this.konanTarget = target
     }
 
-    val targetIsSupported: Boolean
-        @Internal get() = konanTarget.enabled
-
     val isCrossCompile: Boolean
-        @Internal get() = (konanTarget != TargetManager.host)
+        @Internal get() = (konanTarget != HostManager.host)
 
     val target: String
         @Internal get() = konanTarget.visibleName

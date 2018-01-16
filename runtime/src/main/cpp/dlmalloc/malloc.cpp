@@ -525,7 +525,7 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 
 /**** Start of Konan-specific dlmalloc configuration. ****/
 #define USE_DL_PREFIX 1
-#if KONAN_WASM || __ZEPHYR__
+#if KONAN_WASM
 #define USE_LOCKS 0
 #define LACKS_TIME_H 1
 #define NO_MALLOC_STATS 1

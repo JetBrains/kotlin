@@ -14,11 +14,5 @@
  * limitations under the License.
  */
 
-@SymbolName("blinky")
-external fun blinky(value: Int) 
+extern int Konan_main(int argc, const char** argv);
 
-val x = 1
-
-fun main(args: Array<String>) {
-    blinky(x)
-}

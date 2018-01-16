@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.isSubpackageOf
 
 internal class ObjCExport(val context: Context) {
 
-    private val target get() = context.config.targetManager.target
+    private val target get() = context.config.target
 
     internal fun produceObjCFramework() {
         if (context.config.produce != CompilerOutputKind.FRAMEWORK) return

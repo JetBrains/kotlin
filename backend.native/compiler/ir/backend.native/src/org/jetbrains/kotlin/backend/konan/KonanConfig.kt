@@ -39,30 +39,29 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val currentAbiVersion: Int = configuration.get(KonanConfigKeys.ABI_VERSION)!!
 
-    internal val targetManager = TargetManager(
-        configuration.get(KonanConfigKeys.TARGET))
+    internal val distribution = Distribution(
+        false,
+        null,
+        configuration.get(KonanConfigKeys.RUNTIME_FILE))
 
-    private val target = targetManager.target
+    internal val platformManager = PlatformManager(distribution)
+    internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
+    internal val target = targetManager.target
 
     init {
-        if (!target.enabled) {
-            error("Target $target is not available on the ${TargetManager.host} host")
+        if (!platformManager.isEnabled(target)) {
+            error("Target $target is not available on the ${HostManager.host} host")
         }
     }
 
-    val indirectBranchesAreAllowed = target != KonanTarget.WASM32
-
-    internal val distribution = Distribution(target, 
-        configuration.get(KonanConfigKeys.PROPERTY_FILE),
-        configuration.get(KonanConfigKeys.RUNTIME_FILE))
-
-    internal val platform = PlatformManager(distribution.properties, distribution.dependenciesDir).platform(target).apply {
+    val platform = platformManager.platform(target).apply {
         if (configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES)) {
             downloadDependencies()
         }
     }
 
     internal val clang = platform.clang
+    val indirectBranchesAreAllowed = target != KonanTarget.WASM32
 
     internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
     private val prefix = produce.prefix(target)
@@ -84,7 +83,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
 
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
-    private val resolver = defaultResolver(repositories, distribution)
+    private val resolver = defaultResolver(repositories, target, distribution)
 
     internal val immediateLibraries: List<LibraryReaderImpl> by lazy {
         val result = resolver.resolveImmediateLibraries(
@@ -109,7 +108,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val defaultNativeLibraries = 
         if (produce == CompilerOutputKind.PROGRAM) 
-            File(distribution.defaultNatives).listFiles.map { it.absolutePath } 
+            File(distribution.defaultNatives(target)).listFiles.map { it.absolutePath } 
         else emptyList()
 
     internal val nativeLibraries: List<String> = 

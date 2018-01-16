@@ -139,8 +139,7 @@ task update_kotlin_compiler(type: DefaultTask) {
 }
 
 abstract class NativeDep extends DefaultTask {
-    protected final String hostSystem = TargetManager.longerSystemName();
-    static final String baseUrl = "https://jetbrains.bintray.com/kotlin-native-dependencies"
+    static final String baseUrl = "https://download.jetbrains.com/kotlin/native"
 
     @Input
     abstract String getFileName()
@@ -198,11 +197,11 @@ class TgzNativeDep extends NativeDep {
 
 class HelperNativeDep extends TgzNativeDep {
 
-    Properties konanProperties = new Properties()
+    KonanPropertiesLoader konanPropertiesLoader = null
 
     @TaskAction
     public void downloadAndExtract() {
-        def downloader = new DependencyProcessor(baseOutDir, konanProperties, [baseName], baseUrl, false)
+        def downloader = new DependencyProcessor(baseOutDir, konanPropertiesLoader, baseUrl, false)
         downloader.showInfo = false
         downloader.run()
     }
@@ -237,18 +236,15 @@ enum DependencyKind {
     String toString() { return name }
 }
 
-TargetManager.enabled.each { target ->
-    def konanProperties = ConfigurablesImplKt.loadConfigurables(
-            target,
-            rootProject.ext.konanProperties,
-            rootProject.ext.dependenciesDir.canonicalPath
-    )
+def platformManager = rootProject.ext.platformManager
 
-    konanProperties.dependencies.each { dependency ->
+platformManager.enabled.each { target ->
+    def loader = platformManager.loader(target)
+    loader.dependencies.each { dependency ->
         if (tasks.findByName(dependency) == null) {
             task "${dependency}"(type: HelperNativeDep) {
                 baseName = dependency
-                it.konanProperties = rootProject.ext.konanProperties
+                it.konanPropertiesLoader = loader
             }
         }
     }
@@ -256,14 +252,14 @@ TargetManager.enabled.each { target ->
     // Also resolves all dependencies:
     final DependencyProcessor dependencyProcessor = new DependencyProcessor(
             project.rootProject.ext.dependenciesDir,
-            rootProject.ext.konanProperties,
-            konanProperties.dependencies,
+            loader.properties,
+            loader.dependencies,
             HelperNativeDep.baseUrl,
             false
     )
 
     DependencyKind.values().each { kind ->
-        def dir = kind.getDirectory(konanProperties)
+        def dir = kind.getDirectory(loader)
         if (dir != null) {
             String path = dependencyProcessor.resolveRelative(dir).canonicalPath
             rootProject.ext.set(kind.getPropertyName(target), path)

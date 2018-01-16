@@ -147,7 +147,6 @@ class NamedNativeInteropConfig implements Named {
     }
 
     File getNativeLibsDir() {
-        def target = new TargetManager(target).target.visibleName
         return new File(project.buildDir, "nativelibs/$target")
     }
 
@@ -158,8 +157,11 @@ class NamedNativeInteropConfig implements Named {
     NamedNativeInteropConfig(Project project, String name, String target = null, String flavor = 'jvm') {
         this.name = name
         this.project = project
-        this.target = target
         this.flavor = flavor
+
+        def platformManager = project.rootProject.ext.platformManager
+        def targetManager = platformManager.targetManager(target)
+        this.target = targetManager.targetName
 
         this.headers = []
         this.linkFiles = project.files()
@@ -197,7 +199,7 @@ class NamedNativeInteropConfig implements Named {
                     new File(project.findProject(":Interop:Indexer").buildDir, "nativelibs"),
                     new File(project.findProject(":Interop:Runtime").buildDir, "nativelibs")
             ).asPath
-            systemProperties "konan.home": project.rootProject.file("dist")
+            systemProperties "konan.home": project.rootProject.projectDir
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
 
             outputs.dir generatedSrcDir
@@ -213,7 +215,6 @@ class NamedNativeInteropConfig implements Named {
 
                 linkerOpts += linkFiles.files
 
-                args '-properties', project.findProject(":backend.native").file("konan.properties")
                 args '-generated', generatedSrcDir
                 args '-natives', nativeLibsDir
                 args '-flavor', this.flavor

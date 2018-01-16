@@ -2228,7 +2228,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         // On x86_64 it is the case if the return value takes more than 16 bytes or is the structure with
         // unaligned fields (there are some complicated exceptions currently ignored). The latter condition
         // is "encoded" by stub generator by emitting either `getMessenger` or `getMessengerLU` intrinsic call.
-        val isStret = when (context.config.targetManager.target) {
+        val isStret = when (context.config.target) {
             KonanTarget.MACBOOK, KonanTarget.IPHONE_SIM -> isLU // x86_64
             KonanTarget.IPHONE -> false // aarch64
             else -> TODO()

@@ -1,14 +1,14 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.target.HostManager
 
 class CMakeSpecification extends BaseKonanSpecification {
     def 'Plugin should generate CMake from project without additional settings'() {
         when:
         def sdlIncludePath
         def sdlLinkOptions
-        switch (TargetManager.host.family) {
+        switch (HostManager.host.family) {
             case Family.WINDOWS:
                 sdlIncludePath = "C:/SDL2/include"
                 sdlLinkOptions = "C:/SDL2/lib"
@@ -22,7 +22,7 @@ class CMakeSpecification extends BaseKonanSpecification {
                 sdlLinkOptions = "-L/usr/lib/x86_64-linux-gnu"
                 break
             default:
-                throw IllegalStateException("Unknown host: $TargetManager.host")
+                throw IllegalStateException("Unknown host: ${HostManager.hostName}")
                 break
         }
 

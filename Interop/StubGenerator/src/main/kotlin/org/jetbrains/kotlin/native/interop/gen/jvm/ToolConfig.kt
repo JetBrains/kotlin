@@ -16,29 +16,20 @@
 
 package  org.jetbrains.kotlin.native.interop.tool
 
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.properties.loadProperties
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.konan.target.TargetManager
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 
-class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: String?,
-                 runnerProvidedKonanHome: String, val flavor: KotlinPlatform) {
+class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform) {
 
-    private val targetManager = TargetManager(userProvidedTargetName)
-    private val host = TargetManager.host
+    private val konanHome = System.getProperty("konan.home")
+    private val distribution = customerDistribution(konanHome)
+    private val platformManager = PlatformManager(distribution)
+    private val targetManager = platformManager.targetManager(userProvidedTargetName)
+    private val host = HostManager.host
     private val target = targetManager.target
 
-    private val konanHome = File(runnerProvidedKonanHome).absolutePath
-    private val konanPropertiesFile = userProvidedKonanProperties?.File() ?: File(konanHome, "konan/konan.properties")
-    private val properties = konanPropertiesFile.loadProperties()
-
-    private val dependencies = DependencyProcessor.defaultDependenciesRoot
-
-    private val platform = PlatformManager(properties, dependencies.path).platform(target)
+    private val platform = platformManager.platform(target)
 
     val substitutions = mapOf<String, String>(
             "target" to target.detailedName,

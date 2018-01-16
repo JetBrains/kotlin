@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.GradleRunner
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.target.HostManager
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -25,7 +25,7 @@ class KonanProject {
     static String DEFAULT_ARTIFACT_NAME = 'main'
     static String DEFAULT_INTEROP_NAME = "stdio"
 
-    static String HOST = TargetManager.hostName
+    static String HOST = HostManager.hostName
 
     File projectDir
     Path projectPath

@@ -24,8 +24,8 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.TargetManager
-import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.target.customerDistribution
 import java.io.File
 import java.util.*
 import javax.inject.Inject
@@ -74,8 +74,14 @@ internal val Project.konanArtifactsContainer: NamedDomainObjectContainer<KonanBu
     get() = extensions.getByName(KonanPlugin.ARTIFACTS_CONTAINER_NAME)
             as NamedDomainObjectContainer<KonanBuildingConfig<*>>
 
+internal val Project.platformManager: PlatformManager
+    get() = findProperty("platformManager") as PlatformManager? ?:
+            PlatformManager(customerDistribution(konanHome))
+
 internal val Project.konanTargets: List<KonanTarget>
-    get() = konanExtension.konanTargets
+    get() = platformManager.toKonanTargets(konanExtension.targets)
+                .filter{ platformManager.isEnabled(it) }
+                .distinct()
 
 @Suppress("UNCHECKED_CAST")
 internal val Project.konanExtension: KonanExtension
@@ -227,11 +233,7 @@ open class KonanExtension {
     var targets = mutableListOf("host")
     var languageVersion: String? = null
     var apiVersion: String? = null
-
     val jvmArgs = mutableListOf<String>()
-
-    internal val konanTargets: List<KonanTarget>
-        get() = targets.map { TargetManager(it).target }.distinct()
 }
 
 class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderRegistry)

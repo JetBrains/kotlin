@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.KlibInstall
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.DefFile
 
 import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.getVisibleName
@@ -25,25 +27,18 @@ buildscript {
 }
 
 //#region Util functions.
-private ArrayList<DefFile> targetDefFiles(String target) {
-    def platform = targetToPlatform(target)
-    def substitution = ['arch': target,
-                        'os'  : targetToOs(target)]
-    file("src/platform/$platform")
+private ArrayList<DefFile> targetDefFiles(KonanTarget  target) {
+    def substitution = ['arch': target.visibleName,
+                        'os'  : target.detailedName]
+    file("src/platform/${getVisibleName(target.family)}")
             .listFiles()
             .findAll { it.name.endsWith(".def") }
             // The libz.a/libz.so and zlib.h are missing in raspberrypi and mips sysroots.
             // Just workaround it until we have sysroots corrected.
-            .findAll { ! ((target == 'raspberrypi' || target == 'linux_mips32' || target == 'linux_mipsel32') && it.name == 'zlib.def') }
+            .findAll { ! ((target instanceof KonanTarget.RASPBERRYPI || 
+                           target instanceof KonanTarget.LINUX_MIPS32 || 
+                           target instanceof KonanTarget.LINUX_MIPSEL32) && it.name == 'zlib.def') }
             .collect { new DefFile(it, substitution) }
-}
-
-private String targetToPlatform(String target) {
-    getVisibleName(new TargetManager(target).target.family)
-}
-
-private String targetToOs(String target) {
-    new TargetManager(target).target.detailedName
 }
 
 private String defFileToLibName(String target, String name) {
@@ -51,15 +46,17 @@ private String defFileToLibName(String target, String name) {
 }
 //#endregion
 
-targetList.each { target ->
+project.rootProject.ext.platformManager.enabled.each { target ->
+
+    def targetName = target.visibleName
 
     ArrayList<Task> installTasks = []
 
     targetDefFiles(target).each { df ->
-        def libName = defFileToLibName(target, df.name)
+        def libName = defFileToLibName(targetName, df.name)
 
         konanArtifacts {
-            interop (libName, targets: [target]) {
+            interop (libName, targets: [targetName]) {
                 defFile df.file
                 artifactName df.name
                 noDefaultLibs true
@@ -70,21 +67,21 @@ targetList.each { target ->
             }
         }
 
-        def libTask = konanArtifacts."$libName"."$target"
-        libTask.dependsOn df.config.depends.collect{ defFileToLibName(target, it) }
-        libTask.dependsOn ":${target}CrossDist"
+        def libTask = konanArtifacts."$libName"."$targetName"
+        libTask.dependsOn df.config.depends.collect{ defFileToLibName(targetName, it) }
+        libTask.dependsOn ":${targetName}CrossDist"
 
         task "$libName"(type: KlibInstall) {
             klib = libTask.artifact
-            repo = file("$konanHome/klib/platform/$target")
-            it.target = target
+            repo = file("$konanHome/klib/platform/$targetName")
+            it.target = targetName
             dependsOn libTask
 
         }
         installTasks.add(tasks[libName])
     }
 
-    task "${target}Install" {
+    task "${targetName}Install" {
         dependsOn installTasks
     }
 }
@@ -92,7 +89,7 @@ targetList.each { target ->
 // TODO: Don't install libraries here - copy them in the distPlatformLibs task
 task hostInstall {
     dependsOn tasks.withType(KlibInstall.class).findAll {
-        new TargetManager(it.target).target == TargetManager.host
+        it.target == HostManager.hostName
     }
 }
 

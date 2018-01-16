@@ -30,15 +30,12 @@ abstract class KonanTest extends JavaExec {
     public boolean inDevelopersRun = false
 
     public String source
-    def targetManager = new TargetManager(project.testTarget)
-    def target = targetManager.target
-    def backendNative = project.project(":backend.native")
-    def runtimeProject = project.project(":runtime")
+    def platformManager = project.rootProject.platformManager
+    def target = platformManager.targetManager(project.testTarget).target
     def dist = project.rootProject.file(project.findProperty("konan.home") ?: "dist")
     def dependenciesDir = project.rootProject.dependenciesDir
     def konancDriver = project.isWindows() ? "konanc.bat" : "konanc"
     def konanc = new File("${dist.canonicalPath}/bin/$konancDriver").absolutePath
-    def mainC = 'main.c'
     def outputSourceSetName = "testOutputLocal"
     def enableKonanAssertions = true
     String outputDirectory = null
@@ -227,7 +224,7 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
 
         createOutputDirectory()
         def program = buildExePath()
-        def suffix = targetManager.target.family.exeSuffix
+        def suffix = target.family.exeSuffix
         def exe = "$program.$suffix"
 
         compileTest(buildCompileList(), program)
@@ -282,19 +279,17 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
     }
 
     List<String> executionCommandLine(String exe) {
-        def properties = project.rootProject.konanProperties
-        def targetToolchain = TargetPropertiesKt.hostTargetString(properties, "targetToolchain", target)
-        def absoluteTargetToolchain = "$dependenciesDir/$targetToolchain"
-        if (target == KonanTarget.WASM32) {
+
+        def absoluteTargetToolchain = platformManager.platform(target).absoluteTargetToolchain
+        def absoluteTargetSysRoot = platformManager.platform(target).absoluteTargetSysRoot
+        if (target instanceof KonanTarget.WASM32) {
             def d8 = "$absoluteTargetToolchain/bin/d8"
             def launcherJs = "${exe}.js"
             return [d8, '--expose-wasm', launcherJs, '--', exe]
-        } else if (target == KonanTarget.LINUX_MIPS32 || target == KonanTarget.LINUX_MIPSEL32) {
-            def targetSysroot = TargetPropertiesKt.targetString(properties, "targetSysRoot", target)
-            def absoluteTargetSysroot = "$dependenciesDir/$targetSysroot"
-            def qemu = target == KonanTarget.LINUX_MIPS32 ? "qemu-mips" : "qemu-mipsel"
+        } else if (target instanceof KonanTarget.LINUX_MIPS32 || target instanceof KonanTarget.LINUX_MIPSEL32) {
+            def qemu = target instanceof KonanTarget.LINUX_MIPS32 ? "qemu-mips" : "qemu-mipsel"
             def absoluteQemu = "$absoluteTargetToolchain/bin/$qemu"
-            return [absoluteQemu, "-L", absoluteTargetSysroot, exe]
+            return [absoluteQemu, "-L", absoluteTargetSysRoot, exe]
         } else {
             return [exe]
         }
@@ -548,7 +543,7 @@ class DynamicKonanTest extends KonanTest {
     void compileTest(List<String> filesToCompile, String exe) {
         def libname = "testlib"
         def dylib = "$outputDirectory/$libname"
-        def realExe = "${exe}.${targetManager.target.family.exeSuffix}"
+        def realExe = "${exe}.${target.family.exeSuffix}"
 
         runCompiler(filesToCompile, dylib, ['-produce', 'dynamic'] + ((flags != null) ? flags :[]))
         runClang([cSource], realExe, ['-I', outputDirectory, '-L', outputDirectory, '-l', libname])

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 interface TargetableExternalStorage {
     fun targetString(key: String): String? 
-    fun targetList(key: String): List<String> 
+    fun targetList(key: String): List<String>
     fun hostString(key: String): String? 
     fun hostList(key: String): List<String> 
     fun hostTargetString(key: String): String? 
@@ -50,6 +50,7 @@ abstract class KonanPropertiesLoader(override val target: KonanTarget, val prope
         = properties.hostTargetString(key, target)
     override fun hostTargetList(key: String): List<String> 
         = properties.hostTargetList(key, target)
+
     override fun absolute(value: String?): String =
             dependencyProcessor!!.resolveRelative(value!!).absolutePath
     private val dependencyProcessor  by lazy {
@@ -57,3 +58,16 @@ abstract class KonanPropertiesLoader(override val target: KonanTarget, val prope
     }
 }
 
+fun Properties.keepOnlyDefaultProfiles() {
+    val DEPENDENCY_PROFILES_KEY = "dependencyProfiles"
+    val dependencyProfiles = this.getProperty(DEPENDENCY_PROFILES_KEY)
+    if (dependencyProfiles != "default alt")
+        error("unexpected $DEPENDENCY_PROFILES_KEY value: expected 'default alt', got '$dependencyProfiles'")
+
+    // Force build to use only 'default' profile:
+    this.setProperty(DEPENDENCY_PROFILES_KEY, "default")
+    // Force build to use fixed Xcode version:
+    this.setProperty("useFixedXcodeVersion", "9.2")
+    // TODO: it actually affects only resolution made in :dependencies,
+    // that's why we assume that 'default' profile comes first (and check this above).
+}

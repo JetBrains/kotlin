@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputDirectory
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 
 // TODO: Implement as a part of the gradle plugin
@@ -24,12 +24,13 @@ open class KlibInstall: Exec() {
         }
 
     @Input
-    var target: String = TargetManager.hostName
+    var target: String = HostManager.hostName
 
     override fun configure(config: Closure<*>): Task {
         val result = super.configure(config)
-        val konanHome = project.rootProject.file(project.findProperty("konan.home") ?: "dist")
-        val suffix = if (TargetManager.host == KonanTarget.MINGW) ".bat" else  ""
+        val konanHomePath = project.findProperty("konan.home") ?: "dist"
+        val konanHome = project.rootProject.file(konanHomePath)
+        val suffix = if (HostManager.host == KonanTarget.MINGW) ".bat" else  ""
         val klibProgram = "$konanHome/bin/klib$suffix"
 
         doFirst {
