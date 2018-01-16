@@ -6,12 +6,12 @@ FILE fqName:<root> fileName:/lambdas.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:String flags:
             VALUE_PARAMETER name:it index:0 type:kotlin.String flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from=<anonymous>(String): String'
+              RETURN type=kotlin.Nothing from='<anonymous>(String): String'
                 GET_VAR 'value-parameter it: String' type=kotlin.String origin=null
           FUNCTION_REFERENCE '<anonymous>(String): String' type=(kotlin.String) -> kotlin.String origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Function1<String, String> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test1>(): (String) -> String'
+        RETURN type=kotlin.Nothing from='<get-test1>(): (String) -> String'
           GET_FIELD 'test1: (String) -> String' type=(kotlin.String) -> kotlin.String origin=null
   PROPERTY name:test2 type:kotlin.Any.(kotlin.Any) -> kotlin.Any visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Any.(kotlin.Any) -> kotlin.Any visibility:public
@@ -21,13 +21,13 @@ FILE fqName:<root> fileName:/lambdas.kt
             $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
             VALUE_PARAMETER name:it index:0 type:kotlin.Any flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from=<anonymous>(Any) on Any: Int'
+              RETURN type=kotlin.Nothing from='<anonymous>(Any) on Any: Int'
                 CALL 'hashCode(): Int' type=kotlin.Int origin=null
                   $this: GET_VAR 'value-parameter it: Any' type=kotlin.Any origin=null
           FUNCTION_REFERENCE '<anonymous>(Any) on Any: Int' type=kotlin.Any.(kotlin.Any) -> kotlin.Int origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:[@kotlin.ExtensionFunctionType] Function2<Any, Any, Any> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test2>(): Any.(Any) -> Any'
+        RETURN type=kotlin.Nothing from='<get-test2>(): Any.(Any) -> Any'
           GET_FIELD 'test2: Any.(Any) -> Any' type=kotlin.Any.(kotlin.Any) -> kotlin.Any origin=null
   PROPERTY name:test3 type:(kotlin.Int, kotlin.Int) -> kotlin.Unit visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test3 type:(kotlin.Int, kotlin.Int) -> kotlin.Unit visibility:public
@@ -37,12 +37,12 @@ FILE fqName:<root> fileName:/lambdas.kt
             VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
             VALUE_PARAMETER name:j index:1 type:kotlin.Int flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from=<anonymous>(Int, Int): Unit'
+              RETURN type=kotlin.Nothing from='<anonymous>(Int, Int): Unit'
                 GET_OBJECT 'Unit' type=kotlin.Unit
           FUNCTION_REFERENCE '<anonymous>(Int, Int): Unit' type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:Function2<Int, Int, Unit> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test3>(): (Int, Int) -> Unit'
+        RETURN type=kotlin.Nothing from='<get-test3>(): (Int, Int) -> Unit'
           GET_FIELD 'test3: (Int, Int) -> Unit' type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=null
   PROPERTY name:test4 type:(kotlin.Int, kotlin.Int) -> kotlin.Unit visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test4 type:(kotlin.Int, kotlin.Int) -> kotlin.Unit visibility:public
@@ -55,6 +55,6 @@ FILE fqName:<root> fileName:/lambdas.kt
           FUNCTION_REFERENCE '<no name provided>(Int, Int): Unit' type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=ANONYMOUS_FUNCTION
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:Function2<Int, Int, Unit> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test4>(): (Int, Int) -> Unit'
+        RETURN type=kotlin.Nothing from='<get-test4>(): (Int, Int) -> Unit'
           GET_FIELD 'test4: (Int, Int) -> Unit' type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=null
 

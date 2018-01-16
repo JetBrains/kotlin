@@ -33,7 +33,7 @@ BB 4
 INCOMING <- BB 2, 3
     When exit: WHEN type=kotlin.Int origin=null
 CONTENT
-      1 RETURN type=kotlin.Nothing from=max(Int, Int): Int'
+      1 RETURN type=kotlin.Nothing from='max(Int, Int): Int'
 OUTGOING -> NONE
     Function exit: FUN name:max visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:Int flags:
 

@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> ($this:Test1) returnType:JInner flags:
         $this: VALUE_PARAMETER name:<this> type:Test1 flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test>(): J.JInner'
+          RETURN type=kotlin.Nothing from='<get-test>(): J.JInner'
             GET_FIELD 'test: J.JInner' type=J.JInner origin=null
               receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
     PROPERTY FAKE_OVERRIDE name:x type:kotlin.Int visibility:public modality:FINAL flags:var

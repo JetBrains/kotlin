@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:ILeft) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:ILeft flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>(): Int'
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CONST Int type=kotlin.Int value=1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:IRight) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:IRight flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>(): Int'
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CONST Int type=kotlin.Int value=2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:CBoth) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:CBoth flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>(): Int'
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
               $this: CALL '<get-bar>(): Int' superQualifier=ILeft type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_VAR 'this@CBoth: CBoth' type=CBoth origin=null

@@ -17,7 +17,7 @@ BB 2
 INCOMING <- BB 1
     When exit: WHEN type=kotlin.Int origin=WHEN
 CONTENT
-      1 RETURN type=kotlin.Nothing from=empty(): Int'
+      1 RETURN type=kotlin.Nothing from='empty(): Int'
 OUTGOING -> NONE
     Function exit: FUN name:empty visibility:public modality:FINAL <> () returnType:Int flags:
 

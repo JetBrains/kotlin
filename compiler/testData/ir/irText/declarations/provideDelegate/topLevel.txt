@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/topLevel.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Delegate) returnType:String flags:
         $this: VALUE_PARAMETER name:<this> type:Delegate flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-value>(): String'
+          RETURN type=kotlin.Nothing from='<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Delegate: Delegate' type=Delegate origin=null
     FUN name:getValue visibility:public modality:FINAL <> ($this:Delegate, thisRef:kotlin.Any?, property:kotlin.Any?) returnType:String flags:
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/topLevel.kt
       VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any? flags:
       VALUE_PARAMETER name:property index:1 type:kotlin.Any? flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=getValue(Any?, Any?): String'
+        RETURN type=kotlin.Nothing from='getValue(Any?, Any?): String'
           CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Delegate: Delegate' type=Delegate origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/topLevel.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:DelegateProvider) returnType:String flags:
         $this: VALUE_PARAMETER name:<this> type:DelegateProvider flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-value>(): String'
+          RETURN type=kotlin.Nothing from='<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@DelegateProvider: DelegateProvider' type=DelegateProvider origin=null
     FUN name:provideDelegate visibility:public modality:FINAL <> ($this:DelegateProvider, thisRef:kotlin.Any?, property:kotlin.Any?) returnType:Delegate flags:
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/topLevel.kt
       VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any? flags:
       VALUE_PARAMETER name:property index:1 type:kotlin.Any? flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=provideDelegate(Any?, Any?): Delegate'
+        RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any?): Delegate'
           CALL 'constructor Delegate(String)' type=Delegate origin=null
             value: CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR 'this@DelegateProvider: DelegateProvider' type=DelegateProvider origin=null
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/topLevel.kt
           property: PROPERTY_REFERENCE 'testTopLevel: String' field=null getter='<get-testTopLevel>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testTopLevel> visibility:public modality:FINAL <> () returnType:String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-testTopLevel>(): String'
+        RETURN type=kotlin.Nothing from='<get-testTopLevel>(): String'
           CALL 'getValue(Any?, Any?): String' type=kotlin.String origin=null
             $this: GET_FIELD '`testTopLevel$delegate`: Delegate' type=Delegate origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null

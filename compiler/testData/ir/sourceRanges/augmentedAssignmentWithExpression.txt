@@ -24,7 +24,7 @@
       @2:0..8:1 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   @10:0..18 FUN name:foo visibility:public modality:FINAL <> () returnType:Host flags:
     @10:12..18 BLOCK_BODY
-      @10:12..18 RETURN type=kotlin.Nothing from=foo(): Host'
+      @10:12..18 RETURN type=kotlin.Nothing from='foo(): Host'
         @10:12..18 CALL 'constructor Host()' type=test.Host origin=null
   @12:0..14:1 FUN name:test2 visibility:public modality:FINAL <> ($receiver:test.Host) returnType:Unit flags:
     @12:4..8 VALUE_PARAMETER name:<this> type:test.Host flags:

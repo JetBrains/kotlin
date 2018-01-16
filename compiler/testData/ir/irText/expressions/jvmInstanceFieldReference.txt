@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/Derived.kt
     FUN name:getValue visibility:public modality:FINAL <> ($this:Derived) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:Derived flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=getValue(): Int'
+        RETURN type=kotlin.Nothing from='getValue(): Int'
           GET_FIELD 'value: Int' type=kotlin.Int origin=GET_PROPERTY
             receiver: GET_VAR 'this@Derived: Derived' type=Derived origin=null
     FUN name:setValue visibility:public modality:FINAL <> ($this:Derived, value:kotlin.Int) returnType:Unit flags:

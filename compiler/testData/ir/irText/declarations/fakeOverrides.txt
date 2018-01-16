@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/fakeOverrides.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:Test1) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Test1 flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>(): Int'
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             GET_FIELD 'bar: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:CFoo<kotlin.String>, x:kotlin.String) returnType:Unit flags:

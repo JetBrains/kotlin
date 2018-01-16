@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     FUN name:bar visibility:public modality:OPEN <> ($this:BaseImpl) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:BaseImpl flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=bar(): Int'
+        RETURN type=kotlin.Nothing from='bar(): Int'
           CONST Int type=kotlin.Int value=42
     FUN name:qux visibility:public modality:OPEN <> ($this:BaseImpl, $receiver:kotlin.String) returnType:Unit flags:
       $this: VALUE_PARAMETER name:<this> type:BaseImpl flags:
@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     VALUE_PARAMETER name:x0 index:0 type:kotlin.String flags:
     VALUE_PARAMETER name:y0 index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=otherImpl(String, Int): IOther'
+      RETURN type=kotlin.Nothing from='otherImpl(String, Int): IOther'
         BLOCK type=otherImpl.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:otherImpl.<no name provided> flags:
@@ -93,7 +93,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:OPEN <> ($this:otherImpl.<no name provided>) returnType:String flags:
                 $this: VALUE_PARAMETER name:<this> type:otherImpl.<no name provided> flags:
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from=<get-x>(): String'
+                  RETURN type=kotlin.Nothing from='<get-x>(): String'
                     GET_FIELD 'x: String' type=kotlin.String origin=null
                       receiver: GET_VAR 'this@<no name provided>: <no name provided>' type=otherImpl.<no name provided> origin=null
             PROPERTY name:y type:kotlin.Int visibility:public modality:OPEN flags:var
@@ -103,7 +103,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:OPEN <> ($this:otherImpl.<no name provided>) returnType:Int flags:
                 $this: VALUE_PARAMETER name:<this> type:otherImpl.<no name provided> flags:
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from=<get-y>(): Int'
+                  RETURN type=kotlin.Nothing from='<get-y>(): Int'
                     GET_FIELD 'y: Int' type=kotlin.Int origin=null
                       receiver: GET_VAR 'this@<no name provided>: <no name provided>' type=otherImpl.<no name provided> origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<set-y> visibility:public modality:OPEN <> ($this:otherImpl.<no name provided>, <set-?>:kotlin.Int) returnType:Unit flags:
@@ -118,14 +118,14 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                 $this: VALUE_PARAMETER name:<this> type:otherImpl.<no name provided> flags:
                 $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte flags:
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from=<get-z1>() on Byte: Int'
+                  RETURN type=kotlin.Nothing from='<get-z1>() on Byte: Int'
                     CONST Int type=kotlin.Int value=1
             PROPERTY name:z2 type:kotlin.Int visibility:public modality:OPEN flags:var
               FUN name:<get-z2> visibility:public modality:OPEN <> ($this:otherImpl.<no name provided>, $receiver:kotlin.Byte) returnType:Int flags:
                 $this: VALUE_PARAMETER name:<this> type:otherImpl.<no name provided> flags:
                 $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte flags:
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from=<get-z2>() on Byte: Int'
+                  RETURN type=kotlin.Nothing from='<get-z2>() on Byte: Int'
                     CONST Int type=kotlin.Int value=2
               FUN name:<set-z2> visibility:public modality:OPEN <> ($this:otherImpl.<no name provided>, $receiver:kotlin.Byte, value:kotlin.Int) returnType:Unit flags:
                 $this: VALUE_PARAMETER name:<this> type:otherImpl.<no name provided> flags:
@@ -152,7 +152,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     FUN DELEGATED_MEMBER name:bar visibility:public modality:OPEN <> ($this:Test1) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:Test1 flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=bar(): Int'
+        RETURN type=kotlin.Nothing from='bar(): Int'
           CALL 'bar(): Int' type=kotlin.Int origin=null
             $this: GET_FIELD '`Test1$IBase$delegate`: BaseImpl' type=BaseImpl origin=null
               receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
@@ -193,7 +193,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     FUN DELEGATED_MEMBER name:bar visibility:public modality:OPEN <> ($this:Test2) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:Test2 flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=bar(): Int'
+        RETURN type=kotlin.Nothing from='bar(): Int'
           CALL 'bar(): Int' type=kotlin.Int origin=null
             $this: GET_FIELD '`Test2$IBase$delegate`: BaseImpl' type=BaseImpl origin=null
               receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
@@ -225,7 +225,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
         $this: VALUE_PARAMETER name:<this> type:Test2 flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-z1>() on Byte: Int'
+          RETURN type=kotlin.Nothing from='<get-z1>() on Byte: Int'
             CALL '<get-z1>() on Byte: Int' type=kotlin.Int origin=null
               $this: GET_FIELD '`Test2$IOther$delegate`: IOther' type=IOther origin=null
                 receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
@@ -234,7 +234,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       FUN DELEGATED_MEMBER name:<get-x> visibility:public modality:OPEN <> ($this:Test2) returnType:String flags:
         $this: VALUE_PARAMETER name:<this> type:Test2 flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x>(): String'
+          RETURN type=kotlin.Nothing from='<get-x>(): String'
             CALL '<get-x>(): String' type=kotlin.String origin=null
               $this: GET_FIELD '`Test2$IOther$delegate`: IOther' type=IOther origin=null
                 receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
@@ -243,7 +243,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
         $this: VALUE_PARAMETER name:<this> type:Test2 flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-z2>() on Byte: Int'
+          RETURN type=kotlin.Nothing from='<get-z2>() on Byte: Int'
             CALL '<get-z2>() on Byte: Int' type=kotlin.Int origin=null
               $this: GET_FIELD '`Test2$IOther$delegate`: IOther' type=IOther origin=null
                 receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
@@ -262,7 +262,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       FUN DELEGATED_MEMBER name:<get-y> visibility:public modality:OPEN <> ($this:Test2) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Test2 flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-y>(): Int'
+          RETURN type=kotlin.Nothing from='<get-y>(): Int'
             CALL '<get-y>(): Int' type=kotlin.Int origin=null
               $this: GET_FIELD '`Test2$IOther$delegate`: IOther' type=IOther origin=null
                 receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null

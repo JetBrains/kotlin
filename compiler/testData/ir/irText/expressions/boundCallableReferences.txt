@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>(): Int'
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             GET_FIELD 'bar: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
           $this: CALL 'constructor A()' type=A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:KFunction0<Unit> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test1>(): KFunction0<Unit>'
+        RETURN type=kotlin.Nothing from='<get-test1>(): KFunction0<Unit>'
           GET_FIELD 'test1: KFunction0<Unit>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
   PROPERTY name:test2 type:kotlin.reflect.KProperty0<kotlin.Int> visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty0<kotlin.Int> visibility:public
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
           $this: CALL 'constructor A()' type=A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:KProperty0<Int> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test2>(): KProperty0<Int>'
+        RETURN type=kotlin.Nothing from='<get-test2>(): KProperty0<Int>'
           GET_FIELD 'test2: KProperty0<Int>' type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
   PROPERTY name:test3 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public
@@ -53,6 +53,6 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
           $receiver: CALL 'constructor A()' type=A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:KFunction0<Unit> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test3>(): KFunction0<Unit>'
+        RETURN type=kotlin.Nothing from='<get-test3>(): KFunction0<Unit>'
           GET_FIELD 'test3: KFunction0<Unit>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
 

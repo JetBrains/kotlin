@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertyWithSuspendOperators.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-z>(): Int'
+          RETURN type=kotlin.Nothing from='<get-z>(): Int'
             GET_FIELD 'z: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-z> visibility:public modality:FINAL <> ($this:A, <set-?>:kotlin.Int) returnType:Unit flags:
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertyWithSuspendOperators.kt
       VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any? flags:
       VALUE_PARAMETER name:property index:1 type:kotlin.reflect.KProperty<*> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=getValue(Any?, KProperty<*>): Int'
+        RETURN type=kotlin.Nothing from='getValue(Any?, KProperty<*>): Int'
           CALL '<get-z>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'this@A: A' type=A origin=null
     FUN name:setValue visibility:public modality:FINAL <> ($this:A, thisRef:kotlin.Any?, property:kotlin.reflect.KProperty<*>, value:kotlin.Int) returnType:Unit flags:suspend
@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertyWithSuspendOperators.kt
       VALUE_PARAMETER name:property index:1 type:kotlin.reflect.KProperty<*> flags:
       VALUE_PARAMETER name:value index:2 type:kotlin.Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=setValue(Any?, KProperty<*>, Int): Unit'
+        RETURN type=kotlin.Nothing from='setValue(Any?, KProperty<*>, Int): Unit'
           CALL 'suspendCoroutineOrReturn(crossinline (Continuation<Unit>) -> Any?): Unit' type=kotlin.Unit origin=null
             <T>: Unit
             block: BLOCK type=(kotlin.coroutines.experimental.Continuation<kotlin.Unit>) -> kotlin.Any origin=LAMBDA
@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertyWithSuspendOperators.kt
                   CALL 'resume(Unit): Unit' type=kotlin.Unit origin=null
                     $this: GET_VAR 'value-parameter x: Continuation<Unit>' type=kotlin.coroutines.experimental.Continuation<kotlin.Unit> origin=null
                     value: GET_OBJECT 'Unit' type=kotlin.Unit
-                  RETURN type=kotlin.Nothing from=<anonymous>(Continuation<Unit>): Any'
+                  RETURN type=kotlin.Nothing from='<anonymous>(Continuation<Unit>): Any'
                     CALL '<get-COROUTINE_SUSPENDED>(): Any' type=kotlin.Any origin=GET_PROPERTY
               FUNCTION_REFERENCE '<anonymous>(Continuation<Unit>): Any' type=(kotlin.coroutines.experimental.Continuation<kotlin.Unit>) -> kotlin.Any origin=LAMBDA
     FUN name:provideDelegate visibility:public modality:FINAL <> ($this:A, host:kotlin.Any?, p:kotlin.Any) returnType:A flags:suspend
@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertyWithSuspendOperators.kt
       VALUE_PARAMETER name:host index:0 type:kotlin.Any? flags:
       VALUE_PARAMETER name:p index:1 type:kotlin.Any flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=provideDelegate(Any?, Any): A'
+        RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any): A'
           CALL 'suspendCoroutineOrReturn(crossinline (Continuation<A>) -> Any?): A' type=A origin=null
             <T>: A
             block: BLOCK type=(kotlin.coroutines.experimental.Continuation<A>) -> kotlin.Any origin=LAMBDA
@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertyWithSuspendOperators.kt
                   CALL 'resume(A): Unit' type=kotlin.Unit origin=null
                     $this: GET_VAR 'value-parameter x: Continuation<A>' type=kotlin.coroutines.experimental.Continuation<A> origin=null
                     value: GET_VAR 'this@A: A' type=A origin=null
-                  RETURN type=kotlin.Nothing from=<anonymous>(Continuation<A>): Any'
+                  RETURN type=kotlin.Nothing from='<anonymous>(Continuation<A>): Any'
                     CALL '<get-COROUTINE_SUSPENDED>(): Any' type=kotlin.Any origin=GET_PROPERTY
               FUNCTION_REFERENCE '<anonymous>(Continuation<A>): Any' type=(kotlin.coroutines.experimental.Continuation<A>) -> kotlin.Any origin=LAMBDA
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -87,7 +87,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertyWithSuspendOperators.kt
             p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testVal: Int' delegate='`testVal$delegate`: A' getter='<get-testVal>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testVal> visibility:local modality:FINAL <> () returnType:Int flags:suspend
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<get-testVal>(): Int'
+            RETURN type=kotlin.Nothing from='<get-testVal>(): Int'
               CALL 'getValue(Any?, KProperty<*>): Int' type=kotlin.Int origin=null
                 $this: GET_VAR '`testVal$delegate`: A' type=A origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertyWithSuspendOperators.kt
             p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testVar: Int' delegate='`testVar$delegate`: A' getter='<get-testVar>(): Int' setter='<set-testVar>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testVar> visibility:local modality:FINAL <> () returnType:Int flags:suspend
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<get-testVar>(): Int'
+            RETURN type=kotlin.Nothing from='<get-testVar>(): Int'
               CALL 'getValue(Any?, KProperty<*>): Int' type=kotlin.Int origin=null
                 $this: GET_VAR '`testVar$delegate`: A' type=A origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
@@ -108,7 +108,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertyWithSuspendOperators.kt
         FUN DELEGATED_PROPERTY_ACCESSOR name:<set-testVar> visibility:local modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:suspend
           VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<set-testVar>(Int): Unit'
+            RETURN type=kotlin.Nothing from='<set-testVar>(Int): Unit'
               CALL 'setValue(Any?, KProperty<*>, Int): Unit' type=kotlin.Unit origin=null
                 $this: GET_VAR '`testVar$delegate`: A' type=A origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null

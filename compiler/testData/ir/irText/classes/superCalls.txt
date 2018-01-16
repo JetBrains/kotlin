@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/superCalls.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:Base) returnType:String flags:
         $this: VALUE_PARAMETER name:<this> type:Base flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>(): String'
+          RETURN type=kotlin.Nothing from='<get-bar>(): String'
             GET_FIELD 'bar: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Base: Base' type=Base origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/superCalls.kt
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:Derived) returnType:String flags:
         $this: VALUE_PARAMETER name:<this> type:Derived flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>(): String'
+          RETURN type=kotlin.Nothing from='<get-bar>(): String'
             CALL '<get-bar>(): String' superQualifier=Base type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR 'this@Derived: Derived' type=Derived origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

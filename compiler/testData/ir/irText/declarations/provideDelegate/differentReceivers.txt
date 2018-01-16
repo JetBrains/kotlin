@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:MyClass) returnType:String flags:
         $this: VALUE_PARAMETER name:<this> type:MyClass flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-value>(): String'
+          RETURN type=kotlin.Nothing from='<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@MyClass: MyClass' type=MyClass origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
     VALUE_PARAMETER name:host index:0 type:kotlin.Any? flags:
     VALUE_PARAMETER name:p index:1 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=provideDelegate(Any?, Any) on MyClass: String'
+      RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any) on MyClass: String'
         CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
           $this: GET_VAR 'this@provideDelegate: MyClass' type=MyClass origin=null
   FUN name:getValue visibility:public modality:FINAL <> ($receiver:kotlin.String, receiver:kotlin.Any?, p:kotlin.Any) returnType:String flags:
@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
     VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? flags:
     VALUE_PARAMETER name:p index:1 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=getValue(Any?, Any) on String: String'
+      RETURN type=kotlin.Nothing from='getValue(Any?, Any) on String: String'
         GET_VAR 'this@getValue: String' type=kotlin.String origin=null
   PROPERTY name:testO type:kotlin.String visibility:public modality:FINAL flags:delegatedmval
     FIELD DELEGATE name:testO$delegate type:kotlin.String visibility:private
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
           p: PROPERTY_REFERENCE 'testO: String' field=null getter='<get-testO>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testO> visibility:public modality:FINAL <> () returnType:String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-testO>(): String'
+        RETURN type=kotlin.Nothing from='<get-testO>(): String'
           CALL 'getValue(Any?, Any) on String: String' type=kotlin.String origin=null
             $receiver: GET_FIELD '`testO$delegate`: String' type=kotlin.String origin=null
             receiver: CONST Null type=kotlin.Nothing? value=null
@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
         CONST String type=kotlin.String value=K
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testK> visibility:public modality:FINAL <> () returnType:String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-testK>(): String'
+        RETURN type=kotlin.Nothing from='<get-testK>(): String'
           CALL 'getValue(Any?, Any) on String: String' type=kotlin.String origin=null
             $receiver: GET_FIELD '`testK$delegate`: String' type=kotlin.String origin=null
             receiver: CONST Null type=kotlin.Nothing? value=null
@@ -72,6 +72,6 @@ FILE fqName:<root> fileName:/differentReceivers.kt
           other: CALL '<get-testK>(): String' type=kotlin.String origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testOK> visibility:public modality:FINAL <> () returnType:String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-testOK>(): String'
+        RETURN type=kotlin.Nothing from='<get-testOK>(): String'
           GET_FIELD 'testOK: String' type=kotlin.String origin=null
 

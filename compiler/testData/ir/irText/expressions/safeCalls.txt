@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Ref) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Ref flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-value>(): Int'
+          RETURN type=kotlin.Nothing from='<get-value>(): Int'
             GET_FIELD 'value: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Ref: Ref' type=Ref origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:Ref, <set-?>:kotlin.Int) returnType:Unit flags:
@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
       $this: VALUE_PARAMETER name:<this> type:IHost flags:
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=extLength() on String: Int'
+        RETURN type=kotlin.Nothing from='extLength() on String: Int'
           CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'this@extLength: String' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
   FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:Int? flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.String? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1(String?): Int?'
+      RETURN type=kotlin.Nothing from='test1(String?): Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
             GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=null
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
   FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:Int? flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.String? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2(String?): Int?'
+      RETURN type=kotlin.Nothing from='test2(String?): Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
             GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=null
@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.String? flags:
     VALUE_PARAMETER name:y index:1 type:kotlin.Any? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3(String?, Any?): Boolean?'
+      RETURN type=kotlin.Nothing from='test3(String?, Any?): Boolean?'
         BLOCK type=kotlin.Boolean? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
             GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=null
@@ -121,7 +121,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
     $receiver: VALUE_PARAMETER name:<this> type:IHost flags:
     VALUE_PARAMETER name:s index:0 type:kotlin.String? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test5(String?) on IHost: Int?'
+      RETURN type=kotlin.Nothing from='test5(String?) on IHost: Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
             GET_VAR 'value-parameter s: String?' type=kotlin.String? origin=null
@@ -139,7 +139,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
   FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.Int) returnType:Int flags:
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=foo() on Int: Int'
+      RETURN type=kotlin.Nothing from='foo() on Int: Int'
         CONST Int type=kotlin.Int value=239
   FUN name:box visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY

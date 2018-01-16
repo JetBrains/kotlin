@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/ifElseIf.kt
   FUN name:test visibility:public modality:FINAL <> (i:kotlin.Int) returnType:Int flags:
     VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test(Int): Int'
+      RETURN type=kotlin.Nothing from='test(Int): Int'
         WHEN type=kotlin.Int origin=WHEN
           BRANCH
             if: CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT

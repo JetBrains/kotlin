@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/stringPlus.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1(String, Any): String'
+      RETURN type=kotlin.Nothing from='test1(String, Any): String'
         CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
           $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
           other: GET_VAR 'value-parameter b: Any' type=kotlin.Any origin=null
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/stringPlus.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2(String, Int): String'
+      RETURN type=kotlin.Nothing from='test2(String, Int): String'
         CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
           $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/stringPlus.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3(String, Int): String'
+      RETURN type=kotlin.Nothing from='test3(String, Int): String'
         CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
           $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
             $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS

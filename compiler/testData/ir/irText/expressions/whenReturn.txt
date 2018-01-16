@@ -10,30 +10,30 @@ FILE fqName:<root> fileName:/whenReturn.kt
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value=A
-            then: RETURN type=kotlin.Nothing from=toString(String): String'
+            then: RETURN type=kotlin.Nothing from='toString(String): String'
               CONST String type=kotlin.String value=Excellent
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value=B
-            then: RETURN type=kotlin.Nothing from=toString(String): String'
+            then: RETURN type=kotlin.Nothing from='toString(String): String'
               CONST String type=kotlin.String value=Good
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value=C
-            then: RETURN type=kotlin.Nothing from=toString(String): String'
+            then: RETURN type=kotlin.Nothing from='toString(String): String'
               CONST String type=kotlin.String value=Mediocre
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value=D
-            then: RETURN type=kotlin.Nothing from=toString(String): String'
+            then: RETURN type=kotlin.Nothing from='toString(String): String'
               CONST String type=kotlin.String value=Fair
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: RETURN type=kotlin.Nothing from=toString(String): String'
+            then: RETURN type=kotlin.Nothing from='toString(String): String'
               CONST String type=kotlin.String value=Failure
-      RETURN type=kotlin.Nothing from=toString(String): String'
+      RETURN type=kotlin.Nothing from='toString(String): String'
         CONST String type=kotlin.String value=???
 

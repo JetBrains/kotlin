@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/kt16905.kt
   TYPEALIAS typealias OI = Outer.Inner type=Outer.Inner
   FUN name:test visibility:public modality:FINAL <> () returnType:Inner flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test(): OI /* = Outer.Inner */'
+      RETURN type=kotlin.Nothing from='test(): OI /* = Outer.Inner */'
         CALL 'constructor Inner()' type=Outer.Inner origin=null
           $this: CALL 'constructor Outer()' type=Outer origin=null
 

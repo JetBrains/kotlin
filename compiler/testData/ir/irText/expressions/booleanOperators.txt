@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/booleanOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1(Boolean, Boolean): Boolean'
+      RETURN type=kotlin.Nothing from='test1(Boolean, Boolean): Boolean'
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/booleanOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2(Boolean, Boolean): Boolean'
+      RETURN type=kotlin.Nothing from='test2(Boolean, Boolean): Boolean'
         WHEN type=kotlin.Boolean origin=OROR
           BRANCH
             if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/booleanOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1x(Boolean, Boolean): Boolean'
+      RETURN type=kotlin.Nothing from='test1x(Boolean, Boolean): Boolean'
         CALL 'and(Boolean): Boolean' type=kotlin.Boolean origin=null
           $this: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
           other: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/booleanOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2x(Boolean, Boolean): Boolean'
+      RETURN type=kotlin.Nothing from='test2x(Boolean, Boolean): Boolean'
         CALL 'or(Boolean): Boolean' type=kotlin.Boolean origin=null
           $this: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
           other: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null

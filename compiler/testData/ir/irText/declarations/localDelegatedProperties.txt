@@ -8,12 +8,12 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
             initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Int flags:
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from=<anonymous>(): Int'
+                  RETURN type=kotlin.Nothing from='<anonymous>(): Int'
                     CONST Int type=kotlin.Int value=42
               FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-x> visibility:local modality:FINAL <> () returnType:Int flags:
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<get-x>(): Int'
+            RETURN type=kotlin.Nothing from='<get-x>(): Int'
               CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
                 <T>: Int
                 $receiver: GET_VAR '`x$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
             <V>: Int
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-x> visibility:local modality:FINAL <> () returnType:Int flags:
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<get-x>(): Int'
+            RETURN type=kotlin.Nothing from='<get-x>(): Int'
               CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out Int>: Int' type=kotlin.Int origin=null
                 <V>: Int
                 <V1 : V>: Int
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
         FUN DELEGATED_PROPERTY_ACCESSOR name:<set-x> visibility:local modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
           VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<set-x>(Int): Unit'
+            RETURN type=kotlin.Nothing from='<set-x>(Int): Unit'
               CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
                 <V>: Int
                 $receiver: GET_VAR '`x$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null

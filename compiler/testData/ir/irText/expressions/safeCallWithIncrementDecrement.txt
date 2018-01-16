@@ -16,7 +16,7 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
     FUN name:<get-p> visibility:public modality:FINAL <> ($receiver:test.C?) returnType:Int flags:
       $receiver: VALUE_PARAMETER name:<this> type:test.C? flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-p>() on C?: Int'
+        RETURN type=kotlin.Nothing from='<get-p>() on C?: Int'
           CONST Int type=kotlin.Int value=42
     FUN name:<set-p> visibility:public modality:FINAL <> ($receiver:test.C?, value:kotlin.Int) returnType:Unit flags:
       $receiver: VALUE_PARAMETER name:<this> type:test.C? flags:
@@ -25,7 +25,7 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
   FUN name:inc visibility:public modality:FINAL <> ($receiver:kotlin.Int?) returnType:Int? flags:
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=inc() on Int?: Int?'
+      RETURN type=kotlin.Nothing from='inc() on Int?: Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Int? flags:val
             GET_VAR 'this@inc: Int?' type=kotlin.Int? origin=null
@@ -43,7 +43,7 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int? flags:
     VALUE_PARAMETER name:index index:0 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=get(Int) on Int?: Int'
+      RETURN type=kotlin.Nothing from='get(Int) on Int?: Int'
         CONST Int type=kotlin.Int value=42
   FUN name:set visibility:public modality:FINAL <> ($receiver:kotlin.Int?, index:kotlin.Int, value:kotlin.Int) returnType:Unit flags:
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int? flags:

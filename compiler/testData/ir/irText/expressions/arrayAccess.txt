@@ -5,16 +5,16 @@ FILE fqName:<root> fileName:/arrayAccess.kt
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-p>(): Int'
+        RETURN type=kotlin.Nothing from='<get-p>(): Int'
           GET_FIELD 'p: Int' type=kotlin.Int origin=null
   FUN name:foo visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=foo(): Int'
+      RETURN type=kotlin.Nothing from='foo(): Int'
         CONST Int type=kotlin.Int value=1
   FUN name:test visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.IntArray flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test(IntArray): Int'
+      RETURN type=kotlin.Nothing from='test(IntArray): Int'
         CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
           $this: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
             $this: CALL 'get(Int): Int' type=kotlin.Int origin=GET_ARRAY_ELEMENT

@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/extFunSafeInvoke.kt
     VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? flags:
     VALUE_PARAMETER name:fn index:1 type:kotlin.Any.(kotlin.Int, kotlin.String) -> kotlin.Unit flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test(Any?, Any.(Int, String) -> Unit): Unit?'
+      RETURN type=kotlin.Nothing from='test(Any?, Any.(Int, String) -> Unit): Unit?'
         BLOCK type=kotlin.Unit? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:val
             GET_VAR 'value-parameter receiver: Any?' type=kotlin.Any? origin=null

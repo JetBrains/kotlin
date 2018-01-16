@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Cell<T>) returnType:T flags:
         $this: VALUE_PARAMETER name:<this> type:Cell<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-value>(): T'
+          RETURN type=kotlin.Nothing from='<get-value>(): T'
             GET_FIELD 'value: T' type=T origin=null
               receiver: GET_VAR 'this@Cell: Cell<T>' type=Cell<T> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

@@ -49,7 +49,7 @@ BB 6
 INCOMING <- BB 3, 4, 5
     When exit: WHEN type=kotlin.Int origin=WHEN
 CONTENT
-      1 RETURN type=kotlin.Nothing from=compare(Int, Int): Int'
+      1 RETURN type=kotlin.Nothing from='compare(Int, Int): Int'
 OUTGOING -> NONE
     Function exit: FUN name:compare visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:Int flags:
 

@@ -12,14 +12,14 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test1>(): Int'
+          RETURN type=kotlin.Nothing from='<get-test1>(): Int'
             GET_FIELD 'test1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
     PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:val
       FUN name:<get-test2> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test2>(): Int'
+          RETURN type=kotlin.Nothing from='<get-test2>(): Int'
             CONST Int type=kotlin.Int value=0
     PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:var
       FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test3>(): Int'
+          RETURN type=kotlin.Nothing from='<get-test3>(): Int'
             GET_FIELD 'test3: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test4>(): Int'
+          RETURN type=kotlin.Nothing from='<get-test4>(): Int'
             GET_FIELD 'test4: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN name:<set-test4> visibility:public modality:FINAL <> ($this:C, value:kotlin.Int) returnType:Unit flags:
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test5>(): Int'
+          RETURN type=kotlin.Nothing from='<get-test5>(): Int'
             GET_FIELD 'test5: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN name:<set-test5> visibility:private modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
       FUN name:<get-test6> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test6>(): Int'
+          RETURN type=kotlin.Nothing from='<get-test6>(): Int'
             GET_FIELD 'test6: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
     PROPERTY name:test7 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmval
@@ -90,13 +90,13 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
             initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Int flags:
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from=<anonymous>(): Int'
+                  RETURN type=kotlin.Nothing from='<anonymous>(): Int'
                     CONST Int type=kotlin.Int value=42
               FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test7>(): Int'
+          RETURN type=kotlin.Nothing from='<get-test7>(): Int'
             CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
               <T>: Int
               $receiver: GET_FIELD '`test7$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
@@ -112,7 +112,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test8>(): Int'
+          RETURN type=kotlin.Nothing from='<get-test8>(): Int'
             CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out Int>: Int' type=kotlin.Int origin=null
               <V>: Int
               <V1 : V>: Int
@@ -124,7 +124,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:C flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<set-test8>(Int): Unit'
+          RETURN type=kotlin.Nothing from='<set-test8>(Int): Unit'
             CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
               <V>: Int
               $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null

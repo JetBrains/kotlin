@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.Map<out K, V> flags:
     VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<K, V> flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=plus(Pair<K, V>) on Map<out K, V>: Map<K, V>'
+      RETURN type=kotlin.Nothing from='plus(Pair<K, V>) on Map<out K, V>: Map<K, V>'
         WHEN type=kotlin.collections.Map<K, V> origin=null
           BRANCH
             if: CALL 'isEmpty(): Boolean' type=kotlin.Boolean origin=null
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.collections.LinkedHashMap<K!, V!> /* = java.util.LinkedHashMap<K!, V!> */) returnType:Unit flags:
                   $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.LinkedHashMap<K!, V!> /* = java.util.LinkedHashMap<K!, V!> */ flags:
                   BLOCK_BODY
-                    RETURN type=kotlin.Nothing from=<anonymous>() on LinkedHashMap<K!, V!> /* = LinkedHashMap<K!, V!> */: Unit'
+                    RETURN type=kotlin.Nothing from='<anonymous>() on LinkedHashMap<K!, V!> /* = LinkedHashMap<K!, V!> */: Unit'
                       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                         CALL 'put(K!, V!): V?' type=V? origin=null
                           $this: GET_VAR 'this@<anonymous>: LinkedHashMap<(K..K?), (V..V?)>' type=kotlin.collections.LinkedHashMap<K!, V!> /* = java.util.LinkedHashMap<K!, V!> */ origin=null

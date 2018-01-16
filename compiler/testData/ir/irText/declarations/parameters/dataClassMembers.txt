@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test<T>) returnType:T flags:
         $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x>(): T'
+          RETURN type=kotlin.Nothing from='<get-x>(): T'
             GET_FIELD 'x: T' type=T origin=null
               receiver: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
     PROPERTY name:y type:kotlin.String visibility:public modality:FINAL flags:val
@@ -27,19 +27,19 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test<T>) returnType:String flags:
         $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-y>(): String'
+          RETURN type=kotlin.Nothing from='<get-y>(): String'
             GET_FIELD 'y: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:Test<T>) returnType:T flags:
       $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=component1(): T'
+        RETURN type=kotlin.Nothing from='component1(): T'
           CALL '<get-x>(): T' type=T origin=GET_PROPERTY
             $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:Test<T>) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=component2(): String'
+        RETURN type=kotlin.Nothing from='component2(): String'
           CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:Test<T>, x:T, y:kotlin.String) returnType:Test<T> flags:
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
           CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=copy(T = ..., String = ...): Test<T>'
+        RETURN type=kotlin.Nothing from='copy(T = ..., String = ...): Test<T>'
           CALL 'constructor Test(T, String = ...)' type=Test<T> origin=null
             <T>: null
             x: GET_VAR 'value-parameter x: T = ...' type=T origin=null
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:Test<T>) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=toString(): String'
+        RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
             CONST String type=kotlin.String value=Test(
             CONST String type=kotlin.String value=x=
@@ -101,7 +101,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
             other: CALL 'hashCode(): Int' type=kotlin.Int origin=null
               $this: CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
-        RETURN type=kotlin.Nothing from=hashCode(): Int'
+        RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:Test<T>, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:Test<T> flags:
@@ -112,13 +112,13 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
             if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
               arg0: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
               arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=true
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test<T>
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test<T> flags:val
           TYPE_OP type=Test<T> origin=CAST typeOperand=Test<T>
@@ -131,7 +131,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
                   $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
                 arg1: CALL '<get-x>(): T' type=T origin=GET_PROPERTY
                   $this: GET_VAR 'tmp0_other_with_cast: Test<T>' type=Test<T> origin=null
-            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -141,8 +141,8 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
                   $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
                 arg1: CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
                   $this: GET_VAR 'tmp0_other_with_cast: Test<T>' type=Test<T> origin=null
-            then: RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
-        RETURN type=kotlin.Nothing from=equals(Any?): Boolean'
+        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
           CONST Boolean type=kotlin.Boolean value=true
 

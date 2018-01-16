@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test0) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Test0 flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x>(): Int'
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Test0: Test0' type=Test0 origin=null
     ENUM_ENTRY name:ZERO
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test1) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Test1 flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x>(): Int'
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
     ENUM_ENTRY name:ZERO
@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test2) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Test2 flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x>(): Int'
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
     ENUM_ENTRY name:ZERO

@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   FUN name:foo visibility:public modality:FINAL <> () returnType:Host flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=foo(): Host'
+      RETURN type=kotlin.Nothing from='foo(): Host'
         CALL 'constructor Host()' type=Host origin=null
   FUN name:test2 visibility:public modality:FINAL <> ($receiver:Host) returnType:Unit flags:
     $receiver: VALUE_PARAMETER name:<this> type:Host flags:

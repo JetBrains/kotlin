@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x1> visibility:public modality:FINAL <> ($this:X1) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:X1 flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x1>(): Int'
+          RETURN type=kotlin.Nothing from='<get-x1>(): Int'
             GET_FIELD 'x1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@X1: X1' type=X1 origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x1> visibility:public modality:FINAL <> ($this:X1, <set-?>:kotlin.Int) returnType:Unit flags:
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x2> visibility:public modality:FINAL <> ($this:X1.X2) returnType:Int flags:
           $this: VALUE_PARAMETER name:<this> type:X1.X2 flags:
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<get-x2>(): Int'
+            RETURN type=kotlin.Nothing from='<get-x2>(): Int'
               GET_FIELD 'x2: Int' type=kotlin.Int origin=null
                 receiver: GET_VAR 'this@X2: X2' type=X1.X2 origin=null
         FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x2> visibility:public modality:FINAL <> ($this:X1.X2, <set-?>:kotlin.Int) returnType:Unit flags:
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x3> visibility:public modality:FINAL <> ($this:X1.X2.X3) returnType:Int flags:
             $this: VALUE_PARAMETER name:<this> type:X1.X2.X3 flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from=<get-x3>(): Int'
+              RETURN type=kotlin.Nothing from='<get-x3>(): Int'
                 GET_FIELD 'x3: Int' type=kotlin.Int origin=null
                   receiver: GET_VAR 'this@X3: X3' type=X1.X2.X3 origin=null
           FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x3> visibility:public modality:FINAL <> ($this:X1.X2.X3, <set-?>:kotlin.Int) returnType:Unit flags:
@@ -173,7 +173,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:B) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:B flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-s>(): Int'
+          RETURN type=kotlin.Nothing from='<get-s>(): Int'
             GET_FIELD 's: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@B: B' type=B origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-s> visibility:public modality:FINAL <> ($this:B, <set-?>:kotlin.Int) returnType:Unit flags:

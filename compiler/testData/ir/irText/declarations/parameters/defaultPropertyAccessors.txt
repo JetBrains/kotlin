@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test1>(): Int'
+        RETURN type=kotlin.Nothing from='<get-test1>(): Int'
           GET_FIELD 'test1: Int' type=kotlin.Int origin=null
   PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public
@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test2>(): Int'
+        RETURN type=kotlin.Nothing from='<get-test2>(): Int'
           GET_FIELD 'test2: Int' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test2> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testMember1> visibility:public modality:FINAL <> ($this:Host) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Host flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-testMember1>(): Int'
+          RETURN type=kotlin.Nothing from='<get-testMember1>(): Int'
             GET_FIELD 'testMember1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Host: Host' type=Host origin=null
     PROPERTY name:testMember2 type:kotlin.Int visibility:public modality:FINAL flags:var
@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testMember2> visibility:public modality:FINAL <> ($this:Host) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Host flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-testMember2>(): Int'
+          RETURN type=kotlin.Nothing from='<get-testMember2>(): Int'
             GET_FIELD 'testMember2: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Host: Host' type=Host origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testMember2> visibility:public modality:FINAL <> ($this:Host, <set-?>:kotlin.Int) returnType:Unit flags:
@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testInPrimaryCtor1> visibility:public modality:FINAL <> ($this:InPrimaryCtor<T>) returnType:T flags:
         $this: VALUE_PARAMETER name:<this> type:InPrimaryCtor<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-testInPrimaryCtor1>(): T'
+          RETURN type=kotlin.Nothing from='<get-testInPrimaryCtor1>(): T'
             GET_FIELD 'testInPrimaryCtor1: T' type=T origin=null
               receiver: GET_VAR 'this@InPrimaryCtor: InPrimaryCtor<T>' type=InPrimaryCtor<T> origin=null
     PROPERTY name:testInPrimaryCtor2 type:kotlin.Int visibility:public modality:FINAL flags:var
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testInPrimaryCtor2> visibility:public modality:FINAL <> ($this:InPrimaryCtor<T>) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:InPrimaryCtor<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-testInPrimaryCtor2>(): Int'
+          RETURN type=kotlin.Nothing from='<get-testInPrimaryCtor2>(): Int'
             GET_FIELD 'testInPrimaryCtor2: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@InPrimaryCtor: InPrimaryCtor<T>' type=InPrimaryCtor<T> origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testInPrimaryCtor2> visibility:public modality:FINAL <> ($this:InPrimaryCtor<T>, <set-?>:kotlin.Int) returnType:Unit flags:

@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-q> visibility:public modality:FINAL <> ($this:A<Q>) returnType:Q flags:
         $this: VALUE_PARAMETER name:<this> type:A<Q> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-q>(): Q'
+          RETURN type=kotlin.Nothing from='<get-q>(): Q'
             GET_FIELD 'q: Q' type=Q origin=null
               receiver: GET_VAR 'this@A: A<Q>' type=A<Q> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

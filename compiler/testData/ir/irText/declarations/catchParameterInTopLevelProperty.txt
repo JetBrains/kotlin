@@ -9,6 +9,6 @@ FILE fqName:<root> fileName:/catchParameterInTopLevelProperty.kt
             BLOCK type=kotlin.Unit origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:Unit flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test>(): Unit'
+        RETURN type=kotlin.Nothing from='<get-test>(): Unit'
           GET_FIELD 'test: Unit' type=kotlin.Unit origin=null
 

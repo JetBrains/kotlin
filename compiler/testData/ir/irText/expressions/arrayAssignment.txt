@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/arrayAssignment.kt
         value: CONST Int type=kotlin.Int value=0
   FUN name:foo visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=foo(): Int'
+      RETURN type=kotlin.Nothing from='foo(): Int'
         CONST Int type=kotlin.Int value=1
   FUN name:test2 visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY

@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/secondaryConstructorWithInitializersFromClassBody.k
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestProperty) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:TestProperty flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x>(): Int'
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@TestProperty: TestProperty' type=TestProperty origin=null
     CONSTRUCTOR visibility:public <> () returnType:TestProperty flags:
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/secondaryConstructorWithInitializersFromClassBody.k
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestInitBlock) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:TestInitBlock flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x>(): Int'
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@TestInitBlock: TestInitBlock' type=TestInitBlock origin=null
     ANONYMOUS_INITIALIZER TestInitBlock

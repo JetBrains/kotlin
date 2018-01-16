@@ -59,7 +59,7 @@ INCOMING <- BB 5
     Do..while exit: DO_WHILE label=null origin=DO_WHILE_LOOP
 CONTENT
       1 GET_VAR 'count: Int' type=kotlin.Int origin=null
-      2 RETURN type=kotlin.Nothing from=digitCountInNumber(Int, Int): Int'
+      2 RETURN type=kotlin.Nothing from='digitCountInNumber(Int, Int): Int'
 OUTGOING -> NONE
     Function exit: FUN name:digitCountInNumber visibility:public modality:FINAL <> (n:kotlin.Int, m:kotlin.Int) returnType:Int flags:
 

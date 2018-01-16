@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/equality.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1(Int, Int): Boolean'
+      RETURN type=kotlin.Nothing from='test1(Int, Int): Boolean'
         CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
           arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/equality.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2(Int, Int): Boolean'
+      RETURN type=kotlin.Nothing from='test2(Int, Int): Boolean'
         CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
           arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/equality.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Any? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3(Any?, Any?): Boolean'
+      RETURN type=kotlin.Nothing from='test3(Any?, Any?): Boolean'
         CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
           arg0: GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
           arg1: GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null

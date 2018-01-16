@@ -11,25 +11,25 @@ FILE fqName:<root> fileName:/typeOperators.kt
   FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Boolean flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1(Any): Boolean'
+      RETURN type=kotlin.Nothing from='test1(Any): Boolean'
         TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=IThing
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Boolean flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2(Any): Boolean'
+      RETURN type=kotlin.Nothing from='test2(Any): Boolean'
         TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=IThing
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:IThing flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3(Any): IThing'
+      RETURN type=kotlin.Nothing from='test3(Any): IThing'
         TYPE_OP type=IThing origin=CAST typeOperand=IThing
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN name:test4 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:IThing? flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4(Any): IThing?'
+      RETURN type=kotlin.Nothing from='test4(Any): IThing?'
         TYPE_OP type=IThing? origin=SAFE_CAST typeOperand=IThing
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
 

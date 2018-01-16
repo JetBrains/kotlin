@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:A<T>) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:A<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>(): Int'
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             GET_FIELD 'bar: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@A: A<T>' type=A<T> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
         FUNCTION_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction1<A<kotlin.String>, kotlin.Unit> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:KFunction1<A<String>, Unit> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test1>(): KFunction1<A<String>, Unit>'
+        RETURN type=kotlin.Nothing from='<get-test1>(): KFunction1<A<String>, Unit>'
           GET_FIELD 'test1: KFunction1<A<String>, Unit>' type=kotlin.reflect.KFunction1<A<kotlin.String>, kotlin.Unit> origin=null
   PROPERTY name:test2 type:kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> visibility:public
@@ -40,6 +40,6 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
         PROPERTY_REFERENCE 'bar: Int' field=null getter='<get-bar>(): Int' setter=null type=kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:KProperty1<A<String>, Int> flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test2>(): KProperty1<A<String>, Int>'
+        RETURN type=kotlin.Nothing from='<get-test2>(): KProperty1<A<String>, Int>'
           GET_FIELD 'test2: KProperty1<A<String>, Int>' type=kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> origin=null
 

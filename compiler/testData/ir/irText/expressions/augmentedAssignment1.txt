@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/augmentedAssignment1.kt
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-p>(): Int'
+        RETURN type=kotlin.Nothing from='<get-p>(): Int'
           GET_FIELD 'p: Int' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:

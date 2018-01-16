@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/kt16904.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:B flags:
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x>(): B'
+          RETURN type=kotlin.Nothing from='<get-x>(): B'
             GET_FIELD 'x: B' type=B origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
     PROPERTY name:y type:kotlin.Int visibility:public modality:FINAL flags:var
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/kt16904.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-y>(): Int'
+          RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-y> visibility:public modality:FINAL <> ($this:A, <set-?>:kotlin.Int) returnType:Unit flags:

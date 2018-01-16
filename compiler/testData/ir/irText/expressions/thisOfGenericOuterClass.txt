@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Outer<T>) returnType:T flags:
         $this: VALUE_PARAMETER name:<this> type:Outer<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x>(): T'
+          RETURN type=kotlin.Nothing from='<get-x>(): T'
             GET_FIELD 'x: T' type=T origin=null
               receiver: GET_VAR 'this@Outer: Outer<T>' type=Outer<T> origin=null
     CLASS CLASS name:Inner modality:OPEN visibility:public flags:
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Outer<T>.Inner) returnType:Int flags:
           $this: VALUE_PARAMETER name:<this> type:Outer<T>.Inner flags:
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<get-y>(): Int'
+            RETURN type=kotlin.Nothing from='<get-y>(): Int'
               GET_FIELD 'y: Int' type=kotlin.Int origin=null
                 receiver: GET_VAR 'this@Inner: Inner<T>' type=Outer<T>.Inner origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
   FUN name:test visibility:public modality:FINAL <> ($receiver:Outer<kotlin.Int>) returnType:Inner<Int> flags:
     $receiver: VALUE_PARAMETER name:<this> type:Outer<kotlin.Int> flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test() on Outer<Int>: Outer<Int>.Inner'
+      RETURN type=kotlin.Nothing from='test() on Outer<Int>: Outer<Int>.Inner'
         BLOCK type=test.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.<no name provided> flags:
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xx> visibility:public modality:FINAL <> ($this:test.<no name provided>) returnType:Int flags:
                 $this: VALUE_PARAMETER name:<this> type:test.<no name provided> flags:
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from=<get-xx>(): Int'
+                  RETURN type=kotlin.Nothing from='<get-xx>(): Int'
                     GET_FIELD 'xx: Int' type=kotlin.Int origin=null
                       receiver: GET_VAR 'this@<no name provided>: <no name provided>' type=test.<no name provided> origin=null
             PROPERTY FAKE_OVERRIDE name:y type:kotlin.Int visibility:public modality:FINAL flags:val

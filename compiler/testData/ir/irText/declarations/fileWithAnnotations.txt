@@ -9,6 +9,6 @@ FILE fqName:<root> fileName:/fileWithAnnotations.kt
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-bar>(): Int'
+        RETURN type=kotlin.Nothing from='<get-bar>(): Int'
           GET_FIELD 'bar: Int' type=kotlin.Int origin=null
 

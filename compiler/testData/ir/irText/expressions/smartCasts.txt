@@ -8,12 +8,12 @@ FILE fqName:<root> fileName:/smartCasts.kt
   FUN name:overloaded visibility:public modality:FINAL <> (s:kotlin.String) returnType:String flags:
     VALUE_PARAMETER name:s index:0 type:kotlin.String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=overloaded(String): String'
+      RETURN type=kotlin.Nothing from='overloaded(String): String'
         GET_VAR 'value-parameter s: String' type=kotlin.String origin=null
   FUN name:overloaded visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Any flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=overloaded(Any): Any'
+      RETURN type=kotlin.Nothing from='overloaded(Any): Any'
         GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Unit flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/smartCasts.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from=test1(Any): Unit'
+          then: RETURN type=kotlin.Nothing from='test1(Any): Unit'
             GET_OBJECT 'Unit' type=kotlin.Unit
       CALL 'println(Int): Unit' type=kotlin.Unit origin=null
         message: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
@@ -46,9 +46,9 @@ FILE fqName:<root> fileName:/smartCasts.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from=test2(Any): String'
+          then: RETURN type=kotlin.Nothing from='test2(Any): String'
             CONST String type=kotlin.String value=
-      RETURN type=kotlin.Nothing from=test2(Any): String'
+      RETURN type=kotlin.Nothing from='test2(Any): String'
         CALL 'overloaded(String): String' type=kotlin.String origin=null
           s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
@@ -59,9 +59,9 @@ FILE fqName:<root> fileName:/smartCasts.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from=test3(Any): String'
+          then: RETURN type=kotlin.Nothing from='test3(Any): String'
             CONST String type=kotlin.String value=
-      RETURN type=kotlin.Nothing from=test3(Any): String'
+      RETURN type=kotlin.Nothing from='test3(Any): String'
         TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
 

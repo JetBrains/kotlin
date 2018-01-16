@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
         CALL 'constructor A()' type=A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:A flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-p>(): A'
+        RETURN type=kotlin.Nothing from='<get-p>(): A'
           GET_FIELD 'p: A' type=A origin=null
   FUN name:testVariable visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY

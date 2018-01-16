@@ -20,12 +20,12 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
   FUN name:component1 visibility:public modality:FINAL <> ($receiver:I1) returnType:Int flags:
     $receiver: VALUE_PARAMETER name:<this> type:I1 flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=component1() on I1: Int'
+      RETURN type=kotlin.Nothing from='component1() on I1: Int'
         CONST Int type=kotlin.Int value=1
   FUN name:component2 visibility:public modality:FINAL <> ($receiver:I2) returnType:String flags:
     $receiver: VALUE_PARAMETER name:<this> type:I2 flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=component2() on I2: String'
+      RETURN type=kotlin.Nothing from='component2() on I2: String'
         CONST String type=kotlin.String value=
   FUN name:test visibility:public modality:FINAL <> (x:I1) returnType:Unit flags:
     VALUE_PARAMETER name:x index:0 type:I1 flags:
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=I2
             GET_VAR 'value-parameter x: I1' type=I1 origin=null
-          then: RETURN type=kotlin.Nothing from=test(I1): Unit'
+          then: RETURN type=kotlin.Nothing from='test(I1): Unit'
             GET_OBJECT 'Unit' type=kotlin.Unit
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
         VAR IR_TEMPORARY_VARIABLE name:tmp0_container type:I1 flags:val

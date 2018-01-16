@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/classMembers.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-y>(): Int'
+          RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
     PROPERTY name:z type:kotlin.Int visibility:public modality:FINAL flags:var
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/classMembers.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-z>(): Int'
+          RETURN type=kotlin.Nothing from='<get-z>(): Int'
             GET_FIELD 'z: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-z> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
@@ -50,20 +50,20 @@ FILE fqName:<root> fileName:/classMembers.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-property> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-property>(): Int'
+          RETURN type=kotlin.Nothing from='<get-property>(): Int'
             GET_FIELD 'property: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
     PROPERTY name:propertyWithGet type:kotlin.Int visibility:public modality:FINAL flags:val
       FUN name:<get-propertyWithGet> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-propertyWithGet>(): Int'
+          RETURN type=kotlin.Nothing from='<get-propertyWithGet>(): Int'
             CONST Int type=kotlin.Int value=42
     PROPERTY name:propertyWithGetAndSet type:kotlin.Int visibility:public modality:FINAL flags:var
       FUN name:<get-propertyWithGetAndSet> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-propertyWithGetAndSet>(): Int'
+          RETURN type=kotlin.Nothing from='<get-propertyWithGetAndSet>(): Int'
             CALL '<get-z>(): Int' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'this@C: C' type=C origin=null
       FUN name:<set-propertyWithGetAndSet> visibility:public modality:FINAL <> ($this:C, value:kotlin.Int) returnType:Unit flags:
@@ -115,7 +115,7 @@ FILE fqName:<root> fileName:/classMembers.kt
       FUN name:bar visibility:public modality:OPEN <> ($this:C.NestedInterface) returnType:Unit flags:
         $this: VALUE_PARAMETER name:<this> type:C.NestedInterface flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=bar(): Unit'
+          RETURN type=kotlin.Nothing from='bar(): Unit'
             CALL 'foo(): Unit' type=kotlin.Unit origin=null
               $this: GET_VAR 'this@NestedInterface: NestedInterface' type=C.NestedInterface origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

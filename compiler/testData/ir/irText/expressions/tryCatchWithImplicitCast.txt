@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/tryCatchWithImplicitCast.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from=testImplicitCast(Any): Unit'
+          then: RETURN type=kotlin.Nothing from='testImplicitCast(Any): Unit'
             GET_OBJECT 'Unit' type=kotlin.Unit
       VAR name:t type:kotlin.String flags:val
         TRY type=kotlin.String

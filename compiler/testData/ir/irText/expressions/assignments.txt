@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/assignments.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Ref) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Ref flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x>(): Int'
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Ref: Ref' type=Ref origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:public modality:FINAL <> ($this:Ref, <set-?>:kotlin.Int) returnType:Unit flags:

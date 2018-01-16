@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> visibility:public modality:FINAL <> ($this:X.B) returnType:String flags:
             $this: VALUE_PARAMETER name:<this> type:X.B flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from=<get-value2>(): String'
+              RETURN type=kotlin.Nothing from='<get-value2>(): String'
                 GET_FIELD 'value2: String' type=kotlin.String origin=null
                   receiver: GET_VAR 'this@B: B' type=X.B origin=null
         PROPERTY name:value type:() -> kotlin.String visibility:public modality:OPEN flags:val
@@ -30,14 +30,14 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
               BLOCK type=() -> kotlin.String origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:String flags:
                   BLOCK_BODY
-                    RETURN type=kotlin.Nothing from=<anonymous>(): String'
+                    RETURN type=kotlin.Nothing from='<anonymous>(): String'
                       CALL '<get-value2>(): String' type=kotlin.String origin=GET_PROPERTY
                         $this: GET_ENUM 'B' type=X.B
                 FUNCTION_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:OPEN <> ($this:X.B) returnType:Function0<String> flags:
             $this: VALUE_PARAMETER name:<this> type:X.B flags:
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from=<get-value>(): () -> String'
+              RETURN type=kotlin.Nothing from='<get-value>(): () -> String'
                 GET_FIELD 'value: () -> String' type=() -> kotlin.String origin=null
                   receiver: GET_VAR 'this@B: B' type=X.B origin=null
         FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Any flags:
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   FUN name:box visibility:public modality:FINAL <> () returnType:String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=box(): String'
+      RETURN type=kotlin.Nothing from='box(): String'
         CALL 'invoke(): String' type=kotlin.String origin=INVOKE
           $this: CALL '<get-value>(): () -> String' type=() -> kotlin.String origin=GET_PROPERTY
             $this: GET_ENUM 'B' type=X

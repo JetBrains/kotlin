@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1(Int, Int): Int'
+      RETURN type=kotlin.Nothing from='test1(Int, Int): Int'
         CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2(Int, Int): Int'
+      RETURN type=kotlin.Nothing from='test2(Int, Int): Int'
         CALL 'minus(Int): Int' type=kotlin.Int origin=MINUS
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3(Int, Int): Int'
+      RETURN type=kotlin.Nothing from='test3(Int, Int): Int'
         CALL 'times(Int): Int' type=kotlin.Int origin=MUL
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4(Int, Int): Int'
+      RETURN type=kotlin.Nothing from='test4(Int, Int): Int'
         CALL 'div(Int): Int' type=kotlin.Int origin=DIV
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test5(Int, Int): Int'
+      RETURN type=kotlin.Nothing from='test5(Int, Int): Int'
         CALL 'rem(Int): Int' type=kotlin.Int origin=PERC
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test6(Int, Int): IntRange'
+      RETURN type=kotlin.Nothing from='test6(Int, Int): IntRange'
         CALL 'rangeTo(Int): IntRange' type=kotlin.ranges.IntRange origin=RANGE
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1x(Int, Int): Int'
+      RETURN type=kotlin.Nothing from='test1x(Int, Int): Int'
         CALL 'plus(Int): Int' type=kotlin.Int origin=null
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2x(Int, Int): Int'
+      RETURN type=kotlin.Nothing from='test2x(Int, Int): Int'
         CALL 'minus(Int): Int' type=kotlin.Int origin=null
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3x(Int, Int): Int'
+      RETURN type=kotlin.Nothing from='test3x(Int, Int): Int'
         CALL 'times(Int): Int' type=kotlin.Int origin=null
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4x(Int, Int): Int'
+      RETURN type=kotlin.Nothing from='test4x(Int, Int): Int'
         CALL 'div(Int): Int' type=kotlin.Int origin=null
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test5x(Int, Int): Int'
+      RETURN type=kotlin.Nothing from='test5x(Int, Int): Int'
         CALL 'mod(Int): Int' type=kotlin.Int origin=null
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null

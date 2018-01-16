@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/outerClassInstanceReference.kt
       FUN name:inner visibility:public modality:FINAL <> ($this:Outer.Inner) returnType:Unit flags:
         $this: VALUE_PARAMETER name:<this> type:Outer.Inner flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=inner(): Unit'
+          RETURN type=kotlin.Nothing from='inner(): Unit'
             CALL 'outer(): Unit' type=kotlin.Unit origin=null
               $this: GET_VAR 'this@Outer: Outer' type=Outer origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

@@ -3,12 +3,12 @@ FILE fqName:<root> fileName:/extensionPropertyGetterCall.kt
     FUN name:<get-okext> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:String flags:
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-okext>() on String: String'
+        RETURN type=kotlin.Nothing from='<get-okext>() on String: String'
           CONST String type=kotlin.String value=OK
   FUN name:test5 visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:String flags:
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test5() on String: String'
+      RETURN type=kotlin.Nothing from='test5() on String: String'
         CALL '<get-okext>() on String: String' type=kotlin.String origin=GET_PROPERTY
           $receiver: GET_VAR 'this@test5: String' type=kotlin.String origin=null
 

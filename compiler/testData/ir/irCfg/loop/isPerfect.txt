@@ -81,7 +81,7 @@ CONTENT
       1 GET_VAR 'sum: Int' type=kotlin.Int origin=null
       2 GET_VAR 'value-parameter n: Int' type=kotlin.Int origin=null
       3 CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-      4 RETURN type=kotlin.Nothing from=isPerfect(Int): Boolean'
+      4 RETURN type=kotlin.Nothing from='isPerfect(Int): Boolean'
 OUTGOING -> NONE
     Function exit: FUN name:isPerfect visibility:public modality:FINAL <> (n:kotlin.Int) returnType:Boolean flags:
 

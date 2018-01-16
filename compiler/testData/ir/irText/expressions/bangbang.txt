@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/bangbang.kt
   FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:Any flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1(Any?): Any'
+      RETURN type=kotlin.Nothing from='test1(Any?): Any'
         BLOCK type=kotlin.Any origin=EXCLEXCL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Any? flags:val
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/bangbang.kt
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2(Any?): Int'
+      RETURN type=kotlin.Nothing from='test2(Any?): Int'
         BLOCK type=kotlin.Int origin=EXCLEXCL
           VAR IR_TEMPORARY_VARIABLE name:tmp1_notnull type:kotlin.Int? flags:val
             BLOCK type=kotlin.Int? origin=SAFE_CALL

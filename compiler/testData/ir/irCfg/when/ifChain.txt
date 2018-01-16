@@ -22,7 +22,7 @@ INCOMING <- BB 1
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
       1 CONST Double type=kotlin.Double value=1.0
-      2 RETURN type=kotlin.Nothing from=minBiRoot(Double, Double, Double): Double'
+      2 RETURN type=kotlin.Nothing from='minBiRoot(Double, Double, Double): Double'
 OUTGOING -> NONE
     Function exit: FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:Double flags:
 BB 3
@@ -45,7 +45,7 @@ INCOMING <- BB 3
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
 CONTENT
       1 CONST Double type=kotlin.Double value=2.0
-      2 RETURN type=kotlin.Nothing from=minBiRoot(Double, Double, Double): Double'
+      2 RETURN type=kotlin.Nothing from='minBiRoot(Double, Double, Double): Double'
 OUTGOING -> NONE
     Function exit: FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:Double flags:
 BB 5
@@ -54,7 +54,7 @@ INCOMING <- BB 3
 CONTENT
       1 GET_VAR 'bc: Double' type=kotlin.Double origin=null
       2 CALL 'unaryMinus(): Double' type=kotlin.Double origin=UMINUS
-      3 RETURN type=kotlin.Nothing from=minBiRoot(Double, Double, Double): Double'
+      3 RETURN type=kotlin.Nothing from='minBiRoot(Double, Double, Double): Double'
 OUTGOING -> NONE
     Function exit: FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:Double flags:
 BB 6
@@ -82,7 +82,7 @@ INCOMING <- BB 6
     CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
 CONTENT
       1 CONST Double type=kotlin.Double value=3.0
-      2 RETURN type=kotlin.Nothing from=minBiRoot(Double, Double, Double): Double'
+      2 RETURN type=kotlin.Nothing from='minBiRoot(Double, Double, Double): Double'
 OUTGOING -> NONE
     Function exit: FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:Double flags:
 BB 8
@@ -169,7 +169,7 @@ BB 16
 INCOMING <- BB 14, 15
     When exit: WHEN type=kotlin.Double origin=null
 CONTENT
-      1 RETURN type=kotlin.Nothing from=minBiRoot(Double, Double, Double): Double'
+      1 RETURN type=kotlin.Nothing from='minBiRoot(Double, Double, Double): Double'
 OUTGOING -> NONE
     Function exit: FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:Double flags:
 

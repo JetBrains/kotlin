@@ -41,7 +41,7 @@ INCOMING <- BB 3
     While exit: WHILE label=null origin=FOR_LOOP_INNER_WHILE
 CONTENT
       1 GET_VAR 'result: Int' type=kotlin.Int origin=null
-      2 RETURN type=kotlin.Nothing from=factorial(Int): Int'
+      2 RETURN type=kotlin.Nothing from='factorial(Int): Int'
 OUTGOING -> NONE
     Function exit: FUN name:factorial visibility:public modality:FINAL <> (i:kotlin.Int) returnType:Int flags:
 

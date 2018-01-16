@@ -5,17 +5,17 @@ FILE fqName:<root> fileName:/elvis.kt
         CONST Null type=kotlin.Nothing? value=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Any? flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-p>(): Any?'
+        RETURN type=kotlin.Nothing from='<get-p>(): Any?'
           GET_FIELD 'p: Any?' type=kotlin.Any? origin=null
   FUN name:foo visibility:public modality:FINAL <> () returnType:Any? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=foo(): Any?'
+      RETURN type=kotlin.Nothing from='foo(): Any?'
         CONST Null type=kotlin.Nothing? value=null
   FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?, b:kotlin.Any) returnType:Any flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1(Any?, Any): Any'
+      RETURN type=kotlin.Nothing from='test1(Any?, Any): Any'
         BLOCK type=kotlin.Any origin=ELVIS
           VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Any? flags:val
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/elvis.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.String? flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2(String?, Any): Any'
+      RETURN type=kotlin.Nothing from='test2(String?, Any): Any'
         BLOCK type=kotlin.Any origin=ELVIS
           VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.String? flags:val
             GET_VAR 'value-parameter a: String?' type=kotlin.String? origin=null
@@ -53,15 +53,15 @@ FILE fqName:<root> fileName:/elvis.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null
-          then: RETURN type=kotlin.Nothing from=test3(Any?, Any?): String'
+          then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
             CONST String type=kotlin.String value=
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
-          then: RETURN type=kotlin.Nothing from=test3(Any?, Any?): String'
+          then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
             CONST String type=kotlin.String value=
-      RETURN type=kotlin.Nothing from=test3(Any?, Any?): String'
+      RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
         BLOCK type=kotlin.String origin=ELVIS
           VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Any? flags:val
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/elvis.kt
   FUN name:test4 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Any flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4(Any): Any'
+      RETURN type=kotlin.Nothing from='test4(Any): Any'
         BLOCK type=kotlin.Any origin=ELVIS
           VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Any? flags:val
             CALL '<get-p>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
@@ -95,7 +95,7 @@ FILE fqName:<root> fileName:/elvis.kt
   FUN name:test5 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Any flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test5(Any): Any'
+      RETURN type=kotlin.Nothing from='test5(Any): Any'
         BLOCK type=kotlin.Any origin=ELVIS
           VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Any? flags:val
             CALL 'foo(): Any?' type=kotlin.Any? origin=null

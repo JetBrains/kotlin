@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
   FUN name:foo visibility:public modality:FINAL <> () returnType:IntArray flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=foo(): IntArray'
+      RETURN type=kotlin.Nothing from='foo(): IntArray'
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int
             CONST Int type=kotlin.Int value=1
@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
             CONST Int type=kotlin.Int value=3
   FUN name:bar visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=bar(): Int'
+      RETURN type=kotlin.Nothing from='bar(): Int'
         CONST Int type=kotlin.Int value=42
   CLASS CLASS name:C modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:C) returnType:IntArray flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-x>(): IntArray'
+          RETURN type=kotlin.Nothing from='<get-x>(): IntArray'
             GET_FIELD 'x: IntArray' type=kotlin.IntArray origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

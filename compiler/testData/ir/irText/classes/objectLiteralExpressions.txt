@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
           CALL 'constructor <no name provided>()' type=test1.<no name provided> origin=OBJECT_LITERAL
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Any flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test1>(): Any'
+        RETURN type=kotlin.Nothing from='<get-test1>(): Any'
           GET_FIELD 'test1: Any' type=kotlin.Any origin=null
   PROPERTY name:test2 type:IFoo visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test2 type:IFoo visibility:public
@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
           CALL 'constructor <no name provided>()' type=test2.<no name provided> origin=OBJECT_LITERAL
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:IFoo flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test2>(): IFoo'
+        RETURN type=kotlin.Nothing from='<get-test2>(): IFoo'
           GET_FIELD 'test2: IFoo' type=IFoo origin=null
   CLASS CLASS name:Outer modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer flags:
@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
     FUN name:test3 visibility:public modality:FINAL <> ($this:Outer) returnType:Inner flags:
       $this: VALUE_PARAMETER name:<this> type:Outer flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=test3(): Outer.Inner'
+        RETURN type=kotlin.Nothing from='test3(): Outer.Inner'
           BLOCK type=Outer.test3.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.test3.<no name provided> flags:
@@ -116,7 +116,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
   FUN name:test4 visibility:public modality:FINAL <> ($receiver:Outer) returnType:Inner flags:
     $receiver: VALUE_PARAMETER name:<this> type:Outer flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4() on Outer: Outer.Inner'
+      RETURN type=kotlin.Nothing from='test4() on Outer: Outer.Inner'
         BLOCK type=test4.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test4.<no name provided> flags:

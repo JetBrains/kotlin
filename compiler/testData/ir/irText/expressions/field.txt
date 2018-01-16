@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/field.kt
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testSimple> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-testSimple>(): Int'
+        RETURN type=kotlin.Nothing from='<get-testSimple>(): Int'
           GET_FIELD 'testSimple: Int' type=kotlin.Int origin=null
     FUN name:<set-testSimple> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/field.kt
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testAugmented> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-testAugmented>(): Int'
+        RETURN type=kotlin.Nothing from='<get-testAugmented>(): Int'
           GET_FIELD 'testAugmented: Int' type=kotlin.Int origin=null
     FUN name:<set-testAugmented> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:

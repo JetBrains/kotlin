@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:IntCell) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:IntCell flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-value>(): Int'
+          RETURN type=kotlin.Nothing from='<get-value>(): Int'
             GET_FIELD 'value: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@IntCell: IntCell' type=IntCell origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:IntCell, <set-?>:kotlin.Int) returnType:Unit flags:
@@ -49,14 +49,14 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
       $this: VALUE_PARAMETER name:<this> type:IReceiver flags:
       $receiver: VALUE_PARAMETER name:<this> type:FiveTimes flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=iterator() on FiveTimes: IntCell'
+        RETURN type=kotlin.Nothing from='iterator() on FiveTimes: IntCell'
           CALL 'constructor IntCell(Int)' type=IntCell origin=null
             value: CONST Int type=kotlin.Int value=5
     FUN name:hasNext visibility:public modality:OPEN <> ($this:IReceiver, $receiver:IntCell) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:IReceiver flags:
       $receiver: VALUE_PARAMETER name:<this> type:IntCell flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=hasNext() on IntCell: Boolean'
+        RETURN type=kotlin.Nothing from='hasNext() on IntCell: Boolean'
           CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
             arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
               $this: CALL '<get-value>(): Int' type=kotlin.Int origin=GET_PROPERTY
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
       $this: VALUE_PARAMETER name:<this> type:IReceiver flags:
       $receiver: VALUE_PARAMETER name:<this> type:IntCell flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=next() on IntCell: Int'
+        RETURN type=kotlin.Nothing from='next() on IntCell: Int'
           BLOCK type=kotlin.Int origin=POSTFIX_DECR
             VAR IR_TEMPORARY_VARIABLE name:tmp0_this type:IntCell flags:val
               GET_VAR 'this@next: IntCell' type=IntCell origin=null

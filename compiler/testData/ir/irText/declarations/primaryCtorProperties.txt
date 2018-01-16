@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/primaryCtorProperties.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test1>(): Int'
+          RETURN type=kotlin.Nothing from='<get-test1>(): Int'
             GET_FIELD 'test1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
     PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/primaryCtorProperties.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test2>(): Int'
+          RETURN type=kotlin.Nothing from='<get-test2>(): Int'
             GET_FIELD 'test2: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test2> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:

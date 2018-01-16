@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
       FUN DELEGATED_MEMBER name:<get-bar> visibility:public modality:OPEN <> ($this:Test<TT>) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Test<TT> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>(): Int'
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CALL '<get-bar>(): Int' type=kotlin.Int origin=null
               $this: GET_FIELD '`Test$IBase$delegate`: IBase<TT>' type=IBase<TT> origin=null
                 receiver: GET_VAR 'this@Test: Test<TT>' type=Test<TT> origin=null

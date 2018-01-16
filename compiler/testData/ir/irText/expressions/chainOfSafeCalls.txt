@@ -8,12 +8,12 @@ FILE fqName:<root> fileName:/chainOfSafeCalls.kt
     FUN name:foo visibility:public modality:FINAL <> ($this:C) returnType:C flags:
       $this: VALUE_PARAMETER name:<this> type:C flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=foo(): C'
+        RETURN type=kotlin.Nothing from='foo(): C'
           GET_VAR 'this@C: C' type=C origin=null
     FUN name:bar visibility:public modality:FINAL <> ($this:C) returnType:C? flags:
       $this: VALUE_PARAMETER name:<this> type:C flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=bar(): C?'
+        RETURN type=kotlin.Nothing from='bar(): C?'
           GET_VAR 'this@C: C' type=C origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/chainOfSafeCalls.kt
   FUN name:test visibility:public modality:FINAL <> (nc:C?) returnType:C? flags:
     VALUE_PARAMETER name:nc index:0 type:C? flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test(C?): C?'
+      RETURN type=kotlin.Nothing from='test(C?): C?'
         BLOCK type=C? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp3_safe_receiver type:C? flags:val
             BLOCK type=C? origin=SAFE_CALL

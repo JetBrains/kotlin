@@ -197,7 +197,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "COMPOSITE type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitReturn(expression: IrReturn, data: Nothing?): String =
-        "RETURN type=${expression.type.render()} from=${expression.returnTarget.ref()}'"
+        "RETURN type=${expression.type.render()} from='${expression.returnTarget.ref()}'"
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
         "CALL '${expression.descriptor.ref()}' ${expression.renderSuperQualifier()}" +

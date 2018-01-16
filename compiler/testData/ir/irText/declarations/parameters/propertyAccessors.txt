@@ -2,12 +2,12 @@ FILE fqName:<root> fileName:/propertyAccessors.kt
   PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
     FUN name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test1>(): Int'
+        RETURN type=kotlin.Nothing from='<get-test1>(): Int'
           CONST Int type=kotlin.Int value=42
   PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
     FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test2>(): Int'
+        RETURN type=kotlin.Nothing from='<get-test2>(): Int'
           CONST Int type=kotlin.Int value=42
     FUN name:<set-test2> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
@@ -16,13 +16,13 @@ FILE fqName:<root> fileName:/propertyAccessors.kt
     FUN name:<get-testExt1> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:Int flags:
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-testExt1>() on String: Int'
+        RETURN type=kotlin.Nothing from='<get-testExt1>() on String: Int'
           CONST Int type=kotlin.Int value=42
   PROPERTY name:testExt2 type:kotlin.Int visibility:public modality:FINAL flags:var
     FUN name:<get-testExt2> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:Int flags:
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-testExt2>() on String: Int'
+        RETURN type=kotlin.Nothing from='<get-testExt2>() on String: Int'
           CONST Int type=kotlin.Int value=42
     FUN name:<set-testExt2> visibility:public modality:FINAL <> ($receiver:kotlin.String, value:kotlin.Int) returnType:Unit flags:
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
@@ -32,13 +32,13 @@ FILE fqName:<root> fileName:/propertyAccessors.kt
     FUN name:<get-testExt3> visibility:public modality:FINAL <> ($receiver:T) returnType:Int flags:
       $receiver: VALUE_PARAMETER name:<this> type:T flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-testExt3>() on T: Int'
+        RETURN type=kotlin.Nothing from='<get-testExt3>() on T: Int'
           CONST Int type=kotlin.Int value=42
   PROPERTY name:testExt4 type:kotlin.Int visibility:public modality:FINAL flags:var
     FUN name:<get-testExt4> visibility:public modality:FINAL <> ($receiver:T) returnType:Int flags:
       $receiver: VALUE_PARAMETER name:<this> type:T flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-testExt4>() on T: Int'
+        RETURN type=kotlin.Nothing from='<get-testExt4>() on T: Int'
           CONST Int type=kotlin.Int value=42
     FUN name:<set-testExt4> visibility:public modality:FINAL <> ($receiver:T, value:kotlin.Int) returnType:Unit flags:
       $receiver: VALUE_PARAMETER name:<this> type:T flags:
@@ -55,13 +55,13 @@ FILE fqName:<root> fileName:/propertyAccessors.kt
       FUN name:<get-testMem1> visibility:public modality:FINAL <> ($this:Host<T>) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-testMem1>(): Int'
+          RETURN type=kotlin.Nothing from='<get-testMem1>(): Int'
             CONST Int type=kotlin.Int value=42
     PROPERTY name:testMem2 type:kotlin.Int visibility:public modality:FINAL flags:var
       FUN name:<get-testMem2> visibility:public modality:FINAL <> ($this:Host<T>) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-testMem2>(): Int'
+          RETURN type=kotlin.Nothing from='<get-testMem2>(): Int'
             CONST Int type=kotlin.Int value=42
       FUN name:<set-testMem2> visibility:public modality:FINAL <> ($this:Host<T>, value:kotlin.Int) returnType:Unit flags:
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
@@ -72,14 +72,14 @@ FILE fqName:<root> fileName:/propertyAccessors.kt
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-testMemExt1>() on String: Int'
+          RETURN type=kotlin.Nothing from='<get-testMemExt1>() on String: Int'
             CONST Int type=kotlin.Int value=42
     PROPERTY name:testMemExt2 type:kotlin.Int visibility:public modality:FINAL flags:var
       FUN name:<get-testMemExt2> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.String) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-testMemExt2>() on String: Int'
+          RETURN type=kotlin.Nothing from='<get-testMemExt2>() on String: Int'
             CONST Int type=kotlin.Int value=42
       FUN name:<set-testMemExt2> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.String, value:kotlin.Int) returnType:Unit flags:
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
@@ -91,14 +91,14 @@ FILE fqName:<root> fileName:/propertyAccessors.kt
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         $receiver: VALUE_PARAMETER name:<this> type:TT flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-testMemExt3>() on TT: Int'
+          RETURN type=kotlin.Nothing from='<get-testMemExt3>() on TT: Int'
             CONST Int type=kotlin.Int value=42
     PROPERTY name:testMemExt4 type:kotlin.Int visibility:public modality:FINAL flags:var
       FUN name:<get-testMemExt4> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:TT) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         $receiver: VALUE_PARAMETER name:<this> type:TT flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-testMemExt4>() on TT: Int'
+          RETURN type=kotlin.Nothing from='<get-testMemExt4>() on TT: Int'
             CONST Int type=kotlin.Int value=42
       FUN name:<set-testMemExt4> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:TT, value:kotlin.Int) returnType:Unit flags:
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:

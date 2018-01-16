@@ -5,19 +5,19 @@ FILE fqName:<root> fileName:/callWithReorderedArguments.kt
     BLOCK_BODY
   FUN name:noReorder1 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=noReorder1(): Int'
+      RETURN type=kotlin.Nothing from='noReorder1(): Int'
         CONST Int type=kotlin.Int value=1
   FUN name:noReorder2 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=noReorder2(): Int'
+      RETURN type=kotlin.Nothing from='noReorder2(): Int'
         CONST Int type=kotlin.Int value=2
   FUN name:reordered1 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=reordered1(): Int'
+      RETURN type=kotlin.Nothing from='reordered1(): Int'
         CONST Int type=kotlin.Int value=1
   FUN name:reordered2 visibility:public modality:FINAL <> () returnType:Int flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=reordered2(): Int'
+      RETURN type=kotlin.Nothing from='reordered2(): Int'
         CONST Int type=kotlin.Int value=2
   FUN name:test visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY

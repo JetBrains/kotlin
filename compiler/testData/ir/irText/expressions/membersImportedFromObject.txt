@@ -8,13 +8,13 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
     FUN name:foo visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=foo(): Int'
+        RETURN type=kotlin.Nothing from='foo(): Int'
           CONST Int type=kotlin.Int value=1
     FUN name:fooExt visibility:public modality:FINAL <> ($this:A, $receiver:kotlin.Int) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=fooExt() on Int: Int'
+        RETURN type=kotlin.Nothing from='fooExt() on Int: Int'
           CONST Int type=kotlin.Int value=2
     PROPERTY name:bar type:kotlin.Int visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>(): Int'
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             GET_FIELD 'bar: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
     PROPERTY name:barExt type:kotlin.Int visibility:public modality:FINAL flags:val
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
         $this: VALUE_PARAMETER name:<this> type:A flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-barExt>() on Int: Int'
+          RETURN type=kotlin.Nothing from='<get-barExt>() on Int: Int'
             CONST Int type=kotlin.Int value=43
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
           $this: GET_OBJECT 'A' type=A
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test1>(): Int'
+        RETURN type=kotlin.Nothing from='<get-test1>(): Int'
           GET_FIELD 'test1: Int' type=kotlin.Int origin=null
   PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
           $this: GET_OBJECT 'A' type=A
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test2>(): Int'
+        RETURN type=kotlin.Nothing from='<get-test2>(): Int'
           GET_FIELD 'test2: Int' type=kotlin.Int origin=null
   PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
           $receiver: CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test3>(): Int'
+        RETURN type=kotlin.Nothing from='<get-test3>(): Int'
           GET_FIELD 'test3: Int' type=kotlin.Int origin=null
   PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public
@@ -76,6 +76,6 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
           $receiver: CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:Int flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test4>(): Int'
+        RETURN type=kotlin.Nothing from='<get-test4>(): Int'
           GET_FIELD 'test4: Int' type=kotlin.Int origin=null
 

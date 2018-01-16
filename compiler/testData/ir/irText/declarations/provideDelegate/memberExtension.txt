@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:Host.StringDelegate) returnType:String flags:
           $this: VALUE_PARAMETER name:<this> type:Host.StringDelegate flags:
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<get-s>(): String'
+            RETURN type=kotlin.Nothing from='<get-s>(): String'
               GET_FIELD 's: String' type=kotlin.String origin=null
                 receiver: GET_VAR 'this@StringDelegate: StringDelegate' type=Host.StringDelegate origin=null
       FUN name:getValue visibility:public modality:FINAL <> ($this:Host.StringDelegate, receiver:kotlin.String, p:kotlin.Any) returnType:String flags:
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
         VALUE_PARAMETER name:receiver index:0 type:kotlin.String flags:
         VALUE_PARAMETER name:p index:1 type:kotlin.Any flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=getValue(String, Any): String'
+          RETURN type=kotlin.Nothing from='getValue(String, Any): String'
             CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
               $this: GET_VAR 'value-parameter receiver: String' type=kotlin.String origin=null
               other: CALL '<get-s>(): String' type=kotlin.String origin=GET_PROPERTY
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
       VALUE_PARAMETER name:host index:0 type:kotlin.Any? flags:
       VALUE_PARAMETER name:p index:1 type:kotlin.Any flags:
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=provideDelegate(Any?, Any) on String: Host.StringDelegate'
+        RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any) on String: Host.StringDelegate'
           CALL 'constructor StringDelegate(String)' type=Host.StringDelegate origin=null
             s: GET_VAR 'this@provideDelegate: String' type=kotlin.String origin=null
     PROPERTY name:plusK type:kotlin.String visibility:public modality:FINAL flags:delegatedmval
@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
         $this: VALUE_PARAMETER name:<this> type:Host flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-plusK>() on String: String'
+          RETURN type=kotlin.Nothing from='<get-plusK>() on String: String'
             CALL 'getValue(String, Any): String' type=kotlin.String origin=null
               $this: GET_FIELD '`plusK$delegate`: Host.StringDelegate' type=Host.StringDelegate origin=null
                 receiver: GET_VAR 'this@Host: Host' type=Host origin=null
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> ($this:Host) returnType:String flags:
         $this: VALUE_PARAMETER name:<this> type:Host flags:
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-ok>(): String'
+          RETURN type=kotlin.Nothing from='<get-ok>(): String'
             GET_FIELD 'ok: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Host: Host' type=Host origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

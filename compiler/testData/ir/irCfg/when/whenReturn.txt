@@ -45,7 +45,7 @@ INCOMING <- BB 0
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
       1 CONST String type=kotlin.String value=Excellent
-      2 RETURN type=kotlin.Nothing from=toString(String): String'
+      2 RETURN type=kotlin.Nothing from='toString(String): String'
 OUTGOING -> NONE
     Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 BB 6
@@ -53,7 +53,7 @@ INCOMING <- BB 1
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
       1 CONST String type=kotlin.String value=Good
-      2 RETURN type=kotlin.Nothing from=toString(String): String'
+      2 RETURN type=kotlin.Nothing from='toString(String): String'
 OUTGOING -> NONE
     Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 BB 7
@@ -61,7 +61,7 @@ INCOMING <- BB 2
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
       1 CONST String type=kotlin.String value=Mediocre
-      2 RETURN type=kotlin.Nothing from=toString(String): String'
+      2 RETURN type=kotlin.Nothing from='toString(String): String'
 OUTGOING -> NONE
     Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 BB 8
@@ -69,7 +69,7 @@ INCOMING <- BB 3
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
       1 CONST String type=kotlin.String value=Fair
-      2 RETURN type=kotlin.Nothing from=toString(String): String'
+      2 RETURN type=kotlin.Nothing from='toString(String): String'
 OUTGOING -> NONE
     Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 BB 9
@@ -77,7 +77,7 @@ INCOMING <- BB 4
     CONST Boolean type=kotlin.Boolean value=true
 CONTENT
       1 CONST String type=kotlin.String value=Failure
-      2 RETURN type=kotlin.Nothing from=toString(String): String'
+      2 RETURN type=kotlin.Nothing from='toString(String): String'
 OUTGOING -> NONE
     Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 BB 10
@@ -85,7 +85,7 @@ INCOMING <- BB 4
     CONST Boolean type=kotlin.Boolean value=true
 CONTENT
       1 CONST String type=kotlin.String value=???
-      2 RETURN type=kotlin.Nothing from=toString(String): String'
+      2 RETURN type=kotlin.Nothing from='toString(String): String'
 OUTGOING -> NONE
     Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
 
