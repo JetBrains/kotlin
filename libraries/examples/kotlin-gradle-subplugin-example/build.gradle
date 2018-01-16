@@ -20,5 +20,5 @@ dependencies {
     compileOnly project(':compiler:cli-common')
     compileOnly project(':compiler:cli')
     
-    compileOnly "org.jetbrains.kotlin:gradle-api:1.6"
+    compileOnly gradleApi()
 }
