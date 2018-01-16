@@ -19,10 +19,12 @@
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.kotlin.dsl.extra
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
-import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.JavaExec
+import org.gradle.kotlin.dsl.*
+import java.io.File
 
 private fun Project.intellijRepoDir() = File("${project.rootDir.absoluteFile}/buildSrc/prepare-deps/intellij-sdk/build/repo")
 
@@ -92,5 +94,54 @@ fun Project.intellijUltimateRootDir() =
 fun DependencyHandlerScope.excludeInAndroidStudio(rootProject: Project, block: DependencyHandlerScope.() -> Unit) {
     if (!rootProject.extra.has("versions.androidStudioRelease")) {
         block()
+    }
+}
+
+fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, body: JavaExec.() -> Unit): JavaExec {
+
+    return task<JavaExec>(name) {
+        val ideaSandboxConfigDir = File(ideaSandboxDir, "config")
+
+        classpath = the<JavaPluginConvention>().sourceSets["main"].runtimeClasspath
+
+        main = "com.intellij.idea.Main"
+
+        workingDir = File(intellijRootDir(), "bin")
+
+        jvmArgs(
+            "-Xmx1250m",
+            "-XX:ReservedCodeCacheSize=240m",
+            "-XX:+HeapDumpOnOutOfMemoryError",
+            "-ea",
+            "-Didea.is.internal=true",
+            "-Didea.debug.mode=true",
+            "-Didea.system.path=$ideaSandboxDir",
+            "-Didea.config.path=$ideaSandboxConfigDir",
+            "-Dapple.laf.useScreenMenuBar=true",
+            "-Dapple.awt.graphics.UseQuartz=true",
+            "-Dsun.io.useCanonCaches=false",
+            "-Dplugin.path=${ideaPluginDir.parentFile.absolutePath}",
+            "-Dkotlin.internal.mode.enabled=true",
+            "-Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar"
+        )
+
+        if (project.hasProperty("noPCE")) {
+            jvmArgs("-Didea.ProcessCanceledException=disabled")
+        }
+
+        args()
+
+        doFirst {
+            val disabledPluginsFile = File(ideaSandboxConfigDir, "disabled_plugins.txt")
+            val disabledPluginsContents = disabledPluginsFile.takeIf { it.isFile }?.readLines()
+            val filteredContents = disabledPluginsContents?.filterNot { it.contains("org.jetbrains.kotlin") }
+            if (filteredContents != null && filteredContents.size != disabledPluginsContents.size) {
+                with(disabledPluginsFile.printWriter()) {
+                    filteredContents.forEach(this::println)
+                }
+            }
+        }
+
+        body()
     }
 }

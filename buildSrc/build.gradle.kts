@@ -41,12 +41,11 @@ rootProject.apply {
     from(rootProject.file("../versions.gradle.kts"))
 }
 
-val intellijUltimateEnabled = project.getBooleanProperty("intellijUltimateEnabled")
-                              ?: project.hasProperty("teamcity")
-                              || System.getenv("TEAMCITY_VERSION") != null
-val intellijSeparateSdks = project.getBooleanProperty("intellijSeparateSdks") ?: false
-extra["intellijUltimateEnabled"] = intellijUltimateEnabled
-extra["intellijSeparateSdks"] = intellijSeparateSdks
+val intellijUltimateEnabled by extra(project.getBooleanProperty("intellijUltimateEnabled")
+                                     ?: project.hasProperty("teamcity")
+                                     || System.getenv("TEAMCITY_VERSION") != null)
+val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
+
 extra["intellijRepo"] = "https://www.jetbrains.com/intellij-repository"
 extra["intellijReleaseType"] = "releases" // or "snapshots"
 extra["versions.androidDxSources"] = "5.0.0_r2"
