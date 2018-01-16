@@ -1,7 +1,3 @@
-/**
- * @KaptMetadata
- */
-
 import java.util.concurrent.*;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;

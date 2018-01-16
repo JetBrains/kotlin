@@ -1,6 +1,3 @@
-/**
- * @KaptMetadata
- */
 package test;
 
 import java.lang.System;
@@ -13,9 +10,6 @@ public abstract interface ListUpdateCallback {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 package test;
 
 import java.lang.System;

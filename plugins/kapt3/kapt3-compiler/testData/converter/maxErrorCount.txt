@@ -1,7 +1,3 @@
-/**
- * @KaptMetadata
- */
-
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()

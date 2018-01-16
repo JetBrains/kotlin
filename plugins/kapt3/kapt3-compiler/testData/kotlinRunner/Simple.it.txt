@@ -1,38 +1,10 @@
-/**
- * @KaptMetadata
- */
-package test;
+package error;
 
-import java.lang.System;
-
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface MyAnnotation {
+public final class NonExistentClass {
 }
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
-package test;
-
-import java.lang.System;
-
-@kotlin.Metadata()
-public enum EnumClass {
-    /*public static final*/ BLACK /* = new BLACK() */,
-    /*public static final*/ WHITE /* = new WHITE() */;
-
-    EnumClass() {
-    }
-}
-
-////////////////////
-
-/**
- * @KaptMetadata
- */
 package test;
 
 import java.lang.System;
@@ -59,9 +31,32 @@ public final class Simple {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum EnumClass {
+    /*public static final*/ BLACK /* = new BLACK() */,
+    /*public static final*/ WHITE /* = new WHITE() */;
+
+    EnumClass() {
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MyAnnotation {
+}
+
+////////////////////
+
 package test;
 
 import java.lang.System;
@@ -75,11 +70,4 @@ public enum EnumClass2 {
     EnumClass2(@org.jetbrains.annotations.NotNull()
     java.lang.String blah) {
     }
-}
-
-////////////////////
-
-package error;
-
-public final class NonExistentClass {
 }

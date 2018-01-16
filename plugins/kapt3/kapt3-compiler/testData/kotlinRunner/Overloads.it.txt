@@ -1,6 +1,10 @@
-/**
- * @KaptMetadata
- */
+package error;
+
+public final class NonExistentClass {
+}
+
+////////////////////
+
 package test;
 
 import java.lang.System;
@@ -12,9 +16,6 @@ public abstract @interface MyAnnotation {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 package test;
 
 import java.lang.System;
@@ -48,11 +49,4 @@ public final class State {
     public State(int someInt, long someLong) {
         super();
     }
-}
-
-////////////////////
-
-package error;
-
-public final class NonExistentClass {
 }
