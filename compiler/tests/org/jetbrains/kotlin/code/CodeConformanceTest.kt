@@ -62,7 +62,9 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js/build",
                 "libraries/kotlin.test/js/it/.gradle",
                 "libraries/kotlin.test/js/it/node_modules",
-                "libraries/stdlib/js/node_modules"
+                "libraries/stdlib/js/node_modules",
+                "buildSrc/prepare-deps/android-dx/build",
+                "buildSrc/prepare-deps/intellij-sdk/build"
         )
     }
 
