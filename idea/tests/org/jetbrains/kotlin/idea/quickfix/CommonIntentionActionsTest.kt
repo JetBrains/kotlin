@@ -22,6 +22,7 @@ import com.intellij.lang.jvm.JvmModifier
 import com.intellij.lang.jvm.actions.*
 import com.intellij.lang.jvm.types.JvmSubstitutor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Pair.pair
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiJvmSubstitutor
 import com.intellij.psi.PsiSubstitutor
@@ -177,8 +178,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
                 createConstructorActions(
-                        myFixture.atCaret(),
-                        MemberRequest.Constructor(parameters = makeParams(PsiType.INT))
+                    myFixture.atCaret(), constructorRequest(project, listOf(pair("param0", PsiType.INT as PsiType)))
                 ).findWithText("Add primary constructor to 'Foo'")
         )
         myFixture.checkResult("""
@@ -195,8 +195,8 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
                 createConstructorActions(
-                        myFixture.atCaret(),
-                        MemberRequest.Constructor(parameters = makeParams(PsiType.INT))
+                    myFixture.atCaret(),
+                    constructorRequest(project, listOf(pair("param0", PsiType.INT as PsiType)))
                 ).findWithText("Add secondary constructor to 'Foo'")
         )
         myFixture.checkResult("""
@@ -216,8 +216,8 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
                 createConstructorActions(
-                        myFixture.atCaret(),
-                        MemberRequest.Constructor(parameters = makeParams(PsiType.INT))
+                    myFixture.atCaret(),
+                    constructorRequest(project, listOf(pair("param0", PsiType.INT as PsiType)))
                 ).findWithText("Add 'int' as 1st parameter to method 'Foo'")
         )
         myFixture.checkResult("""
@@ -234,8 +234,8 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
                 createConstructorActions(
-                        myFixture.atCaret(),
-                        MemberRequest.Constructor()
+                    myFixture.atCaret(),
+                    constructorRequest(project, listOf(pair("param0", PsiType.INT as PsiType)))
                 ).findWithText("Remove 1st parameter from method 'Foo'")
         )
         myFixture.checkResult("""
