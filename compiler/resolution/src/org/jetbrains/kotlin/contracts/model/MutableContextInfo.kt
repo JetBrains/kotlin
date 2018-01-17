@@ -29,20 +29,20 @@ import org.jetbrains.kotlin.types.KotlinType
  * Also, it's abstracted away from PSI
  */
 class MutableContextInfo private constructor(
-        val firedEffects: MutableList<ESEffect>,
-        val subtypes: MutableMap<ESValue, MutableSet<KotlinType>>,
-        val notSubtypes: MutableMap<ESValue, MutableSet<KotlinType>>,
-        val equalValues: MutableMap<ESValue, MutableSet<ESValue>>,
-        val notEqualValues: MutableMap<ESValue, MutableSet<ESValue>>
+    val firedEffects: MutableList<ESEffect>,
+    val subtypes: MutableMap<ESValue, MutableSet<KotlinType>>,
+    val notSubtypes: MutableMap<ESValue, MutableSet<KotlinType>>,
+    val equalValues: MutableMap<ESValue, MutableSet<ESValue>>,
+    val notEqualValues: MutableMap<ESValue, MutableSet<ESValue>>
 ) {
     companion object {
         val EMPTY: MutableContextInfo
             get() = MutableContextInfo(
-                    firedEffects = mutableListOf(),
-                    subtypes = mutableMapOf(),
-                    notSubtypes = mutableMapOf(),
-                    equalValues = mutableMapOf(),
-                    notEqualValues = mutableMapOf()
+                firedEffects = mutableListOf(),
+                subtypes = mutableMapOf(),
+                notSubtypes = mutableMapOf(),
+                equalValues = mutableMapOf(),
+                notEqualValues = mutableMapOf()
             )
     }
 
@@ -63,19 +63,19 @@ class MutableContextInfo private constructor(
     fun fire(effect: ESEffect) = apply { firedEffects += effect }
 
     fun or(other: MutableContextInfo): MutableContextInfo = MutableContextInfo(
-            firedEffects = firedEffects.intersect(other.firedEffects).toMutableList(),
-            subtypes = subtypes.intersect(other.subtypes),
-            notSubtypes = notSubtypes.intersect(other.notSubtypes),
-            equalValues = equalValues.intersect(other.equalValues),
-            notEqualValues = notEqualValues.intersect(other.notEqualValues)
+        firedEffects = firedEffects.intersect(other.firedEffects).toMutableList(),
+        subtypes = subtypes.intersect(other.subtypes),
+        notSubtypes = notSubtypes.intersect(other.notSubtypes),
+        equalValues = equalValues.intersect(other.equalValues),
+        notEqualValues = notEqualValues.intersect(other.notEqualValues)
     )
 
     fun and(other: MutableContextInfo): MutableContextInfo = MutableContextInfo(
-            firedEffects = firedEffects.union(other.firedEffects).toMutableList(),
-            subtypes = subtypes.union(other.subtypes),
-            notSubtypes = notSubtypes.union(other.notSubtypes),
-            equalValues = equalValues.union(other.equalValues),
-            notEqualValues = notEqualValues.union(other.notEqualValues)
+        firedEffects = firedEffects.union(other.firedEffects).toMutableList(),
+        subtypes = subtypes.union(other.subtypes),
+        notSubtypes = notSubtypes.union(other.notSubtypes),
+        equalValues = equalValues.union(other.equalValues),
+        notEqualValues = notEqualValues.union(other.notEqualValues)
     )
 
     private fun <D> MutableMap<ESValue, MutableSet<D>>.intersect(that: MutableMap<ESValue, MutableSet<D>>): MutableMap<ESValue, MutableSet<D>> {
@@ -120,7 +120,7 @@ class MutableContextInfo private constructor(
         }
 
         append("Fired effects: ")
-        append(info.firedEffects.joinToString(separator = ", " ))
+        append(info.firedEffects.joinToString(separator = ", "))
         appendln("")
 
         subtypes.printMapEntriesWithSeparator("is")

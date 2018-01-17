@@ -70,10 +70,10 @@ enum class ConstraintKind {
 }
 
 class Constraint(
-        val kind: ConstraintKind,
-        val type: UnwrappedType, // flexible types here is allowed
-        val position: IncorporationConstraintPosition,
-        val typeHashCode: Int = type.hashCode()
+    val kind: ConstraintKind,
+    val type: UnwrappedType, // flexible types here is allowed
+    val position: IncorporationConstraintPosition,
+    val typeHashCode: Int = type.hashCode()
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -100,18 +100,18 @@ interface VariableWithConstraints {
 }
 
 class InitialConstraint(
-        val a: UnwrappedType,
-        val b: UnwrappedType,
-        val constraintKind: ConstraintKind, // see [checkConstraint]
-        val position: ConstraintPosition
+    val a: UnwrappedType,
+    val b: UnwrappedType,
+    val constraintKind: ConstraintKind, // see [checkConstraint]
+    val position: ConstraintPosition
 ) {
     override fun toString(): String {
         val sign =
-        when (constraintKind) {
-            ConstraintKind.EQUALITY -> "=="
-            ConstraintKind.LOWER -> ":>"
-            ConstraintKind.UPPER -> "<:"
-        }
+            when (constraintKind) {
+                ConstraintKind.EQUALITY -> "=="
+                ConstraintKind.LOWER -> ":>"
+                ConstraintKind.UPPER -> "<:"
+            }
         return "$a $sign $b from $position"
     }
 }

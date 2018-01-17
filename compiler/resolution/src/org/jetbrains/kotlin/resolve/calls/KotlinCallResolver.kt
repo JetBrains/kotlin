@@ -28,29 +28,35 @@ import java.lang.UnsupportedOperationException
 
 
 class KotlinCallResolver(
-        private val towerResolver: TowerResolver,
-        private val kotlinCallCompleter: KotlinCallCompleter,
-        private val overloadingConflictResolver: NewOverloadingConflictResolver,
-        private val callComponents: KotlinCallComponents
+    private val towerResolver: TowerResolver,
+    private val kotlinCallCompleter: KotlinCallCompleter,
+    private val overloadingConflictResolver: NewOverloadingConflictResolver,
+    private val callComponents: KotlinCallComponents
 ) {
 
     fun resolveCall(
-            scopeTower: ImplicitScopeTower,
-            resolutionCallbacks: KotlinResolutionCallbacks,
-            kotlinCall: KotlinCall,
-            expectedType: UnwrappedType?,
-            factoryProviderForInvoke: CandidateFactoryProviderForInvoke<KotlinResolutionCandidate>,
-            collectAllCandidates: Boolean
+        scopeTower: ImplicitScopeTower,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        kotlinCall: KotlinCall,
+        expectedType: UnwrappedType?,
+        factoryProviderForInvoke: CandidateFactoryProviderForInvoke<KotlinResolutionCandidate>,
+        collectAllCandidates: Boolean
     ): CallResolutionResult {
         kotlinCall.checkCallInvariants()
 
         val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall)
-        val processor = when(kotlinCall.callKind) {
+        val processor = when (kotlinCall.callKind) {
             KotlinCallKind.VARIABLE -> {
                 createVariableAndObjectProcessor(scopeTower, kotlinCall.name, candidateFactory, kotlinCall.explicitReceiver?.receiver)
             }
             KotlinCallKind.FUNCTION -> {
-                createFunctionProcessor(scopeTower, kotlinCall.name, candidateFactory, factoryProviderForInvoke, kotlinCall.explicitReceiver?.receiver)
+                createFunctionProcessor(
+                    scopeTower,
+                    kotlinCall.name,
+                    candidateFactory,
+                    factoryProviderForInvoke,
+                    kotlinCall.explicitReceiver?.receiver
+                )
             }
             KotlinCallKind.UNSUPPORTED -> throw UnsupportedOperationException()
         }
@@ -60,18 +66,23 @@ class KotlinCallResolver(
             return kotlinCallCompleter.createAllCandidatesResult(allCandidates, expectedType, resolutionCallbacks)
         }
 
-        val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = kotlinCall.callKind != KotlinCallKind.UNSUPPORTED, name = kotlinCall.name)
+        val candidates = towerResolver.runResolve(
+            scopeTower,
+            processor,
+            useOrder = kotlinCall.callKind != KotlinCallKind.UNSUPPORTED,
+            name = kotlinCall.name
+        )
 
         return choseMostSpecific(candidateFactory, resolutionCallbacks, expectedType, candidates)
     }
 
     fun resolveGivenCandidates(
-            scopeTower: ImplicitScopeTower,
-            resolutionCallbacks: KotlinResolutionCallbacks,
-            kotlinCall: KotlinCall,
-            expectedType: UnwrappedType?,
-            givenCandidates: Collection<GivenCandidate>,
-            collectAllCandidates: Boolean
+        scopeTower: ImplicitScopeTower,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        kotlinCall: KotlinCall,
+        expectedType: UnwrappedType?,
+        givenCandidates: Collection<GivenCandidate>,
+        collectAllCandidates: Boolean
     ): CallResolutionResult {
         kotlinCall.checkCallInvariants()
         val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall)
@@ -79,23 +90,27 @@ class KotlinCallResolver(
         val resolutionCandidates = givenCandidates.map { candidateFactory.createCandidate(it).forceResolution() }
 
         if (collectAllCandidates) {
-            val allCandidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
-                                                                    TowerResolver.AllCandidatesCollector(),
-                                                                    useOrder = false)
+            val allCandidates = towerResolver.runWithEmptyTowerData(
+                KnownResultProcessor(resolutionCandidates),
+                TowerResolver.AllCandidatesCollector(),
+                useOrder = false
+            )
             return kotlinCallCompleter.createAllCandidatesResult(allCandidates, expectedType, resolutionCallbacks)
 
         }
-        val candidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
-                                                             TowerResolver.SuccessfulResultCollector(),
-                                                             useOrder = true)
+        val candidates = towerResolver.runWithEmptyTowerData(
+            KnownResultProcessor(resolutionCandidates),
+            TowerResolver.SuccessfulResultCollector(),
+            useOrder = true
+        )
         return choseMostSpecific(candidateFactory, resolutionCallbacks, expectedType, candidates)
     }
 
     private fun choseMostSpecific(
-            candidateFactory: SimpleCandidateFactory,
-            resolutionCallbacks: KotlinResolutionCallbacks,
-            expectedType: UnwrappedType?,
-            candidates: Collection<KotlinResolutionCandidate>
+        candidateFactory: SimpleCandidateFactory,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        expectedType: UnwrappedType?,
+        candidates: Collection<KotlinResolutionCandidate>
     ): CallResolutionResult {
         val isDebuggerContext = candidateFactory.scopeTower.isDebuggerContext
 
@@ -108,10 +123,11 @@ class KotlinCallResolver(
         }
 
         val maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
-                refinedCandidates,
-                CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                discriminateGenerics = true, // todo
-                isDebuggerContext = isDebuggerContext)
+            refinedCandidates,
+            CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+            discriminateGenerics = true, // todo
+            isDebuggerContext = isDebuggerContext
+        )
 
         return kotlinCallCompleter.runCompletion(candidateFactory, maximallySpecificCandidates, expectedType, resolutionCallbacks)
     }

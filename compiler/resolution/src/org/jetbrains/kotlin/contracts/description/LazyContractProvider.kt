@@ -46,7 +46,7 @@ class LazyContractProvider(private val computation: () -> Any?) : ContractProvid
 
     companion object {
         fun createInitialized(contract: ContractDescription?): LazyContractProvider =
-                LazyContractProvider({}).apply { setContractDescription(contract) }
+            LazyContractProvider({}).apply { setContractDescription(contract) }
     }
 }
 

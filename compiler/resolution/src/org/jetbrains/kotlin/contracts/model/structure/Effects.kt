@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.ESValue
 import org.jetbrains.kotlin.contracts.model.SimpleEffect
 
-data class ESCalls(val callable: ESValue, val kind: InvocationKind): SimpleEffect() {
+data class ESCalls(val callable: ESValue, val kind: InvocationKind) : SimpleEffect() {
     override fun isImplies(other: ESEffect): Boolean? {
         if (other !is ESCalls) return null
 
@@ -33,7 +33,7 @@ data class ESCalls(val callable: ESValue, val kind: InvocationKind): SimpleEffec
 
 }
 
-data class ESReturns(val value: ESValue): SimpleEffect() {
+data class ESReturns(val value: ESValue) : SimpleEffect() {
     override fun isImplies(other: ESEffect): Boolean? {
         if (other !is ESReturns) return null
 

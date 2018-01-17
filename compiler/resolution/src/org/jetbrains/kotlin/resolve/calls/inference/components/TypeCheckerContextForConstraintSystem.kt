@@ -31,6 +31,7 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
 
     // super and sub type isSingleClassifierType
     abstract fun addUpperConstraint(typeVariable: TypeConstructor, superType: UnwrappedType)
+
     abstract fun addLowerConstraint(typeVariable: TypeConstructor, subType: UnwrappedType)
 
     override fun getLowerCapturedTypePolicy(subType: SimpleType, superType: NewCapturedType) = when {
@@ -65,10 +66,10 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
     }
 
     private fun UnwrappedType.isTypeVariableWithExact() =
-            anyBound(this@TypeCheckerContextForConstraintSystem::isMyTypeVariable) && hasExactAnnotation()
+        anyBound(this@TypeCheckerContextForConstraintSystem::isMyTypeVariable) && hasExactAnnotation()
 
     private fun UnwrappedType.isTypeVariableWithNoInfer() =
-            anyBound(this@TypeCheckerContextForConstraintSystem::isMyTypeVariable) && hasNoInferAnnotation()
+        anyBound(this@TypeCheckerContextForConstraintSystem::isMyTypeVariable) && hasNoInferAnnotation()
 
     private fun internalAddSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType): Boolean? {
         assertInputTypes(subType, superType)
@@ -81,8 +82,7 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
 
         if (subType.anyBound(this::isMyTypeVariable)) {
             return simplifyUpperConstraint(subType, superType) && (answer ?: true)
-        }
-        else {
+        } else {
             return simplifyConstraintForPossibleIntersectionSubType(subType, superType) ?: answer
         }
     }
@@ -174,7 +174,7 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
         if (typeVariable.isMarkedNullable) {
             // here is important that superType is singleClassifierType
             return superType.anyBound(this::isMyTypeVariable) ||
-                isSubtypeOfByTypeChecker(typeVariable.builtIns.nullableNothingType, superType)
+                    isSubtypeOfByTypeChecker(typeVariable.builtIns.nullableNothingType, superType)
         }
 
         return true
@@ -222,11 +222,14 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
     }
 
     private fun isSubtypeOfByTypeChecker(subType: UnwrappedType, superType: UnwrappedType) =
-            with(NewKotlinTypeChecker) { this@TypeCheckerContextForConstraintSystem.isSubtypeOf(subType, superType) }
+        with(NewKotlinTypeChecker) { this@TypeCheckerContextForConstraintSystem.isSubtypeOf(subType, superType) }
 
     private fun assertInputTypes(subType: UnwrappedType, superType: UnwrappedType) {
-        fun correctSubType(subType: SimpleType) = subType.isSingleClassifierType || subType.isIntersectionType || isMyTypeVariable(subType) || subType.isError
-        fun correctSuperType(superType: SimpleType) = superType.isSingleClassifierType || superType.isIntersectionType || isMyTypeVariable(superType) || superType.isError
+        fun correctSubType(subType: SimpleType) =
+            subType.isSingleClassifierType || subType.isIntersectionType || isMyTypeVariable(subType) || subType.isError
+
+        fun correctSuperType(superType: SimpleType) =
+            superType.isSingleClassifierType || superType.isIntersectionType || isMyTypeVariable(superType) || superType.isError
 
         assert(subType.bothBounds(::correctSubType)) {
             "Not singleClassifierType and not intersection subType: $subType"

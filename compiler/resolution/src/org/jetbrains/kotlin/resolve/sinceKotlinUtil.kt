@@ -30,12 +30,12 @@ val SINCE_KOTLIN_FQ_NAME = FqName("kotlin.SinceKotlin")
  * callback is called with the version specified in the [SinceKotlin] annotation if the descriptor is inaccessible.
  */
 fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(
-        languageVersionSettings: LanguageVersionSettings,
-        actionIfInaccessible: ((ApiVersion) -> Unit)? = null
+    languageVersionSettings: LanguageVersionSettings,
+    actionIfInaccessible: ((ApiVersion) -> Unit)? = null
 ): Boolean {
     val version =
-            if (this is CallableMemberDescriptor && !kind.isReal) getSinceKotlinVersionByOverridden(this)
-            else getOwnSinceKotlinVersion()
+        if (this is CallableMemberDescriptor && !kind.isReal) getSinceKotlinVersionByOverridden(this)
+        else getOwnSinceKotlinVersion()
 
     // Allow access in the following cases:
     // 1) There's no @SinceKotlin annotation for this descriptor
@@ -59,16 +59,15 @@ private fun getSinceKotlinVersionByOverridden(descriptor: CallableMemberDescript
 private fun DeclarationDescriptor.getOwnSinceKotlinVersion(): ApiVersion? {
     // TODO: use-site targeted annotations
     fun DeclarationDescriptor.loadAnnotationValue(): ApiVersion? =
-            (annotations.findAnnotation(SINCE_KOTLIN_FQ_NAME)?.allValueArguments?.values?.singleOrNull()?.value as? String)
-                    ?.let(ApiVersion.Companion::parse)
+        (annotations.findAnnotation(SINCE_KOTLIN_FQ_NAME)?.allValueArguments?.values?.singleOrNull()?.value as? String)
+            ?.let(ApiVersion.Companion::parse)
 
     val ownVersion = loadAnnotationValue()
     val ctorClass = (this as? ConstructorDescriptor)?.containingDeclaration?.loadAnnotationValue()
     val property = (this as? PropertyAccessorDescriptor)?.correspondingProperty?.loadAnnotationValue()
 
-    val typeAliasDescriptor = (this as? TypeAliasDescriptor) ?:
-                              (this as? TypeAliasConstructorDescriptor)?.typeAliasDescriptor ?:
-                              (this as? FakeCallableDescriptorForTypeAliasObject)?.typeAliasDescriptor
+    val typeAliasDescriptor = (this as? TypeAliasDescriptor) ?: (this as? TypeAliasConstructorDescriptor)?.typeAliasDescriptor
+    ?: (this as? FakeCallableDescriptorForTypeAliasObject)?.typeAliasDescriptor
 
     val typeAlias = typeAliasDescriptor?.loadAnnotationValue()
 

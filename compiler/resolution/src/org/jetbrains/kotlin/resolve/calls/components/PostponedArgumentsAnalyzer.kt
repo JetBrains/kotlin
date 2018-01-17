@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class PostponedArgumentsAnalyzer(
-        private val callableReferenceResolver: CallableReferenceResolver
+    private val callableReferenceResolver: CallableReferenceResolver
 ) {
     interface Context {
         fun buildCurrentSubstitutor(): NewTypeSubstitutor
@@ -36,10 +36,16 @@ class PostponedArgumentsAnalyzer(
 
         // mutable operations
         fun addOtherSystem(otherSystem: ConstraintStorage)
+
         fun getBuilder(): ConstraintSystemBuilder
     }
 
-    fun analyze(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, argument: ResolvedAtom, diagnosticsHolder: KotlinDiagnosticsHolder) {
+    fun analyze(
+        c: Context,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        argument: ResolvedAtom,
+        diagnosticsHolder: KotlinDiagnosticsHolder
+    ) {
         when (argument) {
             is ResolvedLambdaAtom ->
                 analyzeLambda(c, resolutionCallbacks, argument, diagnosticsHolder)
@@ -56,7 +62,12 @@ class PostponedArgumentsAnalyzer(
         }
     }
 
-    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: ResolvedLambdaAtom, diagnosticHolder: KotlinDiagnosticsHolder) {
+    private fun analyzeLambda(
+        c: Context,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        lambda: ResolvedLambdaAtom,
+        diagnosticHolder: KotlinDiagnosticsHolder
+    ) {
         val currentSubstitutor = c.buildCurrentSubstitutor()
         fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type)
 
@@ -64,7 +75,8 @@ class PostponedArgumentsAnalyzer(
         val parameters = lambda.parameters.map(::substitute)
         val expectedType = lambda.returnType.takeIf { c.canBeProper(it) }?.let(::substitute)
 
-        val returnArguments = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(lambda.atom, lambda.isSuspend, receiver, parameters, expectedType)
+        val returnArguments =
+            resolutionCallbacks.analyzeAndGetLambdaReturnArguments(lambda.atom, lambda.isSuspend, receiver, parameters, expectedType)
 
         returnArguments.forEach { c.addSubsystemFromArgument(it) }
 

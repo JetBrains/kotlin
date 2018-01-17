@@ -56,17 +56,18 @@ interface KotlinDiagnosticsHolder {
 fun KotlinDiagnosticsHolder.addDiagnosticIfNotNull(diagnostic: KotlinCallDiagnostic?) {
     diagnostic?.let { addDiagnostic(it) }
 }
+
 /**
  * baseSystem contains all information from arguments, i.e. it is union of all system of arguments
  * Also by convention we suppose that baseSystem has no contradiction
  */
 class KotlinResolutionCandidate(
-        val callComponents: KotlinCallComponents,
-        val scopeTower: ImplicitScopeTower,
-        private val baseSystem: ConstraintStorage,
-        val resolvedCall: MutableResolvedCallAtom,
-        val knownTypeParametersResultingSubstitutor: TypeSubstitutor? = null,
-        private val resolutionSequence: List<ResolutionPart> = resolvedCall.atom.callKind.resolutionSequence
+    val callComponents: KotlinCallComponents,
+    val scopeTower: ImplicitScopeTower,
+    private val baseSystem: ConstraintStorage,
+    val resolvedCall: MutableResolvedCallAtom,
+    val knownTypeParametersResultingSubstitutor: TypeSubstitutor? = null,
+    private val resolutionSequence: List<ResolutionPart> = resolvedCall.atom.callKind.resolutionSequence
 ) : Candidate, KotlinDiagnosticsHolder {
     val diagnosticsFromResolutionParts = arrayListOf<KotlinCallDiagnostic>() // TODO: this is mutable list, take diagnostics only once!
     private var newSystem: NewConstraintSystemImpl? = null
@@ -106,8 +107,7 @@ class KotlinResolutionCandidate(
             if (workStep >= workCount) {
                 partIndex++
                 workStep -= workCount
-            }
-            else {
+            } else {
                 break
             }
         }
@@ -165,11 +165,11 @@ class KotlinResolutionCandidate(
 }
 
 class MutableResolvedCallAtom(
-        override val atom: KotlinCall,
-        override val candidateDescriptor: CallableDescriptor, // original candidate descriptor
-        override val explicitReceiverKind: ExplicitReceiverKind,
-        override val dispatchReceiverArgument: SimpleKotlinCallArgument?,
-        override val extensionReceiverArgument: SimpleKotlinCallArgument?
+    override val atom: KotlinCall,
+    override val candidateDescriptor: CallableDescriptor, // original candidate descriptor
+    override val explicitReceiverKind: ExplicitReceiverKind,
+    override val dispatchReceiverArgument: SimpleKotlinCallArgument?,
+    override val extensionReceiverArgument: SimpleKotlinCallArgument?
 ) : ResolvedCallAtom() {
     override lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     override lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>

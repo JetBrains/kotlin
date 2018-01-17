@@ -29,26 +29,27 @@ interface NewTypeSubstitutor {
     fun safeSubstitute(type: UnwrappedType): UnwrappedType = substitute(type, runCapturedChecks = true, keepAnnotation = false) ?: type
 
     fun substituteKeepAnnotations(type: UnwrappedType): UnwrappedType =
-            substitute(type, runCapturedChecks = true, keepAnnotation = true) ?: type
+        substitute(type, runCapturedChecks = true, keepAnnotation = true) ?: type
 
     private fun substitute(type: UnwrappedType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? =
-            when (type) {
-                is SimpleType -> substitute(type, keepAnnotation, runCapturedChecks)
-                is FlexibleType -> if (type is DynamicType || type is RawType) {
+        when (type) {
+            is SimpleType -> substitute(type, keepAnnotation, runCapturedChecks)
+            is FlexibleType -> if (type is DynamicType || type is RawType) {
+                null
+            } else {
+                val lowerBound = substitute(type.lowerBound, keepAnnotation, runCapturedChecks)
+                val upperBound = substitute(type.upperBound, keepAnnotation, runCapturedChecks)
+                if (lowerBound == null && upperBound == null) {
                     null
-                }
-                else {
-                    val lowerBound = substitute(type.lowerBound, keepAnnotation, runCapturedChecks)
-                    val upperBound = substitute(type.upperBound, keepAnnotation, runCapturedChecks)
-                    if (lowerBound == null && upperBound == null) {
-                        null
-                    }
-                    else {
-                        // todo discuss lowerIfFlexible and upperIfFlexible
-                        KotlinTypeFactory.flexibleType(lowerBound?.lowerIfFlexible() ?: type.lowerBound, upperBound?.upperIfFlexible() ?: type.upperBound)
-                    }
+                } else {
+                    // todo discuss lowerIfFlexible and upperIfFlexible
+                    KotlinTypeFactory.flexibleType(
+                        lowerBound?.lowerIfFlexible() ?: type.lowerBound,
+                        upperBound?.upperIfFlexible() ?: type.upperBound
+                    )
                 }
             }
+        }
 
     private fun substitute(type: SimpleType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? {
         if (type.isError) return null
@@ -57,10 +58,11 @@ interface NewTypeSubstitutor {
             val substitutedExpandedType = substitute(type.expandedType, keepAnnotation, runCapturedChecks)
             val substitutedAbbreviation = substitute(type.abbreviation, keepAnnotation, runCapturedChecks)
             if (substitutedExpandedType is SimpleType? && substitutedAbbreviation is SimpleType?) {
-                return AbbreviatedType(substitutedExpandedType ?: type.expandedType,
-                                       substitutedAbbreviation ?: type.abbreviation)
-            }
-            else {
+                return AbbreviatedType(
+                    substitutedExpandedType ?: type.expandedType,
+                    substitutedAbbreviation ?: type.abbreviation
+                )
+            } else {
                 return substitutedExpandedType
             }
         }
@@ -74,21 +76,26 @@ interface NewTypeSubstitutor {
         if (typeConstructor is NewCapturedTypeConstructor) {
             if (!runCapturedChecks) return null
 
-            assert(type is NewCapturedType || (type is DefinitelyNotNullType && type.original is NewCapturedType)) { // KT-16147
+            assert(type is NewCapturedType || (type is DefinitelyNotNullType && type.original is NewCapturedType)) {
+                // KT-16147
                 "Type is inconsistent -- somewhere we create type with typeConstructor = $typeConstructor " +
-                "and class: ${type::class.java.canonicalName}. type.toString() = $type"
+                        "and class: ${type::class.java.canonicalName}. type.toString() = $type"
             }
             val capturedType = if (type is DefinitelyNotNullType) type.original as NewCapturedType else type as NewCapturedType
             val lower = capturedType.lowerType?.let { substitute(it, keepAnnotation, runCapturedChecks = false) }
-            if (lower != null) throw IllegalStateException("Illegal type substitutor: $this, " +
-                                                           "because for captured type '$type' lower type approximation should be null, but it is: '$lower'," +
-                                                           "original lower type: '${capturedType.lowerType}")
+            if (lower != null) throw IllegalStateException(
+                "Illegal type substitutor: $this, " +
+                        "because for captured type '$type' lower type approximation should be null, but it is: '$lower'," +
+                        "original lower type: '${capturedType.lowerType}"
+            )
 
             typeConstructor.supertypes.forEach { supertype ->
                 substitute(supertype, keepAnnotation, runCapturedChecks = false)?.let {
-                    throw IllegalStateException("Illegal type substitutor: $this, " +
-                                                "because for captured type '$type' supertype approximation should be null, but it is: '$supertype'," +
-                                                "original supertype: '$supertype'")
+                    throw IllegalStateException(
+                        "Illegal type substitutor: $this, " +
+                                "because for captured type '$type' supertype approximation should be null, but it is: '$supertype'," +
+                                "original supertype: '$supertype'"
+                    )
                 }
             }
 
@@ -120,9 +127,9 @@ interface NewTypeSubstitutor {
     }
 
     private fun substituteParametrizedType(
-            type: SimpleType,
-            keepAnnotation: Boolean,
-            runCapturedChecks: Boolean
+        type: SimpleType,
+        keepAnnotation: Boolean,
+        runCapturedChecks: Boolean
     ): UnwrappedType? {
         val parameters = type.constructor.parameters
         val arguments = type.arguments

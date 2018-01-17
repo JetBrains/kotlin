@@ -30,12 +30,15 @@ sealed class ConstraintPosition
 class ExplicitTypeParameterConstraintPosition(val typeArgument: SimpleTypeArgument) : ConstraintPosition() {
     override fun toString() = "TypeParameter $typeArgument"
 }
+
 class ExpectedTypeConstraintPosition(val topLevelCall: KotlinCall) : ConstraintPosition() {
     override fun toString() = "ExpectedType for call $topLevelCall"
 }
+
 class DeclaredUpperBoundConstraintPosition(val typeParameterDescriptor: TypeParameterDescriptor) : ConstraintPosition() {
     override fun toString() = "DeclaredUpperBound ${typeParameterDescriptor.name} from ${typeParameterDescriptor.containingDeclaration}"
 }
+
 class ArgumentConstraintPosition(val argument: KotlinCallArgument) : ConstraintPosition() {
     override fun toString() = "Argument $argument"
 }
@@ -47,9 +50,11 @@ class ReceiverConstraintPosition(val argument: KotlinCallArgument) : ConstraintP
 class FixVariableConstraintPosition(val variable: NewTypeVariable) : ConstraintPosition() {
     override fun toString() = "Fix variable $variable"
 }
+
 class KnownTypeParameterConstraintPosition(val typeArgument: KotlinType) : ConstraintPosition() {
     override fun toString() = "TypeArgument $typeArgument"
 }
+
 class LambdaArgumentConstraintPosition(val lambda: ResolvedLambdaAtom) : ConstraintPosition() {
     override fun toString(): String {
         return "LambdaArgument $lambda"
@@ -68,15 +73,15 @@ abstract class ConstraintSystemCallDiagnostic(applicability: ResolutionCandidate
 }
 
 class NewConstraintError(
-        val lowerType: UnwrappedType,
-        val upperType: UnwrappedType,
-        val position: IncorporationConstraintPosition
+    val lowerType: UnwrappedType,
+    val upperType: UnwrappedType,
+    val position: IncorporationConstraintPosition
 ) : ConstraintSystemCallDiagnostic(if (position.from is ReceiverConstraintPosition) INAPPLICABLE_WRONG_RECEIVER else INAPPLICABLE)
 
 class CapturedTypeFromSubtyping(
-        val typeVariable: NewTypeVariable,
-        val constraintType: UnwrappedType,
-        val position: ConstraintPosition
+    val typeVariable: NewTypeVariable,
+    val constraintType: UnwrappedType,
+    val position: ConstraintPosition
 ) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
 
 class NotEnoughInformationForTypeParameter(val typeVariable: NewTypeVariable) : ConstraintSystemCallDiagnostic(INAPPLICABLE)

@@ -31,7 +31,8 @@ abstract class InapplicableArgumentDiagnostic : KotlinCallDiagnostic(INAPPLICABL
 }
 
 // ArgumentsToParameterMapper
-class TooManyArguments(val argument: KotlinCallArgument, val descriptor: CallableDescriptor) : KotlinCallDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR) {
+class TooManyArguments(val argument: KotlinCallArgument, val descriptor: CallableDescriptor) :
+    KotlinCallDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
 
@@ -50,54 +51,54 @@ class NameNotFound(val argument: KotlinCallArgument, val descriptor: CallableDes
 }
 
 class NoValueForParameter(
-        val parameterDescriptor: ValueParameterDescriptor,
-        val descriptor: CallableDescriptor
+    val parameterDescriptor: ValueParameterDescriptor,
+    val descriptor: CallableDescriptor
 ) : KotlinCallDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
 }
 
 class ArgumentPassedTwice(
-        val argument: KotlinCallArgument,
-        val parameterDescriptor: ValueParameterDescriptor,
-        val firstOccurrence: ResolvedCallArgument
+    val argument: KotlinCallArgument,
+    val parameterDescriptor: ValueParameterDescriptor,
+    val firstOccurrence: ResolvedCallArgument
 ) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentName(argument, this)
 }
 
 class VarargArgumentOutsideParentheses(
-        override val argument: KotlinCallArgument,
-        val parameterDescriptor: ValueParameterDescriptor
+    override val argument: KotlinCallArgument,
+    val parameterDescriptor: ValueParameterDescriptor
 ) : InapplicableArgumentDiagnostic()
 
 class NameForAmbiguousParameter(
-        val argument: KotlinCallArgument,
-        val parameterDescriptor: ValueParameterDescriptor,
-        val overriddenParameterWithOtherName: ValueParameterDescriptor
+    val argument: KotlinCallArgument,
+    val parameterDescriptor: ValueParameterDescriptor,
+    val overriddenParameterWithOtherName: ValueParameterDescriptor
 ) : KotlinCallDiagnostic(CONVENTION_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentName(argument, this)
 }
 
 class NamedArgumentReference(
-        val argument: KotlinCallArgument,
-        val parameterDescriptor: ValueParameterDescriptor
+    val argument: KotlinCallArgument,
+    val parameterDescriptor: ValueParameterDescriptor
 ) : KotlinCallDiagnostic(RESOLVED) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentName(argument, this)
 }
 
 // TypeArgumentsToParameterMapper
 class WrongCountOfTypeArguments(
-        val descriptor: CallableDescriptor,
-        val currentCount: Int
+    val descriptor: CallableDescriptor,
+    val currentCount: Int
 ) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onTypeArguments(this)
 }
 
 // Callable reference resolution
 class CallableReferenceNotCompatible(
-        override val argument: CallableReferenceKotlinCallArgument,
-        val candidate: CallableMemberDescriptor,
-        val expectedType: UnwrappedType?,
-        val callableReverenceType: UnwrappedType
+    override val argument: CallableReferenceKotlinCallArgument,
+    val candidate: CallableMemberDescriptor,
+    val expectedType: UnwrappedType?,
+    val callableReverenceType: UnwrappedType
 ) : InapplicableArgumentDiagnostic()
 
 // supported by FE but not supported by BE now
@@ -110,35 +111,35 @@ class CallableReferencesDefaultArgumentUsed(
 }
 
 class NotCallableMemberReference(
-        override val argument: CallableReferenceKotlinCallArgument,
-        val candidate: CallableDescriptor
+    override val argument: CallableReferenceKotlinCallArgument,
+    val candidate: CallableDescriptor
 ) : InapplicableArgumentDiagnostic()
 
 class NoneCallableReferenceCandidates(override val argument: CallableReferenceKotlinCallArgument) : InapplicableArgumentDiagnostic()
 
 class CallableReferenceCandidatesAmbiguity(
-        override val argument: CallableReferenceKotlinCallArgument,
-        val candidates: Collection<CallableReferenceCandidate>
+    override val argument: CallableReferenceKotlinCallArgument,
+    val candidates: Collection<CallableReferenceCandidate>
 ) : InapplicableArgumentDiagnostic()
 
 class NotCallableExpectedType(
-        override val argument: CallableReferenceKotlinCallArgument,
-        val expectedType: UnwrappedType,
-        val notCallableTypeConstructor: TypeConstructor
+    override val argument: CallableReferenceKotlinCallArgument,
+    val expectedType: UnwrappedType,
+    val notCallableTypeConstructor: TypeConstructor
 ) : InapplicableArgumentDiagnostic()
 
 // SmartCasts
 class SmartCastDiagnostic(
-        val argument: ExpressionKotlinCallArgument,
-        val smartCastType: UnwrappedType,
-        val kotlinCall: KotlinCall?
-): KotlinCallDiagnostic(RESOLVED) {
+    val argument: ExpressionKotlinCallArgument,
+    val smartCastType: UnwrappedType,
+    val kotlinCall: KotlinCall?
+) : KotlinCallDiagnostic(RESOLVED) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
 
 class UnstableSmartCast(
-        val argument: ExpressionKotlinCallArgument,
-        val targetType: UnwrappedType
+    val argument: ExpressionKotlinCallArgument,
+    val targetType: UnwrappedType
 ) : KotlinCallDiagnostic(MAY_THROW_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
@@ -172,8 +173,8 @@ class NoneCandidatesCallDiagnostic(val kotlinCall: KotlinCall) : KotlinCallDiagn
 }
 
 class ManyCandidatesCallDiagnostic(
-        val kotlinCall: KotlinCall,
-        val candidates: Collection<KotlinResolutionCandidate>
+    val kotlinCall: KotlinCall,
+    val candidates: Collection<KotlinResolutionCandidate>
 ) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
