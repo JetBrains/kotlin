@@ -29,10 +29,8 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -71,15 +69,13 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
 
         val callableInfos = SmartList<CallableInfo>()
 
-        val psiFactory = KtPsiFactory(element)
-
         if (isApplicableForAccessor(propertyDescriptor.getter)) {
             val getterInfo = FunctionInfo(
                     name = OperatorNameConventions.GET_VALUE.asString(),
                     receiverTypeInfo = accessorReceiverType,
                     returnTypeInfo = TypeInfo(propertyType, Variance.OUT_VARIANCE),
                     parameterInfos = listOf(thisRefParam, metadataParam),
-                    modifierList = psiFactory.createModifierList(KtTokens.OPERATOR_KEYWORD)
+                    isOperator = true
             )
             callableInfos.add(getterInfo)
         }
@@ -91,7 +87,7 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
                     receiverTypeInfo = accessorReceiverType,
                     returnTypeInfo = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE),
                     parameterInfos = listOf(thisRefParam, metadataParam, newValueParam),
-                    modifierList = psiFactory.createModifierList(KtTokens.OPERATOR_KEYWORD)
+                    isOperator = true
             )
             callableInfos.add(setterInfo)
         }
