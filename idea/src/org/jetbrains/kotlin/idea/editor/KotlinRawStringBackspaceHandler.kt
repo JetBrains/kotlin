@@ -41,7 +41,9 @@ class KotlinRawStringBackspaceHandler : BackspaceHandlerDelegate() {
 
         psiElement.parentOfType(KtStringTemplateExpression::class)?.let {
             if (it.text == "\"\"\"\"\"\"") {
-                rangeMarker = editor.document.createRangeMarker(it.textRange)
+                if (editor.caretModel.offset == it.textOffset + 3) {
+                    rangeMarker = editor.document.createRangeMarker(it.textRange)
+                }
             }
         }
     }

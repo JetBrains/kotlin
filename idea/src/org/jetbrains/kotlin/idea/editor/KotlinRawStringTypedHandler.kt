@@ -39,9 +39,12 @@ class KotlinRawStringTypedHandler : TypedHandlerDelegate() {
         }
         // A quote is typed after 2 other quotes
         val offset = editor.caretModel.offset
-        val psiElement = file.findElementAt(offset) ?: return Result.CONTINUE
-        if (PsiTreeUtil.getParentOfType(psiElement, KtStringTemplateExpression::class.java) != null) {
-            return Result.CONTINUE
+        // Check for caret at end of document
+        if (offset < editor.document.textLength) {
+            val psiElement = file.findElementAt(offset) ?: return Result.CONTINUE
+            if (PsiTreeUtil.getParentOfType(psiElement, KtStringTemplateExpression::class.java) != null) {
+                return Result.CONTINUE
+            }
         }
 
         val text = editor.document.text
