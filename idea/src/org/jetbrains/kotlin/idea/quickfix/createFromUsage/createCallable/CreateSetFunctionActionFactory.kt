@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtOperationExpression
+import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.Variance
@@ -61,12 +63,7 @@ object CreateSetFunctionActionFactory : CreateGetSetFunctionActionFactory(isGet 
 
         val returnType = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE)
         return FunctionInfo(
-                OperatorNameConventions.SET.asString(),
-                arrayType,
-                returnType,
-                Collections.emptyList(),
-                parameters,
-                modifierList = KtPsiFactory(element).createModifierList(KtTokens.OPERATOR_KEYWORD)
+                OperatorNameConventions.SET.asString(), arrayType, returnType, Collections.emptyList(), parameters, isOperator = true
         )
     }
 }

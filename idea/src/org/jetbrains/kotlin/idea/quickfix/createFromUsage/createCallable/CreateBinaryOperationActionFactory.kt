@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
@@ -56,12 +55,8 @@ object CreateBinaryOperationActionFactory : CreateCallableMemberFromUsageFactory
         }
         val parameters = Collections.singletonList(ParameterInfo(TypeInfo(argumentExpr, Variance.IN_VARIANCE)))
         val isOperator = token != KtTokens.IDENTIFIER
-        return FunctionInfo(
-                operationName,
-                receiverType,
-                returnType,
-                parameterInfos = parameters,
-                modifierList = KtPsiFactory(element).createModifierList(if (isOperator) KtTokens.OPERATOR_KEYWORD else KtTokens.INFIX_KEYWORD)
-        )
+        return FunctionInfo(operationName, receiverType, returnType, parameterInfos = parameters,
+                            isOperator = isOperator,
+                            isInfix = !isOperator)
     }
 }

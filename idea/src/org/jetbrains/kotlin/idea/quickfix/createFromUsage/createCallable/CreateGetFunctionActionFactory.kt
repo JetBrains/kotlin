@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
@@ -36,12 +34,7 @@ object CreateGetFunctionActionFactory : CreateGetSetFunctionActionFactory(isGet 
         val parameters = element.indexExpressions.map { ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE)) }
         val returnType = TypeInfo(element, Variance.OUT_VARIANCE)
         return FunctionInfo(
-                OperatorNameConventions.GET.asString(),
-                arrayType,
-                returnType,
-                Collections.emptyList(),
-                parameters,
-                modifierList = KtPsiFactory(element).createModifierList(KtTokens.OPERATOR_KEYWORD)
+                OperatorNameConventions.GET.asString(), arrayType, returnType, Collections.emptyList(), parameters, isOperator = true
         )
     }
 }
