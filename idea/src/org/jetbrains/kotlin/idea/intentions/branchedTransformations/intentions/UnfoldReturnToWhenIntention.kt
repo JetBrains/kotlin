@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.*
@@ -35,14 +36,17 @@ class UnfoldReturnToWhenIntention : SelfTargetingRangeIntention<KtReturnExpressi
     }
 
     override fun applyTo(element: KtReturnExpression, editor: Editor?) {
+        val psiFactory = KtPsiFactory(element)
+        val context = element.analyze()
+
         val whenExpression = element.returnedExpression as KtWhenExpression
         val newWhenExpression = whenExpression.copied()
 
-        for (entry in newWhenExpression.entries) {
+        whenExpression.entries.zip(newWhenExpression.entries).forEach { (entry, newEntry) ->
             val expr = entry.expression!!.lastBlockStatementOrThis()
-            expr.replace(KtPsiFactory(element).createExpressionByPattern("return $0", expr))
+            val newExpr = newEntry.expression!!.lastBlockStatementOrThis()
+            newExpr.replace(UnfoldReturnToIfIntention.createReturnExpression(expr, psiFactory, context))
         }
-
         element.replace(newWhenExpression)
     }
 }
