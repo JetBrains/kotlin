@@ -2467,6 +2467,36 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/unfolding/returnToIf"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("ifWithBreak.kt")
+                public void testIfWithBreak() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToIf/ifWithBreak.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifWithContinue.kt")
+                public void testIfWithContinue() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToIf/ifWithContinue.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifWithInnerReturn.kt")
+                public void testIfWithInnerReturn() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToIf/ifWithInnerReturn.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifWithNothing.kt")
+                public void testIfWithNothing() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToIf/ifWithNothing.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifWithThrow.kt")
+                public void testIfWithThrow() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToIf/ifWithThrow.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("innerIfTransformed.kt")
                 public void testInnerIfTransformed() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToIf/innerIfTransformed.kt");
@@ -2509,6 +2539,36 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 @TestMetadata("simpleWhenWithBlocks.kt")
                 public void testSimpleWhenWithBlocks() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToWhen/simpleWhenWithBlocks.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("whenWithBreak.kt")
+                public void testWhenWithBreak() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToWhen/whenWithBreak.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("whenWithContinue.kt")
+                public void testWhenWithContinue() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToWhen/whenWithContinue.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("whenWithInnerReturn.kt")
+                public void testWhenWithInnerReturn() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToWhen/whenWithInnerReturn.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("whenWithNothing.kt")
+                public void testWhenWithNothing() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToWhen/whenWithNothing.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("whenWithThrow.kt")
+                public void testWhenWithThrow() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/unfolding/returnToWhen/whenWithThrow.kt");
                     doTest(fileName);
                 }
             }
