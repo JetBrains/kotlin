@@ -3,6 +3,8 @@ description = "Kotlin AllOpen IDEA Plugin"
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     compile(project(":kotlin-allopen-compiler-plugin"))
     compile(project(":compiler:util"))

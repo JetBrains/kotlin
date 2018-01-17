@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections;
@@ -3432,6 +3421,153 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/scopeFunctions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ScopeFunctions extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInScopeFunctions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/scopeFunctions"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/scopeFunctions/alsoToApply")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AlsoToApply extends AbstractLocalInspectionTest {
+            public void testAllFilesPresentInAlsoToApply() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/scopeFunctions/alsoToApply"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/alsoToApply/simple.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ApplyToAlso extends AbstractLocalInspectionTest {
+            public void testAllFilesPresentInApplyToAlso() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("doubleNestedLambdas.kt")
+            public void testDoubleNestedLambdas() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/doubleNestedLambdas.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("innerLambda.kt")
+            public void testInnerLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/innerLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("itInNestedLambda.kt")
+            public void testItInNestedLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/itInNestedLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("method.kt")
+            public void testMethod() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/method.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerLambda.kt")
+            public void testOuterLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/outerLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("thisQualifier.kt")
+            public void testThisQualifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/thisQualifier.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/scopeFunctions/letToRun")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LetToRun extends AbstractLocalInspectionTest {
+            public void testAllFilesPresentInLetToRun() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/scopeFunctions/letToRun"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("nestedLambda.kt")
+            public void testNestedLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/letToRun/nestedLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerThis.kt")
+            public void testOuterThis() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/letToRun/outerThis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("qualifyThis.kt")
+            public void testQualifyThis() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/letToRun/qualifyThis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("qualifyThisNoConflict.kt")
+            public void testQualifyThisNoConflict() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/letToRun/qualifyThisNoConflict.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("qualifyThisWithLambda.kt")
+            public void testQualifyThisWithLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/letToRun/qualifyThisWithLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("qualifyThisWithLambdaNoConflict.kt")
+            public void testQualifyThisWithLambdaNoConflict() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/letToRun/qualifyThisWithLambdaNoConflict.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/letToRun/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("thisInStringTemplate.kt")
+            public void testThisInStringTemplate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/letToRun/thisInStringTemplate.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/scopeFunctions/runToLet")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class RunToLet extends AbstractLocalInspectionTest {
+            public void testAllFilesPresentInRunToLet() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/scopeFunctions/runToLet"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/scopeFunctions/runToLet/simple.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/selfAssignment")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3830,6 +3966,18 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/sortModifiers"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/sortModifiers/annotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("annotationGroup.kt")
+        public void testAnnotationGroup() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/sortModifiers/annotationGroup.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/sortModifiers/simple.kt");
@@ -3929,6 +4077,33 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unusedLambdaExpressionBody/simple.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/inspectionsLocal/unsafeCastFromDynamic")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnsafeCastFromDynamic extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInUnsafeCastFromDynamic() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/unsafeCastFromDynamic"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("binaryExpression.kt")
+        public void testBinaryExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unsafeCastFromDynamic/binaryExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullable.kt")
+        public void testNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unsafeCastFromDynamic/nullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unsafeCastFromDynamic/simple.kt");
             doTest(fileName);
         }
     }

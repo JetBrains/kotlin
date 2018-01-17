@@ -1,10 +1,13 @@
+/**
+ * @KaptMetadata
+ */
+
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeUnit.MICROSECONDS;
 import a.b.ABC;
 
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     public Test.MyDate date;
@@ -18,61 +21,50 @@ public final class Test {
     public bcd bcd;
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getDate()LTest$MyDate;")
     public final Test.MyDate getDate() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setDate(LTest$MyDate;)V")
     public final void setDate(@org.jetbrains.annotations.NotNull()
     Test.MyDate p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getTimeUnit()Ljava/util/concurrent/TimeUnit;")
     public final java.util.concurrent.TimeUnit getTimeUnit() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setTimeUnit(Ljava/util/concurrent/TimeUnit;)V")
     public final void setTimeUnit(@org.jetbrains.annotations.NotNull()
     java.util.concurrent.TimeUnit p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getMicroseconds()Ljava/util/concurrent/TimeUnit;")
     public final java.util.concurrent.TimeUnit getMicroseconds() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setMicroseconds(Ljava/util/concurrent/TimeUnit;)V")
     public final void setMicroseconds(@org.jetbrains.annotations.NotNull()
     java.util.concurrent.TimeUnit p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getAbc()Lerror/NonExistentClass;")
     public final a.b.ABC getAbc() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setAbc(Lerror/NonExistentClass;)V")
     public final void setAbc(@org.jetbrains.annotations.NotNull()
     a.b.ABC p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getBcd()Lerror/NonExistentClass;")
     public final bcd getBcd() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setBcd(Lerror/NonExistentClass;)V")
     public final void setBcd(@org.jetbrains.annotations.NotNull()
     bcd p0) {
     }
 
-    @kapt.internal.KaptSignature("<init>()V")
     public Test() {
         super();
     }
@@ -83,17 +75,14 @@ public final class Test {
         public Test.MyDate date2;
 
         @org.jetbrains.annotations.NotNull()
-        @kapt.internal.KaptSignature("getDate2()LTest$MyDate;")
         public final Test.MyDate getDate2() {
             return null;
         }
 
-        @kapt.internal.KaptSignature("setDate2(LTest$MyDate;)V")
         public final void setDate2(@org.jetbrains.annotations.NotNull()
         Test.MyDate p0) {
         }
 
-        @kapt.internal.KaptSignature("<init>()V")
         public MyDate() {
             super();
         }
@@ -102,6 +91,9 @@ public final class Test {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -109,42 +101,20 @@ import java.util.concurrent.TimeUnit.MICROSECONDS;
 import a.b.ABC;
 
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class Test2 {
     @org.jetbrains.annotations.NotNull()
     public java.util.Date date;
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature("getDate()Ljava/util/Date;")
     public final java.util.Date getDate() {
         return null;
     }
 
-    @kapt.internal.KaptSignature("setDate(Ljava/util/Date;)V")
     public final void setDate(@org.jetbrains.annotations.NotNull()
     java.util.Date p0) {
     }
 
-    @kapt.internal.KaptSignature("<init>()V")
     public Test2() {
         super();
     }
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptMetadata {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptSignature {
-
-    public java.lang.String value();
 }

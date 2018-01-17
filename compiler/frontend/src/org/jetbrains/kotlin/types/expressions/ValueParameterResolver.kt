@@ -32,22 +32,25 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.types.TypeUtils
 
 class ValueParameterResolver(
-        private val expressionTypingServices: ExpressionTypingServices,
-        private val constantExpressionEvaluator: ConstantExpressionEvaluator,
-        private val languageVersionSettings: LanguageVersionSettings
+    private val expressionTypingServices: ExpressionTypingServices,
+    private val constantExpressionEvaluator: ConstantExpressionEvaluator,
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     fun resolveValueParameters(
-            valueParameters: List<KtParameter>,
-            valueParameterDescriptors: List<ValueParameterDescriptor>,
-            declaringScope: LexicalScope,
-            dataFlowInfo: DataFlowInfo,
-            trace: BindingTrace
+        valueParameters: List<KtParameter>,
+        valueParameterDescriptors: List<ValueParameterDescriptor>,
+        declaringScope: LexicalScope,
+        dataFlowInfo: DataFlowInfo,
+        trace: BindingTrace
     ) {
-        val scopeForDefaultValue = LexicalScopeImpl(declaringScope, declaringScope.ownerDescriptor, false, null, LexicalScopeKind.DEFAULT_VALUE)
+        val scopeForDefaultValue =
+            LexicalScopeImpl(declaringScope, declaringScope.ownerDescriptor, false, null, LexicalScopeKind.DEFAULT_VALUE)
 
-        val contextForDefaultValue = ExpressionTypingContext.newContext(trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE,
-                                                                        languageVersionSettings)
+        val contextForDefaultValue = ExpressionTypingContext.newContext(
+            trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE,
+            languageVersionSettings
+        )
 
         for ((descriptor, parameter) in valueParameterDescriptors.zip(valueParameters)) {
             ForceResolveUtil.forceResolveAllContents(descriptor.annotations)
@@ -56,9 +59,9 @@ class ValueParameterResolver(
     }
 
     private fun resolveDefaultValue(
-            valueParameterDescriptor: ValueParameterDescriptor,
-            jetParameter: KtParameter,
-            context: ExpressionTypingContext
+        valueParameterDescriptor: ValueParameterDescriptor,
+        jetParameter: KtParameter,
+        context: ExpressionTypingContext
     ) {
         if (!valueParameterDescriptor.declaresDefaultValue()) return
         val defaultValue = jetParameter.defaultValue ?: return

@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 abstract class KtClassOrObject :
-        KtTypeParameterListOwnerStub<KotlinClassOrObjectStub<out KtClassOrObject>>, KtDeclarationContainer, KtNamedDeclaration, KtPureClassOrObject {
+    KtTypeParameterListOwnerStub<KotlinClassOrObjectStub<out KtClassOrObject>>, KtDeclarationContainer, KtNamedDeclaration,
+    KtPureClassOrObject {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinClassOrObjectStub<out KtClassOrObject>, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
@@ -59,8 +60,7 @@ abstract class KtClassOrObject :
 
         if (specifierList.entries.size > 1) {
             EditCommaSeparatedListHelper.removeItem<KtElement>(superTypeListEntry)
-        }
-        else {
+        } else {
             deleteChildRange(findChildByType<PsiElement>(KtTokens.COLON) ?: specifierList, specifierList)
         }
     }
@@ -69,18 +69,18 @@ abstract class KtClassOrObject :
 
     fun getBody(): KtClassBody? = getStubOrPsiChild(KtStubElementTypes.CLASS_BODY)
 
-    inline fun <reified T: KtDeclaration> addDeclaration(declaration: T): T {
+    inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T {
         val body = getOrCreateBody()
         val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.lastChild!!, PsiWhiteSpace::class.java)
         return body.addAfter(declaration, anchor) as T
     }
 
-    inline fun <reified T: KtDeclaration> addDeclarationAfter(declaration: T, anchor: PsiElement?): T {
+    inline fun <reified T : KtDeclaration> addDeclarationAfter(declaration: T, anchor: PsiElement?): T {
         val anchorBefore = anchor ?: declarations.lastOrNull() ?: return addDeclaration(declaration)
         return getOrCreateBody().addAfter(declaration, anchorBefore) as T
     }
 
-    inline fun <reified T: KtDeclaration> addDeclarationBefore(declaration: T, anchor: PsiElement?): T {
+    inline fun <reified T : KtDeclaration> addDeclarationBefore(declaration: T, anchor: PsiElement?): T {
         val anchorAfter = anchor ?: declarations.firstOrNull() ?: return addDeclaration(declaration)
         return getOrCreateBody().addBefore(declaration, anchorAfter) as T
     }
@@ -112,9 +112,11 @@ abstract class KtClassOrObject :
     fun isAnnotation(): Boolean = hasModifier(KtTokens.ANNOTATION_KEYWORD)
 
     fun getDeclarationKeyword(): PsiElement? =
-            findChildByType(TokenSet.create(
-                    KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.OBJECT_KEYWORD
-            ))
+        findChildByType(
+            TokenSet.create(
+                KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.OBJECT_KEYWORD
+            )
+        )
 
     override fun delete() {
         CheckUtil.checkWritable(this)
@@ -122,8 +124,7 @@ abstract class KtClassOrObject :
         val file = containingKtFile
         if (!isTopLevel() || file.declarations.size > 1) {
             super.delete()
-        }
-        else {
+        } else {
             file.delete()
         }
     }

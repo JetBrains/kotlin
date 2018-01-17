@@ -56,9 +56,9 @@ object CoroutineSuspendCallChecker : CallChecker {
         }
 
         val enclosingSuspendFunction = context.scope
-                .parentsWithSelf.firstOrNull {
+            .parentsWithSelf.firstOrNull {
             it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS &&
-            it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
+                    it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
         }?.cast<LexicalScope>()?.ownerDescriptor?.cast<FunctionDescriptor>()
 
         when {
@@ -67,19 +67,32 @@ object CoroutineSuspendCallChecker : CallChecker {
 
                 if (!InlineUtil.checkNonLocalReturnUsage(enclosingSuspendFunction, callElement, context.resolutionContext)) {
                     context.trace.report(Errors.NON_LOCAL_SUSPENSION_POINT.on(reportOn))
-                }
-                else if (context.scope.parentsWithSelf.any { it.isScopeForDefaultParameterValuesOf(enclosingSuspendFunction) }) {
+                } else if (context.scope.parentsWithSelf.any { it.isScopeForDefaultParameterValuesOf(enclosingSuspendFunction) }) {
                     context.trace.report(Errors.UNSUPPORTED.on(reportOn, "suspend function calls in a context of default parameter value"))
                 }
 
-                context.trace.record(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call, enclosingSuspendFunction)
+                context.trace.record(
+                    BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL,
+                    resolvedCall.call,
+                    enclosingSuspendFunction
+                )
 
                 checkRestrictsSuspension(enclosingSuspendFunction, resolvedCall, reportOn, context)
             }
             else -> {
                 when (descriptor) {
-                    is FunctionDescriptor -> context.trace.report(Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(reportOn, resolvedCall.candidateDescriptor))
-                    is PropertyDescriptor -> context.trace.report(Errors.ILLEGAL_SUSPEND_PROPERTY_ACCESS.on(reportOn, resolvedCall.candidateDescriptor))
+                    is FunctionDescriptor -> context.trace.report(
+                        Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(
+                            reportOn,
+                            resolvedCall.candidateDescriptor
+                        )
+                    )
+                    is PropertyDescriptor -> context.trace.report(
+                        Errors.ILLEGAL_SUSPEND_PROPERTY_ACCESS.on(
+                            reportOn,
+                            resolvedCall.candidateDescriptor
+                        )
+                    )
                 }
             }
         }
@@ -87,7 +100,7 @@ object CoroutineSuspendCallChecker : CallChecker {
 }
 
 private fun HierarchicalScope.isScopeForDefaultParameterValuesOf(enclosingSuspendFunction: FunctionDescriptor) =
-        this is LexicalScope && this.kind == LexicalScopeKind.DEFAULT_VALUE && this.ownerDescriptor == enclosingSuspendFunction
+    this is LexicalScope && this.kind == LexicalScopeKind.DEFAULT_VALUE && this.ownerDescriptor == enclosingSuspendFunction
 
 object BuilderFunctionsCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -116,10 +129,10 @@ fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, dia
 }
 
 private fun checkRestrictsSuspension(
-        enclosingCallableDescriptor: CallableDescriptor,
-        resolvedCall: ResolvedCall<*>,
-        reportOn: PsiElement,
-        context: CallCheckerContext
+    enclosingCallableDescriptor: CallableDescriptor,
+    resolvedCall: ResolvedCall<*>,
+    reportOn: PsiElement,
+    context: CallCheckerContext
 ) {
     val enclosingSuspendReceiverValue = enclosingCallableDescriptor.extensionReceiverParameter?.value ?: return
 

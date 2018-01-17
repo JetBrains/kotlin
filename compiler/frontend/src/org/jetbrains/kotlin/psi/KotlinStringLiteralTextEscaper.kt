@@ -22,7 +22,7 @@ import gnu.trove.TIntArrayList
 import org.jetbrains.kotlin.psi.psiUtil.getContentRange
 import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
 
-class KotlinStringLiteralTextEscaper(host: KtStringTemplateExpression): LiteralTextEscaper<KtStringTemplateExpression>(host) {
+class KotlinStringLiteralTextEscaper(host: KtStringTemplateExpression) : LiteralTextEscaper<KtStringTemplateExpression>(host) {
     private var sourceOffsets: IntArray? = null
 
     override fun decode(rangeInsideHost: TextRange, outChars: StringBuilder): Boolean {

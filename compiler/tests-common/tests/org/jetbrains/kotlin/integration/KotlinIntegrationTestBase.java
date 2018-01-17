@@ -83,6 +83,8 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         content = content.replaceAll(Pattern.quote(KotlinCompilerVersion.VERSION), "[KotlinVersion]");
         content = content.replaceAll("\\(JRE .+\\)", "(JRE [JREVersion])");
         content = StringUtil.convertLineSeparators(content);
+        content = content.replaceAll("\n.*Picked up [_A-Z]+:.*\n", "\n");
+        content = content.replaceFirst("\nERR:\n\nReturn code:", "\nReturn code:");
         return content;
     }
 

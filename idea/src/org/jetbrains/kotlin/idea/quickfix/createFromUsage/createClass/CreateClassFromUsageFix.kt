@@ -163,7 +163,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
                             is PsiPackage -> createFileByPackage(selectedParent, editor, file)
                             else -> throw AssertionError("Unexpected element: " + selectedParent.text)
                         } ?: return@runWriteAction
-                val constructorInfo = PrimaryConstructorInfo(classInfo, expectedTypeInfo)
+                val constructorInfo = ClassWithPrimaryConstructorInfo(classInfo, expectedTypeInfo)
                 val builder = CallableBuilderConfiguration(
                         Collections.singletonList(constructorInfo),
                         element as KtElement,

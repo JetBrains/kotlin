@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.diagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer
 
 class RenderedDiagnostic<D : Diagnostic>(
-        val diagnostic: D,
-        val renderer: DiagnosticRenderer<D>
+    val diagnostic: D,
+    val renderer: DiagnosticRenderer<D>
 ) {
     val text = renderer.render(diagnostic)
 

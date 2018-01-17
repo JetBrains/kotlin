@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
@@ -86,7 +87,14 @@ internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: B
             "kotlin.Double" -> PsiType.DOUBLE.orBoxed()
             "kotlin.Float" -> PsiType.FLOAT.orBoxed()
             "kotlin.String" -> PsiType.getJavaLangString(element.manager, GlobalSearchScope.projectScope(element.project))
-            else -> null
+            else -> {
+                val typeConstructor = this.constructor
+                if (typeConstructor is IntegerValueTypeConstructor) {
+                    typeConstructor.supertypes.first().toPsiType(source, element, boxed)
+                } else {
+                    null
+                }
+            }
         }
         if (psiType != null) return psiType
     }

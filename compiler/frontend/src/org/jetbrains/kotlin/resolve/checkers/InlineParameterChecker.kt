@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 object InlineParameterChecker : SimpleDeclarationChecker {
     override fun check(
-            declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
+        declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
     ) {
         if (declaration is KtFunction) {
             val inline = declaration.hasModifier(KtTokens.INLINE_KEYWORD)

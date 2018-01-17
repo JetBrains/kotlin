@@ -38,14 +38,14 @@ interface FileScopeProvider {
 }
 
 class FileScopeProviderImpl(
-        private val fileScopeFactory: FileScopeFactory,
-        private val bindingTrace: BindingTrace,
-        private val storageManager: StorageManager
+    private val fileScopeFactory: FileScopeFactory,
+    private val bindingTrace: BindingTrace,
+    private val storageManager: StorageManager
 ) : FileScopeProvider {
 
     private val cache = storageManager.createMemoizedFunction<KtFile, FileScopes> { file ->
         val scopes = (file.originalFile as KtFile?)?.fileScopesCustomizer?.createFileScopes(fileScopeFactory)
-                     ?: fileScopeFactory.createScopesForFile(file)
+                ?: fileScopeFactory.createScopesForFile(file)
         bindingTrace.recordScope(scopes.lexicalScope, file)
         scopes
     }

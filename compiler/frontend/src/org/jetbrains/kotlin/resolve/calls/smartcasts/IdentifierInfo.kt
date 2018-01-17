@@ -42,9 +42,9 @@ interface IdentifierInfo {
     }
 
     class Variable(
-            val variable: VariableDescriptor,
-            override val kind: DataFlowValue.Kind,
-            val bound: DataFlowValue?
+        val variable: VariableDescriptor,
+        override val kind: DataFlowValue.Kind,
+        val bound: DataFlowValue?
     ) : IdentifierInfo {
 
         override val canBeBound
@@ -72,10 +72,10 @@ interface IdentifierInfo {
     }
 
     class Qualified(
-            val receiverInfo: IdentifierInfo,
-            val selectorInfo: IdentifierInfo,
-            val safe: Boolean,
-            val receiverType: KotlinType?
+        val receiverInfo: IdentifierInfo,
+        val selectorInfo: IdentifierInfo,
+        val safe: Boolean,
+        val receiverType: KotlinType?
     ) : IdentifierInfo {
         override val kind: DataFlowValue.Kind get() = if (receiverInfo.kind == STABLE_VALUE) selectorInfo.kind else OTHER
 
@@ -90,9 +90,9 @@ interface IdentifierInfo {
     }
 
     data class SafeCast(
-            val subjectInfo: IdentifierInfo,
-            val subjectType: KotlinType?,
-            val targetType: KotlinType?
+        val subjectInfo: IdentifierInfo,
+        val subjectType: KotlinType?,
+        val targetType: KotlinType?
     ) : IdentifierInfo {
         override val kind get() = OTHER
 
@@ -104,10 +104,10 @@ interface IdentifierInfo {
     companion object {
 
         fun qualified(
-                receiverInfo: IdentifierInfo,
-                receiverType: KotlinType?,
-                selectorInfo: IdentifierInfo,
-                safe: Boolean
+            receiverInfo: IdentifierInfo,
+            receiverType: KotlinType?,
+            selectorInfo: IdentifierInfo,
+            safe: Boolean
         ) = when (receiverInfo) {
             NO -> NO
             is PackageOrClass -> selectorInfo

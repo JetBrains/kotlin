@@ -1,7 +1,9 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.ValueArgument
@@ -11,12 +13,19 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 
 class KotlinUAnnotation(
         override val psi: KtAnnotationEntry,
         givenParent: UElement?
 ) : KotlinAbstractUElement(givenParent), UAnnotation {
+
+    override val javaPsi = psi.toLightAnnotation()
+
+    override val sourcePsi = psi
+
     private val resolvedAnnotation: AnnotationDescriptor? by lz { psi.analyze()[BindingContext.ANNOTATION, psi] }
 
     private val resolvedCall: ResolvedCall<*>? by lz { psi.getResolvedCall(psi.analyze()) }
@@ -71,6 +80,16 @@ class KotlinUAnnotation(
 
         val defaultValue = (parameter.source.getPsi() as? KtParameter)?.defaultValue ?: return null
         return getLanguagePlugin().convertWithParent(defaultValue)
+    }
+
+    override fun convertParent(): UElement? {
+        val superParent = super.convertParent() ?: return null
+        if (psi.useSiteTarget?.getAnnotationUseSiteTarget() == AnnotationUseSiteTarget.RECEIVER) {
+            (superParent.uastParent as? KotlinUMethod)?.uastParameters?.firstIsInstance<KotlinReceiverUParameter>()?.let {
+                return it
+            }
+        }
+        return superParent
     }
 }
 

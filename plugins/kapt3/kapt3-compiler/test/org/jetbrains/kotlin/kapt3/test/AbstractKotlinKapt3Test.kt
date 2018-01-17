@@ -160,13 +160,13 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
     companion object {
         private val KOTLIN_METADATA_GROUP = "[a-z0-9]+ = (\\{.+?\\}|[0-9]+)"
         private val KOTLIN_METADATA_REGEX = "@kotlin\\.Metadata\\(($KOTLIN_METADATA_GROUP)(, $KOTLIN_METADATA_GROUP)*\\)".toRegex()
-        private val KAPT_METADATA_REGEX = "@kapt\\.internal\\.KaptMetadata\\((value = )?\"[^(].*?\"\\)".toRegex()
+        private val KAPT_METADATA_REGEX = "\\* @KaptMetadata .+".toRegex()
 
         private val EXPECTED_ERROR = "EXPECTED_ERROR"
 
         internal fun removeMetadataAnnotationContents(s: String): String {
             return s.replace(KOTLIN_METADATA_REGEX, "@kotlin.Metadata()")
-                    .replace(KAPT_METADATA_REGEX, "@kapt.internal.KaptMetadata()")
+                    .replace(KAPT_METADATA_REGEX, "* @KaptMetadata")
         }
 
         @JvmStatic

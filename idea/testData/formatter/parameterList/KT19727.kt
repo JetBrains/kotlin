@@ -14,6 +14,10 @@ fun main(args: Array<String>) {
             println("Hello world")
         }
     })
+
+    useCallable("B", fun() {
+        println("Hello world")
+    })
 }
 
 // SET_TRUE: CALL_PARAMETERS_LPAREN_ON_NEXT_LINE

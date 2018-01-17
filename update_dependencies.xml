@@ -2,7 +2,7 @@
     <import file="common.xml" optional="false"/>
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="172.4343.14"/>
+    <property name="ideaVersion" value="173.4127.27"/>
     <property name="idea.repository.type" value="releases"/> <!-- releases or snapshots -->
     <property name="idea.kotlin.branch" value="rc"/>
 
@@ -547,7 +547,7 @@
                         <file file="@{idea.dir}/lib/xpp3-1.1.4-min.jar"/>
                         <file file="@{idea.dir}/lib/asm-all.jar"/>
                         <file file="@{idea.dir}/lib/snappy-in-java-0.5.1.jar"/>
-                        <file file="@{idea.dir}/lib/streamex-0.6.2.jar"/>
+                        <file file="@{idea.dir}/lib/streamex-0.6.5.jar"/>
 
                         <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
                         <file file="@{idea.dir}/lib/util.jar"/>

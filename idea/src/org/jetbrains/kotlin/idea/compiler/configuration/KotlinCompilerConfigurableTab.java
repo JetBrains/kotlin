@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.compiler.configuration;
@@ -140,7 +129,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                     new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            restrictAPIVersions(getSelectedLanguageVersionView().getVersion());
+                            restrictAPIVersions(getSelectedLanguageVersionView());
                         }
                     }
             );
@@ -300,7 +289,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
         fileChooser.addBrowseFolderListener(title, null, null,
                                             new FileChooserDescriptor(forFiles, !forFiles, false, false, false, false),
-                                            TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT, false);
+                                            TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
     }
 
     private static boolean isModified(@NotNull TextFieldWithBrowseButton chooser, @Nullable String currentValue) {
@@ -319,8 +308,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     }
 
     @SuppressWarnings("unchecked")
-    public void restrictAPIVersions(LanguageVersion upperBound) {
-        LanguageVersion selectedAPIVersion = getSelectedAPIVersionView().getVersion();
+    public void restrictAPIVersions(VersionView upperBoundView) {
+        VersionView selectedAPIView = getSelectedAPIVersionView();
+        LanguageVersion selectedAPIVersion = selectedAPIView.getVersion();
+        LanguageVersion upperBound = upperBoundView.getVersion();
         List<VersionView> permittedAPIVersions = new ArrayList<>(LanguageVersion.values().length + 1);
         if (isLessOrEqual(VersionView.LatestStable.INSTANCE.getVersion(), upperBound)) {
             permittedAPIVersions.add(VersionView.LatestStable.INSTANCE);
@@ -335,8 +326,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         );
         apiVersionComboBox.setSelectedItem(
                 VersionComparatorUtil.compare(selectedAPIVersion.getVersionString(), upperBound.getVersionString()) <= 0
-                ? selectedAPIVersion
-                : ApiVersion.createByLanguageVersion(upperBound)
+                ? selectedAPIView
+                : upperBoundView
         );
     }
 
@@ -563,7 +554,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void reset() {
         reportWarningsCheckBox.setSelected(!commonCompilerArguments.getSuppressWarnings());
         languageVersionComboBox.setSelectedItem(KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments));
-        restrictAPIVersions(getSelectedLanguageVersionView().getVersion());
+        restrictAPIVersions(getSelectedLanguageVersionView());
         apiVersionComboBox.setSelectedItem(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments));
         coroutineSupportComboBox.setSelectedItem(CoroutineSupport.byCompilerArguments(commonCompilerArguments));
         additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());

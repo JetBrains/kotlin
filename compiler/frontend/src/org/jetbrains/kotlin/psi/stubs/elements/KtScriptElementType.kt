@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinScriptStubImpl
 
 class KtScriptElementType(debugName: String) : KtStubElementType<KotlinScriptStub, KtScript>(
-        debugName, KtScript::class.java, KotlinScriptStub::class.java
+    debugName, KtScript::class.java, KotlinScriptStub::class.java
 ) {
 
     override fun createStub(psi: KtScript, parentStub: StubElement<PsiElement>): KotlinScriptStub {

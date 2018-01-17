@@ -410,7 +410,8 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             IrClassReferenceImpl(
                     expression.startOffset, expression.endOffset,
                     expression.type,
-                    symbolRemapper.getReferencedClassifier(expression.symbol)
+                    symbolRemapper.getReferencedClassifier(expression.symbol),
+                    expression.classType
             )
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrInstanceInitializerCall =

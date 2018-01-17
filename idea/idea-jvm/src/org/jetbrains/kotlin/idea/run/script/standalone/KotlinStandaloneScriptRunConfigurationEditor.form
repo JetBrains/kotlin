@@ -19,7 +19,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="b06d8" class="com.intellij.execution.ui.AlternativeJREPanel" binding="alternativeJREPanel">
+      <component id="c4ccd" class="com.intellij.execution.ui.JrePathEditor" binding="jrePathEditor">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

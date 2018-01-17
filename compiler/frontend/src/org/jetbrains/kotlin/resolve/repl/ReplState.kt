@@ -62,7 +62,12 @@ class ReplState {
         abstract val parentLine: SuccessfulLine?
 
         class SubmittedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
-        class SuccessfulLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?, val lineDescriptor: LazyScriptDescriptor) : LineInfo()
+        class SuccessfulLine(
+            override val linePsi: KtFile,
+            override val parentLine: SuccessfulLine?,
+            val lineDescriptor: LazyScriptDescriptor
+        ) : LineInfo()
+
         class FailedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
     }
 

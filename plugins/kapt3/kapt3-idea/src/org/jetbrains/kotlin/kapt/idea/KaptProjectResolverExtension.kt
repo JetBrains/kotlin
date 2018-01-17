@@ -21,6 +21,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.*
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder
@@ -115,8 +116,9 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
             try {
                 sourceSet.generatedKotlinSourcesDirFile?.let { variant.mainArtifact.generatedSourceFolders += it }
             } catch (e: Throwable) {
-                LOG.error(RuntimeException(
-                        "Kapt importer for generated source roots failed, source root name: ${sourceSet.sourceSetName}", e))
+                // There was an error being thrown here, but the code above doesn't work for the newer versions of Android Studio 3
+                // (generatedSourceFolders returns a wrapped unmodifiable list), and the thrown exception breaks the import.
+                // The error will be moved back when I find a work-around for AS3.
             }
         }
     }
@@ -158,7 +160,7 @@ class KaptModelBuilderService : AbstractKotlinGradleModelBuilder() {
     override fun canBuild(modelName: String?): Boolean = modelName == KaptGradleModel::class.java.name
 
     override fun buildAll(modelName: String?, project: Project): Any {
-        val kaptPlugin = project.plugins.findPlugin("kotlin-kapt")
+        val kaptPlugin: Plugin<*>? = project.plugins.findPlugin("kotlin-kapt")
         val kaptIsEnabled = kaptPlugin != null
 
         val sourceSets = mutableListOf<KaptSourceSetModel>()

@@ -42,9 +42,9 @@ interface AnnotationBasedExtension {
     }
 
     private fun AnnotationDescriptor.isASpecialAnnotation(
-            specialAnnotations: List<String>,
-            visitedAnnotations: MutableSet<String> = hashSetOf(),
-            allowMetaAnnotations: Boolean = true
+        specialAnnotations: List<String>,
+        visitedAnnotations: MutableSet<String> = hashSetOf(),
+        allowMetaAnnotations: Boolean = true
     ): Boolean {
         val annotationFqName = fqName?.asString() ?: return false
         if (annotationFqName in visitedAnnotations) return false // Prevent infinite recursion

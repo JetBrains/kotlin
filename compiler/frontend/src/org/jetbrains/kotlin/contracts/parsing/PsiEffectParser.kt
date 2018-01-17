@@ -24,4 +24,5 @@ internal interface PsiEffectParser {
     fun tryParseEffect(expression: KtExpression): EffectDeclaration?
 }
 
-internal abstract class AbstractPsiEffectParser(val trace: BindingTrace, val contractParserDispatcher: PsiContractParserDispatcher) : PsiEffectParser
+internal abstract class AbstractPsiEffectParser(val trace: BindingTrace, val contractParserDispatcher: PsiContractParserDispatcher) :
+    PsiEffectParser

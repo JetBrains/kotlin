@@ -1,5 +1,10 @@
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
+
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class Kt18377Kt {
 
     public Kt18377Kt() {
@@ -7,26 +12,7 @@ public final class Kt18377Kt {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "Date(D)Ljava/util/Date;")
     public static final java.util.Date Date(double p0_1484504552) {
         return null;
     }
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptMetadata {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptSignature {
-
-    public java.lang.String value();
 }

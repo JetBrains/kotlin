@@ -4,6 +4,10 @@ fun x() {
     ) {
         println("> 0")
     }
+
+    if (foo.length > 0) {
+        println("> 0")
+    }
 }
 
 // SET_TRUE: IF_RPAREN_ON_NEW_LINE

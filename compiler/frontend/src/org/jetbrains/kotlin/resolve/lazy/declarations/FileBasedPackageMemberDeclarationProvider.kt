@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.StorageManager
 
 class FileBasedPackageMemberDeclarationProvider(
-        storageManager: StorageManager,
-        private val fqName: FqName,
-        private val factory: FileBasedDeclarationProviderFactory,
-        private val packageFiles: Collection<KtFile>)
-: AbstractPsiBasedDeclarationProvider(storageManager), PackageMemberDeclarationProvider {
+    storageManager: StorageManager,
+    private val fqName: FqName,
+    private val factory: FileBasedDeclarationProviderFactory,
+    private val packageFiles: Collection<KtFile>
+) : AbstractPsiBasedDeclarationProvider(storageManager), PackageMemberDeclarationProvider {
 
     private val allDeclaredSubPackages = storageManager.createLazyValue<Collection<FqName>> {
         factory.getAllDeclaredSubPackagesOf(fqName)
@@ -48,5 +48,5 @@ class FileBasedPackageMemberDeclarationProvider(
     override fun containsFile(file: KtFile) = file in packageFiles
 
     override fun toString() = "Declarations for package $fqName with files ${packageFiles.map { it.name }} " +
-                              "with declarations inside ${packageFiles.flatMap { it.declarations }.map { it.name ?: "???"}}"
+            "with declarations inside ${packageFiles.flatMap { it.declarations }.map { it.name ?: "???" }}"
 }

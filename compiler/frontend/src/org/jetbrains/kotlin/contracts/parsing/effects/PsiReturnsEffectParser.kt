@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 internal class PsiReturnsEffectParser(
-        trace: BindingTrace,
-        contractParserDispatcher: PsiContractParserDispatcher
+    trace: BindingTrace,
+    contractParserDispatcher: PsiContractParserDispatcher
 ) : AbstractPsiEffectParser(trace, contractParserDispatcher) {
     override fun tryParseEffect(expression: KtExpression): EffectDeclaration? {
         val resolvedCall = expression.getResolvedCall(trace.bindingContext) ?: return null
@@ -39,13 +39,18 @@ internal class PsiReturnsEffectParser(
         if (!descriptor.isReturnsEffectDescriptor()) return null
 
         val argumentExpression = resolvedCall.firstArgumentAsExpressionOrNull()
-        val constantValue = if (argumentExpression == null)
+        val constantValue = if (argumentExpression == null) {
             ConstantReference.WILDCARD
-        else {
+        } else {
             // Note that we distinguish absence of an argument and unparsed argument
             val constant = contractParserDispatcher.parseConstant(argumentExpression)
             if (constant == null) {
-                trace.report(Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(argumentExpression, "only true/false/null constants in Returns-effect are currently supported"))
+                trace.report(
+                    Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(
+                        argumentExpression,
+                        "only true/false/null constants in Returns-effect are currently supported"
+                    )
+                )
                 return null
             }
             constant

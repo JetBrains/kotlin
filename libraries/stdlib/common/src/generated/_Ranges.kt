@@ -472,6 +472,7 @@ public expect infix fun Short.until(to: Short): IntRange
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeastComparable
  */
 public expect fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T
 
@@ -479,6 +480,7 @@ public expect fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Byte.coerceAtLeast(minimumValue: Byte): Byte
 
@@ -486,6 +488,7 @@ public expect fun Byte.coerceAtLeast(minimumValue: Byte): Byte
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Short.coerceAtLeast(minimumValue: Short): Short
 
@@ -493,6 +496,7 @@ public expect fun Short.coerceAtLeast(minimumValue: Short): Short
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Int.coerceAtLeast(minimumValue: Int): Int
 
@@ -500,6 +504,7 @@ public expect fun Int.coerceAtLeast(minimumValue: Int): Int
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Long.coerceAtLeast(minimumValue: Long): Long
 
@@ -507,6 +512,7 @@ public expect fun Long.coerceAtLeast(minimumValue: Long): Long
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Float.coerceAtLeast(minimumValue: Float): Float
 
@@ -514,6 +520,7 @@ public expect fun Float.coerceAtLeast(minimumValue: Float): Float
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtLeast
  */
 public expect fun Double.coerceAtLeast(minimumValue: Double): Double
 
@@ -521,6 +528,7 @@ public expect fun Double.coerceAtLeast(minimumValue: Double): Double
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMostComparable
  */
 public expect fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T
 
@@ -528,6 +536,7 @@ public expect fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Byte.coerceAtMost(maximumValue: Byte): Byte
 
@@ -535,6 +544,7 @@ public expect fun Byte.coerceAtMost(maximumValue: Byte): Byte
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Short.coerceAtMost(maximumValue: Short): Short
 
@@ -542,6 +552,7 @@ public expect fun Short.coerceAtMost(maximumValue: Short): Short
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Int.coerceAtMost(maximumValue: Int): Int
 
@@ -549,6 +560,7 @@ public expect fun Int.coerceAtMost(maximumValue: Int): Int
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Long.coerceAtMost(maximumValue: Long): Long
 
@@ -556,6 +568,7 @@ public expect fun Long.coerceAtMost(maximumValue: Long): Long
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Float.coerceAtMost(maximumValue: Float): Float
 
@@ -563,6 +576,7 @@ public expect fun Float.coerceAtMost(maximumValue: Float): Float
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
 public expect fun Double.coerceAtMost(maximumValue: Double): Double
 
@@ -570,6 +584,7 @@ public expect fun Double.coerceAtMost(maximumValue: Double): Double
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceInComparable
  */
 public expect fun <T: Comparable<T>> T.coerceIn(minimumValue: T?, maximumValue: T?): T
 
@@ -577,6 +592,7 @@ public expect fun <T: Comparable<T>> T.coerceIn(minimumValue: T?, maximumValue: 
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public expect fun Byte.coerceIn(minimumValue: Byte, maximumValue: Byte): Byte
 
@@ -584,6 +600,7 @@ public expect fun Byte.coerceIn(minimumValue: Byte, maximumValue: Byte): Byte
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public expect fun Short.coerceIn(minimumValue: Short, maximumValue: Short): Short
 
@@ -591,6 +608,7 @@ public expect fun Short.coerceIn(minimumValue: Short, maximumValue: Short): Shor
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public expect fun Int.coerceIn(minimumValue: Int, maximumValue: Int): Int
 
@@ -598,6 +616,7 @@ public expect fun Int.coerceIn(minimumValue: Int, maximumValue: Int): Int
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public expect fun Long.coerceIn(minimumValue: Long, maximumValue: Long): Long
 
@@ -605,6 +624,7 @@ public expect fun Long.coerceIn(minimumValue: Long, maximumValue: Long): Long
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public expect fun Float.coerceIn(minimumValue: Float, maximumValue: Float): Float
 
@@ -612,6 +632,7 @@ public expect fun Float.coerceIn(minimumValue: Float, maximumValue: Float): Floa
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public expect fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double
 
@@ -619,6 +640,7 @@ public expect fun Double.coerceIn(minimumValue: Double, maximumValue: Double): D
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * @sample samples.comparisons.ComparableOps.coerceInFloatingPointRange
  */
 @SinceKotlin("1.1")
 public expect fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T
@@ -627,6 +649,7 @@ public expect fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * @sample samples.comparisons.ComparableOps.coerceInComparable
  */
 public expect fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T
 
@@ -634,6 +657,7 @@ public expect fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public expect fun Int.coerceIn(range: ClosedRange<Int>): Int
 
@@ -641,6 +665,7 @@ public expect fun Int.coerceIn(range: ClosedRange<Int>): Int
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * @sample samples.comparisons.ComparableOps.coerceIn
  */
 public expect fun Long.coerceIn(range: ClosedRange<Long>): Long
 

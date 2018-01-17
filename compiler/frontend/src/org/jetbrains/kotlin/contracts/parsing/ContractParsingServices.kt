@@ -44,9 +44,9 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
         val contractProvider = ownerDescriptor.getUserData(ContractProviderKey) ?: return
 
         val isFeatureTurnedOn = languageVersionSettings.supportsFeature(LanguageFeature.CallsInPlaceEffect) ||
-                                languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect) ||
-                                // This condition is here for technical purposes of compiling 1.2-runtime with contracts
-                                languageVersionSettings.getFlag(AnalysisFlag.Flags.allowKotlinPackage)
+                languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect) ||
+                // This condition is here for technical purposes of compiling 1.2-runtime with contracts
+                languageVersionSettings.getFlag(AnalysisFlag.Flags.allowKotlinPackage)
 
         val contractDescriptor = when {
             !isFeatureTurnedOn || !isContractDescriptionCallPreciseCheck(expression, trace.bindingContext) -> null
@@ -63,20 +63,20 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
     }
 
     private fun parseContract(expression: KtExpression?, trace: BindingTrace, ownerDescriptor: FunctionDescriptor): ContractDescription? =
-            PsiContractParserDispatcher(trace, this).parseContract(expression, ownerDescriptor)
+        PsiContractParserDispatcher(trace, this).parseContract(expression, ownerDescriptor)
 
     internal fun isContractDescriptionCall(expression: KtExpression, context: BindingContext): Boolean =
-            isContractDescriptionCallFastCheck(expression) && isContractDescriptionCallPreciseCheck(expression, context)
+        isContractDescriptionCallFastCheck(expression) && isContractDescriptionCallPreciseCheck(expression, context)
 
     private fun isContractAllowedHere(element: KtElement): Boolean =
-            element is KtNamedFunction && element.isTopLevel && element.hasBlockBody() && !element.hasModifier(KtTokens.OPERATOR_KEYWORD)
+        element is KtNamedFunction && element.isTopLevel && element.hasBlockBody() && !element.hasModifier(KtTokens.OPERATOR_KEYWORD)
 
     private fun isContractAllowedHere(scope: LexicalScope): Boolean =
-            scope.kind == LexicalScopeKind.CODE_BLOCK && (scope.parent as? LexicalScope)?.kind == LexicalScopeKind.FUNCTION_INNER_SCOPE
+        scope.kind == LexicalScopeKind.CODE_BLOCK && (scope.parent as? LexicalScope)?.kind == LexicalScopeKind.FUNCTION_INNER_SCOPE
 
     private fun isContractDescriptionCallFastCheck(expression: KtExpression): Boolean =
-            expression is KtCallExpression && expression.calleeExpression?.text == "contract"
+        expression is KtCallExpression && expression.calleeExpression?.text == "contract"
 
     private fun isContractDescriptionCallPreciseCheck(expression: KtExpression, context: BindingContext): Boolean =
-            expression.getResolvedCall(context)?.resultingDescriptor?.isContractCallDescriptor() ?: false
+        expression.getResolvedCall(context)?.resultingDescriptor?.isContractCallDescriptor() ?: false
 }

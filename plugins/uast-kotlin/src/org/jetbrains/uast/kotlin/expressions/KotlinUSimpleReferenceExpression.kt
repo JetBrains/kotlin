@@ -101,7 +101,7 @@ open class KotlinUSimpleReferenceExpression(
             private val resolvedCall: ResolvedCall<*>,
             private val accessorDescriptor: DeclarationDescriptor,
             val setterValue: KtExpression?
-    ) : UCallExpression {
+    ) : UCallExpression, JvmDeclarationUElement {
         override val methodName: String?
             get() = accessorDescriptor.name.asString()
 
@@ -113,6 +113,9 @@ open class KotlinUSimpleReferenceExpression(
                 else
                     null
             }
+
+        override val javaPsi: PsiElement? = null
+        override val sourcePsi: PsiElement? = psi
 
         override val annotations: List<UAnnotation>
             get() = emptyList()

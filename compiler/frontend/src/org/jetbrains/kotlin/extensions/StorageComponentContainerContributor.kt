@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 
 interface StorageComponentContainerContributor {
     companion object : ProjectExtensionDescriptor<StorageComponentContainerContributor>(
-            "org.jetbrains.kotlin.storageComponentContainerContributor", StorageComponentContainerContributor::class.java
+        "org.jetbrains.kotlin.storageComponentContainerContributor", StorageComponentContainerContributor::class.java
     )
 
     fun registerModuleComponents(container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor) {}

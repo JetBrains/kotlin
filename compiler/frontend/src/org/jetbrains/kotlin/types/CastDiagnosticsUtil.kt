@@ -38,9 +38,9 @@ object CastDiagnosticsUtil {
     // it must be really impossible
     @JvmStatic
     fun isCastPossible(
-            lhsType: KotlinType,
-            rhsType: KotlinType,
-            platformToKotlinClassMap: PlatformToKotlinClassMap
+        lhsType: KotlinType,
+        rhsType: KotlinType,
+        platformToKotlinClassMap: PlatformToKotlinClassMap
     ): Boolean {
         val rhsNullable = TypeUtils.isNullableType(rhsType)
         val lhsNullable = TypeUtils.isNullableType(lhsType)
@@ -77,8 +77,8 @@ object CastDiagnosticsUtil {
     }
 
     private fun mapToPlatformIndependentClasses(
-            type: KotlinType,
-            platformToKotlinClassMap: PlatformToKotlinClassMap
+        type: KotlinType,
+        platformToKotlinClassMap: PlatformToKotlinClassMap
     ): List<ClassDescriptor> {
         val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return listOf()
 
@@ -88,7 +88,7 @@ object CastDiagnosticsUtil {
     private fun isFinal(type: KotlinType) = !TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type)
 
     private fun isTrait(type: KotlinType) =
-            type.constructor.declarationDescriptor.let { it is ClassDescriptor && it.kind == ClassKind.INTERFACE }
+        type.constructor.declarationDescriptor.let { it is ClassDescriptor && it.kind == ClassKind.INTERFACE }
 
     /**
      * Check if cast from supertype to subtype is erased.
@@ -168,11 +168,10 @@ object CastDiagnosticsUtil {
         val substitution: MutableMap<TypeConstructor, TypeProjection> = if (supertypeWithVariables != null) {
             // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
             val solution = TypeUnifier.unify(
-                    TypeProjectionImpl(supertype), TypeProjectionImpl(supertypeWithVariables), variableConstructors::contains
+                TypeProjectionImpl(supertype), TypeProjectionImpl(supertypeWithVariables), variableConstructors::contains
             )
             Maps.newHashMap(solution.substitution)
-        }
-        else {
+        } else {
             // If there's no corresponding supertype, no variables are determined
             // This may be OK, e.g. in case 'Any as List<*>'
             Maps.newHashMapWithExpectedSize<TypeConstructor, TypeProjection>(variables.size)
@@ -185,8 +184,9 @@ object CastDiagnosticsUtil {
             val value = substitution[variable.typeConstructor]
             if (value == null) {
                 substitution.put(
-                        variable.typeConstructor,
-                        TypeUtils.makeStarProjection(variable))
+                    variable.typeConstructor,
+                    TypeUtils.makeStarProjection(variable)
+                )
                 allArgumentsInferred = false
             }
         }
@@ -201,10 +201,10 @@ object CastDiagnosticsUtil {
     private fun allParametersReified(subtype: KotlinType) = subtype.constructor.parameters.all { it.isReified }
 
     fun castIsUseless(
-            expression: KtBinaryExpressionWithTypeRHS,
-            context: ExpressionTypingContext,
-            targetType: KotlinType,
-            actualType: KotlinType
+        expression: KtBinaryExpressionWithTypeRHS,
+        context: ExpressionTypingContext,
+        targetType: KotlinType,
+        actualType: KotlinType
     ): Boolean {
         // Here: x as? Type <=> x as Type?
         val refinedTargetType = if (KtPsiUtil.isSafeCast(expression)) TypeUtils.makeNullable(targetType) else targetType
@@ -214,9 +214,9 @@ object CastDiagnosticsUtil {
 
     // It is a warning "useless cast" for `as` and a warning "redundant is" for `is`
     fun isRefinementUseless(
-            possibleTypes: Collection<KotlinType>,
-            targetType: KotlinType,
-            shouldCheckForExactType: Boolean
+        possibleTypes: Collection<KotlinType>,
+        targetType: KotlinType,
+        shouldCheckForExactType: Boolean
     ): Boolean {
         val intersectedType = TypeIntersector.intersectTypes(possibleTypes.map { it.upperIfFlexible() }) ?: return false
 
@@ -255,8 +255,8 @@ object CastDiagnosticsUtil {
     private fun checkExactTypeForUselessCast(expression: KtBinaryExpressionWithTypeRHS): Boolean {
         var parent = expression.parent
         while (parent is KtParenthesizedExpression ||
-               parent is KtLabeledExpression ||
-               parent is KtAnnotatedExpression) {
+            parent is KtLabeledExpression ||
+            parent is KtAnnotatedExpression) {
             parent = parent.parent
         }
 
@@ -268,12 +268,12 @@ object CastDiagnosticsUtil {
                 PsiTreeUtil.isAncestor(receiver, expression, false)
             }
 
-            // in binary expression, left argument can be a receiver and right an argument
-            // in unary expression, left argument can be a receiver
+        // in binary expression, left argument can be a receiver and right an argument
+        // in unary expression, left argument can be a receiver
             is KtBinaryExpression, is KtUnaryExpression -> true
 
-            // Previously we've checked that there is no expected type, therefore cast in property or
-            // in function has an effect on inference and thus isn't useless
+        // Previously we've checked that there is no expected type, therefore cast in property or
+        // in function has an effect on inference and thus isn't useless
             is KtProperty, is KtPropertyAccessor, is KtNamedFunction, is KtFunctionLiteral -> true
 
             else -> false

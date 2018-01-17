@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.backend.jvm.codegen.IrExpressionLambda
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
@@ -328,17 +330,29 @@ class MethodInliner(
 
         val capturedParamsSize = parameters.capturedParametersSizeOnStack
         val realParametersSize = parameters.realParametersSizeOnStack
+        val transformedNode = MethodNode(
+            API, node.access, node.name,
+            Type.getMethodDescriptor(Type.getReturnType(node.desc), *(Type.getArgumentTypes(node.desc) + parameters.capturedTypes)),
+            node.signature, node.exceptions?.toTypedArray()
+        )
 
-        val transformedNode = object : MethodNode(
-                API, node.access, node.name,
-                Type.getMethodDescriptor(Type.getReturnType(node.desc), *(Type.getArgumentTypes(node.desc) + parameters.capturedTypes)),
-                node.signature, node.exceptions?.toTypedArray()
-        ) {
+        val transformationVisitor = object : MethodVisitor(API, transformedNode) {
             private val GENERATE_DEBUG_INFO = GENERATE_SMAP && inlineOnlySmapSkipper == null
 
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 
             private fun getNewIndex(`var`: Int): Int {
+                if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda) {
+                    if (`var` < parameters.argsSizeOnStack) {
+                        if (`var` < capturedParamsSize) {
+                            return `var` + realParametersSize
+                        }
+                        else {
+                            return `var` - capturedParamsSize
+                        }
+                    }
+                    return `var`
+                }
                 return `var` + if (`var` < realParametersSize) 0 else capturedParamsSize
             }
 
@@ -391,7 +405,7 @@ class MethodInliner(
             }
         }
 
-        node.accept(transformedNode)
+        node.accept(transformationVisitor)
 
         transformCaptured(transformedNode)
         transformFinallyDeepIndex(transformedNode, finallyDeepShift)
@@ -641,6 +655,33 @@ class MethodInliner(
     private fun transformCaptured(node: MethodNode) {
         if (nodeRemapper.isRoot) {
             return
+        }
+
+        if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda) {
+            val capturedVars = inliningContext.lambdaInfo!!.capturedVars
+            var offset = parameters.realParametersSizeOnStack
+            val map = capturedVars.map {
+                offset to it.also { offset += it.type.size }
+            }.toMap()
+
+            var cur: AbstractInsnNode? = node.instructions.first
+            while (cur != null) {
+                if (cur is VarInsnNode && cur.opcode == Opcodes.ALOAD && map.contains(cur.`var`)) {
+                    val varIndex = cur.`var`
+                    val capturedParamDesc = map[varIndex]!!
+
+                    val newIns = FieldInsnNode(
+                        Opcodes.GETSTATIC,
+                        capturedParamDesc.containingLambdaName,
+                        foldName(capturedParamDesc.fieldName),
+                        capturedParamDesc.type.descriptor
+                    )
+                    node.instructions.insertBefore(cur, newIns)
+                    node.instructions.remove(cur)
+                    cur = newIns
+                }
+                cur = cur.next
+            }
         }
 
         // Fold all captured variables access chains

@@ -40,10 +40,10 @@ abstract class TargetPlatform(val platformName: String) {
     abstract val multiTargetPlatform: MultiTargetPlatform
 
     object Common : TargetPlatform("Default") {
-        private val defaultImports = LockBasedStorageManager().createMemoizedFunction<Boolean, List<ImportPath>> {
-            includeKotlinComparisons ->
-            ArrayList<ImportPath>().apply {
-                listOf(
+        private val defaultImports =
+            LockBasedStorageManager().createMemoizedFunction<Boolean, List<ImportPath>> { includeKotlinComparisons ->
+                ArrayList<ImportPath>().apply {
+                    listOf(
                         "kotlin.*",
                         "kotlin.annotation.*",
                         "kotlin.collections.*",
@@ -51,28 +51,28 @@ abstract class TargetPlatform(val platformName: String) {
                         "kotlin.sequences.*",
                         "kotlin.text.*",
                         "kotlin.io.*"
-                ).forEach { add(ImportPath.fromString(it)) }
+                    ).forEach { add(ImportPath.fromString(it)) }
 
-                if (includeKotlinComparisons) {
-                    add(ImportPath.fromString("kotlin.comparisons.*"))
+                    if (includeKotlinComparisons) {
+                        add(ImportPath.fromString("kotlin.comparisons.*"))
+                    }
                 }
             }
-        }
 
         override fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath> = defaultImports(includeKotlinComparisons)
 
         override val platformConfigurator =
-                object : PlatformConfigurator(
-                        DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
-                        IdentifierChecker.Default, OverloadFilter.Default, PlatformToKotlinClassMap.EMPTY, DelegationFilter.Default,
-                        OverridesBackwardCompatibilityHelper.Default,
-                        DeclarationReturnTypeSanitizer.Default
-                ) {
-                    override fun configureModuleComponents(container: StorageComponentContainer) {
-                        container.useInstance(SyntheticScopes.Empty)
-                        container.useInstance(TypeSpecificityComparator.NONE)
-                    }
+            object : PlatformConfigurator(
+                DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
+                IdentifierChecker.Default, OverloadFilter.Default, PlatformToKotlinClassMap.EMPTY, DelegationFilter.Default,
+                OverridesBackwardCompatibilityHelper.Default,
+                DeclarationReturnTypeSanitizer.Default
+            ) {
+                override fun configureModuleComponents(container: StorageComponentContainer) {
+                    container.useInstance(SyntheticScopes.Empty)
+                    container.useInstance(TypeSpecificityComparator.NONE)
                 }
+            }
 
         override val multiTargetPlatform: MultiTargetPlatform
             get() = MultiTargetPlatform.Common
@@ -80,52 +80,53 @@ abstract class TargetPlatform(val platformName: String) {
 }
 
 private val DEFAULT_DECLARATION_CHECKERS = listOf(
-        DataClassDeclarationChecker(),
-        ConstModifierChecker,
-        UnderscoreChecker,
-        InlineParameterChecker,
-        InfixModifierChecker(),
-        SinceKotlinAnnotationValueChecker,
-        RequireKotlinAnnotationValueChecker,
-        ReifiedTypeParameterAnnotationChecker(),
-        DynamicReceiverChecker,
-        DelegationChecker(),
-        KClassWithIncorrectTypeArgumentChecker,
-        SuspendOperatorsCheckers
+    DataClassDeclarationChecker(),
+    ConstModifierChecker,
+    UnderscoreChecker,
+    InlineParameterChecker,
+    InfixModifierChecker(),
+    SinceKotlinAnnotationValueChecker,
+    RequireKotlinAnnotationValueChecker,
+    ReifiedTypeParameterAnnotationChecker(),
+    DynamicReceiverChecker,
+    DelegationChecker(),
+    KClassWithIncorrectTypeArgumentChecker,
+    SuspendOperatorsCheckers
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
-        CapturingInClosureChecker(), InlineCheckerWrapper(), SafeCallChecker(),
-        DeprecatedCallChecker, CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
-        ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
-        CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker, MissingDependencyClassChecker,
-        CallableReferenceCompatibilityChecker(), LateinitIntrinsicApplicabilityChecker,
-        UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker()
+    CapturingInClosureChecker(), InlineCheckerWrapper(), SafeCallChecker(),
+    DeprecatedCallChecker, CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
+    ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
+    CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker, MissingDependencyClassChecker,
+    CallableReferenceCompatibilityChecker(), LateinitIntrinsicApplicabilityChecker,
+    UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker()
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
-        DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker, MissingDependencyClassChecker.ClassifierUsage
+    DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker, MissingDependencyClassChecker.ClassifierUsage
 )
 
 
 abstract class PlatformConfigurator(
-        private val dynamicTypesSettings: DynamicTypesSettings,
-        additionalDeclarationCheckers: List<DeclarationChecker>,
-        additionalCallCheckers: List<CallChecker>,
-        additionalTypeCheckers: List<AdditionalTypeChecker>,
-        additionalClassifierUsageCheckers: List<ClassifierUsageChecker>,
-        private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
-        private val identifierChecker: IdentifierChecker,
-        private val overloadFilter: OverloadFilter,
-        private val platformToKotlinClassMap: PlatformToKotlinClassMap,
-        private val delegationFilter: DelegationFilter,
-        private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper,
-        private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer
+    private val dynamicTypesSettings: DynamicTypesSettings,
+    additionalDeclarationCheckers: List<DeclarationChecker>,
+    additionalCallCheckers: List<CallChecker>,
+    additionalTypeCheckers: List<AdditionalTypeChecker>,
+    additionalClassifierUsageCheckers: List<ClassifierUsageChecker>,
+    private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
+    private val identifierChecker: IdentifierChecker,
+    private val overloadFilter: OverloadFilter,
+    private val platformToKotlinClassMap: PlatformToKotlinClassMap,
+    private val delegationFilter: DelegationFilter,
+    private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper,
+    private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer
 ) {
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
     private val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
     private val typeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
-    private val classifierUsageCheckers: List<ClassifierUsageChecker> = DEFAULT_CLASSIFIER_USAGE_CHECKERS + additionalClassifierUsageCheckers
+    private val classifierUsageCheckers: List<ClassifierUsageChecker> =
+        DEFAULT_CLASSIFIER_USAGE_CHECKERS + additionalClassifierUsageCheckers
 
     abstract fun configureModuleComponents(container: StorageComponentContainer)
 
@@ -145,5 +146,5 @@ abstract class PlatformConfigurator(
     }
 }
 
-fun createContainer(id: String, platform: TargetPlatform, init: StorageComponentContainer.() -> Unit)
-        = composeContainer(id, platform.platformConfigurator.platformSpecificContainer, init)
+fun createContainer(id: String, platform: TargetPlatform, init: StorageComponentContainer.() -> Unit) =
+    composeContainer(id, platform.platformConfigurator.platformSpecificContainer, init)

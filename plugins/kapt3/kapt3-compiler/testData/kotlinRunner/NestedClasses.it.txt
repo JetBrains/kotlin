@@ -1,51 +1,32 @@
-package error;
-
-public final class NonExistentClass {
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptMetadata {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptSignature {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
+/**
+ * @KaptMetadata
+ */
 package test;
+
+import java.lang.System;
 
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@kapt.internal.KaptMetadata()
 public abstract @interface MyAnnotation {
 }
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 package test;
 
+import java.lang.System;
+
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class Simple {
     public static final test.Simple.Companion Companion = null;
 
     @MyAnnotation()
-    @kapt.internal.KaptSignature("myMethod()V")
     public final void myMethod() {
     }
 
-    @kapt.internal.KaptSignature("<init>()V")
     public Simple() {
         super();
     }
@@ -53,7 +34,6 @@ public final class Simple {
     @kotlin.Metadata()
     public static final class NestedClass {
 
-        @kapt.internal.KaptSignature("<init>()V")
         public NestedClass() {
             super();
         }
@@ -61,7 +41,6 @@ public final class Simple {
         @kotlin.Metadata()
         public static final class NestedNestedClass {
 
-            @kapt.internal.KaptSignature("<init>()V")
             public NestedNestedClass() {
                 super();
             }
@@ -71,7 +50,6 @@ public final class Simple {
     @kotlin.Metadata()
     public final class InnerClass {
 
-        @kapt.internal.KaptSignature("<init>(Ltest/Simple;)V")
         public InnerClass() {
             super();
         }
@@ -80,9 +58,15 @@ public final class Simple {
     @kotlin.Metadata()
     public static final class Companion {
 
-        @kapt.internal.KaptSignature("<init>()V")
         private Companion() {
             super();
         }
     }
+}
+
+////////////////////
+
+package error;
+
+public final class NonExistentClass {
 }

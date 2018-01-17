@@ -26,7 +26,6 @@ import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
-import junit.framework.TestCase
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.BuildResult
@@ -52,15 +51,12 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.Usage
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.withIC
@@ -76,107 +72,14 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert
-import java.io.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 import java.net.URLClassLoader
 import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
-import kotlin.reflect.KMutableProperty1
-
-class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
-    var isICEnabledBackup: Boolean = false
-
-    override fun setUp() {
-        super.setUp()
-        isICEnabledBackup = IncrementalCompilation.isEnabled()
-        IncrementalCompilation.setIsEnabled(true)
-    }
-
-    override fun tearDown() {
-        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
-        super.tearDown()
-    }
-
-    fun testManyFiles() {
-        doTest()
-
-        val module = myProject.modules.get(0)
-        assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
-
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar")))
-
-        checkWhen(del("src/main.kt"),
-                  pathsToCompile = null,
-                  pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
-        assertFilesNotExistInOutput(module, "foo/MainKt.class")
-
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar")))
-    }
-
-    fun testManyFilesForPackage() {
-        doTest()
-
-        val module = myProject.modules.get(0)
-        assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
-
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"),
-                  arrayOf("src/Bar.kt"),
-                  arrayOf(klass("kotlinProject", "foo.Bar"),
-                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
-                          module("kotlinProject")))
-
-        checkWhen(del("src/main.kt"),
-                  pathsToCompile = null,
-                  pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
-
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), null,
-                  arrayOf(klass("kotlinProject", "foo.Bar"),
-                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
-                          module("kotlinProject")))
-    }
-
-    @WorkingDir("LanguageOrApiVersionChanged")
-    fun testLanguageVersionChanged() {
-        languageOrApiVersionChanged(CommonCompilerArguments::languageVersion)
-    }
-
-    @WorkingDir("LanguageOrApiVersionChanged")
-    fun testApiVersionChanged() {
-        languageOrApiVersionChanged(CommonCompilerArguments::apiVersion)
-    }
-
-    private fun languageOrApiVersionChanged(versionProperty: KMutableProperty1<CommonCompilerArguments, String?>) {
-        initProject(JVM_MOCK_RUNTIME)
-
-        assertEquals(1, myProject.modules.size)
-        val module = myProject.modules.first()
-        val args = JpsKotlinCompilerSettings.getCommonCompilerArguments(module)
-
-        fun setVersion(newVersion: String) {
-            versionProperty.set(args, newVersion)
-            JpsKotlinCompilerSettings.setCommonCompilerArguments(myProject, args)
-        }
-
-        assertNull(args.apiVersion)
-        buildAllModules().assertSuccessful()
-
-        setVersion(LanguageVersion.LATEST_STABLE.versionString)
-        buildAllModules().assertSuccessful()
-        assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME)
-
-        setVersion(LanguageVersion.KOTLIN_1_0.versionString)
-        buildAllModules().assertSuccessful()
-        assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
-    }
-}
 
 open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     companion object {
@@ -266,7 +169,8 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             }
         }
 
-        private fun findFileInOutputDir(module: JpsModule, relativePath: String): File {
+        @JvmStatic
+        protected fun findFileInOutputDir(module: JpsModule, relativePath: String): File {
             val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
             assertNotNull(outputUrl)
             val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
@@ -972,7 +876,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         buildAllModules().assertSuccessful()
 
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
-        assertTrue(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
+        assertFalse(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
         assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
     }
 
@@ -989,7 +893,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         }
 
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
-        assertTrue(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
+        assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
         assertFalse(File(storageRoot, "targets/java-production/module2/kotlin").exists())
     }
 

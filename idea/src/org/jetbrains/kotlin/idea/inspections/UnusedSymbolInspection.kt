@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -139,47 +128,44 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     override fun runForWholeFile() = true
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitDeclaration(declaration: KtDeclaration) {
-                if (declaration !is KtNamedDeclaration) return
-                val message = declaration.describe()?.let { "$it is never used" } ?: return
+        return namedDeclarationVisitor(fun(declaration) {
+            val message = declaration.describe()?.let { "$it is never used" } ?: return
 
-                if (!ProjectRootsUtil.isInProjectSource(declaration)) return
+            if (!ProjectRootsUtil.isInProjectSource(declaration)) return
 
-                // Simple PSI-based checks
-                if (declaration is KtObjectDeclaration && declaration.isCompanion()) return // never mark companion object as unused (there are too many reasons it can be needed for)
+            // Simple PSI-based checks
+            if (declaration is KtObjectDeclaration && declaration.isCompanion()) return // never mark companion object as unused (there are too many reasons it can be needed for)
 
-                if (declaration is KtEnumEntry) return
-                if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
-                if (declaration is KtProperty && declaration.isLocal) return
-                if (declaration is KtParameter && (declaration.getParent().parent !is KtPrimaryConstructor || !declaration.hasValOrVar())) return
+            if (declaration is KtEnumEntry) return
+            if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+            if (declaration is KtProperty && declaration.isLocal) return
+            if (declaration is KtParameter && (declaration.getParent().parent !is KtPrimaryConstructor || !declaration.hasValOrVar())) return
 
-                // More expensive, resolve-based checks
-                val descriptor = declaration.resolveToDescriptorIfAny() ?: return
-                if (descriptor is FunctionDescriptor && descriptor.isOperator) return
-                if (isEntryPoint(declaration)) return
-                if (declaration is KtProperty && declaration.isSerializationImplicitlyUsedField()) return
-                if (declaration is KtNamedFunction && declaration.isSerializationImplicitlyUsedMethod()) return
-                // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
-                if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return
+            // More expensive, resolve-based checks
+            val descriptor = declaration.resolveToDescriptorIfAny() ?: return
+            if (descriptor is FunctionDescriptor && descriptor.isOperator) return
+            if (isEntryPoint(declaration)) return
+            if (declaration is KtProperty && declaration.isSerializationImplicitlyUsedField()) return
+            if (declaration is KtNamedFunction && declaration.isSerializationImplicitlyUsedMethod()) return
+            // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
+            if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return
 
-                // Main checks: finding reference usages && text usages
-                if (hasNonTrivialUsages(declaration, descriptor)) return
-                if (declaration is KtClassOrObject && classOrObjectHasTextUsages(declaration)) return
+            // Main checks: finding reference usages && text usages
+            if (hasNonTrivialUsages(declaration, descriptor)) return
+            if (declaration is KtClassOrObject && classOrObjectHasTextUsages(declaration)) return
 
-                val psiElement = declaration.nameIdentifier ?: (declaration as? KtConstructor<*>)?.getConstructorKeyword() ?: return
-                val problemDescriptor = holder.manager.createProblemDescriptor(
-                        psiElement,
-                        null,
-                        message,
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        true,
-                        *createQuickFixes(declaration).toTypedArray()
-                )
+            val psiElement = declaration.nameIdentifier ?: (declaration as? KtConstructor<*>)?.getConstructorKeyword() ?: return
+            val problemDescriptor = holder.manager.createProblemDescriptor(
+                    psiElement,
+                    null,
+                    message,
+                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    true,
+                    *createQuickFixes(declaration).toTypedArray()
+            )
 
-                holder.registerProblem(problemDescriptor)
-            }
-        }
+            holder.registerProblem(problemDescriptor)
+        })
     }
 
     override val suppressionKey: String get() = "unused"

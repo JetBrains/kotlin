@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 
 class KtTypeAliasElementType(debugName: String) :
-        KtStubElementType<KotlinTypeAliasStub, KtTypeAlias>(debugName, KtTypeAlias::class.java, KotlinTypeAliasStub::class.java) {
+    KtStubElementType<KotlinTypeAliasStub, KtTypeAlias>(debugName, KtTypeAlias::class.java, KotlinTypeAliasStub::class.java) {
 
     override fun createStub(psi: KtTypeAlias, parentStub: StubElement<*>?): KotlinTypeAliasStub {
         val name = StringRef.fromString(psi.name)

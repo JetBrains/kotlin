@@ -1,23 +1,13 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.editor
 
 import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
@@ -30,37 +20,37 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
+class KotlinSmartEnterHandler : SmartEnterProcessorWithFixers() {
     init {
         addFixers(
-                KotlinIfConditionFixer(),
-                KotlinMissingIfBranchFixer(),
+            KotlinIfConditionFixer(),
+            KotlinMissingIfBranchFixer(),
 
-                KotlinWhileConditionFixer(),
-                KotlinForConditionFixer(),
-                KotlinMissingForOrWhileBodyFixer(),
+            KotlinWhileConditionFixer(),
+            KotlinForConditionFixer(),
+            KotlinMissingForOrWhileBodyFixer(),
 
-                KotlinWhenSubjectCaretFixer(),
-                KotlinMissingWhenBodyFixer(),
+            KotlinWhenSubjectCaretFixer(),
+            KotlinMissingWhenBodyFixer(),
 
-                KotlinDoWhileFixer(),
+            KotlinDoWhileFixer(),
 
-                KotlinFunctionParametersFixer(),
-                KotlinFunctionDeclarationBodyFixer(),
+            KotlinFunctionParametersFixer(),
+            KotlinFunctionDeclarationBodyFixer(),
 
-                KotlinPropertySetterParametersFixer(),
-                KotlinPropertySetterBodyFixer(),
+            KotlinPropertySetterParametersFixer(),
+            KotlinPropertySetterBodyFixer(),
 
-                KotlinTryBodyFixer(),
-                KotlinCatchParameterFixer(),
-                KotlinCatchBodyFixer(),
-                KotlinFinallyBodyFixer(),
+            KotlinTryBodyFixer(),
+            KotlinCatchParameterFixer(),
+            KotlinCatchBodyFixer(),
+            KotlinFinallyBodyFixer(),
 
-                KotlinLastLambdaParameterFixer(),
+            KotlinLastLambdaParameterFixer(),
 
-                KotlinClassInitializerFixer(),
+            KotlinClassInitializerFixer(),
 
-                KotlinClassBodyFixer()
+            KotlinClassBodyFixer()
         )
 
         addEnterProcessors(KotlinPlainEnterProcessor())
@@ -78,8 +68,10 @@ class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
                 atCaret is KtDeclaration -> {
                     val declaration = atCaret
                     when {
-                        declaration is KtParameter && !declaration.isInLambdaExpression() -> {/* proceed to function declaration */}
-                        declaration.parent is KtForExpression -> {/* skip variable declaration in 'for' expression */}
+                        declaration is KtParameter && !declaration.isInLambdaExpression() -> {/* proceed to function declaration */
+                        }
+                        declaration.parent is KtForExpression -> {/* skip variable declaration in 'for' expression */
+                        }
                         else -> return atCaret
                     }
                 }
@@ -97,8 +89,7 @@ class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
 
         if (CharArrayUtil.regionMatches(chars, caretOffset, "{}")) {
             caretOffset += 2
-        }
-        else {
+        } else {
             if (CharArrayUtil.regionMatches(chars, caretOffset, "{\n}")) {
                 caretOffset += 3
             }
@@ -158,6 +149,10 @@ class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
             plainEnter(editor)
             return true
         }
+    }
+
+    override fun processDefaultEnter(project: Project, editor: Editor, file: PsiFile) {
+        plainEnter(editor)
     }
 }
 

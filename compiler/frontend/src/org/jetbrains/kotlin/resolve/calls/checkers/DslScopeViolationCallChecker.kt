@@ -46,15 +46,15 @@ object DslScopeViolationCallChecker : CallChecker {
     }
 
     private fun checkCallImplicitReceiver(
-            callImplicitReceiver: ReceiverValue,
-            resolvedCall: ResolvedCall<*>,
-            reportOn: PsiElement,
-            context: CallCheckerContext
+        callImplicitReceiver: ReceiverValue,
+        resolvedCall: ResolvedCall<*>,
+        reportOn: PsiElement,
+        context: CallCheckerContext
     ) {
         val receiversUntilOneFromTheCall =
-                context.scope.parentsWithSelf
-                        .mapNotNull { (it as? LexicalScope)?.implicitReceiver?.value }
-                        .takeWhile { it != callImplicitReceiver }.toList()
+            context.scope.parentsWithSelf
+                .mapNotNull { (it as? LexicalScope)?.implicitReceiver?.value }
+                .takeWhile { it != callImplicitReceiver }.toList()
 
         if (receiversUntilOneFromTheCall.isEmpty()) return
 
@@ -62,7 +62,7 @@ object DslScopeViolationCallChecker : CallChecker {
         if (callDslMarkers.isEmpty()) return
 
         val closestAnotherReceiverWithSameDslMarker =
-                receiversUntilOneFromTheCall.firstOrNull { receiver -> receiver.type.extractDslMarkerFqNames().any(callDslMarkers::contains) }
+            receiversUntilOneFromTheCall.firstOrNull { receiver -> receiver.type.extractDslMarkerFqNames().any(callDslMarkers::contains) }
 
         if (closestAnotherReceiverWithSameDslMarker != null) {
             // TODO: report receivers configuration (what's one is used and what's one is the closest)
@@ -83,7 +83,7 @@ object DslScopeViolationCallChecker : CallChecker {
         }
 
         constructor.declarationDescriptor?.getAllSuperClassifiers()?.asIterable()
-                ?.flatMapTo(result) { it.annotations.extractDslMarkerFqNames() }
+            ?.flatMapTo(result) { it.annotations.extractDslMarkerFqNames() }
 
         return result
     }
@@ -91,7 +91,7 @@ object DslScopeViolationCallChecker : CallChecker {
 }
 
 private fun Annotations.extractDslMarkerFqNames() =
-        filter(AnnotationDescriptor::isDslMarker).map { it.fqName!! }
+    filter(AnnotationDescriptor::isDslMarker).map { it.fqName!! }
 
 private fun AnnotationDescriptor.isDslMarker(): Boolean {
     val classDescriptor = annotationClass ?: return false

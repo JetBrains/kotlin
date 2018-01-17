@@ -6,7 +6,7 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="172.1" until-build="172.*"/>
+  <idea-version since-build="173.1" until-build="173.*"/>
 
   <depends>com.intellij.modules.platform</depends>
 
@@ -210,9 +210,6 @@
 
     <applicationService serviceInterface="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"
                         serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
-
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.configuration.KotlinModuleTypeManager"
-                        serviceImplementation="org.jetbrains.kotlin.idea.KotlinModuleTypeManagerImpl"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.quickfix.QuickFixes"
                         serviceImplementation="org.jetbrains.kotlin.idea.quickfix.QuickFixes"/>
@@ -457,8 +454,6 @@
                             implementationClass="org.jetbrains.kotlin.idea.completion.KDocCompletionContributor"/>
 
     <completion.confidence language="kotlin" implementationClass="com.intellij.codeInsight.completion.UnfocusedNameIdentifier"/>
-    <completion.confidence language="kotlin"
-                           implementationClass="org.jetbrains.kotlin.idea.completion.confidence.UnfocusedPossibleFunctionParameter"/>
     <completion.confidence language="kotlin" implementationClass="com.intellij.codeInsight.completion.AlwaysFocusLookup" order="last"/>
     <completion.confidence language="kotlin" implementationClass="org.jetbrains.kotlin.idea.completion.confidence.EnableAutopopupInStringTemplate"/>
     <completion.confidence language="kotlin" implementationClass="com.intellij.codeInsight.completion.SkipAutopopupInStrings"/>
@@ -578,6 +573,8 @@
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor"/>
     <copyPastePreProcessor implementation="org.jetbrains.kotlin.idea.editor.KotlinLiteralCopyPasteProcessor"/>
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsCopyPasteProcessor"/>
+
+    <filePasteProvider implementation="org.jetbrains.kotlin.idea.conversion.copy.KotlinFilePasteProvider" order="first"/>
 
     <breadcrumbsInfoProvider implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinBreadcrumbsInfoProvider"/>
 
@@ -778,6 +775,14 @@
     <usageContextPanelProvider implementation="org.jetbrains.kotlin.idea.slicer.KotlinUsageContextDataOutflowPanel$Provider"/>
 
     <gotoRelatedProvider implementation="org.jetbrains.kotlin.idea.goto.KotlinExpectOrActualGotoRelatedProvider"/>
+
+    <declarationRangeHandler key="org.jetbrains.kotlin.psi.KtClassOrObject"
+                             implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinClassDeclarationRangeHandler"/>
+
+    <declarationRangeHandler key="org.jetbrains.kotlin.psi.KtDeclarationWithBody"
+                             implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinFunDeclarationRangeHandler"/>
+
+    <lang.jvm.actions.jvmElementActionsFactory implementation="org.jetbrains.kotlin.idea.quickfix.crossLanguage.KotlinElementActionsFactory"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
@@ -2641,6 +2646,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ScopeFunctionConversionInspection"
+                     displayName="Scope function can be converted to another one"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
@@ -2661,8 +2675,6 @@
     <psi.clsCustomNavigationPolicy implementation="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependencySourceNavigationPolicyForJavaClasses"/>
     <resolveScopeProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.KotlinScriptResolveScopeProvider"/>
     <resolveScopeProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesResolveScopeProvider"/>
-
-    <codeInsight.intention.jvmCommonIntentionActionsFactory language="kotlin" implementationClass="org.jetbrains.kotlin.idea.intentions.KotlinCommonIntentionActionsFactory"/>
 
     <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService"
                   serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastBindingContextProviderService"/>

@@ -17,14 +17,17 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.ElementDescriptionUtil
+import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
@@ -52,30 +55,62 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
     override fun applyTo(element: KtClass, editor: Editor?) {
         val project = element.project
 
+        val klass = element.liftToExpected() as? KtClass ?: element
+
         val subclasses = project.runSynchronouslyWithProgress("Searching inheritors...", true) {
-            HierarchySearchRequest(element, element.useScope, false).searchInheritors().mapNotNull { it.unwrapped }
+            HierarchySearchRequest(klass, klass.useScope, false).searchInheritors().mapNotNull { it.unwrapped }
         } ?: return
 
-        val inconvertibleSubclasses = subclasses.filter {
-            it !is KtObjectDeclaration || it.containingClassOrObject != element || it.superTypeListEntries.size != 1
+        val subclassesByContainer = subclasses.groupBy {
+            if (it !is KtObjectDeclaration) return@groupBy null
+            if (it.superTypeListEntries.size != 1) return@groupBy null
+            val containingClass = it.containingClassOrObject as? KtClass ?: return@groupBy null
+            if (containingClass != klass && containingClass.liftToExpected() != klass) return@groupBy null
+            containingClass
         }
+
+        val inconvertibleSubclasses = subclassesByContainer[null] ?: emptyList()
         if (inconvertibleSubclasses.isNotEmpty()) {
-            val message = buildString {
-                append("All inheritors must be nested objects of the class itself and may not inherit from other classes or interfaces.\n")
-                append("Following problems are found:\n")
-                inconvertibleSubclasses.joinTo(this) { ElementDescriptionUtil.getElementDescription(it, RefactoringDescriptionLocation.WITHOUT_PARENT) }
-            }
-            return CommonRefactoringUtil.showErrorHint(project, editor, message, text, null)
+            return showError(
+                    "All inheritors must be nested objects of the class itself and may not inherit from other classes or interfaces.\n",
+                    inconvertibleSubclasses,
+                    project,
+                    editor
+            )
         }
 
-        val needSemicolon = element.declarations.size > subclasses.size
+        @Suppress("UNCHECKED_CAST")
+        val nonSealedClasses = (subclassesByContainer.keys as Set<KtClass>).filter { !it.isSealed() }
+        if (nonSealedClasses.isNotEmpty()) {
+            return showError("All expected and actual classes must be sealed classes.\n", nonSealedClasses, project, editor)
+        }
 
-        val psiFactory = KtPsiFactory(element)
+        if (subclassesByContainer.isNotEmpty()) {
+            subclassesByContainer.forEach { currentClass, currentSubclasses -> processClass(currentClass!!, currentSubclasses, project) }
+        }
+        else {
+            processClass(klass, emptyList(), project)
+        }
+    }
+
+    private fun showError(message: String, elements: List<PsiElement>, project: Project, editor: Editor?) {
+        val errorText = buildString {
+            append(message)
+            append("Following problems are found:\n")
+            elements.joinTo(this) { ElementDescriptionUtil.getElementDescription(it, RefactoringDescriptionLocation.WITHOUT_PARENT) }
+        }
+        return CommonRefactoringUtil.showErrorHint(project, editor, errorText, text, null)
+    }
+
+    private fun processClass(klass: KtClass, subclasses: List<PsiElement>, project: Project) {
+        val needSemicolon = klass.declarations.size > subclasses.size
+
+        val psiFactory = KtPsiFactory(klass)
 
         val comma = psiFactory.createComma()
         val semicolon = psiFactory.createSemicolon()
 
-        val constructorCallNeeded = element.hasExplicitPrimaryConstructor() || element.secondaryConstructors.isNotEmpty()
+        val constructorCallNeeded = klass.hasExplicitPrimaryConstructor() || klass.secondaryConstructors.isNotEmpty()
         val entriesToAdd = subclasses.mapIndexed { i, subclass ->
             subclass as KtObjectDeclaration
 
@@ -101,19 +136,19 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
 
         subclasses.forEach { it.delete() }
 
-        element.removeModifier(KtTokens.SEALED_KEYWORD)
-        element.addModifier(KtTokens.ENUM_KEYWORD)
+        klass.removeModifier(KtTokens.SEALED_KEYWORD)
+        klass.addModifier(KtTokens.ENUM_KEYWORD)
 
         if (entriesToAdd.isNotEmpty()) {
             val firstEntry = entriesToAdd
                     .reversed()
-                    .map { element.addDeclarationBefore(it, null) }
+                    .map { klass.addDeclarationBefore(it, null) }
                     .last()
             // TODO: Add formatter rule
             firstEntry.parent.addBefore(psiFactory.createNewLine(), firstEntry)
         }
         else if (needSemicolon) {
-            element.declarations.firstOrNull()?.let { anchor ->
+            klass.declarations.firstOrNull()?.let { anchor ->
                 val delimiter = anchor.parent.addBefore(semicolon, anchor)
                 CodeStyleManager.getInstance(project).reformat(delimiter)
             }

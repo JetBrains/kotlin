@@ -47,14 +47,16 @@ object DescriptorToSourceUtils {
         result.add(descriptor)
     }
 
-    @JvmStatic fun getEffectiveReferencedDescriptors(descriptor: DeclarationDescriptor): Collection<DeclarationDescriptor> {
+    @JvmStatic
+    fun getEffectiveReferencedDescriptors(descriptor: DeclarationDescriptor): Collection<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
         collectEffectiveReferencedDescriptors(result, descriptor.original)
         return result
     }
 
     // TODO Fix in descriptor
-    @JvmStatic private fun getSourceForExtensionReceiverParameterDescriptor(descriptor: ReceiverParameterDescriptor): PsiElement? {
+    @JvmStatic
+    private fun getSourceForExtensionReceiverParameterDescriptor(descriptor: ReceiverParameterDescriptor): PsiElement? {
         // Only for extension receivers
         if (descriptor.source != SourceElement.NO_SOURCE || descriptor.value !is ExtensionReceiver) return null
         val containingDeclaration = descriptor.containingDeclaration as? CallableDescriptor ?: return null
@@ -62,7 +64,8 @@ object DescriptorToSourceUtils {
         return psi.receiverTypeReference
     }
 
-    @JvmStatic fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
+    @JvmStatic
+    fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
         if (descriptor is ReceiverParameterDescriptor) {
             getSourceForExtensionReceiverParameterDescriptor(descriptor)?.let { return it }
         }
@@ -70,7 +73,8 @@ object DescriptorToSourceUtils {
         return (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
     }
 
-    @JvmStatic fun getSourceFromAnnotation(descriptor: AnnotationDescriptor): KtAnnotationEntry? {
+    @JvmStatic
+    fun getSourceFromAnnotation(descriptor: AnnotationDescriptor): KtAnnotationEntry? {
         return descriptor.source.getPsi() as? KtAnnotationEntry
     }
 
@@ -78,12 +82,14 @@ object DescriptorToSourceUtils {
     // Returns PSI element for descriptor. If there are many relevant elements (e.g. it is fake override
     // with multiple declarations), returns null. It can't find declarations in builtins or decompiled code.
     // In IDE, use DescriptorToSourceUtilsIde instead.
-    @JvmStatic fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
+    @JvmStatic
+    fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
         val effectiveReferencedDescriptors = getEffectiveReferencedDescriptors(descriptor)
         return if (effectiveReferencedDescriptors.size == 1) getSourceFromDescriptor(effectiveReferencedDescriptors.firstOrNull()!!) else null
     }
 
-    @JvmStatic fun getContainingFile(declarationDescriptor: DeclarationDescriptor): KtFile? {
+    @JvmStatic
+    fun getContainingFile(declarationDescriptor: DeclarationDescriptor): KtFile? {
         // declarationDescriptor may describe a synthesized element which doesn't have PSI
         // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
         val descriptor = findTopLevelParent(declarationDescriptor) ?: return null

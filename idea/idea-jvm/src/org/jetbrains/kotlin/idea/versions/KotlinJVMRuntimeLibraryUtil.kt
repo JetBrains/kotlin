@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.versions
@@ -24,11 +13,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
-import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator
-import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
-import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
+import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
@@ -36,17 +21,13 @@ import java.io.File
 import java.io.IOException
 
 fun updateLibraries(project: Project, libraries: Collection<Library>) {
-    if (project.allModules().any { module -> KotlinPluginUtil.isMavenModule(module) }) {
-        Messages.showMessageDialog(project, "Automatic library version update for Maven projects is currently unsupported. Please update your pom.xml manually.",
-                                   "Update Kotlin Runtime Library",
-                                   Messages.getErrorIcon())
-        return
-    }
-
-    if (project.allModules().any { module -> KotlinPluginUtil.isGradleModule(module) }) {
-        Messages.showMessageDialog(project, "Automatic library version update for Gradle projects is currently unsupported. Please update your build.gradle manually.",
-                                   "Update Kotlin Runtime Library",
-                                   Messages.getErrorIcon())
+    if (project.allModules().any { module -> module.getBuildSystemType() != BuildSystemType.JPS }) {
+        Messages.showMessageDialog(
+            project,
+            "Automatic library version update for Maven and Gradle projects is currently unsupported. " +
+                    "Please update your build scripts manually.",
+            "Update Kotlin Runtime Library",
+            Messages.getErrorIcon())
         return
     }
 

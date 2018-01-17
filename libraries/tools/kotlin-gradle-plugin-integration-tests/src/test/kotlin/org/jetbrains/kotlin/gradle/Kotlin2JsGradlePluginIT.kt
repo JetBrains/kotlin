@@ -279,6 +279,27 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testDceFileCollectionDependency() {
+        val project = Project("kotlin2JsDceProject", "2.10", minLogLevel = LogLevel.INFO)
+
+        project.setupWorkingDir()
+        File(project.projectDir, "mainProject/build.gradle").modify {
+            it.replace("compile project(\":libraryProject\")", "compile project(\":libraryProject\").sourceSets.main.output")
+        }
+
+        project.build("runRhino") {
+            assertSuccessful()
+            val pathPrefix = "mainProject/build/kotlin-js-min/main"
+            assertFileExists("$pathPrefix/exampleapp.js.map")
+            assertFileExists("$pathPrefix/examplelib.js.map")
+            assertFileContains("$pathPrefix/exampleapp.js.map", "\"../../../src/main/kotlin/exampleapp/main.kt\"")
+
+            assertFileExists("$pathPrefix/kotlin.js")
+            assertTrue(fileInWorkingDir("$pathPrefix/kotlin.js").length() < 500 * 1000, "Looks like kotlin.js file was not minified by DCE")
+        }
+    }
+
     /** Issue: KT-18495 */
     @Test
     fun testNoSeparateClassesDirWarning() {

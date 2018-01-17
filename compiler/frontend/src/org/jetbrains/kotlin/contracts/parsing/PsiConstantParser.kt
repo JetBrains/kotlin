@@ -32,8 +32,7 @@ internal class PsiConstantParser(val trace: BindingTrace) : KtVisitor<ConstantRe
     override fun visitConstantExpression(expression: KtConstantExpression, data: Unit?): ConstantReference? {
         val type: KotlinType = trace.getType(expression) ?: return null
 
-        val compileTimeConstant: CompileTimeConstant<*>
-                = trace.get(BindingContext.COMPILE_TIME_VALUE, expression) ?: return null
+        val compileTimeConstant: CompileTimeConstant<*> = trace.get(BindingContext.COMPILE_TIME_VALUE, expression) ?: return null
         val value: Any? = compileTimeConstant.getValue(type)
 
         return when (value) {

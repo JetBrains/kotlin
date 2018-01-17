@@ -65,6 +65,10 @@ class KDocCommentKeeper(private val kaptContext: KaptContext<*>) {
         docCommentTable.putComment(tree, KDocComment(extractCommentText(docComment)))
     }
 
+    fun saveComment(tree: JCTree, comment: String) {
+        docCommentTable.putComment(tree, KDocComment(comment))
+    }
+
     private fun extractCommentText(docComment: KDoc): String {
         return docComment.children.dropWhile { it is PsiWhiteSpace || it.isKDocStart() }
                 .dropLastWhile { it is PsiWhiteSpace || it.isKDocEnd() }

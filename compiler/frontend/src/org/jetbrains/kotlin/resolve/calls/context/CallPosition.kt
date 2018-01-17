@@ -28,9 +28,9 @@ sealed class CallPosition {
     class ExtensionReceiverPosition(val resolvedCall: ResolvedCall<*>) : CallPosition()
 
     class ValueArgumentPosition(
-            val resolvedCall: ResolvedCall<*>,
-            val valueParameter: ValueParameterDescriptor,
-            val valueArgument: ValueArgument
+        val resolvedCall: ResolvedCall<*>,
+        val valueParameter: ValueParameterDescriptor,
+        val valueArgument: ValueArgument
     ) : CallPosition()
 
     class PropertyAssignment(val leftPart: KtExpression?) : CallPosition()

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 infix fun SearchScope.and(otherScope: SearchScope): SearchScope = intersectWith(otherScope)
 infix fun SearchScope.or(otherScope: SearchScope): SearchScope = union(otherScope)
+infix fun GlobalSearchScope.or(otherScope: SearchScope): GlobalSearchScope = union(otherScope)
 operator fun SearchScope.minus(otherScope: GlobalSearchScope): SearchScope = this and !otherScope
 operator fun GlobalSearchScope.not(): GlobalSearchScope = GlobalSearchScope.notScope(this)
 

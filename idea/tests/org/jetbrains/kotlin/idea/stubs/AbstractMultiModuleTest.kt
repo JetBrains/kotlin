@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.stubs
@@ -37,10 +26,10 @@ import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
-import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
@@ -107,7 +96,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     protected fun checkFiles(shouldCheckFile: () -> Boolean = { true }, check: () -> Unit) {
         var atLeastOneFile = false
-        PluginJetFilesProvider.allFilesInProject(myProject!!).forEach { file ->
+        myProject.allKotlinFiles().forEach { file ->
             configureByExistingFile(file.virtualFile!!)
             if (shouldCheckFile()) {
                 atLeastOneFile = true
@@ -123,8 +112,7 @@ fun Module.createFacet(
         useProjectSettings: Boolean = true,
         implementedModuleName: String? = null
 ) {
-    val accessToken = WriteAction.start()
-    try {
+    WriteAction.run<Throwable> {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
         with (getOrCreateFacet(modelsProvider, useProjectSettings).configuration.settings)  {
             initializeIfNeeded(
@@ -137,8 +125,5 @@ fun Module.createFacet(
             }
         }
         modelsProvider.commit()
-    }
-    finally {
-        accessToken.finish()
     }
 }

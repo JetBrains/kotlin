@@ -27,18 +27,20 @@ import org.jetbrains.kotlin.lexer.KtTokens
 /**
  * Parses the contents of a Markdown link in KDoc. Uses the standard Kotlin lexer.
  */
-class KDocLinkParser(val inlineLink: Boolean) : PsiParser {
+class KDocLinkParser(private val inlineLink: Boolean) : PsiParser {
     companion object {
         @JvmStatic
         @JvmOverloads
         fun parseMarkdownLink(root: IElementType, chameleon: ASTNode, inlineLink: Boolean = false): ASTNode {
             val parentElement = chameleon.treeParent.psi
             val project = parentElement.project
-            val builder = PsiBuilderFactory.getInstance().createBuilder(project,
-                                                                        chameleon,
-                                                                        KotlinLexer(),
-                                                                        root.language,
-                                                                        chameleon.text)
+            val builder = PsiBuilderFactory.getInstance().createBuilder(
+                project,
+                chameleon,
+                KotlinLexer(),
+                root.language,
+                chameleon.text
+            )
             val parser = KDocLinkParser(inlineLink)
 
             return parser.parse(root, builder).firstChildNode
@@ -55,8 +57,7 @@ class KDocLinkParser(val inlineLink: Boolean) : PsiParser {
             while (!builder.eof() && builder.tokenType != KtTokens.RBRACKET) {
                 builder.advanceLexer()
             }
-        }
-        else {
+        } else {
             parseQualifiedName(builder)
         }
         if (hasLBracket) {
@@ -81,8 +82,7 @@ class KDocLinkParser(val inlineLink: Boolean) : PsiParser {
                     }
                 }
             }
-        }
-        else {
+        } else {
             if (!builder.eof()) {
                 builder.error("Expression expected")
                 while (!builder.eof()) {

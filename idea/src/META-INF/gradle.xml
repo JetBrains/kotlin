@@ -2,12 +2,17 @@
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJSFrameworkSupportProvider"/>
+        <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinJavaFrameworkSupportProvider"/>
+        <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinJSFrameworkSupportProvider"/>
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPCommonFrameworkSupportProvider"/>
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPJavaFrameworkSupportProvider"/>
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPJSFrameworkSupportProvider"/>
         <pluginDescriptions implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradlePluginDescription"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectResolverExtension" order="first"/>
         <projectResolve implementation="org.jetbrains.kotlin.kapt.idea.KaptProjectResolverExtension" order="last"/>
+        <projectResolve implementation="org.jetbrains.kotlin.allopen.ide.AllOpenProjectResolverExtension" order="last"/>
+        <projectResolve implementation="org.jetbrains.kotlin.noarg.ide.NoArgProjectResolverExtension" order="last"/>
+        <projectResolve implementation="org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverProjectResolverExtension" order="last"/>
     </extensions>
 
     <extensionPoints>
@@ -56,8 +61,6 @@
 
         <projectTaskRunner implementation="org.jetbrains.kotlin.idea.run.MultiplatformGradleProjectTaskRunner" order="first"/>
         <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.run.MultiplatformGradleOrderEnumeratorHandler$FactoryImpl" order="first"/>
-
-        <moduleBuilder builderClass="org.jetbrains.kotlin.gradle.kdsl.GradleModuleBuilder" />
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -74,9 +77,6 @@
 
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMultiplatformModuleBuilder"/>
 
-        <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleJavaFrameworkSupportProvider" />
-        <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleKotlinDSLKotlinJavaFrameworkSupportProvider" />
-        <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleKotlinDSLKotlinJSFrameworkSupportProvider" />
-        <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleGroovyFrameworkSupportProvider" />
+        <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
     </extensions>
 </idea-plugin>

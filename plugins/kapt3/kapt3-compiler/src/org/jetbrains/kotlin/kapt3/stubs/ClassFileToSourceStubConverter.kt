@@ -50,8 +50,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import javax.lang.model.element.ElementKind
 import com.sun.tools.javac.util.List as JavacList
-import org.jetbrains.kotlin.kapt3.stubs.KaptLineMappingCollector.Companion.KAPT_METADATA_ANNOTATION_FQNAME
-import org.jetbrains.kotlin.kapt3.stubs.KaptLineMappingCollector.Companion.KAPT_SIGNATURE_ANNOTATION_FQNAME
 
 class ClassFileToSourceStubConverter(
         val kaptContext: KaptContext<GenerationState>,
@@ -114,9 +112,6 @@ class ClassFileToSourceStubConverter(
             stubs = stubs.append(generateNonExistentClass())
         }
 
-        stubs = stubs.append(generateSimpleParametrizedAnnotationClass(KAPT_METADATA_ANNOTATION_FQNAME))
-        stubs = stubs.append(generateSimpleParametrizedAnnotationClass(KAPT_SIGNATURE_ANNOTATION_FQNAME))
-
         return stubs
     }
 
@@ -137,31 +132,6 @@ class ClassFileToSourceStubConverter(
         return topLevel
     }
 
-    private fun generateSimpleParametrizedAnnotationClass(fqName: FqName): JCCompilationUnit {
-        val valueMethod = treeMaker.MethodDef(
-                treeMaker.Modifiers(Flags.PUBLIC.toLong()),
-                treeMaker.name("value"),
-                treeMaker.FqName("java.lang.String"),
-                JavacList.nil(),
-                JavacList.nil(),
-                JavacList.nil(),
-                null,
-                null)
-
-        val nonExistentClass = treeMaker.ClassDef(
-                treeMaker.Modifiers((Flags.PUBLIC or Flags.ANNOTATION or Flags.INTERFACE).toLong()),
-                treeMaker.name(fqName.shortName().asString()),
-                JavacList.nil(),
-                null,
-                JavacList.nil(),
-                JavacList.of(valueMethod))
-
-        val packageName = fqName.parent().asString()
-        val topLevel = treeMaker.TopLevelJava9Aware(treeMaker.FqName(packageName), JavacList.of(nonExistentClass))
-        topLevel.sourcefile = KaptJavaFileObject(topLevel, nonExistentClass)
-        return topLevel
-    }
-
     private fun convertTopLevelClass(clazz: ClassNode): JCCompilationUnit? {
         val origin = kaptContext.origins[clazz] ?: return null
         val ktFile = origin.element?.containingFile as? KtFile ?: return null
@@ -177,13 +147,18 @@ class ClassFileToSourceStubConverter(
 
         val classDeclaration = convertClass(clazz, lineMappings, packageName, true) ?: return null
 
-        classDeclaration.mods.annotations = classDeclaration.mods.annotations.append(
-                createAnnotation(KAPT_METADATA_ANNOTATION_FQNAME, lineMappings.serializeLineInfo ()))
+        classDeclaration.mods.annotations = classDeclaration.mods.annotations
 
         val imports = if (correctErrorTypes) convertImports(ktFile, classDeclaration) else JavacList.nil()
+
+        val nonEmptyImports: JavacList<JCTree> = when {
+            imports.size > 0 -> imports
+            else -> JavacList.of(treeMaker.Import(treeMaker.FqName("java.lang.System"), false))
+        }
+
         val classes = JavacList.of<JCTree>(classDeclaration)
 
-        val topLevel = treeMaker.TopLevelJava9Aware(packageClause, imports + classes)
+        val topLevel = treeMaker.TopLevelJava9Aware(packageClause, nonEmptyImports + classes)
         topLevel.docComments = kdocCommentKeeper.docCommentTable
 
         KaptJavaFileObject(topLevel, classDeclaration).apply {
@@ -191,12 +166,9 @@ class ClassFileToSourceStubConverter(
             _bindings[clazz.name] = this
         }
 
-        return topLevel
-    }
+        kdocCommentKeeper.saveComment(topLevel, lineMappings.getClassMetadataCommentText())
 
-    private fun createAnnotation(fqName: FqName, value: String): JCAnnotation {
-        val offsetsLiteral = convertLiteralExpression(value)
-        return treeMaker.Annotation(treeMaker.FqName(fqName), JavacList.of(offsetsLiteral))
+        return topLevel
     }
 
     private fun convertImports(file: KtFile, classDeclaration: JCClassDecl): JavacList<JCTree> {
@@ -343,7 +315,7 @@ class ClassFileToSourceStubConverter(
                 genericType.typeParameters,
                 if (hasSuperClass) genericType.superClass else null,
                 genericType.interfaces,
-                enumValues + fields + methods + nestedClasses).keepComments(clazz)
+                enumValues + fields + methods + nestedClasses).keepKdocComments(clazz)
     }
 
     private tailrec fun checkIfShouldBeIgnored(type: Type): Boolean {
@@ -449,7 +421,7 @@ class ClassFileToSourceStubConverter(
 
         lineMappings.registerField(containingClass, field)
 
-        return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).keepComments(field)
+        return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).keepKdocComments(field)
     }
 
     private fun convertMethod(
@@ -484,9 +456,6 @@ class ClassFileToSourceStubConverter(
                 else
                     method.access.toLong(),
                 ElementKind.METHOD, packageFqName, visibleAnnotations, method.invisibleAnnotations, descriptor.annotations)
-
-        modifiers.annotations = modifiers.annotations.append(
-                createAnnotation(KAPT_SIGNATURE_ANNOTATION_FQNAME, method.name + method.desc))
 
         val asmReturnType = Type.getReturnType(method.desc)
         val jcReturnType = if (isConstructor) null else treeMaker.Type(asmReturnType)
@@ -559,7 +528,8 @@ class ClassFileToSourceStubConverter(
         return treeMaker.MethodDef(
                 modifiers, treeMaker.name(name), returnType, genericSignature.typeParameters,
                 genericSignature.parameterTypes, genericSignature.exceptionTypes,
-                body, defaultValue).keepComments(method)
+                body, defaultValue
+        ).keepKdocComments(method).keepSignature(lineMappings, method)
     }
 
     private fun isIgnored(annotations: List<AnnotationNode>?): Boolean {
@@ -895,8 +865,13 @@ class ClassFileToSourceStubConverter(
         else -> null
     }
 
-    private fun <T : JCTree> T.keepComments(node: Any): T {
+    private fun <T : JCTree> T.keepKdocComments(node: Any): T {
         kdocCommentKeeper.saveKDocComment(this, node)
+        return this
+    }
+
+    private fun JCMethodDecl.keepSignature(lineMappings: KaptLineMappingCollector, node: MethodNode): JCMethodDecl {
+        lineMappings.registerSignature(this, node)
         return this
     }
 }
@@ -913,21 +888,4 @@ internal tailrec fun getReferenceExpression(expression: KtExpression?): KtRefere
     is KtReferenceExpression -> expression
     is KtQualifiedExpression -> getReferenceExpression(expression.selectorExpression)
     else -> null
-}
-
-internal fun getAnnotationValue(fqName: FqName, mods: JCTree.JCModifiers?): String? {
-    val annotations = mods?.annotations ?: return null
-
-    val annotationName = fqName.asString()
-    val annotation = annotations.firstOrNull { it.annotationType.toString() == annotationName } ?: return null
-
-    val valueArg = annotation.args.singleOrNull()
-
-    return when (valueArg) {
-        is JCTree.JCLiteral -> valueArg.value as? String
-        is JCTree.JCAssign -> {
-            ((valueArg.rhs as? JCTree.JCLiteral)?.value as? String)?.takeIf { valueArg.lhs.toString() == "value" }
-        }
-        else -> null
-    }
 }

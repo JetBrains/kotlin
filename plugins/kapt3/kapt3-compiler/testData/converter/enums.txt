@@ -1,31 +1,42 @@
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
+
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@kapt.internal.KaptMetadata()
 public abstract @interface Anno1 {
 
-    @kapt.internal.KaptSignature(value = "value()Ljava/lang/String;")
     public abstract java.lang.String value();
 }
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
 
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public enum Enum1 {
     /*public static final*/ BLACK /* = new Enum1() */,
     /*public static final*/ WHITE /* = new Enum1() */;
 
-    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;I)V")
     Enum1() {
     }
 }
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
+
+import java.lang.System;
 
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public enum Enum2 {
     /*public static final*/ RED /* = new Enum2() */,
     /*public static final*/ WHITE /* = new Enum2() */;
@@ -34,52 +45,28 @@ public enum Enum2 {
     private final int col2 = 0;
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "color()Ljava/lang/String;")
     public final java.lang.String color() {
         return null;
     }
 
-    @kapt.internal.KaptSignature(value = "privateEnumFun()V")
     private final void privateEnumFun() {
     }
 
-    @kapt.internal.KaptSignature(value = "publicEnumFun()V")
     public final void publicEnumFun() {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @kapt.internal.KaptSignature(value = "getCol()Ljava/lang/String;")
     public final java.lang.String getCol() {
         return null;
     }
 
-    @kapt.internal.KaptSignature(value = "getCol2()I")
     public final int getCol2() {
         return 0;
     }
 
-    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;ILjava/lang/String;I)V")
     Enum2(@org.jetbrains.annotations.NotNull()
     @Anno1(value = "first")
     java.lang.String col, @Anno1(value = "second")
     int col2) {
     }
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptMetadata {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptSignature {
-
-    public java.lang.String value();
 }

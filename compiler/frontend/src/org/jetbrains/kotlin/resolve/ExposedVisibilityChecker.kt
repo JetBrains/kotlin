@@ -38,16 +38,17 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
         return result and checkFunction(constructor, constructorDescriptor)
     }
 
-    fun checkDeclarationWithVisibility(modifierListOwner: KtModifierListOwner,
-                                       descriptor: DeclarationDescriptorWithVisibility,
-                                       visibility: Visibility
-    ) : Boolean {
+    fun checkDeclarationWithVisibility(
+        modifierListOwner: KtModifierListOwner,
+        descriptor: DeclarationDescriptorWithVisibility,
+        visibility: Visibility
+    ): Boolean {
         return when {
             modifierListOwner is KtFunction &&
-            descriptor is FunctionDescriptor -> checkFunction(modifierListOwner, descriptor, visibility)
+                    descriptor is FunctionDescriptor -> checkFunction(modifierListOwner, descriptor, visibility)
 
             modifierListOwner is KtProperty &&
-            descriptor is PropertyDescriptor -> checkProperty(modifierListOwner, descriptor, visibility)
+                    descriptor is PropertyDescriptor -> checkProperty(modifierListOwner, descriptor, visibility)
 
             else -> true
         }
@@ -60,48 +61,66 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
         val typeAliasVisibility = typeAliasDescriptor.effectiveVisibility()
         val restricting = expandedType.leastPermissiveDescriptor(typeAliasVisibility)
         if (restricting != null) {
-            trace.report(Errors.EXPOSED_TYPEALIAS_EXPANDED_TYPE.on(typeAlias.nameIdentifier ?: typeAlias,
-                    typeAliasVisibility, restricting, restricting.effectiveVisibility()))
+            trace.report(
+                Errors.EXPOSED_TYPEALIAS_EXPANDED_TYPE.on(
+                    typeAlias.nameIdentifier ?: typeAlias,
+                    typeAliasVisibility, restricting, restricting.effectiveVisibility()
+                )
+            )
         }
     }
 
-    fun checkFunction(function: KtFunction,
-                      functionDescriptor: FunctionDescriptor,
-                      // for checking situation with modified basic visibility
-                      visibility: Visibility = functionDescriptor.visibility
+    fun checkFunction(
+        function: KtFunction,
+        functionDescriptor: FunctionDescriptor,
+        // for checking situation with modified basic visibility
+        visibility: Visibility = functionDescriptor.visibility
     ): Boolean {
         val functionVisibility = functionDescriptor.effectiveVisibility(visibility)
         var result = true
         if (function !is KtConstructor<*>) {
             val restricting = functionDescriptor.returnType?.leastPermissiveDescriptor(functionVisibility)
             if (restricting != null) {
-                trace.report(Errors.EXPOSED_FUNCTION_RETURN_TYPE.on(function.nameIdentifier ?: function, functionVisibility,
-                                                                    restricting, restricting.effectiveVisibility()))
+                trace.report(
+                    Errors.EXPOSED_FUNCTION_RETURN_TYPE.on(
+                        function.nameIdentifier ?: function, functionVisibility,
+                        restricting, restricting.effectiveVisibility()
+                    )
+                )
                 result = false
             }
         }
         functionDescriptor.valueParameters.forEachIndexed { i, parameterDescriptor ->
             val restricting = parameterDescriptor.type.leastPermissiveDescriptor(functionVisibility)
             if (restricting != null && i < function.valueParameters.size) {
-                trace.report(Errors.EXPOSED_PARAMETER_TYPE.on(function.valueParameters[i], functionVisibility,
-                                                              restricting, restricting.effectiveVisibility()))
+                trace.report(
+                    Errors.EXPOSED_PARAMETER_TYPE.on(
+                        function.valueParameters[i], functionVisibility,
+                        restricting, restricting.effectiveVisibility()
+                    )
+                )
                 result = false
             }
         }
         return result and checkMemberReceiver(function.receiverTypeReference, functionDescriptor)
     }
 
-    fun checkProperty(property: KtProperty,
-                      propertyDescriptor: PropertyDescriptor,
-                      // for checking situation with modified basic visibility
-                      visibility: Visibility = propertyDescriptor.visibility
+    fun checkProperty(
+        property: KtProperty,
+        propertyDescriptor: PropertyDescriptor,
+        // for checking situation with modified basic visibility
+        visibility: Visibility = propertyDescriptor.visibility
     ): Boolean {
         val propertyVisibility = propertyDescriptor.effectiveVisibility(visibility)
         val restricting = propertyDescriptor.type.leastPermissiveDescriptor(propertyVisibility)
         var result = true
         if (restricting != null) {
-            trace.report(Errors.EXPOSED_PROPERTY_TYPE.on(property.nameIdentifier ?: property, propertyVisibility,
-                                                         restricting, restricting.effectiveVisibility()))
+            trace.report(
+                Errors.EXPOSED_PROPERTY_TYPE.on(
+                    property.nameIdentifier ?: property, propertyVisibility,
+                    restricting, restricting.effectiveVisibility()
+                )
+            )
             result = false
         }
         return result and checkMemberReceiver(property.receiverTypeReference, propertyDescriptor)
@@ -113,8 +132,12 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
         val memberVisibility = memberDescriptor.effectiveVisibility()
         val restricting = receiverParameterDescriptor.type.leastPermissiveDescriptor(memberVisibility)
         if (restricting != null) {
-            trace.report(Errors.EXPOSED_RECEIVER_TYPE.on(typeReference, memberVisibility,
-                                                         restricting, restricting.effectiveVisibility()))
+            trace.report(
+                Errors.EXPOSED_RECEIVER_TYPE.on(
+                    typeReference, memberVisibility,
+                    restricting, restricting.effectiveVisibility()
+                )
+            )
             return false
         }
         return true
@@ -135,12 +158,19 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
             val restricting = superType.leastPermissiveDescriptor(classVisibility)
             if (restricting != null) {
                 if (isInterface) {
-                    trace.report(Errors.EXPOSED_SUPER_INTERFACE.on(delegationList[i], classVisibility,
-                                                                   restricting, restricting.effectiveVisibility()))
-                }
-                else {
-                    trace.report(Errors.EXPOSED_SUPER_CLASS.on(delegationList[i], classVisibility,
-                                                               restricting, restricting.effectiveVisibility()))
+                    trace.report(
+                        Errors.EXPOSED_SUPER_INTERFACE.on(
+                            delegationList[i], classVisibility,
+                            restricting, restricting.effectiveVisibility()
+                        )
+                    )
+                } else {
+                    trace.report(
+                        Errors.EXPOSED_SUPER_CLASS.on(
+                            delegationList[i], classVisibility,
+                            restricting, restricting.effectiveVisibility()
+                        )
+                    )
                 }
                 result = false
             }
@@ -157,8 +187,12 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
             for (upperBound in typeParameterDescriptor.upperBounds) {
                 val restricting = upperBound.leastPermissiveDescriptor(classVisibility)
                 if (restricting != null) {
-                    trace.report(Errors.EXPOSED_TYPE_PARAMETER_BOUND.on(typeParameterList[i], classVisibility,
-                                                                        restricting, restricting.effectiveVisibility()))
+                    trace.report(
+                        Errors.EXPOSED_TYPE_PARAMETER_BOUND.on(
+                            typeParameterList[i], classVisibility,
+                            restricting, restricting.effectiveVisibility()
+                        )
+                    )
                     result = false
                     break
                 }

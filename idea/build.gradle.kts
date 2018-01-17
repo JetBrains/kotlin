@@ -32,7 +32,7 @@ dependencies {
 //    compile(project(":kotlin-daemon-client")) { isTransitive = false }
     compile(project(":kotlin-script-util")) { isTransitive = false }
 
-    compile(ideaSdkCoreDeps("intellij-core", "util"))
+    compile(ideaSdkCoreDeps("intellij-core", "util", "annotations"))
 
     compileOnly(ideaSdkDeps("openapi", "idea", "velocity", "boot", "gson", "swingx-core", "jsr305", "forms_rt"))
 

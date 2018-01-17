@@ -53,6 +53,12 @@ abstract class KtLightAbstractAnnotation(parent: PsiElement, computeDelegate: ()
 
     override fun getParameterList() = clsDelegate.parameterList
 
+    override fun canNavigate(): Boolean = super<KtLightElementBase>.canNavigate()
+
+    override fun canNavigateToSource(): Boolean = super<KtLightElementBase>.canNavigateToSource()
+
+    override fun navigate(requestFocus: Boolean) = super<KtLightElementBase>.navigate(requestFocus)
+
     open fun fqNameMatches(fqName: String): Boolean = qualifiedName == fqName
 }
 
@@ -194,15 +200,20 @@ class KtLightAnnotationForSourceEntry(
             delegate.initializers.mapIndexed { i, memberValue ->
                 wrapAnnotationValue(memberValue, this, {
                     originalExpression.let { ktOrigin ->
-                        when (ktOrigin) {
-                            is KtValueArgumentList -> ktOrigin.arguments.getOrNull(i)?.getArgumentExpression()
-                            is KtCallElement -> ktOrigin.valueArguments.getOrNull(i)?.getArgumentExpression()
-                            is KtCollectionLiteralExpression -> ktOrigin.getInnerExpressions().getOrNull(i)
+                        when {
+                            ktOrigin is KtValueArgumentList -> ktOrigin.arguments.getOrNull(i)?.getArgumentExpression()
+                            ktOrigin is KtCallElement -> ktOrigin.valueArguments.getOrNull(i)?.getArgumentExpression()
+                            ktOrigin is KtCollectionLiteralExpression -> ktOrigin.getInnerExpressions().getOrNull(i)
+                            delegate.initializers.size == 1 -> ktOrigin
                             else -> null
                         }.also {
                             if (it == null)
                                 LOG.error("error wrapping ${memberValue.javaClass} for ${ktOrigin?.javaClass} in ${ktOrigin?.containingFile}",
-                                          Attachment("source_fragments.txt", "origin: '${psiReport(ktOrigin)}', delegate: ${psiReport(delegate)}"))
+                                          Attachment(
+                                              "source_fragments.txt",
+                                              "origin: '${psiReport(ktOrigin)}', delegate: ${psiReport(delegate)}, parent: ${psiReport(parent)}"
+                                          )
+                                )
                         }
                     }
                 })
@@ -283,6 +294,12 @@ class KtLightNonExistentAnnotation(parent: KtLightElement<*, *>) : KtLightElemen
     override fun findDeclaredAttributeValue(attributeName: String?) = null
     override fun getMetaData() = null
     override fun getParameterList() = KtLightEmptyAnnotationParameterList(this)
+
+    override fun canNavigate(): Boolean = super<KtLightElementBase>.canNavigate()
+
+    override fun canNavigateToSource(): Boolean = super<KtLightElementBase>.canNavigateToSource()
+
+    override fun navigate(requestFocus: Boolean) = super<KtLightElementBase>.navigate(requestFocus)
 }
 
 class KtLightEmptyAnnotationParameterList(parent: PsiElement) : KtLightElementBase(parent), PsiAnnotationParameterList {

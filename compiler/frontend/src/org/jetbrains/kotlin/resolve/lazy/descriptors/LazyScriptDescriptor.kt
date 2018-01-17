@@ -35,16 +35,16 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class LazyScriptDescriptor(
-        resolveSession: ResolveSession,
-        containingDeclaration: DeclarationDescriptor,
-        name: Name,
-        internal val scriptInfo: KtScriptInfo
+    resolveSession: ResolveSession,
+    containingDeclaration: DeclarationDescriptor,
+    name: Name,
+    internal val scriptInfo: KtScriptInfo
 ) : ScriptDescriptor, LazyClassDescriptor(
-        resolveSession,
-        containingDeclaration,
-        name,
-        scriptInfo,
-        /* isExternal = */ false
+    resolveSession,
+    containingDeclaration,
+    name,
+    scriptInfo,
+    /* isExternal = */ false
 ) {
     init {
         resolveSession.trace.record(BindingContext.SCRIPT, scriptInfo.script, this)
@@ -67,18 +67,19 @@ class LazyScriptDescriptor(
     override fun substitute(substitutor: TypeSubstitutor) = this
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
-            visitor.visitScriptDescriptor(this, data)
+        visitor.visitScriptDescriptor(this, data)
 
-    override fun createMemberScope( c: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider): LazyScriptClassMemberScope =
+    override fun createMemberScope(c: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider): LazyScriptClassMemberScope =
         LazyScriptClassMemberScope(
-                // Must be a ResolveSession for scripts
-                c as ResolveSession,
-                declarationProvider,
-                this,
-                c.trace
+            // Must be a ResolveSession for scripts
+            c as ResolveSession,
+            declarationProvider,
+            this,
+            c.trace
         )
 
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 
-    override fun computeSupertypes() = listOf(ScriptHelper.getInstance().getKotlinType(this, scriptDefinition.template)).ifEmpty { listOf(builtIns.anyType) }
+    override fun computeSupertypes() =
+        listOf(ScriptHelper.getInstance().getKotlinType(this, scriptDefinition.template)).ifEmpty { listOf(builtIns.anyType) }
 }

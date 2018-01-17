@@ -93,11 +93,11 @@ object MissingDependencyClassChecker : CallChecker {
 
     object ClassifierUsage : ClassifierUsageChecker {
         override fun check(
-                targetDescriptor: ClassifierDescriptor,
-                trace: BindingTrace,
-                element: PsiElement,
-                languageVersionSettings: LanguageVersionSettings,
-                deprecationResolver: DeprecationResolver
+            targetDescriptor: ClassifierDescriptor,
+            trace: BindingTrace,
+            element: PsiElement,
+            languageVersionSettings: LanguageVersionSettings,
+            deprecationResolver: DeprecationResolver
         ) {
             diagnosticFor(targetDescriptor, element)?.let(trace::report)
 

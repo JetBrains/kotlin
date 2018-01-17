@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
-internal class PsiConditionParser(val trace: BindingTrace, val dispatcher: PsiContractParserDispatcher) : KtVisitor<BooleanExpression?, Unit>() {
+internal class PsiConditionParser(val trace: BindingTrace, val dispatcher: PsiContractParserDispatcher) :
+    KtVisitor<BooleanExpression?, Unit>() {
     override fun visitIsExpression(expression: KtIsExpression, data: Unit): BooleanExpression? {
         val variable = dispatcher.parseVariable(expression.leftHandSide) ?: return null
         val typeReference = expression.typeReference ?: return null
@@ -101,11 +102,16 @@ internal class PsiConditionParser(val trace: BindingTrace, val dispatcher: PsiCo
         if (expression.operationToken != KtTokens.EXCL) return super.visitUnaryExpression(expression, data)
         val arg = expression.baseExpression?.accept(this, data) ?: return null
         if (arg !is ContractDescriptionValue) {
-            trace.report(Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(expression.baseExpression!!, "negations in contract description can be applied only to variables/values"))
+            trace.report(
+                Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(
+                    expression.baseExpression!!,
+                    "negations in contract description can be applied only to variables/values"
+                )
+            )
         }
         return LogicalNot(arg)
     }
 
     override fun visitParenthesizedExpression(expression: KtParenthesizedExpression, data: Unit): BooleanExpression? =
-            KtPsiUtil.deparenthesize(expression)?.accept(this, data)
+        KtPsiUtil.deparenthesize(expression)?.accept(this, data)
 }

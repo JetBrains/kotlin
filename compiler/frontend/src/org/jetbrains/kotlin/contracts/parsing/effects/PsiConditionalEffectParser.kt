@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class PsiConditionalEffectParser(
-        trace: BindingTrace,
-        dispatcher: PsiContractParserDispatcher
+    trace: BindingTrace,
+    dispatcher: PsiContractParserDispatcher
 ) : AbstractPsiEffectParser(trace, dispatcher) {
     override fun tryParseEffect(expression: KtExpression): EffectDeclaration? {
         val resolvedCall = expression.getResolvedCall(trace.bindingContext) ?: return null
@@ -38,9 +38,9 @@ internal class PsiConditionalEffectParser(
         if (!resolvedCall.resultingDescriptor.isImpliesCallDescriptor()) return null
 
         val effect = contractParserDispatcher.parseEffect(resolvedCall.dispatchReceiver.safeAs<ExpressionReceiver>()?.expression)
-                     ?: return null
+                ?: return null
         val condition = contractParserDispatcher.parseCondition(resolvedCall.firstArgumentAsExpressionOrNull())
-                        ?: return null
+                ?: return null
 
         return ConditionalEffectDeclaration(effect, condition)
     }

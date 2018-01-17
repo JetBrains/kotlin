@@ -17,26 +17,37 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForLocalDeclaration
 import org.jetbrains.kotlin.asJava.toLightGetter
 import org.jetbrains.kotlin.asJava.toLightSetter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
-abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement {
+abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement, JvmDeclarationUElement {
 
-    override val uastParent: UElement? by lz {
+    final override val uastParent: UElement? by lz {
         givenParent ?: convertParent()
     }
 
     protected open fun convertParent(): UElement? {
         val psi = psi
         var parent = psi?.parent ?: psi?.containingFile
+
+        if (psi is KtLightClassForLocalDeclaration) {
+            val originParent = psi.kotlinOrigin.parent
+            parent = when (originParent) {
+                is KtClassBody -> originParent.parent
+                else -> originParent
+            }
+        }
 
         if (psi is KtAnnotationEntry) {
             val parentUnwrapped = KotlinConverter.unwrapElements(parent) ?: return null
@@ -51,6 +62,15 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
                     parent = (parentUnwrapped as? KtProperty)?.setter
                              ?: (parentUnwrapped as? KtParameter)?.toLightSetter()
                              ?: parent
+                AnnotationUseSiteTarget.FIELD ->
+                    parent = (parentUnwrapped as? KtProperty)
+                             ?: (parentUnwrapped as? KtParameter)
+                                     ?.takeIf { it.isPropertyParameter() }
+                                     ?.let(LightClassUtil::getLightClassBackingField)
+                             ?: parent
+                AnnotationUseSiteTarget.SETTER_PARAMETER ->
+                    parent = (parentUnwrapped as? KtParameter)
+                                     ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
             }
         }
         if (psi is UastKotlinPsiVariable && parent != null) {
@@ -152,7 +172,12 @@ private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter):
 }
 
 abstract class KotlinAbstractUExpression(givenParent: UElement?)
-    : KotlinAbstractUElement(givenParent), UExpression {
+    : KotlinAbstractUElement(givenParent), UExpression, JvmDeclarationUElement {
+
+    override val javaPsi: PsiElement? = null
+
+    override val sourcePsi
+        get() = psi
 
     override val annotations: List<UAnnotation>
         get() {

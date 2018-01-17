@@ -67,6 +67,8 @@ class AWithSecondaryInit {
 
     constructor(s: String) {
         a = s
+        var local: String = s
+        local.toString()
     }
 
 }

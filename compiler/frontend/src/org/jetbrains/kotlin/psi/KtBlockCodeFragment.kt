@@ -21,13 +21,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 
 class KtBlockCodeFragment(
-        project: Project,
-        name: String,
-        text: CharSequence,
-        imports: String?,
-        context: PsiElement?
+    project: Project,
+    name: String,
+    text: CharSequence,
+    imports: String?,
+    context: PsiElement?
 ) : KtCodeFragment(project, name, text, imports, KtNodeTypes.BLOCK_CODE_FRAGMENT, context) {
 
     override fun getContentElement() = findChildByClass(KtBlockExpression::class.java)
-                                                ?: throw IllegalStateException("Block expression should be parsed for BlockCodeFragment")
+            ?: throw IllegalStateException("Block expression should be parsed for BlockCodeFragment")
 }

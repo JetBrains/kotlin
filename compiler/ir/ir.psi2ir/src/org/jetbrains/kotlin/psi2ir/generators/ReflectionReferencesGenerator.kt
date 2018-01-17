@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.intermediate.TransientReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -46,7 +45,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             val typeClass = typeConstructorDeclaration ?:
                             throw AssertionError("Unexpected type constructor for ${lhs.type}: $typeConstructorDeclaration")
             IrClassReferenceImpl(ktClassLiteral.startOffset, ktClassLiteral.endOffset, resultType,
-                                 context.symbolTable.referenceClassifier(typeClass))
+                                 context.symbolTable.referenceClassifier(typeClass), lhs.type)
         }
     }
 

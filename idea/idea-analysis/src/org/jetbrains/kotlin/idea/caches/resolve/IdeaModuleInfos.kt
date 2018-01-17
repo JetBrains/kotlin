@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
 import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.configuration.BuildSystemType
+import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -97,7 +98,7 @@ private fun ideaModelDependencies(module: Module, forProduction: Boolean): List<
     //NOTE: lib dependencies can be processed several times during recursive traversal
     val result = LinkedHashSet<IdeaModuleInfo>()
     val dependencyEnumerator = ModuleRootManager.getInstance(module).orderEntries().compileOnly().recursively().exportedOnly()
-    if (forProduction && !(KotlinPluginUtil.isMavenModule(module) || KotlinPluginUtil.isGradleModule(module))) {
+    if (forProduction && module.getBuildSystemType() == BuildSystemType.JPS) {
         dependencyEnumerator.productionOnly()
     }
     dependencyEnumerator.forEach { orderEntry ->

@@ -38,8 +38,7 @@ fun <RC : ResolvedCall<*>> RC.createFlatSignature(): FlatSignature<RC> {
     for ((valueParameter, resolvedValueArgument) in valueArguments.entries) {
         if (resolvedValueArgument is DefaultValueArgument) {
             numDefaults++
-        }
-        else {
+        } else {
             val originalValueParameter = originalValueParameters[valueParameter.index]
             val parameterType = originalValueParameter.argumentValueType
             for (valueArgument in resolvedValueArgument.arguments) {
@@ -52,14 +51,14 @@ fun <RC : ResolvedCall<*>> RC.createFlatSignature(): FlatSignature<RC> {
 }
 
 fun createOverloadingConflictResolver(
-        builtIns: KotlinBuiltIns,
-        specificityComparator: TypeSpecificityComparator
+    builtIns: KotlinBuiltIns,
+    specificityComparator: TypeSpecificityComparator
 ) = OverloadingConflictResolver(
-        builtIns,
-        specificityComparator,
-        MutableResolvedCall<*>::getResultingDescriptor,
-        ConstraintSystemBuilderImpl.Companion::forSpecificity,
-        MutableResolvedCall<*>::createFlatSignature,
-        { (it as? VariableAsFunctionResolvedCallImpl)?.variableCall },
-        { DescriptorToSourceUtils.descriptorToDeclaration(it) != null}
+    builtIns,
+    specificityComparator,
+    MutableResolvedCall<*>::getResultingDescriptor,
+    ConstraintSystemBuilderImpl.Companion::forSpecificity,
+    MutableResolvedCall<*>::createFlatSignature,
+    { (it as? VariableAsFunctionResolvedCallImpl)?.variableCall },
+    { DescriptorToSourceUtils.descriptorToDeclaration(it) != null }
 )

@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
+import org.jetbrains.kotlin.codegen.ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
 import org.jetbrains.kotlin.codegen.StackValue.*
 import org.jetbrains.kotlin.codegen.inline.NameGenerator
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.TypeParameterMappings
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty
@@ -46,7 +48,9 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_THROWABLE_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
+import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Label
@@ -169,8 +173,7 @@ class ExpressionCodegen(
             //coerceNotToUnit(r.type, Type.VOID_TYPE)
             exp.accept(this, data)
         }
-        coerceNotToUnit(result.type, expression.asmType)
-        return expression.onStack
+        return coerceNotToUnit(result.type, expression.asmType)
     }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: BlockInfo): StackValue {
@@ -256,11 +259,14 @@ class ExpressionCodegen(
                     assert(parameterDescriptor.varargElementType != null)
                     //empty vararg
 
+                    // Upper bound for type of vararg parameter should always have a form of 'Array<out T>',
+                    // while its lower bound may be Nothing-typed after approximation
+                    val type = typeMapper.mapType(parameterDescriptor.type.upperIfFlexible())
                     callGenerator.putValueIfNeeded(
                             parameterType,
-                            StackValue.operation(parameterType) {
+                            StackValue.operation(type) {
                                 it.aconst(0)
-                                it.newarray(correctElementType(parameterType))
+                                it.newarray(correctElementType(type))
                             },
                             ValueKind.GENERAL_VARARG, i, this@ExpressionCodegen)
                 }
@@ -280,7 +286,7 @@ class ExpressionCodegen(
             mv.athrow()
         } else if (expression.descriptor !is ConstructorDescriptor) {
             val expectedTypeOnStack = returnType?.let { typeMapper.mapType(it) } ?: callable.returnType
-            StackValue.coerce(callable.returnType, expectedTypeOnStack, mv)
+            return coerceNotToUnit(callable.returnType, expectedTypeOnStack)
         }
 
         return expression.onStack
@@ -331,11 +337,14 @@ class ExpressionCodegen(
     private fun generateFieldValue(expression: IrFieldAccessExpression, data: BlockInfo): StackValue {
         val receiverValue = expression.receiver?.accept(this, data) ?: StackValue.none()
         val propertyDescriptor = expression.descriptor
-        val fieldType = typeMapper.mapType(propertyDescriptor.type)
+
+        val realDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor)
+        val fieldType = typeMapper.mapType(realDescriptor.original.type)
         val ownerType = typeMapper.mapImplementationOwner(propertyDescriptor)
         val fieldName = propertyDescriptor.name.asString()
         val isStatic = expression.receiver == null // TODO
-        return StackValue.field(fieldType, ownerType, fieldName, isStatic, receiverValue, propertyDescriptor)
+
+        return StackValue.field(fieldType, ownerType, fieldName, isStatic, receiverValue, realDescriptor)
     }
 
     override fun visitGetField(expression: IrGetField, data: BlockInfo): StackValue {
@@ -518,14 +527,11 @@ class ExpressionCodegen(
     }
 
 
-    override fun visitWhen(expression: IrWhen, data: BlockInfo): StackValue {
-        val resultType = expression.asmType
-        genIfWithBranches(expression.branches[0], data, resultType, expression.branches.drop(1))
-        return expression.onStack
-    }
+    override fun visitWhen(expression: IrWhen, data: BlockInfo): StackValue =
+        genIfWithBranches(expression.branches[0], data, expression.asmType, expression.branches.drop(1))
 
 
-    fun genIfWithBranches(branch: IrBranch, data: BlockInfo, type: Type, otherBranches: List<IrBranch>) {
+    private fun genIfWithBranches(branch: IrBranch, data: BlockInfo, type: Type, otherBranches: List<IrBranch>): StackValue {
         val elseLabel = Label()
         val condition = branch.condition
         val thenBranch = branch.result
@@ -538,9 +544,9 @@ class ExpressionCodegen(
 
         val end = Label()
 
-        thenBranch.apply {
-            gen(this, type, data)
-            //coerceNotToUnit(this.asmType, type)
+        val result = thenBranch.run {
+            val stackValue = gen(this, data)
+            coerceNotToUnit(stackValue.type, type)
         }
 
         mv.goTo(end)
@@ -552,6 +558,7 @@ class ExpressionCodegen(
         }
 
         mv.mark(end)
+        return result
     }
 
 
@@ -875,6 +882,11 @@ class ExpressionCodegen(
     override fun visitThrow(expression: IrThrow, data: BlockInfo): StackValue {
         gen(expression.value, JAVA_THROWABLE_TYPE, data)
         mv.athrow()
+        return none()
+    }
+
+    override fun visitGetClass(expression: IrGetClass, data: BlockInfo): StackValue {
+        generateClassLiteralReference(expression, true, data)
         return expression.onStack
     }
 
@@ -884,21 +896,22 @@ class ExpressionCodegen(
     }
 
     fun generateClassLiteralReference(
-            receiverExpression: IrExpression,
-            wrapIntoKClass: Boolean,
-            data: BlockInfo
+        classReference: IrExpression,
+        wrapIntoKClass: Boolean,
+        data: BlockInfo
     ) {
-        if (receiverExpression !is IrClassReference /* && DescriptorUtils.isObjectQualifier(receiverExpression.descriptor)*/) {
-            assert(receiverExpression is IrGetClass)
-            JavaClassProperty.generateImpl(mv, gen((receiverExpression as IrGetClass).argument, data))
+        if (classReference !is IrClassReference /* && DescriptorUtils.isObjectQualifier(classReference.descriptor)*/) {
+            assert(classReference is IrGetClass)
+            JavaClassProperty.generateImpl(mv, gen((classReference as IrGetClass).argument, data))
         }
         else {
-//                if (TypeUtils.isTypeParameter(type)) {
-//                    assert(TypeUtils.isReifiedTypeParameter(type)) { "Non-reified type parameter under ::class should be rejected by type checker: " + type }
-//                    putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
-//                }
+            val type = classReference.classType
+            if (TypeUtils.isTypeParameter(type)) {
+                assert(TypeUtils.isReifiedTypeParameter(type)) { "Non-reified type parameter under ::class should be rejected by type checker: " + type }
+                putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
+            }
 
-            putJavaLangClassInstance(mv, typeMapper.mapType(receiverExpression.descriptor.defaultType))
+            putJavaLangClassInstance(mv, typeMapper.mapType(type))
         }
 
         if (wrapIntoKClass) {
@@ -907,10 +920,12 @@ class ExpressionCodegen(
 
     }
 
-    private fun coerceNotToUnit(fromType: Type, toType: Type) {
+    private fun coerceNotToUnit(fromType: Type, toType: Type): StackValue {
         if (toType != AsmTypes.UNIT_TYPE) {
             coerce(fromType, toType, mv)
+            return onStack(toType)
         }
+        return onStack(fromType)
     }
 
     val IrExpression.asmType: Type

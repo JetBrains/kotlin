@@ -30,8 +30,8 @@ interface ScriptHelper {
 
     companion object {
         private val scriptHelperInstance: ScriptHelper =
-                ServiceLoader.load(ScriptHelper::class.java, ScriptHelper::class.java.classLoader).firstOrNull()
-                ?: error("ScriptHelper implementation is not found")
+            ServiceLoader.load(ScriptHelper::class.java, ScriptHelper::class.java.classLoader).firstOrNull()
+                    ?: error("ScriptHelper implementation is not found")
 
         fun getInstance(): ScriptHelper = scriptHelperInstance
     }

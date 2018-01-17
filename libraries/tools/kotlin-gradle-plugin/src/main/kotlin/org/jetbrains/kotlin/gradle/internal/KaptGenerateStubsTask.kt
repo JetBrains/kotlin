@@ -21,6 +21,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.kotlinWarn
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.incremental.ChangedFiles
@@ -70,6 +71,16 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
         args.classpathAsList = this.compileClasspath.toList()
         args.destinationAsFile = this.destinationDir
+    }
+
+    override fun clearOutputsBeforeNonIncrementalBuild() {
+        super.clearOutputsBeforeNonIncrementalBuild()
+
+        if (!stubsDir.deleteRecursively()) {
+            logger.kotlinWarn("Could not delete $stubsDir")
+        }
+
+        stubsDir.mkdirs()
     }
 
     override fun execute(inputs: IncrementalTaskInputs) {

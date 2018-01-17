@@ -123,11 +123,7 @@ class EnumEntryNameInspection : NamingConventionInspection(
     START_UPPER, NO_BAD_CHARACTERS_OR_UNDERSCORE
 ) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitEnumEntry(enumEntry: KtEnumEntry) {
-                verifyName(enumEntry, holder)
-            }
-        }
+        return enumEntryVisitor { enumEntry -> verifyName(enumEntry, holder) }
     }
 }
 
@@ -137,11 +133,8 @@ class FunctionNameInspection : NamingConventionInspection(
     START_LOWER, NO_UNDERSCORES, NO_BAD_CHARACTERS
 ) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitNamedFunction(function: KtNamedFunction) {
-                if (TestUtils.isInTestSourceContent(function)) {
-                    return
-                }
+        return namedFunctionVisitor { function ->
+            if (!TestUtils.isInTestSourceContent(function)) {
                 verifyName(function, holder)
             }
         }
@@ -154,16 +147,14 @@ class TestFunctionNameInspection : NamingConventionInspection(
     START_LOWER
 ) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitNamedFunction(function: KtNamedFunction) {
-                if (!TestUtils.isInTestSourceContent(function)) {
-                    return
-                }
-                if (function.nameIdentifier?.text?.startsWith("`") == true) {
-                    return
-                }
-                verifyName(function, holder)
+        return namedFunctionVisitor { function ->
+            if (!TestUtils.isInTestSourceContent(function)) {
+                return@namedFunctionVisitor
             }
+            if (function.nameIdentifier?.text?.startsWith("`") == true) {
+                return@namedFunctionVisitor
+            }
+            verifyName(function, holder)
         }
     }
 }
@@ -178,11 +169,9 @@ abstract class PropertyNameInspectionBase protected constructor(
     protected enum class PropertyKind { NORMAL, PRIVATE, OBJECT_OR_TOP_LEVEL, CONST, LOCAL }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitProperty(property: KtProperty) {
-                if (property.getKind() == kind) {
-                    verifyName(property, holder)
-                }
+        return propertyVisitor { property ->
+            if (property.getKind() == kind) {
+                verifyName(property, holder)
             }
         }
     }
@@ -234,17 +223,15 @@ class LocalVariableNameInspection :
 class PackageNameInspection :
     NamingConventionInspection("Package", "[a-z][A-Za-z\\d]*(\\.[a-z][A-Za-z\\d]*)*", NO_UNDERSCORES) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitPackageDirective(directive: KtPackageDirective) {
-                val qualifiedName = directive.qualifiedName
-                if (qualifiedName.isNotEmpty() && nameRegex?.matches(qualifiedName) == false) {
-                    val message = getNameMismatchMessage(qualifiedName)
-                    holder.registerProblem(
-                        directive.packageNameExpression!!,
-                        "Package name <code>#ref</code> $message #loc",
-                        RenamePackageFix()
-                    )
-                }
+        return packageDirectiveVisitor { directive ->
+            val qualifiedName = directive.qualifiedName
+            if (qualifiedName.isNotEmpty() && nameRegex?.matches(qualifiedName) == false) {
+                val message = getNameMismatchMessage(qualifiedName)
+                holder.registerProblem(
+                    directive.packageNameExpression!!,
+                    "Package name <code>#ref</code> $message #loc",
+                    RenamePackageFix()
+                )
             }
         }
     }

@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.asJava.elements.isSetter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.uast.*
-import org.jetbrains.uast.java.annotations
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
 import org.jetbrains.uast.kotlin.*
 
@@ -37,6 +37,12 @@ open class KotlinUMethod(
         givenParent: UElement?
 ) : KotlinAbstractUElement(givenParent), UAnnotationMethod, JavaUElementWithComments, PsiMethod by psi {
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
+
+    override val javaPsi = psi
+
+    override val sourcePsi = psi.kotlinOrigin
+
+    override fun getSourceElement() = sourcePsi ?: this
 
     override val uastDefaultValue by lz {
         val annotationParameter = psi.kotlinOrigin as? KtParameter ?: return@lz null
@@ -56,8 +62,17 @@ open class KotlinUMethod(
                 .map { KotlinUAnnotation(it, this) }
     }
 
+    private val receiver by lz { (sourcePsi as? KtCallableDeclaration)?.receiverTypeReference }
+
     override val uastParameters by lz {
-        psi.parameterList.parameters.map { KotlinUParameter(it, this) }
+        val lightParams = psi.parameterList.parameters
+        val receiver = receiver ?: return@lz lightParams.map {
+            KotlinUParameter(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, this)
+        }
+        val receiverLight = lightParams.firstOrNull() ?: return@lz emptyList<UParameter>()
+        val uParameters = SmartList<UParameter>(KotlinReceiverUParameter(receiverLight, receiver, this))
+        lightParams.drop(1).mapTo(uParameters) { KotlinUParameter(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, this) }
+        uParameters
     }
 
     override val uastAnchor: UElement

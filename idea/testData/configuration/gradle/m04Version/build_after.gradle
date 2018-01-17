@@ -7,7 +7,7 @@ version = '1.0'
 repositories {
   mavenCentral()
     maven {
-        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+        url 'http://dl.bintray.com/kotlin/kotlin-eap'
     }
 }
 
@@ -19,7 +19,7 @@ buildscript {
     ext.kotlin_version = '$VERSION$'
     repositories {
         maven {
-            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+            url 'http://dl.bintray.com/kotlin/kotlin-eap'
         }
         mavenCentral()
     }

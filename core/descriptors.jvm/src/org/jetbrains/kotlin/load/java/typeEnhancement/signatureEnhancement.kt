@@ -31,13 +31,10 @@ import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.asFlexibleType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlin.types.unwrapEnhancement
+import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -46,7 +43,10 @@ data class NullabilityQualifierWithMigrationStatus(
         val isForWarningOnly: Boolean = false
 )
 
-class SignatureEnhancement(private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver) {
+class SignatureEnhancement(
+    private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver,
+    private val jsr305State: Jsr305State
+) {
 
     private fun AnnotationDescriptor.extractNullabilityTypeFromArgument(): NullabilityQualifierWithMigrationStatus? {
         val enumEntryDescriptor = firstArgumentValue()
@@ -81,10 +81,16 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
     ): NullabilityQualifierWithMigrationStatus? {
         val annotationFqName = annotationDescriptor.fqName ?: return null
 
-        return when (annotationFqName) {
-            in NULLABLE_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
-            in NOT_NULL_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
-            JAVAX_NONNULL_ANNOTATION -> annotationDescriptor.extractNullabilityTypeFromArgument()
+        return when {
+            annotationFqName in NULLABLE_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
+            annotationFqName in NOT_NULL_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+            annotationFqName == JAVAX_NONNULL_ANNOTATION -> annotationDescriptor.extractNullabilityTypeFromArgument()
+
+            annotationFqName == COMPATQUAL_NULLABLE_ANNOTATION && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
+
+            annotationFqName == COMPATQUAL_NONNULL_ANNOTATION && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
             else -> null
         }
     }

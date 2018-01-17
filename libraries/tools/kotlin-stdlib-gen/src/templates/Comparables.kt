@@ -36,6 +36,7 @@ object ComparableOps : TemplateGroupBase() {
             Ensures that this value is not less than the specified [minimumValue].
 
             @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+            @sample samples.comparisons.ComparableOps.coerceAtLeast${if (f == Generic) "Comparable" else ""}
             """
         }
         body {
@@ -57,6 +58,7 @@ object ComparableOps : TemplateGroupBase() {
             Ensures that this value is not greater than the specified [maximumValue].
 
             @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+            @sample samples.comparisons.ComparableOps.coerceAtMost${if (f == Generic) "Comparable" else ""}
             """
         }
         body {
@@ -78,6 +80,7 @@ object ComparableOps : TemplateGroupBase() {
             Ensures that this value lies in the specified [range].
 
             @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+            @sample samples.comparisons.ComparableOps.coerceIn${if (f == Generic) "Comparable" else ""}
             """
         }
         body(Generic) {
@@ -120,6 +123,7 @@ object ComparableOps : TemplateGroupBase() {
             Ensures that this value lies in the specified [range].
 
             @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+            @sample samples.comparisons.ComparableOps.coerceInFloatingPointRange
             """
         }
         body(Generic) {
@@ -341,6 +345,7 @@ object ComparableOps : TemplateGroupBase() {
             Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
 
             @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+            @sample samples.comparisons.ComparableOps.coerceIn${if (f == Generic) "Comparable" else ""}
             """
         }
         body(Primitives) {

@@ -80,7 +80,6 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.Type
@@ -91,7 +90,8 @@ import java.util.*
 internal val RECEIVER_NAME = "\$receiver"
 internal val THIS_NAME = "this"
 internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluator")
-internal val GENERATED_FUNCTION_NAME = "generated_for_debugger_kotlin_rulezzzz"
+internal val GENERATED_FUNCTION_NAME = "generated_for_debugger_fun"
+internal val GENERATED_CLASS_NAME = "Generated_for_debugger_class"
 
 private val DEBUG_MODE = false
 
@@ -158,7 +158,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             // If bytecode was taken from cache and exception was thrown - recompile bytecode and run eval4j again
             if (isCompiledDataFromCache && result is ExceptionThrown && result.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE) {
                 // We need only lambda classes here cause we using only eval4j evaluation method
-                val classLoaderHandler = loadClasses(context, compiledData.classes.drop(1))
+                val classLoaderHandler = loadClasses(context, compiledData.classes.filter { !it.isMainClass() })
 
                 try {
                     return runEval4j(context, extractAndCompile(codeFragment, sourcePosition, context)).toJdiValue(context)
@@ -236,7 +236,6 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context, parametersDescriptor)
 
             val outputFiles = classFileFactory.asList().filterClassFiles()
-                    .sortedBy { it.relativePath.length }
 
             for (file in outputFiles) {
                 if (LOG.isDebugEnabled) {
@@ -260,7 +259,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         }
 
         private val CompiledDataDescriptor.mainClass
-            get() = classes.firstOrNull() ?: error(
+            get() = classes.firstOrNull { it.isMainClass() } ?: error(
                     "Can't find main class for " + sourcePosition.elementAt.getParentOfType<KtDeclaration>(strict = false))
 
         private fun evaluateWithCompilation(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): Any? {
@@ -569,6 +568,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 }
 
 private val template = """
+@file:JvmName("$GENERATED_CLASS_NAME")
 !PACKAGE!
 
 !IMPORT_LIST!

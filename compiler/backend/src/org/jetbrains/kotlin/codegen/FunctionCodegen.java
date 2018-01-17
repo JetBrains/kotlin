@@ -242,6 +242,7 @@ public class FunctionCodegen {
                 functionDescriptor.isSuspend() &&
                 functionDescriptor.getModality() != Modality.ABSTRACT && isOverridable(functionDescriptor) &&
                 !isInterface(functionDescriptor.getContainingDeclaration()) &&
+                !(functionDescriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor) &&
                 origin.getOriginKind() != JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL;
 
         if (isOpenSuspendInClass) {

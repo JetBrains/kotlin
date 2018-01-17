@@ -197,7 +197,10 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
             val accessorOwner = (accessor as FunctionDescriptor).containingDeclaration as ClassOrPackageFragmentDescriptor
             val body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             val isConstructor = accessor.calleeDescriptor is ConstructorDescriptor
-            val accessorForIr = accessorToIrAccessor(isConstructor, accessor, context, accessor.calleeDescriptor as FunctionDescriptor, accessorOwner)
+            val accessorForIr = accessorToIrAccessor(
+                isConstructor, accessor, context,
+                accessor.calleeDescriptor as? FunctionDescriptor ?: return,
+                accessorOwner)
             val syntheticFunction = IrFunctionImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
                     accessorForIr, body

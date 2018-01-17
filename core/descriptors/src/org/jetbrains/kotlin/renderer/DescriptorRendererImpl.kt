@@ -523,11 +523,14 @@ internal class DescriptorRendererImpl(
         val isInfix =
                 functionDescriptor.isInfix && (functionDescriptor.overriddenDescriptors.none { it.isInfix } || alwaysRenderModifiers)
 
-        renderModifier(builder, isOperator, "operator")
-        renderModifier(builder, isInfix, "infix")
-        renderMemberModifiers(functionDescriptor, builder)
-        renderModifier(builder, functionDescriptor.isInline, "inline")
         renderModifier(builder, functionDescriptor.isTailrec, "tailrec")
+        renderSuspendModifier(functionDescriptor, builder)
+        renderModifier(builder, functionDescriptor.isInline, "inline")
+        renderModifier(builder, isInfix, "infix")
+        renderModifier(builder, isOperator, "operator")
+    }
+
+    private fun renderSuspendModifier(functionDescriptor: FunctionDescriptor, builder: StringBuilder) {
         renderModifier(builder, functionDescriptor.isSuspend, "suspend")
     }
 
@@ -624,10 +627,17 @@ internal class DescriptorRendererImpl(
                 renderModalityForCallable(function, builder)
 
                 if (includeAdditionalModifiers) {
-                    renderAdditionalModifiers(function, builder)
+                    renderMemberModifiers(function, builder)
                 }
 
                 renderOverride(function, builder)
+
+                if (includeAdditionalModifiers) {
+                    renderAdditionalModifiers(function, builder)
+                } else {
+                    renderSuspendModifier(function, builder)
+                }
+
                 renderMemberKind(function, builder)
 
                 if (verbose) {

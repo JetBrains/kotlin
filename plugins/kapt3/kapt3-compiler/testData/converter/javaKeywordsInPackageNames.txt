@@ -1,10 +1,13 @@
+/**
+ * @KaptMetadata
+ */
 package a.b.c;
 
+import java.lang.System;
+
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class A {
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     public A() {
         super();
     }
@@ -12,32 +15,17 @@ public final class A {
 
 ////////////////////
 
+/**
+ * @KaptMetadata
+ */
 package a.b.typealias.c;
 
+import java.lang.System;
+
 @kotlin.Metadata()
-@kapt.internal.KaptMetadata()
 public final class E {
 
-    @kapt.internal.KaptSignature(value = "<init>()V")
     public E() {
         super();
     }
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptMetadata {
-
-    public java.lang.String value();
-}
-
-////////////////////
-
-package kapt.internal;
-
-public @interface KaptSignature {
-
-    public java.lang.String value();
 }

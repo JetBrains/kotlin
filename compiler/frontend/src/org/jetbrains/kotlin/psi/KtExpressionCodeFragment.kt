@@ -21,11 +21,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 
 class KtExpressionCodeFragment(
-        project: Project,
-        name: String,
-        text: CharSequence,
-        imports: String?,
-        context: PsiElement?
+    project: Project,
+    name: String,
+    text: CharSequence,
+    imports: String?,
+    context: PsiElement?
 ) : KtCodeFragment(project, name, text, imports, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, context) {
 
     override fun getContentElement() = findChildByClass(KtExpression::class.java)

@@ -33,19 +33,11 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
 
     override fun execImpl(messageCollector: MessageCollector, services: Services, arguments: K2JSDceArguments): ExitCode {
         val baseDir = File(arguments.outputDirectory ?: "min")
-        var hasErrors = false
         val files = arguments.freeArgs.flatMap { arg ->
-            val files = collectInputFiles(baseDir, arg, messageCollector)
-            if (files != null) {
-                files
-            }
-            else {
-                hasErrors = true
-                emptyList()
-            }
+            collectInputFiles(baseDir, arg, messageCollector)
         }
 
-        if (hasErrors) return ExitCode.COMPILATION_ERROR
+        if (messageCollector.hasErrors()) return ExitCode.COMPILATION_ERROR
 
         if (files.isEmpty() && !arguments.version) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "no source files")
@@ -56,8 +48,9 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
         for (file in files) {
             existingFiles[file.outputPath]?.let {
                 messageCollector.report(
-                        CompilerMessageSeverity.ERROR,
-                        "duplicate target file will be created for '${file.resource.name}' and '${it.resource.name}'")
+                    CompilerMessageSeverity.ERROR,
+                    "duplicate target file will be created for '${file.resource.name}' and '${it.resource.name}'"
+                )
                 return ExitCode.COMPILATION_ERROR
             }
             existingFiles[file.outputPath] = file
@@ -69,8 +62,7 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
 
         return if (!arguments.devMode) {
             performDce(files, arguments, messageCollector)
-        }
-        else {
+        } else {
             copyFiles(files)
             ExitCode.OK
         }
@@ -95,8 +87,10 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
         val reachabilitySeverity = if (arguments.printReachabilityInfo) CompilerMessageSeverity.INFO else CompilerMessageSeverity.LOGGING
         messageCollector.report(reachabilitySeverity, "")
         for (node in nodes.extractRoots()) {
-            printTree(node, { messageCollector.report(reachabilitySeverity, it) },
-                      printNestedMembers = false, showLocations = true)
+            printTree(
+                node, { messageCollector.report(reachabilitySeverity, it) },
+                printNestedMembers = false, showLocations = true
+            )
         }
 
         return ExitCode.OK
@@ -123,14 +117,13 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
             FileOutputStream(targetFile).use { output ->
                 input.copyTo(output)
             }
-         }
+        }
     }
 
     private fun mapSourcePaths(inputFile: File, targetFile: File): Boolean {
         val json = try {
             InputStreamReader(FileInputStream(inputFile), "UTF-8").use { parseJson(it) }
-        }
-        catch (e: JsonSyntaxException) {
+        } catch (e: JsonSyntaxException) {
             return false
         }
 
@@ -145,12 +138,10 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
             if (result != null) {
                 if (File(targetFile.parentFile, result).exists()) {
                     result
-                }
-                else {
+                } else {
                     it
                 }
-            }
-            else {
+            } else {
                 it
             }
         }
@@ -165,7 +156,7 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
         return true
     }
 
-    private fun collectInputFiles(baseDir: File, fileName: String, messageCollector: MessageCollector): List<InputFile>? {
+    private fun collectInputFiles(baseDir: File, fileName: String, messageCollector: MessageCollector): List<InputFile> {
         val file = File(fileName)
         return when {
             file.isDirectory -> {
@@ -180,15 +171,17 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
                         collectInputFilesFromZip(baseDir, fileName)
                     }
                     else -> {
-                        messageCollector.report(CompilerMessageSeverity.ERROR,
-                                                "invalid file name '$fileName'; must end either with '.js', '.zip' or '.jar'")
-                        null
+                        messageCollector.report(
+                            CompilerMessageSeverity.WARNING,
+                            "invalid file name '${file.absolutePath}'; must end either with '.js', '.zip' or '.jar'"
+                        )
+                        emptyList()
                     }
                 }
             }
             else -> {
                 messageCollector.report(CompilerMessageSeverity.ERROR, "source file or directory not found: $fileName")
-                null
+                emptyList()
             }
         }
     }
@@ -197,41 +190,47 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
         val moduleName = getModuleNameFromPath(path)
         val pathToSourceMapCandidate = "$path.map"
         val pathToSourceMap = if (File(pathToSourceMapCandidate).exists()) pathToSourceMapCandidate else null
-        return InputFile(InputResource.file(path), pathToSourceMap?.let { InputResource.file(it) },
-                         File(baseDir, "$moduleName.js").absolutePath, moduleName)
+        return InputFile(
+            InputResource.file(path), pathToSourceMap?.let { InputResource.file(it) },
+            File(baseDir, "$moduleName.js").absolutePath, moduleName
+        )
     }
 
     private fun collectInputFilesFromZip(baseDir: File, path: String): List<InputFile> {
         return ZipFile(path).use { zipFile ->
             zipFile.entries().asSequence()
-                    .filter { !it.isDirectory }
-                    .filter { it.name.endsWith(".js") }
-                    .filter { zipFile.getEntry(it.name.metaJs()) != null }
-                    .distinctBy { it.name }
-                    .map { entry ->
-                        val moduleName = getModuleNameFromPath(entry.name)
-                        val pathToSourceMapCandidate = "${entry.name}.map"
-                        val pathToSourceMap = if (zipFile.getEntry(pathToSourceMapCandidate) != null) pathToSourceMapCandidate else null
-                        InputFile(InputResource.zipFile(path, entry.name), pathToSourceMap?.let { InputResource.zipFile(path, it) },
-                                  File(baseDir, "$moduleName.js").absolutePath, moduleName)
-                    }
-                    .toList()
+                .filter { !it.isDirectory }
+                .filter { it.name.endsWith(".js") }
+                .filter { zipFile.getEntry(it.name.metaJs()) != null }
+                .distinctBy { it.name }
+                .map { entry ->
+                    val moduleName = getModuleNameFromPath(entry.name)
+                    val pathToSourceMapCandidate = "${entry.name}.map"
+                    val pathToSourceMap = if (zipFile.getEntry(pathToSourceMapCandidate) != null) pathToSourceMapCandidate else null
+                    InputFile(
+                        InputResource.zipFile(path, entry.name), pathToSourceMap?.let { InputResource.zipFile(path, it) },
+                        File(baseDir, "$moduleName.js").absolutePath, moduleName
+                    )
+                }
+                .toList()
         }
     }
 
     private fun collectInputFilesFromDirectory(baseDir: File, path: String): List<InputFile> {
         return File(path).walkTopDown().asSequence()
-                .filter { !it.isDirectory }
-                .filter { it.name.endsWith(".js") }
-                .filter { File(it.path.metaJs()).exists() }
-                .map { entry ->
-                    val moduleName = getModuleNameFromPath(entry.name)
-                    val pathToSourceMapCandidate = "${entry.path}.map"
-                    val pathToSourceMap = if (File(pathToSourceMapCandidate).exists()) pathToSourceMapCandidate else null
-                    InputFile(InputResource.file(entry.path), pathToSourceMap?.let { InputResource.file(it) },
-                              File(baseDir, "$moduleName.js").absolutePath, moduleName)
-                }
-                .toList()
+            .filter { !it.isDirectory }
+            .filter { it.name.endsWith(".js") }
+            .filter { File(it.path.metaJs()).exists() }
+            .map { entry ->
+                val moduleName = getModuleNameFromPath(entry.name)
+                val pathToSourceMapCandidate = "${entry.path}.map"
+                val pathToSourceMap = if (File(pathToSourceMapCandidate).exists()) pathToSourceMapCandidate else null
+                InputFile(
+                    InputResource.file(entry.path), pathToSourceMap?.let { InputResource.file(it) },
+                    File(baseDir, "$moduleName.js").absolutePath, moduleName
+                )
+            }
+            .toList()
     }
 
     private fun String.metaJs() = removeSuffix(".js") + ".meta.js"

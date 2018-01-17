@@ -27,11 +27,11 @@ import java.util.ArrayList
 class CliDeclarationProviderFactoryService(private val sourceFiles: Collection<KtFile>) : DeclarationProviderFactoryService() {
 
     override fun create(
-            project: Project,
-            storageManager: StorageManager,
-            syntheticFiles: Collection<KtFile>,
-            filesScope: GlobalSearchScope,
-            moduleInfo: ModuleInfo
+        project: Project,
+        storageManager: StorageManager,
+        syntheticFiles: Collection<KtFile>,
+        filesScope: GlobalSearchScope,
+        moduleInfo: ModuleInfo
     ): DeclarationProviderFactory {
         val allFiles = ArrayList<KtFile>()
         sourceFiles.filterTo(allFiles) {

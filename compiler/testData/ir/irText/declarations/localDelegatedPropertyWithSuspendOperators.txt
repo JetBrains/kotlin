@@ -22,7 +22,7 @@ FILE /localDelegatedPropertyWithSuspendOperators.kt
           SET_FIELD 'z: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR 'this@A: A' type=A origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-    FUN public final operator suspend fun getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int
+    FUN public final suspend operator fun getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int
       $this: VALUE_PARAMETER this@A: A
       VALUE_PARAMETER value-parameter thisRef: kotlin.Any?
       VALUE_PARAMETER value-parameter property: kotlin.reflect.KProperty<*>
@@ -30,7 +30,7 @@ FILE /localDelegatedPropertyWithSuspendOperators.kt
         RETURN type=kotlin.Nothing from='getValue(Any?, KProperty<*>): Int'
           CALL '<get-z>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'this@A: A' type=A origin=null
-    FUN public final operator suspend fun setValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.Int): kotlin.Unit
+    FUN public final suspend operator fun setValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.Int): kotlin.Unit
       $this: VALUE_PARAMETER this@A: A
       VALUE_PARAMETER value-parameter thisRef: kotlin.Any?
       VALUE_PARAMETER value-parameter property: kotlin.reflect.KProperty<*>
@@ -52,7 +52,7 @@ FILE /localDelegatedPropertyWithSuspendOperators.kt
                   RETURN type=kotlin.Nothing from='<anonymous>(Continuation<Unit>): Any'
                     CALL '<get-COROUTINE_SUSPENDED>(): Any' type=kotlin.Any origin=GET_PROPERTY
               FUNCTION_REFERENCE '<anonymous>(Continuation<Unit>): Any' type=(kotlin.coroutines.experimental.Continuation<kotlin.Unit>) -> kotlin.Any origin=LAMBDA
-    FUN public final operator suspend fun provideDelegate(host: kotlin.Any?, p: kotlin.Any): A
+    FUN public final suspend operator fun provideDelegate(host: kotlin.Any?, p: kotlin.Any): A
       $this: VALUE_PARAMETER this@A: A
       VALUE_PARAMETER value-parameter host: kotlin.Any?
       VALUE_PARAMETER value-parameter p: kotlin.Any

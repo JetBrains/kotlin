@@ -236,7 +236,7 @@ class KotlinFacetEditorGeneralTab(
 
     private fun restrictAPIVersions() {
         with(editor.compilerConfigurable) {
-            restrictAPIVersions(selectedLanguageVersionView.version)
+            restrictAPIVersions(selectedLanguageVersionView)
         }
     }
 

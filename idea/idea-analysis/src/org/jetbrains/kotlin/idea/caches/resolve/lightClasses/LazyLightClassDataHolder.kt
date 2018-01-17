@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
@@ -147,7 +146,7 @@ private sealed class LazyLightClassMemberMatchingError(message: String, containi
 
     init {
         containingClass.kotlinOrigin?.hasLightClassMatchingErrors = true
-        withAttachment("class.kt", (containingClass as KtElement).getDebugText())
+        withAttachment("class.kt", (containingClass.kotlinOrigin)?.getDebugText())
     }
 
     class NoMatch(dummyMember: PsiMember, containingClass: KtLightClass) : LazyLightClassMemberMatchingError(

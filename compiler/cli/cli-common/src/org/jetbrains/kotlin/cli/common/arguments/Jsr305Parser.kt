@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.ReportLevel
 
 class Jsr305Parser(private val collector: MessageCollector) {
-    fun parse(value: Array<String>?): Jsr305State {
+    fun parse(value: Array<String>?, supportCompatqualCheckerFrameworkAnnotations: String?): Jsr305State {
         var global: ReportLevel? = null
         var migration: ReportLevel? = null
         val userDefined = mutableMapOf<String, ReportLevel>()
@@ -70,7 +70,25 @@ class Jsr305Parser(private val collector: MessageCollector) {
             }
         }
 
-        val state = Jsr305State(global ?: ReportLevel.WARN, migration, userDefined)
+        val enableCompatqualCheckerFrameworkAnnotations = when (supportCompatqualCheckerFrameworkAnnotations) {
+            "enable" -> true
+            "disable" -> false
+            null -> null
+            else -> {
+                collector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "Unrecognized -Xsupport-compatqual-checker-framework-annotations option: $supportCompatqualCheckerFrameworkAnnotations. Possible values are 'enable'/'disable'"
+                )
+                null
+            }
+        }
+
+        val state = Jsr305State(
+            global ?: ReportLevel.WARN, migration, userDefined,
+            enableCompatqualCheckerFrameworkAnnotations =
+            enableCompatqualCheckerFrameworkAnnotations
+                    ?: Jsr305State.COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE
+        )
         return if (state == Jsr305State.DISABLED) Jsr305State.DISABLED else state
     }
 

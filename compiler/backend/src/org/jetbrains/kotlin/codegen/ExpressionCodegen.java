@@ -2527,8 +2527,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 }
             }
             else if (receiverDescriptor instanceof ScriptDescriptor) {
-                return generateScriptReceiver
-                        ((ScriptDescriptor) receiverDescriptor);
+                return generateScriptReceiver((ScriptDescriptor) receiverDescriptor);
             }
             else {
                 return StackValue.thisOrOuter(this, receiverDescriptor, isSuper,

@@ -34,12 +34,12 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 
 class DelegationChecker : DeclarationChecker {
     override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings,
-            expectActualTracker: ExpectActualTracker
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        bindingContext: BindingContext,
+        languageVersionSettings: LanguageVersionSettings,
+        expectActualTracker: ExpectActualTracker
     ) {
         if (descriptor !is ClassDescriptor) return
         if (declaration !is KtClassOrObject) return
@@ -57,21 +57,27 @@ class DelegationChecker : DeclarationChecker {
     }
 
     private fun checkDescriptor(
-            classDeclaration: KtClassOrObject,
-            delegatedDescriptor: CallableMemberDescriptor,
-            delegatedToDescriptor: CallableMemberDescriptor,
-            diagnosticHolder: DiagnosticSink
+        classDeclaration: KtClassOrObject,
+        delegatedDescriptor: CallableMemberDescriptor,
+        delegatedToDescriptor: CallableMemberDescriptor,
+        diagnosticHolder: DiagnosticSink
     ) {
         val reachableFromDelegated =
-                OverridingUtil.filterOutOverridden(
-                        DescriptorUtils.getAllOverriddenDescriptors(delegatedDescriptor).filter { it.kind.isReal }.toSet()
-                ) - DescriptorUtils.unwrapFakeOverride(delegatedToDescriptor).original
+            OverridingUtil.filterOutOverridden(
+                DescriptorUtils.getAllOverriddenDescriptors(delegatedDescriptor).filter { it.kind.isReal }.toSet()
+            ) - DescriptorUtils.unwrapFakeOverride(delegatedToDescriptor).original
 
         val nonAbstractReachable = reachableFromDelegated.filter { it.modality == Modality.OPEN }
 
         if (nonAbstractReachable.isNotEmpty()) {
             /*In case of MANY_IMPL_MEMBER_NOT_IMPLEMENTED error there could be several elements otherwise only one*/
-            diagnosticHolder.report(DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE.on(classDeclaration, delegatedDescriptor, nonAbstractReachable))
+            diagnosticHolder.report(
+                DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE.on(
+                    classDeclaration,
+                    delegatedDescriptor,
+                    nonAbstractReachable
+                )
+            )
         }
     }
 }

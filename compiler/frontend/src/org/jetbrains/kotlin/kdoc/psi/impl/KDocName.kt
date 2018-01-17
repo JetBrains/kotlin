@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 /**
  * A single part of a qualified name in the tag subject or link.
  */
-class KDocName(node: ASTNode): KtElementImpl(node) {
+class KDocName(node: ASTNode) : KtElementImpl(node) {
     fun getContainingDoc(): KDoc {
         val kdoc = getStrictParentOfType<KDoc>()
         return kdoc ?: throw IllegalStateException("KDocName must be inside a KDoc")

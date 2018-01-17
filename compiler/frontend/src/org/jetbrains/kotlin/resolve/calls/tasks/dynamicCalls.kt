@@ -81,33 +81,32 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
         override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
             return if (call.valueArgumentList == null && call.valueArguments.isEmpty()) {
                 listOf(createDynamicProperty(owner, name, call))
-            }
-            else listOf()
+            } else listOf()
         }
     }
 
     private fun createDynamicProperty(owner: DeclarationDescriptor, name: Name, call: Call): PropertyDescriptorImpl {
         val propertyDescriptor = PropertyDescriptorImpl.create(
-                owner,
-                Annotations.EMPTY,
-                Modality.FINAL,
-                Visibilities.PUBLIC,
-                true,
-                name,
-                CallableMemberDescriptor.Kind.DECLARATION,
-                SourceElement.NO_SOURCE,
-                /* lateInit = */ false,
-                /* isConst = */ false,
-                /* isExpect = */ false,
-                /* isActual = */ false,
-                /* isExternal = */ false,
-                /* isDelegated = */ false
+            owner,
+            Annotations.EMPTY,
+            Modality.FINAL,
+            Visibilities.PUBLIC,
+            true,
+            name,
+            CallableMemberDescriptor.Kind.DECLARATION,
+            SourceElement.NO_SOURCE,
+            /* lateInit = */ false,
+            /* isConst = */ false,
+            /* isExpect = */ false,
+            /* isActual = */ false,
+            /* isExternal = */ false,
+            /* isDelegated = */ false
         )
         propertyDescriptor.setType(
-                dynamicType,
-                createTypeParameters(propertyDescriptor, call),
-                createDynamicDispatchReceiverParameter(propertyDescriptor),
-                null as KotlinType?
+            dynamicType,
+            createTypeParameters(propertyDescriptor, call),
+            createDynamicDispatchReceiverParameter(propertyDescriptor),
+            null as KotlinType?
         )
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
@@ -121,20 +120,20 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
 
     private fun createDynamicFunction(owner: DeclarationDescriptor, name: Name, call: Call): SimpleFunctionDescriptorImpl {
         val functionDescriptor = SimpleFunctionDescriptorImpl.create(
-                owner,
-                Annotations.EMPTY,
-                name,
-                CallableMemberDescriptor.Kind.DECLARATION,
-                SourceElement.NO_SOURCE
+            owner,
+            Annotations.EMPTY,
+            name,
+            CallableMemberDescriptor.Kind.DECLARATION,
+            SourceElement.NO_SOURCE
         )
         functionDescriptor.initialize(
-                null,
-                createDynamicDispatchReceiverParameter(functionDescriptor),
-                createTypeParameters(functionDescriptor, call),
-                createValueParameters(functionDescriptor, call),
-                dynamicType,
-                Modality.FINAL,
-                Visibilities.PUBLIC
+            null,
+            createDynamicDispatchReceiverParameter(functionDescriptor),
+            createTypeParameters(functionDescriptor, call),
+            createValueParameters(functionDescriptor, call),
+            dynamicType,
+            Modality.FINAL,
+            Visibilities.PUBLIC
         )
         functionDescriptor.setHasSynthesizedParameterNames(true)
         return functionDescriptor
@@ -144,26 +143,27 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
         return ReceiverParameterDescriptorImpl(owner, TransientReceiver(dynamicType))
     }
 
-    private fun createTypeParameters(owner: DeclarationDescriptor, call: Call): List<TypeParameterDescriptor> = call.typeArguments.indices.map {
-        index
-        ->
-        TypeParameterDescriptorImpl.createWithDefaultBound(
+    private fun createTypeParameters(owner: DeclarationDescriptor, call: Call): List<TypeParameterDescriptor> =
+        call.typeArguments.indices.map { index
+            ->
+            TypeParameterDescriptorImpl.createWithDefaultBound(
                 owner,
                 Annotations.EMPTY,
                 false,
                 Variance.INVARIANT,
                 Name.identifier("T$index"),
                 index
-        )
-    }
+            )
+        }
 
     private fun createValueParameters(owner: FunctionDescriptor, call: Call): List<ValueParameterDescriptor> {
         val parameters = ArrayList<ValueParameterDescriptor>()
 
-        fun addParameter(arg : ValueArgument, outType: KotlinType, varargElementType: KotlinType?) {
+        fun addParameter(arg: ValueArgument, outType: KotlinType, varargElementType: KotlinType?) {
             val index = parameters.size
 
-            parameters.add(ValueParameterDescriptorImpl(
+            parameters.add(
+                ValueParameterDescriptorImpl(
                     owner,
                     null,
                     index,
@@ -175,7 +175,8 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
                     /* isNoinline = */ false,
                     varargElementType,
                     SourceElement.NO_SOURCE
-            ))
+                )
+            )
         }
 
         fun getFunctionType(funLiteralExpr: KtLambdaExpression): KotlinType {

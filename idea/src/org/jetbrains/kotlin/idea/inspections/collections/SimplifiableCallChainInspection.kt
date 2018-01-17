@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections.collections
@@ -34,67 +23,63 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
 
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
-            object : KtVisitorVoid() {
-                override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
-                    super.visitQualifiedExpression(expression)
+            qualifiedExpressionVisitor(fun(expression) {
+                val firstExpression = expression.receiverExpression
+                val firstCallExpression = getCallExpression(firstExpression) ?: return
 
-                    val firstExpression = expression.receiverExpression
-                    val firstCallExpression = getCallExpression(firstExpression) ?: return
+                val secondCallExpression = expression.selectorExpression as? KtCallExpression ?: return
 
-                    val secondCallExpression = expression.selectorExpression as? KtCallExpression ?: return
+                val firstCalleeExpression = firstCallExpression.calleeExpression ?: return
+                val secondCalleeExpression = secondCallExpression.calleeExpression ?: return
+                val actualConversions = conversionGroups[
+                        firstCalleeExpression.text to secondCalleeExpression.text
+                        ] ?: return
 
-                    val firstCalleeExpression = firstCallExpression.calleeExpression ?: return
-                    val secondCalleeExpression = secondCallExpression.calleeExpression ?: return
-                    val actualConversions = conversionGroups[
-                            firstCalleeExpression.text to secondCalleeExpression.text
-                            ] ?: return
+                val context = expression.analyze()
+                val firstResolvedCall = firstExpression.getResolvedCall(context) ?: return
+                val conversion = actualConversions.firstOrNull {
+                    firstResolvedCall.resultingDescriptor.fqNameOrNull()?.asString() == it.firstFqName
+                } ?: return
 
-                    val context = expression.analyze()
-                    val firstResolvedCall = firstExpression.getResolvedCall(context) ?: return
-                    val conversion = actualConversions.firstOrNull {
-                        firstResolvedCall.resultingDescriptor.fqNameOrNull()?.asString() == it.firstFqName
-                    } ?: return
+                val builtIns = context[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type?.builtIns ?: return
 
-                    val builtIns = context[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type?.builtIns ?: return
-
-                    // Do not apply on maps due to lack of relevant stdlib functions
-                    val firstReceiverType = firstResolvedCall.extensionReceiver?.type
-                    val firstReceiverRawType = firstReceiverType?.constructor?.declarationDescriptor?.defaultType
-                    if (firstReceiverRawType != null) {
-                        if (firstReceiverRawType.isSubtypeOf(builtIns.map.defaultType) ||
-                            firstReceiverRawType.isSubtypeOf(builtIns.mutableMap.defaultType)) return
-                    }
-
-                    // Do not apply for lambdas with return inside
-                    val lambdaArgument = firstCallExpression.lambdaArguments.firstOrNull()
-                    if (lambdaArgument?.anyDescendantOfType<KtReturnExpression>() == true) return
-
-                    val secondResolvedCall = expression.getResolvedCall(context) ?: return
-                    val secondResultingDescriptor = secondResolvedCall.resultingDescriptor
-                    if (secondResultingDescriptor.fqNameOrNull()?.asString() != conversion.secondFqName) return
-                    if (secondResolvedCall.valueArguments.any { (parameter, resolvedArgument) ->
-                        parameter.type.isFunctionOfAnyKind() &&
-                        resolvedArgument !is DefaultValueArgument
-                    }) return
-
-                    if (conversion.replacement.startsWith("joinTo")) {
-                        // Function parameter in map must have String result type
-                        if (!firstResolvedCall.hasLastFunctionalParameterWithResult(context) {
-                            it.isSubtypeOf(builtIns.charSequence.defaultType)
-                        }) return
-                    }
-
-                    val descriptor = holder.manager.createProblemDescriptor(
-                            expression,
-                            firstCalleeExpression.textRange.shiftRight(-expression.startOffset),
-                            "Call chain on collection type may be simplified",
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            isOnTheFly,
-                            SimplifyCallChainFix(conversion.replacement)
-                    )
-                    holder.registerProblem(descriptor)
+                // Do not apply on maps due to lack of relevant stdlib functions
+                val firstReceiverType = firstResolvedCall.extensionReceiver?.type
+                val firstReceiverRawType = firstReceiverType?.constructor?.declarationDescriptor?.defaultType
+                if (firstReceiverRawType != null) {
+                    if (firstReceiverRawType.isSubtypeOf(builtIns.map.defaultType) ||
+                        firstReceiverRawType.isSubtypeOf(builtIns.mutableMap.defaultType)) return
                 }
-            }
+
+                // Do not apply for lambdas with return inside
+                val lambdaArgument = firstCallExpression.lambdaArguments.firstOrNull()
+                if (lambdaArgument?.anyDescendantOfType<KtReturnExpression>() == true) return
+
+                val secondResolvedCall = expression.getResolvedCall(context) ?: return
+                val secondResultingDescriptor = secondResolvedCall.resultingDescriptor
+                if (secondResultingDescriptor.fqNameOrNull()?.asString() != conversion.secondFqName) return
+                if (secondResolvedCall.valueArguments.any { (parameter, resolvedArgument) ->
+                    parameter.type.isFunctionOfAnyKind() &&
+                    resolvedArgument !is DefaultValueArgument
+                }) return
+
+                if (conversion.replacement.startsWith("joinTo")) {
+                    // Function parameter in map must have String result type
+                    if (!firstResolvedCall.hasLastFunctionalParameterWithResult(context) {
+                        it.isSubtypeOf(builtIns.charSequence.defaultType)
+                    }) return
+                }
+
+                val descriptor = holder.manager.createProblemDescriptor(
+                        expression,
+                        firstCalleeExpression.textRange.shiftRight(-expression.startOffset),
+                        "Call chain on collection type may be simplified",
+                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                        isOnTheFly,
+                        SimplifyCallChainFix(conversion.replacement)
+                )
+                holder.registerProblem(descriptor)
+            })
 
     companion object {
 

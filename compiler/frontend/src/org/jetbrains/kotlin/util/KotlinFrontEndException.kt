@@ -11,10 +11,17 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 class KotlinFrontEndException(message: String, cause: Throwable) : KotlinExceptionWithAttachments(message, cause) {
     constructor(
-            message: String,
-            cause: Throwable,
-            element: PsiElement
+        message: String,
+        cause: Throwable,
+        element: PsiElement
     ) : this(getExceptionMessage("Front-end", message, cause, DiagnosticUtils.atLocation(element)), cause) {
-        withAttachment("element.kt", element.text)
+        withAttachment(
+            "element.kt",
+            if (element.isValid) {
+                element.text
+            } else {
+                "PsiElement (invalid): " + element.toString()
+            }
+        )
     }
 }
