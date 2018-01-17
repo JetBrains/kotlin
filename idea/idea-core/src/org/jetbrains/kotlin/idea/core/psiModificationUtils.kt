@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.addRemoveModifier.MODIFIERS_ORDER
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getLambdaArgumentName
+import org.jetbrains.kotlin.psi.psiUtil.hasBody
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -41,7 +43,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParenthese
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
-import org.jetbrains.kotlin.utils.SmartList
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T : PsiElement> PsiElement.replaced(newElement: T): T {
@@ -434,28 +435,4 @@ fun KtParameter.setDefaultValue(newDefaultValue: KtExpression): PsiElement? {
     val psiFactory = KtPsiFactory(this)
     val eq = equalsToken ?: add(psiFactory.createEQ())
     return addAfter(newDefaultValue, eq) as KtExpression
-}
-
-fun KtModifierList.appendModifier(modifier: KtModifierKeywordToken) {
-    add(KtPsiFactory(this).createModifier(modifier))
-}
-
-fun KtModifierList.normalize(): KtModifierList {
-    val psiFactory = KtPsiFactory(this)
-    return psiFactory.createEmptyModifierList().also { newList ->
-        val modifiers = SmartList<PsiElement>()
-        allChildren.forEach {
-            val elementType = it.node.elementType
-            when {
-                it is KtAnnotation || it is KtAnnotationEntry -> newList.add(it)
-                elementType is KtModifierKeywordToken -> {
-                    if (elementType == KtTokens.DEFAULT_VISIBILITY_KEYWORD) return@forEach
-                    if (elementType == KtTokens.FINALLY_KEYWORD && !hasModifier(KtTokens.OVERRIDE_KEYWORD)) return@forEach
-                    modifiers.add(it)
-                }
-            }
-        }
-        modifiers.sortBy { MODIFIERS_ORDER.indexOf(it.node.elementType) }
-        modifiers.forEach { newList.add(it) }
-    }
 }

@@ -17,19 +17,14 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.codeInsight.intention.LowPriorityAction
-import com.intellij.codeInsight.navigation.NavigationUtil
-import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.quickfix.KotlinCrossLanguageQuickFixAction
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
@@ -40,7 +35,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import java.util.*
 
-open class CreateCallableFromUsageFix<E : KtElement>(
+class CreateCallableFromUsageFix<E : KtElement>(
         originalExpression: E,
         callableInfos: List<CallableInfo>
 ) : CreateCallableFromUsageFixBase<E>(originalExpression, callableInfos, false)
@@ -52,9 +47,9 @@ class CreateExtensionCallableFromUsageFix<E : KtElement>(
 
 abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         originalExpression: E,
-        protected val callableInfos: List<CallableInfo>,
+        private val callableInfos: List<CallableInfo>,
         val isExtension: Boolean
-) : KotlinCrossLanguageQuickFixAction<E>(originalExpression) {
+) : CreateFromUsageFixBase<E>(originalExpression) {
     init {
         assert (callableInfos.isNotEmpty()) { "No CallableInfos: ${originalExpression.getElementTextWithContext()}" }
         if (callableInfos.size > 1) {
@@ -81,8 +76,6 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         if (declaration !is KtClassOrObject && declaration !is KtTypeParameter && declaration !is PsiClass) return null
         return if (isExtension || declaration.canRefactor()) declaration else null
     }
-
-    override fun getFamilyName(): String = KotlinBundle.message("create.from.usage.family")
 
     override fun getText(): String {
         val element = element ?: return ""
@@ -148,7 +141,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         }.toString()
     }
 
-    override fun isAvailableImpl(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
 
         val receiverInfo = callableInfos.first().receiverTypeInfo
@@ -180,26 +173,12 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         }
     }
 
-    override fun invokeImpl(project: Project, editor: Editor?, file: PsiFile) {
-        if (editor == null) return
-
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val callableInfo = callableInfos.first()
 
-        val fileForBuilder: KtFile
-        val editorForBuilder: Editor
-        if (file is KtFile) {
-            fileForBuilder = file
-            editorForBuilder = editor
-        }
-        else {
-            fileForBuilder = element.containingKtFile
-            EditorHelper.openInEditor(element)
-            editorForBuilder = FileEditorManager.getInstance(project).selectedTextEditor!!
-        }
-
         val callableBuilder =
-                CallableBuilderConfiguration(callableInfos, element as KtElement, fileForBuilder, editorForBuilder, isExtension).createBuilder()
+                CallableBuilderConfiguration(callableInfos, element as KtElement, file, editor!!, isExtension).createBuilder()
 
         fun runBuilder(placement: CallablePlacement) {
             callableBuilder.placement = placement

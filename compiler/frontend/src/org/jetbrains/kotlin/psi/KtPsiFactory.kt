@@ -329,8 +329,6 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return createProperty(text + " val x").modifierList!!
     }
 
-    fun createEmptyModifierList() = createModifierList(KtTokens.PRIVATE_KEYWORD).apply { firstChild.delete() }
-
     fun createModifier(modifier: KtModifierKeywordToken): PsiElement {
         return createModifierList(modifier.value).getModifier(modifier)!!
     }
