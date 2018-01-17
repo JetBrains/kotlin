@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
-import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.codegen.inline.isReturnsUnitMarker
 import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
 import org.jetbrains.kotlin.codegen.optimization.common.ControlFlowGraph
@@ -75,31 +74,33 @@ object ReturnUnitMethodTransformer : MethodTransformer() {
         insns: List<AbstractInsnNode>
     ): Map<AbstractInsnNode, Collection<AbstractInsnNode>> {
         val cfg = ControlFlowGraph.build(methodNode)
-        return insns.keysToMap { findSuccessors(cfg, it, methodNode) }
+
+        return insns.keysToMap { findSuccessorsDFS(it, cfg, methodNode) }
     }
 
-    // Find all meaningful successors of [insn]
-    private fun findSuccessors(cfg: ControlFlowGraph, insn: AbstractInsnNode, methodNode: MethodNode): Collection<AbstractInsnNode> {
-        val stack = cfg.getSuccessorsIndices(insn).mapTo(ArrayList()) { methodNode.instructions[it] }
-        val successors = arrayListOf<AbstractInsnNode>()
-        while (stack.isNotEmpty()) {
-            val current = stack.pop()
-            if (current in successors || isReturnsUnitMarker(current)) continue
-            if (!current.isMeaningful || current is JumpInsnNode || current.opcode == Opcodes.NOP) {
-                cfg.getSuccessorsIndices(current).mapTo(stack) { methodNode.instructions[it] }
-                continue
-            }
-            // There can be multiple chains of { UnitInstance, POP } after inlining. Ignore them
-            if (current.isUnitInstance()) {
-                val newSuccessors = findSuccessors(cfg, current, methodNode)
-                if (newSuccessors.all { it.opcode == Opcodes.POP }) {
-                    newSuccessors.flatMapTo(stack) { findSuccessors(cfg, it, methodNode) }
-                    continue
+    // Find all meaningful successors of insn
+    private fun findSuccessorsDFS(insn: AbstractInsnNode, cfg: ControlFlowGraph, methodNode: MethodNode): Collection<AbstractInsnNode> {
+        val visited = hashSetOf<AbstractInsnNode>()
+
+        fun dfs(current: AbstractInsnNode): Collection<AbstractInsnNode> {
+            if (!visited.add(current)) return emptySet()
+
+            return cfg.getSuccessorsIndices(current).flatMap {
+                val succ = methodNode.instructions[it]
+                when {
+                    !succ.isMeaningful || succ is JumpInsnNode || succ.opcode == Opcodes.NOP -> dfs(succ)
+                    succ.isUnitInstance() -> {
+                        // There can be multiple chains of { UnitInstance, POP } after inlining. Ignore them
+                        val newSuccessors = dfs(succ)
+                        if (newSuccessors.all { it.opcode == Opcodes.POP }) newSuccessors.flatMap { dfs(it) }
+                        else setOf(succ)
+                    }
+                    else -> setOf(succ)
                 }
             }
-            successors.add(current)
         }
-        return successors
+
+        return dfs(insn)
     }
 
     private fun isSuspendingCallReturningUnit(node: AbstractInsnNode): Boolean =
