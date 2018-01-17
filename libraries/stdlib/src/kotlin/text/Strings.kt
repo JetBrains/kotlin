@@ -1167,7 +1167,7 @@ public fun CharSequence.split(vararg delimiters: String, ignoreCase: Boolean = f
     if (delimiters.size == 1) {
         val delimiter = delimiters[0]
         if (!delimiter.isEmpty()) {
-            return split(delimiters[0], ignoreCase, limit)
+            return split(delimiter, ignoreCase, limit)
         }
     }
 
@@ -1212,10 +1212,12 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
 
     var currentOffset = 0
     var nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
-    val isLimited = limit > 0
-    // This condition cannot be moved inside of ctor call because it will kill laziness of internal array allocation
-    val result = if (isLimited) ArrayList<String>(limit.coerceAtMost(10)) else ArrayList<String>()
+    if (nextIndex == -1) {
+        return listOf(this.toString())
+    }
 
+    val isLimited = limit > 0
+    val result = ArrayList<String>(if (isLimited) limit.coerceAtMost(10) else 10)
     while (nextIndex != -1) {
         if (!isLimited || result.size < limit - 1) {
             result.add(substring(currentOffset, nextIndex))
@@ -1223,16 +1225,8 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
             nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
         } else {
             result.add(substring(currentOffset, length))
-            currentOffset = length
-            break
+            return result
         }
-    }
-
-    if (currentOffset == 0) {
-        // If no matches found return single element list
-        // instead of triggering allocation of underlying array in 'result'
-        // Speedup is ~15% for small string
-        return listOf(this.toString())
     }
 
     if (!isLimited || result.size < limit) {
