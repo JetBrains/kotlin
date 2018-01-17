@@ -527,6 +527,7 @@ class StringTest {
         assertEquals(listOf("test"), (+"test").split(*arrayOf<String>()), "empty list of delimiters, none matched -> entire string returned")
 
         assertEquals(listOf("abc", "def", "123;456"), (+"abc;def,123;456").split(';', ',', limit = 3))
+        assertEquals(listOf("abc;def,123;456"), (+"abc;def,123;456").split(';', ',', limit = 1))
 
         assertEquals(listOf("abc", "def", "123", "456"), (+"abc=-def==123=456").split("==", "=-", "="))
 
@@ -551,6 +552,9 @@ class StringTest {
 
         assertEquals(listOf("abc", "def", "123,456,789,"), (+"abc,def,123,456,789,").split(',', limit = 3))
         assertEquals(listOf("abc", "def", "123,456,789,"), (+"abc,def,123,456,789,").split(",", limit = 3))
+
+        assertEquals(listOf("abc,def,123,456,789,"), (+"abc,def,123,456,789,").split(',', limit = 1))
+        assertEquals(listOf("abc,def,123,456,789,"), (+"abc,def,123,456,789,").split(",", limit = 1))
 
         assertEquals(listOf("abc", "def", "123", "456"), (+"abc<BR>def<br>123<bR>456").split("<BR>", ignoreCase = true))
         assertEquals(listOf("abc", "def<br>123<bR>456"), (+"abc<BR>def<br>123<bR>456").split("<BR>", ignoreCase = false))
