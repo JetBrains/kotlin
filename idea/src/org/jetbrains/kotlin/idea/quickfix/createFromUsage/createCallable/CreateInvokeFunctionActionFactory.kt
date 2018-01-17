@@ -23,9 +23,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -50,12 +48,6 @@ object CreateInvokeFunctionActionFactory : CreateCallableMemberFromUsageFactory<
         }
 
         val returnType = TypeInfo(element, Variance.OUT_VARIANCE)
-        return FunctionInfo(
-                OperatorNameConventions.INVOKE.asString(),
-                receiverType,
-                returnType,
-                parameterInfos = parameters,
-                modifierList = KtPsiFactory(element).createModifierList(KtTokens.OPERATOR_KEYWORD)
-        )
+        return FunctionInfo(OperatorNameConventions.INVOKE.asString(), receiverType, returnType, parameterInfos = parameters, isOperator = true)
     }
 }
