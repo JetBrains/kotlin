@@ -2375,7 +2375,8 @@ task produce_dynamic(type: DynamicKonanTest) {
                 "RO property is 42\n" +
                 "RW property is 239\n" +
                 "enum100 = 100\n" +
-                "object = 42\n"
+                "object = 42\n" +
+                "topLevel = 777 3\n"
 }
 
 task buildKonanStdlibTests(type: BuildKonanTest) {

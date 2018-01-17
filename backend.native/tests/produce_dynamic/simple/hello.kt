@@ -12,6 +12,16 @@ open class Base {
 
     open fun fooParam(arg0: String, arg1: Int) = println("Base.fooParam: $arg0 $arg1")
 
+    @konan.internal.CName(fullName = "", shortName = "strangeName") fun странноеИмя() = 111
+
+}
+
+@konan.internal.CName(fullName = "topLevelFunctionFromC", shortName = "topLevelFunctionFromCShort")
+fun topLevelFunction(x1: Int, x2: Int) = x1 - x2
+
+@konan.internal.CName("topLevelFunctionVoidFromC")
+fun topLevelFunctionVoid(x1: Int) {
+    assert(x1 == 42)
 }
 
 // Enum.

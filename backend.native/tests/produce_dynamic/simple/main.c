@@ -18,7 +18,6 @@ int main(void) {
 
     const char* string = __ kotlin.root.getString();
 
-
     __ kotlin.root.hello();
     __ kotlin.root.Base.foo(base);
     __ kotlin.root.Base.fooParam(base, "a", 1);
@@ -36,6 +35,10 @@ int main(void) {
     printf("enum100 = %d\n",  __ kotlin.root.Enum.get_code(enum1));
 
     printf("object = %d\n",  __ kotlin.root.Codeable.asCode(object1));
+
+    topLevelFunctionVoidFromC(42);
+    __ kotlin.root.topLevelFunctionVoid(42);
+    printf("topLevel = %d %d\n", topLevelFunctionFromC(780, 3), __ kotlin.root.topLevelFunctionFromCShort(5, 2));
 
     __ DisposeString(string);
     __ DisposeStablePointer(base.pinned);

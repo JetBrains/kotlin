@@ -55,7 +55,11 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
         // Treat any `@ExportForCppRuntime` declaration as exported.
         return true
     }
-    if (this.annotations.hasAnnotation(exportForCompilerAnnotation)){
+    if (this.annotations.findAnnotation(cnameAnnotation) != null) {
+        // Treat `@CName` declaration as exported.
+        return true
+    }
+    if (this.annotations.hasAnnotation(exportForCompilerAnnotation)) {
         return true
     }
     if (this.annotations.hasAnnotation(publishedApiAnnotation)){
@@ -95,6 +99,8 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
 private val symbolNameAnnotation = FqName("konan.SymbolName")
 
 private val exportForCppRuntimeAnnotation = FqName("konan.internal.ExportForCppRuntime")
+
+private val cnameAnnotation = FqName("konan.internal.CName")
 
 private val exportForCompilerAnnotation = FqName("konan.internal.ExportForCompiler")
 

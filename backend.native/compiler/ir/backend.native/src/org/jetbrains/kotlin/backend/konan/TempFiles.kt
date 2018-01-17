@@ -26,7 +26,6 @@ class TempFiles(val outputName: String) {
     val cAdapterBitcode     by lazy { createTempFile("api", ".bc").deleteOnExit() }
 
     val nativeBinaryFileName    get() = nativeBinaryFile.absolutePath
-    val cAdapterHeaderName      get() = cAdapterHeader.absolutePath
     val cAdapterCppName         get() = cAdapterCpp.absolutePath
     val cAdapterBitcodeName     get() = cAdapterBitcode.absolutePath
 }
