@@ -53,8 +53,6 @@ open class KotlinUClass private constructor(
 
     override val psi = unwrap<UClass, PsiClass>(psi)
 
-    override fun getSourceElement() = sourcePsi ?: this
-
     override fun getOriginalElement(): PsiElement? = super.getOriginalElement()
 
     override fun getNameIdentifier(): PsiIdentifier? = UastLightIdentifier(psi, ktClass)

@@ -453,34 +453,16 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 val psiFactory = KtPsiFactory(currentFile)
 
-                val modifiers = buildString {
-                    val modifierList = callableInfo.modifierList?.copied() ?: psiFactory.createEmptyModifierList()
-                    val visibilityKeyword = modifierList.visibilityModifierType()
-                    if (visibilityKeyword == null) {
-                        val defaultVisibility =
-                                if (callableInfo.isAbstract) ""
-                                else if (containingElement is KtClassOrObject
-                                         && !(containingElement is KtClass && containingElement.isInterface())
-                                         && containingElement.isAncestor(config.originalElement)
-                                         && callableInfo.kind != CallableKind.CONSTRUCTOR) "private "
-                                else if (isExtension) "private "
-                                else ""
-                        append(defaultVisibility)
-                    }
-
-                    // TODO: Get rid of isAbstract
-                    if (callableInfo.isAbstract
-                        && containingElement is KtClass
-                        && !containingElement.isInterface()
-                        && !modifierList.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
-                        modifierList.appendModifier(KtTokens.ABSTRACT_KEYWORD)
-                    }
-
-                    val text = modifierList.normalize().text
-                    if (text.isNotEmpty()) {
-                        append("$text ")
-                    }
-                }
+                val modifiers =
+                        if (callableInfo.isAbstract) {
+                            if (containingElement is KtClass && containingElement.isInterface()) "" else "abstract "
+                        }
+                        else if (containingElement is KtClassOrObject
+                                 && !(containingElement is KtClass && containingElement.isInterface())
+                                 && containingElement.isAncestor(config.originalElement)
+                                 && callableInfo.kind != CallableKind.CONSTRUCTOR) "private "
+                        else if (isExtension) "private "
+                        else ""
 
                 val isExpectClassMember by lazy {
                     containingElement is KtClassOrObject && (containingElement.resolveToDescriptorIfAny() as? ClassDescriptor)?.isExpect ?: false
@@ -489,7 +471,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val declaration: KtNamedDeclaration = when (callableInfo.kind) {
                     CallableKind.FUNCTION, CallableKind.CONSTRUCTOR -> {
                         val body = when {
-                            callableInfo is ConstructorInfo -> if (callableInfo.withBody) "{\n\n}" else ""
+                            callableInfo.kind == CallableKind.CONSTRUCTOR -> ""
                             callableInfo.isAbstract -> ""
                             containingElement is KtClass && containingElement.hasModifier(KtTokens.EXTERNAL_KEYWORD) -> ""
                             containingElement is KtObjectDeclaration && containingElement.hasModifier(KtTokens.EXTERNAL_KEYWORD) -> ""
@@ -497,7 +479,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                 && containingElement.parent.parent is KtClass
                                 && (containingElement.parent.parent as KtClass).hasModifier(KtTokens.EXTERNAL_KEYWORD) -> ""
                             isExpectClassMember -> ""
-                            else -> "{\n\n}"
+                            else -> "{}"
 
                         }
                         @Suppress("USELESS_CAST") // KT-10755
@@ -563,11 +545,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     return assignmentToReplace.replace(declaration) as KtCallableDeclaration
                 }
 
-                val container = if (containingElement is KtClass && callableInfo.isForCompanion) {
-                    containingElement.getOrCreateCompanionObject()
-                }
-                else containingElement
-                val declarationInPlace = placeDeclarationInContainer(declaration, container, config.originalElement, jetFileToEdit)
+                val declarationInPlace = placeDeclarationInContainer(declaration, containingElement, config.originalElement, jetFileToEdit)
 
                 if (declarationInPlace is KtSecondaryConstructor) {
                     val containingClass = declarationInPlace.containingClassOrObject!!
@@ -604,11 +582,14 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
 
         private fun setupTypeReferencesForShortening(declaration: KtNamedDeclaration,
-                                                     parameterTypeExpressions: List<TypeExpression>) {
+                                                     parameterTypeExpressions: List<TypeExpression>): List<KtElement> {
+            val typeRefsToShorten = ArrayList<KtElement>()
+
             if (config.isExtension) {
                 val receiverTypeText = receiverTypeCandidate!!.theType.renderLong(typeParameterNameMap).first()
                 val replacingTypeRef = KtPsiFactory(declaration).createType(receiverTypeText)
-                (declaration as KtCallableDeclaration).setReceiverTypeReference(replacingTypeRef)!!
+                val newTypeRef = (declaration as KtCallableDeclaration).setReceiverTypeReference(replacingTypeRef)!!
+                typeRefsToShorten.add(newTypeRef)
             }
 
             val returnTypeRefs = declaration.getReturnTypeReferences()
@@ -619,6 +600,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 if (returnType != null) {
                     // user selected a given type
                     replaceWithLongerName(returnTypeRefs, returnType)
+                    typeRefsToShorten.addAll(declaration.getReturnTypeReferences())
                 }
             }
 
@@ -637,6 +619,11 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     }
                 }
             }
+
+            val expandedValueParameters = declaration.getValueParameters()
+            parameterIndicesToShorten.mapNotNullTo(typeRefsToShorten) { expandedValueParameters[it].typeReference }
+
+            return typeRefsToShorten
         }
 
         private fun postprocessDeclaration(declaration: KtNamedDeclaration) {
@@ -650,12 +637,15 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
 
         private fun setupDeclarationBody(func: KtDeclarationWithBody) {
-            if (func !is KtNamedFunction && func !is KtPropertyAccessor) return
-            if (skipReturnType && callableInfo is FunctionInfo && callableInfo.preferEmptyBody) return
             val oldBody = func.bodyExpression ?: return
+            val templateKind = when (func) {
+                is KtSecondaryConstructor -> TemplateKind.SECONDARY_CONSTRUCTOR
+                is KtNamedFunction, is KtPropertyAccessor -> TemplateKind.FUNCTION
+                else -> throw AssertionError("Unexpected declaration: " + func.getElementTextWithContext())
+            }
             val bodyText = getFunctionBodyTextFromTemplate(
                     func.project,
-                    TemplateKind.FUNCTION,
+                    templateKind,
                     if (callableInfo.name.isNotEmpty()) callableInfo.name else null,
                     if (skipReturnType) "Unit" else (func as? KtFunction)?.typeReference?.text ?: "",
                     receiverClassDescriptor?.importableFqName ?: receiverClassDescriptor?.name?.let { FqName.topLevel(it) }
@@ -762,7 +752,13 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 // add parameter name to the template
                 val possibleNamesFromExpression = parameter.typeInfo.getPossibleNamesFromExpression(currentFileContext)
-                val possibleNames = arrayOf(*parameter.nameSuggestions.toTypedArray(), *possibleNamesFromExpression)
+                val preferredName = parameter.preferredName
+                val possibleNames = if (preferredName != null) {
+                    arrayOf(preferredName, *possibleNamesFromExpression)
+                }
+                else {
+                    possibleNamesFromExpression
+                }
 
                 // figure out suggested names for each type option
                 val parameterTypeToNamesMap = HashMap<String, Array<String>>()
@@ -956,14 +952,6 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                             if (newDeclaration is KtProperty) {
                                 newDeclaration.getter?.let { setupDeclarationBody(it) }
-
-                                if (newDeclaration.getter == null
-                                    && newDeclaration.initializer == null
-                                    && callableInfo is PropertyInfo
-                                    && callableInfo.withInitializer
-                                    && !callableInfo.isLateinitPreferred) {
-                                    newDeclaration.initializer = KtPsiFactory(newDeclaration).createExpression("TODO(\"initialize me\")")
-                                }
                             }
 
                             val callElement = config.originalElement as? KtCallElement
@@ -974,9 +962,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             CodeStyleManager.getInstance(project).reformat(newDeclaration)
 
                             // change short type names to fully qualified ones (to be shortened below)
-                            setupTypeReferencesForShortening(newDeclaration, parameterTypeExpressions)
+                            val typeRefsToShorten = setupTypeReferencesForShortening(newDeclaration, parameterTypeExpressions)
                             if (!transformToJavaMemberIfApplicable(newDeclaration)) {
-                                elementsToShorten.add(newDeclaration)
+                                elementsToShorten.addAll(typeRefsToShorten)
                                 setupEditor(newDeclaration)
                             }
                         }
@@ -1103,24 +1091,17 @@ internal fun <D : KtNamedDeclaration> placeDeclarationInContainer(
         }
 
         container is KtClassOrObject -> {
-            var sibling: PsiElement? = container.declarations.lastOrNull { it::class == declaration::class }
-            if (sibling == null && declaration is KtProperty) {
-                sibling = container.getBody()?.lBrace
-            }
-
-            insertMember(null, container, declaration, sibling)
+            insertMember(null, container, declaration, container.declarations.lastOrNull())
         }
         else -> throw AssertionError("Invalid containing element: ${container.text}")
     }
 
-    if (declaration !is KtPrimaryConstructor) {
-        val parent = declarationInPlace.parent
-        calcNecessaryEmptyLines(declarationInPlace, false).let {
-            if (it > 0) parent.addBefore(psiFactory.createNewLine(it), declarationInPlace)
-        }
-        calcNecessaryEmptyLines(declarationInPlace, true).let {
-            if (it > 0) parent.addAfter(psiFactory.createNewLine(it), declarationInPlace)
-        }
+    val parent = declarationInPlace.parent
+    calcNecessaryEmptyLines(declarationInPlace, false).let {
+        if (it > 0) parent.addBefore(psiFactory.createNewLine(it), declarationInPlace)
+    }
+    calcNecessaryEmptyLines(declarationInPlace, true).let {
+        if (it > 0) parent.addAfter(psiFactory.createNewLine(it), declarationInPlace)
     }
     return declarationInPlace
 }
