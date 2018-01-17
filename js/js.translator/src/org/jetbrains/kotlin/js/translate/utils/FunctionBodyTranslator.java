@@ -82,37 +82,50 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context
     ) {
-        List<ValueParameterDescriptor> originalParameters = descriptor.getValueParameters();
-        List<ValueParameterDescriptor> valueParameters;
-        if (descriptor.isActual() && CollectionsKt.none(originalParameters, ValueParameterDescriptor::declaresDefaultValue)) {
+        List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
+        List<ValueParameterDescriptor> valueParametersForDefaultValue;
+        if (descriptor.isActual() && CollectionsKt.none(valueParameters, ValueParameterDescriptor::declaresDefaultValue)) {
             FunctionDescriptor expected = CodegenUtil.findExpectedFunctionForActual(descriptor);
             if (expected != null) {
-                valueParameters = expected.getValueParameters();
+                valueParametersForDefaultValue = expected.getValueParameters();
             }
             else {
                 PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
                 assert element != null : "No element found for descriptor: " + descriptor;
                 context.bindingTrace().report(Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND.on(element));
-                valueParameters = originalParameters;
+                valueParametersForDefaultValue = valueParameters;
             }
         }
         else {
-            valueParameters = originalParameters;
+            valueParametersForDefaultValue = valueParameters;
         }
 
         List<JsStatement> result = new ArrayList<>(valueParameters.size());
-        for (ValueParameterDescriptor valueParameter : valueParameters) {
-            if (!valueParameter.declaresDefaultValue()) continue;
+        for (int i = 0; i < valueParameters.size(); i++) {
+            ValueParameterDescriptor valueParameter = valueParameters.get(i);
+            ValueParameterDescriptor valueParameterForDefaultValue = valueParametersForDefaultValue.get(i);
+
+            if (!valueParameterForDefaultValue.declaresDefaultValue()) continue;
 
             JsExpression jsNameRef = ReferenceTranslator.translateAsValueReference(valueParameter, context);
-            KtExpression defaultArgument = BindingUtils.getDefaultArgument(valueParameter);
+
+            KtExpression defaultArgument = BindingUtils.getDefaultArgument(valueParameterForDefaultValue);
             JsBlock defaultArgBlock = new JsBlock();
             JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, context, defaultArgBlock);
+
+            // parameterName = defaultValue
             PsiElement psi = KotlinSourceElementKt.getPsi(valueParameter.getSource());
             JsStatement assignStatement = assignment(jsNameRef, defaultValue).source(psi).makeStmt();
+
             JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);
+
+            // parameterName === undefined
             JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, Namer.getUndefinedExpression());
-            checkArgIsUndefined.source(KotlinSourceElementKt.getPsi(valueParameter.getSource()));
+            checkArgIsUndefined.source(psi);
+
+            // if (parameterName === undefined) {
+            //     parameterName = defaultValue
+            // }
             JsIf jsIf = JsAstUtils.newJsIf(checkArgIsUndefined, thenStatement);
             jsIf.setSource(checkArgIsUndefined.getSource());
             result.add(jsIf);
