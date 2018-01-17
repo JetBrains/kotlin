@@ -217,14 +217,17 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
 
         assertModuleLibDepPath(lib, OrderRootType.CLASSES, classesPath == null ? null : Collections.singletonList(classesPath));
         assertModuleLibDepPath(lib, OrderRootType.SOURCES, sourcePath == null ? null : Collections.singletonList(sourcePath));
-        assertModuleLibDepPath(lib, JavadocOrderRootType.getInstance(), javadocPath == null ? null : Collections.singletonList(javadocPath));
+        assertModuleLibDepPath(lib, JavadocOrderRootType.getInstance(),
+                               javadocPath == null ? null : Collections.singletonList(javadocPath));
     }
 
-    protected void assertModuleLibDep(String moduleName,
+    protected void assertModuleLibDep(
+            String moduleName,
             String depName,
             List<String> classesPaths,
             List<String> sourcePaths,
-            List<String> javadocPaths) {
+            List<String> javadocPaths
+    ) {
         LibraryOrderEntry lib = getModuleLibDep(moduleName, depName);
 
         assertModuleLibDepPath(lib, OrderRootType.CLASSES, classesPaths);
@@ -255,19 +258,20 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
     protected void assertExportedDeps(String moduleName, String... expectedDeps) {
         final List<String> actual = new ArrayList<String>();
 
-        getRootManager(moduleName).orderEntries().withoutSdk().withoutModuleSourceEntries().exportedOnly().process(new RootPolicy<Object>() {
-            @Override
-            public Object visitModuleOrderEntry(ModuleOrderEntry e, Object value) {
-                actual.add(e.getModuleName());
-                return null;
-            }
+        getRootManager(moduleName).orderEntries().withoutSdk().withoutModuleSourceEntries().exportedOnly()
+                .process(new RootPolicy<Object>() {
+                    @Override
+                    public Object visitModuleOrderEntry(ModuleOrderEntry e, Object value) {
+                        actual.add(e.getModuleName());
+                        return null;
+                    }
 
-            @Override
-            public Object visitLibraryOrderEntry(LibraryOrderEntry e, Object value) {
-                actual.add(e.getLibraryName());
-                return null;
-            }
-        }, null);
+                    @Override
+                    public Object visitLibraryOrderEntry(LibraryOrderEntry e, Object value) {
+                        actual.add(e.getLibraryName());
+                        return null;
+                    }
+                }, null);
 
         assertOrderedElementsAreEqual(actual, expectedDeps);
     }
@@ -305,7 +309,7 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
 
         for (OrderEntry e : getRootManager(moduleName).getOrderEntries()) {
             if (clazz.isInstance(e) && e.getPresentableName().equals(depName)) {
-                dep = (T)e;
+                dep = (T) e;
             }
         }
         assertNotNull("Dependency not found: " + depName
@@ -507,8 +511,10 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
         downloadArtifacts(myProjectsManager.getProjects(), null);
     }
 
-    protected MavenArtifactDownloader.DownloadResult downloadArtifacts(Collection<MavenProject> projects,
-            List<MavenArtifact> artifacts) {
+    protected MavenArtifactDownloader.DownloadResult downloadArtifacts(
+            Collection<MavenProject> projects,
+            List<MavenArtifact> artifacts
+    ) {
         final MavenArtifactDownloader.DownloadResult[] unresolved = new MavenArtifactDownloader.DownloadResult[1];
 
         AsyncResult<MavenArtifactDownloader.DownloadResult> result = new AsyncResult<MavenArtifactDownloader.DownloadResult>();

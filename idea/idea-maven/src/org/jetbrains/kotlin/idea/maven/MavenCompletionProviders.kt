@@ -24,21 +24,21 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 
 class MavenLanguageVersionsCompletionProvider : MavenFixedValueReferenceProvider(
-        LanguageVersion.values().filter { it.isStable || KotlinInternalMode.enabled }.map { it.versionString }.toTypedArray()
+    LanguageVersion.values().filter { it.isStable || KotlinInternalMode.enabled }.map { it.versionString }.toTypedArray()
 )
 
 class MavenApiVersionsCompletionProvider : MavenFixedValueReferenceProvider(
-        LanguageVersion.values().filter { it.isStable || KotlinInternalMode.enabled }.map { it.versionString }.toTypedArray()
+    LanguageVersion.values().filter { it.isStable || KotlinInternalMode.enabled }.map { it.versionString }.toTypedArray()
 )
 
 class MavenJvmTargetsCompletionProvider : MavenFixedValueReferenceProvider(
-        JvmTarget.values().map(JvmTarget::description).toTypedArray()
+    JvmTarget.values().map(JvmTarget::description).toTypedArray()
 )
 
 class MavenJsModuleKindsCompletionProvider : MavenFixedValueReferenceProvider(
-        DefaultValues.JsModuleKinds.possibleValues!!.map(StringUtil::unquoteString).toTypedArray()
+    DefaultValues.JsModuleKinds.possibleValues!!.map(StringUtil::unquoteString).toTypedArray()
 )
 
 class MavenJsMainCallCompletionProvider : MavenFixedValueReferenceProvider(
-        DefaultValues.JsMain.possibleValues!!.map(StringUtil::unquoteString).toTypedArray()
+    DefaultValues.JsMain.possibleValues!!.map(StringUtil::unquoteString).toTypedArray()
 )

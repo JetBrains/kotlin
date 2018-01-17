@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class KotlinMavenUnresolvedReferenceQuickFixProvider : UnresolvedReferenceQuickFixProvider<KtSimpleNameReference>() {
-    override fun getReferenceClass(): Class<KtSimpleNameReference>  = KtSimpleNameReference::class.java
+    override fun getReferenceClass(): Class<KtSimpleNameReference> = KtSimpleNameReference::class.java
 
     override fun registerFixes(ref: KtSimpleNameReference, registrar: QuickFixActionRegistrar) {
         val module = ModuleUtilCore.findModuleForPsiElement(ref.expression) ?: return
@@ -59,15 +59,14 @@ class KotlinMavenUnresolvedReferenceQuickFixProvider : UnresolvedReferenceQuickF
             } else {
                 importDirective.importedFqName?.asString()
             }
-        }
-        else {
+        } else {
             val typeReference = expression.getParentOfType<KtTypeReference>(true)
             val referenced = typeReference?.text ?: expression.getReferencedName()
 
             expression.containingKtFile
-                    .importDirectives
-                    .firstOrNull { !it.isAllUnder && it.aliasName == referenced || it.importedFqName?.shortName()?.asString() == referenced }
-                    ?.let { it.importedFqName?.asString() }
+                .importDirectives
+                .firstOrNull { !it.isAllUnder && it.aliasName == referenced || it.importedFqName?.shortName()?.asString() == referenced }
+                ?.let { it.importedFqName?.asString() }
                     ?: referenced
         }
 
@@ -77,12 +76,16 @@ class KotlinMavenUnresolvedReferenceQuickFixProvider : UnresolvedReferenceQuickF
     }
 }
 
-class AddMavenDependencyQuickFix(val className: String, val smartPsiElementPointer: SmartPsiElementPointer<KtSimpleNameExpression>) : IntentionAction, LowPriorityAction {
+class AddMavenDependencyQuickFix(
+    val className: String,
+    private val smartPsiElementPointer: SmartPsiElementPointer<KtSimpleNameExpression>
+) :
+    IntentionAction, LowPriorityAction {
     override fun getText() = "Add Maven dependency..."
     override fun getFamilyName() = text
     override fun startInWriteAction() = false
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) =
-            smartPsiElementPointer.element.let { it != null && it.isValid } && file != null && MavenDomUtil.findContainingProject(file) != null
+        smartPsiElementPointer.element.let { it != null && it.isValid } && file != null && MavenDomUtil.findContainingProject(file) != null
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
         if (editor == null || file == null) {

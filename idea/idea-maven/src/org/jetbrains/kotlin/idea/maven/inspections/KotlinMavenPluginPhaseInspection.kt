@@ -59,8 +59,8 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
 
         // all executions including inherited
         val executions = mavenProject.plugins
-                .filter { it.isKotlinMavenPlugin() }
-                .flatMap { it.executions }
+            .filter { it.isKotlinMavenPlugin() }
+            .flatMap { it.executions }
         val allGoalsSet: Set<String> = executions.flatMapTo(HashSet()) { it.goals }
         val hasJvmExecution = PomFile.KotlinGoals.Compile in allGoalsSet || PomFile.KotlinGoals.TestCompile in allGoalsSet
         val hasJsExecution = PomFile.KotlinGoals.Js in allGoalsSet || PomFile.KotlinGoals.TestJs in allGoalsSet
@@ -71,45 +71,52 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
             if (PomFile.KotlinGoals.Compile !in allGoalsSet && PomFile.KotlinGoals.Js !in allGoalsSet) {
                 val fixes = if (hasJavaFiles) {
                     arrayOf(AddExecutionLocalFix(domFileElement.file, module, kotlinPlugin, PomFile.KotlinGoals.Compile))
-                }
-                else {
-                    arrayOf(AddExecutionLocalFix(domFileElement.file, module, kotlinPlugin, PomFile.KotlinGoals.Compile),
-                            AddExecutionLocalFix(domFileElement.file, module, kotlinPlugin, PomFile.KotlinGoals.Js))
+                } else {
+                    arrayOf(
+                        AddExecutionLocalFix(domFileElement.file, module, kotlinPlugin, PomFile.KotlinGoals.Compile),
+                        AddExecutionLocalFix(domFileElement.file, module, kotlinPlugin, PomFile.KotlinGoals.Js)
+                    )
                 }
 
-                holder.createProblem(kotlinPlugin.artifactId.createStableCopy(),
-                                     HighlightSeverity.WARNING,
-                                     "Kotlin plugin has no compile executions",
-                                     *fixes)
-            }
-            else {
+                holder.createProblem(
+                    kotlinPlugin.artifactId.createStableCopy(),
+                    HighlightSeverity.WARNING,
+                    "Kotlin plugin has no compile executions",
+                    *fixes
+                )
+            } else {
                 if (hasJavaFiles) {
-                    pom.findExecutions(kotlinPlugin, PomFile.KotlinGoals.Compile).notAtPhase(PomFile.DefaultPhases.ProcessSources).forEach { badExecution ->
-                        val javacPlugin = mavenProject.findPlugin("org.apache.maven.plugins", "maven-compiler-plugin")
-                        val existingJavac = pom.domModel.build.plugins.plugins.firstOrNull {
-                            it.groupId.stringValue == "org.apache.maven.plugins" &&
-                            it.artifactId.stringValue == "maven-compiler-plugin"
-                        }
+                    pom.findExecutions(kotlinPlugin, PomFile.KotlinGoals.Compile).notAtPhase(PomFile.DefaultPhases.ProcessSources)
+                        .forEach { badExecution ->
+                            val javacPlugin = mavenProject.findPlugin("org.apache.maven.plugins", "maven-compiler-plugin")
+                            val existingJavac = pom.domModel.build.plugins.plugins.firstOrNull {
+                                it.groupId.stringValue == "org.apache.maven.plugins" &&
+                                        it.artifactId.stringValue == "maven-compiler-plugin"
+                            }
 
-                        if (existingJavac == null
-                            || !pom.isPluginAfter(existingJavac, kotlinPlugin)
-                            || pom.isExecutionEnabled(javacPlugin, "default-compile")
-                            || pom.isExecutionEnabled(javacPlugin, "default-testCompile")
-                            || pom.isPluginExecutionMissing(javacPlugin, "default-compile", "compile")
-                            || pom.isPluginExecutionMissing(javacPlugin, "default-testCompile", "testCompile")) {
+                            if (existingJavac == null
+                                || !pom.isPluginAfter(existingJavac, kotlinPlugin)
+                                || pom.isExecutionEnabled(javacPlugin, "default-compile")
+                                || pom.isExecutionEnabled(javacPlugin, "default-testCompile")
+                                || pom.isPluginExecutionMissing(javacPlugin, "default-compile", "compile")
+                                || pom.isPluginExecutionMissing(javacPlugin, "default-testCompile", "testCompile")) {
 
-                            holder.createProblem(badExecution.phase.createStableCopy(),
-                                                 HighlightSeverity.WARNING,
-                                                 "Kotlin plugin should run before javac so kotlin classes could be visible from Java",
-                                                 FixExecutionPhaseLocalFix(badExecution, PomFile.DefaultPhases.ProcessSources),
-                                                 AddJavaExecutionsLocalFix(module, domFileElement.file, kotlinPlugin))
+                                holder.createProblem(
+                                    badExecution.phase.createStableCopy(),
+                                    HighlightSeverity.WARNING,
+                                    "Kotlin plugin should run before javac so kotlin classes could be visible from Java",
+                                    FixExecutionPhaseLocalFix(badExecution, PomFile.DefaultPhases.ProcessSources),
+                                    AddJavaExecutionsLocalFix(module, domFileElement.file, kotlinPlugin)
+                                )
+                            }
                         }
-                    }
 
                     pom.findExecutions(kotlinPlugin, PomFile.KotlinGoals.Js, PomFile.KotlinGoals.TestJs).forEach { badExecution ->
-                        holder.createProblem(badExecution.goals.goals.first { it.isJsGoal() }.createStableCopy(),
-                                             HighlightSeverity.WARNING,
-                                             "JavaScript goal configured for module with Java files")
+                        holder.createProblem(
+                            badExecution.goals.goals.first { it.isJsGoal() }.createStableCopy(),
+                            HighlightSeverity.WARNING,
+                            "JavaScript goal configured for module with Java files"
+                        )
                     }
                 }
 
@@ -117,16 +124,20 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                 val jsDependencies = mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, MAVEN_JS_STDLIB_ID)
 
                 if (hasJvmExecution && stdlibDependencies.isEmpty()) {
-                    holder.createProblem(kotlinPlugin.artifactId.createStableCopy(),
-                                         HighlightSeverity.WARNING,
-                                         "Kotlin JVM compiler configured but no $MAVEN_STDLIB_ID dependency",
-                                         FixAddStdlibLocalFix(domFileElement.file, MAVEN_STDLIB_ID, kotlinPlugin.version.rawText))
+                    holder.createProblem(
+                        kotlinPlugin.artifactId.createStableCopy(),
+                        HighlightSeverity.WARNING,
+                        "Kotlin JVM compiler configured but no $MAVEN_STDLIB_ID dependency",
+                        FixAddStdlibLocalFix(domFileElement.file, MAVEN_STDLIB_ID, kotlinPlugin.version.rawText)
+                    )
                 }
                 if (hasJsExecution && jsDependencies.isEmpty()) {
-                    holder.createProblem(kotlinPlugin.artifactId.createStableCopy(),
-                                         HighlightSeverity.WARNING,
-                                         "Kotlin JavaScript compiler configured but no $MAVEN_JS_STDLIB_ID dependency",
-                                         FixAddStdlibLocalFix(domFileElement.file, MAVEN_JS_STDLIB_ID, kotlinPlugin.version.rawText))
+                    holder.createProblem(
+                        kotlinPlugin.artifactId.createStableCopy(),
+                        HighlightSeverity.WARNING,
+                        "Kotlin JavaScript compiler configured but no $MAVEN_JS_STDLIB_ID dependency",
+                        FixAddStdlibLocalFix(domFileElement.file, MAVEN_JS_STDLIB_ID, kotlinPlugin.version.rawText)
+                    )
                 }
             }
         }
@@ -134,40 +145,48 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
         val stdlibDependencies = pom.findDependencies(MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID, null))
         if (!hasJvmExecution && stdlibDependencies.isNotEmpty()) {
             stdlibDependencies.forEach { dep ->
-                holder.createProblem(dep.artifactId.createStableCopy(),
-                                     HighlightSeverity.WARNING,
-                                     "You have ${dep.artifactId} configured but no corresponding plugin execution",
-                                     ConfigurePluginExecutionLocalFix(module, domFileElement.file, PomFile.KotlinGoals.Compile, dep.version.rawText))
+                holder.createProblem(
+                    dep.artifactId.createStableCopy(),
+                    HighlightSeverity.WARNING,
+                    "You have ${dep.artifactId} configured but no corresponding plugin execution",
+                    ConfigurePluginExecutionLocalFix(module, domFileElement.file, PomFile.KotlinGoals.Compile, dep.version.rawText)
+                )
             }
         }
 
         val stdlibJsDependencies = pom.findDependencies(MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_JS_STDLIB_ID, null))
         if (!hasJsExecution && stdlibJsDependencies.isNotEmpty()) {
             stdlibJsDependencies.forEach { dep ->
-                holder.createProblem(dep.artifactId.createStableCopy(),
-                                     HighlightSeverity.WARNING,
-                                     "You have ${dep.artifactId} configured but no corresponding plugin execution",
-                                     ConfigurePluginExecutionLocalFix(module, domFileElement.file, PomFile.KotlinGoals.Js, dep.version.rawText))
+                holder.createProblem(
+                    dep.artifactId.createStableCopy(),
+                    HighlightSeverity.WARNING,
+                    "You have ${dep.artifactId} configured but no corresponding plugin execution",
+                    ConfigurePluginExecutionLocalFix(module, domFileElement.file, PomFile.KotlinGoals.Js, dep.version.rawText)
+                )
             }
         }
 
         pom.findKotlinExecutions().filter {
             it.goals.goals.any { it.rawText == PomFile.KotlinGoals.Compile || it.rawText == PomFile.KotlinGoals.Js }
-            && it.goals.goals.any { it.rawText == PomFile.KotlinGoals.TestCompile || it.rawText == PomFile.KotlinGoals.TestJs }
+                    && it.goals.goals.any { it.rawText == PomFile.KotlinGoals.TestCompile || it.rawText == PomFile.KotlinGoals.TestJs }
         }.forEach { badExecution ->
-            holder.createProblem(badExecution.goals.createStableCopy(),
-                                 HighlightSeverity.WEAK_WARNING,
-                                 "It is not recommended to have both test and compile goals in the same execution")
-        }
+                holder.createProblem(
+                    badExecution.goals.createStableCopy(),
+                    HighlightSeverity.WEAK_WARNING,
+                    "It is not recommended to have both test and compile goals in the same execution"
+                )
+            }
     }
 
-    private class AddExecutionLocalFix(val file: XmlFile, val module: Module, val kotlinPlugin: MavenDomPlugin, val goal: String) : LocalQuickFix {
+    private class AddExecutionLocalFix(val file: XmlFile, val module: Module, val kotlinPlugin: MavenDomPlugin, val goal: String) :
+        LocalQuickFix {
         override fun getName() = "Create $goal execution"
 
         override fun getFamilyName() = "Create kotlin execution"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            PomFile.forFileOrNull(file)?.addKotlinExecution(module, kotlinPlugin, goal, PomFile.getPhase(module.hasJavaFiles(), false), false, listOf(goal))
+            PomFile.forFileOrNull(file)
+                ?.addKotlinExecution(module, kotlinPlugin, goal, PomFile.getPhase(module.hasJavaFiles(), false), false, listOf(goal))
         }
     }
 
@@ -195,11 +214,13 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
         override fun getFamilyName() = "Add dependency"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            PomFile.forFileOrNull(pomFile)?.addDependency(MavenId(KotlinMavenConfigurator.GROUP_ID, id, version), MavenArtifactScope.COMPILE)
+            PomFile.forFileOrNull(pomFile)
+                ?.addDependency(MavenId(KotlinMavenConfigurator.GROUP_ID, id, version), MavenArtifactScope.COMPILE)
         }
     }
 
-    private class ConfigurePluginExecutionLocalFix(val module: Module, val xmlFile: XmlFile, val goal: String, val version: String?) : LocalQuickFix {
+    private class ConfigurePluginExecutionLocalFix(val module: Module, val xmlFile: XmlFile, val goal: String, val version: String?) :
+        LocalQuickFix {
         override fun getName() = "Create $goal execution of kotlin-maven-compiler"
         override fun getFamilyName() = "Create kotlin execution"
 
@@ -217,7 +238,7 @@ fun Module.hasJavaFiles(): Boolean {
 }
 
 private fun MavenPlugin.isKotlinMavenPlugin() = groupId == KotlinMavenConfigurator.GROUP_ID
-                                                && artifactId == KotlinMavenConfigurator.MAVEN_PLUGIN_ID
+        && artifactId == KotlinMavenConfigurator.MAVEN_PLUGIN_ID
 
 private fun MavenDomGoal.isJsGoal() = rawText == PomFile.KotlinGoals.Js || rawText == PomFile.KotlinGoals.TestJs
 
