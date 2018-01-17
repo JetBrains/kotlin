@@ -1845,6 +1845,12 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             doTest(fileName);
         }
 
+        @TestMetadata("experimentalOnWholeModule.kt")
+        public void testExperimentalOnWholeModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalOnWholeModule.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("experimentalWithNoImpact.kt")
         public void testExperimentalWithNoImpact() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalWithNoImpact.kt");
@@ -1896,6 +1902,12 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("useExperimentalOnFile.kt")
         public void testUseExperimentalOnFile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/useExperimentalOnFile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("useExperimentalOnWholeModule.kt")
+        public void testUseExperimentalOnWholeModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/useExperimentalOnWholeModule.kt");
             doTest(fileName);
         }
 

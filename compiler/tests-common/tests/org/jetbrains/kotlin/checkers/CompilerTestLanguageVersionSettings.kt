@@ -26,6 +26,9 @@ import java.util.regex.Pattern
 const val LANGUAGE_DIRECTIVE = "LANGUAGE"
 const val API_VERSION_DIRECTIVE = "API_VERSION"
 
+const val EXPERIMENTAL_DIRECTIVE = "EXPERIMENTAL"
+const val USE_EXPERIMENTAL_DIRECTIVE = "USE_EXPERIMENTAL"
+
 data class CompilerTestLanguageVersionSettings(
         private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
         override val apiVersion: ApiVersion,
@@ -51,15 +54,21 @@ private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.Sta
 
 fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVersionSettings? {
     val apiVersionString = directiveMap[API_VERSION_DIRECTIVE]
-    val directives = directiveMap[LANGUAGE_DIRECTIVE]
-    if (apiVersionString == null && directives == null) return null
+    val languageFeaturesString = directiveMap[LANGUAGE_DIRECTIVE]
+    val experimental = directiveMap[EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.experimental to it }
+    val useExperimental = directiveMap[USE_EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.useExperimental to it }
+
+    if (apiVersionString == null && languageFeaturesString == null && experimental == null && useExperimental == null) return null
 
     val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST_STABLE)
                      ?: error("Unknown API version: $apiVersionString")
 
-    val languageFeatures = directives?.let(::collectLanguageFeatureMap).orEmpty()
+    val languageFeatures = languageFeaturesString?.let(::collectLanguageFeatureMap).orEmpty()
 
-    return CompilerTestLanguageVersionSettings(languageFeatures, apiVersion, LanguageVersion.LATEST_STABLE)
+    return CompilerTestLanguageVersionSettings(
+        languageFeatures, apiVersion, LanguageVersion.LATEST_STABLE,
+        mapOf(*listOfNotNull(experimental, useExperimental).toTypedArray())
+    )
 }
 
 fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, environment: KotlinCoreEnvironment) {
