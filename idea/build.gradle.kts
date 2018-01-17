@@ -79,9 +79,9 @@ dependencies {
     testCompile(intellijPluginDep("copyright"))
     testCompile(intellijPluginDep("properties"))
     testCompile(intellijPluginDep("java-i18n"))
-    testCompileOnly(intellijDep()) { includeJars("groovy-all-2.4.6", "velocity", "gson-2.5", "idea_rt", "util", "log4j") }
+    testCompileOnly(intellijDep()) { includeJars("groovy-all-2.4.12", "velocity", "gson-2.8.2", "idea_rt", "util", "log4j") }
     testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
-    testCompileOnly(intellijPluginDep("gradle")) { includeJars("gradle-base-services-3.5", "gradle-tooling-extension-impl", "gradle-wrapper-3.5") }
+    testCompileOnly(intellijPluginDep("gradle")) { includeJars("gradle-base-services-4.0", "gradle-tooling-extension-impl", "gradle-wrapper-4.0") }
     testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
     testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
 
