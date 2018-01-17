@@ -38,11 +38,20 @@ import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
-import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
-import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
+import org.jetbrains.kotlin.idea.versions.*
 import java.util.*
 
 class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
+    companion object {
+        private val STDLIB_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID, null)
+        private val STDLIB_JRE7_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID_JRE7, null)
+        private val STDLIB_JDK7_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID_JDK7, null)
+        private val STDLIB_JRE8_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID_JRE8, null)
+        private val STDLIB_JDK8_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID_JDK8, null)
+
+        private val JVM_STDLIB_IDS = listOf(STDLIB_MAVEN_ID, STDLIB_JRE7_MAVEN_ID, STDLIB_JDK7_MAVEN_ID, STDLIB_JRE8_MAVEN_ID, STDLIB_JDK8_MAVEN_ID)
+    }
+
     override fun getStaticDescription() = "Reports kotlin-maven-plugin configuration issues"
 
     override fun checkFileElement(domFileElement: DomFileElement<MavenDomProjectModel>?, holder: DomElementAnnotationHolder?) {
@@ -142,9 +151,9 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
             }
         }
 
-        val stdlibDependencies = pom.findDependencies(MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID, null))
-        if (!hasJvmExecution && stdlibDependencies.isNotEmpty()) {
-            stdlibDependencies.forEach { dep ->
+        val jvmStdlibDependencies = pom.findDependencies(JVM_STDLIB_IDS)
+        if (!hasJvmExecution && jvmStdlibDependencies.isNotEmpty()) {
+            jvmStdlibDependencies.forEach { dep ->
                 holder.createProblem(
                     dep.artifactId.createStableCopy(),
                     HighlightSeverity.WARNING,

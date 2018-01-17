@@ -42,6 +42,7 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.configuration.RepositoryDescription
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
 fun kotlinPluginId(version: String?) = MavenId(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID, version)
@@ -415,7 +416,15 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
     }
 
     fun findDependencies(artifact: MavenId, scope: MavenArtifactScope? = null) =
-        domModel.dependencies.dependencies.filter { it.matches(artifact, scope) }
+        findDependencies(SmartList(artifact), scope)
+
+    fun findDependencies(artifacts: List<MavenId>, scope: MavenArtifactScope? = null): List<MavenDomDependency> {
+        return domModel.dependencies.dependencies.filter { dependency ->
+            artifacts.any { artifact ->
+                dependency.matches(artifact, scope)
+            }
+        }
+    }
 
     private fun ensureBuild(): XmlTag = ensureElement(projectElement, "build")
 
