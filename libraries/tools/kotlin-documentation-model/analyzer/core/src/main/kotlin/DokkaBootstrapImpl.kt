@@ -69,7 +69,8 @@ class DokkaBootstrapImpl : DokkaBootstrap {
                         languageVersion,
                         apiVersion,
                         cacheRoot,
-                        suppressedFiles.map { File(it) }.toSet()
+                        suppressedFiles.map { File(it) }.toSet(),
+                        collectInheritedExtensionsFromLibraries
                 )
         )
     }
