@@ -73,7 +73,8 @@ fun createKotlinJavascriptPackageFragmentProvider(
             emptyList(),
             notFoundClasses,
             ContractDeserializerImpl(configuration),
-            platformDependentDeclarationFilter = PlatformDependentDeclarationFilter.NoPlatformDependent
+            platformDependentDeclarationFilter = PlatformDependentDeclarationFilter.NoPlatformDependent,
+            extensionRegistryLite = JsSerializerProtocol.extensionRegistry
     )
 
     for (packageFragment in packageFragments.filterIsInstance<KotlinJavascriptPackageFragment>()) {

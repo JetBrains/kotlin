@@ -53,7 +53,8 @@ class JvmBuiltInsPackageFragmentProvider(
                 ),
                 notFoundClasses,
                 ContractDeserializer.DEFAULT,
-                additionalClassPartsProvider, platformDependentDeclarationFilter
+                additionalClassPartsProvider, platformDependentDeclarationFilter,
+                BuiltInSerializerProtocol.extensionRegistry
         )
     }
 

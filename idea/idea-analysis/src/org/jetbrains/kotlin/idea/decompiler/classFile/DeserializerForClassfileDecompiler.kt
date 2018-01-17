@@ -71,7 +71,8 @@ class DeserializerForClassfileDecompiler(
                 storageManager, moduleDescriptor, DeserializationConfiguration.Default, classDataFinder, annotationAndConstantLoader,
                 packageFragmentProvider, ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
                 LookupTracker.DO_NOTHING, JavaFlexibleTypeDeserializer, emptyList(), notFoundClasses,
-                ContractDeserializer.DEFAULT
+                ContractDeserializer.DEFAULT,
+                extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY
         )
     }
 

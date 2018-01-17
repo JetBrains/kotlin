@@ -52,7 +52,8 @@ class KotlinMetadataDeserializerForDecompiler(
                 AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, serializerProtocol), packageFragmentProvider,
                 ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
                 LookupTracker.DO_NOTHING, flexibleTypeDeserializer, emptyList(), notFoundClasses,
-                ContractDeserializer.DEFAULT
+                ContractDeserializer.DEFAULT,
+                extensionRegistryLite = serializerProtocol.extensionRegistry
         )
     }
 

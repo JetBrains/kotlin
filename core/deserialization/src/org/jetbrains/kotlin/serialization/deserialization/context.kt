@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -45,7 +46,8 @@ class DeserializationComponents(
         val notFoundClasses: NotFoundClasses,
         val contractDeserializer: ContractDeserializer,
         val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
-        val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All
+        val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All,
+        val extensionRegistryLite: ExtensionRegistryLite
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 
