@@ -14,306 +14,308 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.android.tests;
+package org.jetbrains.kotlin.android.tests
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.codegen.CodegenTestFiles;
-import org.jetbrains.kotlin.codegen.GenerationUtils;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.NameUtils;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.*;
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
-import org.jetbrains.kotlin.utils.Printer;
-import org.junit.Assert;
-import org.junit.Ignore;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.collect.Lists
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
+import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.CodegenTestFiles
+import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.utils.Printer
+import org.junit.Assert
+import org.junit.Ignore
+import java.io.File
+import java.io.IOException
+import java.util.*
 
 @Ignore
-public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
+class CodegenTestsOnAndroidGenerator private constructor(private val pathManager: PathManager) : KtUsefulTestCase() {
+    private var WRITED_FILES_COUNT = 0
 
-    private final PathManager pathManager;
-    private static final String testClassPackage = "org.jetbrains.kotlin.android.tests";
-    private static final String testClassName = "CodegenTestCaseOnAndroid";
-    private static final String baseTestClassPackage = "org.jetbrains.kotlin.android.tests";
-    private static final String baseTestClassName = "AbstractCodegenTestCaseOnAndroid";
-    private static final String generatorName = "CodegenTestsOnAndroidGenerator";
+    private var MODULE_INDEX = 1
 
-    private static int MODULE_INDEX = 1;
-    private int WRITED_FILES_COUNT = 0;
+    private val generatedTestNames = Lists.newArrayList<String>()
 
-    private final List<String> generatedTestNames = Lists.newArrayList();
-
-    public static void generate(PathManager pathManager) throws Throwable {
-        new CodegenTestsOnAndroidGenerator(pathManager).generateOutputFiles();
+    @Throws(Throwable::class)
+    private fun generateOutputFiles() {
+        prepareAndroidModule()
+        generateAndSave()
     }
 
-    private CodegenTestsOnAndroidGenerator(PathManager pathManager) {
-        this.pathManager = pathManager;
-    }
+    @Throws(IOException::class)
+    private fun prepareAndroidModule() {
+        println("Copying kotlin-runtime.jar and kotlin-reflect.jar in android module...")
+        copyKotlinRuntimeJars()
 
-    private void generateOutputFiles() throws Throwable {
-        prepareAndroidModule();
-        generateAndSave();
-    }
-
-    private void prepareAndroidModule() throws IOException {
-        System.out.println("Copying kotlin-runtime.jar and kotlin-reflect.jar in android module...");
-        copyKotlinRuntimeJars();
-
-        System.out.println("Check \"libs\" folder in tested android module...");
-        File libsFolderInTestedModule = new File(pathManager.getLibsFolderInAndroidTestedModuleTmpFolder());
+        println("Check \"libs\" folder in tested android module...")
+        val libsFolderInTestedModule = File(pathManager.libsFolderInAndroidTestedModuleTmpFolder)
         if (!libsFolderInTestedModule.exists()) {
-            libsFolderInTestedModule.mkdirs();
+            libsFolderInTestedModule.mkdirs()
         }
     }
 
-    private void copyKotlinRuntimeJars() throws IOException {
+    @Throws(IOException::class)
+    private fun copyKotlinRuntimeJars() {
         FileUtil.copy(
-                ForTestCompileRuntime.runtimeJarForTests(),
-                new File(pathManager.getLibsFolderInAndroidTmpFolder() + "/kotlin-runtime.jar")
-        );
+            ForTestCompileRuntime.runtimeJarForTests(),
+            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-runtime.jar")
+        )
         FileUtil.copy(
-                ForTestCompileRuntime.reflectJarForTests(),
-                new File(pathManager.getLibsFolderInAndroidTmpFolder() + "/kotlin-reflect.jar")
-        );
+            ForTestCompileRuntime.reflectJarForTests(),
+            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-reflect.jar")
+        )
 
         FileUtil.copy(
-                ForTestCompileRuntime.kotlinTestJarForTests(),
-                new File(pathManager.getLibsFolderInAndroidTmpFolder() + "/kotlin-test.jar")
-        );
+            ForTestCompileRuntime.kotlinTestJarForTests(),
+            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-test.jar")
+        )
     }
 
-    private void generateAndSave() throws Throwable {
-        System.out.println("Generating test files...");
-        StringBuilder out = new StringBuilder();
-        Printer p = new Printer(out);
+    @Throws(Throwable::class)
+    private fun generateAndSave() {
+        println("Generating test files...")
+        val out = StringBuilder()
+        val p = Printer(out)
 
-        p.print(FileUtil.loadFile(new File("license/LICENSE.txt")));
-        p.println("package " + testClassPackage + ";");
-        p.println();
-        p.println("import ", baseTestClassPackage, ".", baseTestClassName, ";");
-        p.println();
-        p.println("/* This class is generated by " + generatorName + ". DO NOT MODIFY MANUALLY */");
-        p.println("public class ", testClassName, " extends ", baseTestClassName, " {");
-        p.pushIndent();
+        p.print(FileUtil.loadFile(File("license/LICENSE.txt")))
+        p.println("package $testClassPackage;")
+        p.println()
+        p.println("import ", baseTestClassPackage, ".", baseTestClassName, ";")
+        p.println()
+        p.println("/* This class is generated by $generatorName. DO NOT MODIFY MANUALLY */")
+        p.println("public class ", testClassName, " extends ", baseTestClassName, " {")
+        p.pushIndent()
 
-        generateTestMethodsForDirectories(p, new File("compiler/testData/codegen/box"), new File("compiler/testData/codegen/boxInline"));
+        generateTestMethodsForDirectories(p, File("compiler/testData/codegen/box"), File("compiler/testData/codegen/boxInline"))
 
-        p.popIndent();
-        p.println("}");
+        p.popIndent()
+        p.println("}")
 
-        String testSourceFilePath =
-                pathManager.getSrcFolderInAndroidTmpFolder() + "/" + testClassPackage.replace(".", "/") + "/" + testClassName + ".java";
-        FileUtil.writeToFile(new File(testSourceFilePath), out.toString());
+        val testSourceFilePath =
+            pathManager.srcFolderInAndroidTmpFolder + "/" + testClassPackage.replace(".", "/") + "/" + testClassName + ".java"
+        FileUtil.writeToFile(File(testSourceFilePath), out.toString())
     }
 
-    private void generateTestMethodsForDirectories(Printer p, File... dirs) throws IOException {
-        FilesWriter holderMock = new FilesWriter(false, false);
-        FilesWriter holderFull = new FilesWriter(true, false);
-        FilesWriter holderInheritMFP = new FilesWriter(true, true);
+    @Throws(IOException::class)
+    private fun generateTestMethodsForDirectories(p: Printer, vararg dirs: File) {
+        val holderMock = FilesWriter(false, false)
+        val holderFull = FilesWriter(true, false)
+        val holderInheritMFP = FilesWriter(true, true)
 
-        for (File dir : dirs) {
-            File[] files = dir.listFiles();
-            Assert.assertNotNull("Folder with testData is empty: " + dir.getAbsolutePath(), files);
-            processFiles(p, files, holderFull, holderMock, holderInheritMFP);
+        for (dir in dirs) {
+            val files = dir.listFiles()
+            Assert.assertNotNull("Folder with testData is empty: " + dir.absolutePath, files)
+            processFiles(p, files!!, holderFull, holderMock, holderInheritMFP)
         }
 
-        holderFull.writeFilesOnDisk();
-        holderMock.writeFilesOnDisk();
-        holderInheritMFP.writeFilesOnDisk();
+        holderFull.writeFilesOnDisk()
+        holderMock.writeFilesOnDisk()
+        holderInheritMFP.writeFilesOnDisk()
     }
 
-    class FilesWriter {
-        private final boolean isFullJdkAndRuntime;
-        private final boolean inheritMultifileParts;
+    internal inner class FilesWriter constructor(
+        private val isFullJdkAndRuntime: Boolean,
+        private val inheritMultifileParts: Boolean
+    ) {
 
-        public List<KtFile> files = new ArrayList<>();
-        private KotlinCoreEnvironment environment;
-        private Disposable disposable;
+        var files: MutableList<KtFile> = ArrayList()
+        private var environment: KotlinCoreEnvironment? = null
+        private var disposable: Disposable? = null
 
-        private FilesWriter(boolean isFullJdkAndRuntime, boolean inheritMultifileParts) {
-            this.isFullJdkAndRuntime = isFullJdkAndRuntime;
-            this.inheritMultifileParts = inheritMultifileParts;
-            this.disposable = new TestDisposable();
-            this.environment = createEnvironment(isFullJdkAndRuntime, disposable);
+        init {
+            this.disposable = TestDisposable()
+            this.environment = createEnvironment(isFullJdkAndRuntime, disposable!!)
         }
 
-        private KotlinCoreEnvironment createEnvironment(boolean isFullJdkAndRuntime, @NotNull Disposable disposable) {
-            ConfigurationKind configurationKind = isFullJdkAndRuntime ? ConfigurationKind.ALL : ConfigurationKind.NO_KOTLIN_REFLECT;
-            TestJdkKind testJdkKind = isFullJdkAndRuntime ? TestJdkKind.FULL_JDK : TestJdkKind.MOCK_JDK;
-            CompilerConfiguration configuration =
-                    KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, KotlinTestUtils.getAnnotationsJar());
-            configuration.put(CommonConfigurationKeys.MODULE_NAME, "android-module-" + MODULE_INDEX++);
+        private fun createEnvironment(isFullJdkAndRuntime: Boolean, disposable: Disposable): KotlinCoreEnvironment {
+            val configurationKind = if (isFullJdkAndRuntime) ConfigurationKind.ALL else ConfigurationKind.NO_KOTLIN_REFLECT
+            val testJdkKind = if (isFullJdkAndRuntime) TestJdkKind.FULL_JDK else TestJdkKind.MOCK_JDK
+            val configuration = KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, KotlinTestUtils.getAnnotationsJar())
+            configuration.put(CommonConfigurationKeys.MODULE_NAME, "android-module-" + MODULE_INDEX++)
             if (inheritMultifileParts) {
-                configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, true);
+                configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, true)
             }
-            return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+            return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         }
 
-        public boolean shouldWriteFilesOnDisk() {
-            return files.size() > 300;
+        fun shouldWriteFilesOnDisk(): Boolean {
+            return files.size > 300
         }
 
-        public void writeFilesOnDiskIfNeeded() {
+        fun writeFilesOnDiskIfNeeded() {
             if (shouldWriteFilesOnDisk()) {
-                writeFilesOnDisk();
+                writeFilesOnDisk()
             }
         }
 
-        public void writeFilesOnDisk() {
-            writeFiles(files);
-            files = new ArrayList<>();
+        fun writeFilesOnDisk() {
+            writeFiles(files)
+            files = ArrayList()
             if (disposable != null) {
-                Disposer.dispose(disposable);
-                disposable = new TestDisposable();
+                Disposer.dispose(disposable!!)
+                disposable = TestDisposable()
             }
-            environment = createEnvironment(isFullJdkAndRuntime, disposable);
+            environment = createEnvironment(isFullJdkAndRuntime, disposable!!)
         }
 
-        public void addFile(String name, String content) {
+        fun addFile(name: String, content: String) {
             try {
-                files.add(CodegenTestFiles.create(name, content, environment.getProject()).getPsiFile());
+                files.add(CodegenTestFiles.create(name, content, environment!!.project).psiFile)
+            } catch (e: Throwable) {
+                throw RuntimeException("Problem during creating file $name: \n$content", e)
             }
-            catch (Throwable e) {
-                throw new RuntimeException("Problem during creating file " + name + ": \n" + content, e);
-            }
+
         }
 
-        private void writeFiles(List<KtFile> filesToCompile) {
-            if (filesToCompile.isEmpty()) return;
+        private fun writeFiles(filesToCompile: List<KtFile>) {
+            if (filesToCompile.isEmpty()) return
 
             //1000 files per folder, each folder would be jared by build.gradle script
             // We can't create one big jar with all test cause dex has problem with memory on teamcity
-            WRITED_FILES_COUNT += filesToCompile.size();
-            File outputDir = new File(pathManager.getOutputForCompiledFiles(WRITED_FILES_COUNT / 1000));
+            WRITED_FILES_COUNT += filesToCompile.size
+            val outputDir = File(pathManager.getOutputForCompiledFiles(WRITED_FILES_COUNT / 1000))
 
-            System.out.println("Generating " + filesToCompile.size() + " files" +
-                               (inheritMultifileParts
-                                ? " (JVM.INHERIT_MULTIFILE_PARTS)"
-                                : isFullJdkAndRuntime ? " (full jdk and runtime)" : "") + " into " + outputDir.getName() + "...");
-            OutputFileCollection outputFiles;
-            GenerationState state = null;
+            println(
+                "Generating " + filesToCompile.size + " files" +
+                        (if (inheritMultifileParts)
+                            " (JVM.INHERIT_MULTIFILE_PARTS)"
+                        else if (isFullJdkAndRuntime) " (full jdk and runtime)" else "") + " into " + outputDir.name + "..."
+            )
+            val outputFiles: OutputFileCollection
+            var state: GenerationState? = null
             try {
-                state = GenerationUtils.compileFiles(filesToCompile, environment);
-                outputFiles = state.getFactory();
-            }
-            catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
-            finally {
+                state = GenerationUtils.compileFiles(filesToCompile, environment!!)
+                outputFiles = state.factory
+            } catch (e: Throwable) {
+                throw RuntimeException(e)
+            } finally {
                 if (state != null) {
-                    state.destroy();
+                    state.destroy()
                 }
             }
 
             if (!outputDir.exists()) {
-                outputDir.mkdirs();
+                outputDir.mkdirs()
             }
-            Assert.assertTrue("Cannot create directory for compiled files", outputDir.exists());
+            Assert.assertTrue("Cannot create directory for compiled files", outputDir.exists())
 
-            OutputUtilsKt.writeAllTo(outputFiles, outputDir);
+            outputFiles.writeAllTo(outputDir)
         }
     }
 
-    private void processFiles(
-            @NotNull Printer printer,
-            @NotNull File[] files,
-            @NotNull FilesWriter holderFull,
-            @NotNull FilesWriter holderMock,
-            @NotNull FilesWriter holderInheritMFP
-    ) throws IOException {
-        holderFull.writeFilesOnDiskIfNeeded();
-        holderMock.writeFilesOnDiskIfNeeded();
-        holderInheritMFP.writeFilesOnDiskIfNeeded();
+    @Throws(IOException::class)
+    private fun processFiles(
+        printer: Printer,
+        files: Array<File>,
+        holderFull: FilesWriter,
+        holderMock: FilesWriter,
+        holderInheritMFP: FilesWriter
+    ) {
+        holderFull.writeFilesOnDiskIfNeeded()
+        holderMock.writeFilesOnDiskIfNeeded()
+        holderInheritMFP.writeFilesOnDiskIfNeeded()
 
-        for (File file : files) {
-            if (SpecialFiles.getExcludedFiles().contains(file.getName())) {
-                continue;
+        for (file in files) {
+            if (SpecialFiles.getExcludedFiles().contains(file.name)) {
+                continue
             }
-            if (file.isDirectory()) {
-                File[] listFiles = file.listFiles();
+            if (file.isDirectory) {
+                val listFiles = file.listFiles()
                 if (listFiles != null) {
-                    processFiles(printer, listFiles, holderFull, holderMock, holderInheritMFP);
+                    processFiles(printer, listFiles, holderFull, holderMock, holderInheritMFP)
                 }
-            }
-            else if (!FileUtilRt.getExtension(file.getName()).equals(KotlinFileType.INSTANCE.getDefaultExtension())) {
+            } else if (FileUtilRt.getExtension(file.name) != KotlinFileType.INSTANCE.defaultExtension) {
                 // skip non kotlin files
-            }
-            else {
-                String fullFileText = FileUtil.loadFile(file, true);
+            } else {
+                val fullFileText = FileUtil.loadFile(file, true)
 
                 if (!InTextDirectivesUtils.isPassingTarget(TargetBackend.JVM, file)) {
-                    continue;
+                    continue
                 }
 
                 //TODO: support LANGUAGE_VERSION
                 if (InTextDirectivesUtils.isDirectiveDefined(fullFileText, "LANGUAGE_VERSION:")) {
-                    continue;
+                    continue
                 }
 
                 //TODO: support multifile facades
                 //TODO: support multifile facades hierarchies
                 if (hasBoxMethod(fullFileText)) {
-                    FilesWriter filesHolder = InTextDirectivesUtils.isDirectiveDefined(fullFileText, "FULL_JDK") ||
-                                              InTextDirectivesUtils.isDirectiveDefined(fullFileText, "WITH_RUNTIME") ||
-                                              InTextDirectivesUtils.isDirectiveDefined(fullFileText, "WITH_REFLECT") ? holderFull : holderMock;
-                    filesHolder = fullFileText.contains("+JVM.INHERIT_MULTIFILE_PARTS") ? holderInheritMFP : filesHolder;
+                    var filesHolder = if (InTextDirectivesUtils.isDirectiveDefined(fullFileText, "FULL_JDK") ||
+                        InTextDirectivesUtils.isDirectiveDefined(fullFileText, "WITH_RUNTIME") ||
+                        InTextDirectivesUtils.isDirectiveDefined(fullFileText, "WITH_REFLECT"))
+                        holderFull
+                    else
+                        holderMock
+                    filesHolder = if (fullFileText.contains("+JVM.INHERIT_MULTIFILE_PARTS")) holderInheritMFP else filesHolder
 
-                    FqName classWithBoxMethod = AndroidTestGeneratorKt.genFiles(file, fullFileText, filesHolder);
-                    if (classWithBoxMethod == null)
-                        continue;
+                    val classWithBoxMethod = genFiles(file, fullFileText, filesHolder) ?: continue
 
-                    String generatedTestName = generateTestName(file.getName());
-                    generateTestMethod(printer, generatedTestName, classWithBoxMethod.asString(), StringUtil.escapeStringCharacters(file.getPath()));
+                    val generatedTestName = generateTestName(file.name)
+                    generateTestMethod(
+                        printer,
+                        generatedTestName,
+                        classWithBoxMethod.asString(),
+                        StringUtil.escapeStringCharacters(file.path)
+                    )
                 }
             }
         }
     }
 
+    private fun generateTestName(fileName: String): String {
+        var result = NameUtils.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)))
 
-
-    private static boolean hasBoxMethod(String text) {
-        return text.contains("fun box()");
-    }
-
-    private static void generateTestMethod(Printer p, String testName, String className, String filePath) {
-        p.println("public void test" + testName + "() throws Exception {");
-        p.pushIndent();
-        p.println("invokeBoxMethod(" + className + ".class, \"" + filePath + "\", \"OK\");");
-        p.popIndent();
-        p.println("}");
-        p.println();
-    }
-
-    private String generateTestName(String fileName) {
-        String result = NameUtils.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)));
-
-        int i = 0;
+        var i = 0
         while (generatedTestNames.contains(result)) {
-            result += "_" + i++;
+            result += "_" + i++
         }
-        generatedTestNames.add(result);
-        return result;
+        generatedTestNames.add(result)
+        return result
+    }
+
+    companion object {
+        private const val testClassPackage = "org.jetbrains.kotlin.android.tests"
+        private const val testClassName = "CodegenTestCaseOnAndroid"
+        private const val baseTestClassPackage = "org.jetbrains.kotlin.android.tests"
+        private const val baseTestClassName = "AbstractCodegenTestCaseOnAndroid"
+        private const val generatorName = "CodegenTestsOnAndroidGenerator"
+
+
+        @JvmStatic
+        @Throws(Throwable::class)
+        fun generate(pathManager: PathManager) {
+            CodegenTestsOnAndroidGenerator(pathManager).generateOutputFiles()
+        }
+
+
+        private fun hasBoxMethod(text: String): Boolean {
+            return text.contains("fun box()")
+        }
+
+        private fun generateTestMethod(p: Printer, testName: String, className: String, filePath: String) {
+            p.println("public void test$testName() throws Exception {")
+            p.pushIndent()
+            p.println("invokeBoxMethod($className.class, \"$filePath\", \"OK\");")
+            p.popIndent()
+            p.println("}")
+            p.println()
+        }
     }
 }
