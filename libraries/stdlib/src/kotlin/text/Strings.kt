@@ -1222,10 +1222,8 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
         if (!isLimited || result.size < limit - 1) {
             result.add(substring(currentOffset, nextIndex))
             currentOffset = nextIndex + delimiter.length
-            nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
-        } else {
-            result.add(substring(currentOffset, length))
-            return result
+            // Do not search for next occurrence if we're reaching limit
+            nextIndex = if (result.size == limit - 1) -1 else indexOf(delimiter, currentOffset, ignoreCase)
         }
     }
 
