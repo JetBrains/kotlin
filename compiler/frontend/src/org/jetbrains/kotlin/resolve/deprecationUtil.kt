@@ -201,10 +201,8 @@ class DeprecationResolver(
         descriptor.checkSinceKotlinVersionAccessibility(languageVersionSettings)
     }
 
-    fun getDeprecations(
-        descriptor: DeclarationDescriptor
-    ) = deprecations(descriptor.original)
-
+    fun getDeprecations(descriptor: DeclarationDescriptor): List<Deprecation> =
+        deprecations(descriptor.original)
 
     fun isDeprecatedHidden(descriptor: DeclarationDescriptor): Boolean =
         getDeprecations(descriptor).any { it.deprecationLevel == HIDDEN }
