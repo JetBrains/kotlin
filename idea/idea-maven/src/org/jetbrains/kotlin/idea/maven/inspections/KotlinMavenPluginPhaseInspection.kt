@@ -49,7 +49,10 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
         private val STDLIB_JRE8_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID_JRE8, null)
         private val STDLIB_JDK8_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID_JDK8, null)
 
-        private val JVM_STDLIB_IDS = listOf(STDLIB_MAVEN_ID, STDLIB_JRE7_MAVEN_ID, STDLIB_JDK7_MAVEN_ID, STDLIB_JRE8_MAVEN_ID, STDLIB_JDK8_MAVEN_ID)
+        private val JVM_STDLIB_IDS =
+            listOf(STDLIB_MAVEN_ID, STDLIB_JRE7_MAVEN_ID, STDLIB_JDK7_MAVEN_ID, STDLIB_JRE8_MAVEN_ID, STDLIB_JDK8_MAVEN_ID)
+
+        private val JS_STDLIB_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_JS_STDLIB_ID, null)
     }
 
     override fun getStaticDescription() = "Reports kotlin-maven-plugin configuration issues"
@@ -129,24 +132,28 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                     }
                 }
 
-                val stdlibDependencies = mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID)
-                val jsDependencies = mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, MAVEN_JS_STDLIB_ID)
-
-                if (hasJvmExecution && stdlibDependencies.isEmpty()) {
-                    holder.createProblem(
-                        kotlinPlugin.artifactId.createStableCopy(),
-                        HighlightSeverity.WARNING,
-                        "Kotlin JVM compiler configured but no $MAVEN_STDLIB_ID dependency",
-                        FixAddStdlibLocalFix(domFileElement.file, MAVEN_STDLIB_ID, kotlinPlugin.version.rawText)
-                    )
+                if (hasJvmExecution && pom.findDependencies(JVM_STDLIB_IDS).isEmpty()) {
+                    val stdlibDependencies = mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID)
+                    if (stdlibDependencies.isEmpty()) {
+                        holder.createProblem(
+                            kotlinPlugin.artifactId.createStableCopy(),
+                            HighlightSeverity.WARNING,
+                            "Kotlin JVM compiler configured but no $MAVEN_STDLIB_ID dependency",
+                            FixAddStdlibLocalFix(domFileElement.file, MAVEN_STDLIB_ID, kotlinPlugin.version.rawText)
+                        )
+                    }
                 }
-                if (hasJsExecution && jsDependencies.isEmpty()) {
-                    holder.createProblem(
-                        kotlinPlugin.artifactId.createStableCopy(),
-                        HighlightSeverity.WARNING,
-                        "Kotlin JavaScript compiler configured but no $MAVEN_JS_STDLIB_ID dependency",
-                        FixAddStdlibLocalFix(domFileElement.file, MAVEN_JS_STDLIB_ID, kotlinPlugin.version.rawText)
-                    )
+
+                if (hasJsExecution && pom.findDependencies(JVM_STDLIB_IDS).isEmpty()) {
+                    val jsDependencies = mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, MAVEN_JS_STDLIB_ID)
+                    if (jsDependencies.isEmpty()) {
+                        holder.createProblem(
+                            kotlinPlugin.artifactId.createStableCopy(),
+                            HighlightSeverity.WARNING,
+                            "Kotlin JavaScript compiler configured but no $MAVEN_JS_STDLIB_ID dependency",
+                            FixAddStdlibLocalFix(domFileElement.file, MAVEN_JS_STDLIB_ID, kotlinPlugin.version.rawText)
+                        )
+                    }
                 }
             }
         }
@@ -163,7 +170,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
             }
         }
 
-        val stdlibJsDependencies = pom.findDependencies(MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_JS_STDLIB_ID, null))
+        val stdlibJsDependencies = pom.findDependencies(JS_STDLIB_MAVEN_ID)
         if (!hasJsExecution && stdlibJsDependencies.isNotEmpty()) {
             stdlibJsDependencies.forEach { dep ->
                 holder.createProblem(
