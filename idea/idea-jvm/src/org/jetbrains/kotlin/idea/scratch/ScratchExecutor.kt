@@ -16,6 +16,14 @@
 
 package org.jetbrains.kotlin.idea.scratch
 
+import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandler
+
 abstract class ScratchExecutor(protected val file: ScratchFile) {
     abstract fun execute()
+
+    protected val handlers = mutableListOf<ScratchOutputHandler>()
+
+    fun addOutputHandler(outputHandler: ScratchOutputHandler) {
+        handlers.add(outputHandler)
+    }
 }

@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.idea.scratch.ScratchExecutor
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
+import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
+import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputType
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
 import java.io.ByteArrayInputStream
@@ -41,7 +43,9 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
     private lateinit var osProcessHandler: OSProcessHandler
 
     override fun execute() {
-        val module = file.module ?: return
+        handlers.forEach { it.onStart(file) }
+
+        val module = file.module ?: return error(file, "Module should be selected")
         val cmdLine = KotlinConsoleKeeper.createCommandLine(module)
 
         osProcessHandler = ReplOSProcessHandler(cmdLine)
@@ -69,6 +73,11 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         val bytes = ("$xmlRes\n").toByteArray(charset)
         processInputOS.write(bytes)
         processInputOS.flush()
+    }
+
+    private fun error(file: ScratchFile, message: String) {
+        handlers.forEach { it.error(file, message) }
+        handlers.forEach { it.onFinish(file) }
     }
 
     private class ReplHistory {
@@ -104,6 +113,10 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
             }
         }
 
+        override fun notifyProcessTerminated(exitCode: Int) {
+            handlers.forEach { it.onFinish(file) }
+        }
+
         private fun strToSource(s: String, encoding: Charset = Charsets.UTF_8) = InputSource(ByteArrayInputStream(s.toByteArray(encoding)))
 
         private fun handleReplMessage(text: String) {
@@ -111,6 +124,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
             val output = try {
                 factory.newDocumentBuilder().parse(strToSource(text))
             } catch (e: Exception) {
+                handlers.forEach { it.error(file, "Couldn't parse REPL output: $text") }
                 return
             }
 
@@ -122,7 +136,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
                 history.entryProcessed()
             }
 
-            val result = content
+            val result = parseReplOutput(content, outputType)
             if (result != null) {
                 val lastExpression = if (outputType == "USER_OUTPUT") {
                     // success command is printed after user output
@@ -132,9 +146,21 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
                 }
 
                 if (lastExpression != null) {
+                    handlers.forEach { it.handle(file, lastExpression, result) }
                 }
             }
+        }
 
+        private fun parseReplOutput(text: String, outputType: String): ScratchOutput? {
+            return when (outputType) {
+                "USER_OUTPUT" -> ScratchOutput(text, ScratchOutputType.OUTPUT)
+                "REPL_RESULT" -> ScratchOutput(text, ScratchOutputType.RESULT)
+                "REPL_INCOMPLETE",
+                "INTERNAL_ERROR",
+                "COMPILE_ERROR",
+                "RUNTIME_ERROR" -> ScratchOutput(text, ScratchOutputType.ERROR)
+                else -> null
+            }
         }
     }
 }

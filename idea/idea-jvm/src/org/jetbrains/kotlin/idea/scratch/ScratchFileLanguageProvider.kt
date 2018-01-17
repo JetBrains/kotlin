@@ -21,10 +21,13 @@ import com.intellij.lang.LanguageExtension
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandler
 
 abstract class ScratchFileLanguageProvider {
     abstract fun createFile(psiFile: PsiFile): ScratchFile?
     abstract fun createReplExecutor(file: ScratchFile): ScratchExecutor?
+
+    abstract fun getOutputHandler(): ScratchOutputHandler
 
     companion object {
         private val EXTENSION = LanguageExtension<ScratchFileLanguageProvider>("org.jetbrains.kotlin.scratchFileLanguageProvider")

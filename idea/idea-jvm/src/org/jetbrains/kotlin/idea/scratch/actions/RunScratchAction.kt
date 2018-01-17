@@ -21,8 +21,10 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.compiler.CompilerManager
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
 import org.jetbrains.kotlin.idea.scratch.getScratchPanelFromSelectedEditor
+import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
 
 class RunScratchAction : AnAction(
     KotlinBundle.message("scratch.run.button"),
@@ -40,18 +42,32 @@ class RunScratchAction : AnAction(
 
         val provider = ScratchFileLanguageProvider.get(scratchFile.psiFile.language) ?: return
 
+        val handler = provider.getOutputHandler()
+
         val module = scratchTopPanel.getModule()
         if (module == null) {
+            handler.error(scratchFile, "Module should be selected")
+            handler.onFinish(scratchFile)
             return
         }
 
         val runnable = r@ {
             val executor = provider.createReplExecutor(scratchFile)
             if (executor == null) {
+                handler.error(scratchFile, "Couldn't run file using REPL")
+                handler.onFinish(scratchFile)
                 return@r
             }
 
             e.presentation.isEnabled = false
+
+            executor.addOutputHandler(handler)
+
+            executor.addOutputHandler(object : ScratchOutputHandlerAdapter() {
+                override fun onFinish(file: ScratchFile) {
+                    e.presentation.isEnabled = true
+                }
+            })
 
             executor.execute()
         }

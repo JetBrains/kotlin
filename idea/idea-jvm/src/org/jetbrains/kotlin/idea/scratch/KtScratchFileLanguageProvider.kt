@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.scratch.output.InlayScratchOutputHandler
 import org.jetbrains.kotlin.idea.scratch.repl.KtScratchReplExecutor
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -26,4 +27,5 @@ class KtScratchFileLanguageProvider : ScratchFileLanguageProvider() {
     }
 
     override fun createReplExecutor(file: ScratchFile) = KtScratchReplExecutor(file)
+    override fun getOutputHandler() = InlayScratchOutputHandler
 }
