@@ -9301,6 +9301,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("correctSubstitutionForIncorporationConstraint.kt")
+                public void testCorrectSubstitutionForIncorporationConstraint() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/correctSubstitutionForIncorporationConstraint.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("declarationsBoundsViolation.kt")
                 public void testDeclarationsBoundsViolation() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/declarationsBoundsViolation.kt");
