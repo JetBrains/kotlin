@@ -1545,9 +1545,27 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("sortArrayList.kt")
+        public void testSortArrayList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/sortArrayList.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("sortImmutableList.kt")
         public void testSortImmutableList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/sortImmutableList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sortLinkedList.kt")
+        public void testSortLinkedList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/sortLinkedList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sortVector.kt")
+        public void testSortVector() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/sortVector.kt");
             doTest(fileName);
         }
 

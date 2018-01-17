@@ -12,7 +12,6 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -20,10 +19,12 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -32,11 +33,9 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
             val args = callExpression.valueArguments
             val firstArg = args.firstOrNull() ?: return
             val context = expression.analyze(BodyResolveMode.PARTIAL)
-            if (KotlinBuiltIns.FQ_NAMES.mutableList !=
-                    firstArg.getArgumentExpression()?.getType(context)?.constructor?.declarationDescriptor?.fqNameSafe) return
+            if (!firstArg.isMutableList(context)) return
 
-            val resolvedCall = expression.getResolvedCall(context) ?: return
-            val descriptor = resolvedCall.resultingDescriptor as? JavaMethodDescriptor ?: return
+            val descriptor = expression.getResolvedCall(context)?.resultingDescriptor as? JavaMethodDescriptor ?: return
             val fqName = descriptor.importableFqName?.asString() ?: return
             if (!canReplaceWithStdLib(expression, fqName, args)) return
 
@@ -67,6 +66,16 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
         return module.languageVersionSettings.apiVersion >= requiredVersion
     }
 
+}
+
+private fun KtValueArgument.isMutableList(context: BindingContext): Boolean {
+    val type = getArgumentExpression()?.getType(context) ?: return false
+    val constructor = type.constructor
+    val mutableListType = type.builtIns.mutableList.defaultType
+    if (constructor.declarationDescriptor?.defaultType?.isSubtypeOf(mutableListType) == true) return true
+    return constructor.supertypes.reversed().any {
+        it.constructor.declarationDescriptor?.defaultType?.isSubtypeOf(mutableListType) == true
+    }
 }
 
 private class ReplaceWithStdLibFix(private val methodName: String, private val receiver: String) : LocalQuickFix {
