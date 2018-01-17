@@ -65,7 +65,8 @@ public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProv
         }
     }
 
-    private boolean isPackageDeclaredExplicitly(@NotNull FqName packageFqName) {
+    @Override
+    public boolean packageExists(@NotNull FqName packageFqName) {
         return index.invoke().declaredPackages.contains(packageFqName);
     }
 
@@ -76,7 +77,7 @@ public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProv
     @Nullable
     @Override
     protected PackageMemberDeclarationProvider createPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
-        if (isPackageDeclaredExplicitly(packageFqName)) {
+        if (packageExists(packageFqName)) {
             return new FileBasedPackageMemberDeclarationProvider(
                     storageManager, packageFqName, this, index.invoke().filesByPackage.get(packageFqName));
         }

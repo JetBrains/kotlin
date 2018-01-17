@@ -34,8 +34,11 @@ public abstract class AbstractDeclarationProviderFactory implements DeclarationP
     @Nullable
     protected abstract PackageMemberDeclarationProvider createPackageMemberDeclarationProvider(@NotNull FqName name);
 
+    public abstract boolean packageExists(@NotNull FqName fqName);
+
     @Override
     public PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
+        if (!packageExists(packageFqName)) return null;
         return packageDeclarationProviders.invoke(packageFqName);
     }
 
