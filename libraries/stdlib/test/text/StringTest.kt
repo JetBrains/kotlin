@@ -527,12 +527,16 @@ class StringTest {
         assertEquals(listOf("test"), (+"test").split(*arrayOf<String>()), "empty list of delimiters, none matched -> entire string returned")
 
         assertEquals(listOf("abc", "def", "123;456"), (+"abc;def,123;456").split(';', ',', limit = 3))
+        assertEquals(listOf("abc;def,123;456"), (+"abc;def,123;456").split(';', ',', limit = 1))
 
         assertEquals(listOf("abc", "def", "123", "456"), (+"abc=-def==123=456").split("==", "=-", "="))
 
         assertEquals(listOf("", "a", "b", "c", ""), (+"abc").split(""))
         assertEquals(listOf("", "a", "b", "b", "a", ""), (+"abba").split("", "a"))
         assertEquals(listOf("", "", "b", "b", "", ""), (+"abba").split("a", ""))
+        assertEquals(listOf("", "bb", ""), (+"abba").split("a", "c"))
+        assertEquals(listOf("", "bb", ""), (+"abba").split('a', 'c'))
+
     }
 
     @Test fun splitSingleDelimiter() = withOneCharSequenceArg { arg1 ->
@@ -543,10 +547,21 @@ class StringTest {
         assertEquals(listOf("abc", "def", "123,456"), (+"abc,def,123,456").split(',', limit = 3))
         assertEquals(listOf("abc", "def", "123,456"), (+"abc,def,123,456").split(",", limit = 3))
 
+        assertEquals(listOf("abc", "def", "123,456,789"), (+"abc,def,123,456,789").split(',', limit = 3))
+        assertEquals(listOf("abc", "def", "123,456,789"), (+"abc,def,123,456,789").split(",", limit = 3))
+
+        assertEquals(listOf("abc", "def", "123,456,789,"), (+"abc,def,123,456,789,").split(',', limit = 3))
+        assertEquals(listOf("abc", "def", "123,456,789,"), (+"abc,def,123,456,789,").split(",", limit = 3))
+
+        assertEquals(listOf("abc,def,123,456,789,"), (+"abc,def,123,456,789,").split(',', limit = 1))
+        assertEquals(listOf("abc,def,123,456,789,"), (+"abc,def,123,456,789,").split(",", limit = 1))
+
         assertEquals(listOf("abc", "def", "123", "456"), (+"abc<BR>def<br>123<bR>456").split("<BR>", ignoreCase = true))
         assertEquals(listOf("abc", "def<br>123<bR>456"), (+"abc<BR>def<br>123<bR>456").split("<BR>", ignoreCase = false))
 
         assertEquals(listOf("a", "b", "c"), (+"a*b*c").split("*"))
+        assertEquals(listOf("", "bb", ""), (+"abba").split("a"))
+        assertEquals(listOf("", "bb", ""), (+"abba").split('a'))
     }
 
     @Test fun splitToLines() = withOneCharSequenceArg { arg1 ->

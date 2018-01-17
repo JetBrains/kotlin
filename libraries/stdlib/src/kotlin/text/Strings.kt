@@ -1167,7 +1167,7 @@ public fun CharSequence.split(vararg delimiters: String, ignoreCase: Boolean = f
     if (delimiters.size == 1) {
         val delimiter = delimiters[0]
         if (!delimiter.isEmpty()) {
-            return split(delimiters[0], ignoreCase, limit)
+            return split(delimiter, ignoreCase, limit)
         }
     }
 
@@ -1212,33 +1212,20 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
 
     var currentOffset = 0
     var nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
-    val isLimited = limit > 0
-    // This condition cannot be moved inside of ctor call because it will kill laziness of internal array allocation
-    val result = if (isLimited) ArrayList<String>(limit.coerceAtMost(10)) else ArrayList<String>()
-
-    while (nextIndex != -1) {
-        if (!isLimited || result.size < limit - 1) {
-            result.add(substring(currentOffset, nextIndex))
-            currentOffset = nextIndex + delimiter.length
-            nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
-        } else {
-            result.add(substring(currentOffset, length))
-            currentOffset = length
-            break
-        }
-    }
-
-    if (currentOffset == 0) {
-        // If no matches found return single element list
-        // instead of triggering allocation of underlying array in 'result'
-        // Speedup is ~15% for small string
+    if (nextIndex == -1) {
         return listOf(this.toString())
     }
 
-    if (!isLimited || result.size < limit) {
-        result.add(substring(currentOffset, length))
+    val isLimited = limit > 0
+    val result = ArrayList<String>(if (isLimited) limit.coerceAtMost(10) else 10)
+    while (nextIndex != -1 && (!isLimited || result.size < limit - 1)) {
+        result.add(substring(currentOffset, nextIndex))
+        currentOffset = nextIndex + delimiter.length
+        // Do not search for next occurrence if we're reaching limit
+        nextIndex = if (result.size == limit - 1) break else indexOf(delimiter, currentOffset, ignoreCase)
     }
 
+    result.add(substring(currentOffset, length))
     return result
 }
 
