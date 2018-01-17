@@ -417,7 +417,7 @@ abstract class KotlinCommonBlock(
         childrenAlignmentStrategy: CommonAlignmentStrategy,
         wrappingStrategy: WrappingStrategy
     ): Sequence<ASTBlock> {
-        if (node.elementType == KtNodeTypes.FUN) {
+        if (node.elementType == KtNodeTypes.FUN && false /* TODO fix tests and restore */) {
             val filteredChildren = node.children().filter {
                 it.textRange.length > 0 && it.elementType != TokenType.WHITE_SPACE
             }

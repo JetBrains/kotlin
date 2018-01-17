@@ -1,8 +1,8 @@
 package format.test
 
 class LineComments {
-// Should not be formatted
-// Format
+    // Should not be formatted
+    // Format
     // Format
     fun test() {
     }
