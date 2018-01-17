@@ -4,5 +4,6 @@
 
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.nodejs.mocha.KotlinMochaRunConfigurationProducer"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.nodejs.protractor.KotlinProtractorRunConfigurationProducer"/>
+        <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.nodejs.jest.KotlinJestRunConfigurationProducer"/>
     </extensions>
 </idea-plugin>
