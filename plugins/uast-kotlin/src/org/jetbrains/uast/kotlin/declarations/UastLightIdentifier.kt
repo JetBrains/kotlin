@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.kotlin.unwrapFakeFileForLightClass
+import org.jetbrains.uast.toUElement
 
 class UastLightIdentifier(lightOwner: PsiNameIdentifierOwner, ktDeclaration: KtNamedDeclaration?) :
     KtLightIdentifier(lightOwner, ktDeclaration) {
@@ -37,12 +38,14 @@ class KotlinUIdentifier private constructor(
     override val javaPsi: PsiIdentifier?,
     override val sourcePsi: PsiElement?,
     override val psi: PsiElement?,
-    override val uastParent: UElement?
-) : UIdentifier(psi, uastParent) {
+    givenParent: UElement?
+) : UIdentifier(psi, givenParent) {
 
     init {
         assert(sourcePsi == null || sourcePsi is LeafPsiElement || sourcePsi is KtElement, { "sourcePsi should be physical" })
     }
+
+    override val uastParent: UElement? by lazy { givenParent ?: sourcePsi?.parent?.toUElement() }
 
     constructor(javaPsi: PsiIdentifier?, sourcePsi: PsiElement?, uastParent: UElement?) : this(javaPsi, sourcePsi, javaPsi, uastParent)
     constructor(sourcePsi: PsiElement?, uastParent: UElement?) : this(null, sourcePsi, sourcePsi, uastParent)
