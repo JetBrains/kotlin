@@ -183,6 +183,18 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("experimentalDeprecated.args")
+        public void testExperimentalDeprecated() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalDeprecated.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalDeprecatedWarning.args")
+        public void testExperimentalDeprecatedWarning() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalDeprecatedWarning.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("experimentalIsNotAnnotation.args")
         public void testExperimentalIsNotAnnotation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalIsNotAnnotation.args");
