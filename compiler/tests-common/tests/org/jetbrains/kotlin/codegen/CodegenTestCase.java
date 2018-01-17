@@ -159,7 +159,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         return configuration;
     }
 
-    private static void updateConfigurationByDirectivesInTestFiles(
+    protected static void updateConfigurationByDirectivesInTestFiles(
             @NotNull List<TestFile> testFilesWithConfigurationDirectives,
             @NotNull CompilerConfiguration configuration
     ) {
