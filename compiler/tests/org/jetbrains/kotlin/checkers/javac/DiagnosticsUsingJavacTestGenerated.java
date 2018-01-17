@@ -10703,6 +10703,45 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/coercionToUnit")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CoercionToUnit extends AbstractDiagnosticsUsingJavacTest {
+                public void testAllFilesPresentInCoercionToUnit() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/coercionToUnit"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("coercionWithExpectedType.kt")
+                public void testCoercionWithExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionWithExpectedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("coercionWithExpectedTypeAndBound.kt")
+                public void testCoercionWithExpectedTypeAndBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionWithExpectedTypeAndBound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("coercionWithoutExpectedType.kt")
+                public void testCoercionWithoutExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionWithoutExpectedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("indirectCoercionWithExpectedType.kt")
+                public void testIndirectCoercionWithExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/coercionToUnit/indirectCoercionWithExpectedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noCoercion.kt")
+                public void testNoCoercion() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/coercionToUnit/noCoercion.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/inference/commonSystem")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

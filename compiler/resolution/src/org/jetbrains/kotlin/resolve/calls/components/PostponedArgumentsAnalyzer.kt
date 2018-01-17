@@ -34,6 +34,8 @@ class PostponedArgumentsAnalyzer(
         // type can be proper if it not contains not fixed type variables
         fun canBeProper(type: UnwrappedType): Boolean
 
+        fun hasUpperUnitConstraint(type: UnwrappedType): Boolean
+
         // mutable operations
         fun addOtherSystem(otherSystem: ConstraintStorage)
 
@@ -73,10 +75,24 @@ class PostponedArgumentsAnalyzer(
 
         val receiver = lambda.receiver?.let(::substitute)
         val parameters = lambda.parameters.map(::substitute)
-        val expectedType = lambda.returnType.takeIf { c.canBeProper(it) }?.let(::substitute)
+        val rawReturnType = lambda.returnType
 
-        val returnArguments =
-            resolutionCallbacks.analyzeAndGetLambdaReturnArguments(lambda.atom, lambda.isSuspend, receiver, parameters, expectedType)
+        val expectedTypeForReturnArguments = when {
+            c.canBeProper(rawReturnType) -> substitute(rawReturnType)
+
+            // For Unit-coercion
+            c.hasUpperUnitConstraint(rawReturnType) -> lambda.returnType.builtIns.unitType
+
+            else -> null
+        }
+
+        val returnArguments = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(
+            lambda.atom,
+            lambda.isSuspend,
+            receiver,
+            parameters,
+            expectedTypeForReturnArguments
+        )
 
         returnArguments.forEach { c.addSubsystemFromArgument(it) }
 

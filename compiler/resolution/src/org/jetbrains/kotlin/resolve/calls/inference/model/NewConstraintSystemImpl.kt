@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.SmartList
 
 class NewConstraintSystemImpl(
@@ -247,5 +249,14 @@ class NewConstraintSystemImpl(
     override fun buildCurrentSubstitutor(): NewTypeSubstitutor {
         checkState(State.BUILDING, State.COMPLETION)
         return storage.buildCurrentSubstitutor()
+    }
+
+    // PostponedArgumentsAnalyzer.Context
+    override fun hasUpperUnitConstraint(type: UnwrappedType): Boolean {
+        checkState(State.BUILDING, State.COMPLETION, State.FREEZED)
+
+        val constraints = storage.notFixedTypeVariables[type.constructor]?.constraints ?: return false
+
+        return constraints.any { it.kind == ConstraintKind.UPPER && it.type.isUnit() }
     }
 }
