@@ -1,0 +1,13 @@
+foo -> UAnnotationMethod (name = foo)
+Boolean -> USimpleNameReferenceExpression (identifier = Boolean)
+    Local -> UClass (name = Local)
+    bar -> ULambdaExpression
+    Local -> USimpleNameReferenceExpression (identifier = Local)
+    baz -> ULocalVariable (name = baz)
+        Local -> USimpleNameReferenceExpression (identifier = Local)
+    Int -> USimpleNameReferenceExpression (identifier = Int)
+    someLocalFun -> ULambdaExpression
+    text -> [!] UnknownKotlinExpression (VALUE_PARAMETER)
+    String -> USimpleNameReferenceExpression (identifier = String)
+    bar -> USimpleNameReferenceExpression (identifier = bar)
+    Local -> USimpleNameReferenceExpression (identifier = Local)
