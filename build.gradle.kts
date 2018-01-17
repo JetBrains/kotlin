@@ -66,7 +66,7 @@ dependencies {
     testCompile(projectTests(":generators:test-generator"))
     testCompile(commonDep("junit:junit"))
     if (intellijUltimateEnabled) {
-        testCompileOnly(intellijUltimateDep()) { includeJars("gson-2.5", "annotations", "trove4j", "openapi", "idea", "util", "jdom") }
+        testCompileOnly(intellijUltimateDep()) { includeJars("gson-2.8.2", "annotations", "trove4j", "openapi", "idea", "util", "jdom") }
     }
     testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
