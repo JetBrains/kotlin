@@ -28,7 +28,7 @@ class KotlinULambdaExpression(
         override val psi: KtLambdaExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), ULambdaExpression, KotlinUElementWithType {
-    override val functionalInterfaceType: PsiType?
+    val functionalInterfaceType: PsiType?
         get() = getFunctionalInterfaceType()
 
     override val body by lz { KotlinConverter.convertOrEmpty(psi.bodyExpression, this) }

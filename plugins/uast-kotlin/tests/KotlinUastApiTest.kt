@@ -79,27 +79,6 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         }
     }
 
-    @Test fun testSAM() {
-        doTest("SAM") { _, file ->
-            assertNull(file.findElementByText<ULambdaExpression>("{ /* Not SAM */ }").functionalInterfaceType)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Variable */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Assignment */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                          file.findElementByText<ULambdaExpression>("{/* Type Cast */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Argument */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Return */}").functionalInterfaceType?.canonicalText)
-        }
-    }
-
     @Test fun testParameterPropertyWithAnnotation() {
         doTest("ParameterPropertyWithAnnotation") { _, file ->
             val test1 = file.classes.find { it.name == "Test1" }!!
