@@ -42,9 +42,9 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import java.util.*
 
 class AddFunctionToSupertypeFix private constructor(
     element: KtNamedFunction,
@@ -169,18 +169,23 @@ class AddFunctionToSupertypeFix private constructor(
                 .map { generateFunctionSignatureForType(functionDescriptor, it) }
         }
 
-        private fun getSuperClasses(classDescriptor: ClassDescriptor): List<ClassDescriptor> {
-            val supertypes = classDescriptor.defaultType.supertypes().sortedWith(
-                Comparator { o1, o2 ->
-                    when {
-                        o1 == o2 -> 0
-                        KotlinTypeChecker.DEFAULT.isSubtypeOf(o1, o2) -> -1
-                        KotlinTypeChecker.DEFAULT.isSubtypeOf(o2, o1) -> 1
-                        else -> o1.toString().compareTo(o2.toString())
+        private fun MutableList<KotlinType>.sortSubtypesFirst(): List<KotlinType> {
+            val typeChecker = KotlinTypeChecker.DEFAULT
+            for (i in 1 until size) {
+                val currentType = this[i]
+                for (j in 0 until i) {
+                    if (typeChecker.isSubtypeOf(currentType, this[j])) {
+                        this.removeAt(i)
+                        this.add(j, currentType)
+                        break
                     }
                 }
-            )
+            }
+            return this
+        }
 
+        private fun getSuperClasses(classDescriptor: ClassDescriptor): List<ClassDescriptor> {
+            val supertypes = classDescriptor.defaultType.supertypes().toMutableList().sortSubtypesFirst()
             return supertypes.mapNotNull { it.constructor.declarationDescriptor as? ClassDescriptor }
         }
 
