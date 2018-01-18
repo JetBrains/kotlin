@@ -14,7 +14,8 @@ buildscript {
     val repos = listOfNotNull(
             bootstrapKotlinRepo,
             "https://jcenter.bintray.com/",
-            "https://plugins.gradle.org/m2")
+            "https://plugins.gradle.org/m2",
+            "https://oss.sonatype.org/content/repositories/snapshots")
 
     extra["repos"] = repos
 
