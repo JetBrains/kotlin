@@ -14,113 +14,90 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.references;
+package org.jetbrains.kotlin.idea.references
 
-import com.google.common.collect.Lists;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.MultiRangeReference;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.kotlin.util.OperatorNameConventions;
+import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.MultiRangeReference
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.util.OperatorNameConventions
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+class KtInvokeFunctionReference(expression: KtCallExpression) : KtSimpleReference<KtCallExpression>(expression), MultiRangeReference {
 
-public class KtInvokeFunctionReference extends KtSimpleReference<KtCallExpression> implements MultiRangeReference {
+    override val resolvesByNames: Collection<Name>
+        get() = NAMES
 
-    public KtInvokeFunctionReference(@NotNull KtCallExpression expression) {
-        super(expression);
+    override fun getRangeInElement(): TextRange {
+        return element.textRange.shiftRight(-element.textOffset)
     }
 
-    @Override
-    public TextRange getRangeInElement() {
-        return getElement().getTextRange().shiftRight(-getElement().getTextOffset());
-    }
-
-    @Override
-    @NotNull
-    protected Collection<DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
-        Call call = CallUtilKt.getCall(getElement(), context);
-        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(call, context);
-        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            return Collections.<DeclarationDescriptor>singleton(
-                    ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall().getCandidateDescriptor());
+    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
+        val call = element.getCall(context)
+        val resolvedCall = call.getResolvedCall(context)
+        return when {
+            resolvedCall is VariableAsFunctionResolvedCall ->
+                setOf<DeclarationDescriptor>((resolvedCall as VariableAsFunctionResolvedCall).functionCall.candidateDescriptor)
+            call != null && resolvedCall != null && call.callType == Call.CallType.INVOKE ->
+                setOf<DeclarationDescriptor>(resolvedCall.candidateDescriptor)
+            else ->
+                emptyList()
         }
-        if (call != null && resolvedCall != null && call.getCallType() == Call.CallType.INVOKE) {
-            return Collections.<DeclarationDescriptor>singleton(resolvedCall.getCandidateDescriptor());
-        }        
-        return Collections.emptyList();
     }
 
-    @Override
-    public List<TextRange> getRanges() {
-        List<TextRange> list = new ArrayList<TextRange>();
-        KtValueArgumentList valueArgumentList = getExpression().getValueArgumentList();
+    override fun getRanges(): List<TextRange> {
+        val list = ArrayList<TextRange>()
+        val valueArgumentList = expression.valueArgumentList
         if (valueArgumentList != null) {
-            if (valueArgumentList.getArguments().size() > 0) {
-                ASTNode valueArgumentListNode = valueArgumentList.getNode();
-                ASTNode lPar = valueArgumentListNode.findChildByType(KtTokens.LPAR);
+            if (valueArgumentList.arguments.isNotEmpty()) {
+                val valueArgumentListNode = valueArgumentList.node
+                val lPar = valueArgumentListNode.findChildByType(KtTokens.LPAR)
                 if (lPar != null) {
-                    list.add(getRange(lPar));
+                    list.add(getRange(lPar))
                 }
 
-                ASTNode rPar = valueArgumentListNode.findChildByType(KtTokens.RPAR);
+                val rPar = valueArgumentListNode.findChildByType(KtTokens.RPAR)
                 if (rPar != null) {
-                    list.add(getRange(rPar));
+                    list.add(getRange(rPar))
                 }
-            }
-            else {
-                list.add(getRange(valueArgumentList.getNode()));
+            } else {
+                list.add(getRange(valueArgumentList.node))
             }
         }
 
-        List<KtLambdaArgument> functionLiteralArguments = getExpression().getLambdaArguments();
-        for (KtLambdaArgument functionLiteralArgument : functionLiteralArguments) {
-            KtLambdaExpression functionLiteralExpression = functionLiteralArgument.getLambdaExpression();
-            list.add(getRange(functionLiteralExpression.getLeftCurlyBrace()));
-            ASTNode rightCurlyBrace = functionLiteralExpression.getRightCurlyBrace();
+        val functionLiteralArguments = expression.lambdaArguments
+        for (functionLiteralArgument in functionLiteralArguments) {
+            val functionLiteralExpression = functionLiteralArgument.getLambdaExpression()
+            list.add(getRange(functionLiteralExpression.leftCurlyBrace))
+            val rightCurlyBrace = functionLiteralExpression.rightCurlyBrace
             if (rightCurlyBrace != null) {
-                list.add(getRange(rightCurlyBrace));
+                list.add(getRange(rightCurlyBrace))
             }
         }
 
-        return list;
+        return list
     }
 
-    private TextRange getRange(ASTNode node) {
-        TextRange textRange = node.getTextRange();
-        return textRange.shiftRight(-getExpression().getTextOffset());
+    private fun getRange(node: ASTNode): TextRange {
+        val textRange = node.textRange
+        return textRange.shiftRight(-expression.textOffset)
     }
 
-    @Override
-    public boolean canRename() {
-        return true;
-    }
+    override fun canRename(): Boolean = true
 
-    @SuppressWarnings("ConstantConditions")
-    @Nullable
-    @Override
-    public PsiElement handleElementRename(@Nullable String newElementName) {
-        return ReferenceUtilKt.renameImplicitConventionalCall(this, newElementName);
-    }
+    override fun handleElementRename(newElementName: String?): PsiElement? = renameImplicitConventionalCall(newElementName)
 
-    private static final List<Name> NAMES = Lists.newArrayList(OperatorNameConventions.INVOKE);
+    companion object {
 
-    @NotNull
-    @Override
-    public Collection<Name> getResolvesByNames() {
-        return NAMES;
+        private val NAMES = listOf(OperatorNameConventions.INVOKE)
     }
 }
