@@ -36,8 +36,8 @@ int main(void) {
 
     printf("object = %d\n",  __ kotlin.root.Codeable.asCode(object1));
 
-    topLevelFunctionVoidFromC(42);
-    __ kotlin.root.topLevelFunctionVoid(42);
+    topLevelFunctionVoidFromC(42, 0);
+    __ kotlin.root.topLevelFunctionVoid(42, 0);
     printf("topLevel = %d %d\n", topLevelFunctionFromC(780, 3), __ kotlin.root.topLevelFunctionFromCShort(5, 2));
 
     __ DisposeString(string);

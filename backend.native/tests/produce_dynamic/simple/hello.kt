@@ -1,3 +1,4 @@
+import kotlinx.cinterop.*
 
 // Top level functions.
 fun hello() {
@@ -16,12 +17,14 @@ open class Base {
 
 }
 
+// Top level functions.
 @konan.internal.CName(fullName = "topLevelFunctionFromC", shortName = "topLevelFunctionFromCShort")
 fun topLevelFunction(x1: Int, x2: Int) = x1 - x2
 
 @konan.internal.CName("topLevelFunctionVoidFromC")
-fun topLevelFunctionVoid(x1: Int) {
+fun topLevelFunctionVoid(x1: Int, pointer: COpaquePointer?) {
     assert(x1 == 42)
+    assert(pointer == null)
 }
 
 // Enum.

@@ -94,6 +94,13 @@ private val cnameAnnotation = FqName("konan.internal.CName")
 private fun org.jetbrains.kotlin.types.KotlinType.isGeneric() =
         constructor.declarationDescriptor is TypeParameterDescriptor
 
+private val ClassDescriptor.isString
+    get() = fqNameSafe.asString() == "kotlin.String"
+
+private val ClassDescriptor.isValueType
+    get() = this.defaultType.correspondingValueType != null
+
+
 private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
     if (!descriptor.isEffectivelyPublicApi || !descriptor.kind.isReal)
         return false
@@ -329,9 +336,8 @@ private class ExportedElement(val kind: ElementKind,
 
     private fun translateArgument(name: String, clazz: ClassDescriptor, direction: Direction,
                                   builder: StringBuilder): String {
-        val fqName = clazz.fqNameSafe.asString()
         return when {
-            fqName == "kotlin.String" ->
+            clazz.isString ->
                 if (direction == Direction.C_TO_KOTLIN) {
                     builder.append("  KObjHolder ${name}_holder;\n")
                     "CreateStringFromCString($name, ${name}_holder.slot())"
@@ -345,7 +351,10 @@ private class ExportedElement(val kind: ElementKind,
                 } else {
                     "((${owner.translateType(clazz)}){ .pinned = CreateStablePointer(${name})})"
                 }
-            else -> name
+            else -> {
+                assert(clazz.isValueType)
+                name
+            }
         }
     }
 
@@ -830,23 +839,24 @@ internal class CAdapterGenerator(
     )
 
     private val primitiveTypeMapping = mapOf(
-            "kotlin.Byte" to "${prefix}_KByte",
-            "kotlin.Short" to "${prefix}_KShort",
-            "kotlin.Int" to "${prefix}_KInt",
-            "kotlin.Long" to "${prefix}_KLong",
-            "kotlin.Float" to "${prefix}_KFloat",
-            "kotlin.Double" to "${prefix}_KDouble",
-            "kotlin.Boolean" to "${prefix}_KBoolean",
-            "kotlin.Char" to "${prefix}_KChar"
+            ValueType.BOOLEAN to "${prefix}_KByte",
+            ValueType.SHORT to "${prefix}_KShort",
+            ValueType.INT to "${prefix}_KInt",
+            ValueType.LONG to "${prefix}_KLong",
+            ValueType.FLOAT to "${prefix}_KFloat",
+            ValueType.DOUBLE to "${prefix}_KDouble",
+            ValueType.CHAR to "${prefix}_KChar",
+            ValueType.C_POINTER to "void*",
+            ValueType.NATIVE_PTR to "void*",
+            ValueType.NATIVE_POINTED to "void*"
     )
 
     internal fun isMappedToString(descriptor: ClassDescriptor) =
             descriptor.fqNameSafe.asString() == "kotlin.String"
 
-    internal fun isMappedToReference(descriptor: ClassDescriptor): Boolean {
-        val name = descriptor.fqNameSafe.asString()
-        return !descriptor.isUnit() && name != "kotlin.String" && !primitiveTypeMapping.contains(name)
-    }
+    internal fun isMappedToReference(descriptor: ClassDescriptor) =
+            !descriptor.isUnit() && !isMappedToString(descriptor) &&
+                    !primitiveTypeMapping.contains(descriptor.defaultType.correspondingValueType)
 
     internal fun isMappedToVoid(descriptor: ClassDescriptor): Boolean {
         return descriptor.isUnit()
@@ -862,10 +872,11 @@ internal class CAdapterGenerator(
 
     private fun translateTypeFull(clazz: ClassDescriptor): Pair<String, String> {
         val fqName = clazz.fqNameSafe.asString()
+        val valueType = clazz.defaultType.correspondingValueType
         return when {
             clazz.isUnit() -> "void" to "void"
             fqName == "kotlin.String" -> "const char*" to "KObjHeader*"
-            primitiveTypeMapping.contains(fqName) -> primitiveTypeMapping[fqName]!! to primitiveTypeMapping[fqName]!!
+            valueType != null && primitiveTypeMapping.contains(valueType) -> primitiveTypeMapping[valueType]!! to primitiveTypeMapping[valueType]!!
             else -> "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KObjHeader*"
         }
     }
