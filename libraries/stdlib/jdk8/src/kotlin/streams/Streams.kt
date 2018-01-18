@@ -75,3 +75,9 @@ public fun LongStream.toList(): List<Long> = toArray().asList()
  */
 @SinceKotlin("1.2")
 public fun DoubleStream.toList(): List<Double> = toArray().asList()
+
+/**
+ * Returns a lazily concatenated [Stream] whose elements are all the elements of the first stream
+ * followed by all the elements of the second stream.
+ */
+operator fun <T> Stream<T>.plus(other: Stream<out T>): Stream<T> = Stream.concat(this, other)
