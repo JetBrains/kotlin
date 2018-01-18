@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 class ConvertReferenceToLambdaInspection : IntentionBasedInspection<KtCallableReferenceExpression>(ConvertReferenceToLambdaIntention::class)
 
 class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntention<KtCallableReferenceExpression>(
-        KtCallableReferenceExpression::class.java, "Convert reference to lambda"
+    KtCallableReferenceExpression::class.java, "Convert reference to lambda"
 ) {
 
     override fun applyTo(element: KtCallableReferenceExpression, editor: Editor?) {
@@ -55,9 +55,11 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         val receiverType = receiverExpression?.let {
             (context[DOUBLE_COLON_LHS, it] as? DoubleColonLHS.Type)?.type
         }
-        val receiverNameAndType = receiverType?.let { KotlinNameSuggester.suggestNamesByType(it, validator = {
-            name -> name !in parameterNamesAndTypes.map { it.first }
-        }, defaultName = "receiver").first() to it }
+        val receiverNameAndType = receiverType?.let {
+            KotlinNameSuggester.suggestNamesByType(it, validator = { name ->
+                name !in parameterNamesAndTypes.map { it.first }
+            }, defaultName = "receiver").first() to it
+        }
 
         val valueArgumentParent = element.parent as? KtValueArgument
         val callGrandParent = valueArgumentParent?.parent?.parent as? KtCallExpression
@@ -66,14 +68,14 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         val matchingParameterIsExtension = matchingParameterType?.isExtensionFunctionType ?: false
 
         val acceptsReceiverAsParameter = receiverNameAndType != null && !matchingParameterIsExtension &&
-                                         (targetDescriptor.dispatchReceiverParameter != null ||
-                                          targetDescriptor.extensionReceiverParameter != null)
+                (targetDescriptor.dispatchReceiverParameter != null ||
+                        targetDescriptor.extensionReceiverParameter != null)
 
         val factory = KtPsiFactory(element)
         val targetName = reference.text
         val lambdaParameterNamesAndTypes =
-                if (acceptsReceiverAsParameter) listOf(receiverNameAndType!!) + parameterNamesAndTypes
-                else parameterNamesAndTypes
+            if (acceptsReceiverAsParameter) listOf(receiverNameAndType!!) + parameterNamesAndTypes
+            else parameterNamesAndTypes
 
         val receiverPrefix = when {
             acceptsReceiverAsParameter -> receiverNameAndType!!.first + "."
@@ -82,35 +84,33 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         }
 
         val lambdaExpression = if (valueArgumentParent != null &&
-                                   lambdaParameterNamesAndTypes.size == 1 &&
-                                   receiverExpression?.text != "it") {
+            lambdaParameterNamesAndTypes.size == 1 &&
+            receiverExpression?.text != "it") {
             factory.createLambdaExpression(
-                    parameters = "",
-                    body = when {
-                        acceptsReceiverAsParameter ->
-                            if (targetDescriptor is PropertyDescriptor) "it.$targetName"
-                            else "it.$targetName()"
-                        else ->
-                            "$receiverPrefix$targetName(it)"
-                    }
+                parameters = "",
+                body = when {
+                    acceptsReceiverAsParameter ->
+                        if (targetDescriptor is PropertyDescriptor) "it.$targetName"
+                        else "it.$targetName()"
+                    else ->
+                        "$receiverPrefix$targetName(it)"
+                }
             )
-        }
-        else {
+        } else {
             factory.createLambdaExpression(
-                    parameters = lambdaParameterNamesAndTypes.joinToString(separator = ", ") {
-                        if (valueArgumentParent != null) it.first
-                        else it.first + ": " + SOURCE_RENDERER.renderType(it.second)
-                    },
-                    body = if (targetDescriptor is PropertyDescriptor) {
-                        "$receiverPrefix$targetName"
-                    }
-                    else {
-                        parameterNamesAndTypes.joinToString(
-                                prefix = "$receiverPrefix$targetName(",
-                                separator = ", ",
-                                postfix = ")"
-                        ) { it.first }
-                    }
+                parameters = lambdaParameterNamesAndTypes.joinToString(separator = ", ") {
+                    if (valueArgumentParent != null) it.first
+                    else it.first + ": " + SOURCE_RENDERER.renderType(it.second)
+                },
+                body = if (targetDescriptor is PropertyDescriptor) {
+                    "$receiverPrefix$targetName"
+                } else {
+                    parameterNamesAndTypes.joinToString(
+                        prefix = "$receiverPrefix$targetName(",
+                        separator = ", ",
+                        postfix = ")"
+                    ) { it.first }
+                }
             )
         }
 
@@ -119,7 +119,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
             else -> false
         }
         val wrappedExpression =
-                if (needParentheses) factory.createExpressionByPattern("($0)", lambdaExpression) else lambdaExpression
+            if (needParentheses) factory.createExpressionByPattern("($0)", lambdaExpression) else lambdaExpression
         ShortenReferences.DEFAULT.process(element.replaced(wrappedExpression))
 
         if (valueArgumentParent != null && callGrandParent != null) {
