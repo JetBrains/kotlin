@@ -21,7 +21,6 @@ dependencies {
     compileOnly project(':compiler:cli')
     
     compileOnly gradleApi()
-}
 
     compileOnly("kotlin.build.custom.deps:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
         artifact {
