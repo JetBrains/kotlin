@@ -252,8 +252,9 @@ private class ExportedElement(val kind: ElementKind,
                     TypeUtils.getClassDescriptor(owner.context.builtIns.nullableAnyType)!!
             else -> uniqueName(original, shortName) to TypeUtils.getClassDescriptor(original.returnType!!)!!
         }
-        val params = ArrayList(original.explicitParameters.mapIndexed() { index, it ->
-            "p$index /* ${it.name.asString()} */" to TypeUtils.getClassDescriptor(it.type)!!
+        val uniqueNames = owner.paramsToUniqueNames(original.explicitParameters)
+        val params = ArrayList(original.explicitParameters.mapIndexed { idx, it ->
+            uniqueNames[idx] to TypeUtils.getClassDescriptor(it.type)!!
         })
         return listOf(returned) + params
     }
@@ -444,6 +445,21 @@ internal class CAdapterGenerator(
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = context.config.moduleId
     private lateinit var outputStreamWriter: PrintWriter
+    private val paramNamesRecorded = mutableMapOf<String, Int>()
+
+    internal fun paramsToUniqueNames(params: List<ParameterDescriptor>): List<String> {
+        paramNamesRecorded.clear()
+        return params.map {
+            val name = translateName(it.name.asString()) 
+            val count = paramNamesRecorded.getOrDefault(name, 0)
+            paramNamesRecorded[name] = count + 1
+            if (count == 0) {
+                name
+            } else {
+                "$name${count.toString()}"
+            }
+        }
+    }
 
     private fun visitChildren(descriptors: Collection<DeclarationDescriptor>) {
         for (descriptor in descriptors) {
