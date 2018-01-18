@@ -42,14 +42,13 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
 class AddFunctionToSupertypeFix private constructor(
-        element: KtNamedFunction,
-        private val functions: List<AddFunctionToSupertypeFix.FunctionData>
+    element: KtNamedFunction,
+    private val functions: List<AddFunctionToSupertypeFix.FunctionData>
 ) : KotlinQuickFixAction<KtNamedFunction>(element), LowPriorityAction {
 
     init {
@@ -57,9 +56,9 @@ class AddFunctionToSupertypeFix private constructor(
     }
 
     private class FunctionData(
-            val signaturePreview: String,
-            val sourceCode: String,
-            val targetClass: KtClass
+        val signaturePreview: String,
+        val sourceCode: String,
+        val targetClass: KtClass
     )
 
     override fun getText(): String {
@@ -76,8 +75,7 @@ class AddFunctionToSupertypeFix private constructor(
         CommandProcessor.getInstance().runUndoTransparentAction {
             if (functions.size == 1 || editor == null || !editor.component.isShowing) {
                 addFunction(functions.first(), project)
-            }
-            else {
+            } else {
                 JBPopupFactory.getInstance().createListPopup(createFunctionPopup(project)).showInBestPositionFor(editor)
             }
         }
@@ -92,7 +90,7 @@ class AddFunctionToSupertypeFix private constructor(
 
             ShortenReferences.DEFAULT.process(insertedFunctionElement)
             val modifierToken = insertedFunctionElement.modalityModifier()?.node?.elementType as? KtModifierKeywordToken
-                                ?: return@executeWriteCommand
+                    ?: return@executeWriteCommand
             if (insertedFunctionElement.implicitModality() == modifierToken) {
                 RemoveModifierFix(insertedFunctionElement, modifierToken, true).invoke()
             }
@@ -115,10 +113,9 @@ class AddFunctionToSupertypeFix private constructor(
         }
     }
 
-    private fun actionName(functionData: FunctionData)
-            = "Add '${functionData.signaturePreview}' to '${functionData.targetClass.name}'"
+    private fun actionName(functionData: FunctionData) = "Add '${functionData.signaturePreview}' to '${functionData.targetClass.name}'"
 
-    companion object: KotlinSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = diagnostic.psiElement as? KtNamedFunction ?: return null
 
@@ -140,64 +137,68 @@ class AddFunctionToSupertypeFix private constructor(
                 val returnType = functionDescriptor.returnType
                 sourceCode += if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) {
                     val bodyText = getFunctionBodyTextFromTemplate(
-                            project,
-                            TemplateKind.FUNCTION,
-                            functionDescriptor.name.asString(),
-                            functionDescriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "Unit",
-                            classDescriptor.importableFqName
+                        project,
+                        TemplateKind.FUNCTION,
+                        functionDescriptor.name.asString(),
+                        functionDescriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "Unit",
+                        classDescriptor.importableFqName
                     )
                     "{ $bodyText }"
-                }
-                else {
+                } else {
                     "{}"
                 }
             }
 
             val targetClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor) as? KtClass ?: return null
             return FunctionData(
-                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(functionDescriptor),
-                    sourceCode,
-                    targetClass)
+                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(functionDescriptor),
+                sourceCode,
+                targetClass
+            )
         }
 
         private fun generateFunctionsToAdd(functionElement: KtNamedFunction): List<FunctionDescriptor> {
             val functionDescriptor = functionElement.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? FunctionDescriptor
-                                     ?: return emptyList()
+                    ?: return emptyList()
 
             val containingClass = functionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
 
             // TODO: filter out impossible supertypes (for example when argument's type isn't visible in a superclass).
             return getSuperClasses(containingClass)
-                    .filterNot { KotlinBuiltIns.isAnyOrNullableAny(it.defaultType) }
-                    .map { generateFunctionSignatureForType(functionDescriptor, it) }
+                .filterNot { KotlinBuiltIns.isAnyOrNullableAny(it.defaultType) }
+                .map { generateFunctionSignatureForType(functionDescriptor, it) }
         }
 
         private fun getSuperClasses(classDescriptor: ClassDescriptor): List<ClassDescriptor> {
             val supertypes = classDescriptor.defaultType.supertypes().sortedWith(
-                    Comparator<KotlinType> { o1, o2 ->
-                        when {
-                            o1 == o2 -> 0
-                            KotlinTypeChecker.DEFAULT.isSubtypeOf(o1, o2) -> -1
-                            KotlinTypeChecker.DEFAULT.isSubtypeOf(o2, o1) -> 1
-                            else -> o1.toString().compareTo(o2.toString())
-                        }
+                Comparator { o1, o2 ->
+                    when {
+                        o1 == o2 -> 0
+                        KotlinTypeChecker.DEFAULT.isSubtypeOf(o1, o2) -> -1
+                        KotlinTypeChecker.DEFAULT.isSubtypeOf(o2, o1) -> 1
+                        else -> o1.toString().compareTo(o2.toString())
                     }
+                }
             )
 
             return supertypes.mapNotNull { it.constructor.declarationDescriptor as? ClassDescriptor }
         }
 
-        private fun generateFunctionSignatureForType(functionDescriptor: FunctionDescriptor, typeDescriptor: ClassDescriptor): FunctionDescriptor {
+        private fun generateFunctionSignatureForType(
+            functionDescriptor: FunctionDescriptor,
+            typeDescriptor: ClassDescriptor
+        ): FunctionDescriptor {
             // TODO: support for generics.
 
             val modality = if (typeDescriptor.kind == ClassKind.INTERFACE) Modality.ABSTRACT else typeDescriptor.modality
 
             return functionDescriptor.copy(
-                    typeDescriptor,
-                    modality,
-                    functionDescriptor.visibility,
-                    CallableMemberDescriptor.Kind.DECLARATION,
-                    /* copyOverrides = */ false)
+                typeDescriptor,
+                modality,
+                functionDescriptor.visibility,
+                CallableMemberDescriptor.Kind.DECLARATION,
+                /* copyOverrides = */ false
+            )
         }
     }
 }
