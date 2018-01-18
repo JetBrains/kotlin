@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndex
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJvmModuleAnnotationsIndex
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
