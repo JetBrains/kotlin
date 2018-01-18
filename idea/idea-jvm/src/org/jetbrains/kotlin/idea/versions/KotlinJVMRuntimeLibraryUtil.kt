@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
+import org.jetbrains.kotlin.idea.framework.isExternalLibrary
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
@@ -64,12 +65,21 @@ private fun updateJar(
     libraryJarDescriptor: LibraryJarDescriptor
 ) {
     val fileToReplace = libraryJarDescriptor.findExistingJar(library)
+    if (fileToReplace == null) {
+        if (libraryJarDescriptor.shouldExist) {
+            error(
+                "Update for library was requested, but file for replacement isn't present: \n" +
+                        "name = ${library.name}\n" +
+                        "isExternal = `${isExternalLibrary(library)}`\n" +
+                        "entries = ${library.getUrls(libraryJarDescriptor.orderRootType)}\n" +
+                        "buildSystems = ${project.allModules().map { module -> module.getBuildSystemType() }.distinct()}"
+            )
+        }
 
-    if (fileToReplace == null && !libraryJarDescriptor.shouldExist) {
         return
     }
 
-    val oldUrl = fileToReplace?.url
+    val oldUrl = fileToReplace.url
     val jarPath: File = libraryJarDescriptor.getPathInPlugin()
 
     if (!jarPath.exists()) {
@@ -77,7 +87,7 @@ private fun updateJar(
         return
     }
 
-    val jarFileToReplace = getLocalJar(fileToReplace)!!
+    val jarFileToReplace = getLocalJar(fileToReplace) ?: error("Couldn't find local jar for ${fileToReplace.canonicalPath}")
     val newVFile = try {
         replaceFile(jarPath, jarFileToReplace)
     } catch (e: IOException) {
@@ -93,10 +103,13 @@ private fun updateJar(
         val model = library.modifiableModel
         runWriteAction {
             try {
-                if (oldUrl != null) {
-                    model.removeRoot(oldUrl, libraryJarDescriptor.orderRootType)
+                model.removeRoot(oldUrl, libraryJarDescriptor.orderRootType)
+
+                val newRoot = JarFileSystem.getInstance().getJarRootForLocalFile(newVFile) ?: run {
+                    Messages.showErrorDialog(project, "Failed to find root for file: ${newVFile.canonicalPath}", "Library update failed")
+                    return@runWriteAction
                 }
-                val newRoot = JarFileSystem.getInstance().getJarRootForLocalFile(newVFile)!!
+
                 model.addRoot(newRoot, libraryJarDescriptor.orderRootType)
             } finally {
                 model.commit()
