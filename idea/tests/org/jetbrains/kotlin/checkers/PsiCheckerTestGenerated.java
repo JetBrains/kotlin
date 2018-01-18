@@ -960,6 +960,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTestWithInfos(fileName);
         }
 
+        @TestMetadata("TyposInOverrideParams.kt")
+        public void testTyposInOverrideParams() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/TyposInOverrideParams.kt");
+            doTestWithInfos(fileName);
+        }
+
         @TestMetadata("WrapIntoRef.kt")
         public void testWrapIntoRef() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/WrapIntoRef.kt");
