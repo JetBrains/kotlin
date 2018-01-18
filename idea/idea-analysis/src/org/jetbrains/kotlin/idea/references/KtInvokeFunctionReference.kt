@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.unpackFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -76,7 +77,7 @@ class KtInvokeFunctionReference(expression: KtCallExpression) : KtSimpleReferenc
 
         val functionLiteralArguments = expression.lambdaArguments
         for (functionLiteralArgument in functionLiteralArguments) {
-            val functionLiteralExpression = functionLiteralArgument.getLambdaExpression()
+            val functionLiteralExpression = functionLiteralArgument.getArgumentExpression().unpackFunctionLiteral() ?: continue
             list.add(getRange(functionLiteralExpression.leftCurlyBrace))
             val rightCurlyBrace = functionLiteralExpression.rightCurlyBrace
             if (rightCurlyBrace != null) {
