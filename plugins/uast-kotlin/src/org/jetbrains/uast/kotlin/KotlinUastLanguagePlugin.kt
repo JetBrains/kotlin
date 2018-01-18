@@ -321,7 +321,7 @@ internal object KotlinConverter {
                             ?.toUElementOfType<UExpression>()
                     ?: KotlinUFunctionCallExpression(element, givenParent)
                 }
-
+            is KtImportDirective -> el<UImportStatement>(build(::KotlinUImportStatement))
             else -> {
                 if (element is LeafPsiElement && element.elementType == KtTokens.IDENTIFIER) {
                     el<UIdentifier>(build(::UIdentifier))

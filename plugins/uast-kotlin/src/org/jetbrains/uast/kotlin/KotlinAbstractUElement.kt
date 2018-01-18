@@ -86,6 +86,10 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
             parent = parent.parent
         }
 
+        if (parent is KtImportList) {
+            parent = parent.parent
+        }
+
         if (psi is KtSuperTypeCallEntry) {
             parent = parent?.parent
         }
