@@ -40,6 +40,18 @@ class ClangManager(val properties: Properties, val baseDir: String) {
 
     val hostCompilerArgsForJni = hostClang.hostCompilerArgsForJni.toTypedArray()
 
+    fun targetLibclangArgs(target: KonanTarget): List<String> {
+        // libclang works not exactly the same way as the clang binary and
+        // (in particular) uses different default header search path.
+        // See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
+        // We workaround the problem with -isystem flag below.
+        val llvmVersion = properties.hostString("llvmVersion")!!
+        val llvmHome = konanProperties[target]!!.absoluteLlvmHome
+        val isystemArgs = listOf("-isystem", "$llvmHome/lib/clang/$llvmVersion/include")
+
+        return isystemArgs + targetClangArgs(target).toList()
+    }
+
     fun targetClangCmd(target: KonanTarget)
         = listOf("${hostClang.llvmDir}/bin/clang") + targetClangArgs(target)
 

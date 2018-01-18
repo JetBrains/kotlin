@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
-import kotlin.reflect.KFunction
 
 class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: String?, runnerProvidedKonanHome: String) {
 
@@ -46,26 +45,12 @@ class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: S
 
     val sysRoot get() = targetProperties.absoluteTargetSysRoot
 
-    val defaultCompilerOpts = 
-        targetProperties.defaultCompilerOpts()
+    val defaultCompilerOpts = ClangManager(properties, dependencies.path)
+            .targetLibclangArgs(targetProperties.target).toList()
+
 
      val libclang = when (host) {
         KonanTarget.MINGW -> "$llvmHome/bin/libclang.dll"
         else -> "$llvmHome/lib/${System.mapLibraryName("clang")}"
     }
 }
-
-private fun maybeExecuteHelper(dependenciesRoot: String, properties: Properties, dependencies: List<String>) {
-    try {
-        val kClass = Class.forName("org.jetbrains.kotlin.konan.util.Helper0").kotlin
-        @Suppress("UNCHECKED_CAST")
-        val ctor = kClass.constructors.single() as KFunction<Runnable>
-        val result = ctor.call(dependenciesRoot, properties, dependencies)
-        result.run()
-    } catch (notFound: ClassNotFoundException) {
-        // Just ignore, no helper.
-    } catch (e: Throwable) {
-        throw IllegalStateException("Cannot download dependencies.", e)
-    }
-}
-
