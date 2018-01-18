@@ -21,10 +21,10 @@ import javax.swing.JComponent
 
 class KotlinSdkType : SdkType("KotlinSDK") {
     companion object {
-        const val DEFAULT_SDK_NAME = "Kotlin SDK"
+        @JvmField val INSTANCE = KotlinSdkType()
     }
 
-    override fun getPresentableName() = DEFAULT_SDK_NAME
+    override fun getPresentableName() = "Kotlin SDK"
 
     override fun getIcon() = KotlinIcons.SMALL_LOGO
 
@@ -41,12 +41,14 @@ class KotlinSdkType : SdkType("KotlinSDK") {
     override fun supportsCustomCreateUI() = true
 
     override fun showCustomCreateUI(sdkModel: SdkModel, parentComponent: JComponent, selectedSdk: Sdk?, sdkCreatedCallback: Consumer<Sdk>) {
-        val newSdkName = SdkConfigurationUtil.createUniqueSdkName(this, "", sdkModel.sdks.toList())
-        sdkCreatedCallback.consume(newSdk(newSdkName))
+        sdkCreatedCallback.consume(createSdkWithUniqueName(sdkModel.sdks.toList()))
     }
 
-    fun newSdk(name: String) = ProjectJdkImpl(name, this).apply {
-        homePath = "not applicable"
+    fun createSdkWithUniqueName(existingSdks: Collection<Sdk>): ProjectJdkImpl {
+        val sdkName = suggestSdkName(SdkConfigurationUtil.createUniqueSdkName(this, "", existingSdks), "")
+        return ProjectJdkImpl(sdkName, this).apply {
+            homePath = "not applicable"
+        }
     }
 
     override fun createAdditionalDataConfigurable(sdkModel: SdkModel, sdkModificator: SdkModificator) = null

@@ -34,6 +34,8 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+
 public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescriptor {
     public static final String LIBRARY_NAME = "myKotlinLib";
 
@@ -50,7 +52,7 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
 
     public SdkAndMockLibraryProjectDescriptor(
             String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage) {
-        this(sourcesPath, withSources, withRuntime, isJsLibrary, allowKotlinPackage, Collections.emptyList());
+        this(sourcesPath, withSources, withRuntime, isJsLibrary, allowKotlinPackage, emptyList());
     }
 
     public SdkAndMockLibraryProjectDescriptor(
@@ -66,7 +68,7 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
-        List<String> extraOptions = allowKotlinPackage ? Collections.singletonList("-Xallow-kotlin-package") : Collections.emptyList();
+        List<String> extraOptions = allowKotlinPackage ? Collections.singletonList("-Xallow-kotlin-package") : emptyList();
         File libraryJar =
                 isJsLibrary
                 ? MockLibraryUtil.compileJsLibraryToJar(sourcesPath, LIBRARY_NAME, withSources)
@@ -94,7 +96,7 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
 
     @Override
     public Sdk getSdk() {
-        return isJsLibrary ? new KotlinSdkType().newSdk(KotlinSdkType.DEFAULT_SDK_NAME) : PluginTestCaseBase.mockJdk();
+        return isJsLibrary ? KotlinSdkType.INSTANCE.createSdkWithUniqueName(emptyList()) : PluginTestCaseBase.mockJdk();
     }
 
     @NotNull

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumen
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.*
 import kotlin.reflect.KProperty1
@@ -279,12 +280,16 @@ private val CommonCompilerArguments.ignoredFields: List<String>
         else -> emptyList()
     }
 
-private fun Module.configureJdkIfPossible(compilerArguments: K2JVMCompilerArguments, modelsProvider: IdeModifiableModelsProvider) {
-    val jdkHome = compilerArguments.jdkHome ?: return
-    val jdk = ProjectJdkTable.getInstance().allJdks.firstOrNull {
-        it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0
-    } ?: return
-    modelsProvider.getModifiableRootModel(this).sdk = jdk
+private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArguments, modelsProvider: IdeModifiableModelsProvider) {
+    val allSdks = ProjectJdkTable.getInstance().allJdks
+    val sdk = if (compilerArguments is K2JVMCompilerArguments) {
+        val jdkHome = compilerArguments.jdkHome ?: return
+        allSdks.firstOrNull { it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0 } ?: return
+    } else {
+        allSdks.firstOrNull { it.sdkType is KotlinSdkType } ?: KotlinSdkType.INSTANCE.createSdkWithUniqueName(allSdks.toList())
+    }
+
+    modelsProvider.getModifiableRootModel(this).sdk = sdk
 }
 
 fun parseCompilerArgumentsToFacet(
@@ -307,9 +312,7 @@ fun parseCompilerArgumentsToFacet(
         // Retain only fields exposed (and not explicitly ignored) in facet configuration editor.
         // The rest is combined into string and stored in CompilerSettings.additionalArguments
 
-        if (compilerArguments is K2JVMCompilerArguments) {
-            kotlinFacet.module.configureJdkIfPossible(compilerArguments, modelsProvider)
-        }
+        kotlinFacet.module.configureSdkIfPossible(compilerArguments, modelsProvider)
 
         val primaryFields = compilerArguments.primaryFields
         val ignoredFields = compilerArguments.ignoredFields
