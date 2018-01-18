@@ -235,7 +235,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.launchAction(
                 createConstructorActions(
                     myFixture.atCaret(),
-                    constructorRequest(project, listOf(pair("param0", PsiType.INT as PsiType)))
+                    constructorRequest(project, emptyList())
                 ).findWithText("Remove 1st parameter from method 'Foo'")
         )
         myFixture.checkResult("""
