@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
 object JsAnalyzerFacade : ResolverForModuleFactory() {
-
     override fun <M : ModuleInfo> createResolverForModule(
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
@@ -47,8 +45,7 @@ object JsAnalyzerFacade : ResolverForModuleFactory() {
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings,
-        targetPlatformVersion: TargetPlatformVersion,
-        packagePartProvider: PackagePartProvider
+        targetPlatformVersion: TargetPlatformVersion
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project

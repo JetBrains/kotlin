@@ -71,10 +71,14 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             modulePlatforms = { JvmPlatform.multiTargetPlatform },
             moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
             resolverForModuleFactoryByPlatform = { JvmAnalyzerFacade },
-            platformParameters = JvmPlatformParameters {
-                javaClass ->
-                val moduleName = javaClass.name.asString().toLowerCase().first().toString()
-                modules.first { it._name == moduleName }
+            platformParameters = { _ ->
+                JvmPlatformParameters(
+                    packagePartProviderFactory = { PackagePartProvider.Empty },
+                    moduleByJavaClass = { javaClass ->
+                        val moduleName = javaClass.name.asString().toLowerCase().first().toString()
+                        modules.first { it._name == moduleName }
+                    }
+                )
             },
             builtIns = builtIns
         )

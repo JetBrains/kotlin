@@ -45,6 +45,10 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
 
+class CommonAnalysisParameters(
+    val packagePartProviderFactory: (ModuleContent<*>) -> PackagePartProvider
+) : PlatformAnalysisParameters
+
 /**
  * A facade that is used to analyze common (platform-independent) modules in multi-platform projects.
  * See [TargetPlatform.Common]
@@ -87,8 +91,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
                 override fun getTargetPlatform(moduleInfo: ModuleInfo) = TargetPlatformVersion.NoVersion
             },
             resolverForModuleFactoryByPlatform = { CommonAnalyzerFacade },
-            platformParameters = object : PlatformAnalysisParameters {},
-            packagePartProviderFactory = packagePartProviderFactory
+            platformParameters = { _ -> CommonAnalysisParameters(packagePartProviderFactory) }
         )
 
         val moduleDescriptor = resolver.descriptorForModule(moduleInfo)
@@ -107,8 +110,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings,
-        targetPlatformVersion: TargetPlatformVersion,
-        packagePartProvider: PackagePartProvider
+        targetPlatformVersion: TargetPlatformVersion
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -118,6 +120,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
             moduleInfo
         )
 
+        val packagePartProvider = (platformParameters as CommonAnalysisParameters).packagePartProviderFactory(moduleContent)
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
             moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, packagePartProvider,

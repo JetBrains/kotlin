@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 
 class JvmPlatformParameters(
+    val packagePartProviderFactory: (ModuleContent<*>) -> PackagePartProvider,
     val moduleByJavaClass: (JavaClass) -> ModuleInfo?
 ) : PlatformAnalysisParameters
 
@@ -52,8 +53,7 @@ object JvmAnalyzerFacade : ResolverForModuleFactory() {
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings,
-        targetPlatformVersion: TargetPlatformVersion,
-        packagePartProvider: PackagePartProvider
+        targetPlatformVersion: TargetPlatformVersion
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -86,6 +86,7 @@ object JvmAnalyzerFacade : ResolverForModuleFactory() {
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
 
         val lookupTracker = LookupTracker.DO_NOTHING
+        val packagePartProvider = (platformParameters as JvmPlatformParameters).packagePartProviderFactory(moduleContent)
         val container = createContainerForLazyResolveWithJava(
             moduleContext,
             trace,
