@@ -42,9 +42,6 @@ class IncrementalPackagePartProvider(
                 parent.findPackageParts(packageFqName)).distinct()
     }
 
-    // TODO
-    override fun findMetadataPackageParts(packageFqName: String): List<String> = TODO()
-
     override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
         return parent.getAnnotationsOnBinaryModule(moduleName)
     }

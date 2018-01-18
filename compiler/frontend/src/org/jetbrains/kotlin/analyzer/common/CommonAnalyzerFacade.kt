@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
@@ -44,9 +43,10 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 
 class CommonAnalysisParameters(
-    val packagePartProviderFactory: (ModuleContent<*>) -> PackagePartProvider
+    val metadataPartProviderFactory: (ModuleContent<*>) -> MetadataPartProvider
 ) : PlatformAnalysisParameters
 
 /**
@@ -68,7 +68,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
     fun analyzeFiles(
         files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
         capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = mapOf(MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common),
-        packagePartProviderFactory: (ModuleContent<ModuleInfo>) -> PackagePartProvider
+        metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
     ): AnalysisResult {
         val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
         val project = files.firstOrNull()?.project ?: throw AssertionError("No files to analyze")
@@ -91,7 +91,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
                 override fun getTargetPlatform(moduleInfo: ModuleInfo) = TargetPlatformVersion.NoVersion
             },
             resolverForModuleFactoryByPlatform = { CommonAnalyzerFacade },
-            platformParameters = { _ -> CommonAnalysisParameters(packagePartProviderFactory) }
+            platformParameters = { _ -> CommonAnalysisParameters(metadataPartProviderFactory) }
         )
 
         val moduleDescriptor = resolver.descriptorForModule(moduleInfo)
@@ -120,10 +120,10 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
             moduleInfo
         )
 
-        val packagePartProvider = (platformParameters as CommonAnalysisParameters).packagePartProviderFactory(moduleContent)
+        val metadataPartProvider = (platformParameters as CommonAnalysisParameters).metadataPartProviderFactory(moduleContent)
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
-            moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, packagePartProvider,
+            moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, metadataPartProvider,
             languageVersionSettings
         )
 
@@ -141,7 +141,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope,
         targetEnvironment: TargetEnvironment,
-        packagePartProvider: PackagePartProvider,
+        metadataPartProvider: MetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings
     ): StorageComponentContainer = createContainer("ResolveCommonCode", targetPlatform) {
         configureModule(moduleContext, targetPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
@@ -154,7 +154,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
         useInstance(languageVersionSettings)
         useImpl<AnnotationResolverImpl>()
         useImpl<CompilerDeserializationConfiguration>()
-        useInstance(packagePartProvider)
+        useInstance(metadataPartProvider)
         useInstance(declarationProviderFactory)
         useImpl<MetadataPackageFragmentProvider>()
 

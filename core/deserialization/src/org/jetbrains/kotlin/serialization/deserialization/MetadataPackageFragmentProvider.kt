@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
@@ -41,7 +40,7 @@ class MetadataPackageFragmentProvider(
         finder: KotlinMetadataFinder,
         moduleDescriptor: ModuleDescriptor,
         notFoundClasses: NotFoundClasses,
-        private val packagePartProvider: PackagePartProvider
+        private val metadataPartProvider: MetadataPartProvider
 ) : AbstractDeserializedPackageFragmentProvider(storageManager, finder, moduleDescriptor) {
     init {
         components = DeserializationComponents(
@@ -65,16 +64,16 @@ class MetadataPackageFragmentProvider(
 
     override fun findPackage(fqName: FqName): DeserializedPackageFragment? =
             if (finder.hasMetadataPackage(fqName))
-                MetadataPackageFragment(fqName, storageManager, moduleDescriptor, packagePartProvider, finder)
+                MetadataPackageFragment(fqName, storageManager, moduleDescriptor, metadataPartProvider, finder)
             else null
 }
 
 class MetadataPackageFragment(
-        fqName: FqName,
-        storageManager: StorageManager,
-        module: ModuleDescriptor,
-        private val packagePartProvider: PackagePartProvider,
-        private val finder: KotlinMetadataFinder
+    fqName: FqName,
+    storageManager: StorageManager,
+    module: ModuleDescriptor,
+    private val metadataPartProvider: MetadataPartProvider,
+    private val finder: KotlinMetadataFinder
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
     override val classDataFinder = ClassDataFinder { classId ->
         val topLevelClassId = generateSequence(classId, ClassId::getOuterClassId).last()
@@ -98,7 +97,7 @@ class MetadataPackageFragment(
     private fun computeMemberScope(): MemberScope {
         // For each .kotlin_metadata file which represents a package part, add a separate deserialized scope
         // with top level callables and type aliases (but no classes) only from that part
-        val packageParts = packagePartProvider.findMetadataPackageParts(fqName.asString())
+        val packageParts = metadataPartProvider.findMetadataPackageParts(fqName.asString())
         val scopes = arrayListOf<DeserializedPackageMemberScope>()
         for (partName in packageParts) {
             val stream = finder.findMetadata(ClassId(fqName, Name.identifier(partName))) ?: continue

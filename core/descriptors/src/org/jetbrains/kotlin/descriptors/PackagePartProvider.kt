@@ -28,17 +28,10 @@ interface PackagePartProvider {
      */
     fun findPackageParts(packageFqName: String): List<String>
 
-    /**
-     * @return simple names of .kotlin_metadata files that store data for top level declarations in the package with the given FQ name
-     */
-    fun findMetadataPackageParts(packageFqName: String): List<String>
-
     fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId>
 
     object Empty : PackagePartProvider {
         override fun findPackageParts(packageFqName: String): List<String> = emptyList()
-
-        override fun findMetadataPackageParts(packageFqName: String): List<String> = emptyList()
 
         override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> = emptyList()
     }

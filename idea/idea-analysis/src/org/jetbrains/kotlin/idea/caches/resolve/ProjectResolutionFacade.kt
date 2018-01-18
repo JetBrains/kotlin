@@ -128,7 +128,7 @@ internal class ProjectResolutionFacade(
         )
 
         val commonPlatformParameters = CommonAnalysisParameters(
-            packagePartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) }
+            metadataPartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) }
         )
 
         val resolverForProject = ResolverForProjectImpl(
