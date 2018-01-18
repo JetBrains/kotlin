@@ -38,6 +38,9 @@ class ClangManager(val properties: Properties, val baseDir: String) {
     fun targetClangArgs(target: KonanTarget)
         = (hostClang.commonClangArgs + targetClangArgs[target]!!.specificClangArgs).toTypedArray()
 
+    fun targetClangArgsForKonanSources(target: KonanTarget) =
+            targetClangArgs(target) + targetClangArgs[target]!!.clangArgsSpecificForKonanSources
+
     val hostCompilerArgsForJni = hostClang.hostCompilerArgsForJni.toTypedArray()
 
     fun targetLibclangArgs(target: KonanTarget): List<String> {

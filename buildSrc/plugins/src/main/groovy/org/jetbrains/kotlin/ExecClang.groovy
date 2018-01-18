@@ -33,7 +33,7 @@ class ExecClang {
     }
 
     private List<String> konanArgs(KonanTarget target) {
-        return project.rootProject.targetClangArgs(target)
+        return project.rootProject.targetClangArgsForKonanSources(target)
     }
 
     private List<String> konanArgs(String target) {

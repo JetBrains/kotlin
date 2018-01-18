@@ -27,12 +27,10 @@ class ClangTargetArgs(val target: KonanTarget, konanProperties: KonanProperties)
     val specificClangArgs: List<String> get() {
         val result = when (target) {
             KonanTarget.LINUX ->
-                listOf("--sysroot=$sysRoot",
-                        "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64")
+                listOf("--sysroot=$sysRoot")
             KonanTarget.RASPBERRYPI ->
                 listOf("-target", targetArg!!,
                         "-mfpu=vfp", "-mfloat-abi=hard",
-                        "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32",
                         "--sysroot=$sysRoot",
                         // TODO: those two are hacks.
                         "-I$sysRoot/usr/include/c++/4.8.3",
@@ -40,38 +38,31 @@ class ClangTargetArgs(val target: KonanTarget, konanProperties: KonanProperties)
 
             KonanTarget.LINUX_MIPS32 ->
                 listOf("-target", targetArg!!,
-                        "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32",
                         "--sysroot=$sysRoot",
                         "-I$sysRoot/usr/include/c++/4.9.4",
                         "-I$sysRoot/usr/include/c++/4.9.4/mips-unknown-linux-gnu")
 
             KonanTarget.LINUX_MIPSEL32 ->
                 listOf("-target", targetArg!!,
-                        "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32",
                         "--sysroot=$sysRoot",
                         "-I$sysRoot/usr/include/c++/4.9.4",
                         "-I$sysRoot/usr/include/c++/4.9.4/mipsel-unknown-linux-gnu")
 
             KonanTarget.MINGW ->
-                listOf("-target", targetArg!!, "--sysroot=$sysRoot",
-                        "-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1", "-Xclang", "-flto-visibility-public-std")
+                listOf("-target", targetArg!!, "--sysroot=$sysRoot", "-Xclang", "-flto-visibility-public-std")
 
             KonanTarget.MACBOOK ->
-                listOf("--sysroot=$sysRoot", "-mmacosx-version-min=10.11", "-DKONAN_OSX=1",
-                        "-DKONAN_OBJC_INTEROP=1")
+                listOf("--sysroot=$sysRoot", "-mmacosx-version-min=10.11")
 
             KonanTarget.IPHONE ->
-                listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", sysRoot, "-miphoneos-version-min=8.0.0",
-                        "-DKONAN_OBJC_INTEROP=1")
+                listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", sysRoot, "-miphoneos-version-min=8.0.0")
 
             KonanTarget.IPHONE_SIM ->
-                listOf("-stdlib=libc++", "-isysroot", sysRoot, "-miphoneos-version-min=8.0.0",
-                        "-DKONAN_OBJC_INTEROP=1")
+                listOf("-stdlib=libc++", "-isysroot", sysRoot, "-miphoneos-version-min=8.0.0")
 
             KonanTarget.ANDROID_ARM32 ->
                 listOf("-target", targetArg!!,
                         "--sysroot=$sysRoot",
-                        "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32", "-DKONAN_ANDROID",
                         // HACKS!
                         "-I$sysRoot/usr/include/c++/4.9.x",
                         "-I$sysRoot/usr/include/c++/4.9.x/arm-linux-androideabi")
@@ -79,20 +70,54 @@ class ClangTargetArgs(val target: KonanTarget, konanProperties: KonanProperties)
             KonanTarget.ANDROID_ARM64 ->
                 listOf("-target", targetArg!!,
                         "--sysroot=$sysRoot",
-                        "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64", "-DKONAN_ANDROID",
                         // HACKS!
                         "-I$sysRoot/usr/include/c++/4.9.x",
                         "-I$sysRoot/usr/include/c++/4.9.x/aarch64-linux-android")
 
             KonanTarget.WASM32 ->
-                listOf("-target", targetArg!!, "-O1", "-fno-rtti", "-fno-exceptions",  "-DKONAN_WASM=1",
-                        "-D_LIBCPP_ABI_VERSION=2", "-D_LIBCPP_NO_EXCEPTIONS=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
-                        "-DKONAN_INTERNAL_DLMALLOC=1", "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1",
+                listOf("-target", targetArg!!, "-O1", "-fno-rtti", "-fno-exceptions",
+                        "-D_LIBCPP_ABI_VERSION=2", "-D_LIBCPP_NO_EXCEPTIONS=1",
                         "-nostdinc", "-Xclang", "-nobuiltininc", "-Xclang", "-nostdsysteminc",
                         "-Xclang", "-isystem$sysRoot/include/libcxx", "-Xclang", "-isystem$sysRoot/lib/libcxxabi/include",
                         "-Xclang", "-isystem$sysRoot/include/compat", "-Xclang", "-isystem$sysRoot/include/libc")
         }
         return result
+    }
+
+    val clangArgsSpecificForKonanSources get() = when (target) {
+        KonanTarget.LINUX ->
+            listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64")
+
+        KonanTarget.RASPBERRYPI ->
+            listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
+
+        KonanTarget.LINUX_MIPS32 ->
+            listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
+
+        KonanTarget.LINUX_MIPSEL32 ->
+            listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
+
+        KonanTarget.MINGW ->
+            listOf("-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1")
+
+        KonanTarget.MACBOOK ->
+            listOf("-DKONAN_OSX=1", "-DKONAN_OBJC_INTEROP=1")
+
+        KonanTarget.IPHONE ->
+            listOf("-DKONAN_OBJC_INTEROP=1")
+
+        KonanTarget.IPHONE_SIM ->
+            listOf("-DKONAN_OBJC_INTEROP=1")
+
+        KonanTarget.ANDROID_ARM32 ->
+            listOf("-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32", "-DKONAN_ANDROID")
+
+        KonanTarget.ANDROID_ARM64 ->
+            listOf("-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64", "-DKONAN_ANDROID")
+
+        KonanTarget.WASM32 ->
+            listOf("-DKONAN_WASM=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
+                    "-DKONAN_INTERNAL_DLMALLOC=1", "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1")
     }
 }
 
