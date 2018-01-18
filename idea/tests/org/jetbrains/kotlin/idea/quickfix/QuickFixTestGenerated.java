@@ -1563,9 +1563,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeUnusedConstructorParameterWithUsage.kt")
+        public void testRemoveUnusedConstructorParameterWithUsage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedConstructorParameterWithUsage.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeUnusedExtensionParameter.kt")
         public void testRemoveUnusedExtensionParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedExtensionParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeUnusedInternalConstructorParameter.kt")
+        public void testRemoveUnusedInternalConstructorParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedInternalConstructorParameter.kt");
             doTest(fileName);
         }
 
@@ -3464,15 +3476,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 public void testCreateComponentFromUsage3() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/component/createComponentFromUsage3.kt");
                     doTest(fileName);
-                }
-            }
-
-            @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/fromJava")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class FromJava extends AbstractQuickFixTest {
-                public void testAllFilesPresentInFromJava() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/fromJava"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
                 }
             }
 

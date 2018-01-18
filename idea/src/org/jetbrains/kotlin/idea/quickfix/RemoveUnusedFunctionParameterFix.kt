@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.intentions.RemoveEmptyPrimaryConstructorIntention
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -40,19 +40,20 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
         val element = element ?: return
         val primaryConstructor = element.parent?.parent as? KtPrimaryConstructor
         val parameterList = element.parent as? KtParameterList
-        if (primaryConstructor != null && parameterList?.parameters?.size == 1 &&
-            (primaryConstructor.getContainingClassOrObject().resolveToDescriptorIfAny() as? MemberDescriptor)?.isExpect == false) {
-            runWriteAction {
-                parameterList.delete()
-            }
+        val context = element.analyze()
+        val parameterDescriptor = context[BindingContext.VALUE_PARAMETER, element] as? ValueParameterDescriptor ?: return
+        ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
+        val nextParameter = parameterList?.parameters?.getOrNull(parameterDescriptor.index)
+        if (nextParameter != null) {
+            editor?.caretModel?.moveToOffset(nextParameter.startOffset)
         }
-        else {
-            val context = element.analyze()
-            val parameterDescriptor = context[BindingContext.VALUE_PARAMETER, element] as? ValueParameterDescriptor ?: return
-            ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
-            val nextParameter = parameterList?.parameters?.getOrNull(parameterDescriptor.index)
-            if (editor != null && nextParameter != null) {
-                editor.caretModel.moveToOffset(nextParameter.startOffset)
+        if (primaryConstructor != null) {
+            val removeConstructorIntention = RemoveEmptyPrimaryConstructorIntention()
+            if (removeConstructorIntention.isApplicableTo(primaryConstructor)) {
+                editor?.caretModel?.moveToOffset(primaryConstructor.endOffset)
+                runWriteAction {
+                    removeConstructorIntention.applyTo(primaryConstructor, editor = null)
+                }
             }
         }
     }
@@ -62,7 +63,7 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
             val parameter = Errors.UNUSED_PARAMETER.cast(diagnostic).psiElement
             val parameterOwner = parameter.parent.parent
             if (parameterOwner is KtFunctionLiteral ||
-                    (parameterOwner is KtNamedFunction && parameterOwner.name == null)) return null
+                (parameterOwner is KtNamedFunction && parameterOwner.name == null)) return null
             return RemoveUnusedFunctionParameterFix(parameter)
         }
     }
