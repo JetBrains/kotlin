@@ -44,7 +44,6 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.util.DocumentUtil
 import org.jetbrains.kotlin.idea.core.targetDescriptors
-import org.jetbrains.kotlin.idea.editor.fixers.end
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.OptimizedImportsBuilder
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -58,10 +57,7 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.*
 
 class KotlinUnusedImportInspection : AbstractKotlinInspection() {
-    data class ImportData(
-            val unusedImports: List<KtImportDirective>,
-            val optimizerData: OptimizedImportsBuilder.InputData
-    )
+    data class ImportData(val unusedImports: List<KtImportDirective>, val optimizerData: OptimizedImportsBuilder.InputData)
 
     companion object {
         fun analyzeImports(file: KtFile): ImportData? {
@@ -73,11 +69,11 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
 
             val directives = file.importDirectives
             val explicitlyImportedFqNames = directives
-                    .asSequence()
-                    .mapNotNull { it.importPath }
-                    .filter { !it.isAllUnder && !it.hasAlias() }
-                    .map { it.fqName }
-                    .toSet()
+                .asSequence()
+                .mapNotNull { it.importPath }
+                .filter { !it.isAllUnder && !it.hasAlias() }
+                .map { it.fqName }
+                .toSet()
 
             val fqNames = HashSet<FqName>()
             val parentFqNames = HashSet<FqName>()
@@ -128,11 +124,13 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             if (!CodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) {
                 fixes.add(EnableOptimizeImportsOnTheFlyFix(file))
             }
-            manager.createProblemDescriptor(it,
-                                            "Unused import directive",
-                                            isOnTheFly,
-                                            fixes.toTypedArray(),
-                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL)
+            manager.createProblemDescriptor(
+                it,
+                "Unused import directive",
+                isOnTheFly,
+                fixes.toTypedArray(),
+                ProblemHighlightType.LIKE_UNUSED_SYMBOL
+            )
         }
 
         if (isOnTheFly) {
@@ -202,8 +200,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             if (!importsRange.containsRange(highlightInfo.startOffset, highlightInfo.endOffset)) {
                 hasErrors = true
                 false
-            }
-            else {
+            } else {
                 true
             }
         })
@@ -237,7 +234,10 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             CodeInsightWorkspaceSettings.getInstance(project).optimizeImportsOnTheFly = true
-            OptimizeImportsProcessor(project, file).run() // we optimize imports manually because on-the-fly import optimization won't work while the caret is in imports
+            OptimizeImportsProcessor(
+                project,
+                file
+            ).run() // we optimize imports manually because on-the-fly import optimization won't work while the caret is in imports
         }
     }
 }
