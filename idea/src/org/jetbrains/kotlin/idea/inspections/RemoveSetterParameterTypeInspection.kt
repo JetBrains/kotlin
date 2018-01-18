@@ -12,16 +12,20 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
 import org.jetbrains.kotlin.idea.intentions.isSetterParameter
 import org.jetbrains.kotlin.psi.parameterVisitor
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class RemoveSetterParameterTypeInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return parameterVisitor { dcl ->
-            val typeReference = dcl.takeIf { it.isSetterParameter }?.typeReference ?: return@parameterVisitor
+        return parameterVisitor { parameter ->
+            val typeReference = parameter.takeIf { it.isSetterParameter }
+                ?.typeReference
+                ?.takeIf { it.endOffset > it.startOffset } ?: return@parameterVisitor
             holder.registerProblem(
                 typeReference,
                 "Redundant setter parameter type",
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                IntentionWrapper(RemoveExplicitTypeIntention(), dcl.containingKtFile)
+                IntentionWrapper(RemoveExplicitTypeIntention(), parameter.containingKtFile)
             )
         }
     }
