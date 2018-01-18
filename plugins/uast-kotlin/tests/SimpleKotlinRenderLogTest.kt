@@ -67,4 +67,10 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test
     fun testReceiverFun() = doTest("ReceiverFun")
+
+    @Test
+    fun testAnonymous() = doTest("Anonymous") { testName, file ->
+        //Disabled because cant convert IMPORT_DIRECTIVE
+        check(testName, file, false)
+    }
 }
