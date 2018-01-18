@@ -131,9 +131,13 @@ class KotlinLanguageInjector(
             if (parts.ranges.isEmpty()) return
 
             InjectorUtils.registerInjection(language, parts.ranges, file, registrar)
-            InjectorUtils.registerSupport(support, false, registrar)
-            InjectorUtils.putInjectedFileUserData(registrar, InjectedLanguageUtil.FRANKENSTEIN_INJECTION,
-                                                  if (parts.isUnparsable) java.lang.Boolean.TRUE else null)
+            InjectorUtils.registerSupport(support, false, ktHost, language)
+            InjectorUtils.putInjectedFileUserData(
+                ktHost,
+                language,
+                InjectedLanguageUtil.FRANKENSTEIN_INJECTION,
+                if (parts.isUnparsable) java.lang.Boolean.TRUE else null
+            )
         }
         else {
             InjectorUtils.registerInjectionSimple(ktHost, baseInjection, support, registrar)
