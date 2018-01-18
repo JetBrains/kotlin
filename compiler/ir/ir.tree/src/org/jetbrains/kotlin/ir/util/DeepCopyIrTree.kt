@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-inline fun <reified T : IrElement> T.deepCopyOld() =
-    transform(DeepCopyIrTree(), null) as T
+inline fun <reified T : IrElement> T.deepCopyOld(): T =
+    transform(DeepCopyIrTree(), null).patchDeclarationParents() as T
 
 @Deprecated("Creates unbound symbols")
 open class DeepCopyIrTree : IrElementTransformerVoid() {

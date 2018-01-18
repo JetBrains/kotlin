@@ -115,6 +115,12 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             errors.add(message)
         }
 
+        private inline fun require(condition: Boolean, message: () -> String) {
+            if (!condition) {
+                errors.add(message())
+            }
+        }
+
         fun verifyWithAssert(irFile: IrFile) {
             irFile.acceptChildrenVoid(this)
             TestCase.assertFalse(errorsAsMessage + "\n\n\n" + irFile.dump(), hasErrors)
@@ -128,8 +134,20 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             if (declaration is IrSymbolOwner) {
                 declaration.symbol.checkBinding("decl", declaration)
 
-                if (declaration.symbol.owner != declaration) {
-                    error("Symbol is not bound to declaration: ${declaration.render()}")
+                require(declaration.symbol.owner == declaration) {
+                    "Symbol is not bound to declaration: ${declaration.render()}"
+                }
+            }
+
+            val containingDeclarationDescriptor = declaration.descriptor.containingDeclaration
+            if (containingDeclarationDescriptor != null) {
+                val parent = declaration.parent
+                if (parent is IrDeclaration) {
+                    require(parent.descriptor == containingDeclarationDescriptor) {
+                        "In declaration ${declaration.descriptor}: " +
+                                "Mismatching parent descriptor (${parent.descriptor}) " +
+                                "and containing declaration descriptor ($containingDeclarationDescriptor)"
+                    }
                 }
             }
         }
@@ -143,20 +161,18 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
             val expectedDispatchReceiver = functionDescriptor.dispatchReceiverParameter
             val actualDispatchReceiver = declaration.dispatchReceiverParameter?.descriptor
-            if (expectedDispatchReceiver != actualDispatchReceiver) {
-                error(
-                    "$functionDescriptor: Dispatch receiver parameter mismatch: " +
-                            "expected $expectedDispatchReceiver, actual $actualDispatchReceiver"
-                )
+            require(expectedDispatchReceiver == actualDispatchReceiver) {
+                "$functionDescriptor: Dispatch receiver parameter mismatch: " +
+                        "expected $expectedDispatchReceiver, actual $actualDispatchReceiver"
+
             }
 
             val expectedExtensionReceiver = functionDescriptor.extensionReceiverParameter
             val actualExtensionReceiver = declaration.extensionReceiverParameter?.descriptor
-            if (expectedExtensionReceiver != actualExtensionReceiver) {
-                error(
-                    "$functionDescriptor: Extension receiver parameter mismatch: " +
-                            "expected $expectedExtensionReceiver, actual $actualExtensionReceiver"
-                )
+            require(expectedExtensionReceiver == actualExtensionReceiver) {
+                "$functionDescriptor: Extension receiver parameter mismatch: " +
+                        "expected $expectedExtensionReceiver, actual $actualExtensionReceiver"
+
             }
 
             val declaredValueParameters = declaration.valueParameters.map { it.descriptor }
@@ -165,8 +181,8 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
                 error("$functionDescriptor: Value parameters mismatch: $declaredValueParameters != $actualValueParameters")
             } else {
                 declaredValueParameters.zip(actualValueParameters).forEach { (declaredValueParameter, actualValueParameter) ->
-                    if (declaredValueParameter != actualValueParameter) {
-                        error("$functionDescriptor: Value parameters mismatch: $declaredValueParameter != $actualValueParameter")
+                    require(declaredValueParameter == actualValueParameter) {
+                        "$functionDescriptor: Value parameters mismatch: $declaredValueParameter != $actualValueParameter"
                     }
                 }
             }
@@ -220,8 +236,8 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
                 error("$descriptor: Type parameters mismatch: $declaredTypeParameters != $expectedTypeParameters")
             } else {
                 declaredTypeParameters.zip(expectedTypeParameters).forEach { (declaredTypeParameter, expectedTypeParameter) ->
-                    if (declaredTypeParameter != expectedTypeParameter) {
-                        error("$descriptor: Type parameters mismatch: $declaredTypeParameter != $expectedTypeParameter")
+                    require(declaredTypeParameter == expectedTypeParameter) {
+                        "$descriptor: Type parameters mismatch: $declaredTypeParameter != $expectedTypeParameter"
                     }
                 }
             }

@@ -32,7 +32,7 @@ import java.util.*
 inline fun <reified T : IrElement> T.deepCopyWithSymbols(): T {
     val remapper = DeepCopySymbolsRemapper()
     acceptVoid(remapper)
-    return transform(DeepCopyIrTreeWithSymbols(remapper), null) as T
+    return transform(DeepCopyIrTreeWithSymbols(remapper), null).patchDeclarationParents() as T
 }
 
 

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
@@ -55,5 +56,7 @@ class Psi2IrTranslator(val configuration: Psi2IrConfiguration = Psi2IrConfigurat
         insertImplicitCasts(context.builtIns, irElement)
 
         postprocessingSteps.forEach { it.postprocess(context, irElement) }
+
+        irElement.patchDeclarationParents()
     }
 }
