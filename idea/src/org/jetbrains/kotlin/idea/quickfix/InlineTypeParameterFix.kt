@@ -34,7 +34,7 @@ class InlineTypeParameterFix(val typeReference: KtTypeReference) : KotlinQuickFi
         val parameterListOwner = typeReference.getStrictParentOfType<KtTypeParameterListOwner>() ?: return
         val context = parameterListOwner.analyzeFully()
         val parameterDescriptor = context[BindingContext.TYPE_PARAMETER, parameter] ?: return
-        parameterListOwner.forEachDescendantOfType<KtTypeReference>() {
+        parameterListOwner.forEachDescendantOfType<KtTypeReference> {
             val typeElement = it.typeElement
             val type = context[BindingContext.TYPE, it]
             if (typeElement != null && type != null && type.constructor.declarationDescriptor == parameterDescriptor) {
@@ -44,8 +44,7 @@ class InlineTypeParameterFix(val typeReference: KtTypeReference) : KotlinQuickFi
 
         if (parameterList.parameters.size == 1) {
             parameterList.delete()
-        }
-        else {
+        } else {
             EditCommaSeparatedListHelper.removeItem(parameter)
         }
     }
