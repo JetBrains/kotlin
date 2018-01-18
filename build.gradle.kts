@@ -22,6 +22,7 @@ buildscript {
             "https://jcenter.bintray.com/",
             "https://plugins.gradle.org/m2",
             "http://dl.bintray.com/kotlin/kotlinx",
+            "http://dl.bintray.com/kotlin/uast",
             "https://repo.gradle.org/gradle/libs-releases-local", // for native-platform
             "https://jetbrains.bintray.com/intellij-third-party-dependencies", // for jflex
             "https://dl.bintray.com/jetbrains/markdown" // for org.jetbrains:markdown
@@ -141,6 +142,7 @@ extra["versions.robolectric"] = "3.1"
 extra["versions.org.springframework"] = "4.2.0.RELEASE"
 extra["versions.jflex"] = "1.7.0"
 extra["versions.markdown"] = "0.1.25"
+extra["versions.org.jetbrains.uast"] = "1.0.12"
 
 val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 val intellijUltimateEnabled = project.getBooleanProperty("intellijUltimateEnabled") ?: isTeamcityBuild
@@ -154,7 +156,7 @@ extra["intellijSeparateSdks"] = intellijSeparateSdks
 extra["IntellijCoreDependencies"] =
         listOf("annotations",
                "asm-all",
-               "guava-21.0",
+               "guava-19.0",
                "jdom",
                "jna",
                "log4j",
