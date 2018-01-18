@@ -138,6 +138,76 @@ public final class DebugJvmModuleProtoBuf {
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getJvmPackageNameBytes(int index);
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+     */
+    boolean hasStringTable();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable getStringTable();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTableOrBuilder getStringTableOrBuilder();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+     */
+    boolean hasQualifiedNameTable();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable getQualifiedNameTable();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTableOrBuilder getQualifiedNameTableOrBuilder();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+     *
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> 
+        getAnnotationList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+     *
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation getAnnotation(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+     *
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     */
+    int getAnnotationCount();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+     *
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     */
+    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> 
+        getAnnotationOrBuilderList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+     *
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.Module}
@@ -216,6 +286,40 @@ public final class DebugJvmModuleProtoBuf {
               jvmPackageName_.add(bs);
               break;
             }
+            case 34: {
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = stringTable_.toBuilder();
+              }
+              stringTable_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(stringTable_);
+                stringTable_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000001;
+              break;
+            }
+            case 42: {
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = qualifiedNameTable_.toBuilder();
+              }
+              qualifiedNameTable_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(qualifiedNameTable_);
+                qualifiedNameTable_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
+              break;
+            }
+            case 50: {
+              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+                annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>();
+                mutable_bitField0_ |= 0x00000020;
+              }
+              annotation_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.PARSER, extensionRegistry));
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -232,6 +336,9 @@ public final class DebugJvmModuleProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
           jvmPackageName_ = jvmPackageName_.getUnmodifiableView();
+        }
+        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+          annotation_ = java.util.Collections.unmodifiableList(annotation_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -264,6 +371,7 @@ public final class DebugJvmModuleProtoBuf {
       return PARSER;
     }
 
+    private int bitField0_;
     public static final int PACKAGE_PARTS_FIELD_NUMBER = 1;
     private java.util.List<org.jetbrains.kotlin.serialization.jvm.DebugJvmModuleProtoBuf.PackageParts> packageParts_;
     /**
@@ -423,10 +531,110 @@ public final class DebugJvmModuleProtoBuf {
       return jvmPackageName_.getByteString(index);
     }
 
+    public static final int STRING_TABLE_FIELD_NUMBER = 4;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable stringTable_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+     */
+    public boolean hasStringTable() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable getStringTable() {
+      return stringTable_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTableOrBuilder getStringTableOrBuilder() {
+      return stringTable_;
+    }
+
+    public static final int QUALIFIED_NAME_TABLE_FIELD_NUMBER = 5;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable qualifiedNameTable_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+     */
+    public boolean hasQualifiedNameTable() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable getQualifiedNameTable() {
+      return qualifiedNameTable_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTableOrBuilder getQualifiedNameTableOrBuilder() {
+      return qualifiedNameTable_;
+    }
+
+    public static final int ANNOTATION_FIELD_NUMBER = 6;
+    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> annotation_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+     *
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> getAnnotationList() {
+      return annotation_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+     *
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> 
+        getAnnotationOrBuilderList() {
+      return annotation_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+     *
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     */
+    public int getAnnotationCount() {
+      return annotation_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+     *
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation getAnnotation(int index) {
+      return annotation_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+     *
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
+        int index) {
+      return annotation_.get(index);
+    }
+
     private void initFields() {
       packageParts_ = java.util.Collections.emptyList();
       metadataParts_ = java.util.Collections.emptyList();
       jvmPackageName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      stringTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.getDefaultInstance();
+      qualifiedNameTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.getDefaultInstance();
+      annotation_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -446,6 +654,18 @@ public final class DebugJvmModuleProtoBuf {
           return false;
         }
       }
+      if (hasQualifiedNameTable()) {
+        if (!getQualifiedNameTable().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getAnnotationCount(); i++) {
+        if (!getAnnotation(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -461,6 +681,15 @@ public final class DebugJvmModuleProtoBuf {
       }
       for (int i = 0; i < jvmPackageName_.size(); i++) {
         output.writeBytes(3, jvmPackageName_.getByteString(i));
+      }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(4, stringTable_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(5, qualifiedNameTable_);
+      }
+      for (int i = 0; i < annotation_.size(); i++) {
+        output.writeMessage(6, annotation_.get(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -487,6 +716,18 @@ public final class DebugJvmModuleProtoBuf {
         }
         size += dataSize;
         size += 1 * getJvmPackageNameList().size();
+      }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(4, stringTable_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(5, qualifiedNameTable_);
+      }
+      for (int i = 0; i < annotation_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(6, annotation_.get(i));
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -599,6 +840,9 @@ public final class DebugJvmModuleProtoBuf {
         if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getPackagePartsFieldBuilder();
           getMetadataPartsFieldBuilder();
+          getStringTableFieldBuilder();
+          getQualifiedNameTableFieldBuilder();
+          getAnnotationFieldBuilder();
         }
       }
       private static Builder create() {
@@ -621,6 +865,24 @@ public final class DebugJvmModuleProtoBuf {
         }
         jvmPackageName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000004);
+        if (stringTableBuilder_ == null) {
+          stringTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.getDefaultInstance();
+        } else {
+          stringTableBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        if (qualifiedNameTableBuilder_ == null) {
+          qualifiedNameTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.getDefaultInstance();
+        } else {
+          qualifiedNameTableBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
+        if (annotationBuilder_ == null) {
+          annotation_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000020);
+        } else {
+          annotationBuilder_.clear();
+        }
         return this;
       }
 
@@ -648,6 +910,7 @@ public final class DebugJvmModuleProtoBuf {
       public org.jetbrains.kotlin.serialization.jvm.DebugJvmModuleProtoBuf.Module buildPartial() {
         org.jetbrains.kotlin.serialization.jvm.DebugJvmModuleProtoBuf.Module result = new org.jetbrains.kotlin.serialization.jvm.DebugJvmModuleProtoBuf.Module(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         if (packagePartsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) == 0x00000001)) {
             packageParts_ = java.util.Collections.unmodifiableList(packageParts_);
@@ -671,6 +934,32 @@ public final class DebugJvmModuleProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000004);
         }
         result.jvmPackageName_ = jvmPackageName_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        if (stringTableBuilder_ == null) {
+          result.stringTable_ = stringTable_;
+        } else {
+          result.stringTable_ = stringTableBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        if (qualifiedNameTableBuilder_ == null) {
+          result.qualifiedNameTable_ = qualifiedNameTable_;
+        } else {
+          result.qualifiedNameTable_ = qualifiedNameTableBuilder_.build();
+        }
+        if (annotationBuilder_ == null) {
+          if (((bitField0_ & 0x00000020) == 0x00000020)) {
+            annotation_ = java.util.Collections.unmodifiableList(annotation_);
+            bitField0_ = (bitField0_ & ~0x00000020);
+          }
+          result.annotation_ = annotation_;
+        } else {
+          result.annotation_ = annotationBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -748,6 +1037,38 @@ public final class DebugJvmModuleProtoBuf {
           }
           onChanged();
         }
+        if (other.hasStringTable()) {
+          mergeStringTable(other.getStringTable());
+        }
+        if (other.hasQualifiedNameTable()) {
+          mergeQualifiedNameTable(other.getQualifiedNameTable());
+        }
+        if (annotationBuilder_ == null) {
+          if (!other.annotation_.isEmpty()) {
+            if (annotation_.isEmpty()) {
+              annotation_ = other.annotation_;
+              bitField0_ = (bitField0_ & ~0x00000020);
+            } else {
+              ensureAnnotationIsMutable();
+              annotation_.addAll(other.annotation_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.annotation_.isEmpty()) {
+            if (annotationBuilder_.isEmpty()) {
+              annotationBuilder_.dispose();
+              annotationBuilder_ = null;
+              annotation_ = other.annotation_;
+              bitField0_ = (bitField0_ & ~0x00000020);
+              annotationBuilder_ = 
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getAnnotationFieldBuilder() : null;
+            } else {
+              annotationBuilder_.addAllMessages(other.annotation_);
+            }
+          }
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -761,6 +1082,18 @@ public final class DebugJvmModuleProtoBuf {
         }
         for (int i = 0; i < getMetadataPartsCount(); i++) {
           if (!getMetadataParts(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasQualifiedNameTable()) {
+          if (!getQualifiedNameTable().isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getAnnotationCount(); i++) {
+          if (!getAnnotation(i).isInitialized()) {
             
             return false;
           }
@@ -1547,6 +1880,550 @@ public final class DebugJvmModuleProtoBuf {
         jvmPackageName_.add(value);
         onChanged();
         return this;
+      }
+
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable stringTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.getDefaultInstance();
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTableOrBuilder> stringTableBuilder_;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+       */
+      public boolean hasStringTable() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable getStringTable() {
+        if (stringTableBuilder_ == null) {
+          return stringTable_;
+        } else {
+          return stringTableBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+       */
+      public Builder setStringTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable value) {
+        if (stringTableBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          stringTable_ = value;
+          onChanged();
+        } else {
+          stringTableBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+       */
+      public Builder setStringTable(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.Builder builderForValue) {
+        if (stringTableBuilder_ == null) {
+          stringTable_ = builderForValue.build();
+          onChanged();
+        } else {
+          stringTableBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+       */
+      public Builder mergeStringTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable value) {
+        if (stringTableBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008) &&
+              stringTable_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.getDefaultInstance()) {
+            stringTable_ =
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.newBuilder(stringTable_).mergeFrom(value).buildPartial();
+          } else {
+            stringTable_ = value;
+          }
+          onChanged();
+        } else {
+          stringTableBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+       */
+      public Builder clearStringTable() {
+        if (stringTableBuilder_ == null) {
+          stringTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.getDefaultInstance();
+          onChanged();
+        } else {
+          stringTableBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.Builder getStringTableBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getStringTableFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTableOrBuilder getStringTableOrBuilder() {
+        if (stringTableBuilder_ != null) {
+          return stringTableBuilder_.getMessageOrBuilder();
+        } else {
+          return stringTable_;
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable string_table = 4;</code>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTableOrBuilder> 
+          getStringTableFieldBuilder() {
+        if (stringTableBuilder_ == null) {
+          stringTableBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTableOrBuilder>(
+                  getStringTable(),
+                  getParentForChildren(),
+                  isClean());
+          stringTable_ = null;
+        }
+        return stringTableBuilder_;
+      }
+
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable qualifiedNameTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.getDefaultInstance();
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTableOrBuilder> qualifiedNameTableBuilder_;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      public boolean hasQualifiedNameTable() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable getQualifiedNameTable() {
+        if (qualifiedNameTableBuilder_ == null) {
+          return qualifiedNameTable_;
+        } else {
+          return qualifiedNameTableBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      public Builder setQualifiedNameTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable value) {
+        if (qualifiedNameTableBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          qualifiedNameTable_ = value;
+          onChanged();
+        } else {
+          qualifiedNameTableBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      public Builder setQualifiedNameTable(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.Builder builderForValue) {
+        if (qualifiedNameTableBuilder_ == null) {
+          qualifiedNameTable_ = builderForValue.build();
+          onChanged();
+        } else {
+          qualifiedNameTableBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      public Builder mergeQualifiedNameTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable value) {
+        if (qualifiedNameTableBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) == 0x00000010) &&
+              qualifiedNameTable_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.getDefaultInstance()) {
+            qualifiedNameTable_ =
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.newBuilder(qualifiedNameTable_).mergeFrom(value).buildPartial();
+          } else {
+            qualifiedNameTable_ = value;
+          }
+          onChanged();
+        } else {
+          qualifiedNameTableBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      public Builder clearQualifiedNameTable() {
+        if (qualifiedNameTableBuilder_ == null) {
+          qualifiedNameTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.getDefaultInstance();
+          onChanged();
+        } else {
+          qualifiedNameTableBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.Builder getQualifiedNameTableBuilder() {
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return getQualifiedNameTableFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTableOrBuilder getQualifiedNameTableOrBuilder() {
+        if (qualifiedNameTableBuilder_ != null) {
+          return qualifiedNameTableBuilder_.getMessageOrBuilder();
+        } else {
+          return qualifiedNameTable_;
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTableOrBuilder> 
+          getQualifiedNameTableFieldBuilder() {
+        if (qualifiedNameTableBuilder_ == null) {
+          qualifiedNameTableBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTableOrBuilder>(
+                  getQualifiedNameTable(),
+                  getParentForChildren(),
+                  isClean());
+          qualifiedNameTable_ = null;
+        }
+        return qualifiedNameTableBuilder_;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> annotation_ =
+        java.util.Collections.emptyList();
+      private void ensureAnnotationIsMutable() {
+        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+          annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>(annotation_);
+          bitField0_ |= 0x00000020;
+         }
+      }
+
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> annotationBuilder_;
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> getAnnotationList() {
+        if (annotationBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(annotation_);
+        } else {
+          return annotationBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public int getAnnotationCount() {
+        if (annotationBuilder_ == null) {
+          return annotation_.size();
+        } else {
+          return annotationBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation getAnnotation(int index) {
+        if (annotationBuilder_ == null) {
+          return annotation_.get(index);
+        } else {
+          return annotationBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public Builder setAnnotation(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation value) {
+        if (annotationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAnnotationIsMutable();
+          annotation_.set(index, value);
+          onChanged();
+        } else {
+          annotationBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public Builder setAnnotation(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder builderForValue) {
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          annotationBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public Builder addAnnotation(org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation value) {
+        if (annotationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAnnotationIsMutable();
+          annotation_.add(value);
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public Builder addAnnotation(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation value) {
+        if (annotationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAnnotationIsMutable();
+          annotation_.add(index, value);
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public Builder addAnnotation(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder builderForValue) {
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.add(builderForValue.build());
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public Builder addAnnotation(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder builderForValue) {
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public Builder addAllAnnotation(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> values) {
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, annotation_);
+          onChanged();
+        } else {
+          annotationBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public Builder clearAnnotation() {
+        if (annotationBuilder_ == null) {
+          annotation_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000020);
+          onChanged();
+        } else {
+          annotationBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public Builder removeAnnotation(int index) {
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.remove(index);
+          onChanged();
+        } else {
+          annotationBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder getAnnotationBuilder(
+          int index) {
+        return getAnnotationFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
+          int index) {
+        if (annotationBuilder_ == null) {
+          return annotation_.get(index);  } else {
+          return annotationBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> 
+           getAnnotationOrBuilderList() {
+        if (annotationBuilder_ != null) {
+          return annotationBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(annotation_);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder addAnnotationBuilder() {
+        return getAnnotationFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder addAnnotationBuilder(
+          int index) {
+        return getAnnotationFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 6;</code>
+       *
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder> 
+           getAnnotationBuilderList() {
+        return getAnnotationFieldBuilder().getBuilderList();
+      }
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> 
+          getAnnotationFieldBuilder() {
+        if (annotationBuilder_ == null) {
+          annotationBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder>(
+                  annotation_,
+                  ((bitField0_ & 0x00000020) == 0x00000020),
+                  getParentForChildren(),
+                  isClean());
+          annotation_ = null;
+        }
+        return annotationBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.jvm.Module)
@@ -3381,18 +4258,25 @@ public final class DebugJvmModuleProtoBuf {
     java.lang.String[] descriptorData = {
       "\n/core/descriptors.jvm/src/jvm_module.de" +
       "bug.proto\022&org.jetbrains.kotlin.serializ" +
-      "ation.jvm\"\275\001\n\006Module\022K\n\rpackage_parts\030\001 " +
-      "\003(\01324.org.jetbrains.kotlin.serialization" +
-      ".jvm.PackageParts\022L\n\016metadata_parts\030\002 \003(" +
-      "\01324.org.jetbrains.kotlin.serialization.j" +
-      "vm.PackageParts\022\030\n\020jvm_package_name\030\003 \003(" +
-      "\t\"\366\001\n\014PackageParts\022\027\n\017package_fq_name\030\001 " +
-      "\002(\t\022\030\n\020short_class_name\030\002 \003(\t\022*\n\036multifi" +
-      "le_facade_short_name_id\030\003 \003(\005B\002\020\001\022#\n\033mul",
-      "tifile_facade_short_name\030\004 \003(\t\022.\n&class_" +
-      "with_jvm_package_name_short_name\030\005 \003(\t\0222" +
-      "\n&class_with_jvm_package_name_package_id" +
-      "\030\006 \003(\005B\002\020\001B\030B\026DebugJvmModuleProtoBuf"
+      "ation.jvm\0320core/deserialization/src/desc" +
+      "riptors.debug.proto\"\236\003\n\006Module\022K\n\rpackag" +
+      "e_parts\030\001 \003(\01324.org.jetbrains.kotlin.ser" +
+      "ialization.jvm.PackageParts\022L\n\016metadata_" +
+      "parts\030\002 \003(\01324.org.jetbrains.kotlin.seria" +
+      "lization.jvm.PackageParts\022\030\n\020jvm_package" +
+      "_name\030\003 \003(\t\022E\n\014string_table\030\004 \001(\0132/.org." +
+      "jetbrains.kotlin.serialization.StringTab",
+      "le\022T\n\024qualified_name_table\030\005 \001(\01326.org.j" +
+      "etbrains.kotlin.serialization.QualifiedN" +
+      "ameTable\022B\n\nannotation\030\006 \003(\0132..org.jetbr" +
+      "ains.kotlin.serialization.Annotation\"\366\001\n" +
+      "\014PackageParts\022\027\n\017package_fq_name\030\001 \002(\t\022\030" +
+      "\n\020short_class_name\030\002 \003(\t\022*\n\036multifile_fa" +
+      "cade_short_name_id\030\003 \003(\005B\002\020\001\022#\n\033multifil" +
+      "e_facade_short_name\030\004 \003(\t\022.\n&class_with_" +
+      "jvm_package_name_short_name\030\005 \003(\t\0222\n&cla" +
+      "ss_with_jvm_package_name_package_id\030\006 \003(",
+      "\005B\002\020\001B\030B\026DebugJvmModuleProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -3405,19 +4289,21 @@ public final class DebugJvmModuleProtoBuf {
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor[] {
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.getDescriptor(),
         }, assigner);
     internal_static_org_jetbrains_kotlin_serialization_jvm_Module_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_org_jetbrains_kotlin_serialization_jvm_Module_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_jvm_Module_descriptor,
-        new java.lang.String[] { "PackageParts", "MetadataParts", "JvmPackageName", });
+        new java.lang.String[] { "PackageParts", "MetadataParts", "JvmPackageName", "StringTable", "QualifiedNameTable", "Annotation", });
     internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_descriptor,
         new java.lang.String[] { "PackageFqName", "ShortClassName", "MultifileFacadeShortNameId", "MultifileFacadeShortName", "ClassWithJvmPackageNameShortName", "ClassWithJvmPackageNamePackageId", });
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

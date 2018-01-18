@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
@@ -26,13 +27,22 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.config.AnalysisFlag;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.DescriptorUtilKt;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.serialization.StringTableImpl;
 import org.jetbrains.kotlin.serialization.jvm.JvmModuleProtoBuf;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -102,12 +112,18 @@ public class ClassFileFactory implements OutputFileCollection {
             part.addTo(builder);
         }
 
-        if (builder.getPackagePartsCount() == 0) return;
+        List<String> experimental = state.getLanguageVersionSettings().getFlag(AnalysisFlag.getExperimental());
+        if (!experimental.isEmpty()) {
+            writeExperimentalMarkers(state.getModule(), builder, experimental);
+        }
+
+        JvmModuleProtoBuf.Module moduleProto = builder.build();
+        if (moduleProto.getSerializedSize() == 0) return;
 
         generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(packagePartSourceFiles)) {
             @Override
             public byte[] asBytes(ClassBuilderFactory factory) {
-                return ClassFileUtilsKt.serializeToByteArray(builder);
+                return ClassFileUtilsKt.serializeToByteArray(moduleProto);
             }
 
             @Override
@@ -120,6 +136,29 @@ public class ClassFileFactory implements OutputFileCollection {
                 }
             }
         });
+    }
+
+    private static void writeExperimentalMarkers(
+            @NotNull ModuleDescriptor module,
+            @NotNull JvmModuleProtoBuf.Module.Builder builder,
+            @NotNull List<String> experimental
+    ) {
+        StringTableImpl stringTable = new StringTableImpl();
+        for (String fqName : experimental) {
+            ClassDescriptor descriptor =
+                    DescriptorUtilKt.resolveClassByFqName(module, new FqName(fqName), NoLookupLocation.FOR_ALREADY_TRACKED);
+            if (descriptor != null) {
+                ProtoBuf.Annotation.Builder annotation = ProtoBuf.Annotation.newBuilder();
+                ClassId classId = DescriptorUtilsKt.getClassId(descriptor);
+                if (classId != null) {
+                    annotation.setId(stringTable.getClassIdIndex(classId));
+                    builder.addAnnotation(annotation);
+                }
+            }
+        }
+        Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable> tables = stringTable.buildProto();
+        builder.setStringTable(tables.getFirst());
+        builder.setQualifiedNameTable(tables.getSecond());
     }
 
     @NotNull

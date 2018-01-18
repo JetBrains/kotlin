@@ -57,7 +57,7 @@ private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): Lis
             }
 }
 
-fun JvmModuleProtoBuf.Module.Builder.serializeToByteArray(): ByteArray {
+fun JvmModuleProtoBuf.Module.serializeToByteArray(): ByteArray {
     val moduleMapping = ByteArrayOutputStream(4096)
     val out = DataOutputStream(moduleMapping)
     val version = JvmMetadataVersion.INSTANCE.toArray()
@@ -65,7 +65,7 @@ fun JvmModuleProtoBuf.Module.Builder.serializeToByteArray(): ByteArray {
     for (number in version) {
         out.writeInt(number)
     }
-    build().writeTo(out)
+    writeTo(out)
     out.flush()
     return moduleMapping.toByteArray()
 }

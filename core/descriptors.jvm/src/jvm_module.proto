@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.serialization.jvm;
 
+import "core/deserialization/src/descriptors.proto";
+
 option java_outer_classname = "JvmModuleProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
@@ -29,6 +31,13 @@ message Module {
   // Values of @JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
   // The names here are dot-separated, e.g. "org.foo.bar"
   repeated string jvm_package_name = 3;
+
+  optional StringTable string_table = 4;
+
+  optional QualifiedNameTable qualified_name_table = 5;
+
+  // Annotations on the whole module
+  repeated Annotation annotation = 6;
 }
 
 message PackageParts {
