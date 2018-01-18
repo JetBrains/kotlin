@@ -20,14 +20,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.jvm.JvmModuleProtoBuf
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 import java.io.IOException
 
 class ModuleMapping private constructor(
-        val packageFqName2Parts: Map<String, PackageParts>,
-        private val debugName: String
+    val packageFqName2Parts: Map<String, PackageParts>,
+    val moduleData: BinaryModuleData,
+    private val debugName: String
 ) {
     fun findPackageParts(packageFqName: String): PackageParts? {
         return packageFqName2Parts[packageFqName]
@@ -40,10 +42,10 @@ class ModuleMapping private constructor(
         val MAPPING_FILE_EXT: String = "kotlin_module"
 
         @JvmField
-        val EMPTY: ModuleMapping = ModuleMapping(emptyMap(), "EMPTY")
+        val EMPTY: ModuleMapping = ModuleMapping(emptyMap(), BinaryModuleData(emptyList()), "EMPTY")
 
         @JvmField
-        val CORRUPTED: ModuleMapping = ModuleMapping(emptyMap(), "CORRUPTED")
+        val CORRUPTED: ModuleMapping = ModuleMapping(emptyMap(), BinaryModuleData(emptyList()), "CORRUPTED")
 
         fun create(
                 bytes: ByteArray?,
@@ -96,9 +98,12 @@ class ModuleMapping private constructor(
                     proto.shortClassNameList.forEach(packageParts::addMetadataPart)
                 }
 
-                return ModuleMapping(result, debugName)
-            }
-            else {
+                // TODO: read arguments of module annotations
+                val nameResolver = NameResolverImpl(moduleProto.stringTable, moduleProto.qualifiedNameTable)
+                val annotations = moduleProto.annotationList.map { proto -> nameResolver.getClassId(proto.id) }
+
+                return ModuleMapping(result, BinaryModuleData(annotations), debugName)
+            } else {
                 // TODO: consider reporting "incompatible ABI version" error for package parts
             }
 

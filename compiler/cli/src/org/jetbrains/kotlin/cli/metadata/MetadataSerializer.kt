@@ -125,7 +125,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
             for (table in packageTable.values) {
                 table.addTo(this)
             }
-        }.serializeToByteArray()
+        }.build().serializeToByteArray()
 
         kotlinModuleFile.parentFile.mkdirs()
         kotlinModuleFile.writeBytes(packageTableBytes)
