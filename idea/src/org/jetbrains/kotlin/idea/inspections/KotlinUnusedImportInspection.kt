@@ -228,7 +228,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
     }
 
     private class EnableOptimizeImportsOnTheFlyFix(private val file: KtFile) : LocalQuickFix, LowPriorityAction {
-        override fun getName() = QuickFixBundle.message("enable.optimize.imports.on.the.fly")
+        override fun getName(): String = QuickFixBundle.message("enable.optimize.imports.on.the.fly")
 
         override fun getFamilyName() = name
 
