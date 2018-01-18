@@ -166,7 +166,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                 is KtFunction ->
                     if (original.isLocal) {
                         el<ULambdaExpression> {
-                            if (original.name.isNullOrEmpty()) {
+                            if (original.name.isNullOrEmpty() || original.parent is KtLambdaExpression) {
                                 createLocalFunctionLambdaExpression(original, givenParent)
                             }
                             else {
