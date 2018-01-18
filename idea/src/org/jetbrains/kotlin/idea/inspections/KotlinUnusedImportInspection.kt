@@ -165,6 +165,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 }
             }
 
+            if (Disposer.isDisposed(progress)) return
             Disposer.register(progress, invokeFixLater)
 
             if (progress.isCanceled) {
