@@ -118,7 +118,7 @@ open class KonanFramework(name: String,
         get() = project.konanBinBaseDir
 
     override fun targetIsSupported(target: KonanTarget): Boolean =
-        target == MACBOOK || target == IPHONE_SIM || target == IPHONE_SIM
+        target == MACBOOK || target == IPHONE || target == IPHONE_SIM
 }
 
 open class KonanLibrary(name: String,

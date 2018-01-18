@@ -122,7 +122,7 @@ class TaskSpecification extends BaseKonanSpecification {
 
     boolean taskExists(BuildResult result, String taskName) {
         def taskNameForSearch = taskName.startsWith(':') ? taskName.substring(1) : taskName
-        return result.output.contains(taskNameForSearch)
+        return result.output =~ "\\s$taskNameForSearch\\s"
     }
 
     boolean compilationTaskExists(BuildResult result, String artifactName, String targetName) {
