@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 
 class RemoveEmptyPrimaryConstructorInspection : IntentionBasedInspection<KtPrimaryConstructor>(
-        RemoveEmptyPrimaryConstructorIntention::class
+    RemoveEmptyPrimaryConstructorIntention::class
 ), CleanupLocalInspectionTool {
-    override fun problemHighlightType(element: KtPrimaryConstructor): ProblemHighlightType =
-            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+    override fun problemHighlightType(element: KtPrimaryConstructor): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveEmptyPrimaryConstructorIntention : SelfTargetingOffsetIndependentIntention<KtPrimaryConstructor>(KtPrimaryConstructor::class.java, "Remove empty primary constructor") {
+class RemoveEmptyPrimaryConstructorIntention :
+    SelfTargetingOffsetIndependentIntention<KtPrimaryConstructor>(KtPrimaryConstructor::class.java, "Remove empty primary constructor") {
 
     override fun applyTo(element: KtPrimaryConstructor, editor: Editor?) = element.delete()
 
