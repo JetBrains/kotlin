@@ -1,5 +1,5 @@
 
-extra["versions.intellijSdk"] = "173.4548.28"
+extra["versions.intellijSdk"] = "172.4343.14"
 extra["versions.androidBuildTools"] = "r23.0.1"
 extra["versions.idea.NodeJS"] = "172.3757.32"
 //extra["versions.androidStudioRelease"] = "3.1.0.5"
