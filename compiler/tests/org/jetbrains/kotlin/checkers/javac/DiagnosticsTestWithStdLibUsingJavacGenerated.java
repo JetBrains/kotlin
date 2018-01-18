@@ -1551,6 +1551,93 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineCrossinline extends AbstractDiagnosticsTestWithStdLibUsingJavac {
+            public void testAllFilesPresentInInlineCrossinline() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("crossinlineSuspendValueParameter.kt")
+            public void testCrossinlineSuspendValueParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/crossinlineSuspendValueParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineOrdinaryOfCrossinlineOrdinary.kt")
+            public void testInlineOrdinaryOfCrossinlineOrdinary() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfCrossinlineOrdinary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineOrdinaryOfCrossinlineSuspend.kt")
+            public void testInlineOrdinaryOfCrossinlineSuspend() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfCrossinlineSuspend.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineOrdinaryOfNoinlineOrdinary.kt")
+            public void testInlineOrdinaryOfNoinlineOrdinary() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfNoinlineOrdinary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineOrdinaryOfNoinlineSuspend.kt")
+            public void testInlineOrdinaryOfNoinlineSuspend() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfNoinlineSuspend.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineOrdinaryOfOrdinary.kt")
+            public void testInlineOrdinaryOfOrdinary() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfOrdinary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineOrdinaryOfSuspend.kt")
+            public void testInlineOrdinaryOfSuspend() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineOrdinaryOfSuspend.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
+            public void testInlineSuspendOfCrossinlineOrdinary() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfCrossinlineOrdinary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineSuspendOfCrossinlineSuspend.kt")
+            public void testInlineSuspendOfCrossinlineSuspend() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfCrossinlineSuspend.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineSuspendOfNoinlineOrdinary.kt")
+            public void testInlineSuspendOfNoinlineOrdinary() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfNoinlineOrdinary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineSuspendOfNoinlineSuspend.kt")
+            public void testInlineSuspendOfNoinlineSuspend() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfNoinlineSuspend.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineSuspendOfOrdinary.kt")
+            public void testInlineSuspendOfOrdinary() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfOrdinary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineSuspendOfSuspend.kt")
+            public void testInlineSuspendOfSuspend() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline/inlineSuspendOfSuspend.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

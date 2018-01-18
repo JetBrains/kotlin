@@ -32,16 +32,22 @@ object InlineParameterChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration is KtFunction) {
             val inline = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
+            val suspend = declaration.hasModifier(KtTokens.SUSPEND_KEYWORD)
             for (parameter in declaration.valueParameters) {
                 val parameterDescriptor = context.trace.get(BindingContext.VALUE_PARAMETER, parameter)
                 if (!inline || (parameterDescriptor != null && !parameterDescriptor.type.isBuiltinFunctionalType)) {
                     parameter.reportIncorrectInline(KtTokens.NOINLINE_KEYWORD, context.trace)
                     parameter.reportIncorrectInline(KtTokens.CROSSINLINE_KEYWORD, context.trace)
                 }
-
                 if (inline && !parameter.hasModifier(KtTokens.NOINLINE_KEYWORD) &&
-                    parameterDescriptor?.type?.isSuspendFunctionType == true) {
-                    context.trace.report(Errors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED.on(parameter))
+                    !parameter.hasModifier(KtTokens.CROSSINLINE_KEYWORD) &&
+                    parameterDescriptor?.type?.isSuspendFunctionType == true
+                ) {
+                    if (suspend) {
+                        context.trace.report(Errors.REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE.on(parameter))
+                    } else {
+                        context.trace.report(Errors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED.on(parameter))
+                    }
                 }
             }
         }

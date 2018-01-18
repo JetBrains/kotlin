@@ -35,7 +35,11 @@ fun builderConsumer(c: suspend () -> Consumer): Consumer {
 }
 
 class Container {
-    var y: String = "FAIL 1"
+    var y: String = "FAIL 0"
+
+    val consumer0 = crossInlineBuilderConsumer { s ->
+        y = s
+    }
 
     val consumer1 = crossInlineBuilderConsumer { s ->
         builder {
@@ -108,6 +112,9 @@ class Container {
 
 fun box(): String {
     val c = Container()
+    c.consumer0.consume("OK")
+    if (c.y != "OK") return c.y
+    c.y = "FAIL 1"
     c.consumer1.consume("OK")
     if (c.y != "OK") return c.y
     c.y = "FAIL 2"

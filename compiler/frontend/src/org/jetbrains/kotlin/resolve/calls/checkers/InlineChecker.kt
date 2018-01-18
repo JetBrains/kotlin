@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -239,7 +240,7 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
         val containingDeclaration = descriptor.getContainingDeclaration()
         val isInvoke = descriptor.getName() == OperatorNameConventions.INVOKE &&
                 containingDeclaration is ClassDescriptor &&
-                containingDeclaration.defaultType.isFunctionType
+                (containingDeclaration.defaultType.isFunctionType || containingDeclaration.defaultType.isSuspendFunctionType)
 
         return isInvoke || InlineUtil.isInline(descriptor)
     }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.coroutines
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationMarker
@@ -175,13 +176,18 @@ private fun NewResolvedCallImpl<VariableDescriptor>.asDummyOldResolvedCall(bindi
     )
 }
 
-fun ResolvedCall<*>.isSuspendNoInlineCall(): Boolean {
-    val isCrossinline =
-        safeAs<VariableAsFunctionResolvedCall>()?.variableCall?.resultingDescriptor?.safeAs<ValueParameterDescriptor>()?.isCrossinline
-                ?: false
+fun ResolvedCall<*>.isSuspendNoInlineCall(codegen: ExpressionCodegen): Boolean {
+    var isCrossinline = false
+    var isInlineLambda = false
+    if (this is VariableAsFunctionResolvedCall) {
+        variableCall.resultingDescriptor.safeAs<ValueParameterDescriptor>()?.let {
+            isCrossinline = it.isCrossinline
+            isInlineLambda = !isCrossinline && !it.isNoinline && codegen.context.functionDescriptor.isInline
+        }
+    }
     return resultingDescriptor.safeAs<FunctionDescriptor>()
         ?.let {
-            val inline = it.isInline || isCrossinline
+            val inline = it.isInline || isCrossinline || isInlineLambda
             it.isSuspend && (!inline || it.isBuiltInSuspendCoroutineOrReturnInJvm() || it.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm())
         } == true
 }

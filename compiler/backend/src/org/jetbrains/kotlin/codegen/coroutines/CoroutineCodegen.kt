@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CAPTURES_CROSSINLINE_SUSPEND_LAMBDA
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
@@ -127,7 +129,8 @@ class CoroutineCodegenForLambda private constructor(
         element: KtElement,
         private val closureContext: ClosureContext,
         classBuilder: ClassBuilder,
-        private val originalSuspendFunctionDescriptor: FunctionDescriptor
+        private val originalSuspendFunctionDescriptor: FunctionDescriptor,
+        private val forInline: Boolean
 ) : AbstractCoroutineCodegen(
         outerExpressionCodegen, element, closureContext, classBuilder,
         userDataForDoResume = mapOf(INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME to originalSuspendFunctionDescriptor)
@@ -300,13 +303,14 @@ class CoroutineCodegenForLambda private constructor(
                 object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
 
                     override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
+                        if (forInline) return super.wrapMethodVisitor(mv, access, name, desc)
                         return CoroutineTransformerMethodVisitor(
-                                mv, access, name, desc, null, null,
-                                obtainClassBuilderForCoroutineState = { v },
-                                element = element,
-                                shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                                containingClassInternalName = v.thisName,
-                                isForNamedFunction = false
+                            mv, access, name, desc, null, null,
+                            obtainClassBuilderForCoroutineState = { v },
+                            lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
+                            shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
+                            containingClassInternalName = v.thisName,
+                            isForNamedFunction = false
                         )
                     }
 
@@ -336,7 +340,9 @@ class CoroutineCodegenForLambda private constructor(
                             originalSuspendLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
                     ),
                     classBuilder,
-                    originalSuspendLambdaDescriptor
+                    originalSuspendLambdaDescriptor,
+                    // Local suspend lambdas, which call crossinline suspend parameters of containing functions must be generated after inlining
+                    expressionCodegen.bindingContext[CAPTURES_CROSSINLINE_SUSPEND_LAMBDA, originalSuspendLambdaDescriptor] == true
             )
         }
     }
