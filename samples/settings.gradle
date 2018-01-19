@@ -1,6 +1,7 @@
 // NOTE: If a new sample uses only platform libs,
 // please add it into the 'buildSamplesWithPlatfromLibs' task in build.gradle.
 include ':calculator'
+include ':calculator:jvmCliApp'
 include ':csvparser'
 include ':gitchurn'
 include ':globalState'

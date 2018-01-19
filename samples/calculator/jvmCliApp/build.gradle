@@ -1,0 +1,24 @@
+buildscript {
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
+    compile project.parent
+}
+
+applicationName = "KotlinCalculator"
+
+mainClassName = 'org.konan.calculator.JvmCliKt'
+run {
+    args "2 + 2"
+}

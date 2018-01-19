@@ -23,10 +23,24 @@ The sample consists of:
     framework by invoking Gradle from custom "Run Script" build phase, and this
     framework is imported into the Xcode project.
 
-    
+## Using the same code with Kotlin/JVM
+
 The library can also be compiled to a `.jar` by Kotlin/JVM compiler with Gradle. 
 Just run from the [sample root dir](../): 
 ```
 ./gradlew calculator:jar
 ```
 This will generate a `calculator.jar` in `build/libs/`.
+
+There is also simple Kotlin/JVM CLI app available in `jvmCliApp` subdirectory.
+To build and run it, use
+```
+./gradlew calculator:jvmCliApp:run
+```
+
+To build the distribution:
+```
+./gradlew calculator:jvmCliApp:distZip
+```
+(the result will be available as
+`jvmCliApp/build/distributions/KotlinCalculator.zip`)
