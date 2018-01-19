@@ -100,7 +100,7 @@ class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModifi
 
         private fun PsiFile.getContainingDirectorySafe(): PsiDirectory? {
             val virtualFile = this.viewProvider.virtualFile.takeIf { it.isValid } ?: return null
-            val parentDirectory = virtualFile.parent.takeIf { it.isValid } ?: return null
+            val parentDirectory = virtualFile.parent?.takeIf { it.isValid } ?: return null
             return this.manager.findDirectory(parentDirectory)
         }
 
