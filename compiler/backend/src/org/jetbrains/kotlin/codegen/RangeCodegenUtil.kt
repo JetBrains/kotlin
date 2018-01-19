@@ -143,6 +143,12 @@ fun isArrayOrPrimitiveArrayWithIndex(descriptor: CallableDescriptor) =
         KotlinBuiltIns.isArray(it) || KotlinBuiltIns.isPrimitiveArray(it)
     }
 
+fun isIterableWithIndex(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("withIndex", "kotlin.collections") {
+        val typeDescriptor = it.constructor.declarationDescriptor ?: return false
+        isTopLevelInPackage(typeDescriptor, "Iterable", "kotlin.collections")
+    }
+
 fun isCollectionIndices(descriptor: CallableDescriptor) =
     descriptor.isTopLevelExtensionOnType("indices", "kotlin.collections") {
         KotlinBuiltIns.isCollectionOrNullableCollection(it)
