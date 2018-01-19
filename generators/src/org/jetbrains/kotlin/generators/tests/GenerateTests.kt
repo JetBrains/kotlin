@@ -735,8 +735,9 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractScratchRunActionTest> {
-            model("scratch", extension = "kts", testMethod = "doCompilingTest", testClassName = "Compiling")
-            model("scratch", extension = "kts", testMethod = "doReplTest", testClassName = "Repl")
+            model("scratch", extension = "kts", testMethod = "doCompilingTest", testClassName = "Compiling", recursive = false)
+            model("scratch", extension = "kts", testMethod = "doReplTest", testClassName = "Repl", recursive = false)
+            model("scratch/multiFile", extension = null, testMethod = "doMultiFileTest", recursive = false)
         }
     }
 
