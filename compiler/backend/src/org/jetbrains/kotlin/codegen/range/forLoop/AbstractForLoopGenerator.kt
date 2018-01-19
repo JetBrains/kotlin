@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.range.forLoop
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.filterOutDescriptorsWithSpecialNames
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.codegen.getElementType
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -30,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 abstract class AbstractForLoopGenerator(
     protected val codegen: ExpressionCodegen,
-    override val forExpression: KtForExpression
+    final override val forExpression: KtForExpression
 ) : ForLoopGenerator {
     protected val bindingContext = codegen.bindingContext
     protected val v = codegen.v!!
@@ -44,13 +44,6 @@ abstract class AbstractForLoopGenerator(
 
     protected var loopParameterVar: Int = -1
     protected lateinit var loopParameterType: Type
-
-    private fun BindingContext.getElementType(forExpression: KtForExpression): KotlinType {
-        val loopRange = forExpression.loopRange!!
-        val nextCall = get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange)
-                ?: throw AssertionError("No next() function " + DiagnosticUtils.atLocation(loopRange))
-        return nextCall.resultingDescriptor.returnType!!
-    }
 
     override fun beforeLoop() {
         val loopParameter = forExpression.loopParameter ?: return

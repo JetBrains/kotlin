@@ -21,8 +21,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -88,6 +91,13 @@ fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
     }
 }
 
+fun BindingContext.getElementType(forExpression: KtForExpression): KotlinType {
+    val loopRange = forExpression.loopRange!!
+    val nextCall = get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange)
+            ?: throw AssertionError("No next() function " + DiagnosticUtils.atLocation(loopRange))
+    return nextCall.resultingDescriptor.returnType!!
+}
+
 fun getPrimitiveRangeOrProgressionElementType(rangeOrProgressionName: FqName): PrimitiveType? =
     RANGE_TO_ELEMENT_TYPE[rangeOrProgressionName] ?: PROGRESSION_TO_ELEMENT_TYPE[rangeOrProgressionName]
 
@@ -125,6 +135,11 @@ fun isPrimitiveNumberUntil(descriptor: CallableDescriptor) =
 
 fun isArrayOrPrimitiveArrayIndices(descriptor: CallableDescriptor) =
     descriptor.isTopLevelExtensionOnType("indices", "kotlin.collections") {
+        KotlinBuiltIns.isArray(it) || KotlinBuiltIns.isPrimitiveArray(it)
+    }
+
+fun isArrayOrPrimitiveArrayWithIndex(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("withIndex", "kotlin.collections") {
         KotlinBuiltIns.isArray(it) || KotlinBuiltIns.isPrimitiveArray(it)
     }
 
