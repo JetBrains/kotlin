@@ -98,65 +98,53 @@ fun isPrimitiveNumberRangeTo(rangeTo: CallableDescriptor) =
     "rangeTo" == rangeTo.name.asString() && isPrimitiveNumberClassDescriptor(rangeTo.containingDeclaration) ||
             isPrimitiveRangeToExtension(rangeTo)
 
-private fun isPrimitiveRangeToExtension(descriptor: CallableDescriptor): Boolean {
-    if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) return false
-
-    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
-    return KotlinBuiltIns.isPrimitiveType(extensionReceiver.type)
+private inline fun CallableDescriptor.isTopLevelExtensionOnType(
+    name: String,
+    packageFQN: String,
+    receiverTypePredicate: (KotlinType) -> Boolean
+): Boolean {
+    if (!isTopLevelInPackage(this, name, packageFQN)) return false
+    val extensionReceiverType = original.extensionReceiverParameter?.type ?: return false
+    return receiverTypePredicate(extensionReceiverType)
 }
 
-fun isPrimitiveNumberDownTo(descriptor: CallableDescriptor): Boolean {
-    if (!isTopLevelInPackage(descriptor, "downTo", "kotlin.ranges")) return false
+private fun isPrimitiveRangeToExtension(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("rangeTo", "kotlin.ranges") {
+        KotlinBuiltIns.isPrimitiveType(it)
+    }
 
-    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
-    val extensionReceiverClassifier = extensionReceiver.type.constructor.declarationDescriptor
-    return isPrimitiveNumberClassDescriptor(extensionReceiverClassifier)
-}
+fun isPrimitiveNumberDownTo(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("downTo", "kotlin.ranges") {
+        isPrimitiveNumberClassDescriptor(it.constructor.declarationDescriptor)
+    }
 
-fun isPrimitiveNumberUntil(descriptor: CallableDescriptor): Boolean {
-    if (!isTopLevelInPackage(descriptor, "until", "kotlin.ranges")) return false
+fun isPrimitiveNumberUntil(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("until", "kotlin.ranges") {
+        isPrimitiveNumberClassDescriptor(it.constructor.declarationDescriptor)
+    }
 
-    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
-    val extensionReceiverClassifier = extensionReceiver.type.constructor.declarationDescriptor
-    return isPrimitiveNumberClassDescriptor(extensionReceiverClassifier)
-}
+fun isArrayOrPrimitiveArrayIndices(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("indices", "kotlin.collections") {
+        KotlinBuiltIns.isArray(it) || KotlinBuiltIns.isPrimitiveArray(it)
+    }
 
-fun isArrayOrPrimitiveArrayIndices(descriptor: CallableDescriptor): Boolean {
-    if (!isTopLevelInPackage(descriptor, "indices", "kotlin.collections")) return false
+fun isCollectionIndices(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("indices", "kotlin.collections") {
+        KotlinBuiltIns.isCollectionOrNullableCollection(it)
+    }
 
-    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
-    val extensionReceiverType = extensionReceiver.type
-    return KotlinBuiltIns.isArray(extensionReceiverType) || KotlinBuiltIns.isPrimitiveArray(extensionReceiverType)
-}
+fun isCharSequenceIndices(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("indices", "kotlin.text") {
+        KotlinBuiltIns.isCharSequenceOrNullableCharSequence(it)
+    }
 
-fun isCollectionIndices(descriptor: CallableDescriptor): Boolean {
-    if (!isTopLevelInPackage(descriptor, "indices", "kotlin.collections")) return false
-
-    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
-    val extensionReceiverType = extensionReceiver.type
-    return KotlinBuiltIns.isCollectionOrNullableCollection(extensionReceiverType)
-}
-
-fun isCharSequenceIndices(descriptor: CallableDescriptor): Boolean {
-    if (!isTopLevelInPackage(descriptor, "indices", "kotlin.text")) return false
-
-    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
-    val extensionReceiverType = extensionReceiver.type
-    return KotlinBuiltIns.isCharSequenceOrNullableCharSequence(extensionReceiverType)
-}
-
-fun isComparableRangeTo(descriptor: CallableDescriptor): Boolean {
-    if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) return false
-
-    val extensionReceiver = descriptor.original.extensionReceiverParameter ?: return false
-    val extensionReceiverTypeDescriptor =
-        extensionReceiver.type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
-    val upperBoundType = extensionReceiverTypeDescriptor.upperBounds.singleOrNull() ?: return false
-    val upperBoundClassDescriptor = upperBoundType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
-    if (!isTopLevelInPackage(upperBoundClassDescriptor, "Comparable", "kotlin")) return false
-
-    return true
-}
+fun isComparableRangeTo(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("rangeTo", "kotlin.ranges") {
+        val extensionReceiverTypeDescriptor = it.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
+        val upperBoundType = extensionReceiverTypeDescriptor.upperBounds.singleOrNull() ?: return false
+        val upperBoundClassDescriptor = upperBoundType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
+        isTopLevelInPackage(upperBoundClassDescriptor, "Comparable", "kotlin")
+    }
 
 fun isClosedRangeContains(descriptor: CallableDescriptor): Boolean {
     if (descriptor.name.asString() != "contains") return false
@@ -188,13 +176,10 @@ fun isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(descriptor: CallableD
     return true
 }
 
-fun isPrimitiveProgressionReverse(descriptor: CallableDescriptor): Boolean {
-    if (!isTopLevelInPackage(descriptor, "reversed", "kotlin.ranges")) return false
-    if (descriptor.valueParameters.isNotEmpty()) return false
-    val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return false
-    if (!isPrimitiveProgression(extensionReceiverType)) return false
-    return true
-}
+fun isPrimitiveProgressionReverse(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("reversed", "kotlin.ranges") {
+        isPrimitiveProgression(it)
+    }
 
 private fun isPrimitiveNumberType(type: KotlinType) =
     KotlinBuiltIns.isByte(type) ||
