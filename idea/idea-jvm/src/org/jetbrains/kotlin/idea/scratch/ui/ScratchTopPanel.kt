@@ -53,6 +53,12 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     init {
         add(createActionsToolbar())
 
+        moduleChooser = createModuleChooser(scratchFile.psiFile.project)
+        add(JLabel("Use classpath of module"))
+        add(moduleChooser)
+
+        add(JSeparator(SwingConstants.VERTICAL))
+
         isReplCheckbox = JCheckBox("Use REPL", false).customize()
         add(isReplCheckbox)
 
@@ -62,10 +68,6 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         add(isMakeBeforeRunCheckbox)
 
         add(JSeparator(SwingConstants.VERTICAL))
-
-        moduleChooser = createModuleChooser(scratchFile.psiFile.project)
-        add(JLabel("Use classpath of module"))
-        add(moduleChooser)
     }
 
     fun getModule(): Module? = moduleChooser.selectedModule
