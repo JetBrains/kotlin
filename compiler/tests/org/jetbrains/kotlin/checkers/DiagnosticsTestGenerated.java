@@ -14822,6 +14822,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("notnullTypesFromJavaWithSmartcast.kt")
+            public void testNotnullTypesFromJavaWithSmartcast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/notnullTypesFromJavaWithSmartcast.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NullableNothingIsExactlyNull.kt")
             public void testNullableNothingIsExactlyNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/NullableNothingIsExactlyNull.kt");
