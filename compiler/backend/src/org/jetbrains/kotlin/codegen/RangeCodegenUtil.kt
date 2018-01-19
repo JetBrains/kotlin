@@ -32,30 +32,30 @@ import org.jetbrains.org.objectweb.asm.Type
 val supportedRangeTypes = listOf(PrimitiveType.CHAR, PrimitiveType.INT, PrimitiveType.LONG)
 
 private val RANGE_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
-        supportedRangeTypes.associateBy {
-            RANGES_PACKAGE_FQ_NAME.child(Name.identifier(it.typeName.toString() + "Range"))
-        }
+    supportedRangeTypes.associateBy {
+        RANGES_PACKAGE_FQ_NAME.child(Name.identifier(it.typeName.toString() + "Range"))
+    }
 
 private val PROGRESSION_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
-        supportedRangeTypes.associateBy {
-            RANGES_PACKAGE_FQ_NAME.child(Name.identifier(it.typeName.toString() + "Progression"))
-        }
+    supportedRangeTypes.associateBy {
+        RANGES_PACKAGE_FQ_NAME.child(Name.identifier(it.typeName.toString() + "Progression"))
+    }
 
 fun isPrimitiveRange(rangeType: KotlinType) =
-        !rangeType.isMarkedNullable && getPrimitiveRangeElementType(rangeType) != null
+    !rangeType.isMarkedNullable && getPrimitiveRangeElementType(rangeType) != null
 
 fun isPrimitiveProgression(rangeType: KotlinType) =
-        !rangeType.isMarkedNullable && getPrimitiveProgressionElementType(rangeType) != null
+    !rangeType.isMarkedNullable && getPrimitiveProgressionElementType(rangeType) != null
 
 fun getPrimitiveRangeElementType(rangeType: KotlinType): PrimitiveType? =
-        getPrimitiveRangeOrProgressionElementType(rangeType, RANGE_TO_ELEMENT_TYPE)
+    getPrimitiveRangeOrProgressionElementType(rangeType, RANGE_TO_ELEMENT_TYPE)
 
 private fun getPrimitiveProgressionElementType(rangeType: KotlinType) =
-        getPrimitiveRangeOrProgressionElementType(rangeType, PROGRESSION_TO_ELEMENT_TYPE)
+    getPrimitiveRangeOrProgressionElementType(rangeType, PROGRESSION_TO_ELEMENT_TYPE)
 
 private fun getPrimitiveRangeOrProgressionElementType(
-        rangeOrProgression: KotlinType,
-        map: Map<FqName, PrimitiveType>
+    rangeOrProgression: KotlinType,
+    map: Map<FqName, PrimitiveType>
 ): PrimitiveType? {
     val declarationDescriptor = rangeOrProgression.constructor.declarationDescriptor ?: return null
     val fqName = DescriptorUtils.getFqName(declarationDescriptor).takeIf { it.isSafe } ?: return null
@@ -89,15 +89,14 @@ fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
 }
 
 fun getPrimitiveRangeOrProgressionElementType(rangeOrProgressionName: FqName): PrimitiveType? =
-        RANGE_TO_ELEMENT_TYPE[rangeOrProgressionName] ?:
-        PROGRESSION_TO_ELEMENT_TYPE[rangeOrProgressionName]
+    RANGE_TO_ELEMENT_TYPE[rangeOrProgressionName] ?: PROGRESSION_TO_ELEMENT_TYPE[rangeOrProgressionName]
 
 fun isRangeOrProgression(className: FqName) =
-        getPrimitiveRangeOrProgressionElementType(className) != null
+    getPrimitiveRangeOrProgressionElementType(className) != null
 
 fun isPrimitiveNumberRangeTo(rangeTo: CallableDescriptor) =
-        "rangeTo" == rangeTo.name.asString() && isPrimitiveNumberClassDescriptor(rangeTo.containingDeclaration) ||
-        isPrimitiveRangeToExtension(rangeTo)
+    "rangeTo" == rangeTo.name.asString() && isPrimitiveNumberClassDescriptor(rangeTo.containingDeclaration) ||
+            isPrimitiveRangeToExtension(rangeTo)
 
 private fun isPrimitiveRangeToExtension(descriptor: CallableDescriptor): Boolean {
     if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) return false
@@ -150,7 +149,8 @@ fun isComparableRangeTo(descriptor: CallableDescriptor): Boolean {
     if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) return false
 
     val extensionReceiver = descriptor.original.extensionReceiverParameter ?: return false
-    val extensionReceiverTypeDescriptor = extensionReceiver.type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
+    val extensionReceiverTypeDescriptor =
+        extensionReceiver.type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
     val upperBoundType = extensionReceiverTypeDescriptor.upperBounds.singleOrNull() ?: return false
     val upperBoundClassDescriptor = upperBoundType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
     if (!isTopLevelInPackage(upperBoundClassDescriptor, "Comparable", "kotlin")) return false
@@ -197,13 +197,13 @@ fun isPrimitiveProgressionReverse(descriptor: CallableDescriptor): Boolean {
 }
 
 private fun isPrimitiveNumberType(type: KotlinType) =
-        KotlinBuiltIns.isByte(type) ||
-        KotlinBuiltIns.isShort(type) ||
-        KotlinBuiltIns.isInt(type) ||
-        KotlinBuiltIns.isChar(type) ||
-        KotlinBuiltIns.isLong(type) ||
-        KotlinBuiltIns.isFloat(type) ||
-        KotlinBuiltIns.isDouble(type)
+    KotlinBuiltIns.isByte(type) ||
+            KotlinBuiltIns.isShort(type) ||
+            KotlinBuiltIns.isInt(type) ||
+            KotlinBuiltIns.isChar(type) ||
+            KotlinBuiltIns.isLong(type) ||
+            KotlinBuiltIns.isFloat(type) ||
+            KotlinBuiltIns.isDouble(type)
 
 fun isClosedFloatingPointRangeContains(descriptor: CallableDescriptor): Boolean {
     if (descriptor.name.asString() != "contains") return false
@@ -242,7 +242,8 @@ fun getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCallee: CallableDe
         when {
             KotlinBuiltIns.isDouble(it) -> return Type.DOUBLE_TYPE
             KotlinBuiltIns.isFloat(it) -> return Type.FLOAT_TYPE
-            else -> {}
+            else -> {
+            }
         }
     }
 
