@@ -39,7 +39,13 @@ abstract class AbstractMavenConfigureProjectByChangingFileTest : AbstractConfigu
         doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), KotlinJavascriptMavenConfigurator())
     }
 
-    override fun runConfigurator(module: Module, file: PsiFile, configurator: KotlinMavenConfigurator, version: String, collector: NotificationMessageCollector) {
+    override fun runConfigurator(
+        module: Module,
+        file: PsiFile,
+        configurator: KotlinMavenConfigurator,
+        version: String,
+        collector: NotificationMessageCollector
+    ) {
         WriteCommandAction.runWriteCommandAction(module.project) {
             configurator.configureModule(module, file, version, collector)
         }

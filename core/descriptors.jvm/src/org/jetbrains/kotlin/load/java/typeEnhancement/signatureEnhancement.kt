@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
+import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
@@ -49,13 +50,11 @@ class SignatureEnhancement(
 ) {
 
     private fun AnnotationDescriptor.extractNullabilityTypeFromArgument(): NullabilityQualifierWithMigrationStatus? {
-        val enumEntryDescriptor = firstArgumentValue()
-                                  // if no argument is specified, use default value: NOT_NULL
-                                  ?: return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+        val enumValue = firstArgument() as? EnumValue
+                        // if no argument is specified, use default value: NOT_NULL
+                        ?: return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
 
-        if (enumEntryDescriptor !is ClassDescriptor) return null
-
-        return when (enumEntryDescriptor.name.asString()) {
+        return when (enumValue.enumEntryName.asString()) {
             "ALWAYS" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
             "MAYBE", "NEVER" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
             "UNKNOWN" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY)

@@ -4,9 +4,9 @@ public fun a(): kotlin.Unit
 public fun consumeInt(/*0*/ i: kotlin.Int): kotlin.Unit
 public fun consumeString(/*0*/ s: kotlin.String): kotlin.Unit
 public fun Example.div(/*0*/ other: Example): kotlin.String
-public operator infix fun Example.minus(/*0*/ other: Example): kotlin.String
+public infix operator fun Example.minus(/*0*/ other: Example): kotlin.String
 public fun Example.plus(/*0*/ other: Example): kotlin.String
-public operator infix fun Example.times(/*0*/ other: Example): kotlin.String
+public infix operator fun Example.times(/*0*/ other: Example): kotlin.String
 
 public final class Example {
     public constructor Example()
@@ -14,7 +14,7 @@ public final class Example {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final fun minus(/*0*/ other: Example): kotlin.Int
-    public final operator infix fun plus(/*0*/ other: Example): kotlin.Int
-    public final operator infix fun times(/*0*/ other: Example): kotlin.Int
+    public final infix operator fun plus(/*0*/ other: Example): kotlin.Int
+    public final infix operator fun times(/*0*/ other: Example): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

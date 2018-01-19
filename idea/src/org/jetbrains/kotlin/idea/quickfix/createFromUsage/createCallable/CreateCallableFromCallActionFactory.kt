@@ -153,7 +153,10 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
 
         if (!receiverType.isAbstract() && TypeUtils.getAllSupertypes(receiverType).all { !it.isAbstract() }) return null
 
-        return mainCallable.copy(receiverTypeInfo = receiverTypeInfo, possibleContainers = emptyList(), isAbstract = true)
+        return mainCallable.copy(
+                receiverTypeInfo = receiverTypeInfo,
+                possibleContainers = emptyList(),
+                modifierList = KtPsiFactory(originalExpression).createModifierList(KtTokens.ABSTRACT_KEYWORD))
     }
 
     protected fun getCallableWithReceiverInsideExtension(
@@ -322,7 +325,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
 
             val parameters = expression.getParameterInfos()
 
-            return SecondaryConstructorInfo(parameters, klass)
+            return ConstructorInfo(parameters, klass)
         }
     }
 

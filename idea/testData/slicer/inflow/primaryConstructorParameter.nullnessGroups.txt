@@ -1,3 +1,4 @@
 [NotNull Values]
-3 	open class A(<bold>n: Int</bold>, s: String = "???")
-3 		open class A(<bold>n: Int</bold>, s: String = "???")
+3 	open class A @JvmOverloads constructor(<bold>n: Int</bold>, s: String = "???")
+3 		open class A @JvmOverloads constructor(<bold>n: Int</bold>, s: String = "???")
+

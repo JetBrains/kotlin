@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 
 internal class PsiCallsEffectParser(
-        trace: BindingTrace,
-        contractParserDispatcher: PsiContractParserDispatcher
+    trace: BindingTrace,
+    contractParserDispatcher: PsiContractParserDispatcher
 ) : AbstractPsiEffectParser(trace, contractParserDispatcher) {
 
     override fun tryParseEffect(expression: KtExpression): EffectDeclaration? {

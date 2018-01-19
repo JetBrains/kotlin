@@ -3,11 +3,7 @@ package org.jetbrains.uast.test.kotlin
 import com.intellij.psi.PsiModifier
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.asJava.toLightAnnotation
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -225,6 +221,40 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 val annotation = field.annotations.assertedFind("kotlin.SinceKotlin") { it.qualifiedName }
                 Assert.assertEquals(annotation.findDeclaredAttributeValue("version")?.evaluateString(), "1.0")
             }
+        }
+    }
+
+
+    fun UFile.checkUastSuperTypes(refText: String, superTypes: List<String>) {
+        findElementByTextFromPsi<UClass>(refText, false).let {
+            assertEquals("base classes", superTypes, it.uastSuperTypes.map { it.getQualifiedName() })
+        }
+    }
+
+
+    @Test
+    fun testSuperTypes() {
+        doTest("SuperCalls") { _, file ->
+            file.checkUastSuperTypes("B", listOf("A"))
+            file.checkUastSuperTypes("O", listOf("A"))
+            file.checkUastSuperTypes("innerObject ", listOf("A"))
+            file.checkUastSuperTypes("InnerClass", listOf("A"))
+            file.checkUastSuperTypes("object : A(\"textForAnon\")", listOf("A"))
+        }
+    }
+
+    @Test
+    fun testAnonymousSuperTypes() {
+        doTest("Anonymous") { _, file ->
+            file.checkUastSuperTypes("object : Runnable { override fun run() {} }", listOf("java.lang.Runnable"))
+            file.checkUastSuperTypes(
+                "object : Runnable, Closeable { override fun close() {} override fun run() {} }",
+                listOf("java.lang.Runnable", "java.io.Closeable")
+            )
+            file.checkUastSuperTypes(
+                "object : InputStream(), Runnable { override fun read(): Int = 0; override fun run() {} }",
+                listOf("java.io.InputStream", "java.lang.Runnable")
+            )
         }
     }
 }

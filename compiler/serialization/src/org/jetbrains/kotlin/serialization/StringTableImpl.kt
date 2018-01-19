@@ -62,7 +62,7 @@ open class StringTableImpl : StringTable {
         return getClassIdIndex(classId)
     }
 
-    fun getClassIdIndex(classId: ClassId): Int {
+    override fun getClassIdIndex(classId: ClassId): Int {
         val builder = QualifiedName.newBuilder()
         builder.kind = QualifiedName.Kind.CLASS
 

@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaStaticClassScope
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
-import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -78,7 +79,7 @@ fun DeserializedMemberDescriptor.isFromJvmPackagePart(): Boolean =
 
 fun ValueParameterDescriptor.getParameterNameAnnotation(): AnnotationDescriptor? {
     val annotation = annotations.findAnnotation(JvmAnnotationNames.PARAMETER_NAME_FQ_NAME) ?: return null
-    if (annotation.firstArgumentValue()?.safeAs<String>()?.isEmpty() != false) {
+    if (annotation.firstArgument()?.safeAs<StringValue>()?.value?.isEmpty() != false) {
         return null
     }
 
@@ -91,8 +92,8 @@ object NullDefaultValue : AnnotationDefaultValue()
 
 fun ValueParameterDescriptor.getDefaultValueFromAnnotation(): AnnotationDefaultValue? {
     annotations.findAnnotation(JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME)
-            ?.firstArgumentValue()
-            ?.safeAs<String>()
+            ?.firstArgument()
+            ?.safeAs<StringValue>()?.value
             ?.let { return StringDefaultValue(it) }
 
     if (annotations.hasAnnotation(JvmAnnotationNames.DEFAULT_NULL_FQ_NAME)) {

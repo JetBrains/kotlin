@@ -71,7 +71,8 @@ open class StubIndexService protected constructor() {
     }
 
     companion object {
-        @JvmStatic fun getInstance(): StubIndexService {
+        @JvmStatic
+        fun getInstance(): StubIndexService {
             return ServiceManager.getService(StubIndexService::class.java) ?: NO_INDEX
         }
 

@@ -41,8 +41,7 @@ enum class KDocKnownTag private constructor(val isReferenceRequired: Boolean, va
             }
             try {
                 return valueOf(tagName.toString().toUpperCase())
-            }
-            catch (ignored: IllegalArgumentException) {
+            } catch (ignored: IllegalArgumentException) {
             }
 
             return null

@@ -18,7 +18,8 @@ val packagesToRelocate =
                 "org.picocontainer",
                 "org.jline",
                 "gnu",
-                "org.fusesource")
+                "org.fusesource",
+                "kotlinx.coroutines")
 
 // The shaded compiler "dummy" is used to rewrite dependencies in projects that are used with the embeddable compiler
 // on the runtime and use some shaded dependencies from the compiler

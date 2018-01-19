@@ -37,10 +37,10 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) {
         get() = emptyList()
 
     open fun isScript(fileName: String): Boolean =
-            fileName.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
+        fileName.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
 
     open fun getScriptName(script: KtScript): Name =
-            NameUtils.getScriptNameForFile(script.containingKtFile.name)
+        NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
     open val dependencyResolver: DependenciesResolver get() = DependenciesResolver.NoDependencies
 

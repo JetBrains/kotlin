@@ -69,6 +69,8 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
 
             return _jpsCompileServiceSession
         }
+
+        const val FAIL_ON_FALLBACK_PROPERTY = "test.kotlin.jps.compiler.runner.fail.on.fallback"
     }
 
     fun runK2JvmCompiler(
@@ -190,6 +192,10 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             compilerClassName: String,
             environment: JpsCompilerEnvironment
     ): ExitCode {
+        if ("true" == System.getProperty("kotlin.jps.tests") && "true" == System.getProperty(FAIL_ON_FALLBACK_PROPERTY)) {
+            error("Fallback strategy is disabled in tests!")
+        }
+
         // otherwise fallback to in-process
         log.info("Compile in-process")
 

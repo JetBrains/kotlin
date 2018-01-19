@@ -55,12 +55,19 @@ internal object CheckVisibility : ResolutionPart() {
         if (scopeTower.isDebuggerContext) return
 
         val receiverValue = dispatchReceiverArgument?.receiver?.receiverValue ?: Visibilities.ALWAYS_SUITABLE_RECEIVER
-        val invisibleMember = Visibilities.findInvisibleMember(receiverValue, resolvedCall.candidateDescriptor, containingDescriptor) ?: return
+        val invisibleMember =
+            Visibilities.findInvisibleMember(receiverValue, resolvedCall.candidateDescriptor, containingDescriptor) ?: return
 
         if (dispatchReceiverArgument is ExpressionKotlinCallArgument) {
             val smartCastReceiver = getReceiverValueWithSmartCast(receiverValue, dispatchReceiverArgument.receiver.stableType)
             if (Visibilities.findInvisibleMember(smartCastReceiver, candidateDescriptor, containingDescriptor) == null) {
-                addDiagnostic(SmartCastDiagnostic(dispatchReceiverArgument, dispatchReceiverArgument.receiver.stableType, resolvedCall.atom))
+                addDiagnostic(
+                    SmartCastDiagnostic(
+                        dispatchReceiverArgument,
+                        dispatchReceiverArgument.receiver.stableType,
+                        resolvedCall.atom
+                    )
+                )
                 return
             }
         }
@@ -147,16 +154,23 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
 
             val knownTypeArgument = knownTypeParametersResultingSubstitutor?.substitute(typeParameter.defaultType)
             if (knownTypeArgument != null) {
-                csBuilder.addEqualityConstraint(freshVariable.defaultType, knownTypeArgument.unwrap(), KnownTypeParameterConstraintPosition(knownTypeArgument))
+                csBuilder.addEqualityConstraint(
+                    freshVariable.defaultType,
+                    knownTypeArgument.unwrap(),
+                    KnownTypeParameterConstraintPosition(knownTypeArgument)
+                )
                 continue
             }
 
             val typeArgument = resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(typeParameter)
 
             if (typeArgument is SimpleTypeArgument) {
-                csBuilder.addEqualityConstraint(freshVariable.defaultType, typeArgument.type, ExplicitTypeParameterConstraintPosition(typeArgument))
-            }
-            else {
+                csBuilder.addEqualityConstraint(
+                    freshVariable.defaultType,
+                    typeArgument.type,
+                    ExplicitTypeParameterConstraintPosition(typeArgument)
+                )
+            } else {
                 assert(typeArgument == TypeArgumentPlaceholder) {
                     "Unexpected typeArgument: $typeArgument, ${typeArgument.javaClass.canonicalName}"
                 }
@@ -165,8 +179,8 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
     }
 
     fun createToFreshVariableSubstitutorAndAddInitialConstraints(
-            candidateDescriptor: CallableDescriptor,
-            csBuilder: ConstraintSystemOperation
+        candidateDescriptor: CallableDescriptor,
+        csBuilder: ConstraintSystemOperation
     ): FreshVariableNewTypeSubstitutor {
         val typeParameters = candidateDescriptor.typeParameters
 
@@ -193,9 +207,11 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
 
 internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
     private fun KotlinResolutionCandidate.hasError(): Nothing =
-            error("Inconsistent call: $kotlinCall. \n" +
-                  "Candidate: $candidateDescriptor, explicitReceiverKind: ${resolvedCall.explicitReceiverKind}.\n" +
-                  "Explicit receiver: ${kotlinCall.explicitReceiver}, dispatchReceiverForInvokeExtension: ${kotlinCall.dispatchReceiverForInvokeExtension}")
+        error(
+            "Inconsistent call: $kotlinCall. \n" +
+                    "Candidate: $candidateDescriptor, explicitReceiverKind: ${resolvedCall.explicitReceiverKind}.\n" +
+                    "Explicit receiver: ${kotlinCall.explicitReceiver}, dispatchReceiverForInvokeExtension: ${kotlinCall.dispatchReceiverForInvokeExtension}"
+        )
 
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         when (resolvedCall.explicitReceiverKind) {
@@ -207,20 +223,25 @@ internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
 }
 
 private fun KotlinResolutionCandidate.resolveKotlinArgument(
-        argument: KotlinCallArgument,
-        candidateParameter: ParameterDescriptor?,
-        isReceiver: Boolean
+    argument: KotlinCallArgument,
+    candidateParameter: ParameterDescriptor?,
+    isReceiver: Boolean
 ) {
     val expectedType = candidateParameter?.let {
-        resolvedCall.substitutor.substituteKeepAnnotations(argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings))
+        resolvedCall.substitutor.substituteKeepAnnotations(
+            argument.getExpectedType(
+                candidateParameter,
+                callComponents.languageVersionSettings
+            )
+        )
     }
     addResolvedKtPrimitive(resolveKtPrimitive(csBuilder, argument, expectedType, this, isReceiver))
 }
 
 internal object CheckReceivers : ResolutionPart() {
     private fun KotlinResolutionCandidate.checkReceiver(
-            receiverArgument: SimpleKotlinCallArgument?,
-            receiverParameter: ReceiverParameterDescriptor?
+        receiverArgument: SimpleKotlinCallArgument?,
+        receiverParameter: ReceiverParameterDescriptor?
     ) {
         if ((receiverArgument == null) != (receiverParameter == null)) {
             error("Inconsistency receiver state for call $kotlinCall and candidate descriptor: $candidateDescriptor")

@@ -35,7 +35,8 @@ abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpressi
                     }
                     is KtSimpleNameStringTemplateEntry -> {
                         if (newElement !is KtSimpleNameExpression && !newElement.isThisWithoutLabel()) {
-                            val newEntry = parent.replace(KtPsiFactory(expression).createBlockStringTemplateEntry(newElement)) as KtBlockStringTemplateEntry
+                            val newEntry =
+                                parent.replace(KtPsiFactory(expression).createBlockStringTemplateEntry(newElement)) as KtBlockStringTemplateEntry
                             return newEntry.expression!!
                         }
                     }

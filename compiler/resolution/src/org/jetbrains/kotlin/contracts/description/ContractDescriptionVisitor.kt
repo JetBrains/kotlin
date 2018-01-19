@@ -25,7 +25,10 @@ interface ContractDescriptionVisitor<out R, in D> {
 
     // Effects
     fun visitEffectDeclaration(effectDeclaration: EffectDeclaration, data: D): R = visitContractDescriptionElement(effectDeclaration, data)
-    fun visitConditionalEffectDeclaration(conditionalEffect: ConditionalEffectDeclaration, data: D): R = visitEffectDeclaration(conditionalEffect, data)
+
+    fun visitConditionalEffectDeclaration(conditionalEffect: ConditionalEffectDeclaration, data: D): R =
+        visitEffectDeclaration(conditionalEffect, data)
+
     fun visitReturnsEffectDeclaration(returnsEffect: ReturnsEffectDeclaration, data: D): R = visitEffectDeclaration(returnsEffect, data)
     fun visitCallsEffectDeclaration(callsEffect: CallsEffectDeclaration, data: D): R = visitEffectDeclaration(callsEffect, data)
 
@@ -43,7 +46,10 @@ interface ContractDescriptionVisitor<out R, in D> {
     fun visitValue(value: ContractDescriptionValue, data: D): R = visitContractDescriptionElement(value, data)
 
     fun visitConstantDescriptor(constantReference: ConstantReference, data: D): R = visitValue(constantReference, data)
-    fun visitBooleanConstantDescriptor(booleanConstantDescriptor: BooleanConstantReference, data: D): R = visitConstantDescriptor(booleanConstantDescriptor, data)
+    fun visitBooleanConstantDescriptor(booleanConstantDescriptor: BooleanConstantReference, data: D): R =
+        visitConstantDescriptor(booleanConstantDescriptor, data)
+
     fun visitVariableReference(variableReference: VariableReference, data: D): R = visitValue(variableReference, data)
-    fun visitBooleanVariableReference(booleanVariableReference: BooleanVariableReference, data: D): R = visitVariableReference(booleanVariableReference, data)
+    fun visitBooleanVariableReference(booleanVariableReference: BooleanVariableReference, data: D): R =
+        visitVariableReference(booleanVariableReference, data)
 }

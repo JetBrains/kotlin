@@ -49,8 +49,7 @@ class KtObjectDeclaration : KtClassOrObject {
             addAfter(psiFactory.createWhiteSpace(), getObjectKeyword()!!)
 
             result
-        }
-        else {
+        } else {
             super.setName(name)
         }
     }
@@ -58,7 +57,7 @@ class KtObjectDeclaration : KtClassOrObject {
     fun isCompanion(): Boolean = _stub?.isCompanion() ?: hasModifier(KtTokens.COMPANION_KEYWORD)
 
     override fun getTextOffset(): Int = nameIdentifier?.textRange?.startOffset
-                                        ?: getObjectKeyword()!!.textRange.startOffset
+            ?: getObjectKeyword()!!.textRange.startOffset
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitObjectDeclaration(this, data)

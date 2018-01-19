@@ -26,15 +26,15 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 import java.util.*
 
 class KotlinClassStubImpl(
-        type: KtClassElementType,
-        parent: StubElement<out PsiElement>?,
-        private val qualifiedName: StringRef?,
-        private val name: StringRef?,
-        private val superNames: Array<StringRef>,
-        private val isInterface: Boolean,
-        private val isEnumEntry: Boolean,
-        private val isLocal: Boolean,
-        private val isTopLevel: Boolean
+    type: KtClassElementType,
+    parent: StubElement<out PsiElement>?,
+    private val qualifiedName: StringRef?,
+    private val name: StringRef?,
+    private val superNames: Array<StringRef>,
+    private val isInterface: Boolean,
+    private val isEnumEntry: Boolean,
+    private val isLocal: Boolean,
+    private val isTopLevel: Boolean
 ) : KotlinStubBaseImpl<KtClass>(parent, type), KotlinClassStub {
 
     override fun getFqName(): FqName? {

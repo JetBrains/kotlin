@@ -252,6 +252,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("extensionProperties.kt")
+        public void testExtensionProperties() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/extensionProperties.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fakeOverrides.kt")
         public void testFakeOverrides() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/fakeOverrides.kt");
@@ -879,12 +885,6 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("smartCastsWithDestructuring.kt")
         public void testSmartCastsWithDestructuring() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/smartCastsWithDestructuring.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("smoke.kt")
-        public void testSmoke() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/smoke.kt");
             doTest(fileName);
         }
 

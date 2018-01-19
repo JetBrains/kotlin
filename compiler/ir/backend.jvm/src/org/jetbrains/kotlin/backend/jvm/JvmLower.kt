@@ -28,7 +28,9 @@ class JvmLower(val context: JvmBackendContext) {
         // TODO run lowering passes as callbacks in bottom-up visitor
         FileClassLowering(context).lower(irFile)
         KCallableNamePropertyLowering(context).lower(irFile)
-        LateinitLowering(context).lower(irFile)
+
+        LateinitLowering(context, true).lower(irFile)
+
         ConstAndJvmFieldPropertiesLowering().lower(irFile)
         PropertiesLowering().lower(irFile)
 

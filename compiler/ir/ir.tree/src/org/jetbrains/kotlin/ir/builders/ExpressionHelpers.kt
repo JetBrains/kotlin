@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 
 inline fun IrBuilderWithScope.irLet(
-        value: IrExpression,
-        origin: IrStatementOrigin? = null,
-        nameHint: String? = null,
-        body: (VariableDescriptor) -> IrExpression
+    value: IrExpression,
+    origin: IrStatementOrigin? = null,
+    nameHint: String? = null,
+    body: (VariableDescriptor) -> IrExpression
 ): IrExpression {
     val irTemporary = scope.createTemporaryVariable(value, nameHint)
     val irResult = body(irTemporary.descriptor)
@@ -43,10 +43,10 @@ inline fun IrBuilderWithScope.irLet(
 }
 
 inline fun IrBuilderWithScope.irLetS(
-        value: IrExpression,
-        origin: IrStatementOrigin? = null,
-        nameHint: String? = null,
-        body: (IrValueSymbol) -> IrExpression
+    value: IrExpression,
+    origin: IrStatementOrigin? = null,
+    nameHint: String? = null,
+    body: (IrValueSymbol) -> IrExpression
 ): IrExpression {
     val irTemporary = scope.createTemporaryVariable(value, nameHint)
     val irResult = body(irTemporary.symbol)
@@ -83,95 +83,108 @@ fun <T : IrElement> IrStatementsBuilder<T>.defineTemporaryVar(value: IrExpressio
 }
 
 fun IrBuilderWithScope.irExprBody(value: IrExpression) =
-        IrExpressionBodyImpl(startOffset, endOffset, value)
+    IrExpressionBodyImpl(startOffset, endOffset, value)
 
 fun IrBuilderWithScope.irReturn(value: IrExpression) =
-        IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType,
-                     scope.scopeOwnerSymbol.assertedCast<IrFunctionSymbol> {
-                         "Function scope expected: ${scope.scopeOwner}"
-                     },
-                     value)
+    IrReturnImpl(
+        startOffset, endOffset, context.builtIns.nothingType,
+        scope.scopeOwnerSymbol.assertedCast<IrFunctionSymbol> {
+            "Function scope expected: ${scope.scopeOwner}"
+        },
+        value
+    )
 
 fun IrBuilderWithScope.irReturnTrue() =
-        irReturn(IrConstImpl(startOffset, endOffset, context.builtIns.booleanType, IrConstKind.Boolean, true))
+    irReturn(IrConstImpl(startOffset, endOffset, context.builtIns.booleanType, IrConstKind.Boolean, true))
 
 fun IrBuilderWithScope.irReturnFalse() =
-        irReturn(IrConstImpl(startOffset, endOffset, context.builtIns.booleanType, IrConstKind.Boolean, false))
+    irReturn(IrConstImpl(startOffset, endOffset, context.builtIns.booleanType, IrConstKind.Boolean, false))
 
 fun IrBuilderWithScope.irIfThenElse(type: KotlinType, condition: IrExpression, thenPart: IrExpression, elsePart: IrExpression) =
-        IrIfThenElseImpl(startOffset, endOffset, type, condition, thenPart, elsePart)
+    IrIfThenElseImpl(startOffset, endOffset, type, condition, thenPart, elsePart)
 
 fun IrBuilderWithScope.irIfNull(type: KotlinType, subject: IrExpression, thenPart: IrExpression, elsePart: IrExpression) =
-        irIfThenElse(type, irEqualsNull(subject), thenPart, elsePart)
+    irIfThenElse(type, irEqualsNull(subject), thenPart, elsePart)
 
 fun IrBuilderWithScope.irThrowNpe(origin: IrStatementOrigin) =
-        IrNullaryPrimitiveImpl(startOffset, endOffset, origin, context.irBuiltIns.throwNpeSymbol)
+    IrNullaryPrimitiveImpl(startOffset, endOffset, origin, context.irBuiltIns.throwNpeSymbol)
 
 fun IrBuilderWithScope.irIfThenReturnTrue(condition: IrExpression) =
-        IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, irReturnTrue())
+    IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, irReturnTrue())
 
 fun IrBuilderWithScope.irIfThenReturnFalse(condition: IrExpression) =
-        IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, irReturnFalse())
+    IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, irReturnFalse())
 
 fun IrBuilderWithScope.irGet(variable: IrValueSymbol) =
-        IrGetValueImpl(startOffset, endOffset, variable)
+    IrGetValueImpl(startOffset, endOffset, variable)
 
 fun IrBuilderWithScope.irSetVar(variable: IrVariableSymbol, value: IrExpression) =
-        IrSetVariableImpl(startOffset, endOffset, variable, value, IrStatementOrigin.EQ)
+    IrSetVariableImpl(startOffset, endOffset, variable, value, IrStatementOrigin.EQ)
 
 fun IrBuilderWithScope.irEqeqeq(arg1: IrExpression, arg2: IrExpression) =
-        context.eqeqeq(startOffset, endOffset, arg1, arg2)
+    context.eqeqeq(startOffset, endOffset, arg1, arg2)
 
 fun IrBuilderWithScope.irNull() =
-        IrConstImpl.constNull(startOffset, endOffset, context.builtIns.nullableNothingType)
+    IrConstImpl.constNull(startOffset, endOffset, context.builtIns.nullableNothingType)
 
 fun IrBuilderWithScope.irEqualsNull(argument: IrExpression) =
-        primitiveOp2(startOffset, endOffset, context.irBuiltIns.eqeqSymbol, IrStatementOrigin.EQEQ,
-                     argument, irNull())
+    primitiveOp2(
+        startOffset, endOffset, context.irBuiltIns.eqeqSymbol, IrStatementOrigin.EQEQ,
+        argument, irNull()
+    )
 
 fun IrBuilderWithScope.irNotEquals(arg1: IrExpression, arg2: IrExpression) =
-        primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCLEQ,
-                     primitiveOp2(startOffset, endOffset, context.irBuiltIns.eqeqSymbol, IrStatementOrigin.EXCLEQ,
-                                  arg1, arg2))
+    primitiveOp1(
+        startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCLEQ,
+        primitiveOp2(
+            startOffset, endOffset, context.irBuiltIns.eqeqSymbol, IrStatementOrigin.EXCLEQ,
+            arg1, arg2
+        )
+    )
 
 fun IrBuilderWithScope.irGet(receiver: IrExpression, getterSymbol: IrFunctionSymbol): IrCall =
-        IrGetterCallImpl(startOffset, endOffset, getterSymbol, getterSymbol.descriptor, null, receiver, null, IrStatementOrigin.GET_PROPERTY)
+    IrGetterCallImpl(startOffset, endOffset, getterSymbol, getterSymbol.descriptor, null, receiver, null, IrStatementOrigin.GET_PROPERTY)
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: KotlinType): IrCall =
-        IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor, null)
+    IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor, null)
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrCall =
-        irCall(callee, callee.descriptor.returnType!!)
+    irCall(callee, callee.descriptor.returnType!!)
 
 fun IrBuilderWithScope.irCallOp(callee: IrFunctionSymbol, dispatchReceiver: IrExpression, argument: IrExpression): IrCall =
-        irCall(callee, callee.descriptor.returnType!!).apply {
-            this.dispatchReceiver = dispatchReceiver
-            putValueArgument(0, argument)
-        }
+    irCall(callee, callee.descriptor.returnType!!).apply {
+        this.dispatchReceiver = dispatchReceiver
+        putValueArgument(0, argument)
+    }
 
-fun IrBuilderWithScope.irCallOp(callee: IrFunctionSymbol, type: KotlinType, dispatchReceiver: IrExpression, argument: IrExpression): IrCall =
-        irCall(callee, type).apply {
-            this.dispatchReceiver = dispatchReceiver
-            putValueArgument(0, argument)
-        }
+fun IrBuilderWithScope.irCallOp(
+    callee: IrFunctionSymbol,
+    type: KotlinType,
+    dispatchReceiver: IrExpression,
+    argument: IrExpression
+): IrCall =
+    irCall(callee, type).apply {
+        this.dispatchReceiver = dispatchReceiver
+        putValueArgument(0, argument)
+    }
 
 fun IrBuilderWithScope.irIs(argument: IrExpression, type: KotlinType) =
-        IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.booleanType, IrTypeOperator.INSTANCEOF, type, argument)
+    IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.booleanType, IrTypeOperator.INSTANCEOF, type, argument)
 
 fun IrBuilderWithScope.irNotIs(argument: IrExpression, type: KotlinType) =
-        IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.booleanType, IrTypeOperator.NOT_INSTANCEOF, type, argument)
+    IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.booleanType, IrTypeOperator.NOT_INSTANCEOF, type, argument)
 
 fun IrBuilderWithScope.irAs(argument: IrExpression, type: KotlinType) =
-        IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, type, argument)
+    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, type, argument)
 
 fun IrBuilderWithScope.irImplicitCast(argument: IrExpression, type: KotlinType) =
-        IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, argument)
+    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, argument)
 
 fun IrBuilderWithScope.irInt(value: Int) =
-        IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, value)
+    IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, value)
 
 fun IrBuilderWithScope.irString(value: String) =
-        IrConstImpl.string(startOffset, endOffset, context.builtIns.stringType, value)
+    IrConstImpl.string(startOffset, endOffset, context.builtIns.stringType, value)
 
 fun IrBuilderWithScope.irConcat() =
-        IrStringConcatenationImpl(startOffset, endOffset, context.builtIns.stringType)
+    IrStringConcatenationImpl(startOffset, endOffset, context.builtIns.stringType)

@@ -27,15 +27,15 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object SuspendOperatorsCheckers : SimpleDeclarationChecker {
     private val UNSUPPORTED_OPERATOR_NAMES = setOf(
-            OperatorNameConventions.CONTAINS,
-            OperatorNameConventions.GET, OperatorNameConventions.SET
+        OperatorNameConventions.CONTAINS,
+        OperatorNameConventions.GET, OperatorNameConventions.SET
     )
 
     override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        bindingContext: BindingContext
     ) {
         if (descriptor is FunctionDescriptor && descriptor.isSuspend && descriptor.isOperator &&
             descriptor.name in UNSUPPORTED_OPERATOR_NAMES) {

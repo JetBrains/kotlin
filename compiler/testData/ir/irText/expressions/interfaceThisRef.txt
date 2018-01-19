@@ -1,18 +1,18 @@
-FILE /interfaceThisRef.kt
-  CLASS INTERFACE IFoo
-    $this: VALUE_PARAMETER this@IFoo: IFoo
-    FUN public abstract fun foo(): kotlin.Unit
-      $this: VALUE_PARAMETER this@IFoo: IFoo
-    FUN public open fun bar(): kotlin.Unit
-      $this: VALUE_PARAMETER this@IFoo: IFoo
+FILE fqName:<root> fileName:/interfaceThisRef.kt
+  CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IFoo flags:
+    FUN name:foo visibility:public modality:ABSTRACT <> ($this:IFoo) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:IFoo flags:
+    FUN name:bar visibility:public modality:OPEN <> ($this:IFoo) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:IFoo flags:
       BLOCK_BODY
         CALL 'foo(): Unit' type=kotlin.Unit origin=null
           $this: GET_VAR 'this@IFoo: IFoo' type=IFoo origin=null
-    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER this@Any: Any
-      VALUE_PARAMETER value-parameter other: kotlin.Any?
-    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER this@Any: Any
-    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

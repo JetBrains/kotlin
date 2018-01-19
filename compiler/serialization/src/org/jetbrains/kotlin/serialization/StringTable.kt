@@ -17,12 +17,15 @@
 package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
+import org.jetbrains.kotlin.name.ClassId
 import java.io.OutputStream
 
 interface StringTable {
     fun getStringIndex(string: String): Int
 
     fun getFqNameIndex(descriptor: ClassifierDescriptorWithTypeParameters): Int
+
+    fun getClassIdIndex(classId: ClassId): Int
 
     fun serializeTo(output: OutputStream)
 }

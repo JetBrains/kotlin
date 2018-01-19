@@ -26,29 +26,29 @@ import org.jetbrains.kotlin.resolve.BindingContext
 interface DeclarationChecker {
     // TODO: Think about encapsulating these parameters into specific class like CheckerParameters when you're about to add another one
     fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings,
-            expectActualTracker: ExpectActualTracker
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        bindingContext: BindingContext,
+        languageVersionSettings: LanguageVersionSettings,
+        expectActualTracker: ExpectActualTracker
     )
 }
 
 interface SimpleDeclarationChecker : DeclarationChecker {
     override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings,
-            expectActualTracker: ExpectActualTracker
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        bindingContext: BindingContext,
+        languageVersionSettings: LanguageVersionSettings,
+        expectActualTracker: ExpectActualTracker
     ) = check(declaration, descriptor, diagnosticHolder, bindingContext)
 
     fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        bindingContext: BindingContext
     )
 }

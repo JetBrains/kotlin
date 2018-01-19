@@ -23,7 +23,7 @@ dependencies {
     testCompile project(path: ':kotlin-build-common', configuration: 'tests-jar')
     testCompile project(path: ':compiler:incremental-compilation-impl', configuration: 'tests-jar')
 
-    testCompile 'org.jetbrains.kotlin:gradle-api:2.2'
+    testCompile gradleApi()
 
     testRuntime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
 }

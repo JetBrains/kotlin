@@ -158,7 +158,7 @@ internal class BoxedChar(val c: Int) : Comparable<Int> {
 @kotlin.internal.InlineOnly
 internal inline fun <T> concat(args: Array<T>): T {
     val typed = js("Array")(args.size)
-    for (i in 0..args.size - 1) {
+    for (i in args.indices) {
         val arr = args[i]
         if (arr !is Array<*>) {
             typed[i] = js("[]").slice.call(arr)
@@ -196,15 +196,15 @@ internal fun <T> primitiveArrayConcat(a: T, b: T): T {
     }
     else {
         var size = 0
-        for (i in 0..args.size - 1) {
+        for (i in args.indices) {
             size += args[i].asDynamic().length as Int
         }
         val result = js("new a.constructor(size)")
         kotlin.copyArrayType(a, result)
         size = 0
-        for (i in 0..args.size - 1) {
+        for (i in args.indices) {
             val arr = args[i].asDynamic()
-            for (j in 0..arr.length - 1) {
+            for (j in 0 until arr.length) {
                 result[size++] = arr[j]
             }
         }

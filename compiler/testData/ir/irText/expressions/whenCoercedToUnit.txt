@@ -1,15 +1,15 @@
-FILE /whenCoercedToUnit.kt
-  FUN public fun foo(x: kotlin.Int): kotlin.Unit
-    VALUE_PARAMETER value-parameter x: kotlin.Int
+FILE fqName:<root> fileName:/whenCoercedToUnit.kt
+  FUN name:foo visibility:public modality:FINAL <> (x:kotlin.Int) returnType:Unit flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=WHEN
-        VAR IR_TEMPORARY_VARIABLE val tmp0_subject: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:val
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
         WHEN type=kotlin.Unit origin=WHEN
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
-              arg1: CONST Int type=kotlin.Int value='0'
+              arg1: CONST Int type=kotlin.Int value=0
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              CONST Int type=kotlin.Int value='0'
+              CONST Int type=kotlin.Int value=0
 

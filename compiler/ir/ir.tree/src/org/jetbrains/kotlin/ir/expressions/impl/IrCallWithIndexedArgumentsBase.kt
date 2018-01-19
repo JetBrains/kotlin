@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -26,16 +25,16 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.lang.AssertionError
 
 abstract class IrCallWithIndexedArgumentsBase(
-        startOffset: Int, endOffset: Int, type: KotlinType,
-        numArguments: Int,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-        override val origin: IrStatementOrigin? = null
+    startOffset: Int, endOffset: Int, type: KotlinType,
+    numArguments: Int,
+    typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+    override val origin: IrStatementOrigin? = null
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArguments) {
     private val argumentsByParameterIndex =
-            arrayOfNulls<IrExpression>(numArguments)
+        arrayOfNulls<IrExpression>(numArguments)
 
     override fun getValueArgument(index: Int): IrExpression? =
-            argumentsByParameterIndex[index]
+        argumentsByParameterIndex[index]
 
     override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
         if (index >= argumentsByParameterIndex.size) {

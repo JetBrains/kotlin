@@ -36,13 +36,13 @@ abstract class AbstractIrSourceRangesTestCase : AbstractIrGeneratorTestCase() {
     }
 
     private fun IrElement.dumpWithSourceLocations(fileEntry: SourceManager.FileEntry): String =
-            StringBuilder().also {
-                acceptVoid(DumpSourceLocations(it, fileEntry))
-            }.toString()
+        StringBuilder().also {
+            acceptVoid(DumpSourceLocations(it, fileEntry))
+        }.toString()
 
     private class DumpSourceLocations(
-            out: Appendable,
-            val fileEntry: SourceManager.FileEntry
+        out: Appendable,
+        val fileEntry: SourceManager.FileEntry
     ) : IrElementVisitorVoid {
         val printer = Printer(out, "  ")
         val elementRenderer = RenderIrElementVisitor()
@@ -56,9 +56,9 @@ abstract class AbstractIrSourceRangesTestCase : AbstractIrGeneratorTestCase() {
         }
 
         private fun SourceRangeInfo.render() =
-                if (startLineNumber == endLineNumber)
-                    "$startLineNumber:$startColumnNumber..$endColumnNumber"
-                else
-                    "$startLineNumber:$startColumnNumber..$endLineNumber:$endColumnNumber"
+            if (startLineNumber == endLineNumber)
+                "$startLineNumber:$startColumnNumber..$endColumnNumber"
+            else
+                "$startLineNumber:$startColumnNumber..$endLineNumber:$endColumnNumber"
     }
 }

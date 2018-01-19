@@ -22,7 +22,7 @@ dependencies {
     compileOnly project(':compiler')
     compileOnly project(':kotlin-noarg-compiler-plugin')
 
-    compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
+    compileOnly gradleApi()
 }
 
 evaluationDependsOn(":kotlin-noarg-compiler-plugin")

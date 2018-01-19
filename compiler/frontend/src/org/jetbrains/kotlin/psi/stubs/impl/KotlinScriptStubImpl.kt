@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinScriptStubImpl(
-        parent: StubElement<out PsiElement>?,
-        private val _fqName: StringRef?
+    parent: StubElement<out PsiElement>?,
+    private val _fqName: StringRef?
 ) : KotlinStubBaseImpl<KtScript>(parent, KtStubElementTypes.SCRIPT), KotlinScriptStub {
     override fun getName(): String = getFqName().shortName().asString()
 

@@ -25,8 +25,8 @@ abstract class AbstractPsi2IrBoxTestCase : AbstractIrGeneratorTestCase() {
         val irModule = generateIrModule(false)
         val irModuleDump = irModule.dump()
         val expectedPath = wholeFile.canonicalPath
-                // .replace("/codegen/box/", "/ir/irTextBox/")
-                .replace(".kt", ".txt")
+            // .replace("/codegen/box/", "/ir/irTextBox/")
+            .replace(".kt", ".txt")
         val expectedFile = File(expectedPath)
         KotlinTestUtils.assertEqualsToFile(expectedFile, irModuleDump)
     }

@@ -22,7 +22,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -56,7 +56,13 @@ abstract class AbstractDecompiledTextBaseTest(
         if (isAllFilesPresentInTest()) {
             return KotlinLightProjectDescriptor.INSTANCE
         }
-        return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(false), false, withRuntime, isJsLibrary, allowKotlinPackage)
+        return SdkAndMockLibraryProjectDescriptor(
+            TEST_DATA_PATH + "/" + getTestName(false),
+            false,
+            withRuntime,
+            isJsLibrary,
+            allowKotlinPackage
+        )
     }
 
     private fun checkThatFileWasParsedCorrectly(clsFile: PsiFile) {

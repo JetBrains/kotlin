@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 
 open class LocalFunctionDeclarationInstruction(
-        element: KtElement,
-        val body: Pseudocode,
-        blockScope: BlockScope
+    element: KtElement,
+    val body: Pseudocode,
+    blockScope: BlockScope
 ) : InstructionWithNext(element, blockScope) {
     var sink: SubroutineSinkInstruction? = null
         set(value) {
@@ -54,5 +54,5 @@ open class LocalFunctionDeclarationInstruction(
     override fun toString(): String = "d(${render(element)})"
 
     override fun createCopy(): InstructionImpl =
-            LocalFunctionDeclarationInstruction(element, body.copy(), blockScope)
+        LocalFunctionDeclarationInstruction(element, body.copy(), blockScope)
 }

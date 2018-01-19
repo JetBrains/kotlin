@@ -74,7 +74,7 @@ class ContractDescriptionRenderer(private val builder: StringBuilder) : Contract
     }
 
     private fun ContractDescriptionElement.isAtom(): Boolean =
-            this is VariableReference || this is ConstantReference || this is IsNullPredicate || this is IsInstancePredicate
+        this is VariableReference || this is ConstantReference || this is IsNullPredicate || this is IsInstancePredicate
 
     private fun needsBrackets(parent: ContractDescriptionElement, child: ContractDescriptionElement): Boolean {
         if (child.isAtom()) return false
@@ -87,8 +87,7 @@ class ContractDescriptionRenderer(private val builder: StringBuilder) : Contract
             builder.append("(")
             block()
             builder.append(")")
-        }
-        else {
+        } else {
             block()
         }
     }

@@ -30,24 +30,23 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 interface ClassifierUsageChecker {
     fun check(
-            targetDescriptor: ClassifierDescriptor,
-            trace: BindingTrace,
-            element: PsiElement,
-            languageVersionSettings: LanguageVersionSettings,
-            deprecationResolver: DeprecationResolver
+        targetDescriptor: ClassifierDescriptor,
+        trace: BindingTrace,
+        element: PsiElement,
+        languageVersionSettings: LanguageVersionSettings,
+        deprecationResolver: DeprecationResolver
     )
 
     companion object {
         fun check(
-                declarations: Collection<PsiElement>,
-                trace: BindingTrace,
-                languageVersionSettings: LanguageVersionSettings,
-                deprecationResolver: DeprecationResolver,
-                checkers: Iterable<ClassifierUsageChecker>
+            declarations: Collection<PsiElement>,
+            trace: BindingTrace,
+            languageVersionSettings: LanguageVersionSettings,
+            deprecationResolver: DeprecationResolver,
+            checkers: Iterable<ClassifierUsageChecker>
         ) {
             val visitor = object : KtTreeVisitorVoid() {
                 override fun visitReferenceExpression(expression: KtReferenceExpression) {
@@ -92,7 +91,10 @@ interface ClassifierUsageChecker {
                     return targets.filterIsInstance<ClassifierDescriptor>().singleOrNull()
                 }
 
-                private fun getReferenceToCompanionViaClassifier(expression: KtReferenceExpression, target: ClassifierDescriptor): ClassifierDescriptor? {
+                private fun getReferenceToCompanionViaClassifier(
+                    expression: KtReferenceExpression,
+                    target: ClassifierDescriptor
+                ): ClassifierDescriptor? {
                     if (!DescriptorUtils.isCompanionObject(target)) return null
                     return trace.get(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression)
                 }

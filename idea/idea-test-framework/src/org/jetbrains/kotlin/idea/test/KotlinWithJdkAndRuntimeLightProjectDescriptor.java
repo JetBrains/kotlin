@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.test;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -41,6 +42,12 @@ public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndL
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_WITH_KOTLIN_TEST = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
             Arrays.asList(ForTestCompileRuntime.runtimeJarForTests(),
                           PathUtil.getKotlinPathsForDistDirectory().getKotlinTestPath())
+    );
+
+    @NotNull
+    public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_WITH_REFLECT = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
+            Arrays.asList(ForTestCompileRuntime.runtimeJarForTests(),
+                          ForTestCompileRuntime.reflectJarForTests())
     );
 
     @NotNull

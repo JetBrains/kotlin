@@ -8,7 +8,7 @@ public final class Controller {
     public constructor Controller()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final inline suspend fun inlineFun(/*0*/ x: kotlin.Int): kotlin.Unit
+    public final suspend inline fun inlineFun(/*0*/ x: kotlin.Int): kotlin.Unit
     public final suspend fun noParameters(): kotlin.Unit
     public final suspend fun oldConvention(/*0*/ x: kotlin.coroutines.experimental.Continuation<kotlin.Int>): kotlin.Unit
     public final suspend fun oneParameter(/*0*/ q: kotlin.Any): kotlin.Unit

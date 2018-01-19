@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isError
 
 class AnnotationChecker(
-        private val additionalCheckers: Iterable<AdditionalAnnotationChecker>,
-        private val languageVersionSettings: LanguageVersionSettings
+    private val additionalCheckers: Iterable<AdditionalAnnotationChecker>,
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
@@ -86,25 +86,25 @@ class AnnotationChecker(
 
     private fun KtAnnotated?.getImplicitUseSiteTargetList(): List<AnnotationUseSiteTarget> = when (this) {
         is KtParameter ->
-                if (ownerFunction is KtPrimaryConstructor) UseSiteTargetsList.T_CONSTRUCTOR_PARAMETER else emptyList()
+            if (ownerFunction is KtPrimaryConstructor) UseSiteTargetsList.T_CONSTRUCTOR_PARAMETER else emptyList()
         is KtProperty ->
-                if (!isLocal) UseSiteTargetsList.T_PROPERTY else emptyList()
+            if (!isLocal) UseSiteTargetsList.T_PROPERTY else emptyList()
         is KtPropertyAccessor ->
-                if (isGetter) listOf(AnnotationUseSiteTarget.PROPERTY_GETTER) else listOf(AnnotationUseSiteTarget.PROPERTY_SETTER)
+            if (isGetter) listOf(AnnotationUseSiteTarget.PROPERTY_GETTER) else listOf(AnnotationUseSiteTarget.PROPERTY_SETTER)
         else ->
-                emptyList()
+            emptyList()
     }
 
     private fun KtAnnotated?.getDefaultUseSiteTarget(descriptor: AnnotationDescriptor) =
-            getImplicitUseSiteTargetList().firstOrNull {
-                KotlinTarget.USE_SITE_MAPPING[it] in AnnotationChecker.applicableTargetSet(descriptor)
-            }
+        getImplicitUseSiteTargetList().firstOrNull {
+            KotlinTarget.USE_SITE_MAPPING[it] in AnnotationChecker.applicableTargetSet(descriptor)
+        }
 
     private fun checkEntries(
-            entries: List<KtAnnotationEntry>,
-            actualTargets: TargetList,
-            trace: BindingTrace,
-            annotated: KtAnnotated? = null
+        entries: List<KtAnnotationEntry>,
+        actualTargets: TargetList,
+        trace: BindingTrace,
+        annotated: KtAnnotated? = null
     ) {
         val entryTypesWithAnnotations = hashMapOf<KotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
@@ -116,7 +116,7 @@ class AnnotationChecker(
             val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget() ?: annotated.getDefaultUseSiteTarget(descriptor)
             val existingTargetsForAnnotation = entryTypesWithAnnotations.getOrPut(descriptor.type) { arrayListOf() }
             val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation
-                                      || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
+                    || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
 
             if (duplicateAnnotation && !classDescriptor.isRepeatableAnnotation()) {
                 trace.report(Errors.REPEATED_ANNOTATION.on(entry))
@@ -174,12 +174,17 @@ class AnnotationChecker(
         }
 
         if (useSiteTarget != null) {
-            trace.report(Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.on(
-                    entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target", useSiteTarget.renderName))
-        }
-        else {
-            trace.report(Errors.WRONG_ANNOTATION_TARGET.on(
-                    entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target"))
+            trace.report(
+                Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.on(
+                    entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target", useSiteTarget.renderName
+                )
+            )
+        } else {
+            trace.report(
+                Errors.WRONG_ANNOTATION_TARGET.on(
+                    entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target"
+                )
+            )
         }
     }
 
@@ -191,18 +196,19 @@ class AnnotationChecker(
             return descriptor.annotationClass?.let(this::applicableTargetSet) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 
-        @JvmStatic fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
+        @JvmStatic
+        fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
             val classDescriptor = descriptor.annotationClass ?: return emptySet()
             return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 
         fun applicableTargetSet(classDescriptor: ClassDescriptor): Set<KotlinTarget>? {
             val targetEntryDescriptor = classDescriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.target)
-                                        ?: return null
+                    ?: return null
             val valueArguments = targetEntryDescriptor.allValueArguments
             val valueArgument = valueArguments.entries.firstOrNull()?.value as? ArrayValue ?: return null
             return valueArgument.value.filterIsInstance<EnumValue>().mapNotNull {
-                KotlinTarget.valueOrNull(it.value.name.asString())
+                KotlinTarget.valueOrNull(it.enumEntryName.asString())
             }.toSet()
         }
 
@@ -211,8 +217,8 @@ class AnnotationChecker(
             return getActualTargetList(annotated, descriptor, trace).defaultTargets
         }
 
-        private fun DeclarationDescriptor?.hasBackingField(bindingTrace: BindingTrace)
-                = (this as? PropertyDescriptor)?.let { bindingTrace.get(BindingContext.BACKING_FIELD_REQUIRED, it) } ?: false
+        private fun DeclarationDescriptor?.hasBackingField(bindingTrace: BindingTrace) =
+            (this as? PropertyDescriptor)?.let { bindingTrace.get(BindingContext.BACKING_FIELD_REQUIRED, it) } ?: false
 
         private fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?, trace: BindingTrace): TargetList {
             return when (annotated) {
@@ -273,29 +279,32 @@ class AnnotationChecker(
                 if (backingField) extraTargets(FIELD)
                 if (delegate) {
                     onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER, FIELD)
-                }
-                else {
+                } else {
                     onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
                 }
             }
 
             fun T_MEMBER_PROPERTY(backingField: Boolean, delegate: Boolean) =
-                    targetList(when {
+                targetList(
+                    when {
                         backingField -> MEMBER_PROPERTY_WITH_BACKING_FIELD
                         delegate -> MEMBER_PROPERTY_WITH_DELEGATE
                         else -> MEMBER_PROPERTY_WITHOUT_FIELD_OR_DELEGATE
-                    }, MEMBER_PROPERTY, PROPERTY) {
-                        propertyTargets(backingField, delegate)
-                    }
+                    }, MEMBER_PROPERTY, PROPERTY
+                ) {
+                    propertyTargets(backingField, delegate)
+                }
 
             fun T_TOP_LEVEL_PROPERTY(backingField: Boolean, delegate: Boolean) =
-                    targetList(when {
+                targetList(
+                    when {
                         backingField -> TOP_LEVEL_PROPERTY_WITH_BACKING_FIELD
                         delegate -> TOP_LEVEL_PROPERTY_WITH_DELEGATE
                         else -> TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE
-                    }, TOP_LEVEL_PROPERTY, PROPERTY) {
-                        propertyTargets(backingField, delegate)
-                    }
+                    }, TOP_LEVEL_PROPERTY, PROPERTY
+                ) {
+                    propertyTargets(backingField, delegate)
+                }
 
             val T_PROPERTY_GETTER = targetList(PROPERTY_GETTER)
             val T_PROPERTY_SETTER = targetList(PROPERTY_SETTER)
@@ -368,17 +377,22 @@ class AnnotationChecker(
         }
 
         private class TargetList(
-                val defaultTargets: List<KotlinTarget>,
-                val canBeSubstituted: List<KotlinTarget> = emptyList(),
-                val onlyWithUseSiteTarget: List<KotlinTarget> = emptyList())
+            val defaultTargets: List<KotlinTarget>,
+            val canBeSubstituted: List<KotlinTarget> = emptyList(),
+            val onlyWithUseSiteTarget: List<KotlinTarget> = emptyList()
+        )
 
         private object UseSiteTargetsList {
-            val T_CONSTRUCTOR_PARAMETER = listOf(AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER,
-                                                 AnnotationUseSiteTarget.PROPERTY,
-                                                 AnnotationUseSiteTarget.FIELD)
+            val T_CONSTRUCTOR_PARAMETER = listOf(
+                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER,
+                AnnotationUseSiteTarget.PROPERTY,
+                AnnotationUseSiteTarget.FIELD
+            )
 
-            val T_PROPERTY = listOf(AnnotationUseSiteTarget.PROPERTY,
-                                    AnnotationUseSiteTarget.FIELD)
+            val T_PROPERTY = listOf(
+                AnnotationUseSiteTarget.PROPERTY,
+                AnnotationUseSiteTarget.FIELD
+            )
         }
     }
 }

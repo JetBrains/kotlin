@@ -41,94 +41,113 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.lang.AssertionError
 
 fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, receiver: ReceiverValue?): IntermediateValue? =
-        receiver?.let { generateReceiver(ktDefaultElement, receiver) }
+    receiver?.let { generateReceiver(ktDefaultElement, receiver) }
 
 fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): IntermediateValue =
-        generateReceiver(ktDefaultElement.startOffset, ktDefaultElement.endOffset, receiver)
+    generateReceiver(ktDefaultElement.startOffset, ktDefaultElement.endOffset, receiver)
 
 fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffset: Int, receiver: ReceiverValue): IntermediateValue =
-        if (receiver is TransientReceiver)
-            TransientReceiverValue(receiver.type)
-        else generateDelegatedValue(receiver.type) {
-            val receiverExpression = when (receiver) {
-                is ImplicitClassReceiver -> {
-                    val receiverClassDescriptor = receiver.classDescriptor
-                    if (shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor))
-                        generateSingletonReference(receiverClassDescriptor, defaultStartOffset, defaultEndOffset, receiver.type)
-                    else
-                        IrGetValueImpl(defaultStartOffset, defaultEndOffset,
-                                       context.symbolTable.referenceValueParameter(receiverClassDescriptor.thisAsReceiverParameter))
-                }
-                is ThisClassReceiver ->
-                    generateThisOrSuperReceiver(receiver, receiver.classDescriptor)
-                is SuperCallReceiverValue ->
-                    generateThisOrSuperReceiver(receiver, receiver.thisType.constructor.declarationDescriptor as ClassDescriptor)
-                is ExpressionReceiver ->
-                    generateExpression(receiver.expression)
-                is ClassValueReceiver ->
-                    IrGetObjectValueImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
-                                         context.symbolTable.referenceClass(receiver.classQualifier.descriptor as ClassDescriptor))
-                is ExtensionReceiver ->
-                    IrGetValueImpl(defaultStartOffset, defaultStartOffset,
-                                   context.symbolTable.referenceValueParameter(receiver.declarationDescriptor.extensionReceiverParameter!!))
-                else ->
-                    TODO("Receiver: ${receiver::class.java.simpleName}")
+    if (receiver is TransientReceiver)
+        TransientReceiverValue(receiver.type)
+    else generateDelegatedValue(receiver.type) {
+        val receiverExpression = when (receiver) {
+            is ImplicitClassReceiver -> {
+                val receiverClassDescriptor = receiver.classDescriptor
+                if (shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor))
+                    generateSingletonReference(receiverClassDescriptor, defaultStartOffset, defaultEndOffset, receiver.type)
+                else
+                    IrGetValueImpl(
+                        defaultStartOffset, defaultEndOffset,
+                        context.symbolTable.referenceValueParameter(receiverClassDescriptor.thisAsReceiverParameter)
+                    )
             }
-
-            if (receiverExpression is IrExpressionWithCopy)
-                RematerializableValue(receiverExpression)
-            else
-                OnceExpressionValue(receiverExpression)
+            is ThisClassReceiver ->
+                generateThisOrSuperReceiver(receiver, receiver.classDescriptor)
+            is SuperCallReceiverValue ->
+                generateThisOrSuperReceiver(receiver, receiver.thisType.constructor.declarationDescriptor as ClassDescriptor)
+            is ExpressionReceiver ->
+                generateExpression(receiver.expression)
+            is ClassValueReceiver ->
+                IrGetObjectValueImpl(
+                    receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
+                    context.symbolTable.referenceClass(receiver.classQualifier.descriptor as ClassDescriptor)
+                )
+            is ExtensionReceiver ->
+                IrGetValueImpl(
+                    defaultStartOffset, defaultStartOffset,
+                    context.symbolTable.referenceValueParameter(receiver.declarationDescriptor.extensionReceiverParameter!!)
+                )
+            else ->
+                TODO("Receiver: ${receiver::class.java.simpleName}")
         }
 
-fun StatementGenerator.generateSingletonReference(descriptor: ClassDescriptor, startOffset: Int, endOffset: Int, type: KotlinType): IrDeclarationReference =
-        when {
-            DescriptorUtils.isObject(descriptor) ->
-                IrGetObjectValueImpl(startOffset, endOffset, type,
-                                     context.symbolTable.referenceClass(descriptor))
-            DescriptorUtils.isEnumEntry(descriptor) ->
-                IrGetEnumValueImpl(startOffset, endOffset, type,
-                                   context.symbolTable.referenceEnumEntry(descriptor))
-            else -> {
-                val companionObjectDescriptor = descriptor.companionObjectDescriptor
-                                                ?: throw java.lang.AssertionError("Class value without companion object: $descriptor")
-                IrGetObjectValueImpl(startOffset, endOffset, type,
-                                     context.symbolTable.referenceClass(companionObjectDescriptor))
-            }
+        if (receiverExpression is IrExpressionWithCopy)
+            RematerializableValue(receiverExpression)
+        else
+            OnceExpressionValue(receiverExpression)
+    }
+
+fun StatementGenerator.generateSingletonReference(
+    descriptor: ClassDescriptor,
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType
+): IrDeclarationReference =
+    when {
+        DescriptorUtils.isObject(descriptor) ->
+            IrGetObjectValueImpl(
+                startOffset, endOffset, type,
+                context.symbolTable.referenceClass(descriptor)
+            )
+        DescriptorUtils.isEnumEntry(descriptor) ->
+            IrGetEnumValueImpl(
+                startOffset, endOffset, type,
+                context.symbolTable.referenceEnumEntry(descriptor)
+            )
+        else -> {
+            val companionObjectDescriptor = descriptor.companionObjectDescriptor
+                    ?: throw java.lang.AssertionError("Class value without companion object: $descriptor")
+            IrGetObjectValueImpl(
+                startOffset, endOffset, type,
+                context.symbolTable.referenceClass(companionObjectDescriptor)
+            )
         }
+    }
 
 private fun StatementGenerator.shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor: ClassDescriptor): Boolean {
     return receiverClassDescriptor.kind.isSingleton &&
-           this.scopeOwner != receiverClassDescriptor && //For anonymous initializers
-           this.scopeOwner.containingDeclaration != receiverClassDescriptor
+            this.scopeOwner != receiverClassDescriptor && //For anonymous initializers
+            this.scopeOwner.containingDeclaration != receiverClassDescriptor
 }
 
 private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverValue, classDescriptor: ClassDescriptor): IrExpression {
-    val expressionReceiver = receiver as? ExpressionReceiver ?:
-                             throw AssertionError("'this' or 'super' receiver should be an expression receiver")
+    val expressionReceiver =
+        receiver as? ExpressionReceiver ?: throw AssertionError("'this' or 'super' receiver should be an expression receiver")
     val ktReceiver = expressionReceiver.expression
-    return IrGetValueImpl(ktReceiver.startOffset, ktReceiver.endOffset,
-                          context.symbolTable.referenceValueParameter(classDescriptor.thisAsReceiverParameter))
+    return IrGetValueImpl(
+        ktReceiver.startOffset, ktReceiver.endOffset,
+        context.symbolTable.referenceValueParameter(classDescriptor.thisAsReceiverParameter)
+    )
 }
 
 fun StatementGenerator.generateBackingFieldReceiver(
-        startOffset: Int,
-        endOffset: Int,
-        resolvedCall: ResolvedCall<*>?,
-        fieldDescriptor: SyntheticFieldDescriptor
+    startOffset: Int,
+    endOffset: Int,
+    resolvedCall: ResolvedCall<*>?,
+    fieldDescriptor: SyntheticFieldDescriptor
 ): IntermediateValue? {
     val receiver = resolvedCall?.dispatchReceiver ?: fieldDescriptor.getDispatchReceiverForBackend() ?: return null
     return this.generateReceiver(startOffset, endOffset, receiver)
 }
 
 fun StatementGenerator.generateCallReceiver(
-        ktDefaultElement: KtElement,
-        calleeDescriptor: CallableDescriptor,
-        dispatchReceiver: ReceiverValue?,
-        extensionReceiver: ReceiverValue?,
-        isSafe: Boolean,
-        isAssignmentReceiver: Boolean = false
-) : CallReceiver {
+    ktDefaultElement: KtElement,
+    calleeDescriptor: CallableDescriptor,
+    dispatchReceiver: ReceiverValue?,
+    extensionReceiver: ReceiverValue?,
+    isSafe: Boolean,
+    isAssignmentReceiver: Boolean = false
+): CallReceiver {
     val dispatchReceiverValue: IntermediateValue?
     val extensionReceiverValue: IntermediateValue?
     when (calleeDescriptor) {
@@ -136,13 +155,14 @@ fun StatementGenerator.generateCallReceiver(
             assert(dispatchReceiver == null) {
                 "Call for member imported from object $calleeDescriptor has non-null dispatch receiver $dispatchReceiver"
             }
-            dispatchReceiverValue = generateReceiverForCalleeImportedFromObject(ktDefaultElement.startOffset, ktDefaultElement.endOffset, calleeDescriptor)
+            dispatchReceiverValue =
+                    generateReceiverForCalleeImportedFromObject(ktDefaultElement.startOffset, ktDefaultElement.endOffset, calleeDescriptor)
             extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
         }
         is TypeAliasConstructorDescriptor -> {
             assert(!(dispatchReceiver != null && extensionReceiver != null)) {
                 "Type alias constructor call for $calleeDescriptor can't have both dispatch receiver and extension receiver: " +
-                "$dispatchReceiver, $extensionReceiver"
+                        "$dispatchReceiver, $extensionReceiver"
             }
             dispatchReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver ?: dispatchReceiver)
             extensionReceiverValue = null
@@ -156,28 +176,35 @@ fun StatementGenerator.generateCallReceiver(
     return when {
         !isSafe ->
             SimpleCallReceiver(dispatchReceiverValue, extensionReceiverValue)
-        extensionReceiverValue != null  || dispatchReceiverValue != null->
-            SafeCallReceiver(this, ktDefaultElement.startOffset, ktDefaultElement.endOffset,
-                             extensionReceiverValue, dispatchReceiverValue, isAssignmentReceiver)
+        extensionReceiverValue != null || dispatchReceiverValue != null ->
+            SafeCallReceiver(
+                this, ktDefaultElement.startOffset, ktDefaultElement.endOffset,
+                extensionReceiverValue, dispatchReceiverValue, isAssignmentReceiver
+            )
         else ->
             throw AssertionError("Safe call should have an explicit receiver: ${ktDefaultElement.text}")
     }
 }
 
 private fun StatementGenerator.generateReceiverForCalleeImportedFromObject(
-        startOffset: Int,
-        endOffset: Int,
-        calleeDescriptor: ImportedFromObjectCallableDescriptor<*>
+    startOffset: Int,
+    endOffset: Int,
+    calleeDescriptor: ImportedFromObjectCallableDescriptor<*>
 ): ExpressionValue {
     val objectDescriptor = calleeDescriptor.containingObject
     val objectType = objectDescriptor.defaultType
     return generateExpressionValue(objectType) {
-        IrGetObjectValueImpl(startOffset, endOffset, objectType,
-                             context.symbolTable.referenceClass(objectDescriptor))
+        IrGetObjectValueImpl(
+            startOffset, endOffset, objectType,
+            context.symbolTable.referenceClass(objectDescriptor)
+        )
     }
 }
 
-fun StatementGenerator.generateVarargExpression(varargArgument: VarargValueArgument, valueParameter: ValueParameterDescriptor) : IrExpression? {
+fun StatementGenerator.generateVarargExpression(
+    varargArgument: VarargValueArgument,
+    valueParameter: ValueParameterDescriptor
+): IrExpression? {
     if (varargArgument.arguments.isEmpty()) {
         return null
     }
@@ -189,20 +216,22 @@ fun StatementGenerator.generateVarargExpression(varargArgument: VarargValueArgum
         Math.max(maxEndOffset, argument.asElement().endOffset)
     }
 
-    val varargElementType = valueParameter.varargElementType ?:
-                            throw AssertionError("Vararg argument for non-vararg parameter $valueParameter")
+    val varargElementType =
+        valueParameter.varargElementType ?: throw AssertionError("Vararg argument for non-vararg parameter $valueParameter")
 
     val irVararg = IrVarargImpl(varargStartOffset, varargEndOffset, valueParameter.type, varargElementType)
 
     for (argument in varargArgument.arguments) {
-        val ktArgumentExpression = argument.getArgumentExpression() ?:
-                                   throw AssertionError("No argument expression for vararg element ${argument.asElement().text}")
+        val ktArgumentExpression = argument.getArgumentExpression()
+                ?: throw AssertionError("No argument expression for vararg element ${argument.asElement().text}")
         val irVarargElement =
-                if (argument.getSpreadElement() != null)
-                    IrSpreadElementImpl(ktArgumentExpression.startOffset, ktArgumentExpression.endOffset,
-                                                                            generateExpression(ktArgumentExpression))
-                else
+            if (argument.getSpreadElement() != null)
+                IrSpreadElementImpl(
+                    ktArgumentExpression.startOffset, ktArgumentExpression.endOffset,
                     generateExpression(ktArgumentExpression)
+                )
+            else
+                generateExpression(ktArgumentExpression)
 
         irVararg.addElement(irVarargElement)
     }
@@ -210,17 +239,20 @@ fun StatementGenerator.generateVarargExpression(varargArgument: VarargValueArgum
     return irVararg
 }
 
-fun StatementGenerator.generateValueArgument(valueArgument: ResolvedValueArgument, valueParameter: ValueParameterDescriptor): IrExpression? =
-        when (valueArgument) {
-            is DefaultValueArgument ->
-                null
-            is ExpressionValueArgument ->
-                generateExpression(valueArgument.valueArgument!!.getArgumentExpression()!!)
-            is VarargValueArgument ->
-                generateVarargExpression(valueArgument, valueParameter)
-            else ->
-                TODO("Unexpected valueArgument: ${valueArgument::class.java.simpleName}")
-        }
+fun StatementGenerator.generateValueArgument(
+    valueArgument: ResolvedValueArgument,
+    valueParameter: ValueParameterDescriptor
+): IrExpression? =
+    when (valueArgument) {
+        is DefaultValueArgument ->
+            null
+        is ExpressionValueArgument ->
+            generateExpression(valueArgument.valueArgument!!.getArgumentExpression()!!)
+        is VarargValueArgument ->
+            generateVarargExpression(valueArgument, valueParameter)
+        else ->
+            TODO("Unexpected valueArgument: ${valueArgument::class.java.simpleName}")
+    }
 
 fun Generator.getSuperQualifier(resolvedCall: ResolvedCall<*>): ClassDescriptor? {
     val superCallExpression = getSuperCallExpression(resolvedCall.call) ?: return null
@@ -239,11 +271,12 @@ fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuild
 
 fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: ResolvedCall<*>): CallBuilder {
     val extensionInvoke = resolvedCall.resultingDescriptor
-    val functionNClass = extensionInvoke.containingDeclaration as? ClassDescriptor ?:
-                         throw AssertionError("'invoke' should be a class member: $extensionInvoke")
-    val unsubstitutedPlainInvokes = functionNClass.unsubstitutedMemberScope.getContributedFunctions(extensionInvoke.name, NoLookupLocation.FROM_BACKEND)
-    val unsubstitutedPlainInvoke = unsubstitutedPlainInvokes.singleOrNull() ?:
-                                   throw AssertionError("There should be a single 'invoke' in FunctionN class: $unsubstitutedPlainInvokes")
+    val functionNClass = extensionInvoke.containingDeclaration as? ClassDescriptor
+            ?: throw AssertionError("'invoke' should be a class member: $extensionInvoke")
+    val unsubstitutedPlainInvokes =
+        functionNClass.unsubstitutedMemberScope.getContributedFunctions(extensionInvoke.name, NoLookupLocation.FROM_BACKEND)
+    val unsubstitutedPlainInvoke = unsubstitutedPlainInvokes.singleOrNull()
+            ?: throw AssertionError("There should be a single 'invoke' in FunctionN class: $unsubstitutedPlainInvokes")
 
     val expectedValueParametersCount = extensionInvoke.valueParameters.size + 1
     assert(unsubstitutedPlainInvoke.valueParameters.size == expectedValueParametersCount) {
@@ -251,29 +284,31 @@ fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: ResolvedCall
     }
 
     val functionNType = extensionInvoke.dispatchReceiverParameter!!.type
-    val plainInvoke = unsubstitutedPlainInvoke.substitute(TypeSubstitutor.create(functionNType)) ?:
-                      throw AssertionError("Substitution failed for $unsubstitutedPlainInvoke, type=$functionNType")
+    val plainInvoke = unsubstitutedPlainInvoke.substitute(TypeSubstitutor.create(functionNType))
+            ?: throw AssertionError("Substitution failed for $unsubstitutedPlainInvoke, type=$functionNType")
 
     val ktCallElement = resolvedCall.call.callElement
 
     val call = CallBuilder(resolvedCall, plainInvoke, isExtensionInvokeCall = true)
 
     val functionReceiverValue = run {
-        val dispatchReceiver = resolvedCall.dispatchReceiver ?:
-                               throw AssertionError("Extension 'invoke' call should have a dispatch receiver")
+        val dispatchReceiver =
+            resolvedCall.dispatchReceiver ?: throw AssertionError("Extension 'invoke' call should have a dispatch receiver")
         generateReceiver(ktCallElement, dispatchReceiver)
     }
 
     val extensionInvokeReceiverValue = run {
-        val extensionReceiver = resolvedCall.extensionReceiver ?:
-                                throw AssertionError("Extension 'invoke' call should have an extension receiver")
+        val extensionReceiver =
+            resolvedCall.extensionReceiver ?: throw AssertionError("Extension 'invoke' call should have an extension receiver")
         generateReceiver(ktCallElement, extensionReceiver)
     }
 
     call.callReceiver =
             if (resolvedCall.call.isSafeCall())
-                SafeExtensionInvokeCallReceiver(this, ktCallElement.startOffset, ktCallElement.endOffset,
-                                                call, functionReceiverValue, extensionInvokeReceiverValue)
+                SafeExtensionInvokeCallReceiver(
+                    this, ktCallElement.startOffset, ktCallElement.endOffset,
+                    call, functionReceiverValue, extensionInvokeReceiverValue
+                )
             else
                 ExtensionInvokeCallReceiver(call, functionReceiverValue, extensionInvokeReceiverValue)
 
@@ -313,11 +348,13 @@ private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, reso
 fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
     val call = CallBuilder(resolvedCall, unwrapCallableDescriptor(resolvedCall.resultingDescriptor))
 
-    call.callReceiver = generateCallReceiver(resolvedCall.call.callElement,
-                                             resolvedCall.resultingDescriptor,
-                                             resolvedCall.dispatchReceiver,
-                                             resolvedCall.extensionReceiver,
-                                             isSafe = resolvedCall.call.isSafeCall())
+    call.callReceiver = generateCallReceiver(
+        resolvedCall.call.callElement,
+        resolvedCall.resultingDescriptor,
+        resolvedCall.dispatchReceiver,
+        resolvedCall.extensionReceiver,
+        isSafe = resolvedCall.call.isSafeCall()
+    )
 
     call.superQualifier = getSuperQualifier(resolvedCall)
 
@@ -325,11 +362,11 @@ fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): 
 }
 
 fun unwrapCallableDescriptor(resultingDescriptor: CallableDescriptor): CallableDescriptor =
-        when (resultingDescriptor) {
-            is ImportedFromObjectCallableDescriptor<*> ->
-                resultingDescriptor.callableFromObject
-            is TypeAliasConstructorDescriptor ->
-                resultingDescriptor.underlyingConstructorDescriptor
-            else ->
-                resultingDescriptor
-        }
+    when (resultingDescriptor) {
+        is ImportedFromObjectCallableDescriptor<*> ->
+            resultingDescriptor.callableFromObject
+        is TypeAliasConstructorDescriptor ->
+            resultingDescriptor.underlyingConstructorDescriptor
+        else ->
+            resultingDescriptor
+    }

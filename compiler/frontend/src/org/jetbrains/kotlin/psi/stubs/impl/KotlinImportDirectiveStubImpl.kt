@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinImportDirectiveStubImpl(
-        parent: StubElement<PsiElement>,
-        private val isAllUnder: Boolean,
-        private val importedFqName: StringRef?,
-        private val isValid: Boolean
+    parent: StubElement<PsiElement>,
+    private val isAllUnder: Boolean,
+    private val importedFqName: StringRef?,
+    private val isValid: Boolean
 ) : KotlinStubBaseImpl<KtImportDirective>(parent, KtStubElementTypes.IMPORT_DIRECTIVE), KotlinImportDirectiveStub {
     override fun isAllUnder(): Boolean = isAllUnder
 

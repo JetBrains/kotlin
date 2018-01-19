@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrWhileLoopImpl(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?) :
-        IrLoopBase(startOffset, endOffset, type, origin), IrWhileLoop {
+    IrLoopBase(startOffset, endOffset, type, origin), IrWhileLoop {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitWhileLoop(this, data)
     }

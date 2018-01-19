@@ -26,11 +26,11 @@ sealed class ResolvedCallArgument {
 
     }
 
-    class SimpleArgument(val callArgument: KotlinCallArgument): ResolvedCallArgument() {
+    class SimpleArgument(val callArgument: KotlinCallArgument) : ResolvedCallArgument() {
         override val arguments: List<KotlinCallArgument>
             get() = listOf(callArgument)
 
     }
 
-    class VarargArgument(override val arguments: List<KotlinCallArgument>): ResolvedCallArgument()
+    class VarargArgument(override val arguments: List<KotlinCallArgument>) : ResolvedCallArgument()
 }

@@ -25,20 +25,21 @@ import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
 
 class KotlinFunctionStubImpl(
-        parent: StubElement<out PsiElement>?,
-        private val nameRef: StringRef?,
-        private val isTopLevel: Boolean,
-        private val fqName: FqName?,
-        private val isExtension: Boolean,
-        private val hasBlockBody: Boolean,
-        private val hasBody: Boolean,
-        private val hasTypeParameterListBeforeFunctionName: Boolean
+    parent: StubElement<out PsiElement>?,
+    private val nameRef: StringRef?,
+    private val isTopLevel: Boolean,
+    private val fqName: FqName?,
+    private val isExtension: Boolean,
+    private val hasBlockBody: Boolean,
+    private val hasBody: Boolean,
+    private val hasTypeParameterListBeforeFunctionName: Boolean
 ) : KotlinStubBaseImpl<KtNamedFunction>(parent, KtStubElementTypes.FUNCTION), KotlinFunctionStub {
     init {
         if (isTopLevel && fqName == null) {
             throw IllegalArgumentException("fqName shouldn't be null for top level functions")
         }
     }
+
     override fun getFqName() = fqName
 
     override fun getName() = StringRef.toString(nameRef)

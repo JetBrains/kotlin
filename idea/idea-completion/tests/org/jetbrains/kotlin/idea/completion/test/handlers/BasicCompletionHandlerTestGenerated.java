@@ -582,6 +582,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("Suspend.kt")
+        public void testSuspend() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/Suspend.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TypeFunctionName.kt")
         public void testTypeFunctionName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/TypeFunctionName.kt");

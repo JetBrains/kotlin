@@ -48,6 +48,7 @@ public class SpecialFiles {
         excludedFiles.add("enumKClassAnnotation.kt");
         excludedFiles.add("primitivesAndArrays.kt");
         excludedFiles.add("getDelegateWithoutReflection.kt");
+        excludedFiles.add("parameterAnnotationInDefaultImpls.kt");
 
         // Reflection is used to check full class name
         excludedFiles.add("native");
@@ -127,9 +128,8 @@ public class SpecialFiles {
         //wrong function resolution after package renaming
         excludedFiles.add("apiVersionAtLeast1.kt");
 
-        //special flags
-        excludedFiles.add("inlineFunInConstructorCallWithEnabledNormalization.kt");
-        excludedFiles.add("kt9532_lv10.kt");
+        //special symbols in names
+        excludedFiles.add("nameWithWhitespace.kt");
     }
 
     private SpecialFiles() {

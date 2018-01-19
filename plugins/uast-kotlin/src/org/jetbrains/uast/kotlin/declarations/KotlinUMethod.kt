@@ -42,6 +42,8 @@ open class KotlinUMethod(
 
     override val sourcePsi = psi.kotlinOrigin
 
+    override fun getSourceElement() = sourcePsi ?: this
+
     override val uastDefaultValue by lz {
         val annotationParameter = psi.kotlinOrigin as? KtParameter ?: return@lz null
         val defaultValue = annotationParameter.defaultValue ?: return@lz null

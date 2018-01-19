@@ -58,8 +58,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             if (isSimpleAssignment) {
                 // Set( Op( Get(), RHS ) )
                 irLValue.store(irOpCall)
-            }
-            else {
+            } else {
                 // Op( Get(), RHS )
                 irOpCall
             }
@@ -109,32 +108,33 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
         return when (descriptor) {
             is SyntheticFieldDescriptor -> {
-                val receiverValue = statementGenerator.generateBackingFieldReceiver(ktLeft.startOffset, ktLeft.endOffset, resolvedCall, descriptor)
+                val receiverValue =
+                    statementGenerator.generateBackingFieldReceiver(ktLeft.startOffset, ktLeft.endOffset, resolvedCall, descriptor)
                 createBackingFieldLValue(ktLeft, descriptor.propertyDescriptor, receiverValue, origin)
             }
             is LocalVariableDescriptor ->
                 @Suppress("DEPRECATION")
                 if (descriptor.isDelegated)
                     DelegatedLocalPropertyLValue(
-                            ktLeft.startOffset, ktLeft.endOffset,
-                            descriptor.type,
-                            descriptor.getter?.let { context.symbolTable.referenceDeclaredFunction(it) },
-                            descriptor.setter?.let { context.symbolTable.referenceDeclaredFunction(it) },
-                            origin
+                        ktLeft.startOffset, ktLeft.endOffset,
+                        descriptor.type,
+                        descriptor.getter?.let { context.symbolTable.referenceDeclaredFunction(it) },
+                        descriptor.setter?.let { context.symbolTable.referenceDeclaredFunction(it) },
+                        origin
                     )
                 else
                     VariableLValue(
-                            ktLeft.startOffset, ktLeft.endOffset,
-                            context.symbolTable.referenceVariable(descriptor),
-                            origin
+                        ktLeft.startOffset, ktLeft.endOffset,
+                        context.symbolTable.referenceVariable(descriptor),
+                        origin
                     )
             is PropertyDescriptor ->
                 generateAssignmentReceiverForProperty(descriptor, origin, ktLeft, resolvedCall)
             is ValueDescriptor ->
                 VariableLValue(
-                        ktLeft.startOffset, ktLeft.endOffset,
-                        context.symbolTable.referenceValue(descriptor),
-                        origin
+                    ktLeft.startOffset, ktLeft.endOffset,
+                    context.symbolTable.referenceValue(descriptor),
+                    origin
                 )
             else ->
                 OnceExpressionValue(statementGenerator.generateExpression(ktLeft))
@@ -142,50 +142,50 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
     }
 
     private fun createBackingFieldLValue(
-            ktExpression: KtExpression,
-            descriptor: PropertyDescriptor,
-            receiverValue: IntermediateValue?,
-            origin: IrStatementOrigin?
+        ktExpression: KtExpression,
+        descriptor: PropertyDescriptor,
+        receiverValue: IntermediateValue?,
+        origin: IrStatementOrigin?
     ): BackingFieldLValue =
-            BackingFieldLValue(
-                    ktExpression.startOffset, ktExpression.endOffset,
-                    descriptor.type,
-                    context.symbolTable.referenceField(descriptor),
-                    receiverValue, origin
-            )
+        BackingFieldLValue(
+            ktExpression.startOffset, ktExpression.endOffset,
+            descriptor.type,
+            context.symbolTable.referenceField(descriptor),
+            receiverValue, origin
+        )
 
     private fun generateAssignmentReceiverForProperty(
-            descriptor: PropertyDescriptor,
-            origin: IrStatementOrigin,
-            ktLeft: KtExpression,
-            resolvedCall: ResolvedCall<*>
+        descriptor: PropertyDescriptor,
+        origin: IrStatementOrigin,
+        ktLeft: KtExpression,
+        resolvedCall: ResolvedCall<*>
     ): AssignmentReceiver =
-            if (isValInitializationInConstructor(descriptor, resolvedCall)) {
-                val thisClass = getThisClass()
-                val irThis = IrGetValueImpl(
-                        ktLeft.startOffset, ktLeft.endOffset,
-                        context.symbolTable.referenceValueParameter(thisClass.thisAsReceiverParameter)
-                )
-                createBackingFieldLValue(ktLeft, descriptor, RematerializableValue(irThis), null)
-            }
-            else {
-                val propertyReceiver = statementGenerator.generateCallReceiver(
-                        ktLeft, descriptor, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
-                        isSafe = resolvedCall.call.isSafeCall(),
-                        isAssignmentReceiver = true)
+        if (isValInitializationInConstructor(descriptor, resolvedCall)) {
+            val thisClass = getThisClass()
+            val irThis = IrGetValueImpl(
+                ktLeft.startOffset, ktLeft.endOffset,
+                context.symbolTable.referenceValueParameter(thisClass.thisAsReceiverParameter)
+            )
+            createBackingFieldLValue(ktLeft, descriptor, RematerializableValue(irThis), null)
+        } else {
+            val propertyReceiver = statementGenerator.generateCallReceiver(
+                ktLeft, descriptor, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
+                isSafe = resolvedCall.call.isSafeCall(),
+                isAssignmentReceiver = true
+            )
 
-                val superQualifier = getSuperQualifier(resolvedCall)
+            val superQualifier = getSuperQualifier(resolvedCall)
 
-                createPropertyLValue(ktLeft, descriptor, propertyReceiver, getTypeArguments(resolvedCall), origin, superQualifier)
-            }
+            createPropertyLValue(ktLeft, descriptor, propertyReceiver, getTypeArguments(resolvedCall), origin, superQualifier)
+        }
 
     private fun createPropertyLValue(
-            ktExpression: KtExpression,
-            descriptor: PropertyDescriptor,
-            propertyReceiver: CallReceiver,
-            typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-            origin: IrStatementOrigin?,
-            superQualifier: ClassDescriptor?
+        ktExpression: KtExpression,
+        descriptor: PropertyDescriptor,
+        propertyReceiver: CallReceiver,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+        origin: IrStatementOrigin?,
+        superQualifier: ClassDescriptor?
     ): PropertyLValueBase {
         val superQualifierSymbol = superQualifier?.let { context.symbolTable.referenceClass(it) }
 
@@ -197,33 +197,32 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
         return if (getterSymbol != null || setterSymbol != null) {
             AccessorPropertyLValue(
-                    scope,
-                    ktExpression.startOffset, ktExpression.endOffset, origin,
-                    descriptor.type,
-                    getterSymbol,
-                    getterDescriptor,
-                    setterSymbol,
-                    setterDescriptor,
-                    typeArguments,
-                    propertyReceiver,
-                    superQualifierSymbol
+                scope,
+                ktExpression.startOffset, ktExpression.endOffset, origin,
+                descriptor.type,
+                getterSymbol,
+                getterDescriptor,
+                setterSymbol,
+                setterDescriptor,
+                typeArguments,
+                propertyReceiver,
+                superQualifierSymbol
             )
-        }
-        else
+        } else
             FieldPropertyLValue(
-                    scope,
-                    ktExpression.startOffset, ktExpression.endOffset, origin,
-                    context.symbolTable.referenceField(descriptor),
-                    propertyReceiver,
-                    superQualifierSymbol
+                scope,
+                ktExpression.startOffset, ktExpression.endOffset, origin,
+                context.symbolTable.referenceField(descriptor),
+                propertyReceiver,
+                superQualifierSymbol
             )
     }
 
     private fun isValInitializationInConstructor(descriptor: PropertyDescriptor, resolvedCall: ResolvedCall<*>): Boolean =
-            !descriptor.isVar &&
-            descriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-            statementGenerator.scopeOwner.let { it is ConstructorDescriptor || it is ClassDescriptor } &&
-            resolvedCall.dispatchReceiver is ThisClassReceiver
+        !descriptor.isVar &&
+                descriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+                statementGenerator.scopeOwner.let { it is ConstructorDescriptor || it is ClassDescriptor } &&
+                resolvedCall.dispatchReceiver is ThisClassReceiver
 
     private fun getThisClass(): ClassDescriptor {
         val scopeOwner = statementGenerator.scopeOwner
@@ -234,7 +233,10 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         }
     }
 
-    private fun generateArrayAccessAssignmentReceiver(ktLeft: KtArrayAccessExpression, origin: IrStatementOrigin): ArrayAccessAssignmentReceiver {
+    private fun generateArrayAccessAssignmentReceiver(
+        ktLeft: KtArrayAccessExpression,
+        origin: IrStatementOrigin
+    ): ArrayAccessAssignmentReceiver {
         val irArray = statementGenerator.generateExpression(ktLeft.arrayExpression!!)
         val irIndexExpressions = ktLeft.indexExpressions.map { statementGenerator.generateExpression(it) }
 
@@ -244,9 +246,11 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val indexedSetResolvedCall = get(BindingContext.INDEXED_LVALUE_SET, ktLeft)
         val indexedSetCall = indexedSetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) }
 
-        return ArrayAccessAssignmentReceiver(irArray, irIndexExpressions, indexedGetCall, indexedSetCall,
-                                             CallGenerator(statementGenerator),
-                                             ktLeft.startOffset, ktLeft.endOffset, origin)
+        return ArrayAccessAssignmentReceiver(
+            irArray, irIndexExpressions, indexedGetCall, indexedSetCall,
+            CallGenerator(statementGenerator),
+            ktLeft.startOffset, ktLeft.endOffset, origin
+        )
     }
 
 }

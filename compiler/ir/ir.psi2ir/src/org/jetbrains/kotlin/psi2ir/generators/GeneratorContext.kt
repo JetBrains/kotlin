@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class GeneratorContext(
-        val configuration: Psi2IrConfiguration,
-        val moduleDescriptor: ModuleDescriptor,
-        val bindingContext: BindingContext
+    val configuration: Psi2IrConfiguration,
+    val moduleDescriptor: ModuleDescriptor,
+    val bindingContext: BindingContext
 ) : IrGeneratorContext(IrBuiltIns(moduleDescriptor.builtIns)) {
     val sourceManager = PsiSourceManager()
 

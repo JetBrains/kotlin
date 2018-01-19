@@ -24,19 +24,19 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrTypeOperatorCallImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    override val operator: IrTypeOperator,
+    override val typeOperand: KotlinType
+) : IrExpressionBase(startOffset, endOffset, type), IrTypeOperatorCall {
+    constructor(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        override val operator: IrTypeOperator,
-        override val typeOperand: KotlinType
-) : IrExpressionBase(startOffset, endOffset, type), IrTypeOperatorCall {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            type: KotlinType,
-            operator: IrTypeOperator,
-            typeOperand: KotlinType,
-            argument: IrExpression
+        operator: IrTypeOperator,
+        typeOperand: KotlinType,
+        argument: IrExpression
     ) : this(startOffset, endOffset, type, operator, typeOperand) {
         this.argument = argument
     }
@@ -44,7 +44,7 @@ class IrTypeOperatorCallImpl(
     override lateinit var argument: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitTypeOperator(this, data)
+        visitor.visitTypeOperator(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         argument.accept(visitor, data)

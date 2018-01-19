@@ -6,4 +6,4 @@ val prop = object : B() {
     }
 }
 
-// REF: x
+// REF: (in object in prop).x

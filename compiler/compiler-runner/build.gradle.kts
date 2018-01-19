@@ -15,7 +15,7 @@ dependencies {
     compileOnly(project(":compiler:daemon-common"))
     compile(project(":kotlin-daemon-client"))
     compileOnly(project(":compiler:util"))
-    runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
+    runtimeOnly(projectRuntimeJar(":kotlin-compiler-embeddable"))
 }
 
 sourceSets {

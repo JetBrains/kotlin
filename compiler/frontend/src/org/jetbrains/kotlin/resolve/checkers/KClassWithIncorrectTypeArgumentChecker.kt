@@ -29,7 +29,12 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 object KClassWithIncorrectTypeArgumentChecker : SimpleDeclarationChecker {
-    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
+    override fun check(
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        bindingContext: BindingContext
+    ) {
         if (descriptor !is CallableMemberDescriptor || descriptor.visibility == Visibilities.LOCAL) return
 
         if (declaration !is KtCallableDeclaration || declaration.typeReference != null) return
@@ -53,7 +58,12 @@ object KClassWithIncorrectTypeArgumentChecker : SimpleDeclarationChecker {
         }
 
         if (typeParameterWithoutNotNullableUpperBound != null) {
-            diagnosticHolder.report(Errors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE.on(declaration, typeParameterWithoutNotNullableUpperBound!!))
+            diagnosticHolder.report(
+                Errors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE.on(
+                    declaration,
+                    typeParameterWithoutNotNullableUpperBound!!
+                )
+            )
         }
     }
 

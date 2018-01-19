@@ -28,14 +28,13 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 
 class AllUnderImportScope(
-        descriptor: DeclarationDescriptor,
-        excludedImportNames: Collection<FqName>
+    descriptor: DeclarationDescriptor,
+    excludedImportNames: Collection<FqName>
 ) : BaseImportingScope(null) {
 
     private val scopes: List<MemberScope> = if (descriptor is ClassDescriptor) {
         listOf(descriptor.staticScope, descriptor.unsubstitutedInnerClassesScope)
-    }
-    else {
+    } else {
         assert(descriptor is PackageViewDescriptor) {
             "Must be class or package view descriptor: $descriptor"
         }
@@ -44,8 +43,7 @@ class AllUnderImportScope(
 
     private val excludedNames: Set<Name> = if (excludedImportNames.isEmpty()) { // optimization
         emptySet<Name>()
-    }
-    else {
+    } else {
         val fqName = DescriptorUtils.getFqNameSafe(descriptor)
         // toSet() is used here instead mapNotNullTo(hashSetOf()) because it results in not keeping empty sets as separate instances
         excludedImportNames.mapNotNull { if (it.parent() == fqName) it.shortName() else null }.toSet()
@@ -54,21 +52,20 @@ class AllUnderImportScope(
     override fun computeImportedNames(): Set<Name>? = scopes.flatMapToNullable(hashSetOf(), MemberScope::computeAllNames)
 
     override fun getContributedDescriptors(
-            kindFilter: DescriptorKindFilter,
-            nameFilter: (Name) -> Boolean,
-            changeNamesForAliased: Boolean
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean,
+        changeNamesForAliased: Boolean
     ): Collection<DeclarationDescriptor> {
         val nameFilterToUse = if (excludedNames.isEmpty()) { // optimization
             nameFilter
-        }
-        else {
+        } else {
             { it !in excludedNames && nameFilter(it) }
         }
 
         val noPackagesKindFilter = kindFilter.withoutKinds(DescriptorKindFilter.PACKAGES_MASK)
         return scopes
-                .flatMap { it.getContributedDescriptors(noPackagesKindFilter, nameFilterToUse) }
-                .filter { it !is PackageViewDescriptor } // subpackages are not imported
+            .flatMap { it.getContributedDescriptors(noPackagesKindFilter, nameFilterToUse) }
+            .filter { it !is PackageViewDescriptor } // subpackages are not imported
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {

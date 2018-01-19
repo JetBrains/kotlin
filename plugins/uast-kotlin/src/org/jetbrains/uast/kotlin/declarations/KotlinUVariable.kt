@@ -241,7 +241,7 @@ class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override va
         get() = emptyList()
     override val psi: PsiElement?
         get() = null
-    override val javaPsi: PsiElement?
+    override val javaPsi: PsiAnnotation?
         get() = null
     override val sourcePsi: PsiElement?
         get() = null
@@ -269,6 +269,7 @@ open class KotlinUField(
         override val sourcePsi: KtElement?,
         givenParent: UElement?
 ) : AbstractKotlinUVariable(givenParent), UField, PsiField by psi {
+    override fun getSourceElement() = sourcePsi ?: this
 
     override val javaPsi  = unwrap<UField, PsiField>(psi)
 

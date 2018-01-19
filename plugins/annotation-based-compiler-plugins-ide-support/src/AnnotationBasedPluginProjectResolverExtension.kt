@@ -56,7 +56,7 @@ abstract class AnnotationBasedPluginProjectResolverExtension<T : AnnotationBased
         val model = resolverCtx.getExtraProject(gradleModule, modelClass)
 
         if (model != null) {
-            ideModule.putUserData(userDataKey, model)
+            ideModule.putCopyableUserData(userDataKey, model)
         }
 
         super.populateModuleExtraModels(gradleModule, ideModule)

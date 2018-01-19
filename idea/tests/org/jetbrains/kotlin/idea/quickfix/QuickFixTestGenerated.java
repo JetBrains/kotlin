@@ -1563,9 +1563,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeUnusedConstructorParameterWithUsage.kt")
+        public void testRemoveUnusedConstructorParameterWithUsage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedConstructorParameterWithUsage.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeUnusedExtensionParameter.kt")
         public void testRemoveUnusedExtensionParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedExtensionParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeUnusedInternalConstructorParameter.kt")
+        public void testRemoveUnusedInternalConstructorParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedInternalConstructorParameter.kt");
             doTest(fileName);
         }
 

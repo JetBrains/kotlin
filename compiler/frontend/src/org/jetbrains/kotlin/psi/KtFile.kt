@@ -36,13 +36,13 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
-        PsiFileBase(viewProvider, KotlinLanguage.INSTANCE),
-        KtDeclarationContainer,
-        KtAnnotated,
-        KtElement,
-        PsiClassOwner,
-        PsiNamedElement,
-        PsiModifiableCodeBlock {
+    PsiFileBase(viewProvider, KotlinLanguage.INSTANCE),
+    KtDeclarationContainer,
+    KtAnnotated,
+    KtElement,
+    PsiClassOwner,
+    PsiNamedElement,
+    PsiModifiableCodeBlock {
 
     @Volatile
     private var isScript: Boolean? = null
@@ -85,8 +85,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
             val packageDirective = packageDirective
             if (packageDirective != null) {
                 packageDirective.fqName = value
-            }
-            else {
+            } else {
                 val newPackageDirective = KtPsiFactory(this).createPackageDirectiveIfNeeded(value) ?: return
                 addAfter(newPackageDirective, null)
             }
@@ -126,8 +125,8 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
         get() {
             val stub = stub
             val danglingModifierLists = stub?.getChildrenByType(
-                    KtStubElementTypes.MODIFIER_LIST,
-                    KtStubElementTypes.MODIFIER_LIST.arrayFactory
+                KtStubElementTypes.MODIFIER_LIST,
+                KtStubElementTypes.MODIFIER_LIST.arrayFactory
             ) ?: findChildrenByClass(KtModifierList::class.java)
             return danglingModifierLists.flatMap { obj: KtModifierList -> obj.annotationEntries }
         }
@@ -139,12 +138,12 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     override fun getDeclarations(): List<KtDeclaration> {
         val stub = stub
         return stub?.getChildrenByType(KtStubElementTypes.DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
-               ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
+                ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
     }
 
     fun <T : KtElementImplStub<out StubElement<*>>> findChildByTypeOrClass(
-            elementType: KtPlaceHolderStubElementType<T>,
-            elementClass: Class<T>
+        elementType: KtPlaceHolderStubElementType<T>,
+        elementClass: Class<T>
     ): T? {
         val stub = stub
         if (stub != null) {
@@ -155,7 +154,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     }
 
     fun findImportByAlias(name: String): KtImportDirective? =
-            importDirectives.firstOrNull { name == it.aliasName }
+        importDirectives.firstOrNull { name == it.aliasName }
 
     @Deprecated("") // getPackageFqName should be used instead
     override fun getPackageName(): String {
@@ -188,9 +187,9 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
 
         val result = declarations.any {
             (it is KtProperty ||
-             it is KtNamedFunction ||
-             it is KtScript ||
-             it is KtTypeAlias) && !it.hasExpectModifier()
+                    it is KtNamedFunction ||
+                    it is KtScript ||
+                    it is KtTypeAlias) && !it.hasExpectModifier()
         }
 
         hasTopLeveCallables = result
@@ -201,8 +200,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
         if (visitor is KtVisitor<*, *>) {
             @Suppress("UNCHECKED_CAST")
             accept(visitor as KtVisitor<Any, Any?>, null)
-        }
-        else {
+        } else {
             visitor.visitFile(this)
         }
     }
@@ -218,10 +216,10 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     }
 
     override fun getAnnotations(): List<KtAnnotation> =
-            fileAnnotationList?.annotations ?: emptyList()
+        fileAnnotationList?.annotations ?: emptyList()
 
     override fun getAnnotationEntries(): List<KtAnnotationEntry> =
-            fileAnnotationList?.annotationEntries ?: emptyList()
+        fileAnnotationList?.annotationEntries ?: emptyList()
 
     @Throws(IncorrectOperationException::class)
     override fun setName(name: String): PsiElement {

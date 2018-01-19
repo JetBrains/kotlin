@@ -369,11 +369,6 @@ public class ErrorUtils {
     }
 
     @NotNull
-    public static ClassDescriptor createErrorClassWithExactName(@NotNull Name name) {
-        return new ErrorClassDescriptor(name);
-    }
-
-    @NotNull
     public static MemberScope createErrorScope(@NotNull String debugMessage) {
         return createErrorScope(debugMessage, false);
     }

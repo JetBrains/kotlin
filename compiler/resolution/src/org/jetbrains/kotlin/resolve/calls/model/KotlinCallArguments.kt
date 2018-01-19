@@ -88,7 +88,7 @@ interface FunctionExpression : LambdaKotlinCallArgument {
  * D.E::foo <-> Expression
  */
 sealed class LHSResult {
-    class Type(val qualifier: QualifierReceiver, resolvedType: UnwrappedType): LHSResult() {
+    class Type(val qualifier: QualifierReceiver, resolvedType: UnwrappedType) : LHSResult() {
         val unboundDetailedReceiver: ReceiverValueWithSmartCastInfo
 
         init {
@@ -101,7 +101,7 @@ sealed class LHSResult {
         }
     }
 
-    class Object(val qualifier: QualifierReceiver): LHSResult() {
+    class Object(val qualifier: QualifierReceiver) : LHSResult() {
         val objectValueReceiver: ReceiverValueWithSmartCastInfo
 
         init {
@@ -111,12 +111,13 @@ sealed class LHSResult {
             objectValueReceiver = qualifier.classValueReceiverWithSmartCastInfo ?: error("class value should be not null for $qualifier")
         }
     }
-    class Expression(val lshCallArgument: SimpleKotlinCallArgument): LHSResult()
+
+    class Expression(val lshCallArgument: SimpleKotlinCallArgument) : LHSResult()
 
     // todo this case is forbid for now
-    object Empty: LHSResult()
+    object Empty : LHSResult()
 
-    object Error: LHSResult()
+    object Error : LHSResult()
 }
 
 interface CallableReferenceKotlinCallArgument : PostponableKotlinCallArgument {
@@ -135,6 +136,6 @@ interface TypeArgument
 // todo allow '_' in frontend
 object TypeArgumentPlaceholder : TypeArgument
 
-interface SimpleTypeArgument: TypeArgument {
+interface SimpleTypeArgument : TypeArgument {
     val type: UnwrappedType
 }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getContainingClass
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -43,6 +44,8 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
+private val RETENTION_PARAMETER_NAME = Name.identifier("value")
 
 fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = companionObjectDescriptor ?: this
 
@@ -215,11 +218,10 @@ fun Annotated.isDocumentedAnnotation(): Boolean =
         annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) != null
 
 fun Annotated.getAnnotationRetention(): KotlinRetention? {
-    val retentionArgumentValue = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention)
-                                         ?.allValueArguments
-                                         ?.get(Name.identifier("value"))
-                                         as? EnumValue ?: return null
-    return KotlinRetention.valueOf(retentionArgumentValue.value.name.asString())
+    val retentionArgumentValue =
+            annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention)?.allValueArguments?.get(RETENTION_PARAMETER_NAME)
+                    as? EnumValue ?: return null
+    return KotlinRetention.valueOf(retentionArgumentValue.enumEntryName.asString())
 }
 
 val DeclarationDescriptor.parentsWithSelf: Sequence<DeclarationDescriptor>
@@ -416,7 +418,7 @@ fun ClassDescriptor.isSubclassOf(superclass: ClassDescriptor): Boolean = Descrip
 val AnnotationDescriptor.annotationClass: ClassDescriptor?
     get() = type.constructor.declarationDescriptor as? ClassDescriptor
 
-fun AnnotationDescriptor.firstArgumentValue() = allValueArguments.values.firstOrNull()?.value
+fun AnnotationDescriptor.firstArgument(): ConstantValue<*>? = allValueArguments.values.firstOrNull()
 
 fun MemberDescriptor.isEffectivelyExternal(): Boolean {
     if (isExternal) return true

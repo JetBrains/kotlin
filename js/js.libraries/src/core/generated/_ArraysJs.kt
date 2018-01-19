@@ -3948,7 +3948,7 @@ public fun <T> Array<out T>.takeLast(n: Int): List<T> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<T>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
@@ -3963,7 +3963,7 @@ public fun ByteArray.takeLast(n: Int): List<Byte> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Byte>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
@@ -3978,7 +3978,7 @@ public fun ShortArray.takeLast(n: Int): List<Short> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Short>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
@@ -3993,7 +3993,7 @@ public fun IntArray.takeLast(n: Int): List<Int> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Int>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
@@ -4008,7 +4008,7 @@ public fun LongArray.takeLast(n: Int): List<Long> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Long>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
@@ -4023,7 +4023,7 @@ public fun FloatArray.takeLast(n: Int): List<Float> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Float>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
@@ -4038,7 +4038,7 @@ public fun DoubleArray.takeLast(n: Int): List<Double> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Double>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
@@ -4053,7 +4053,7 @@ public fun BooleanArray.takeLast(n: Int): List<Boolean> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Boolean>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
@@ -4068,7 +4068,7 @@ public fun CharArray.takeLast(n: Int): List<Char> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Char>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
@@ -11729,7 +11729,7 @@ public infix fun <R> CharArray.zip(other: Array<out R>): List<Pair<Char, R>> {
 public inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11741,7 +11741,7 @@ public inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (a:
 public inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (a: Byte, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11753,7 +11753,7 @@ public inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (a: Byte,
 public inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (a: Short, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11765,7 +11765,7 @@ public inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (a: Shor
 public inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (a: Int, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11777,7 +11777,7 @@ public inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (a: Int, b
 public inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (a: Long, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11789,7 +11789,7 @@ public inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (a: Long,
 public inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (a: Float, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11801,7 +11801,7 @@ public inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (a: Floa
 public inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (a: Double, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11813,7 +11813,7 @@ public inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (a: Dou
 public inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (a: Boolean, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11825,7 +11825,7 @@ public inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (a: Bo
 public inline fun <R, V> CharArray.zip(other: Array<out R>, transform: (a: Char, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12082,7 +12082,7 @@ public infix fun CharArray.zip(other: CharArray): List<Pair<Char, Char>> {
 public inline fun <V> ByteArray.zip(other: ByteArray, transform: (a: Byte, b: Byte) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12094,7 +12094,7 @@ public inline fun <V> ByteArray.zip(other: ByteArray, transform: (a: Byte, b: By
 public inline fun <V> ShortArray.zip(other: ShortArray, transform: (a: Short, b: Short) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12106,7 +12106,7 @@ public inline fun <V> ShortArray.zip(other: ShortArray, transform: (a: Short, b:
 public inline fun <V> IntArray.zip(other: IntArray, transform: (a: Int, b: Int) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12118,7 +12118,7 @@ public inline fun <V> IntArray.zip(other: IntArray, transform: (a: Int, b: Int) 
 public inline fun <V> LongArray.zip(other: LongArray, transform: (a: Long, b: Long) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12130,7 +12130,7 @@ public inline fun <V> LongArray.zip(other: LongArray, transform: (a: Long, b: Lo
 public inline fun <V> FloatArray.zip(other: FloatArray, transform: (a: Float, b: Float) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12142,7 +12142,7 @@ public inline fun <V> FloatArray.zip(other: FloatArray, transform: (a: Float, b:
 public inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (a: Double, b: Double) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12154,7 +12154,7 @@ public inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (a: Double,
 public inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (a: Boolean, b: Boolean) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12166,7 +12166,7 @@ public inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (a: Boole
 public inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Char) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list

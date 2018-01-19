@@ -46,10 +46,10 @@ fun CallableDescriptor.isLowPriorityFromStdlibJre7Or8(): Boolean {
     if (!packageFqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return false
 
     val isFromStdlibJre7Or8 =
-            packageFqName == kotlin && name == use ||
-            packageFqName == kotlinText && name == get ||
-            packageFqName == kotlinCollections && (name == getOrDefault || name == remove) ||
-            packageFqName == kotlinStreams
+        packageFqName == kotlin && name == use ||
+                packageFqName == kotlinText && name == get ||
+                packageFqName == kotlinCollections && (name == getOrDefault || name == remove) ||
+                packageFqName == kotlinStreams
 
     if (!isFromStdlibJre7Or8) return false
 

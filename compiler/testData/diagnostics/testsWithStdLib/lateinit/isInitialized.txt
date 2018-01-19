@@ -30,7 +30,7 @@ public open class Foo : Base {
         invisible_fake final override /*1*/ lateinit /*fake_override*/ var y: kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final inline override /*1*/ /*fake_override*/ fun inlineFun(): kotlin.Unit
+        public final override /*1*/ inline /*fake_override*/ fun inlineFun(): kotlin.Unit
         public final fun innerOk(): kotlin.Unit
         public final override /*1*/ /*fake_override*/ fun ok(): kotlin.Unit
         public final override /*1*/ /*fake_override*/ fun onLiteral(): kotlin.Unit
@@ -46,7 +46,7 @@ public final class FooImpl : Foo {
     invisible_fake final override /*1*/ lateinit /*fake_override*/ var y: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final inline override /*1*/ /*fake_override*/ fun inlineFun(): kotlin.Unit
+    public final override /*1*/ inline /*fake_override*/ fun inlineFun(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun ok(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun onLiteral(): kotlin.Unit
     public final fun onNonAccessible(): kotlin.Unit
@@ -61,7 +61,7 @@ public final class OtherFooImpl : Foo {
     invisible_fake final override /*1*/ lateinit /*fake_override*/ var y: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final inline override /*1*/ /*fake_override*/ fun inlineFun(): kotlin.Unit
+    public final override /*1*/ inline /*fake_override*/ fun inlineFun(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun ok(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun onLiteral(): kotlin.Unit
     public final fun onNonAccessible(): kotlin.Unit

@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.types.isError
 
 object ConstModifierChecker : SimpleDeclarationChecker {
     override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        bindingContext: BindingContext
     ) {
         if (descriptor !is VariableDescriptor || !declaration.hasModifier(KtTokens.CONST_KEYWORD)) return
 
@@ -45,11 +45,13 @@ object ConstModifierChecker : SimpleDeclarationChecker {
     }
 
     fun canBeConst(declaration: KtDeclaration, constModifierPsiElement: PsiElement, descriptor: VariableDescriptor): Boolean =
-            checkCanBeConst(declaration, constModifierPsiElement, descriptor).canBeConst
+        checkCanBeConst(declaration, constModifierPsiElement, descriptor).canBeConst
 
-    private fun checkCanBeConst(declaration: KtDeclaration,
-                        constModifierPsiElement: PsiElement,
-                        descriptor: VariableDescriptor): ConstApplicability {
+    private fun checkCanBeConst(
+        declaration: KtDeclaration,
+        constModifierPsiElement: PsiElement,
+        descriptor: VariableDescriptor
+    ): ConstApplicability {
         if (descriptor.isVar) {
             return Errors.WRONG_MODIFIER_TARGET.on(constModifierPsiElement, KtTokens.CONST_KEYWORD, "vars").nonApplicable()
         }

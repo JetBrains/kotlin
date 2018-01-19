@@ -21,14 +21,11 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.AnnotationValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
@@ -45,7 +42,6 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
         storageManager, kotlinClassFinder
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module, notFoundClasses)
-    private val factory = ConstantValueFactory(module.builtIns)
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
             annotationDeserializer.deserializeAnnotation(proto, nameResolver)
@@ -65,7 +61,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             initializer
         }
 
-        return factory.createConstantValue(normalizedValue)
+        return ConstantValueFactory.createConstantValue(normalizedValue)
     }
 
     override fun loadPropertyAnnotations(
@@ -98,7 +94,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             override fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name) {
-                arguments[name] = enumEntryValue(enumClassId, enumEntryName)
+                arguments[name] = EnumValue(enumClassId, enumEntryName)
             }
 
             override fun visitArray(name: Name): AnnotationArrayArgumentVisitor? {
@@ -110,13 +106,13 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                     }
 
                     override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
-                        elements.add(enumEntryValue(enumClassId, enumEntryName))
+                        elements.add(EnumValue(enumClassId, enumEntryName))
                     }
 
                     override fun visitEnd() {
                         val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                         if (parameter != null) {
-                            arguments[name] = factory.createArrayValue(elements.compact(), parameter.type)
+                            arguments[name] = ConstantValueFactory.createArrayValue(elements.compact(), parameter.type)
                         }
                     }
                 }
@@ -133,25 +129,13 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                 }
             }
 
-            // NOTE: see analogous code in AnnotationDeserializer
-            private fun enumEntryValue(enumClassId: ClassId, name: Name): ConstantValue<*> {
-                val enumClass = resolveClass(enumClassId)
-                if (enumClass.kind == ClassKind.ENUM_CLASS) {
-                    val classifier = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(name, NoLookupLocation.FROM_JAVA_LOADER)
-                    if (classifier is ClassDescriptor) {
-                        return factory.createEnumValue(classifier)
-                    }
-                }
-                return factory.createErrorValue("Unresolved enum entry: $enumClassId.$name")
-            }
-
             override fun visitEnd() {
                 result.add(AnnotationDescriptorImpl(annotationClass.defaultType, arguments, source))
             }
 
             private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {
-                return factory.createConstantValue(value) ?:
-                       factory.createErrorValue("Unsupported annotation argument: $name")
+                return ConstantValueFactory.createConstantValue(value)
+                       ?: ErrorValue.create("Unsupported annotation argument: $name")
             }
         }
     }

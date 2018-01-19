@@ -25,16 +25,17 @@ import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class LocalClassGenerator(statementGenerator: StatementGenerator): StatementGeneratorExtension(statementGenerator) {
+class LocalClassGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateObjectLiteral(ktObjectLiteral: KtObjectLiteralExpression): IrStatement {
         val objectLiteralType = getInferredTypeWithImplicitCastsOrFail(ktObjectLiteral)
-        val irBlock = IrBlockImpl(ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType, IrStatementOrigin.OBJECT_LITERAL)
+        val irBlock =
+            IrBlockImpl(ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType, IrStatementOrigin.OBJECT_LITERAL)
 
         val irClass = DeclarationGenerator(statementGenerator.context).generateClassOrObjectDeclaration(ktObjectLiteral.objectDeclaration)
         irBlock.statements.add(irClass)
 
-        val objectConstructor = irClass.descriptor.unsubstitutedPrimaryConstructor ?:
-                                throw AssertionError("Object literal should have a primary constructor: ${irClass.descriptor}")
+        val objectConstructor = irClass.descriptor.unsubstitutedPrimaryConstructor
+                ?: throw AssertionError("Object literal should have a primary constructor: ${irClass.descriptor}")
         assert(objectConstructor.dispatchReceiverParameter == null) {
             "Object literal constructor should have no dispatch receiver parameter: $objectConstructor"
         }
@@ -46,19 +47,19 @@ class LocalClassGenerator(statementGenerator: StatementGenerator): StatementGene
         }
 
         irBlock.statements.add(
-                IrCallImpl(
-                        ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType,
-                        context.symbolTable.referenceConstructor(objectConstructor),
-                        objectConstructor,
-                        null,
-                        IrStatementOrigin.OBJECT_LITERAL
-                )
+            IrCallImpl(
+                ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType,
+                context.symbolTable.referenceConstructor(objectConstructor),
+                objectConstructor,
+                null,
+                IrStatementOrigin.OBJECT_LITERAL
+            )
         )
 
         return irBlock
     }
 
     fun generateLocalClass(ktClassOrObject: KtClassOrObject): IrStatement =
-            DeclarationGenerator(statementGenerator.context).generateClassOrObjectDeclaration(ktClassOrObject)
+        DeclarationGenerator(statementGenerator.context).generateClassOrObjectDeclaration(ktClassOrObject)
 
 }

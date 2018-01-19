@@ -38,7 +38,7 @@ interface DiagnosticSuppressor {
 
     companion object {
         val EP_NAME: ExtensionPointName<DiagnosticSuppressor> =
-                ExtensionPointName.create<DiagnosticSuppressor>("org.jetbrains.kotlin.diagnosticSuppressor")
+            ExtensionPointName.create<DiagnosticSuppressor>("org.jetbrains.kotlin.diagnosticSuppressor")
     }
 }
 
@@ -46,12 +46,12 @@ abstract class KotlinSuppressCache {
     private val diagnosticSuppressors = ExtensionProvider.create(DiagnosticSuppressor.EP_NAME)
 
     // The cache is weak: we're OK with losing it
-    private val suppressors =  ContainerUtil.createConcurrentWeakValueMap<KtAnnotated, Suppressor>()
+    private val suppressors = ContainerUtil.createConcurrentWeakValueMap<KtAnnotated, Suppressor>()
 
     val filter: (Diagnostic) -> Boolean = { diagnostic: Diagnostic -> !isSuppressed(diagnostic) }
 
     fun isSuppressed(psiElement: PsiElement, suppressionKey: String, severity: Severity) =
-            isSuppressed(StringSuppressRequest(psiElement, severity, suppressionKey.toLowerCase()))
+        isSuppressed(StringSuppressRequest(psiElement, severity, suppressionKey.toLowerCase()))
 
     fun isSuppressed(diagnostic: Diagnostic): Boolean = isSuppressed(DiagnosticSuppressRequest(diagnostic))
 
@@ -224,12 +224,13 @@ abstract class KotlinSuppressCache {
     }
 
     private class StringSuppressRequest(
-            override val element: PsiElement,
-            override val severity: Severity,
-            override val suppressKey: String) : SuppressRequest
+        override val element: PsiElement,
+        override val severity: Severity,
+        override val suppressKey: String
+    ) : SuppressRequest
 
     private class DiagnosticSuppressRequest(val diagnostic: Diagnostic) : SuppressRequest {
-        override val element: PsiElement get() =  diagnostic.psiElement
+        override val element: PsiElement get() = diagnostic.psiElement
         override val severity: Severity get() = diagnostic.severity
         override val suppressKey: String get() = getDiagnosticSuppressKey(diagnostic)
     }
@@ -241,8 +242,7 @@ class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressC
 
         return if (descriptor != null) {
             descriptor.annotations.toList()
-        }
-        else {
+        } else {
             annotated.annotationEntries.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
         }
     }

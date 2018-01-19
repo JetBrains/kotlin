@@ -1,5 +1,3 @@
-
-
 import org.gradle.jvm.tasks.Jar
 
 apply { plugin("kotlin") }
@@ -89,6 +87,11 @@ dependencies {
     (rootProject.extra["compilerModules"] as Array<String>).forEach {
         testCompile(project(it))
     }
+}
+
+val processResources: Copy by tasks
+processResources.from("../compiler/cli/src") {
+    include("META-INF/extensions/compiler.xml")
 }
 
 sourceSets {

@@ -47,11 +47,15 @@ interface ConstraintSystemBuilder : ConstraintSystemOperation {
     fun buildCurrentSubstitutor(): NewTypeSubstitutor
 }
 
-fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition) =
-        runTransaction {
-            if (!hasContradiction) addSubtypeConstraint(lowerType, upperType, position)
-            !hasContradiction
-        }
+fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(
+    lowerType: UnwrappedType,
+    upperType: UnwrappedType,
+    position: ConstraintPosition
+) =
+    runTransaction {
+        if (!hasContradiction) addSubtypeConstraint(lowerType, upperType, position)
+        !hasContradiction
+    }
 
 
 fun PostponedArgumentsAnalyzer.Context.addSubsystemFromArgument(argument: KotlinCallArgument?) {

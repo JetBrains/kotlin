@@ -41,23 +41,26 @@ class DeprecatedMavenDependencyInspection : DomElementsInspection<MavenDomProjec
 
         for (libInfo in DEPRECATED_LIBRARIES_INFORMATION) {
             pomFile.findDependencies(MavenId(libInfo.old.groupId, libInfo.old.name, null))
-                    .filter { it.version?.stringValue != null }
-                    .filter {
-                        val libVersion = project.findDependencies(libInfo.old.groupId, libInfo.old.name).map { it.version }.distinct().singleOrNull()
-                        libVersion != null && VersionComparatorUtil.COMPARATOR.compare(libVersion, libInfo.outdatedAfterVersion) >= 0
-                    }
-                    .forEach { dependency ->
-                        val xmlElement = dependency.artifactId.xmlElement
-                        if (xmlElement != null) {
-                            val fix = ReplaceStringInDocumentFix(xmlElement, libInfo.old.name, libInfo.new.name)
+                .filter { it.version?.stringValue != null }
+                .filter {
+                    val libVersion =
+                        project.findDependencies(libInfo.old.groupId, libInfo.old.name).map { it.version }.distinct().singleOrNull()
+                    libVersion != null && VersionComparatorUtil.COMPARATOR.compare(libVersion, libInfo.outdatedAfterVersion) >= 0
+                }
+                .forEach { dependency ->
+                    val xmlElement = dependency.artifactId.xmlElement
+                    if (xmlElement != null) {
+                        val fix = ReplaceStringInDocumentFix(xmlElement, libInfo.old.name, libInfo.new.name)
 
-                            holder.createProblem(dependency.artifactId,
-                                                 ProblemHighlightType.LIKE_DEPRECATED,
-                                                 libInfo.message,
-                                                 null,
-                                                 fix)
-                        }
+                        holder.createProblem(
+                            dependency.artifactId,
+                            ProblemHighlightType.LIKE_DEPRECATED,
+                            libInfo.message,
+                            null,
+                            fix
+                        )
                     }
+                }
         }
     }
 }

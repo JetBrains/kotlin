@@ -21,17 +21,16 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 
 inline fun <reified T> Scope.assertCastOwner() =
-        scopeOwner as? T ?:
-        throw AssertionError("Unexpected scopeOwner: $scopeOwner")
+    scopeOwner as? T ?: throw AssertionError("Unexpected scopeOwner: $scopeOwner")
 
 fun Scope.functionOwner(): FunctionDescriptor =
-        assertCastOwner()
+    assertCastOwner()
 
 fun Scope.classOwner(): ClassDescriptor =
-        scopeOwner.let {
-            when (it) {
-                is ClassDescriptor -> it
-                is MemberDescriptor -> it.containingDeclaration as ClassDescriptor
-                else -> throw AssertionError("Unexpected scopeOwner: $scopeOwner")
-            }
+    scopeOwner.let {
+        when (it) {
+            is ClassDescriptor -> it
+            is MemberDescriptor -> it.containingDeclaration as ClassDescriptor
+            else -> throw AssertionError("Unexpected scopeOwner: $scopeOwner")
         }
+    }

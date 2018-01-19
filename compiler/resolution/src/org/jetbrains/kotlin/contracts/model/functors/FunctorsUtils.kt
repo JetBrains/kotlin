@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.contracts.model.ESExpression
  * Applies [operation] to [first] and [second] if both not-null, otherwise returns null
  */
 internal fun <F, S, R> applyIfBothNotNull(first: F?, second: S?, operation: (F, S) -> R): R? =
-        if (first == null || second == null) null else operation(first, second)
+    if (first == null || second == null) null else operation(first, second)
 
 /**
  * If both [first] and [second] are null, then return null
@@ -40,15 +40,18 @@ internal fun <F : R, S : R, R> applyWithDefault(first: F?, second: S?, operation
 }
 
 internal fun foldConditionsWithOr(list: List<ConditionalEffect>): ESExpression? =
-        if (list.isEmpty())
-            null
-        else
-            list.map { it.condition }.reduce { acc, condition -> ESOr(acc, condition) }
+    if (list.isEmpty())
+        null
+    else
+        list.map { it.condition }.reduce { acc, condition -> ESOr(acc, condition) }
 
 /**
  * Places all clauses that equal to `firstModel` into first list, and all clauses that equal to `secondModel` into second list
  */
-internal fun List<ConditionalEffect>.strictPartition(firstModel: ESEffect, secondModel: ESEffect): Pair<List<ConditionalEffect>, List<ConditionalEffect>> {
+internal fun List<ConditionalEffect>.strictPartition(
+    firstModel: ESEffect,
+    secondModel: ESEffect
+): Pair<List<ConditionalEffect>, List<ConditionalEffect>> {
     val first = mutableListOf<ConditionalEffect>()
     val second = mutableListOf<ConditionalEffect>()
 

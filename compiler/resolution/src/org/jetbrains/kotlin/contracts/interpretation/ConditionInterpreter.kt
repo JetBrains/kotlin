@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.contracts.model.ESExpression
 import org.jetbrains.kotlin.contracts.model.functors.IsFunctor
 import org.jetbrains.kotlin.contracts.model.structure.*
 
-internal class ConditionInterpreter(private val dispatcher: ContractInterpretationDispatcher) : ContractDescriptionVisitor<ESExpression?, Unit> {
+internal class ConditionInterpreter(private val dispatcher: ContractInterpretationDispatcher) :
+    ContractDescriptionVisitor<ESExpression?, Unit> {
     override fun visitLogicalOr(logicalOr: LogicalOr, data: Unit): ESExpression? {
         val left = logicalOr.left.accept(this, data) ?: return null
         val right = logicalOr.right.accept(this, data) ?: return null
@@ -51,8 +52,8 @@ internal class ConditionInterpreter(private val dispatcher: ContractInterpretati
     }
 
     override fun visitBooleanConstantDescriptor(booleanConstantDescriptor: BooleanConstantReference, data: Unit): ESExpression? =
-            dispatcher.interpretConstant(booleanConstantDescriptor)
+        dispatcher.interpretConstant(booleanConstantDescriptor)
 
     override fun visitBooleanVariableReference(booleanVariableReference: BooleanVariableReference, data: Unit): ESExpression? =
-            dispatcher.interpretVariable(booleanVariableReference)
+        dispatcher.interpretVariable(booleanVariableReference)
 }

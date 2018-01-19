@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
 fun getReceiverValueWithSmartCast(
-        receiverArgument: ReceiverValue?,
-        smartCastType: KotlinType?
+    receiverArgument: ReceiverValue?,
+    smartCastType: KotlinType?
 ) = smartCastType?.let(::SmartCastReceiverValue) ?: receiverArgument
 
 private class SmartCastReceiverValue(private val type: KotlinType) : ReceiverValue {

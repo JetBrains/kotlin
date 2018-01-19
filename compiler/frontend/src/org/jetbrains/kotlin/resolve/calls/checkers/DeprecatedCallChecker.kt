@@ -40,9 +40,9 @@ object DeprecatedCallChecker : CallChecker {
     }
 
     private fun check(
-            targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement,
-            languageVersionSettings: LanguageVersionSettings,
-            deprecationResolver: DeprecationResolver
+        targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement,
+        languageVersionSettings: LanguageVersionSettings,
+        deprecationResolver: DeprecationResolver
     ) {
         // Objects will be checked by DeprecatedClassifierUsageChecker
         if (targetDescriptor is FakeCallableDescriptorForObject) return
@@ -58,8 +58,7 @@ object DeprecatedCallChecker : CallChecker {
             for (deprecation in deprecations) {
                 trace.report(createDeprecationDiagnostic(element, deprecation, languageVersionSettings))
             }
-        }
-        else if (targetDescriptor is PropertyDescriptor && shouldCheckPropertyGetter(element)) {
+        } else if (targetDescriptor is PropertyDescriptor && shouldCheckPropertyGetter(element)) {
             targetDescriptor.getter?.let { check(it, trace, element, languageVersionSettings, deprecationResolver) }
         }
     }

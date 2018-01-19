@@ -26,20 +26,22 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class AnonymousInitializerGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
-    fun generateAnonymousInitializerDeclaration(ktAnonymousInitializer: KtAnonymousInitializer, classDescriptor: ClassDescriptor): IrDeclaration =
-            context.symbolTable.declareAnonymousInitializer(
-                    ktAnonymousInitializer.startOffset, ktAnonymousInitializer.endOffset, IrDeclarationOrigin.DEFINED, classDescriptor
-            ).buildWithScope { irAnonymousInitializer ->
-                val bodyGenerator = createBodyGenerator(irAnonymousInitializer.symbol)
-                val statementGenerator = bodyGenerator.createStatementGenerator()
-                val ktBody = ktAnonymousInitializer.body!!
-                val irBlockBody = IrBlockBodyImpl(ktBody.startOffset, ktBody.endOffset)
-                if (ktBody is KtBlockExpression) {
-                    statementGenerator.generateStatements(ktBody.statements, irBlockBody)
-                }
-                else {
-                    irBlockBody.statements.add(statementGenerator.generateStatement(ktBody))
-                }
-                irAnonymousInitializer.body = irBlockBody
+    fun generateAnonymousInitializerDeclaration(
+        ktAnonymousInitializer: KtAnonymousInitializer,
+        classDescriptor: ClassDescriptor
+    ): IrDeclaration =
+        context.symbolTable.declareAnonymousInitializer(
+            ktAnonymousInitializer.startOffset, ktAnonymousInitializer.endOffset, IrDeclarationOrigin.DEFINED, classDescriptor
+        ).buildWithScope { irAnonymousInitializer ->
+            val bodyGenerator = createBodyGenerator(irAnonymousInitializer.symbol)
+            val statementGenerator = bodyGenerator.createStatementGenerator()
+            val ktBody = ktAnonymousInitializer.body!!
+            val irBlockBody = IrBlockBodyImpl(ktBody.startOffset, ktBody.endOffset)
+            if (ktBody is KtBlockExpression) {
+                statementGenerator.generateStatements(ktBody.statements, irBlockBody)
+            } else {
+                irBlockBody.statements.add(statementGenerator.generateStatement(ktBody))
             }
+            irAnonymousInitializer.body = irBlockBody
+        }
 }

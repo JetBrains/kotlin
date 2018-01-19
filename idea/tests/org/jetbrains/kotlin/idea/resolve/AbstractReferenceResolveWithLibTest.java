@@ -23,7 +23,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.test.AstAccessControl;
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
@@ -35,7 +35,7 @@ public abstract class AbstractReferenceResolveWithLibTest extends AbstractRefere
         if (PluginTestCaseBase.isAllFilesPresentTest(getTestName(true))) {
             return null;
         }
-        return new JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(true) + "Src", false, true, false, false);
+        return new SdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(true) + "Src", false, true, false, false);
     }
 
     @Nullable

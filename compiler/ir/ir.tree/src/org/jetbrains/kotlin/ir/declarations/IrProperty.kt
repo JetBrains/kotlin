@@ -16,27 +16,30 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
 
 interface IrProperty : IrDeclaration {
     override val descriptor: PropertyDescriptor
-    val typeParameters: MutableList<IrTypeParameter>
+
+    val name: Name
+    val type: KotlinType
+    val modality: Modality
+    val visibility: Visibility
+    val isVar: Boolean
+    val isConst: Boolean
+    val isLateinit: Boolean
     val isDelegated: Boolean
+
+    val typeParameters: MutableList<IrTypeParameter>
+
     var backingField: IrField?
     var getter: IrFunction?
     var setter: IrFunction?
 
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.PROPERTY
-}
-
-interface IrField : IrSymbolDeclaration<IrFieldSymbol> {
-    override val descriptor: PropertyDescriptor
-
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.FIELD
-
-    var initializer: IrExpressionBody?
 }

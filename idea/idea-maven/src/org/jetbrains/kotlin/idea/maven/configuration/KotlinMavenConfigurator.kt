@@ -41,10 +41,12 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 
 abstract class KotlinMavenConfigurator
-        protected constructor(private val testArtifactId: String?,
-                              private val addJunit: Boolean,
-                              override val name: String,
-                              override val presentableText: String) : KotlinProjectConfigurator {
+protected constructor(
+    private val testArtifactId: String?,
+    private val addJunit: Boolean,
+    override val name: String,
+    override val presentableText: String
+) : KotlinProjectConfigurator {
 
     override fun getStatus(moduleSourceRootGroup: ModuleSourceRootGroup): ConfigureKotlinStatus {
         val module = moduleSourceRootGroup.baseModule
@@ -77,8 +79,8 @@ abstract class KotlinMavenConfigurator
         val mavenProject = mavenProjectsManager.findProject(module) ?: return ConfigureKotlinStatus.BROKEN
 
         val kotlinPluginId = kotlinPluginId(null)
-        val kotlinPlugin = mavenProject.plugins.find { it.mavenId.equals(kotlinPluginId.groupId, kotlinPluginId.artifactId)}
-                           ?: return ConfigureKotlinStatus.CAN_BE_CONFIGURED
+        val kotlinPlugin = mavenProject.plugins.find { it.mavenId.equals(kotlinPluginId.groupId, kotlinPluginId.artifactId) }
+                ?: return ConfigureKotlinStatus.CAN_BE_CONFIGURED
 
         if (kotlinPlugin.executions.any { it.goals.any(this::isRelevantGoal) }) {
             return ConfigureKotlinStatus.CONFIGURED
@@ -108,8 +110,7 @@ abstract class KotlinMavenConfigurator
                 if (file != null && canConfigureFile(file)) {
                     configureModule(module, file, dialog.kotlinVersion, collector)
                     OpenFileAction.openFile(file.virtualFile, project)
-                }
-                else {
+                } else {
                     showErrorMessage(project, "Cannot find pom.xml for module " + module.name)
                 }
             }
@@ -126,13 +127,13 @@ abstract class KotlinMavenConfigurator
     protected abstract fun getStdlibArtifactId(module: Module, version: String): String
 
     open fun configureModule(module: Module, file: PsiFile, version: String, collector: NotificationMessageCollector): Boolean =
-            changePomFile(module, file, version, collector)
+        changePomFile(module, file, version, collector)
 
     private fun changePomFile(
-            module: Module,
-            file: PsiFile,
-            version: String,
-            collector: NotificationMessageCollector
+        module: Module,
+        file: PsiFile,
+        version: String,
+        collector: NotificationMessageCollector
     ): Boolean {
         val virtualFile = file.virtualFile ?: error("Virtual file should exists for psi file " + file.name)
         val domModel = MavenDomUtil.getMavenDomProjectModel(module.project, virtualFile)
@@ -144,7 +145,13 @@ abstract class KotlinMavenConfigurator
         val pom = PomFile.forFileOrNull(file as XmlFile) ?: return false
         pom.addProperty(KOTLIN_VERSION_PROPERTY, version)
 
-        pom.addDependency(MavenId(GROUP_ID, getStdlibArtifactId(module, version), "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.COMPILE, null, false, null)
+        pom.addDependency(
+            MavenId(GROUP_ID, getStdlibArtifactId(module, version), "\${$KOTLIN_VERSION_PROPERTY}"),
+            MavenArtifactScope.COMPILE,
+            null,
+            false,
+            null
+        )
         if (testArtifactId != null) {
             pom.addDependency(MavenId(GROUP_ID, testArtifactId, "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.TEST, null, false, null)
         }
@@ -174,13 +181,13 @@ abstract class KotlinMavenConfigurator
     }
 
     protected fun createExecution(
-            pomFile: PomFile,
-            kotlinPlugin: MavenDomPlugin,
-            executionId: String,
-            goalName: String,
-            module: Module,
-            isTest: Boolean) {
-
+        pomFile: PomFile,
+        kotlinPlugin: MavenDomPlugin,
+        executionId: String,
+        goalName: String,
+        module: Module,
+        isTest: Boolean
+    ) {
         pomFile.addKotlinExecution(module, kotlinPlugin, executionId, PomFile.getPhase(false, isTest), isTest, listOf(goalName))
 
         if (hasJavaFiles(module)) {
@@ -189,18 +196,19 @@ abstract class KotlinMavenConfigurator
     }
 
     override fun updateLanguageVersion(
-            module: Module,
-            languageVersion: String?,
-            apiVersion: String?,
-            requiredStdlibVersion: ApiVersion,
-            forTests: Boolean
+        module: Module,
+        languageVersion: String?,
+        apiVersion: String?,
+        requiredStdlibVersion: ApiVersion,
+        forTests: Boolean
     ) {
         fun doUpdateMavenLanguageVersion(): PsiElement? {
             val psi = KotlinMavenConfigurator.findModulePomFile(module) as? XmlFile ?: return null
             val pom = PomFile.forFileOrNull(psi) ?: return null
             return pom.changeLanguageVersion(
-                    languageVersion,
-                    apiVersion)
+                languageVersion,
+                apiVersion
+            )
         }
 
         val runtimeUpdateRequired = getRuntimeLibraryVersion(module)?.let { ApiVersion.parse(it) }?.let { runtimeVersion ->
@@ -208,39 +216,49 @@ abstract class KotlinMavenConfigurator
         } ?: false
 
         if (runtimeUpdateRequired) {
-            Messages.showErrorDialog(module.project,
-                                     "This language feature requires version $requiredStdlibVersion or later of the Kotlin runtime library. " +
-                                     "Please update the version in your build script.",
-                                     "Update Language Version")
+            Messages.showErrorDialog(
+                module.project,
+                "This language feature requires version $requiredStdlibVersion or later of the Kotlin runtime library. " +
+                        "Please update the version in your build script.",
+                "Update Language Version"
+            )
             return
         }
 
         val element = doUpdateMavenLanguageVersion()
         if (element == null) {
-            Messages.showErrorDialog(module.project,
-                                     "Failed to update.pom.xml. Please update the file manually.",
-                                     "Update Language Version")
-        }
-        else {
+            Messages.showErrorDialog(
+                module.project,
+                "Failed to update.pom.xml. Please update the file manually.",
+                "Update Language Version"
+            )
+        } else {
             OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
         }
     }
 
-    override fun addLibraryDependency(module: Module, element: PsiElement, library: ExternalLibraryDescriptor, libraryJarDescriptors: List<LibraryJarDescriptor>) {
+    override fun addLibraryDependency(
+        module: Module,
+        element: PsiElement,
+        library: ExternalLibraryDescriptor,
+        libraryJarDescriptors: List<LibraryJarDescriptor>
+    ) {
         val scope = OrderEntryFix.suggestScopeByLocation(module, element)
         JavaProjectModelModificationService.getInstance(module.project).addDependency(module, library, scope)
     }
 
     override fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State) {
         val runtimeUpdateRequired = state != LanguageFeature.State.DISABLED &&
-                                    (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
+                (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
 
         val messageTitle = ChangeCoroutineSupportFix.getFixText(state)
         if (runtimeUpdateRequired) {
-            Messages.showErrorDialog(module.project,
-                                     "Coroutines support requires version 1.1 or later of the Kotlin runtime library. " +
-                                     "Please update the version in your build script.",
-                                     messageTitle)
+            Messages.showErrorDialog(
+                module.project,
+                "Coroutines support requires version 1.1 or later of the Kotlin runtime library. " +
+                        "Please update the version in your build script.",
+                messageTitle
+            )
             return
         }
 
@@ -261,19 +279,19 @@ abstract class KotlinMavenConfigurator
 
         val element = doChangeMavenCoroutineConfiguration()
         if (element == null) {
-            Messages.showErrorDialog(module.project,
-                                     "Failed to update.pom.xml. Please update the file manually.",
-                                     messageTitle)
+            Messages.showErrorDialog(
+                module.project,
+                "Failed to update.pom.xml. Please update the file manually.",
+                messageTitle
+            )
         }
         return element
     }
 
     companion object {
-        val NAME = "maven"
-
-        val GROUP_ID = "org.jetbrains.kotlin"
-        val MAVEN_PLUGIN_ID = "kotlin-maven-plugin"
-        private val KOTLIN_VERSION_PROPERTY = "kotlin.version"
+        const val GROUP_ID = "org.jetbrains.kotlin"
+        const val MAVEN_PLUGIN_ID = "kotlin-maven-plugin"
+        private const val KOTLIN_VERSION_PROPERTY = "kotlin.version"
 
         private fun hasJavaFiles(module: Module): Boolean {
             return !FileTypeIndex.getFiles(JavaFileType.INSTANCE, GlobalSearchScope.moduleScope(module)).isEmpty()
@@ -296,11 +314,13 @@ abstract class KotlinMavenConfigurator
         }
 
         private fun showErrorMessage(project: Project, message: String?) {
-            Messages.showErrorDialog(project,
-                                     "<html>Couldn't configure kotlin-maven plugin automatically.<br/>" +
-                                     (if (message != null) "$message</br>" else "") +
-                                     "See manual installation instructions <a href=\"http://confluence.jetbrains.com/display/Kotlin/Kotlin+Build+Tools#KotlinBuildTools-Maven\">here</a>.</html>",
-                                     "Configure Kotlin-Maven Plugin")
+            Messages.showErrorDialog(
+                project,
+                "<html>Couldn't configure kotlin-maven plugin automatically.<br/>" +
+                        (if (message != null) "$message</br>" else "") +
+                        "See manual installation instructions <a href=\"http://confluence.jetbrains.com/display/Kotlin/Kotlin+Build+Tools#KotlinBuildTools-Maven\">here</a>.</html>",
+                "Configure Kotlin-Maven Plugin"
+            )
         }
     }
 }

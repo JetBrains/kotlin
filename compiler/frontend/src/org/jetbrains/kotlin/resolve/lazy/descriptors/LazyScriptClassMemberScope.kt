@@ -27,37 +27,38 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.script.ScriptHelper
 
 class LazyScriptClassMemberScope(
-        resolveSession: ResolveSession,
-        declarationProvider: ClassMemberDeclarationProvider,
-        private val scriptDescriptor: LazyScriptDescriptor,
-        trace: BindingTrace)
-: LazyClassMemberScope(resolveSession, declarationProvider, scriptDescriptor, trace) {
+    resolveSession: ResolveSession,
+    declarationProvider: ClassMemberDeclarationProvider,
+    private val scriptDescriptor: LazyScriptDescriptor,
+    trace: BindingTrace
+) : LazyClassMemberScope(resolveSession, declarationProvider, scriptDescriptor, trace) {
 
     override fun resolvePrimaryConstructor(): ClassConstructorDescriptor? {
         val constructor = ClassConstructorDescriptorImpl.create(
-                scriptDescriptor,
-                Annotations.EMPTY,
-                true,
-                SourceElement.NO_SOURCE
+            scriptDescriptor,
+            Annotations.EMPTY,
+            true,
+            SourceElement.NO_SOURCE
         )
         constructor.initialize(
-                createScriptParameters(constructor),
-                Visibilities.PUBLIC
+            createScriptParameters(constructor),
+            Visibilities.PUBLIC
         )
         setDeferredReturnType(constructor)
         return constructor
     }
 
     private fun createScriptParameters(constructor: ClassConstructorDescriptorImpl): List<ValueParameterDescriptor> {
-        return ScriptHelper.getInstance().getScriptParameters(scriptDescriptor.scriptDefinition, scriptDescriptor).mapIndexed { index, (name, type) ->
-            ValueParameterDescriptorImpl(
+        return ScriptHelper.getInstance().getScriptParameters(scriptDescriptor.scriptDefinition, scriptDescriptor)
+            .mapIndexed { index, (name, type) ->
+                ValueParameterDescriptorImpl(
                     constructor, null, index, Annotations.EMPTY, name, type,
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
                     null, SourceElement.NO_SOURCE
-            )
-        }
+                )
+            }
     }
 
     override fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<PropertyDescriptor>) {

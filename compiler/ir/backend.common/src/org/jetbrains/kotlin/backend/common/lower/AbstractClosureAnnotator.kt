@@ -124,6 +124,10 @@ class ClosureAnnotator   {
                 includeInParent(closureBuilder)
             }
 
+            classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters?.forEach {
+                closureBuilder.declareVariable(it)
+            }
+
             closuresStack.push(closureBuilder)
             declaration.acceptChildrenVoid(this)
             closuresStack.pop()

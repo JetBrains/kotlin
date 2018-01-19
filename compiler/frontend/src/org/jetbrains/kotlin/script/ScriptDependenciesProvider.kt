@@ -28,9 +28,9 @@ interface ScriptDependenciesProvider {
 
     companion object {
         fun getInstance(project: Project): ScriptDependenciesProvider =
-                ServiceManager.getService(project, ScriptDependenciesProvider::class.java)
+            ServiceManager.getService(project, ScriptDependenciesProvider::class.java)
     }
 }
 
-fun getScriptExternalDependencies(file: VirtualFile, project: Project): ScriptDependencies?  =
-        ScriptDependenciesProvider.getInstance(project).getScriptDependencies(file)
+fun getScriptExternalDependencies(file: VirtualFile, project: Project): ScriptDependencies? =
+    ScriptDependenciesProvider.getInstance(project).getScriptDependencies(file)

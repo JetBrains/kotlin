@@ -68,11 +68,9 @@ val PsiElement.parentsWithSelf: Sequence<PsiElement>
 val PsiElement.parents: Sequence<PsiElement>
     get() = parentsWithSelf.drop(1)
 
-fun PsiElement.prevLeaf(skipEmptyElements: Boolean = false): PsiElement?
-        = PsiTreeUtil.prevLeaf(this, skipEmptyElements)
+fun PsiElement.prevLeaf(skipEmptyElements: Boolean = false): PsiElement? = PsiTreeUtil.prevLeaf(this, skipEmptyElements)
 
-fun PsiElement.nextLeaf(skipEmptyElements: Boolean = false): PsiElement?
-        = PsiTreeUtil.nextLeaf(this, skipEmptyElements)
+fun PsiElement.nextLeaf(skipEmptyElements: Boolean = false): PsiElement? = PsiTreeUtil.nextLeaf(this, skipEmptyElements)
 
 val PsiElement.prevLeafs: Sequence<PsiElement>
     get() = generateSequence({ prevLeaf() }, { it.prevLeaf() })
@@ -97,7 +95,7 @@ fun PsiElement.nextLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
 }
 
 fun <T : PsiElement> PsiElement.getParentOfTypesAndPredicate(
-        strict: Boolean = false, vararg parentClasses: Class<T>, predicate: (T) -> Boolean
+    strict: Boolean = false, vararg parentClasses: Class<T>, predicate: (T) -> Boolean
 ): T? {
     var element = if (strict) parent else this
     while (element != null) {
@@ -175,7 +173,10 @@ inline fun <reified T : PsiElement> PsiElement.getParentOfTypeAndBranch(strict: 
     return getParentOfType<T>(strict)?.getIfChildIsInBranch(this, branch)
 }
 
-inline fun <reified T : PsiElement> PsiElement.getParentOfTypeAndBranches(strict: Boolean = false, noinline branches: T.() -> Iterable<PsiElement?>): T? {
+inline fun <reified T : PsiElement> PsiElement.getParentOfTypeAndBranches(
+    strict: Boolean = false,
+    noinline branches: T.() -> Iterable<PsiElement?>
+): T? {
     return getParentOfType<T>(strict)?.getIfChildIsInBranches(this, branches)
 }
 
@@ -188,7 +189,9 @@ fun PsiElement.isInsideOf(elements: Iterable<PsiElement>): Boolean = elements.an
 
 fun PsiChildRange.trimWhiteSpaces(): PsiChildRange {
     if (first == null) return this
-    return PsiChildRange(first.siblings().firstOrNull { it !is PsiWhiteSpace }, last!!.siblings(forward = false).firstOrNull { it !is PsiWhiteSpace })
+    return PsiChildRange(
+        first.siblings().firstOrNull { it !is PsiWhiteSpace },
+        last!!.siblings(forward = false).firstOrNull { it !is PsiWhiteSpace })
 }
 
 // -------------------- Recursive tree visiting --------------------------------------------------------------------------------------------
@@ -197,7 +200,10 @@ inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(noinline 
     forEachDescendantOfType({ true }, action)
 }
 
-inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(crossinline canGoInside: (PsiElement) -> Boolean, noinline action: (T) -> Unit) {
+inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
+    crossinline canGoInside: (PsiElement) -> Boolean,
+    noinline action: (T) -> Unit
+) {
     this.accept(object : PsiRecursiveElementVisitor() {
         override fun visitElement(element: PsiElement) {
             if (canGoInside(element)) {
@@ -215,7 +221,10 @@ inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(noinline pred
     return findDescendantOfType(predicate) != null
 }
 
-inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(crossinline canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): Boolean {
+inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(
+    crossinline canGoInside: (PsiElement) -> Boolean,
+    noinline predicate: (T) -> Boolean = { true }
+): Boolean {
     return findDescendantOfType(canGoInside, predicate) != null
 }
 
@@ -223,7 +232,10 @@ inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinline pre
     return findDescendantOfType({ true }, predicate)
 }
 
-inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(crossinline canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): T? {
+inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(
+    crossinline canGoInside: (PsiElement) -> Boolean,
+    noinline predicate: (T) -> Boolean = { true }
+): T? {
     var result: T? = null
     this.accept(object : PsiRecursiveElementWalkingVisitor() {
         override fun visitElement(element: PsiElement) {
@@ -245,7 +257,10 @@ inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(noinline
     return collectDescendantsOfType({ true }, predicate)
 }
 
-inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(crossinline canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): List<T> {
+inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(
+    crossinline canGoInside: (PsiElement) -> Boolean,
+    noinline predicate: (T) -> Boolean = { true }
+): List<T> {
     val result = ArrayList<T>()
     forEachDescendantOfType<T>(canGoInside) {
         if (predicate(it)) {
@@ -294,11 +309,11 @@ fun PsiFile.elementsInRange(range: TextRange): List<PsiElement> {
         val leaf = findFirstLeafWhollyInRange(this, currentRange) ?: break
 
         val element = leaf
-                .parentsWithSelf
-                .first {
-                    val parent = it.parent
-                    it is PsiFile || parent.textRange !in currentRange
-                }
+            .parentsWithSelf
+            .first {
+                val parent = it.parent
+                it is PsiFile || parent.textRange !in currentRange
+            }
         result.add(element)
 
         offset = element.endOffset
@@ -333,8 +348,8 @@ fun PsiElement.getElementTextWithContext(): String {
     }
 
     // Find parent for element among file children
-    val topLevelElement = PsiTreeUtil.findFirstParent(this, { it.parent is PsiFile }) ?:
-                          throw AssertionError("For non-file element we should always be able to find parent in file children")
+    val topLevelElement = PsiTreeUtil.findFirstParent(this, { it.parent is PsiFile })
+            ?: throw AssertionError("For non-file element we should always be able to find parent in file children")
 
     val startContextOffset = topLevelElement.startOffset
     val elementContextOffset = textRange.startOffset
@@ -344,9 +359,9 @@ fun PsiElement.getElementTextWithContext(): String {
 
     val isInjected = containingFile is VirtualFileWindow
     return StringBuilder(topLevelElement.text)
-            .insert(inFileParentOffset, "<caret>")
-            .insert(0, "File name: ${containingFile.name} Physical: ${containingFile.isPhysical} Injected: $isInjected\n")
-            .toString()
+        .insert(inFileParentOffset, "<caret>")
+        .insert(0, "File name: ${containingFile.name} Physical: ${containingFile.isPhysical} Injected: $isInjected\n")
+        .toString()
 }
 
 fun PsiElement.getTextWithLocation(): String = "'${this.text}' at ${DiagnosticUtils.atLocation(this)}"
@@ -356,7 +371,7 @@ fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList
         return file.fileAnnotationList!!.replace(annotationList) as KtFileAnnotationList
     }
 
-    val beforeAnchor : PsiElement? = when {
+    val beforeAnchor: PsiElement? = when {
         file.packageDirective?.packageKeyword != null -> file.packageDirective!!
         file.importList != null -> file.importList!!
         file.declarations.firstOrNull() != null -> file.declarations.first()
@@ -379,7 +394,7 @@ fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList
 operator fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
 fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
-        SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)
+    SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)
 
 fun PsiElement.before(element: PsiElement) = textRange.endOffset <= element.textRange.startOffset
 

@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import junit.framework.TestCase
+import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -46,7 +47,10 @@ import org.jetbrains.kotlin.js.dce.InputFile
 import org.jetbrains.kotlin.js.dce.InputResource
 import org.jetbrains.kotlin.js.facade.*
 import org.jetbrains.kotlin.js.parser.parse
-import org.jetbrains.kotlin.js.parser.sourcemaps.*
+import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
+import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapLocationRemapper
+import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
+import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.test.utils.*
@@ -524,9 +528,8 @@ abstract class BasicBoxTest(
         val configuration = environment.configuration.copy()
 
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, module.inliningDisabled)
-        module.languageVersion?.let { languageVersion ->
-            configuration.languageVersionSettings =
-                    LanguageVersionSettingsImpl(languageVersion, LanguageVersionSettingsImpl.DEFAULT.apiVersion)
+        module.languageVersionSettings?.let { languageVersionSettings ->
+            configuration.languageVersionSettings = languageVersionSettings
         }
 
         configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies)
@@ -640,11 +643,10 @@ abstract class BasicBoxTest(
             KotlinTestUtils.mkdirs(temporaryFile.parentFile)
             temporaryFile.writeText(text, Charsets.UTF_8)
 
-            val version = InTextDirectivesUtils.findStringWithPrefixes(text, "// LANGUAGE_VERSION:")
-            if (version != null) {
-                assert(currentModule.languageVersion == null) { "Should not specify LANGUAGE_VERSION twice" }
-                currentModule.languageVersion = LanguageVersion.fromVersionString(version)
-            }
+            val old = currentModule.languageVersionSettings
+            val new = parseLanguageVersionSettings(directives)
+            assert(old == null || old == new) { "Should not specify language version settings twice:\n$old\n$new" }
+            currentModule.languageVersionSettings = new
 
             SOURCE_MAP_SOURCE_EMBEDDING.find(text)?.let { match ->
                 currentModule.sourceMapSourceEmbedding = SourceMapSourceEmbedding.valueOf(match.groupValues[1])
@@ -677,7 +679,7 @@ abstract class BasicBoxTest(
         var moduleKind = ModuleKind.PLAIN
         var inliningDisabled = false
         val files = mutableListOf<TestFile>()
-        var languageVersion: LanguageVersion? = null
+        var languageVersionSettings: LanguageVersionSettings? = null
         var sourceMapSourceEmbedding = SourceMapSourceEmbedding.NEVER
 
         val hasFilesToRecompile get() = files.any { it.recompile }

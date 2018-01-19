@@ -76,14 +76,6 @@ sourceSets {
     }
 }
 
-val jar: Jar by tasks
-jar.apply {
-    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
-    from("../idea/src").apply {
-        include("META-INF/extensions/compiler.xml")
-    }
-}
-
 projectTest {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir

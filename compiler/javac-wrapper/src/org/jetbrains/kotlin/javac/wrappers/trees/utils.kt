@@ -20,7 +20,6 @@ import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedArrayAnnotationArgument
-import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedField
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedReferenceAnnotationArgument
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -81,14 +80,12 @@ fun Collection<JavaAnnotation>.filterTypeAnnotations(): Collection<JavaAnnotatio
             }
             is TreeBasedArrayAnnotationArgument -> {
                 elementTypeArg.args.find {
-                    val field = (it as? TreeBasedReferenceAnnotationArgument)?.resolve() as? SymbolBasedField
-                    field?.element?.simpleName?.contentEquals("TYPE_USE") ?: false
+                    (it as? TreeBasedReferenceAnnotationArgument)?.entryName?.asString() == "TYPE_USE"
                 }?.let { filteredAnnotations.add(annotation) }
             }
             is TreeBasedReferenceAnnotationArgument -> {
-                (elementTypeArg.resolve() as? SymbolBasedField)?.let { field ->
-                    field.element.simpleName.takeIf { it.contentEquals("TYPE_USE") }
-                            ?.let { filteredAnnotations.add(annotation) }
+                if (elementTypeArg.entryName?.asString() == "TYPE_USE") {
+                    filteredAnnotations.add(annotation)
                 }
             }
         }

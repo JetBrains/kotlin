@@ -703,7 +703,7 @@ internal fun CharSequence.regionMatchesImpl(thisOffset: Int, other: CharSequence
         return false
     }
 
-    for (index in 0..length-1) {
+    for (index in 0 until length) {
         if (!this[thisOffset + index].equals(other[otherOffset + index], ignoreCase))
             return false
     }
@@ -1067,7 +1067,7 @@ private class DelimitedRangesSequence(private val input: CharSequence, private v
                     }
                     else {
                         val (index,length) = match
-                        nextItem = currentStartIndex..index-1
+                        nextItem = currentStartIndex until index
                         currentStartIndex = index + length
                         nextSearchIndex = currentStartIndex + if (length == 0) 1 else 0
                     }

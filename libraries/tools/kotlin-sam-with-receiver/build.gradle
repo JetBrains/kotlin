@@ -22,7 +22,7 @@ dependencies {
     compileOnly project(':compiler')
     compileOnly project(':kotlin-sam-with-receiver-compiler-plugin')
 
-    compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
+    compileOnly gradleApi()
 }
 
 evaluationDependsOn(":kotlin-sam-with-receiver-compiler-plugin")

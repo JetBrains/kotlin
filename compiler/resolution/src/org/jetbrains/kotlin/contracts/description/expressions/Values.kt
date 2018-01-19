@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 
 interface ContractDescriptionValue : ContractDescriptionElement {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
-            contractDescriptionVisitor.visitValue(this, data)
+        contractDescriptionVisitor.visitValue(this, data)
 }
 
 open class ConstantReference(val name: String) : ContractDescriptionValue {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
-            contractDescriptionVisitor.visitConstantDescriptor(this, data)
+        contractDescriptionVisitor.visitConstantDescriptor(this, data)
 
     companion object {
         val NULL = ConstantReference("NULL")
@@ -40,7 +40,7 @@ open class ConstantReference(val name: String) : ContractDescriptionValue {
 
 class BooleanConstantReference(name: String) : ConstantReference(name), BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
-            contractDescriptionVisitor.visitBooleanConstantDescriptor(this, data)
+        contractDescriptionVisitor.visitBooleanConstantDescriptor(this, data)
 
     companion object {
         val TRUE = BooleanConstantReference("TRUE")
@@ -50,10 +50,10 @@ class BooleanConstantReference(name: String) : ConstantReference(name), BooleanE
 
 open class VariableReference(val descriptor: ParameterDescriptor) : ContractDescriptionValue {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D) =
-            contractDescriptionVisitor.visitVariableReference(this, data)
+        contractDescriptionVisitor.visitVariableReference(this, data)
 }
 
 class BooleanVariableReference(descriptor: ParameterDescriptor) : VariableReference(descriptor), BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
-            contractDescriptionVisitor.visitBooleanVariableReference(this, data)
+        contractDescriptionVisitor.visitBooleanVariableReference(this, data)
 }

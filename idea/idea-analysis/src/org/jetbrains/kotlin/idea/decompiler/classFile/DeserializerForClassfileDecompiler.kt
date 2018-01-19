@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotlinAnyLocalClassifierResolver
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -104,7 +105,7 @@ class DirectoryBasedClassFinder(
         val packageDirectory: VirtualFile,
         val directoryPackageFqName: FqName
 ) : KotlinClassFinder {
-    override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.classId)
+    override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.classId!!)
 
     override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
         if (classId.packageFqName != directoryPackageFqName) {
@@ -149,10 +150,3 @@ class DirectoryBasedDataFinder(
         return ClassDataWithSource(JvmProtoBufUtil.readClassDataFrom(data, strings), KotlinJvmBinarySourceElement(binaryClass))
     }
 }
-
-
-private val JavaClass.classId: ClassId
-    get() {
-        val outer = outerClass
-        return if (outer == null) ClassId.topLevel(fqName!!) else outer.classId.createNestedClassId(name)
-    }

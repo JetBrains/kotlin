@@ -1,0 +1,12 @@
+4 override fun foo() = <bold>3</bold>
+4 	override fun <bold>foo() = 3</bold>
+10 		val z = c.<bold>foo()</bold>
+10 			val <bold>z = c.foo()</bold>
+2 		public int <bold>foo();</bold>
+8 			val x = a.<bold>foo()</bold>
+8 				val <bold>x = a.foo()</bold>
+9 			val y = b.<bold>foo()</bold>
+9 				val <bold>y = b.foo()</bold>
+11 			val u = d.<bold>foo()</bold>
+11 				val <bold>u = d.foo()</bold>
+10 			DUPLICATE: val z = c.<bold>foo()</bold>

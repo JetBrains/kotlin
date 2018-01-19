@@ -644,19 +644,19 @@ class DescriptorSerializer private constructor(
             proto.message = stringTable.getStringIndex(message)
         }
 
-        val level = (args[RequireKotlinNames.LEVEL] as? EnumValue)?.value?.name?.asString()
+        val level = (args[RequireKotlinNames.LEVEL] as? EnumValue)?.enumEntryName?.asString()
         when (level) {
-            DeprecationLevel.ERROR.toString() -> { /* ERROR is the default level */ }
-            DeprecationLevel.WARNING.toString() -> proto.level = ProtoBuf.VersionRequirement.Level.WARNING
-            DeprecationLevel.HIDDEN.toString() -> proto.level = ProtoBuf.VersionRequirement.Level.HIDDEN
+            DeprecationLevel.ERROR.name -> { /* ERROR is the default level */ }
+            DeprecationLevel.WARNING.name -> proto.level = ProtoBuf.VersionRequirement.Level.WARNING
+            DeprecationLevel.HIDDEN.name -> proto.level = ProtoBuf.VersionRequirement.Level.HIDDEN
         }
 
-        val versionKind = (args[RequireKotlinNames.VERSION_KIND] as? EnumValue)?.value?.name?.asString()
+        val versionKind = (args[RequireKotlinNames.VERSION_KIND] as? EnumValue)?.enumEntryName?.asString()
         when (versionKind) {
-            ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION.toString() -> { /* LANGUAGE_VERSION is the default kind */ }
-            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION.toString() ->
+            ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION.name -> { /* LANGUAGE_VERSION is the default kind */ }
+            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION.name ->
                 proto.versionKind = ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION
-            ProtoBuf.VersionRequirement.VersionKind.API_VERSION.toString() ->
+            ProtoBuf.VersionRequirement.VersionKind.API_VERSION.name ->
                 proto.versionKind = ProtoBuf.VersionRequirement.VersionKind.API_VERSION
         }
 

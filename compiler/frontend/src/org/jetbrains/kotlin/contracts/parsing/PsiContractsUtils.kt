@@ -83,10 +83,10 @@ fun DeclarationDescriptor.isCallsInPlaceEffectDescriptor(): Boolean = equalsDslD
 fun DeclarationDescriptor.isInvocationKindEnum(): Boolean = equalsDslDescriptor(INVOCATION_KIND_ENUM)
 
 fun DeclarationDescriptor.isEqualsDescriptor(): Boolean =
-        this is FunctionDescriptor && this.name == Name.identifier("equals") && // fast checks
-        this.returnType?.isBoolean() == true && this.valueParameters.singleOrNull()?.type?.isNullableAny() == true // signature matches
+    this is FunctionDescriptor && this.name == Name.identifier("equals") && // fast checks
+            this.returnType?.isBoolean() == true && this.valueParameters.singleOrNull()?.type?.isNullableAny() == true // signature matches
 
 internal fun ResolvedCall<*>.firstArgumentAsExpressionOrNull(): KtExpression? =
-        this.valueArgumentsByIndex?.firstOrNull()?.safeAs<ExpressionValueArgument>()?.valueArgument?.getArgumentExpression()
+    this.valueArgumentsByIndex?.firstOrNull()?.safeAs<ExpressionValueArgument>()?.valueArgument?.getArgumentExpression()
 
 private fun DeclarationDescriptor.equalsDslDescriptor(dslName: Name): Boolean = this.name == dslName && this.isFromContractDsl()

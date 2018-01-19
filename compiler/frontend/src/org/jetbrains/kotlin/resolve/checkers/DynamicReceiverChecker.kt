@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.types.isDynamic
 
 object DynamicReceiverChecker : SimpleDeclarationChecker {
     override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        bindingContext: BindingContext
     ) {
         if (descriptor !is CallableDescriptor || declaration !is KtCallableDeclaration || descriptor.hasDynamicExtensionAnnotation()) return
 

@@ -23,18 +23,18 @@ import org.jetbrains.kotlin.types.WrappedTypeFactory
 
 interface DeclarationReturnTypeSanitizer {
     fun sanitizeReturnType(
-            inferred: UnwrappedType,
-            wrappedTypeFactory: WrappedTypeFactory,
-            trace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings
+        inferred: UnwrappedType,
+        wrappedTypeFactory: WrappedTypeFactory,
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
     ): UnwrappedType
 
     object Default : DeclarationReturnTypeSanitizer {
         override fun sanitizeReturnType(
-                inferred: UnwrappedType,
-                wrappedTypeFactory: WrappedTypeFactory,
-                trace: BindingTrace,
-                languageVersionSettings: LanguageVersionSettings
+            inferred: UnwrappedType,
+            wrappedTypeFactory: WrappedTypeFactory,
+            trace: BindingTrace,
+            languageVersionSettings: LanguageVersionSettings
         ) = inferred
     }
 }

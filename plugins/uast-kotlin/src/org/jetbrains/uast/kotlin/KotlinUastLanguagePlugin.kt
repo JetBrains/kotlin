@@ -166,7 +166,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                 is KtFunction ->
                     if (original.isLocal) {
                         el<ULambdaExpression> {
-                            if (original.name.isNullOrEmpty()) {
+                            if (original.name.isNullOrEmpty() || original.parent is KtLambdaExpression) {
                                 createLocalFunctionLambdaExpression(original, givenParent)
                             }
                             else {
@@ -321,7 +321,7 @@ internal object KotlinConverter {
                             ?.toUElementOfType<UExpression>()
                     ?: KotlinUFunctionCallExpression(element, givenParent)
                 }
-
+            is KtImportDirective -> el<UImportStatement>(build(::KotlinUImportStatement))
             else -> {
                 if (element is LeafPsiElement && element.elementType == KtTokens.IDENTIFIER) {
                     el<UIdentifier>(build(::UIdentifier))

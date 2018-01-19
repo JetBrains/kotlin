@@ -57,7 +57,7 @@ fun findOutdatedKotlinLibraries(project: Project): List<VersionedLibrary> {
     return outdatedLibraries
 }
 
-fun getOutdatedRuntimeLibraryVersion(library: Library): String? {
+private fun getOutdatedRuntimeLibraryVersion(library: Library): String? {
     val libraryVersion = getKotlinLibraryVersion(library) ?: return null
     val runtimeVersion = bundledRuntimeVersion()
 
@@ -65,23 +65,22 @@ fun getOutdatedRuntimeLibraryVersion(library: Library): String? {
 }
 
 private fun getKotlinLibraryVersion(library: Library): String? =
-        JavaRuntimeDetectionUtil.getJavaRuntimeVersion(library) ?:
-        JsLibraryStdDetectionUtil.getJsLibraryStdVersion(library)
+    JavaRuntimeDetectionUtil.getJavaRuntimeVersion(library) ?: JsLibraryStdDetectionUtil.getJsLibraryStdVersion(library)
 
 fun findKotlinRuntimeLibrary(module: Module, predicate: (Library) -> Boolean = ::isKotlinRuntime): Library? {
     val orderEntries = ModuleRootManager.getInstance(module).orderEntries.filterIsInstance<LibraryOrderEntry>()
     return orderEntries.asSequence()
-            .mapNotNull { it.library }
-            .firstOrNull(predicate)
+        .mapNotNull { it.library }
+        .firstOrNull(predicate)
 }
 
-fun isKotlinRuntime(library: Library) = isKotlinJavaRuntime(library) || isKotlinJsRuntime(library)
+private fun isKotlinRuntime(library: Library) = isKotlinJavaRuntime(library) || isKotlinJsRuntime(library)
 
-fun isKotlinJavaRuntime(library: Library) =
-        JavaRuntimeDetectionUtil.getRuntimeJar(library.getFiles(OrderRootType.CLASSES).asList()) != null
+private fun isKotlinJavaRuntime(library: Library) =
+    JavaRuntimeDetectionUtil.getRuntimeJar(library.getFiles(OrderRootType.CLASSES).asList()) != null
 
-fun isKotlinJsRuntime(library: Library) =
-        JsLibraryStdDetectionUtil.hasJsStdlibJar(library)
+private fun isKotlinJsRuntime(library: Library) =
+    JsLibraryStdDetectionUtil.hasJsStdlibJar(library)
 
 fun collectModulesWithOutdatedRuntime(libraries: List<VersionedLibrary>): List<Module> =
     libraries.flatMap { it.usedInModules }
@@ -96,46 +95,50 @@ fun notifyOutdatedKotlinRuntime(project: Project, outdatedLibraries: Collection<
         val libraryName = versionedLibrary.library.name
 
         "<p>Your version of Kotlin runtime in '$libraryName' library is $readableVersion, while plugin version is $pluginVersion.</p>" +
-        "<p>Runtime library should be updated to avoid compatibility problems.</p>" +
-        "<p><a href=\"update\">Update Runtime</a> <a href=\"ignore\">Ignore</a></p>"
-    }
-    else {
+                "<p>Runtime library should be updated to avoid compatibility problems.</p>" +
+                "<p><a href=\"update\">Update Runtime</a> <a href=\"ignore\">Ignore</a></p>"
+    } else {
         val libraryNames = outdatedLibraries.joinToString { it.library.name ?: "unknown library" }
 
         "<p>Version of Kotlin runtime is outdated in several libraries ($libraryNames). Plugin version is $pluginVersion.</p>" +
-        "<p>Runtime libraries should be updated to avoid compatibility problems.</p>" +
-        "<p><a href=\"update\">Update All</a> <a href=\"ignore\">Ignore</a></p>"
+                "<p>Runtime libraries should be updated to avoid compatibility problems.</p>" +
+                "<p><a href=\"update\">Update All</a> <a href=\"ignore\">Ignore</a></p>"
     }
 
 
-    Notifications.Bus.notify(Notification(OUTDATED_RUNTIME_GROUP_DISPLAY_ID, "Outdated Kotlin Runtime", message,
-                                          NotificationType.WARNING, NotificationListener { notification, event ->
-        if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-            when {
-                "update" == event.description -> {
-                    val outdatedLibraries = findOutdatedKotlinLibraries(project).map { it.library }
-                    ApplicationManager.getApplication().invokeLater {
-                        updateLibraries(project, outdatedLibraries)
+    Notifications.Bus.notify(
+        Notification(
+            OUTDATED_RUNTIME_GROUP_DISPLAY_ID, "Outdated Kotlin Runtime", message,
+            NotificationType.WARNING, NotificationListener { notification, event ->
+                if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
+                    when {
+                        "update" == event.description -> {
+                            val updatedOutdatedLibraries = findOutdatedKotlinLibraries(project).map { it.library }
+                            ApplicationManager.getApplication().invokeLater {
+                                updateLibraries(project, updatedOutdatedLibraries)
+                            }
+                        }
+                        "ignore" == event.description -> {
+                            if (!project.isDisposed) {
+                                PropertiesComponent.getInstance(project).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion)
+                            }
+                        }
+                        else -> {
+                            throw AssertionError()
+                        }
                     }
-                }
-                "ignore" == event.description -> {
-                    if (!project.isDisposed) {
-                        PropertiesComponent.getInstance(project).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion)
-                    }
-                }
-                else -> {
-                    throw AssertionError()
+                    notification.expire()
                 }
             }
-            notification.expire()
-        }
-    }), project)
+        ),
+        project
+    )
 }
 
-private val SUPPRESSED_PROPERTY_NAME = "oudtdated.runtime.suppressed.plugin.version"
-private val OUTDATED_RUNTIME_GROUP_DISPLAY_ID = "Outdated Kotlin Runtime"
+private const val SUPPRESSED_PROPERTY_NAME = "oudtdated.runtime.suppressed.plugin.version"
+private const val OUTDATED_RUNTIME_GROUP_DISPLAY_ID = "Outdated Kotlin Runtime"
 
 fun isRuntimeOutdated(libraryVersion: String?, runtimeVersion: String): Boolean {
     return libraryVersion == null || libraryVersion.startsWith("internal-") != runtimeVersion.startsWith("internal-") ||
-           VersionComparatorUtil.compare(runtimeVersion.substringBefore("-release-"), libraryVersion) > 0
+            VersionComparatorUtil.compare(runtimeVersion.substringBefore("-release-"), libraryVersion) > 0
 }

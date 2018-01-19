@@ -23,6 +23,6 @@ interface OverridesBackwardCompatibilityHelper {
 
     object Default : OverridesBackwardCompatibilityHelper {
         override fun overrideCanBeOmitted(overridingDescriptor: CallableMemberDescriptor): Boolean =
-                false
+            false
     }
 }

@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class DataClassDeclarationChecker : SimpleDeclarationChecker {
     override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        bindingContext: BindingContext
     ) {
         if (descriptor !is ClassDescriptor) return
         if (declaration !is KtClassOrObject) return

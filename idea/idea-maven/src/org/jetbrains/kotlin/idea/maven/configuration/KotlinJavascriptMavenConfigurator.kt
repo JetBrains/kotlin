@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
-class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(null, false, KotlinJavascriptMavenConfigurator.NAME, KotlinJavascriptMavenConfigurator.PRESENTABLE_TEXT) {
+class KotlinJavascriptMavenConfigurator :
+    KotlinMavenConfigurator(null, false, KotlinJavascriptMavenConfigurator.NAME, KotlinJavascriptMavenConfigurator.PRESENTABLE_TEXT) {
 
     override fun getStdlibArtifactId(module: Module, version: String) = MAVEN_JS_STDLIB_ID
 
@@ -47,7 +48,7 @@ class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(null, false, K
     override fun getMinimumSupportedVersion() = "1.1.0"
 
     companion object {
-        private val NAME = "js maven"
-        private val PRESENTABLE_TEXT = "Maven (JavaScript)"
+        private const val NAME = "js maven"
+        private const val PRESENTABLE_TEXT = "Maven (JavaScript)"
     }
 }

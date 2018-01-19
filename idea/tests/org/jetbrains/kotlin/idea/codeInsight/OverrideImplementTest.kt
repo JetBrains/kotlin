@@ -204,6 +204,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
         doOverrideFileTest()
     }
 
+    fun testSuspendFun() {
+        doOverrideFileTest()
+    }
+
     fun testDoNotOverrideFinal() {
         doMultiOverrideFileTest()
     }

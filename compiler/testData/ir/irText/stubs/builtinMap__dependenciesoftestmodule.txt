@@ -1,489 +1,489 @@
-MODULE_FRAGMENT <dependencies of test-module>
-  EXTERNAL_PACKAGE_FRAGMENT java.util
-    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedHashMap
-      TYPE_PARAMETER <K : kotlin.Any!>
-      TYPE_PARAMETER <V : kotlin.Any!>
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor LinkedHashMap<K : kotlin.Any!, V : kotlin.Any!>()
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor LinkedHashMap<K : kotlin.Any!, V : kotlin.Any!>(p0: (kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?))
-        VALUE_PARAMETER value-parameter p0: (kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?)
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor LinkedHashMap<K : kotlin.Any!, V : kotlin.Any!>(p0: kotlin.Int)
-        VALUE_PARAMETER value-parameter p0: kotlin.Int
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor LinkedHashMap<K : kotlin.Any!, V : kotlin.Any!>(p0: kotlin.Int, p1: kotlin.Float)
-        VALUE_PARAMETER value-parameter p0: kotlin.Int
-        VALUE_PARAMETER value-parameter p1: kotlin.Float
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor LinkedHashMap<K : kotlin.Any!, V : kotlin.Any!>(p0: kotlin.Int, p1: kotlin.Float, p2: kotlin.Boolean)
-        VALUE_PARAMETER value-parameter p0: kotlin.Int
-        VALUE_PARAMETER value-parameter p1: kotlin.Float
-        VALUE_PARAMETER value-parameter p2: kotlin.Boolean
-      FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun readObject(p0: java.io.ObjectInputStream!): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: java.io.ObjectInputStream!
-      FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun writeObject(p0: java.io.ObjectOutputStream!): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: java.io.ObjectOutputStream!
-      FUN IR_EXTERNAL_DECLARATION_STUB private open fun linkNodeLast(p0: java.util.LinkedHashMap.Entry<K!, V!>!): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: java.util.LinkedHashMap.Entry<K!, V!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB private open fun transferLinks(p0: java.util.LinkedHashMap.Entry<K!, V!>!, p1: java.util.LinkedHashMap.Entry<K!, V!>!): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: java.util.LinkedHashMap.Entry<K!, V!>!
-        VALUE_PARAMETER value-parameter p1: java.util.LinkedHashMap.Entry<K!, V!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB protected/*protected and package*/ open fun removeEldestEntry(p0: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!): kotlin.Boolean
-        VALUE_PARAMETER value-parameter p0: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun clone(): kotlin.Any
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun compute(p0: K, p1: java.util.function.BiFunction<in K, in V?, out V?>): V?
-        VALUE_PARAMETER value-parameter p0: K
-        VALUE_PARAMETER value-parameter p1: java.util.function.BiFunction<in K, in V?, out V?>
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun computeIfAbsent(p0: K, p1: java.util.function.Function<in K, out V>): V
-        VALUE_PARAMETER value-parameter p0: K
-        VALUE_PARAMETER value-parameter p1: java.util.function.Function<in K, out V>
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun computeIfPresent(p0: K, p1: java.util.function.BiFunction<in K, in V, out V?>): V?
-        VALUE_PARAMETER value-parameter p0: K
-        VALUE_PARAMETER value-parameter p1: java.util.function.BiFunction<in K, in V, out V?>
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun containsKey(key: K): kotlin.Boolean
-        VALUE_PARAMETER value-parameter key: K
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun isEmpty(): kotlin.Boolean
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun merge(p0: K, p1: V, p2: java.util.function.BiFunction<in V, in V, out V?>): V?
-        VALUE_PARAMETER value-parameter p0: K
-        VALUE_PARAMETER value-parameter p1: V
-        VALUE_PARAMETER value-parameter p2: java.util.function.BiFunction<in V, in V, out V?>
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun put(key: K, value: V): V?
-        VALUE_PARAMETER value-parameter key: K
-        VALUE_PARAMETER value-parameter value: V
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun putAll(from: kotlin.collections.Map<out K, V>): kotlin.Unit
-        VALUE_PARAMETER value-parameter from: kotlin.collections.Map<out K, V>
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun putIfAbsent(p0: K, p1: V): V?
-        VALUE_PARAMETER value-parameter p0: K
-        VALUE_PARAMETER value-parameter p1: V
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun remove(key: K): V?
-        VALUE_PARAMETER value-parameter key: K
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun remove(key: K, value: V): kotlin.Boolean
-        VALUE_PARAMETER value-parameter key: K
-        VALUE_PARAMETER value-parameter value: V
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun replace(p0: K, p1: V): V?
-        VALUE_PARAMETER value-parameter p0: K
-        VALUE_PARAMETER value-parameter p1: V
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun replace(p0: K, p1: V, p2: V): kotlin.Boolean
-        VALUE_PARAMETER value-parameter p0: K
-        VALUE_PARAMETER value-parameter p1: V
-        VALUE_PARAMETER value-parameter p2: V
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public open override val size: kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <get-size>(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun clear(): kotlin.Unit
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun containsValue(value: V): kotlin.Boolean
-        VALUE_PARAMETER value-parameter value: V
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun forEach(p0: java.util.function.BiConsumer<in K, in V>): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: java.util.function.BiConsumer<in K, in V>
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun get(key: K): V?
-        VALUE_PARAMETER value-parameter key: K
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun getOrDefault(key: K, defaultValue: V): V
-        VALUE_PARAMETER value-parameter key: K
-        VALUE_PARAMETER value-parameter defaultValue: V
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun replaceAll(p0: java.util.function.BiFunction<in K, in V, out V>): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: java.util.function.BiFunction<in K, in V, out V>
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public open override val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <get-entries>(): kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public open override val keys: kotlin.collections.MutableSet<K>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <get-keys>(): kotlin.collections.(Mutable)Set<K!>!
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public open override val values: kotlin.collections.MutableCollection<V>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <get-values>(): kotlin.collections.(Mutable)Collection<V!>!
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedHashIterator
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedHashIterator()
-        FUN IR_EXTERNAL_DECLARATION_STUB public final fun remove(): kotlin.Unit
-        FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun hasNext(): kotlin.Boolean
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-        FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final fun nextNode(): java.util.LinkedHashMap.Entry<K!, V!>!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var current: java.util.LinkedHashMap.Entry<K!, V!>!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var current: java.util.LinkedHashMap.Entry<K!, V!>!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var expectedModCount: kotlin.Int
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var expectedModCount: kotlin.Int
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var next: java.util.LinkedHashMap.Entry<K!, V!>!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var next: java.util.LinkedHashMap.Entry<K!, V!>!
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedEntryIterator
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedEntryIterator()
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun next(): kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun hasNext(): kotlin.Boolean
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun remove(): kotlin.Unit
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun forEachRemaining(p0: java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Unit
-          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-        FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun nextNode(): java.util.LinkedHashMap.Entry<K!, V!>!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedEntrySet
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedEntrySet()
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun clear(): kotlin.Unit
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun contains(element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!): kotlin.Boolean
-          VALUE_PARAMETER value-parameter element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun forEach(p0: java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!): kotlin.Unit
-          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun iterator(): kotlin.collections.MutableIterator<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun remove(element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!): kotlin.Boolean
-          VALUE_PARAMETER value-parameter element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun spliterator(): java.util.Spliterator<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val size: kotlin.Int
-          FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-size>(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <T : kotlin.Any!> toArray(p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
-          TYPE_PARAMETER <T : kotlin.Any!>
-          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun add(element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!): kotlin.Boolean
-          VALUE_PARAMETER value-parameter element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun addAll(elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun isEmpty(): kotlin.Boolean
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun parallelStream(): java.util.stream.Stream<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeAll(elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeIf(p0: java.util.function.Predicate<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter p0: java.util.function.Predicate<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun retainAll(elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun stream(): java.util.stream.Stream<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toArray(): kotlin.Array<(out) kotlin.Any!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
-          FIELD IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
-        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun <T : kotlin.Any!> finishToArray(p0: kotlin.Array<(out) T!>!, p1: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
-          TYPE_PARAMETER <T : kotlin.Any!>
-          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
-          VALUE_PARAMETER value-parameter p1: kotlin.collections.(Mutable)Iterator<*>!
-        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun hugeCapacity(p0: kotlin.Int): kotlin.Int
-          VALUE_PARAMETER value-parameter p0: kotlin.Int
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedKeyIterator
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedKeyIterator()
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun next(): K!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun hasNext(): kotlin.Boolean
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun remove(): kotlin.Unit
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun forEachRemaining(p0: java.util.function.Consumer<in K!>): kotlin.Unit
-          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in K!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-        FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun nextNode(): java.util.LinkedHashMap.Entry<K!, V!>!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedKeySet
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedKeySet()
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun clear(): kotlin.Unit
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun contains(element: K!): kotlin.Boolean
-          VALUE_PARAMETER value-parameter element: K!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun forEach(p0: java.util.function.Consumer<in K!>!): kotlin.Unit
-          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in K!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun iterator(): kotlin.collections.MutableIterator<K!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun remove(element: K!): kotlin.Boolean
-          VALUE_PARAMETER value-parameter element: K!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun spliterator(): java.util.Spliterator<K!>
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val size: kotlin.Int
-          FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-size>(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <T : kotlin.Any!> toArray(p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
-          TYPE_PARAMETER <T : kotlin.Any!>
-          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun add(element: K!): kotlin.Boolean
-          VALUE_PARAMETER value-parameter element: K!
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun addAll(elements: kotlin.collections.Collection<K!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<K!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun containsAll(elements: kotlin.collections.Collection<K!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<K!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun isEmpty(): kotlin.Boolean
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun parallelStream(): java.util.stream.Stream<K!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeAll(elements: kotlin.collections.Collection<K!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<K!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeIf(p0: java.util.function.Predicate<in K!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter p0: java.util.function.Predicate<in K!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun retainAll(elements: kotlin.collections.Collection<K!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<K!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun stream(): java.util.stream.Stream<K!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toArray(): kotlin.Array<(out) kotlin.Any!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
-          FIELD IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
-        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun <T : kotlin.Any!> finishToArray(p0: kotlin.Array<(out) T!>!, p1: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
-          TYPE_PARAMETER <T : kotlin.Any!>
-          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
-          VALUE_PARAMETER value-parameter p1: kotlin.collections.(Mutable)Iterator<*>!
-        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun hugeCapacity(p0: kotlin.Int): kotlin.Int
-          VALUE_PARAMETER value-parameter p0: kotlin.Int
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedValueIterator
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedValueIterator()
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun next(): V!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun hasNext(): kotlin.Boolean
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun remove(): kotlin.Unit
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun forEachRemaining(p0: java.util.function.Consumer<in V!>): kotlin.Unit
-          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in V!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-        FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun nextNode(): java.util.LinkedHashMap.Entry<K!, V!>!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedValues
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedValues()
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun clear(): kotlin.Unit
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun contains(element: V!): kotlin.Boolean
-          VALUE_PARAMETER value-parameter element: V!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun forEach(p0: java.util.function.Consumer<in V!>!): kotlin.Unit
-          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in V!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun iterator(): kotlin.collections.MutableIterator<V!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun spliterator(): java.util.Spliterator<V!>
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val size: kotlin.Int
-          FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-size>(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <T : kotlin.Any!> toArray(p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
-          TYPE_PARAMETER <T : kotlin.Any!>
-          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun add(element: V!): kotlin.Boolean
-          VALUE_PARAMETER value-parameter element: V!
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun addAll(elements: kotlin.collections.Collection<V!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<V!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun containsAll(elements: kotlin.collections.Collection<V!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<V!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun isEmpty(): kotlin.Boolean
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun parallelStream(): java.util.stream.Stream<V!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun remove(element: V!): kotlin.Boolean
-          VALUE_PARAMETER value-parameter element: V!
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeAll(elements: kotlin.collections.Collection<V!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<V!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeIf(p0: java.util.function.Predicate<in V!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter p0: java.util.function.Predicate<in V!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun retainAll(elements: kotlin.collections.Collection<V!>): kotlin.Boolean
-          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<V!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun stream(): java.util.stream.Stream<V!>
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toArray(): kotlin.Array<(out) kotlin.Any!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
-          FIELD IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
-        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun <T : kotlin.Any!> finishToArray(p0: kotlin.Array<(out) T!>!, p1: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
-          TYPE_PARAMETER <T : kotlin.Any!>
-          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
-          VALUE_PARAMETER value-parameter p1: kotlin.collections.(Mutable)Iterator<*>!
-        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun hugeCapacity(p0: kotlin.Int): kotlin.Int
-          VALUE_PARAMETER value-parameter p0: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun capacity(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun getNode(p0: kotlin.Int, p1: kotlin.Any!): java.util.HashMap.Node<K!, V!>!
-        VALUE_PARAMETER value-parameter p0: kotlin.Int
-        VALUE_PARAMETER value-parameter p1: kotlin.Any!
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun loadFactor(): kotlin.Float
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun putMapEntries(p0: (kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?), p1: kotlin.Boolean): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: (kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?)
-        VALUE_PARAMETER value-parameter p1: kotlin.Boolean
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun putVal(p0: kotlin.Int, p1: K!, p2: V!, p3: kotlin.Boolean, p4: kotlin.Boolean): V!
-        VALUE_PARAMETER value-parameter p0: kotlin.Int
-        VALUE_PARAMETER value-parameter p1: K!
-        VALUE_PARAMETER value-parameter p2: V!
-        VALUE_PARAMETER value-parameter p3: kotlin.Boolean
-        VALUE_PARAMETER value-parameter p4: kotlin.Boolean
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun removeNode(p0: kotlin.Int, p1: kotlin.Any!, p2: kotlin.Any!, p3: kotlin.Boolean, p4: kotlin.Boolean): java.util.HashMap.Node<K!, V!>!
-        VALUE_PARAMETER value-parameter p0: kotlin.Int
-        VALUE_PARAMETER value-parameter p1: kotlin.Any!
-        VALUE_PARAMETER value-parameter p2: kotlin.Any!
-        VALUE_PARAMETER value-parameter p3: kotlin.Boolean
-        VALUE_PARAMETER value-parameter p4: kotlin.Boolean
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun resize(): kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun treeifyBin(p0: kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!, p1: kotlin.Int): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!
-        VALUE_PARAMETER value-parameter p1: kotlin.Int
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val loadFactor: kotlin.Float
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val loadFactor: kotlin.Float
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var entrySet: kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var entrySet: kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var keySet: kotlin.collections.(Mutable)Set<K!>!
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var keySet: kotlin.collections.(Mutable)Set<K!>!
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var modCount: kotlin.Int
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var modCount: kotlin.Int
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var size: kotlin.Int
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var size: kotlin.Int
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var table: kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var table: kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var threshold: kotlin.Int
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var threshold: kotlin.Int
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var values: kotlin.collections.(Mutable)Collection<V!>!
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var values: kotlin.collections.(Mutable)Collection<V!>!
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final val accessOrder: kotlin.Boolean
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final val accessOrder: kotlin.Boolean
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var head: java.util.LinkedHashMap.Entry<K!, V!>!
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var head: java.util.LinkedHashMap.Entry<K!, V!>!
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var tail: java.util.LinkedHashMap.Entry<K!, V!>!
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var tail: java.util.LinkedHashMap.Entry<K!, V!>!
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS Entry
-        TYPE_PARAMETER <K : kotlin.Any!>
-        TYPE_PARAMETER <V : kotlin.Any!>
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor Entry<K : kotlin.Any!, V : kotlin.Any!>(p0: kotlin.Int, p1: K!, p2: V!, p3: java.util.HashMap.Node<K!, V!>!)
-          VALUE_PARAMETER value-parameter p0: kotlin.Int
-          VALUE_PARAMETER value-parameter p1: K!
-          VALUE_PARAMETER value-parameter p2: V!
-          VALUE_PARAMETER value-parameter p3: java.util.HashMap.Node<K!, V!>!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun equals(other: kotlin.Any?): kotlin.Boolean
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun hashCode(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun setValue(newValue: V!): V!
-          VALUE_PARAMETER value-parameter newValue: V!
-        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun toString(): kotlin.String
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val key: K!
-          FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-key>(): K!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val value: V!
-          FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-value>(): V!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val hash: kotlin.Int
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val hash: kotlin.Int
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val key: K!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val key: K!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.HashMap.Node<K!, V!>!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.HashMap.Node<K!, V!>!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var value: V!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var value: V!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var after: java.util.LinkedHashMap.Entry<K!, V!>!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var after: java.util.LinkedHashMap.Entry<K!, V!>!
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var before: java.util.LinkedHashMap.Entry<K!, V!>!
-          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var before: java.util.LinkedHashMap.Entry<K!, V!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun afterNodeAccess(p0: java.util.HashMap.Node<K!, V!>!): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: java.util.HashMap.Node<K!, V!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun afterNodeInsertion(p0: kotlin.Boolean): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: kotlin.Boolean
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun afterNodeRemoval(p0: java.util.HashMap.Node<K!, V!>!): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: java.util.HashMap.Node<K!, V!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun internalWriteEntries(p0: java.io.ObjectOutputStream!): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: java.io.ObjectOutputStream!
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun newNode(p0: kotlin.Int, p1: K!, p2: V!, p3: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.Node<K!, V!>!
-        VALUE_PARAMETER value-parameter p0: kotlin.Int
-        VALUE_PARAMETER value-parameter p1: K!
-        VALUE_PARAMETER value-parameter p2: V!
-        VALUE_PARAMETER value-parameter p3: java.util.HashMap.Node<K!, V!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun newTreeNode(p0: kotlin.Int, p1: K!, p2: V!, p3: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.TreeNode<K!, V!>!
-        VALUE_PARAMETER value-parameter p0: kotlin.Int
-        VALUE_PARAMETER value-parameter p1: K!
-        VALUE_PARAMETER value-parameter p2: V!
-        VALUE_PARAMETER value-parameter p3: java.util.HashMap.Node<K!, V!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun reinitialize(): kotlin.Unit
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun replacementNode(p0: java.util.HashMap.Node<K!, V!>!, p1: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.Node<K!, V!>!
-        VALUE_PARAMETER value-parameter p0: java.util.HashMap.Node<K!, V!>!
-        VALUE_PARAMETER value-parameter p1: java.util.HashMap.Node<K!, V!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun replacementTreeNode(p0: java.util.HashMap.Node<K!, V!>!, p1: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.TreeNode<K!, V!>!
-        VALUE_PARAMETER value-parameter p0: java.util.HashMap.Node<K!, V!>!
-        VALUE_PARAMETER value-parameter p1: java.util.HashMap.Node<K!, V!>!
-      FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun eq(p0: kotlin.Any!, p1: kotlin.Any!): kotlin.Boolean
-        VALUE_PARAMETER value-parameter p0: kotlin.Any!
-        VALUE_PARAMETER value-parameter p1: kotlin.Any!
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB private const final val serialVersionUID: kotlin.Long = 3801124242820219131.toLong()
-        FIELD IR_EXTERNAL_DECLARATION_STUB private const final val serialVersionUID: kotlin.Long = 3801124242820219131.toLong()
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val DEFAULT_INITIAL_CAPACITY: kotlin.Int = 16
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val DEFAULT_INITIAL_CAPACITY: kotlin.Int = 16
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val DEFAULT_LOAD_FACTOR: kotlin.Float = 0.75.toFloat()
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val DEFAULT_LOAD_FACTOR: kotlin.Float = 0.75.toFloat()
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val MAXIMUM_CAPACITY: kotlin.Int = 1073741824
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val MAXIMUM_CAPACITY: kotlin.Int = 1073741824
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val MIN_TREEIFY_CAPACITY: kotlin.Int = 64
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val MIN_TREEIFY_CAPACITY: kotlin.Int = 64
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val TREEIFY_THRESHOLD: kotlin.Int = 8
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val TREEIFY_THRESHOLD: kotlin.Int = 8
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val UNTREEIFY_THRESHOLD: kotlin.Int = 6
-        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val UNTREEIFY_THRESHOLD: kotlin.Int = 6
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun hash(p0: kotlin.Any!): kotlin.Int
-        VALUE_PARAMETER value-parameter p0: kotlin.Any!
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun tableSizeFor(p0: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter p0: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun comparableClassFor(p0: kotlin.Any!): java.lang.Class<*>!
-        VALUE_PARAMETER value-parameter p0: kotlin.Any!
-      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun compareComparables(p0: java.lang.Class<*>!, p1: kotlin.Any!, p2: kotlin.Any!): kotlin.Int
-        VALUE_PARAMETER value-parameter p0: java.lang.Class<*>!
-        VALUE_PARAMETER value-parameter p1: kotlin.Any!
-        VALUE_PARAMETER value-parameter p2: kotlin.Any!
-  EXTERNAL_PACKAGE_FRAGMENT kotlin.collections
-    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE Map
-      TYPE_PARAMETER <K>
-      TYPE_PARAMETER <out V>
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin @kotlin.internal.PlatformDependent public open fun getOrDefault(key: K, defaultValue: @kotlin.UnsafeVariance V): V
-        VALUE_PARAMETER value-parameter key: K
-        VALUE_PARAMETER value-parameter defaultValue: @kotlin.UnsafeVariance V
-      FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun containsKey(key: K): kotlin.Boolean
-        VALUE_PARAMETER value-parameter key: K
-      FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun containsValue(value: @kotlin.UnsafeVariance V): kotlin.Boolean
-        VALUE_PARAMETER value-parameter value: @kotlin.UnsafeVariance V
-      FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun isEmpty(): kotlin.Boolean
-      FUN IR_EXTERNAL_DECLARATION_STUB public abstract operator fun get(key: K): V?
-        VALUE_PARAMETER value-parameter key: K
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
-        FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-entries>(): kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val keys: kotlin.collections.Set<K>
-        FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-keys>(): kotlin.collections.Set<K>
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val size: kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-size>(): kotlin.Int
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val values: kotlin.collections.Collection<V>
-        FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-values>(): kotlin.collections.Collection<V>
-      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE Entry
-        TYPE_PARAMETER <out K>
-        TYPE_PARAMETER <out V>
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val key: K
-          FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-key>(): K
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val value: V
-          FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-value>(): V
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-      FUN IR_EXTERNAL_DECLARATION_STUB public open fun forEach(p0: java.util.function.BiConsumer<in K, in V>): kotlin.Unit
-        VALUE_PARAMETER value-parameter p0: java.util.function.BiConsumer<in K, in V>
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-  EXTERNAL_PACKAGE_FRAGMENT kotlin.collections
-    FUN IR_EXTERNAL_DECLARATION_STUB public fun <K, V> mapOf(pair: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
-      TYPE_PARAMETER <K>
-      TYPE_PARAMETER <V>
-      VALUE_PARAMETER value-parameter pair: kotlin.Pair<K, V>
-  EXTERNAL_PACKAGE_FRAGMENT kotlin
-    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS Pair
-      TYPE_PARAMETER <out A>
-      TYPE_PARAMETER <out B>
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor Pair<out A, out B>(first: A, second: B)
-        VALUE_PARAMETER value-parameter first: A
-        VALUE_PARAMETER value-parameter second: B
-      FUN IR_EXTERNAL_DECLARATION_STUB public final fun copy(first: A = ..., second: B = ...): kotlin.Pair<A, B>
-        VALUE_PARAMETER value-parameter first: A = ...
+MODULE_FRAGMENT name:<dependencies of test-module>
+  EXTERNAL_PACKAGE_FRAGMENT fqName:java.util
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedHashMap modality:OPEN visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any!]
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any!]
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:java.util.LinkedHashMap<K, V> flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> (p0:(kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?)) returnType:java.util.LinkedHashMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:(kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?) flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> (p0:kotlin.Int) returnType:java.util.LinkedHashMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> (p0:kotlin.Int, p1:kotlin.Float) returnType:java.util.LinkedHashMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.Float flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> (p0:kotlin.Int, p1:kotlin.Float, p2:kotlin.Boolean) returnType:java.util.LinkedHashMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.Float flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:kotlin.Boolean flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:readObject visibility:invisible_fake modality:OPEN <> (p0:java.io.ObjectInputStream!) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.io.ObjectInputStream! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:writeObject visibility:invisible_fake modality:OPEN <> (p0:java.io.ObjectOutputStream!) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.io.ObjectOutputStream! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:linkNodeLast visibility:private modality:OPEN <> (p0:java.util.LinkedHashMap.Entry<K!, V!>!) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.LinkedHashMap.Entry<K!, V!>! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:transferLinks visibility:private modality:OPEN <> (p0:java.util.LinkedHashMap.Entry<K!, V!>!, p1:java.util.LinkedHashMap.Entry<K!, V!>!) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.LinkedHashMap.Entry<K!, V!>! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.LinkedHashMap.Entry<K!, V!>! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:removeEldestEntry visibility:protected/*protected and package*/ modality:OPEN <> (p0:kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clone visibility:public modality:OPEN <> () returnType:Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compute visibility:public modality:OPEN <> (p0:K, p1:java.util.function.BiFunction<in K, in V?, out V?>) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.function.BiFunction<in K, in V?, out V?> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:computeIfAbsent visibility:public modality:OPEN <> (p0:K, p1:java.util.function.Function<in K, out V>) returnType:V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.function.Function<in K, out V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:computeIfPresent visibility:public modality:OPEN <> (p0:K, p1:java.util.function.BiFunction<in K, in V, out V?>) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.function.BiFunction<in K, in V, out V?> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsKey visibility:public modality:OPEN <> (key:K) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:OPEN <> () returnType:Boolean flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:merge visibility:public modality:OPEN <> (p0:K, p1:V, p2:java.util.function.BiFunction<in V, in V, out V?>) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:java.util.function.BiFunction<in V, in V, out V?> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:put visibility:public modality:OPEN <> (key:K, value:V) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:putAll visibility:public modality:OPEN <> (from:kotlin.collections.Map<out K, V>) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:from index:0 type:kotlin.collections.Map<out K, V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:putIfAbsent visibility:public modality:OPEN <> (p0:K, p1:V) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:OPEN <> (key:K) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:OPEN <> (key:K, value:V) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replace visibility:public modality:OPEN <> (p0:K, p1:V) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replace visibility:public modality:OPEN <> (p0:K, p1:V, p2:V) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:OPEN flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:OPEN <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:OPEN <> () returnType:Unit flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsValue visibility:public modality:OPEN <> (value:V) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> (p0:java.util.function.BiConsumer<in K, in V>) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiConsumer<in K, in V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:get visibility:public modality:OPEN <> (key:K) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> (key:K, defaultValue:V) returnType:V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:defaultValue index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replaceAll visibility:public modality:OPEN <> (p0:java.util.function.BiFunction<in K, in V, out V>) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiFunction<in K, in V, out V> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:OPEN flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:OPEN <> () returnType:(kotlin.collections.MutableSet<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>..kotlin.collections.Set<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>?) flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:OPEN flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:OPEN <> () returnType:(kotlin.collections.MutableSet<(K..K?)>..kotlin.collections.Set<(K..K?)>?) flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:OPEN flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:OPEN <> () returnType:(kotlin.collections.MutableCollection<(V..V?)>..kotlin.collections.Collection<(V..V?)>?) flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedHashIterator modality:ABSTRACT visibility:public/*package*/ flags:
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedHashIterator flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:FINAL <> () returnType:Unit flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:FINAL <> () returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:nextNode visibility:public/*package*/ modality:FINAL <> () returnType:(java.util.LinkedHashMap.Entry<(K..K?), (V..V?)>..java.util.LinkedHashMap.Entry<(K..K?), (V..V?)>?) flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:current type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:current type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:expectedModCount type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:expectedModCount type:kotlin.Int visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedEntryIterator modality:FINAL visibility:public/*package*/ flags:
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedEntryIterator flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:FINAL <> () returnType:(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?) flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:FINAL <> () returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:FINAL <> () returnType:Unit flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:forEachRemaining visibility:public modality:OPEN <> (p0:java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>) returnType:Unit flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:nextNode visibility:public/*package*/ modality:FINAL <> () returnType:(java.util.LinkedHashMap.Entry<(K..K?), (V..V?)>..java.util.LinkedHashMap.Entry<(K..K?), (V..V?)>?) flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:current type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:current type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:expectedModCount type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:expectedModCount type:kotlin.Int visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedEntrySet modality:FINAL visibility:public/*package*/ flags:
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedEntrySet flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:FINAL <> () returnType:Unit flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:FINAL <> (element:kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:FINAL <> (p0:java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!) returnType:Unit flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:FINAL <> () returnType:MutableIterator<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:FINAL <> (element:kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:FINAL <> () returnType:Spliterator<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)> flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toArray visibility:public modality:OPEN <T> (p0:kotlin.Array<(out) T!>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
+          TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance: upperBounds:[kotlin.Any!]
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Array<(out) T!>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:add visibility:public modality:OPEN <> (element:kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:addAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:OPEN <> () returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:parallelStream visibility:public modality:OPEN <> () returnType:Stream<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:removeAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:removeIf visibility:public modality:OPEN <> (p0:java.util.function.Predicate<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Predicate<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:retainAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:stream visibility:public modality:OPEN <> () returnType:Stream<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toArray visibility:public modality:OPEN <> () returnType:(kotlin.Array<(kotlin.Any..kotlin.Any?)>..kotlin.Array<out (kotlin.Any..kotlin.Any?)>?) flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:constmval
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake
+        FUN IR_EXTERNAL_DECLARATION_STUB name:finishToArray visibility:invisible_fake modality:OPEN <T> (p0:kotlin.Array<(out) T!>!, p1:kotlin.collections.(Mutable)Iterator<*>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
+          TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance: upperBounds:[kotlin.Any!]
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Array<(out) T!>! flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.collections.(Mutable)Iterator<*>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hugeCapacity visibility:invisible_fake modality:OPEN <> (p0:kotlin.Int) returnType:Int flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedKeyIterator modality:FINAL visibility:public/*package*/ flags:
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedKeyIterator flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:FINAL <> () returnType:(K..K?) flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:FINAL <> () returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:FINAL <> () returnType:Unit flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:forEachRemaining visibility:public modality:OPEN <> (p0:java.util.function.Consumer<in K!>) returnType:Unit flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in K!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:nextNode visibility:public/*package*/ modality:FINAL <> () returnType:(java.util.LinkedHashMap.Entry<(K..K?), (V..V?)>..java.util.LinkedHashMap.Entry<(K..K?), (V..V?)>?) flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:current type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:current type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:expectedModCount type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:expectedModCount type:kotlin.Int visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedKeySet modality:FINAL visibility:public/*package*/ flags:
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedKeySet flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:FINAL <> () returnType:Unit flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:FINAL <> (element:K!) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:K! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:FINAL <> (p0:java.util.function.Consumer<in K!>!) returnType:Unit flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in K!>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:FINAL <> () returnType:MutableIterator<(K..K?)> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:FINAL <> (element:K!) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:K! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:FINAL <> () returnType:Spliterator<(K..K?)> flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toArray visibility:public modality:OPEN <T> (p0:kotlin.Array<(out) T!>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
+          TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance: upperBounds:[kotlin.Any!]
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Array<(out) T!>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:add visibility:public modality:OPEN <> (element:K!) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:K! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:addAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<K!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<K!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<K!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<K!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:OPEN <> () returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:parallelStream visibility:public modality:OPEN <> () returnType:Stream<(K..K?)> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:removeAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<K!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<K!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:removeIf visibility:public modality:OPEN <> (p0:java.util.function.Predicate<in K!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Predicate<in K!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:retainAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<K!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<K!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:stream visibility:public modality:OPEN <> () returnType:Stream<(K..K?)> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toArray visibility:public modality:OPEN <> () returnType:(kotlin.Array<(kotlin.Any..kotlin.Any?)>..kotlin.Array<out (kotlin.Any..kotlin.Any?)>?) flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:constmval
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake
+        FUN IR_EXTERNAL_DECLARATION_STUB name:finishToArray visibility:invisible_fake modality:OPEN <T> (p0:kotlin.Array<(out) T!>!, p1:kotlin.collections.(Mutable)Iterator<*>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
+          TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance: upperBounds:[kotlin.Any!]
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Array<(out) T!>! flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.collections.(Mutable)Iterator<*>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hugeCapacity visibility:invisible_fake modality:OPEN <> (p0:kotlin.Int) returnType:Int flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedValueIterator modality:FINAL visibility:public/*package*/ flags:
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedValueIterator flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:FINAL <> () returnType:(V..V?) flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:FINAL <> () returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:FINAL <> () returnType:Unit flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:forEachRemaining visibility:public modality:OPEN <> (p0:java.util.function.Consumer<in V!>) returnType:Unit flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in V!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:nextNode visibility:public/*package*/ modality:FINAL <> () returnType:(java.util.LinkedHashMap.Entry<(K..K?), (V..V?)>..java.util.LinkedHashMap.Entry<(K..K?), (V..V?)>?) flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:current type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:current type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:expectedModCount type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:expectedModCount type:kotlin.Int visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedValues modality:FINAL visibility:public/*package*/ flags:
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedValues flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:FINAL <> () returnType:Unit flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:FINAL <> (element:V!) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:V! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:FINAL <> (p0:java.util.function.Consumer<in V!>!) returnType:Unit flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in V!>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:FINAL <> () returnType:MutableIterator<(V..V?)> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:FINAL <> () returnType:Spliterator<(V..V?)> flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toArray visibility:public modality:OPEN <T> (p0:kotlin.Array<(out) T!>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
+          TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance: upperBounds:[kotlin.Any!]
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Array<(out) T!>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:add visibility:public modality:OPEN <> (element:V!) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:V! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:addAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<V!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<V!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<V!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<V!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:OPEN <> () returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:parallelStream visibility:public modality:OPEN <> () returnType:Stream<(V..V?)> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:OPEN <> (element:V!) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:V! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:removeAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<V!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<V!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:removeIf visibility:public modality:OPEN <> (p0:java.util.function.Predicate<in V!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Predicate<in V!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:retainAll visibility:public modality:OPEN <> (elements:kotlin.collections.Collection<V!>) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<V!> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:stream visibility:public modality:OPEN <> () returnType:Stream<(V..V?)> flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toArray visibility:public modality:OPEN <> () returnType:(kotlin.Array<(kotlin.Any..kotlin.Any?)>..kotlin.Array<out (kotlin.Any..kotlin.Any?)>?) flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:constmval
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake
+        FUN IR_EXTERNAL_DECLARATION_STUB name:finishToArray visibility:invisible_fake modality:OPEN <T> (p0:kotlin.Array<(out) T!>!, p1:kotlin.collections.(Mutable)Iterator<*>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
+          TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance: upperBounds:[kotlin.Any!]
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Array<(out) T!>! flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.collections.(Mutable)Iterator<*>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hugeCapacity visibility:invisible_fake modality:OPEN <> (p0:kotlin.Int) returnType:Int flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:capacity visibility:public/*package*/ modality:FINAL <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:getNode visibility:public/*package*/ modality:FINAL <> (p0:kotlin.Int, p1:kotlin.Any!) returnType:(java.util.HashMap.Node<(K..K?), (V..V?)>..java.util.HashMap.Node<(K..K?), (V..V?)>?) flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.Any! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:loadFactor visibility:public/*package*/ modality:FINAL <> () returnType:Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:putMapEntries visibility:public/*package*/ modality:FINAL <> (p0:(kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?), p1:kotlin.Boolean) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:(kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?) flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.Boolean flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:putVal visibility:public/*package*/ modality:FINAL <> (p0:kotlin.Int, p1:K!, p2:V!, p3:kotlin.Boolean, p4:kotlin.Boolean) returnType:(V..V?) flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:K! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:V! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p3 index:3 type:kotlin.Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p4 index:4 type:kotlin.Boolean flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:removeNode visibility:public/*package*/ modality:FINAL <> (p0:kotlin.Int, p1:kotlin.Any!, p2:kotlin.Any!, p3:kotlin.Boolean, p4:kotlin.Boolean) returnType:(java.util.HashMap.Node<(K..K?), (V..V?)>..java.util.HashMap.Node<(K..K?), (V..V?)>?) flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.Any! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:kotlin.Any! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p3 index:3 type:kotlin.Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p4 index:4 type:kotlin.Boolean flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:resize visibility:public/*package*/ modality:FINAL <> () returnType:(kotlin.Array<(java.util.HashMap.Node<(K..K?), (V..V?)>..java.util.HashMap.Node<(K..K?), (V..V?)>?)>..kotlin.Array<out (java.util.HashMap.Node<(K..K?), (V..V?)>..java.util.HashMap.Node<(K..K?), (V..V?)>?)>?) flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:treeifyBin visibility:public/*package*/ modality:FINAL <> (p0:kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!, p1:kotlin.Int) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.Int flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:loadFactor type:kotlin.Float visibility:public/*package*/ modality:FINAL flags:val
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:loadFactor type:kotlin.Float visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entrySet type:kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>! visibility:public/*package*/ modality:FINAL flags:var
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:entrySet type:kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>! visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keySet type:kotlin.collections.(Mutable)Set<K!>! visibility:public/*package*/ modality:FINAL flags:var
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:keySet type:kotlin.collections.(Mutable)Set<K!>! visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:modCount type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:var
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:modCount type:kotlin.Int visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:var
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:table type:kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>! visibility:public/*package*/ modality:FINAL flags:var
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:table type:kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>! visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:threshold type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:var
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:threshold type:kotlin.Int visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.(Mutable)Collection<V!>! visibility:public/*package*/ modality:FINAL flags:var
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.(Mutable)Collection<V!>! visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:accessOrder type:kotlin.Boolean visibility:public/*package*/ modality:FINAL flags:val
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:accessOrder type:kotlin.Boolean visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:head type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:head type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:tail type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:tail type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Entry modality:OPEN visibility:public/*package*/ flags:
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any!]
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any!]
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> (p0:kotlin.Int, p1:K!, p2:V!, p3:java.util.HashMap.Node<K!, V!>!) returnType:java.util.LinkedHashMap.Entry<K, V> flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:K! flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:V! flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p3 index:3 type:java.util.HashMap.Node<K!, V!>! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:FINAL <> (other:kotlin.Any?) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:FINAL <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:setValue visibility:public modality:FINAL <> (newValue:V!) returnType:(V..V?) flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:newValue index:0 type:V! flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:FINAL <> () returnType:String flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public modality:FINAL flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:FINAL <> () returnType:(K..K?) flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public modality:FINAL flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:FINAL <> () returnType:(V..V?) flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:hash type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:val
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:hash type:kotlin.Int visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public/*package*/ modality:FINAL flags:val
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.HashMap.Node<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.HashMap.Node<K!, V!>! visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:after type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:after type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:before type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:before type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
+      FUN IR_EXTERNAL_DECLARATION_STUB name:afterNodeAccess visibility:public/*package*/ modality:OPEN <> (p0:java.util.HashMap.Node<K!, V!>!) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.HashMap.Node<K!, V!>! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:afterNodeInsertion visibility:public/*package*/ modality:OPEN <> (p0:kotlin.Boolean) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Boolean flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:afterNodeRemoval visibility:public/*package*/ modality:OPEN <> (p0:java.util.HashMap.Node<K!, V!>!) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.HashMap.Node<K!, V!>! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:internalWriteEntries visibility:public/*package*/ modality:OPEN <> (p0:java.io.ObjectOutputStream!) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.io.ObjectOutputStream! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:newNode visibility:public/*package*/ modality:OPEN <> (p0:kotlin.Int, p1:K!, p2:V!, p3:java.util.HashMap.Node<K!, V!>!) returnType:(java.util.HashMap.Node<(K..K?), (V..V?)>..java.util.HashMap.Node<(K..K?), (V..V?)>?) flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:K! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:V! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p3 index:3 type:java.util.HashMap.Node<K!, V!>! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:newTreeNode visibility:public/*package*/ modality:OPEN <> (p0:kotlin.Int, p1:K!, p2:V!, p3:java.util.HashMap.Node<K!, V!>!) returnType:(java.util.HashMap.TreeNode<(K..K?), (V..V?)>..java.util.HashMap.TreeNode<(K..K?), (V..V?)>?) flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:K! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:V! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p3 index:3 type:java.util.HashMap.Node<K!, V!>! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:reinitialize visibility:public/*package*/ modality:OPEN <> () returnType:Unit flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replacementNode visibility:public/*package*/ modality:OPEN <> (p0:java.util.HashMap.Node<K!, V!>!, p1:java.util.HashMap.Node<K!, V!>!) returnType:(java.util.HashMap.Node<(K..K?), (V..V?)>..java.util.HashMap.Node<(K..K?), (V..V?)>?) flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.HashMap.Node<K!, V!>! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.HashMap.Node<K!, V!>! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replacementTreeNode visibility:public/*package*/ modality:OPEN <> (p0:java.util.HashMap.Node<K!, V!>!, p1:java.util.HashMap.Node<K!, V!>!) returnType:(java.util.HashMap.TreeNode<(K..K?), (V..V?)>..java.util.HashMap.TreeNode<(K..K?), (V..V?)>?) flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.HashMap.Node<K!, V!>! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.HashMap.Node<K!, V!>! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:eq visibility:invisible_fake modality:OPEN <> (p0:kotlin.Any!, p1:kotlin.Any!) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Any! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.Any! flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private modality:FINAL flags:constmval
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_INITIAL_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_INITIAL_CAPACITY type:kotlin.Int visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_LOAD_FACTOR type:kotlin.Float visibility:public/*package*/ modality:FINAL flags:constmval
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_LOAD_FACTOR type:kotlin.Float visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAXIMUM_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:MAXIMUM_CAPACITY type:kotlin.Int visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_TREEIFY_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:MIN_TREEIFY_CAPACITY type:kotlin.Int visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:TREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:TREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:UNTREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:UNTREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hash visibility:public/*package*/ modality:FINAL <> (p0:kotlin.Any!) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Any! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:tableSizeFor visibility:public/*package*/ modality:FINAL <> (p0:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:comparableClassFor visibility:public/*package*/ modality:OPEN <> (p0:kotlin.Any!) returnType:(java.lang.Class<*>..java.lang.Class<*>?) flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Any! flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compareComparables visibility:public/*package*/ modality:OPEN <> (p0:java.lang.Class<*>!, p1:kotlin.Any!, p2:kotlin.Any!) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.lang.Class<*>! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.Any! flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:kotlin.Any! flags:
+  EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin.collections
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Map modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance:out upperBounds:[kotlin.Any?]
+      FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> (key:K, defaultValue:@kotlin.UnsafeVariance V) returnType:V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:defaultValue index:1 type:@kotlin.UnsafeVariance V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsKey visibility:public modality:ABSTRACT <> (key:K) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsValue visibility:public modality:ABSTRACT <> (value:@kotlin.UnsafeVariance V) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:@kotlin.UnsafeVariance V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> () returnType:Boolean flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:get visibility:public modality:ABSTRACT <> (key:K) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> () returnType:Set<Entry<K, V>> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.Set<K> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> () returnType:Set<K> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> () returnType:Int flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.Collection<V> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> () returnType:Collection<V> flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Entry modality:ABSTRACT visibility:public flags:
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance:out upperBounds:[kotlin.Any?]
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance:out upperBounds:[kotlin.Any?]
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:ABSTRACT <> () returnType:K flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:ABSTRACT <> () returnType:V flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> (p0:java.util.function.BiConsumer<in K, in V>) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiConsumer<in K, in V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+  EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin.collections
+    FUN IR_EXTERNAL_DECLARATION_STUB name:mapOf visibility:public modality:FINAL <K, V> (pair:kotlin.Pair<K, V>) returnType:Map<K, V> flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any?]
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:pair index:0 type:kotlin.Pair<K, V> flags:
+  EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Pair modality:FINAL visibility:public flags:data
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:A index:0 variance:out upperBounds:[kotlin.Any?]
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:B index:1 variance:out upperBounds:[kotlin.Any?]
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> (first:A, second:B) returnType:kotlin.Pair<A, B> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:first index:0 type:A flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:second index:1 type:B flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:copy visibility:public modality:FINAL <> (first:A, second:B) returnType:Pair<A, B> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:first index:0 type:A flags:
           EXPRESSION_BODY
             ERROR_EXPR 'Stub expression for default value of first' type=A
-        VALUE_PARAMETER value-parameter second: B = ...
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:second index:1 type:B flags:
           EXPRESSION_BODY
             ERROR_EXPR 'Stub expression for default value of second' type=B
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun component1(): A
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun component2(): B
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public final val first: A
-        FUN IR_EXTERNAL_DECLARATION_STUB public final fun <get-first>(): A
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public final val second: B
-        FUN IR_EXTERNAL_DECLARATION_STUB public final fun <get-second>(): B
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-    FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.internal.InlineOnly public inline fun <T> T.apply(block: T.() -> kotlin.Unit): T
-      TYPE_PARAMETER <T>
-      VALUE_PARAMETER value-parameter block: T.() -> kotlin.Unit
+      FUN IR_EXTERNAL_DECLARATION_STUB name:component1 visibility:public modality:FINAL <> () returnType:A flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:component2 visibility:public modality:FINAL <> () returnType:B flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:first type:A visibility:public modality:FINAL flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-first> visibility:public modality:FINAL <> () returnType:A flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:second type:B visibility:public modality:FINAL flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-second> visibility:public modality:FINAL <> () returnType:B flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+    FUN IR_EXTERNAL_DECLARATION_STUB name:apply visibility:public modality:FINAL <T> (block:T.() -> kotlin.Unit) returnType:T flags:inline
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance: upperBounds:[kotlin.Any?]
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:block index:0 type:T.() -> kotlin.Unit flags:

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.contracts.description.expressions.VariableReference
  */
 class ConditionalEffectDeclaration(val effect: EffectDeclaration, val condition: BooleanExpression) : EffectDeclaration {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
-            contractDescriptionVisitor.visitConditionalEffectDeclaration(this, data)
+        contractDescriptionVisitor.visitConditionalEffectDeclaration(this, data)
 }
 
 
@@ -44,7 +44,7 @@ class ConditionalEffectDeclaration(val effect: EffectDeclaration, val condition:
  */
 class ReturnsEffectDeclaration(val value: ConstantReference) : EffectDeclaration {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
-            contractDescriptionVisitor.visitReturnsEffectDeclaration(this, data)
+        contractDescriptionVisitor.visitReturnsEffectDeclaration(this, data)
 
 }
 
@@ -55,7 +55,7 @@ class ReturnsEffectDeclaration(val value: ConstantReference) : EffectDeclaration
  */
 class CallsEffectDeclaration(val variableReference: VariableReference, val kind: InvocationKind) : EffectDeclaration {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
-            contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
+        contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
 }
 
 enum class InvocationKind {

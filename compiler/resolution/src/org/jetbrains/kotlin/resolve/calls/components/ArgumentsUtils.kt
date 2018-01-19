@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 internal fun unexpectedArgument(argument: KotlinCallArgument): Nothing =
-        error("Unexpected argument type: $argument, ${argument.javaClass.canonicalName}.")
+    error("Unexpected argument type: $argument, ${argument.javaClass.canonicalName}.")
 
 // if expression is not stable and has smart casts, then we create this type
 internal val ReceiverValueWithSmartCastInfo.unstableType: UnwrappedType?
@@ -49,19 +49,18 @@ internal val ReceiverValueWithSmartCastInfo.stableType: UnwrappedType
     }
 
 internal fun KotlinCallArgument.getExpectedType(parameter: ParameterDescriptor, languageVersionSettings: LanguageVersionSettings) =
-        if (this.isSpread || this.isArrayAssignedAsNamedArgumentInAnnotation(parameter, languageVersionSettings)) {
-            parameter.type.unwrap()
-        }
-        else {
-            parameter.safeAs<ValueParameterDescriptor>()?.varargElementType?.unwrap() ?: parameter.type.unwrap()
-        }
+    if (this.isSpread || this.isArrayAssignedAsNamedArgumentInAnnotation(parameter, languageVersionSettings)) {
+        parameter.type.unwrap()
+    } else {
+        parameter.safeAs<ValueParameterDescriptor>()?.varargElementType?.unwrap() ?: parameter.type.unwrap()
+    }
 
 val ValueParameterDescriptor.isVararg: Boolean get() = varargElementType != null
 val ParameterDescriptor.isVararg: Boolean get() = this.safeAs<ValueParameterDescriptor>()?.isVararg ?: false
 
 private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInAnnotation(
-        parameter: ParameterDescriptor,
-        languageVersionSettings: LanguageVersionSettings
+    parameter: ParameterDescriptor,
+    languageVersionSettings: LanguageVersionSettings
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
 

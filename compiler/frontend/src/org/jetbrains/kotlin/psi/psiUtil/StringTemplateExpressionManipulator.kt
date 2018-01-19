@@ -22,8 +22,12 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import com.intellij.openapi.util.text.StringUtil
 
-class StringTemplateExpressionManipulator: AbstractElementManipulator<KtStringTemplateExpression>() {
-    override fun handleContentChange(element: KtStringTemplateExpression, range: TextRange, newContent: String): KtStringTemplateExpression? {
+class StringTemplateExpressionManipulator : AbstractElementManipulator<KtStringTemplateExpression>() {
+    override fun handleContentChange(
+        element: KtStringTemplateExpression,
+        range: TextRange,
+        newContent: String
+    ): KtStringTemplateExpression? {
         val node = element.node
         val content = if (node.firstChildNode.textLength == 1) StringUtil.escapeStringCharacters(newContent) else newContent
         val oldText = node.text

@@ -18,10 +18,15 @@ package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.psi.PsiCall
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.impl.light.LightMemberReference
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.slicer.JavaSliceUsage
 import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
@@ -54,8 +59,8 @@ import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpression
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -68,19 +73,19 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
-private fun KtDeclaration.processHierarchyDownward(scope: SearchScope, processor: KtDeclaration.() -> Unit) {
+private fun PsiElement.processHierarchyDownward(scope: SearchScope, processor: PsiElement.() -> Unit) {
     processor()
     HierarchySearchRequest(this, scope).searchOverriders().forEach {
-        (it.namedUnwrappedElement as? KtDeclaration)?.processor()
+        it.namedUnwrappedElement?.processor()
     }
 }
 
-private fun KtDeclaration.processHierarchyUpward(scope: AnalysisScope, processor: KtDeclaration.() -> Unit) {
+private fun KtDeclaration.processHierarchyUpward(scope: AnalysisScope, processor: PsiElement.() -> Unit) {
     processor()
     val descriptor = unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
     DescriptorUtils
             .getAllOverriddenDescriptors(descriptor)
-            .mapNotNull { it.source.getPsi() as? KtDeclaration }
+            .mapNotNull { it.source.getPsi() }
             .filter { scope.contains(it) }
             .forEach(processor)
 }
@@ -157,7 +162,7 @@ class InflowSlicer(
         processor: Processor<SliceUsage>,
         parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
-    private fun KtDeclaration.processHierarchyDownwardAndPass() {
+    private fun PsiElement.processHierarchyDownwardAndPass() {
         processHierarchyDownward(parentUsage.scope.toSearchScope()) { passToProcessor() }
     }
 
@@ -165,14 +170,25 @@ class InflowSlicer(
 
     private fun KtDeclaration.processAssignments(accessSearchScope: SearchScope) {
         processVariableAccesses(accessSearchScope, AccessKind.WRITE_WITH_OPTIONAL_READ) body@ {
-            val refExpression = it.element as? KtExpression ?: return@body
-            val (accessKind, accessExpression) = refExpression.readWriteAccessWithFullExpression(true)
-            if (accessKind == ReferenceAccess.WRITE && accessExpression is KtBinaryExpression && accessExpression.operationToken == KtTokens.EQ) {
-                accessExpression.right?.passToProcessorAsValue()
+            val refElement = it.element ?: return@body
+            val refParent = refElement.parent
+
+            val rhsValue = when {
+                refElement is KtExpression -> {
+                    val (accessKind, accessExpression) = refElement.readWriteAccessWithFullExpression(true)
+                    if (accessKind == ReferenceAccess.WRITE && accessExpression is KtBinaryExpression && accessExpression.operationToken == KtTokens.EQ) {
+                        accessExpression.right
+                    }
+                    else {
+                        accessExpression
+                    }
+                }
+
+                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(0)
+
+                else -> null
             }
-            else {
-                accessExpression.passToProcessorAsValue()
-            }
+            rhsValue?.passToProcessorAsValue()
         }
     }
 
@@ -202,7 +218,7 @@ class InflowSlicer(
         if (hasDelegateExpression()) {
             val getter = (unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter
             val delegateGetterResolvedCall = getter?.let { bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it] }
-            (delegateGetterResolvedCall?.resultingDescriptor?.source?.getPsi() as? KtDeclarationWithBody)?.passToProcessor()
+            delegateGetterResolvedCall?.resultingDescriptor?.source?.getPsi()?.passToProcessor()
             return
         }
 
@@ -246,16 +262,26 @@ class InflowSlicer(
         val parameterDescriptor = analyze()[BindingContext.VALUE_PARAMETER, this] ?: return
 
         (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope()) body@ {
-            val refExpression = it.element as? KtExpression ?: return@body
-            val callElement = refExpression.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return@body
-            val resolvedCall = callElement.getResolvedCall(callElement.analyze()) ?: return@body
-            val resolvedArgument = resolvedCall.valueArguments[parameterDescriptor] ?: return@body
-            val flownExpression = when (resolvedArgument) {
-                                      is DefaultValueArgument -> defaultValue
-                                      is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
-                                      else -> null
-                                  } ?: return@body
-            flownExpression.passToProcessorAsValue()
+            val refElement = it.element ?: return@body
+            val refParent = refElement.parent
+
+            val argumentExpression = when {
+                refElement is KtExpression -> {
+                    val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return@body
+                    val resolvedCall = callElement.getResolvedCall(callElement.analyze()) ?: return@body
+                    val resolvedArgument = resolvedCall.valueArguments[parameterDescriptor] ?: return@body
+                    when (resolvedArgument) {
+                        is DefaultValueArgument -> defaultValue
+                        is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
+                        else -> null
+                    }
+                }
+
+                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(this@processParameter.parameterIndex())
+
+                else -> null
+            }
+            argumentExpression?.passToProcessorAsValue()
         }
 
         if (valOrVarKeyword.toValVar() == KotlinValVar.Var) {
@@ -313,7 +339,7 @@ class InflowSlicer(
                     return
                 }
                 val accessedDescriptor = createdAt.target.accessedDescriptor ?: return
-                val accessedDeclaration = accessedDescriptor.source.getPsi() as? KtDeclaration ?: return
+                val accessedDeclaration = accessedDescriptor.source.getPsi() ?: return
                 if (accessedDescriptor is SyntheticFieldDescriptor) {
                     val property = accessedDeclaration as? KtProperty ?: return
                     if (accessedDescriptor.propertyDescriptor.setter?.isDefault ?: true) {
@@ -347,7 +373,7 @@ class InflowSlicer(
                     (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression?.passToProcessorAsValue(parentUsage.lambdaLevel + 1)
                 }
                 else {
-                    (resultingDescriptor.source.getPsi() as? KtDeclaration)?.processHierarchyDownwardAndPass()
+                    resultingDescriptor.source.getPsi()?.processHierarchyDownwardAndPass()
                 }
             }
         }
@@ -376,8 +402,14 @@ class OutflowSlicer(
 
             val withDereferences = parentUsage.params.showInstanceDereferences
             val accessKind = if (withDereferences) AccessKind.READ_OR_WRITE else AccessKind.READ_ONLY
-            processVariableAccesses(parentUsage.scope.toSearchScope(), accessKind) body@ {
-                val refExpression = (it.element as? KtExpression)?.let { KtPsiUtil.safeDeparenthesize(it) } ?: return@body
+            (this as? KtDeclaration)?.processVariableAccesses(parentUsage.scope.toSearchScope(), accessKind) body@ {
+                val refElement = it.element
+                if (refElement !is KtExpression) {
+                    refElement?.passToProcessor()
+                    return@body
+                }
+
+                val refExpression = KtPsiUtil.safeDeparenthesize(refElement)
                 if (withDereferences) {
                     refExpression.processDereferences()
                 }
@@ -388,7 +420,7 @@ class OutflowSlicer(
         }
     }
 
-    private fun PsiElement.getCallElementForExactCallee(): KtElement? {
+    private fun PsiElement.getCallElementForExactCallee(): PsiElement? {
         if (this is KtArrayAccessExpression) return this
 
         val operationRefExpr = getNonStrictParentOfType<KtOperationReferenceExpression>()
@@ -397,6 +429,7 @@ class OutflowSlicer(
         val parentCall = getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return null
         val callee = parentCall.calleeExpression?.let { KtPsiUtil.safeDeparenthesize(it) }
         if (callee == this || callee is KtConstructorCalleeExpression && callee.isAncestor(this, true)) return parentCall
+
         return null
     }
 
@@ -409,9 +442,25 @@ class OutflowSlicer(
     private fun KtFunction.processFunction() {
         if (this is KtConstructor<*> || this is KtNamedFunction && name != null) {
             processHierarchyUpward(parentUsage.scope) {
-                (this as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope()) {
-                    it.element?.getCallElementForExactCallee()?.passToProcessor()
-                    it.element?.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
+                if (this is KtFunction) {
+                    processCalls(parentUsage.scope.toSearchScope()) {
+                        val refElement = it.element
+                        when {
+                            refElement == null -> (it.reference as? LightMemberReference)?.element?.passToProcessor()
+                            refElement is KtExpression -> {
+                                refElement.getCallElementForExactCallee()?.passToProcessor()
+                                refElement.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
+                            }
+                            else -> refElement.passToProcessor()
+                        }
+                    }
+                }
+                else if (this is PsiMethod && language == JavaLanguage.INSTANCE) {
+                    // todo: work around the bug in JavaSliceProvider.transform()
+                    processor.process(JavaSliceUsage.createRootUsage(this, parentUsage.params))
+                }
+                else {
+                    passToProcessor()
                 }
             }
             return
@@ -462,7 +511,7 @@ class OutflowSlicer(
     private fun KtExpression.processExpression() {
         processPseudocodeUsages { pseudoValue, instr ->
             when (instr) {
-                is WriteValueInstruction -> (instr.target.accessedDescriptor?.source?.getPsi() as? KtDeclaration)?.passToProcessor()
+                is WriteValueInstruction -> instr.target.accessedDescriptor?.source?.getPsi()?.passToProcessor()
                 is CallInstruction -> {
                     if (parentUsage.lambdaLevel > 0 && instr.receiverValues[pseudoValue] != null) {
                         instr.element.passToProcessor(parentUsage.lambdaLevel - 1)

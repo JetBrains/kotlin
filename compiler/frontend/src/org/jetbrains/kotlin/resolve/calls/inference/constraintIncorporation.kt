@@ -32,11 +32,12 @@ import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import java.util.*
 
 data class ConstraintContext(
-        val position: ConstraintPosition,
-        // see TypeBounds.Bound.derivedFrom
-        val derivedFrom: Set<TypeVariable>? = null,
-        val initial: Boolean = false,
-        val initialReduction: Boolean = false)
+    val position: ConstraintPosition,
+    // see TypeBounds.Bound.derivedFrom
+    val derivedFrom: Set<TypeVariable>? = null,
+    val initial: Boolean = false,
+    val initialReduction: Boolean = false
+)
 
 fun ConstraintSystemBuilderImpl.incorporateBound(newBound: Bound) {
     val typeVariable = newBound.typeVariable

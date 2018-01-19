@@ -24,7 +24,7 @@ typealias ImmutableHashMap<K, V> = javaslang.collection.HashMap<K, V>
 
 abstract class ControlFlowInfo<S : ControlFlowInfo<S, D>, D : Any>
 internal constructor(
-        protected val map: ImmutableMap<VariableDescriptor, D> = ImmutableHashMap.empty()
+    protected val map: ImmutableMap<VariableDescriptor, D> = ImmutableHashMap.empty()
 ) : ImmutableMap<VariableDescriptor, D> by map, ReadOnlyControlFlowInfo<D> {
     abstract protected fun copy(newMap: ImmutableMap<VariableDescriptor, D>): S
 
@@ -69,7 +69,7 @@ interface ReadOnlyInitControlFlowInfo : ReadOnlyControlFlowInfo<VariableControlF
 typealias ReadOnlyUseControlFlowInfo = ReadOnlyControlFlowInfo<VariableUseState>
 
 class InitControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableControlFlowState> = ImmutableHashMap.empty()) :
-        ControlFlowInfo<InitControlFlowInfo, VariableControlFlowState>(map), ReadOnlyInitControlFlowInfo {
+    ControlFlowInfo<InitControlFlowInfo, VariableControlFlowState>(map), ReadOnlyInitControlFlowInfo {
     override fun copy(newMap: ImmutableMap<VariableDescriptor, VariableControlFlowState>) = InitControlFlowInfo(newMap)
 
     // this = output of EXHAUSTIVE_WHEN_ELSE instruction
@@ -87,7 +87,7 @@ class InitControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableControlF
 }
 
 class UseControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableUseState> = ImmutableHashMap.empty()) :
-        ControlFlowInfo<UseControlFlowInfo, VariableUseState>(map), ReadOnlyUseControlFlowInfo {
+    ControlFlowInfo<UseControlFlowInfo, VariableUseState>(map), ReadOnlyUseControlFlowInfo {
     override fun copy(newMap: ImmutableMap<VariableDescriptor, VariableUseState>) = UseControlFlowInfo(newMap)
 }
 
@@ -144,13 +144,13 @@ class VariableControlFlowState private constructor(val initState: InitState, val
             }
 
         fun createInitializedExhaustively(isDeclared: Boolean): VariableControlFlowState =
-                create(InitState.INITIALIZED_EXHAUSTIVELY, isDeclared)
+            create(InitState.INITIALIZED_EXHAUSTIVELY, isDeclared)
 
         fun create(isInitialized: Boolean, isDeclared: Boolean = false): VariableControlFlowState =
-                create(if (isInitialized) InitState.INITIALIZED else InitState.NOT_INITIALIZED, isDeclared)
+            create(if (isInitialized) InitState.INITIALIZED else InitState.NOT_INITIALIZED, isDeclared)
 
         fun create(isDeclaredHere: Boolean, mergedEdgesData: VariableControlFlowState?): VariableControlFlowState =
-                create(true, isDeclaredHere || mergedEdgesData != null && mergedEdgesData.isDeclared)
+            create(true, isDeclaredHere || mergedEdgesData != null && mergedEdgesData.isDeclared)
     }
 }
 

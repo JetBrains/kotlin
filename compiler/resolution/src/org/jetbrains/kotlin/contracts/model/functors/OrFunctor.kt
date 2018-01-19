@@ -30,7 +30,7 @@ class OrFunctor : AbstractBinaryFunctor() {
         ESConstant.FALSE -> computation.effects
         ESConstant.TRUE -> emptyList()
 
-        // This means that expression isn't typechecked properly
+    // This means that expression isn't typechecked properly
         else -> computation.effects
     }
 

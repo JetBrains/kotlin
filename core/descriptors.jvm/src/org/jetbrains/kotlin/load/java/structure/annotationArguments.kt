@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.structure
 
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 interface JavaAnnotationArgument {
@@ -31,8 +32,8 @@ interface JavaArrayAnnotationArgument : JavaAnnotationArgument {
 }
 
 interface JavaEnumValueAnnotationArgument : JavaAnnotationArgument {
+    val enumClassId: ClassId?
     val entryName: Name?
-    fun resolve(): JavaField?
 }
 
 interface JavaClassObjectAnnotationArgument : JavaAnnotationArgument {

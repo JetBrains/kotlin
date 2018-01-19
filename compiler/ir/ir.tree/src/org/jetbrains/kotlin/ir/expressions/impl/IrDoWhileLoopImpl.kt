@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrDoWhileLoopImpl(startOffset: Int, endOffset: Int, type : KotlinType, origin: IrStatementOrigin?) :
-        IrLoopBase(startOffset, endOffset, type, origin), IrDoWhileLoop {
+class IrDoWhileLoopImpl(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?) :
+    IrLoopBase(startOffset, endOffset, type, origin), IrDoWhileLoop {
     constructor(
-            startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?,
-            body: IrExpression, condition: IrExpression
+        startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?,
+        body: IrExpression, condition: IrExpression
     ) : this(startOffset, endOffset, type, origin) {
         this.condition = condition
         this.body = body

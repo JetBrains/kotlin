@@ -69,10 +69,10 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         }
 
         val configuration = createConfiguration(
-                configurationKind, jdkKind,
-                listOf<File>(getAnnotationsJar()),
-                arrayOf(javaFilesDir).filterNotNull(),
-                files
+            configurationKind, jdkKind,
+            listOf<File>(getAnnotationsJar()),
+            arrayOf(javaFilesDir).filterNotNull(),
+            files
         )
 
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -96,7 +96,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         private val IGNORE_ERRORS_PATTERN = Regex("""// !IGNORE_ERRORS""")
 
         internal fun shouldIgnoreErrors(wholeFile: File): Boolean =
-                IGNORE_ERRORS_PATTERN.containsMatchIn(wholeFile.readText())
+            IGNORE_ERRORS_PATTERN.containsMatchIn(wholeFile.readText())
 
         internal fun createExpectedTextFile(testFile: TestFile, dir: File, fileName: String): File {
             val textFile = File(dir, fileName)
@@ -110,10 +110,10 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         }
 
         fun generateIrModule(
-                ktFilesToAnalyze: List<KtFile>,
-                environment: KotlinCoreEnvironment,
-                psi2ir: Psi2IrTranslator,
-                shouldGenerate: (KtFile) -> Boolean
+            ktFilesToAnalyze: List<KtFile>,
+            environment: KotlinCoreEnvironment,
+            psi2ir: Psi2IrTranslator,
+            shouldGenerate: (KtFile) -> Boolean
         ): IrModuleFragment {
             val analysisResult = JvmResolveUtil.analyze(ktFilesToAnalyze, environment)
             if (!psi2ir.configuration.ignoreErrors) {
@@ -124,11 +124,21 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             return generateIrModule(fileToGenerate, analysisResult.moduleDescriptor, analysisResult.bindingContext, psi2ir)
         }
 
-        fun generateIrModule(ktFiles: List<KtFile>, moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext, ignoreErrors: Boolean = false) =
-                generateIrModule(ktFiles, moduleDescriptor, bindingContext, Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors)))
+        fun generateIrModule(
+            ktFiles: List<KtFile>,
+            moduleDescriptor: ModuleDescriptor,
+            bindingContext: BindingContext,
+            ignoreErrors: Boolean = false
+        ) =
+            generateIrModule(ktFiles, moduleDescriptor, bindingContext, Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors)))
 
-        fun generateIrModule(ktFiles: List<KtFile>, moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext, psi2ir: Psi2IrTranslator) =
-                psi2ir.generateModule(moduleDescriptor, ktFiles, bindingContext)
+        fun generateIrModule(
+            ktFiles: List<KtFile>,
+            moduleDescriptor: ModuleDescriptor,
+            bindingContext: BindingContext,
+            psi2ir: Psi2IrTranslator
+        ) =
+            psi2ir.generateModule(moduleDescriptor, ktFiles, bindingContext)
     }
 }
 

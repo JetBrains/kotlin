@@ -84,7 +84,11 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractReducingFunctor() {
                 resultingClauses.add(trueClause)
             }
 
-            if (effect.simpleEffect.value != constant && effect.simpleEffect.value is ESConstant && isSafeToProduceFalse(call, effect.simpleEffect.value, constant)) {
+            if (effect.simpleEffect.value != constant && effect.simpleEffect.value is ESConstant && isSafeToProduceFalse(
+                    call,
+                    effect.simpleEffect.value,
+                    constant
+                )) {
                 val falseClause = ConditionalEffect(effect.condition, ESReturns(isNegated.lift()))
                 resultingClauses.add(falseClause)
             }
@@ -96,10 +100,10 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractReducingFunctor() {
     // It is safe to produce false if we're comparing types which are isomorphic to Boolean. For such types we can be sure, that
     // if leftConstant != rightConstant, then this is the only way to produce 'false'.
     private fun isSafeToProduceFalse(leftCall: Computation, leftConstant: ESConstant, rightConstant: ESConstant): Boolean = when {
-        // Comparison of Boolean
+    // Comparison of Boolean
         KotlinBuiltIns.isBoolean(rightConstant.type) && leftCall.type != null && KotlinBuiltIns.isBoolean(leftCall.type!!) -> true
 
-        // Comparison of NULL/NOT_NULL, which is essentially Boolean
+    // Comparison of NULL/NOT_NULL, which is essentially Boolean
         leftConstant.isNullConstant() && rightConstant.isNullConstant() -> true
 
         else -> false
@@ -107,8 +111,8 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractReducingFunctor() {
 
     private fun equateValues(left: ESValue, right: ESValue): List<ESEffect> {
         return listOf(
-                ConditionalEffect(ESEqual(left, right, isNegated), ESReturns(true.lift())),
-                ConditionalEffect(ESEqual(left, right, isNegated.not()), ESReturns(false.lift()))
+            ConditionalEffect(ESEqual(left, right, isNegated), ESReturns(true.lift())),
+            ConditionalEffect(ESEqual(left, right, isNegated.not()), ESReturns(false.lift()))
         )
     }
 }

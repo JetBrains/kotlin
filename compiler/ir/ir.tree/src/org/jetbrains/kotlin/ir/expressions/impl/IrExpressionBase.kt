@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrExpressionBase(
-        startOffset: Int,
-        endOffset: Int,
-        override val type: KotlinType
+    startOffset: Int,
+    endOffset: Int,
+    override val type: KotlinType
 ) : IrElementBase(startOffset, endOffset), IrExpression

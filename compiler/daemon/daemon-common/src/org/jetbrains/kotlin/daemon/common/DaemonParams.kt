@@ -50,6 +50,7 @@ val COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS: Long = 10000L // 10 secs
 val COMPILE_DAEMON_TIMEOUT_INFINITE_MS: Long = 0L
 val COMPILE_DAEMON_IS_READY_MESSAGE = "Kotlin compile daemon is ready"
 
+val COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS: String = "kotlin.daemon.custom.run.files.path.for.tests"
 val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String get() =
     FileSystem.getRuntimeStateFilesPath("kotlin", "daemon")
 
@@ -225,8 +226,9 @@ data class DaemonOptions(
 
 // TODO: consider implementing generic approach to it or may be replace getters with ones returning default if necessary
 val DaemonOptions.runFilesPathOrDefault: String
-    get() = if (runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else runFilesPath
-
+    get() = System.getProperty(COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS)
+            ?: runFilesPath.takeUnless { it.isBlank() }
+            ?: COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH
 
 fun Iterable<String>.distinctStringsDigest(): ByteArray =
         MessageDigest.getInstance(CLASSPATH_ID_DIGEST)

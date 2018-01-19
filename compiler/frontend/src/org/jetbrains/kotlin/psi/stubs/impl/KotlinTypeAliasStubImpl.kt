@@ -25,17 +25,17 @@ import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinTypeAliasStubImpl(
-        parent: StubElement<out PsiElement>?,
-        private val name: StringRef?,
-        private val qualifiedName: StringRef?,
-        private val isTopLevel: Boolean
+    parent: StubElement<out PsiElement>?,
+    private val name: StringRef?,
+    private val qualifiedName: StringRef?,
+    private val isTopLevel: Boolean
 ) : KotlinStubBaseImpl<KtTypeAlias>(parent, KtStubElementTypes.TYPEALIAS), KotlinTypeAliasStub {
 
     override fun getName(): String? =
-            StringRef.toString(name)
+        StringRef.toString(name)
 
     override fun getFqName(): FqName? =
-            StringRef.toString(qualifiedName)?.let(::FqName)
+        StringRef.toString(qualifiedName)?.let(::FqName)
 
     override fun isTopLevel(): Boolean = isTopLevel
 }

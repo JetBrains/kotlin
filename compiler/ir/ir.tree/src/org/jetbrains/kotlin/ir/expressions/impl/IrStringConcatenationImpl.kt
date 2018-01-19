@@ -24,8 +24,12 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class IrStringConcatenationImpl(startOffset: Int, endOffset: Int, type: KotlinType) :
-        IrExpressionBase(startOffset, endOffset, type), IrStringConcatenation {
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType, arguments: Collection<IrExpression>) : this(startOffset, endOffset, type) {
+    IrExpressionBase(startOffset, endOffset, type), IrStringConcatenation {
+    constructor(startOffset: Int, endOffset: Int, type: KotlinType, arguments: Collection<IrExpression>) : this(
+        startOffset,
+        endOffset,
+        type
+    ) {
         this.arguments.addAll(arguments)
     }
 
@@ -36,7 +40,7 @@ class IrStringConcatenationImpl(startOffset: Int, endOffset: Int, type: KotlinTy
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitStringConcatenation(this, data)
+        visitor.visitStringConcatenation(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         arguments.forEach { it.accept(visitor, data) }

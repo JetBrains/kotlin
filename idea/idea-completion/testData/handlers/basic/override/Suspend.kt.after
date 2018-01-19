@@ -1,0 +1,11 @@
+interface I {
+    suspend fun foo()
+}
+
+class A : I {
+    override suspend fun foo() {
+        <caret><selection>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
+    }
+}
+
+// ELEMENT_TEXT: "override suspend fun foo() {...}"

@@ -36,10 +36,10 @@ interface CallChecker {
 }
 
 class CallCheckerContext(
-        val resolutionContext: ResolutionContext<*>,
-        val trace: BindingTrace,
-        val languageVersionSettings: LanguageVersionSettings,
-        val deprecationResolver: DeprecationResolver
+    val resolutionContext: ResolutionContext<*>,
+    val trace: BindingTrace,
+    val languageVersionSettings: LanguageVersionSettings,
+    val deprecationResolver: DeprecationResolver
 ) {
     val scope: LexicalScope
         get() = resolutionContext.scope
@@ -51,9 +51,9 @@ class CallCheckerContext(
         get() = resolutionContext.isAnnotationContext
 
     constructor(
-            c: ResolutionContext<*>,
-            languageVersionSettings: LanguageVersionSettings,
-            deprecationResolver: DeprecationResolver
+        c: ResolutionContext<*>,
+        languageVersionSettings: LanguageVersionSettings,
+        deprecationResolver: DeprecationResolver
     ) : this(c, c.trace, languageVersionSettings, deprecationResolver)
 }
 
@@ -62,4 +62,4 @@ class CallCheckerContext(
 // Receiver parameter is present to emphasize that this function should ideally be only used from call checkers.
 @Suppress("unused")
 fun CallChecker.isComputingDeferredType(type: KotlinType) =
-        type is DeferredType && type.isComputing
+    type is DeferredType && type.isComputing

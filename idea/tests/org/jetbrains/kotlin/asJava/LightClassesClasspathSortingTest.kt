@@ -21,7 +21,7 @@ import com.intellij.psi.impl.ResolveScopeManager
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.configureAs
@@ -61,7 +61,10 @@ class LightClassesClasspathSortingTest : KotlinCodeInsightTestCase() {
     }
 
     private fun getProjectDescriptor(dir: String) =
-            JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/lightClassesOrder/$dir", true)
+        SdkAndMockLibraryProjectDescriptor(
+            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/lightClassesOrder/$dir",
+            true
+        )
 
     override fun getTestDataPath(): String? {
         return PluginTestCaseBase.getTestDataPathBase() + "/decompiler/lightClassesOrder/"

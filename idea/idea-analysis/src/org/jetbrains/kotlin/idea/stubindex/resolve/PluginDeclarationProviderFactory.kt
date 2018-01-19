@@ -57,7 +57,10 @@ class PluginDeclarationProviderFactory(
         }
     }
 
-    private fun packageExists(name: FqName): Boolean {
+    override fun packageExists(fqName: FqName) =
+        fileBasedDeclarationProviderFactory.packageExists(fqName) || stubBasedPackageExists(fqName)
+
+    private fun stubBasedPackageExists(name: FqName): Boolean {
         return if (moduleInfo is ModuleSourceInfo)
             project.service<PerModulePackageCacheService>().packageExists(name, moduleInfo)
         else
@@ -65,7 +68,7 @@ class PluginDeclarationProviderFactory(
     }
 
     private fun getStubBasedPackageMemberDeclarationProvider(name: FqName): PackageMemberDeclarationProvider? {
-        if (!packageExists(name)) return null
+        if (!stubBasedPackageExists(name)) return null
 
         return StubBasedPackageMemberDeclarationProvider(name, project, indexedFilesScope)
     }

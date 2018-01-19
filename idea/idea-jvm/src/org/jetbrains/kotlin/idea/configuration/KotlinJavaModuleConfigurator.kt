@@ -23,6 +23,7 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -31,13 +32,13 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
+import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
-import org.jetbrains.kotlin.idea.versions.isKotlinJavaRuntime
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
@@ -73,12 +74,13 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
 
     override fun getLibraryJarDescriptors(sdk: Sdk?): List<LibraryJarDescriptor> {
         var result = listOf(
-                LibraryJarDescriptor.RUNTIME_JAR,
-                LibraryJarDescriptor.RUNTIME_SRC_JAR,
-                LibraryJarDescriptor.REFLECT_JAR,
-                LibraryJarDescriptor.REFLECT_SRC_JAR,
-                LibraryJarDescriptor.TEST_JAR,
-                LibraryJarDescriptor.TEST_SRC_JAR)
+            LibraryJarDescriptor.RUNTIME_JAR,
+            LibraryJarDescriptor.RUNTIME_SRC_JAR,
+            LibraryJarDescriptor.REFLECT_JAR,
+            LibraryJarDescriptor.REFLECT_SRC_JAR,
+            LibraryJarDescriptor.TEST_JAR,
+            LibraryJarDescriptor.TEST_SRC_JAR
+        )
         val sdkVersion = sdk?.version ?: return result
         if (sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_7)) {
             result += listOf(LibraryJarDescriptor.RUNTIME_JDK7_JAR, LibraryJarDescriptor.RUNTIME_JDK7_SOURCES_JAR)
@@ -90,8 +92,8 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
         return result
     }
 
-    override val libraryMatcher: (Library) -> Boolean
-        get() = ::isKotlinJavaRuntime
+    override val libraryMatcher: (Library) -> Boolean =
+        { library -> JavaRuntimeDetectionUtil.getRuntimeJar(library.getFiles(OrderRootType.CLASSES).asList()) != null }
 
     override fun configureKotlinSettings(modules: List<Module>) {
         val project = modules.firstOrNull()?.project ?: return
@@ -102,8 +104,7 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
             Kotlin2JvmCompilerArgumentsHolder.getInstance(project).update {
                 jvmTarget = "1.8"
             }
-        }
-        else {
+        } else {
             for (module in modules) {
                 val sdkVersion = module.sdk?.version
                 if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
@@ -118,19 +119,19 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
     }
 
     override fun configureModule(
-            module: Module,
-            classesPath: String,
-            sourcesPath: String,
-            collector: NotificationMessageCollector,
-            forceJarState: FileState?,
-            useBundled: Boolean
+        module: Module,
+        classesPath: String,
+        sourcesPath: String,
+        collector: NotificationMessageCollector,
+        forceJarState: FileState?,
+        useBundled: Boolean
     ) {
         super.configureModule(module, classesPath, sourcesPath, collector, forceJarState, useBundled)
         addStdlibToJavaModuleInfo(module, collector)
     }
 
     companion object {
-        val NAME = "java"
+        const val NAME = "java"
 
         val instance: KotlinJavaModuleConfigurator
             get() = Extensions.findExtension(KotlinProjectConfigurator.EP_NAME, KotlinJavaModuleConfigurator::class.java)
