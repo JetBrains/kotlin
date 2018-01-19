@@ -60,7 +60,7 @@ dependencies {
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
     testRuntime(intellijPluginDep("coverage")) { includeJars("jacocoant") }
-    testRuntime(intellijPluginDep("maven"))
+    //testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
 }
 
