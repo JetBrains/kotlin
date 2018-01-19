@@ -16,73 +16,44 @@
 
 package org.jetbrains.kotlin.konan.properties
 
-import org.jetbrains.kotlin.konan.file.*
-import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.Configurables
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
-class KonanProperties(val target: KonanTarget, val properties: Properties, val baseDir: String? = null) {
+interface TargetableExternalStorage {
+    fun targetString(key: String): String? 
+    fun targetList(key: String): List<String> 
+    fun hostString(key: String): String? 
+    fun hostList(key: String): List<String> 
+    fun hostTargetString(key: String): String? 
+    fun hostTargetList(key: String): List<String> 
+    fun absolute(value: String?): String
+    fun downloadDependencies()
+}
 
-    fun downloadDependencies() {
+open class KonanPropertiesLoader(override val target: KonanTarget, val properties: Properties, val baseDir: String? = null) : Configurables {
+    val dependencies get() = hostTargetList("dependencies")
+
+    override fun downloadDependencies() {
         dependencyProcessor!!.run()
     }
 
-    fun targetString(key: String): String? 
+    override fun targetString(key: String): String? 
         = properties.targetString(key, target)
-    fun targetList(key: String): List<String> 
+    override fun targetList(key: String): List<String> 
         = properties.targetList(key, target)
-    fun hostString(key: String): String? 
+    override fun hostString(key: String): String? 
         = properties.hostString(key)
-    fun hostList(key: String): List<String> 
+    override fun hostList(key: String): List<String> 
         = properties.hostList(key)
-    fun hostTargetString(key: String): String? 
+    override fun hostTargetString(key: String): String? 
         = properties.hostTargetString(key, target)
-    fun hostTargetList(key: String): List<String> 
+    override fun hostTargetList(key: String): List<String> 
         = properties.hostTargetList(key, target)
-
-    val llvmHome get() = hostString("llvmHome")
-
-    // TODO: Delegate to a map?
-    val llvmLtoNooptFlags get() = targetList("llvmLtoNooptFlags")
-    val llvmLtoOptFlags get() = targetList("llvmLtoOptFlags")
-    val llvmLtoFlags get() = targetList("llvmLtoFlags")
-    val llvmLtoDynamicFlags get() = targetList("llvmLtoDynamicFlags")
-    val entrySelector get() = targetList("entrySelector")
-    val linkerOptimizationFlags get() = targetList("linkerOptimizationFlags")
-    val linkerKonanFlags get() = targetList("linkerKonanFlags")
-    val linkerNoDebugFlags get() = targetList("linkerNoDebugFlags")
-    val linkerDynamicFlags get() = targetList("linkerDynamicFlags")
-    val llvmDebugOptFlags get() = targetList("llvmDebugOptFlags")
-    val s2wasmFlags get() = targetList("s2wasmFlags")
-
-    val targetSysRoot get() = targetString("targetSysRoot")
-    val libffiDir get() = targetString("libffiDir")
-    val gccToolchain get() = targetString("gccToolchain")
-    val targetArg get() = targetString("quadruple")
-    // Notice: these ones are host-target.
-    val targetToolchain get() = hostTargetString("targetToolchain")
-    val dependencies get() = hostTargetList("dependencies")
-
-    private fun absolute(value: String?): String =
+    override fun absolute(value: String?): String =
             dependencyProcessor!!.resolveRelative(value!!).absolutePath
-
-    val absoluteTargetSysRoot get() = absolute(targetSysRoot)
-    val absoluteTargetToolchain get() = absolute(targetToolchain)
-    val absoluteGccToolchain get() = absolute(gccToolchain)
-    val absoluteLlvmHome get() = absolute(llvmHome)
-    val absoluteLibffiDir get() = absolute(libffiDir)
-
-    val mingwWithLlvm: String?
-        get() { 
-            if (target != KonanTarget.MINGW) {
-                error("Only mingw target can have '.mingwWithLlvm' property")
-            }
-            // TODO: make it a property in the konan.properties.
-            // Use (equal) llvmHome fow now.
-            return targetString("llvmHome")
-        }
-
-    val osVersionMin: String? get() = targetString("osVersionMin")
-
-    private val dependencyProcessor = baseDir?.let { DependencyProcessor(java.io.File(it), this) }
-
+    private val dependencyProcessor  by lazy {
+        baseDir?.let { DependencyProcessor(java.io.File(it), this) }
+    }
 }
+

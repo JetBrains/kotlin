@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan
-
+package org.jetbrains.kotlin.konan.file
 
 val String.isJavaScript 
     get() = this.endsWith(".js")

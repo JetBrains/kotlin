@@ -52,19 +52,17 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val indirectBranchesAreAllowed = target != KonanTarget.WASM32
 
-    private fun Distribution.prepareDependencies(checkDependencies: Boolean) {
-        if (checkDependencies) {
-            targetProperties.downloadDependencies()
+    internal val distribution = Distribution(target, 
+        configuration.get(KonanConfigKeys.PROPERTY_FILE),
+        configuration.get(KonanConfigKeys.RUNTIME_FILE))
+
+    internal val platform = PlatformManager(distribution.properties, distribution.dependenciesDir).platform(target).apply {
+        if (configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES)) {
+            downloadDependencies()
         }
     }
 
-    internal val distribution = Distribution(targetManager, 
-        configuration.get(KonanConfigKeys.PROPERTY_FILE),
-        configuration.get(KonanConfigKeys.RUNTIME_FILE)).apply {
-        prepareDependencies(configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES))
-    }
-
-    internal val clang = TargetClang(distribution.properties, distribution.dependenciesDir, target)
+    internal val clang = platform.clang
 
     internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
     private val prefix = produce.prefix(target)

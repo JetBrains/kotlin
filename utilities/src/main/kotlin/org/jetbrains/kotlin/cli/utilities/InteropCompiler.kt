@@ -65,7 +65,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
     val manifest = File(buildDir, "manifest.properties")
 
     val targetManager = TargetManager(target)
-    val resolver = defaultResolver(repos, targetManager)
+    val resolver = defaultResolver(repos, targetManager.target)
     val allLibraries = resolver.resolveLibrariesRecursive(
             libraries, targetManager.target, noStdLib = true, noDefaultLibs = noDefaultLibs
     )

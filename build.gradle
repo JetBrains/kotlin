@@ -39,7 +39,7 @@ ext {
 
     distDir = file('dist')
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot
-    clangManager = new ClangManager(konanProperties, dependenciesDir.absolutePath)
+    platformManager = new PlatformManager(konanProperties, dependenciesDir.absolutePath)
     kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinCompilerVersion}"
     kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdLibVersion}"
     kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinReflectVersion}"
@@ -71,7 +71,7 @@ void setupHostAndTarget() {
 
 void setupClang(Project project) {
 
-    project.convention.plugins.clangManager = project.rootProject.ext.clangManager
+    project.convention.plugins.platformManager = project.rootProject.ext.platformManager
     project.convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 
     project.plugins.withType(NativeComponentPlugin) {
@@ -98,13 +98,13 @@ void setupClang(Project project) {
 
                 toolChains {
                     clang(Clang) {
-                        hostClang.hostClangPath.each {
+                        hostPlatform.clang.clangPaths.each {
                             path it
                         }
 
                         eachPlatform { // TODO: will not work when cross-compiling
                             [cCompiler, cppCompiler, linker].each {
-                                it.withArguments { it.addAll(project.hostClangArgs) }
+                                it.withArguments { it.addAll(project.hostPlatform.clang.clangArgs) }
                             }
 
                         }

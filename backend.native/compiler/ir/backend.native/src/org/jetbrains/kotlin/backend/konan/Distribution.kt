@@ -16,21 +16,15 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.properties.*
+import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
-class Distribution(val targetManager: TargetManager,
-    val propertyFileOverride: String? = null,
-    val runtimeFileOverride: String? = null) {
-
-    val target = targetManager.target
-    val targetName = targetManager.targetName
-    val host = TargetManager.host
-    val hostSuffix = TargetManager.hostSuffix
-    val hostTargetSuffix = targetManager.hostTargetSuffix
-    val targetSuffix = targetManager.targetSuffix
+class Distribution(val target: KonanTarget,
+    propertyFileOverride: String? = null,
+    runtimeFileOverride: String? = null) {
 
     val localKonanDir = "${File.userHome}/.konan"
 
@@ -46,22 +40,10 @@ class Distribution(val targetManager: TargetManager,
 
     val klib = "$konanHome/klib"
     val stdlib = "$klib/common/stdlib"
+
+    val targetName = target.visibleName
     val defaultNatives = "$konanHome/konan/targets/${targetName}/native"
     val runtime = runtimeFileOverride ?: "$stdlib/targets/${targetName}/native/runtime.bc"
 
     val dependenciesDir = DependencyProcessor.defaultDependenciesRoot.absolutePath
-
-    val targetProperties = KonanProperties(target, properties, dependenciesDir)
-
-    val llvmHome = targetProperties.absoluteLlvmHome
-    val llvmBin = "$llvmHome/bin"
-    val llvmLib = "$llvmHome/lib"
-    val llvmLto = "$llvmBin/llvm-lto"
-
-    private val libLTODir = when (TargetManager.host) {
-        KonanTarget.MACBOOK, KonanTarget.LINUX -> llvmLib
-        KonanTarget.MINGW -> llvmBin
-        else -> error("Don't know libLTO location for this platform.")
-    }
-    val libLTO = "$libLTODir/${System.mapLibraryName("LTO")}"
 }

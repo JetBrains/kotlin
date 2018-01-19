@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.util.visibleName
 
 interface SearchPathResolver {
     val searchRoots: List<File>
@@ -30,13 +31,13 @@ interface SearchPathResolver {
     fun defaultLinks(nostdlib: Boolean, noDefaultLibs: Boolean): List<File>
 }
 
-fun defaultResolver(repositories: List<String>, targetManager: TargetManager): SearchPathResolver =
-        defaultResolver(repositories, Distribution(targetManager))
+fun defaultResolver(repositories: List<String>, target: KonanTarget): SearchPathResolver =
+        defaultResolver(repositories, Distribution(target))
 
 fun defaultResolver(repositories: List<String>, distribution: Distribution): SearchPathResolver =
         KonanLibrarySearchPathResolver(
                 repositories,
-                distribution.targetManager,
+                distribution.target,
                 distribution.klib,
                 distribution.localKonanDir
         )
@@ -133,7 +134,7 @@ fun SearchPathResolver.resolveLibrariesRecursive(libraryNames: List<String>,
 
 class KonanLibrarySearchPathResolver(
         repositories: List<String>,
-        val targetManager: TargetManager?,
+        val target: KonanTarget?,
         val distributionKlib: String?,
         val localKonanDir: String?,
         val skipCurrentDir: Boolean = false
@@ -146,7 +147,7 @@ class KonanLibrarySearchPathResolver(
         get() = distributionKlib?.File()?.child("common")
 
     val distPlatformHead: File?
-        get() = targetManager?.let { distributionKlib?.File()?.child("platform")?.child(targetManager.targetName) }
+        get() = target?.let { distributionKlib?.File()?.child("platform")?.child(target.visibleName) }
 
     val currentDirHead: File?
         get() = if (!skipCurrentDir) File.userDir else null

@@ -33,7 +33,7 @@ model {
 
                 def hostLibffiDir = rootProject.ext.get("${host}LibffiDir")
 
-                cCompiler.args hostCompilerArgsForJni
+                cCompiler.args hostPlatform.clang.hostCompilerArgsForJni
                 cCompiler.args "-I$hostLibffiDir/include"
 
                 linker.args "$hostLibffiDir/lib/libffi.a"

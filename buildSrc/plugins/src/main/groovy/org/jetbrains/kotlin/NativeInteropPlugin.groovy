@@ -238,7 +238,7 @@ class NamedNativeInteropConfig implements Named {
                 }
 
                 // TODO: the interop plugin should probably be reworked to execute clang from build scripts directly
-                environment['PATH'] = project.files(project.hostClang.hostClangPath).asPath +
+                environment['PATH'] = project.files(project.hostPlatform.clang.clangPaths).asPath +
                         File.pathSeparator + environment['PATH']
 
                 args compilerOpts.collectMany { ['-copt', it] }

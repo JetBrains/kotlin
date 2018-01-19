@@ -72,7 +72,7 @@ model {
             }
 
             binaries.all {
-                cCompiler.args hostCompilerArgsForJni
+                cCompiler.args hostPlatform.clang.hostCompilerArgsForJni
                 cCompiler.args.addAll(cflags)
             }
 

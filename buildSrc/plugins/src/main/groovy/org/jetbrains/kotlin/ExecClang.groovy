@@ -33,7 +33,7 @@ class ExecClang {
     }
 
     private List<String> konanArgs(KonanTarget target) {
-        return project.rootProject.targetClangArgsForKonanSources(target)
+        return project.rootProject.platform(target).clang.clangArgsForKonanSources
     }
 
     private List<String> konanArgs(String target) {
@@ -95,7 +95,7 @@ class ExecClang {
                         throw new GradleException("unsupported clang executable: $executable")
                     }
 
-                    environment["PATH"] = project.files(project.hostClang.hostClangPath).asPath +
+                    environment["PATH"] = project.files(project.hostPlatform.clang.clangPaths).asPath +
                             File.pathSeparator + environment["PATH"]
                     args defaultArgs
                 }

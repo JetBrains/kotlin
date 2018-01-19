@@ -135,7 +135,7 @@ val currentAbiVersion = 1
 fun libraryInRepo(repository: File, name: String): File {
     val resolver = KonanLibrarySearchPathResolver(
             repositories = listOf(repository.absolutePath),
-            targetManager = null,
+            target = null,
             distributionKlib = null,
             localKonanDir = null,
             skipCurrentDir = true
@@ -146,7 +146,7 @@ fun libraryInRepo(repository: File, name: String): File {
 fun libraryInCurrentDir(name: String): File {
     val resolver = KonanLibrarySearchPathResolver(
             repositories = emptyList(),
-            targetManager = null,
+            target = null,
             distributionKlib = null,
             localKonanDir = null
     )
@@ -156,7 +156,7 @@ fun libraryInCurrentDir(name: String): File {
 fun libraryInRepoOrCurrentDir(repository: File, name: String): File {
     val resolver = KonanLibrarySearchPathResolver(
             repositories = listOf(repository.absolutePath),
-            targetManager = null,
+            target = null,
             distributionKlib = null,
             localKonanDir = null
     )

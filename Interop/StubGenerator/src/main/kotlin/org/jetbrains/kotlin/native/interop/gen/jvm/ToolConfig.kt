@@ -16,10 +16,13 @@
 
 package  org.jetbrains.kotlin.native.interop.tool
 
-import org.jetbrains.kotlin.konan.file.*
-import org.jetbrains.kotlin.konan.properties.*
-import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.*
+import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.properties.loadProperties
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.konan.util.visibleName
 
 class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: String?, runnerProvidedKonanHome: String) {
 
@@ -33,23 +36,21 @@ class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: S
 
     private val dependencies = DependencyProcessor.defaultDependenciesRoot
 
-    private val targetProperties = KonanProperties(target, properties, dependencies.path)
+    private val platform = PlatformManager(properties, dependencies.path).platform(target)
 
     val substitutions = mapOf<String, String> (
         "target" to target.detailedName,
         "arch" to target.architecture.visibleName)
 
-    fun downloadDependencies() = targetProperties.downloadDependencies()
+    fun downloadDependencies() = platform.downloadDependencies()
 
-    val llvmHome = targetProperties.absoluteLlvmHome
+    val defaultCompilerOpts = 
+        platform.clang.targetLibclangArgs.toList()
 
-    val sysRoot get() = targetProperties.absoluteTargetSysRoot
+    val llvmHome = platform.absoluteLlvmHome
+    val sysRoot = platform.absoluteTargetSysRoot
 
-    val defaultCompilerOpts = ClangManager(properties, dependencies.path)
-            .targetLibclangArgs(targetProperties.target).toList()
-
-
-     val libclang = when (host) {
+    val libclang = when (host) {
         KonanTarget.MINGW -> "$llvmHome/bin/libclang.dll"
         else -> "$llvmHome/lib/${System.mapLibraryName("clang")}"
     }

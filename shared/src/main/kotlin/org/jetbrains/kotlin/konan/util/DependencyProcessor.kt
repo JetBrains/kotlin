@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.konan.util
 
 import org.jetbrains.kotlin.konan.file.use
-import org.jetbrains.kotlin.konan.properties.KonanProperties
+import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import java.io.File
@@ -69,11 +69,11 @@ private fun Properties.findCandidates(dependencies: List<String>): Map<String, L
 }
 
 
-private val KonanProperties.dependenciesUrl : String            get() = properties.dependenciesUrl
-private val KonanProperties.airplaneMode : Boolean              get() = properties.airplaneMode
-private val KonanProperties.downloadingAttempts : Int           get() = properties.downloadingAttempts
-private val KonanProperties.downloadingAttemptIntervalMs : Long get() = properties.downloadingAttemptIntervalMs
-private val KonanProperties.homeDependencyCache : String        get() = properties.homeDependencyCache
+private val KonanPropertiesLoader.dependenciesUrl : String            get() = properties.dependenciesUrl
+private val KonanPropertiesLoader.airplaneMode : Boolean              get() = properties.airplaneMode
+private val KonanPropertiesLoader.downloadingAttempts : Int           get() = properties.downloadingAttempts
+private val KonanPropertiesLoader.downloadingAttemptIntervalMs : Long get() = properties.downloadingAttemptIntervalMs
+private val KonanPropertiesLoader.homeDependencyCache : String        get() = properties.homeDependencyCache
 
 sealed class DependencySource {
     data class Local(val path: File) : DependencySource()
@@ -114,7 +114,7 @@ class DependencyProcessor(dependenciesRoot: File,
     private val archiveExtension get() = extractor.archiveExtension
 
     constructor(dependenciesRoot: File,
-                properties: KonanProperties,
+                properties: KonanPropertiesLoader,
                 dependenciesUrl: String = properties.dependenciesUrl,
                 keepUnstable:Boolean = true) : this(
             dependenciesRoot,

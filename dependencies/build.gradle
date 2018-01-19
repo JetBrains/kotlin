@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import static org.jetbrains.kotlin.konan.target.KonanTarget.*
 import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.*
-import org.jetbrains.kotlin.konan.properties.KonanProperties
+import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.properties.*
 
 buildscript {
@@ -210,14 +210,14 @@ class HelperNativeDep extends TgzNativeDep {
 
 enum DependencyKind {
     LLVM(            "llvm",            { it.llvmHome },       { "llvmDir" }        ),
-    GCC_TOOLCHAIN(   "gccToolchain",    { it.gccToolchain },   { "gccToolchainDir" }),
+    GCC_TOOLCHAIN(   "gccToolchain",    { (it instanceof LinuxBasedConfigurables) ? it.gccToolchain : null },   { "gccToolchainDir" }),
     SYSROOT(         "sysroot",         { it.targetSysRoot }                        ),
     LIBFFI(          "libffi",          { it.libffiDir }                            ),
     TARGET_TOOLCHAIN("targetToolchain", { it.targetToolchain }                      )
 
 
     DependencyKind(String name,
-            @ClosureParams(value = FromString.class, options = "KonanProperties") Closure<String> dirGetter,
+            @ClosureParams(value = FromString.class, options = "KonanPropertiesLoader") Closure<String> dirGetter,
             @ClosureParams(value = FromString.class, options = "KonanTarget") Closure<String> propertyNameGetter =
                            {target -> "${getVisibleName(target)}${name.capitalize()}Dir"}) {
         this.name = name
@@ -229,7 +229,7 @@ enum DependencyKind {
     private Closure<String> dirGetter           // KonanProperties -> String
     private Closure<String> propertyNameGetter  // KonanTarget -> String
 
-    String getDirectory(KonanProperties properties) {
+    String getDirectory(KonanPropertiesLoader properties) {
         return dirGetter(properties)
     }
 
@@ -241,7 +241,7 @@ enum DependencyKind {
 }
 
 TargetManager.enabled.each { target ->
-    def konanProperties = new KonanProperties(target,
+    def konanProperties = new KonanPropertiesLoader(target,
             rootProject.ext.konanProperties,
             rootProject.ext.dependenciesDir.canonicalPath
     )
