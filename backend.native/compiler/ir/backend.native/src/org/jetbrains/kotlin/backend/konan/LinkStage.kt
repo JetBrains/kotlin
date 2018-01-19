@@ -129,10 +129,11 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
         }
     }
 
-    fun dsymUtilCommand(executable: ExecutableFile) = object : Command(dsymutilCommand(executable)) {
-        override fun runProcess(): Int = 
-            executeCommandWithFilter(command)
-    }
+    fun dsymUtilCommand(executable: ExecutableFile, outputDsymBundle: String) =
+            object : Command(dsymutilCommand(executable, outputDsymBundle)) {
+                override fun runProcess(): Int =
+                        executeCommandWithFilter(command)
+            }
 
     // TODO: consider introducing a better filtering directly in Command.
     private fun executeCommandWithFilter(command: List<String>): Int {
@@ -165,7 +166,8 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
         return exitCode
     }
 
-    open fun dsymutilCommand(executable: ExecutableFile): List<String> = listOf(dsymutil, executable)
+    open fun dsymutilCommand(executable: ExecutableFile, outputDsymBundle: String): List<String> =
+            listOf(dsymutil, executable, "-o", outputDsymBundle)
 
     open fun dsymutilDryRunVerboseCommand(executable: ExecutableFile): List<String> =
             listOf(dsymutil, "-dump-debug-map" ,executable)
@@ -450,9 +452,11 @@ internal class LinkStage(val context: Context) {
             }.execute()
 
             if (debug && platform is MacOSBasedPlatform) {
-                platform.dsymUtilCommand(executable)
-                    .logWith(context::log)
-                    .execute()
+                val outputDsymBundle = context.config.outputFile + ".dSYM" // `outputFile` is either binary or bundle.
+
+                platform.dsymUtilCommand(executable, outputDsymBundle)
+                        .logWith(context::log)
+                        .execute()
             }
         } catch (e: KonanExternalToolFailure) {
             context.reportCompilationError("${e.toolName} invocation reported errors")
