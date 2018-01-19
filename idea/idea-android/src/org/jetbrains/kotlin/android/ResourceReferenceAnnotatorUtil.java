@@ -61,12 +61,13 @@ import java.awt.*;
 import java.io.File;
 
 import static com.android.SdkConstants.*;
-import static com.android.tools.idea.uibuilder.property.renderer.NlDefaultRenderer.ICON_SIZE;
 
 /**
  *  Contains copied privates from AndroidColorAnnotator, so we could use them for Kotlin AndroidResourceReferenceAnnotator
  */
 public class ResourceReferenceAnnotatorUtil {
+    public static final int ICON_SIZE = 14;
+
     @Nullable
     public static File pickBitmapFromXml(@NotNull File file, @NotNull ResourceResolver resourceResolver, @NotNull Project project) {
         try {
