@@ -5805,6 +5805,63 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ForInCharSequenceWithIndex extends AbstractJsCodegenBoxTest {
+            public void testAllFilesPresentInForInCharSequenceWithIndex() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("forInCharSeqWithIndexStops.kt")
+            public void testForInCharSeqWithIndexStops() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInCharSeqWithIndexStops.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("forInCharSequenceWithIndex.kt")
+            public void testForInCharSequenceWithIndex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInCharSequenceWithIndex.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInEmptyStringWithIndex.kt")
+            public void testForInEmptyStringWithIndex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInEmptyStringWithIndex.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInStringWithIndex.kt")
+            public void testForInStringWithIndex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInStringWithIndex.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInStringWithIndexNoElementVar.kt")
+            public void testForInStringWithIndexNoElementVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInStringWithIndexNoElementVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInStringWithIndexNoIndexVar.kt")
+            public void testForInStringWithIndexNoIndexVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInStringWithIndexNoIndexVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInStringWithIndexWithExplicitlyTypedIndexVariable.kt")
+            public void testForInStringWithIndexWithExplicitlyTypedIndexVariable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInStringWithIndexWithExplicitlyTypedIndexVariable.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
