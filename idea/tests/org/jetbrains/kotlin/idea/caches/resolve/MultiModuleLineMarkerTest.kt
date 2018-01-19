@@ -110,6 +110,10 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
                             })
     }
 
+    fun testTopLevelFunWithKotlinTest() {
+        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+    }
+
     fun testSuspendImplInPlatformModules() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], TargetPlatformKind.JavaScript)
     }
