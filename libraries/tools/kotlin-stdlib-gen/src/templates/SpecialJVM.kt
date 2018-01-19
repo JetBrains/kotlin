@@ -376,14 +376,11 @@ object CommonArrays : TemplateGroupBase() {
         doc {
             """
             Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
-            with nulls if necessary. For all indices that are valid in both the original array and the copy, the two arrays
-            contents will be identical. For all indices that are valid in the copy, but not in the original, the copy will
-            contain null.
+            with nulls if necessary. If the object is a primitive type, it will be padded with it's default value.
+            For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+            For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
+            value.
 
-            Examples:
-
-            arrayOf("1", "2", "3").copyOf(5) // ["1", "2", "3", null, null]
-            arrayOf("1", "2", "3").copyOf(1) // ["1"]
 
 
             """
