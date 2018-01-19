@@ -66,6 +66,8 @@ sealed class KotlinType : Annotated {
     }
 }
 
+fun KotlinType.isNullable(): Boolean = TypeUtils.isNullableType(this)
+
 abstract class WrappedType : KotlinType() {
     open fun isComputed(): Boolean = true
     protected abstract val delegate: KotlinType
