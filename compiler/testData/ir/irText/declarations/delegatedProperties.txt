@@ -85,11 +85,17 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
               property: PROPERTY_REFERENCE 'test3: Any' field=null getter='<get-test3>(): Any' setter='<set-test3>(Any): Unit' type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               value: GET_VAR 'value-parameter <set-?>: Any' type=kotlin.Any origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   PROPERTY name:test4 type:kotlin.Any visibility:public modality:FINAL flags:delegatedmvar
     FIELD DELEGATE name:test4$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Any> /* = java.util.HashMap<kotlin.String, kotlin.Any> */ visibility:private

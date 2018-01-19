@@ -108,13 +108,21 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             mapTypeAliasDeclaration(declaration.descriptor)
         )
 
-    override fun visitFunction(declaration: IrFunction): IrFunction =
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrFunction =
         IrFunctionImpl(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             mapFunctionDeclaration(declaration.descriptor),
             declaration.body?.transform()
-        ).transformParameters(declaration)
+        ).transformParameters(declaration).apply {
+            descriptor.overriddenDescriptors.mapIndexedTo(overriddenSymbols) { index, overriddenDescriptor ->
+                val oldOverriddenSymbol = declaration.overriddenSymbols.getOrNull(index)
+                if (overriddenDescriptor.original == oldOverriddenSymbol?.descriptor?.original)
+                    oldOverriddenSymbol
+                else
+                    IrSimpleFunctionSymbolImpl(overriddenDescriptor.original)
+            }
+        }
 
     override fun visitConstructor(declaration: IrConstructor): IrConstructor =
         IrConstructorImpl(

@@ -14,11 +14,17 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
       VALUE_PARAMETER name:t index:0 type:T flags:
       VALUE_PARAMETER name:x index:1 type:X flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS CLASS name:Test modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test<TT> flags:
@@ -32,6 +38,8 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
       EXPRESSION_BODY
         GET_VAR 'value-parameter impl: IBase<TT>' type=IBase<TT> origin=null
     FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <X> ($this:Test<TT>, t:TT, x:X) returnType:Unit flags:
+      overridden:
+        FUN name:qux visibility:public modality:ABSTRACT <X> ($this:IBase<T>, t:T, x:X) returnType:Unit flags:
       TYPE_PARAMETER name:X index:0 variance: upperBounds:[kotlin.Any?]
       $this: VALUE_PARAMETER name:<this> type:Test<TT> flags:
       VALUE_PARAMETER name:t index:0 type:TT flags:
@@ -45,6 +53,8 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
           x: TYPE_OP type=X origin=IMPLICIT_CAST typeOperand=X
             GET_VAR 'value-parameter x: X' type=X origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:Test<TT>, x:kotlin.Int) returnType:Unit flags:
+      overridden:
+        FUN name:foo visibility:public modality:ABSTRACT <> ($this:IBase<T>, x:kotlin.Int) returnType:Unit flags:
       $this: VALUE_PARAMETER name:<this> type:Test<TT> flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
@@ -54,6 +64,8 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
           x: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
     PROPERTY DELEGATED_MEMBER name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
       FUN DELEGATED_MEMBER name:<get-bar> visibility:public modality:OPEN <> ($this:Test<TT>) returnType:Int flags:
+        overridden:
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:IBase<T>) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Test<TT> flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
@@ -61,10 +73,16 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
               $this: GET_FIELD '`Test$IBase$delegate`: IBase<TT>' type=IBase<TT> origin=null
                 receiver: GET_VAR 'this@Test: Test<TT>' type=Test<TT> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

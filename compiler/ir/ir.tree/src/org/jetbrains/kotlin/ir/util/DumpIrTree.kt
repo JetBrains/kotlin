@@ -83,8 +83,18 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
         }
     }
 
-    override fun visitFunction(declaration: IrFunction, data: String) {
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
         declaration.dumpLabeledElementWith(data) {
+            if (declaration.overriddenSymbols.isNotEmpty()) {
+                indented("overridden") {
+                    for (overriddenSymbol in declaration.overriddenSymbols) {
+                        if (overriddenSymbol.isBound)
+                            overriddenSymbol.owner.render()
+                        else
+                            printer.println("UNBOUND: ", DescriptorRenderer.COMPACT.render(overriddenSymbol.descriptor))
+                    }
+                }
+            }
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")
             declaration.extensionReceiverParameter?.accept(this, "\$receiver")
@@ -204,11 +214,20 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
         indented(body)
     }
 
+    private fun IrElement.render() {
+        printer.println(accept(elementRenderer, null))
+    }
+
     private fun IrElement.dumpLabeledSubTree(label: String) {
         printer.println(accept(elementRenderer, null).withLabel(label))
         indented {
             acceptChildren(this@DumpIrTreeVisitor, "")
         }
+    }
+
+    private inline fun indented(label: String, body: () -> Unit) {
+        printer.println("$label:")
+        indented(body)
     }
 
     private inline fun indented(body: () -> Unit) {

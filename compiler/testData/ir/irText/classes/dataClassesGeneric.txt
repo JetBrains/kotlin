@@ -35,6 +35,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
             <T>: null
             x: GET_VAR 'value-parameter x: T = ...' type=T origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:Test1<T>) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:Test1<T> flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
@@ -45,6 +47,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
               $this: GET_VAR 'this@Test1: Test1<T>' type=Test1<T> origin=null
             CONST String type=kotlin.String value=)
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test1<T>) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:Test1<T> flags:
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
@@ -68,6 +72,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:Test1<T>, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:Test1<T> flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
       BLOCK_BODY
