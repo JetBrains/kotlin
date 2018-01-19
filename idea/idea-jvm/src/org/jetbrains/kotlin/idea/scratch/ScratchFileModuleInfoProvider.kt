@@ -23,9 +23,11 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.FileAttribute
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.NotUnderContentRootModuleInfo
@@ -36,9 +38,10 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.moduleInfo
+import kotlin.reflect.KProperty
 
 class ScratchFileModuleInfoProvider(project: Project) : AbstractProjectComponent(project) {
-    private val LOG =Logger.getInstance(this.javaClass)
+    private val LOG = Logger.getInstance(this.javaClass)
 
     override fun projectOpened() {
         myProject.messageBus.connect(myProject).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, ScratchFileModuleListener())
@@ -69,15 +72,25 @@ class ScratchFileModuleInfoProvider(project: Project) : AbstractProjectComponent
                 return
             }
 
-            getScratchPanel(ktFile)?.let { panel ->
-                ktFile.moduleInfo = getModuleInfo(panel.getModule())
+            val scratchPanel = getEditorWithScratchPanel(source, file)?.second
+            scratchPanel?.addModuleListener { psiFile, module ->
+                psiFile.moduleInfo = getModuleInfo(module)
+                // Drop caches for old module
+                ProjectRootManager.getInstance(myProject).incModificationCount()
+                // Force re-highlighting
+                DaemonCodeAnalyzer.getInstance(myProject).restart(psiFile)
 
-                panel.addModuleListener {
-                    ktFile.moduleInfo = getModuleInfo(it)
-                    // Drop caches for old module
-                    ProjectRootManager.getInstance(myProject).incModificationCount()
-                    // Force re-highlighting
-                    DaemonCodeAnalyzer.getInstance(myProject).restart(ktFile)
+                psiFile.virtualFile.moduleName = module.name
+            }
+
+            val module =
+                ktFile.virtualFile.moduleName?.let { ModuleManager.getInstance(myProject).findModuleByName(it) }
+            if (module != null) {
+                scratchPanel?.setModule(module)
+            } else {
+                val firstModule = ModuleManager.getInstance(myProject).modules.firstOrNull()
+                if (firstModule != null) {
+                    scratchPanel?.setModule(firstModule)
                 }
             }
         }
@@ -85,4 +98,20 @@ class ScratchFileModuleInfoProvider(project: Project) : AbstractProjectComponent
 
     private fun getModuleInfo(it: Module?) =
         it?.testSourceInfo() ?: it?.productionSourceInfo() ?: NotUnderContentRootModuleInfo
+}
+
+private var VirtualFile.moduleName: String? by ScratchModuleNameProperty()
+
+private val moduleNameAttribute = FileAttribute("ScratchModuleName", 1, false)
+private class ScratchModuleNameProperty {
+
+    operator fun getValue(file: VirtualFile, property: KProperty<*>): String? {
+        return moduleNameAttribute.readAttributeBytes(file)?.let { String(it) }
+    }
+
+    operator fun setValue(file: VirtualFile, property: KProperty<*>, newValue: String?) {
+        if (newValue != null) {
+            moduleNameAttribute.writeAttributeBytes(file, newValue.toByteArray())
+        }
+    }
 }

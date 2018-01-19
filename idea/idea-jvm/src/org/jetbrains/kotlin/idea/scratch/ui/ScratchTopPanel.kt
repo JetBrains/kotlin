@@ -70,6 +70,10 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
 
     fun getModule(): Module? = moduleChooser.selectedModule
 
+    fun setModule(module: Module) {
+        moduleChooser.selectedModule = module
+    }
+
     fun addModuleListener(f: (Module) -> Unit) {
         moduleChooser.addActionListener {
             moduleChooser.selectedModule?.let { f(it) }
