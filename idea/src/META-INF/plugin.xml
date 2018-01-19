@@ -2516,7 +2516,7 @@
                      language="kotlin"
     />
 
-	<localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ExplicitThisInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ExplicitThisInspection"
                      displayName="Redundant explicit 'this'"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
@@ -2659,6 +2659,15 @@
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.PlatformExtensionReceiverOfInlineInspection"
+                     displayName="Unsafe call of inline function with nullable extension receiver"
+                     groupPath="Kotlin"
+                     groupName="Java interop issues"
+                     enabledByDefault="true"
+                     level="WARNING"
                      language="kotlin"
     />
 

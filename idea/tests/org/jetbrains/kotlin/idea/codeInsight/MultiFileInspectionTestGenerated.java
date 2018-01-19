@@ -54,4 +54,10 @@ public class MultiFileInspectionTestGenerated extends AbstractMultiFileInspectio
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileInspections/mismatchedProjectAndDirectory/mismatchedProjectAndDirectory.test");
         doTest(fileName);
     }
+
+    @TestMetadata("platformExtensionReceiverOfInline/platformExtensionReceiverOfInline.test")
+    public void testPlatformExtensionReceiverOfInline_PlatformExtensionReceiverOfInline() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileInspections/platformExtensionReceiverOfInline/platformExtensionReceiverOfInline.test");
+        doTest(fileName);
+    }
 }
