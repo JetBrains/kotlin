@@ -28,6 +28,8 @@ import javax.inject.Inject
 import java.util.regex.Pattern
 
 abstract class KonanTest extends JavaExec {
+    public boolean inDevelopersRun = false
+
     public String source
     def targetManager = new TargetManager(project.testTarget)
     def target = targetManager.target
@@ -390,6 +392,8 @@ class BuildKonanTest extends ExtKonanTest {
  * Runs test built with Konan's TestRunner
  */
 class RunKonanTest extends ExtKonanTest {
+    public def inDevelopersRun = true
+
     public def buildTaskName = 'buildKonanTests'
     public def runnerLogger = Logger.SILENT
     public def useFilter = true
@@ -437,6 +441,7 @@ class RunKonanTest extends ExtKonanTest {
 }
 
 class RunStdlibTest extends RunKonanTest {
+    public def inDevelopersRun = false
 
     RunStdlibTest() {
         super('buildKonanStdlibTests')
@@ -447,6 +452,8 @@ class RunStdlibTest extends RunKonanTest {
  * Compiles and executes test as a standalone binary
  */
 class RunStandaloneKonanTest extends KonanTest {
+    public def inDevelopersRun = true
+
     void compileTest(List<String> filesToCompile, String exe) {
         runCompiler(filesToCompile, exe, flags?:[])
     }
@@ -521,6 +528,8 @@ class RunInteropKonanTest extends KonanTest {
 }
 
 class LinkKonanTest extends KonanTest {
+    public def inDevelopersRun = true
+
     protected String lib
 
     void compileTest(List<String> filesToCompile, String exe) {
@@ -564,6 +573,7 @@ class DynamicKonanTest extends KonanTest {
     }
 }
 class RunExternalTestGroup extends RunStandaloneKonanTest {
+    def inDevelopersRun = false
 
     def groupDirectory = "."
     def outputSourceSetName = "testOutputExternal"
