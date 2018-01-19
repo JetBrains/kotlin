@@ -152,7 +152,9 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         private fun parseSingleReportInFolder(reportFolder: String): List<TestCase> {
             val folder = File(reportFolder)
             val files = folder.listFiles()!!
-            assert(files.size == 1)
+            assert(files.size == 1) {
+                "Expecting one file but ${files.size}: ${files.joinToString { it.name }}"
+            }
             val reportFile = files[0]
 
             val dbFactory = DocumentBuilderFactory.newInstance()
