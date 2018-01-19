@@ -7,7 +7,7 @@
     "test-tape": "tape js/tape-reporter.js js/tape-plugin.js build/classes/kotlin/test/kotlin-test-js-it_test.js"
   },
   "devDependencies": {
-    "jasmine": "^2.6.0",
+    "jasmine": "^2.9.0",
     "jest": "^20.0.4",
     "mocha": "^3.4.2",
     "qunit": "^1.0.0",
