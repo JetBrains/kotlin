@@ -1212,18 +1212,19 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
 
     var currentOffset = 0
     var nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
-    if (nextIndex == -1) {
+    if (nextIndex == -1 || limit == 1) {
         return listOf(this.toString())
     }
 
     val isLimited = limit > 0
     val result = ArrayList<String>(if (isLimited) limit.coerceAtMost(10) else 10)
-    while (nextIndex != -1 && (!isLimited || result.size < limit - 1)) {
+    do {
         result.add(substring(currentOffset, nextIndex))
         currentOffset = nextIndex + delimiter.length
         // Do not search for next occurrence if we're reaching limit
-        nextIndex = if (result.size == limit - 1) break else indexOf(delimiter, currentOffset, ignoreCase)
-    }
+        if (isLimited && result.size == limit - 1) break
+        nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
+    } while (nextIndex != -1)
 
     result.add(substring(currentOffset, length))
     return result
