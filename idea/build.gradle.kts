@@ -89,6 +89,11 @@ dependencies {
     }
 }
 
+val processResources: Copy by tasks
+processResources.from("../compiler/cli/src") {
+    include("META-INF/extensions/compiler.xml")
+}
+
 sourceSets {
     "main" {
         projectDefault()
@@ -103,11 +108,6 @@ sourceSets {
                      "idea-completion/tests",
                      "idea-live-templates/tests")
     }
-}
-
-val jar: Jar by tasks
-jar.from("../compiler/cli/src") {
-    include("META-INF/extensions/compiler.xml")
 }
 
 projectTest {

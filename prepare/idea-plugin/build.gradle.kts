@@ -92,9 +92,6 @@ dependencies {
 
 val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
     from(files("$rootDir/resources/kotlinManifest.properties"))
-    from(files("$rootDir/compiler/cli/src")) {
-        include("META-INF/extensions/compiler.xml")
-    }
     from(packedJars)
     for (p in projectsToShadow) {
         dependsOn("$p:classes")
