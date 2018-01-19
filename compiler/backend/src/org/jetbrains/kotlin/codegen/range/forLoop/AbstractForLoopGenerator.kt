@@ -29,8 +29,8 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
 abstract class AbstractForLoopGenerator(
-        protected val codegen: ExpressionCodegen,
-        override val forExpression: KtForExpression
+    protected val codegen: ExpressionCodegen,
+    override val forExpression: KtForExpression
 ) : ForLoopGenerator {
     protected val bindingContext = codegen.bindingContext
     protected val v = codegen.v!!
@@ -47,8 +47,8 @@ abstract class AbstractForLoopGenerator(
 
     private fun BindingContext.getElementType(forExpression: KtForExpression): KotlinType {
         val loopRange = forExpression.loopRange!!
-        val nextCall = get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange) ?:
-                       throw AssertionError("No next() function " + DiagnosticUtils.atLocation(loopRange))
+        val nextCall = get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange)
+                ?: throw AssertionError("No next() function " + DiagnosticUtils.atLocation(loopRange))
         return nextCall.resultingDescriptor.returnType!!
     }
 
@@ -59,18 +59,19 @@ abstract class AbstractForLoopGenerator(
             // E tmp<e> = tmp<iterator>.next()
             loopParameterType = asmElementType
             loopParameterVar = createLoopTempVariable(asmElementType)
-        }
-        else {
+        } else {
             // E e = tmp<iterator>.next()
             val parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter)
             loopParameterType = codegen.asmType(parameterDescriptor!!.type)
             loopParameterVar = codegen.myFrameMap.enter(parameterDescriptor, loopParameterType)
             scheduleLeaveVariable(Runnable {
                 codegen.myFrameMap.leave(parameterDescriptor)
-                v.visitLocalVariable(parameterDescriptor.name.asString(),
-                                     loopParameterType.descriptor, null,
-                                     loopParameterStartLabel, bodyEnd,
-                                     loopParameterVar)
+                v.visitLocalVariable(
+                    parameterDescriptor.name.asString(),
+                    loopParameterType.descriptor, null,
+                    loopParameterStartLabel, bodyEnd,
+                    loopParameterVar
+                )
             })
         }
     }
@@ -95,19 +96,22 @@ abstract class AbstractForLoopGenerator(
             val componentVarIndex = codegen.myFrameMap.enter(componentDescriptor, componentAsmType)
             scheduleLeaveVariable(Runnable {
                 codegen.myFrameMap.leave(componentDescriptor)
-                v.visitLocalVariable(componentDescriptor.name.asString(),
-                                     componentAsmType.descriptor, null,
-                                     destructuringStartLabel, bodyEnd,
-                                     componentVarIndex)
+                v.visitLocalVariable(
+                    componentDescriptor.name.asString(),
+                    componentAsmType.descriptor, null,
+                    destructuringStartLabel, bodyEnd,
+                    componentVarIndex
+                )
             })
         }
 
         v.visitLabel(destructuringStartLabel)
 
         codegen.initializeDestructuringDeclarationVariables(
-                destructuringDeclaration,
-                TransientReceiver(elementType),
-                StackValue.local(loopParameterVar, asmElementType))
+            destructuringDeclaration,
+            TransientReceiver(elementType),
+            StackValue.local(loopParameterVar, asmElementType)
+        )
     }
 
     protected abstract fun assignToLoopParameter()
@@ -145,11 +149,11 @@ abstract class AbstractForLoopGenerator(
     // This method consumes range/progression from stack
     // The result is stored to local variable
     protected fun generateRangeOrProgressionProperty(
-            loopRangeType: Type,
-            getterName: String,
-            getterReturnType: Type,
-            varType: Type,
-            varToStore: Int
+        loopRangeType: Type,
+        getterName: String,
+        getterReturnType: Type,
+        varType: Type,
+        varToStore: Int
     ) {
         v.invokevirtual(loopRangeType.internalName, getterName, "()" + getterReturnType.descriptor, false)
         StackValue.local(varToStore, varType).store(StackValue.onStack(getterReturnType), v)

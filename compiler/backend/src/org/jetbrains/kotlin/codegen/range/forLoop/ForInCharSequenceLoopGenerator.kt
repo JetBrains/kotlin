@@ -25,10 +25,10 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class ForInCharSequenceLoopGenerator(
-        codegen: ExpressionCodegen,
-        forExpression: KtForExpression,
-        private val canCacheLength: Boolean,
-        private val charSequenceClassType: Type?
+    codegen: ExpressionCodegen,
+    forExpression: KtForExpression,
+    private val canCacheLength: Boolean,
+    private val charSequenceClassType: Type?
 ) : AbstractForLoopGenerator(codegen, forExpression) {
     private var indexVar: Int = 0
     private var charSequenceVar: Int = 0
@@ -70,8 +70,7 @@ class ForInCharSequenceLoopGenerator(
         v.load(indexVar, Type.INT_TYPE)
         if (canCacheLength) {
             v.load(charSequenceLengthVar, Type.INT_TYPE)
-        }
-        else {
+        } else {
             v.load(charSequenceVar, charSequenceType)
             v.invokeCharSequenceMethod("length", "()I")
         }
@@ -94,8 +93,7 @@ class ForInCharSequenceLoopGenerator(
         val charSequenceClassType = charSequenceClassType
         if (charSequenceClassType != null) {
             invokevirtual(charSequenceClassType.internalName, name, desc, false)
-        }
-        else {
+        } else {
             invokeinterface(CHAR_SEQUENCE_TYPE.internalName, name, desc)
         }
     }

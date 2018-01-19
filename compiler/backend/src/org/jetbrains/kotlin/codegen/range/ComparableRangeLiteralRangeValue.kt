@@ -26,20 +26,20 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 class ComparableRangeLiteralRangeValue(
-        codegen: ExpressionCodegen,
-        rangeCall: ResolvedCall<out CallableDescriptor>
+    codegen: ExpressionCodegen,
+    rangeCall: ResolvedCall<out CallableDescriptor>
 ) : CallIntrinsicRangeValue(rangeCall) {
     private val boundedValue = SimpleBoundedValue(codegen, rangeCall)
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            IteratorForLoopGenerator(codegen, forExpression)
+        IteratorForLoopGenerator(codegen, forExpression)
 
     override fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>) =
-            isClosedRangeContains(resolvedCallForIn.resultingDescriptor)
+        isClosedRangeContains(resolvedCallForIn.resultingDescriptor)
 
     override fun createIntrinsicInExpressionGenerator(
-            codegen: ExpressionCodegen,
-            operatorReference: KtSimpleNameExpression,
-            resolvedCall: ResolvedCall<out CallableDescriptor>
+        codegen: ExpressionCodegen,
+        operatorReference: KtSimpleNameExpression,
+        resolvedCall: ResolvedCall<out CallableDescriptor>
     ) = InContinuousRangeOfComparableExpressionGenerator(operatorReference, boundedValue, codegen.frameMap)
 }

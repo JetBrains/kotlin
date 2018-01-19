@@ -51,8 +51,8 @@ interface BoundedValue {
 }
 
 fun BoundedValue.asStackValue(): StackValue =
-        object : StackValue(instanceType) {
-            override fun putSelector(type: Type, v: InstructionAdapter) {
-                putInstance(v, type)
-            }
+    object : StackValue(instanceType) {
+        override fun putSelector(type: Type, v: InstructionAdapter) {
+            putInstance(v, type)
         }
+    }

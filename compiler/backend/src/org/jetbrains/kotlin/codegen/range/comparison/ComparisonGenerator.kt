@@ -34,15 +34,18 @@ interface ComparisonGenerator {
 }
 
 fun getComparisonGeneratorForPrimitiveType(type: Type): ComparisonGenerator =
-        when {
-            type.isRepresentedAsPrimitiveInt() -> IntComparisonGenerator
-            type == Type.LONG_TYPE -> LongComparisonGenerator
-            type == Type.FLOAT_TYPE -> FloatComparisonGenerator
-            type == Type.DOUBLE_TYPE -> DoubleComparisonGenerator
-            else -> throw UnsupportedOperationException("Unexpected primitive type: " + type)
-        }
+    when {
+        type.isRepresentedAsPrimitiveInt() -> IntComparisonGenerator
+        type == Type.LONG_TYPE -> LongComparisonGenerator
+        type == Type.FLOAT_TYPE -> FloatComparisonGenerator
+        type == Type.DOUBLE_TYPE -> DoubleComparisonGenerator
+        else -> throw UnsupportedOperationException("Unexpected primitive type: " + type)
+    }
 
-fun getComparisonGeneratorForRangeContainsCall(codegen: ExpressionCodegen, call: ResolvedCall<out CallableDescriptor>): ComparisonGenerator? {
+fun getComparisonGeneratorForRangeContainsCall(
+    codegen: ExpressionCodegen,
+    call: ResolvedCall<out CallableDescriptor>
+): ComparisonGenerator? {
     val descriptor = call.resultingDescriptor
 
     val receiverType = descriptor.extensionReceiverParameter?.type ?: descriptor.dispatchReceiverParameter?.type ?: return null
@@ -62,11 +65,11 @@ fun getComparisonGeneratorForRangeContainsCall(codegen: ExpressionCodegen, call:
             IntComparisonGenerator
 
         asmElementType.isRepresentedAsPrimitiveInt() && asmValueParameterType == Type.LONG_TYPE ||
-        asmValueParameterType.isRepresentedAsPrimitiveInt() && asmElementType == Type.LONG_TYPE ->
+                asmValueParameterType.isRepresentedAsPrimitiveInt() && asmElementType == Type.LONG_TYPE ->
             LongComparisonGenerator
 
         asmElementType == Type.FLOAT_TYPE && asmValueParameterType == Type.DOUBLE_TYPE ||
-        asmElementType == Type.DOUBLE_TYPE && asmValueParameterType == Type.FLOAT_TYPE ->
+                asmElementType == Type.DOUBLE_TYPE && asmValueParameterType == Type.FLOAT_TYPE ->
             DoubleComparisonGenerator
 
         else -> null
@@ -74,4 +77,4 @@ fun getComparisonGeneratorForRangeContainsCall(codegen: ExpressionCodegen, call:
 }
 
 private fun Type.isRepresentedAsPrimitiveInt() =
-        this == Type.INT_TYPE || this == Type.SHORT_TYPE || this == Type.BYTE_TYPE || this == Type.CHAR_TYPE
+    this == Type.INT_TYPE || this == Type.SHORT_TYPE || this == Type.BYTE_TYPE || this == Type.CHAR_TYPE

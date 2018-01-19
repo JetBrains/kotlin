@@ -23,40 +23,39 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class SimpleBoundedValue(
+    codegen: ExpressionCodegen,
+    rangeCall: ResolvedCall<out CallableDescriptor>,
+    val lowBound: StackValue,
+    isLowInclusive: Boolean,
+    val highBound: StackValue,
+    isHighInclusive: Boolean
+) : AbstractBoundedValue(codegen, rangeCall, isLowInclusive, isHighInclusive) {
+    constructor(
         codegen: ExpressionCodegen,
         rangeCall: ResolvedCall<out CallableDescriptor>,
-        val lowBound: StackValue,
-        isLowInclusive: Boolean,
-        val highBound: StackValue,
-        isHighInclusive: Boolean
-): AbstractBoundedValue(codegen, rangeCall, isLowInclusive, isHighInclusive) {
-    constructor(
-            codegen: ExpressionCodegen,
-            rangeCall: ResolvedCall<out CallableDescriptor>,
-            isLowInclusive: Boolean = true,
-            isHighInclusive: Boolean = true
+        isLowInclusive: Boolean = true,
+        isHighInclusive: Boolean = true
     ) : this(
-            codegen,
-            rangeCall,
-            codegen.generateCallReceiver(rangeCall),
-            isLowInclusive,
-            codegen.generateCallSingleArgument(rangeCall),
-            isHighInclusive
+        codegen,
+        rangeCall,
+        codegen.generateCallReceiver(rangeCall),
+        isLowInclusive,
+        codegen.generateCallSingleArgument(rangeCall),
+        isHighInclusive
     )
 
     constructor(
-            codegen: ExpressionCodegen,
-            rangeCall: ResolvedCall<out CallableDescriptor>,
-            lowBound: StackValue,
-            highBound: StackValue
+        codegen: ExpressionCodegen,
+        rangeCall: ResolvedCall<out CallableDescriptor>,
+        lowBound: StackValue,
+        highBound: StackValue
     ) : this(codegen, rangeCall, lowBound, true, highBound, true)
 
     override fun putHighLow(v: InstructionAdapter, type: Type) {
         if (!lowBound.canHaveSideEffects() || !highBound.canHaveSideEffects()) {
             highBound.put(type, v)
             lowBound.put(type, v)
-        }
-        else {
+        } else {
             lowBound.put(type, v)
             highBound.put(type, v)
             AsmUtil.swap(v, type, type)

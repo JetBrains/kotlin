@@ -28,49 +28,49 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 class DownToProgressionRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>) :
-        PrimitiveNumberRangeIntrinsicRangeValue(rangeCall), ReversableRangeValue {
+    PrimitiveNumberRangeIntrinsicRangeValue(rangeCall), ReversableRangeValue {
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
-            SimpleBoundedValue(
-                    codegen, rangeCall,
-                    lowBound = codegen.generateCallSingleArgument(rangeCall),
-                    highBound = codegen.generateCallReceiver(rangeCall)
-            )
+        SimpleBoundedValue(
+            codegen, rangeCall,
+            lowBound = codegen.generateCallSingleArgument(rangeCall),
+            highBound = codegen.generateCallReceiver(rangeCall)
+        )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            createConstBoundedForInDownToGenerator(codegen, forExpression) ?:
-            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(codegen, forExpression, getBoundedValue(codegen))
+        createConstBoundedForInDownToGenerator(codegen, forExpression)
+                ?: ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(codegen, forExpression, getBoundedValue(codegen))
 
     override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            createConstBoundedForInReversedDownToGenerator(codegen, forExpression) ?:
-            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(
+        createConstBoundedForInReversedDownToGenerator(codegen, forExpression)
+                ?: ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(
                     codegen, forExpression, getBoundedValue(codegen),
                     inverseBoundsEvaluationOrder = true
-            )
+                )
 
     private fun createConstBoundedForInDownToGenerator(
-            codegen: ExpressionCodegen,
-            forExpression: KtForExpression
+        codegen: ExpressionCodegen,
+        forExpression: KtForExpression
     ): ForLoopGenerator? {
         val endExpression = rangeCall.getFirstArgumentExpression() ?: return null
         return createConstBoundedForLoopGeneratorOrNull(
-                codegen, forExpression,
-                codegen.generateCallReceiver(rangeCall),
-                endExpression,
-                -1
+            codegen, forExpression,
+            codegen.generateCallReceiver(rangeCall),
+            endExpression,
+            -1
         )
     }
 
     private fun createConstBoundedForInReversedDownToGenerator(
-            codegen: ExpressionCodegen,
-            forExpression: KtForExpression
+        codegen: ExpressionCodegen,
+        forExpression: KtForExpression
     ): ForLoopGenerator? {
         val endExpression = rangeCall.getReceiverExpression() ?: return null
         return createConstBoundedForLoopGeneratorOrNull(
-                codegen, forExpression,
-                codegen.generateCallSingleArgument(rangeCall),
-                endExpression,
-                1
+            codegen, forExpression,
+            codegen.generateCallSingleArgument(rangeCall),
+            endExpression,
+            1
         )
     }
 }

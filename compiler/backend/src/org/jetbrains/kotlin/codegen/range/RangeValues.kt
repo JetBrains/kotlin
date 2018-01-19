@@ -51,10 +51,10 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
     return when {
         asmRangeType.sort == Type.ARRAY -> {
             val properForInArraySemantics =
-                    state.languageVersionSettings.supportsFeature(LanguageFeature.ProperForInArrayLoopRangeVariableAssignmentSemantic)
+                state.languageVersionSettings.supportsFeature(LanguageFeature.ProperForInArrayLoopRangeVariableAssignmentSemantic)
             ArrayRangeValue(
-                    properForInArraySemantics || !isLocalVarReference(rangeExpression, bindingContext),
-                    properForInArraySemantics
+                properForInArraySemantics || !isLocalVarReference(rangeExpression, bindingContext),
+                properForInArraySemantics
             )
         }
 
@@ -75,20 +75,20 @@ fun isLocalVarReference(rangeExpression: KtExpression, bindingContext: BindingCo
     if (rangeExpression !is KtSimpleNameExpression) return false
     val resultingDescriptor = rangeExpression.getResolvedCall(bindingContext)?.resultingDescriptor ?: return false
     return resultingDescriptor is LocalVariableDescriptor &&
-           resultingDescriptor !is SyntheticFieldDescriptor &&
-           !resultingDescriptor.isDelegated &&
-           resultingDescriptor.isVar
+            resultingDescriptor !is SyntheticFieldDescriptor &&
+            !resultingDescriptor.isDelegated &&
+            resultingDescriptor.isVar
 }
 
 private fun isSubtypeOfString(type: KotlinType, builtIns: KotlinBuiltIns) =
-        KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.stringType)
+    KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.stringType)
 
 private fun isSubtypeOfCharSequence(type: KotlinType, builtIns: KotlinBuiltIns) =
-        KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.getBuiltInClassByName(Name.identifier("CharSequence")).defaultType)
+    KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.getBuiltInClassByName(Name.identifier("CharSequence")).defaultType)
 
 private fun getResolvedCallForRangeExpression(
-        bindingContext: BindingContext,
-        rangeExpression: KtExpression
+    bindingContext: BindingContext,
+    rangeExpression: KtExpression
 ): ResolvedCall<out CallableDescriptor>? {
     val expression = KtPsiUtil.deparenthesize(rangeExpression) ?: return null
 

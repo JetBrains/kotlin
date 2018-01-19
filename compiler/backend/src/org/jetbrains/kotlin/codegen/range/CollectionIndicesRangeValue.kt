@@ -28,27 +28,27 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
 class CollectionIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>) :
-        PrimitiveNumberRangeIntrinsicRangeValue(rangeCall), ReversableRangeValue {
+    PrimitiveNumberRangeIntrinsicRangeValue(rangeCall), ReversableRangeValue {
 
     private val expectedReceiverType: KotlinType = ExpressionCodegen.getExpectedReceiverType(rangeCall)
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
-            SimpleBoundedValue(
-                    codegen, rangeCall,
-                    lowBound = StackValue.constant(0, asmElementType),
-                    isLowInclusive = true,
-                    highBound = StackValue.operation(Type.INT_TYPE) { v ->
-                        codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), v)
-                        v.invokeinterface("java/util/Collection", "size", "()I")
-                    },
-                    isHighInclusive = false
-            )
+        SimpleBoundedValue(
+            codegen, rangeCall,
+            lowBound = StackValue.constant(0, asmElementType),
+            isLowInclusive = true,
+            highBound = StackValue.operation(Type.INT_TYPE) { v ->
+                codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), v)
+                v.invokeinterface("java/util/Collection", "size", "()I")
+            },
+            isHighInclusive = false
+        )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
+        ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
 
     override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            ForInDefinitelySafeSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
-                    codegen, forExpression, getBoundedValue(codegen)
-            )
+        ForInDefinitelySafeSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
+            codegen, forExpression, getBoundedValue(codegen)
+        )
 }
