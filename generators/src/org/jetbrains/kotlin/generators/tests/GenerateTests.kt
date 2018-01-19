@@ -735,7 +735,8 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractScratchRunActionTest> {
-            model("scratch", extension = "kts")
+            model("scratch", extension = "kts", testMethod = "doCompilingTest", testClassName = "Compiling")
+            model("scratch", extension = "kts", testMethod = "doReplTest", testClassName = "Repl")
         }
     }
 

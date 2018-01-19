@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
 import org.jetbrains.kotlin.idea.scratch.getScratchPanelFromSelectedEditor
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
+import org.jetbrains.kotlin.idea.scratch.ui.scratchTopPanel
 
 class RunScratchAction : AnAction(
     KotlinBundle.message("scratch.run.button"),
@@ -38,7 +39,7 @@ class RunScratchAction : AnAction(
         val scratchFile = scratchTopPanel.scratchFile
 
         val isMakeBeforeRun = false // todo use property from panel
-        val isRepl = true //todo use property from panel
+        val isRepl = scratchTopPanel.isRepl()
 
         val provider = ScratchFileLanguageProvider.get(scratchFile.psiFile.language) ?: return
 
@@ -52,9 +53,9 @@ class RunScratchAction : AnAction(
         }
 
         val runnable = r@ {
-            val executor = provider.createReplExecutor(scratchFile)
+            val executor = if (isRepl) provider.createReplExecutor(scratchFile) else provider.createCompilingExecutor(scratchFile)
             if (executor == null) {
-                handler.error(scratchFile, "Couldn't run file using REPL")
+                handler.error(scratchFile, "Couldn't run ${scratchFile.psiFile.name}")
                 handler.onFinish(scratchFile)
                 return@r
             }

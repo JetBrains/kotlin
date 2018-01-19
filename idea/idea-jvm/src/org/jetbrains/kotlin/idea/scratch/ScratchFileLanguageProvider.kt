@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandler
 abstract class ScratchFileLanguageProvider {
     abstract fun createFile(psiFile: PsiFile): ScratchFile?
     abstract fun createReplExecutor(file: ScratchFile): ScratchExecutor?
+    abstract fun createCompilingExecutor(file: ScratchFile): ScratchExecutor?
 
     abstract fun getOutputHandler(): ScratchOutputHandler
 

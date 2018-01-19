@@ -27,15 +27,13 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.uiDesigner.core.Spacer
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
 import org.jetbrains.kotlin.idea.scratch.getScratchPanel
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.JSeparator
+import javax.swing.*
 
 val ScratchFile.scratchTopPanel: ScratchTopPanel?
     get() = getScratchPanel(psiFile)?.takeIf { it.scratchFile == this@scratchTopPanel }
@@ -50,9 +48,13 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     }
 
     private val moduleChooser: ModulesComboBox
+    private val isReplCheckbox: JCheckBox
 
     init {
         add(createActionsToolbar())
+        add(JSeparator())
+        isReplCheckbox = JCheckBox("Use Repl", false)
+        add(isReplCheckbox)
         add(JSeparator())
         add(JLabel("Use classpath of module:  "))
         moduleChooser = createModuleChooser(scratchFile.psiFile.project)
@@ -66,6 +68,13 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         moduleChooser.addActionListener {
             moduleChooser.selectedModule?.let { f(it) }
         }
+    }
+
+    fun isRepl() = isReplCheckbox.isEnabled
+
+    @TestOnly
+    fun setReplMode(isEnabled: Boolean) {
+        isReplCheckbox.isEnabled = isEnabled
     }
 
     private fun createActionsToolbar(): JComponent {

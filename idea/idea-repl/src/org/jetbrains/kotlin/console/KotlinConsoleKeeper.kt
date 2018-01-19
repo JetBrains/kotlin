@@ -85,7 +85,7 @@ class KotlinConsoleKeeper(val project: Project) {
             return commandLine
         }
 
-        private fun createJavaParametersWithSdk(module: Module): JavaParameters {
+        fun createJavaParametersWithSdk(module: Module): JavaParameters {
             val params = JavaParameters()
             params.charset = null
 
