@@ -144,9 +144,9 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
     else v.toBoolean()
 }
 
-val intellijUltimateEnabled = project.getBooleanProperty("intellijUltimateEnabled")
-                              ?: project.hasProperty("teamcity")
-                              || System.getenv("TEAMCITY_VERSION") != null
+val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
+val intellijUltimateEnabled = project.getBooleanProperty("intellijUltimateEnabled") ?: isTeamcityBuild
+
 val intellijSeparateSdks = project.getBooleanProperty("intellijSeparateSdks") ?: false
 
 extra["intellijUltimateEnabled"] = intellijUltimateEnabled

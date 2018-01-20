@@ -41,9 +41,8 @@ rootProject.apply {
     from(rootProject.file("../versions.gradle.kts"))
 }
 
-val intellijUltimateEnabled by extra(project.getBooleanProperty("intellijUltimateEnabled")
-                                     ?: project.hasProperty("teamcity")
-                                     || System.getenv("TEAMCITY_VERSION") != null)
+val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
+val intellijUltimateEnabled by extra(project.getBooleanProperty("intellijUltimateEnabled") ?: isTeamcityBuild)
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
 
 extra["intellijRepo"] = "https://www.jetbrains.com/intellij-repository"
