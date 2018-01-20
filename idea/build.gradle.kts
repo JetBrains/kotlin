@@ -85,13 +85,13 @@ dependencies {
     testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     testCompileOnly(intellijPluginDep("gradle")) { includeJars("gradle-base-services", "gradle-tooling-extension-impl", "gradle-wrapper", rootProject = rootProject) }
     testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
-    testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
+    //testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
 
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
     testRuntime(intellijPluginDep("coverage"))
-    testRuntime(intellijPluginDep("maven"))
+    //testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("testng"))
 }
