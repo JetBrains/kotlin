@@ -26,7 +26,7 @@ dependencies {
     testCompile(projectTests(":idea:idea-test-framework"))
 
     testCompileOnly(intellijDep())
-    testCompileOnly(intellijPluginDep("maven"))
+    //testCompileOnly(intellijPluginDep("maven"))
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
@@ -45,7 +45,7 @@ dependencies {
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
     testRuntime(intellijPluginDep("coverage"))
-    testRuntime(intellijPluginDep("maven"))
+    //testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
 }
 
