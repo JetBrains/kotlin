@@ -57,7 +57,7 @@ dependencies {
     testRuntime(intellijPluginDep("java-decompiler"))
     testRuntime(intellijPluginDep("java-i18n"))
     testRuntime(intellijPluginDep("junit"))
-    testRuntime(intellijPluginDep("maven"))
+    //testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("testng"))
 }
 
