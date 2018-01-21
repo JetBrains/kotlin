@@ -125,12 +125,12 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
     private fun inlineFunction(irCall             : IrCall,                                 // Call to be substituted.
                                functionDeclaration: IrFunction): IrReturnableBlockImpl {    // Function to substitute.
 
-        val evaluationStatements = evaluateArguments(irCall, functionDeclaration)           // And list of evaluation statements.
-
         val copyFunctionDeclaration = copyIrElement.copy(                                   // Create copy of original function.
             irElement       = functionDeclaration,                                          // Descriptors declared inside the function will be copied.
             typeSubstitutor = createTypeSubstitutor(irCall)                                 // Type parameters will be substituted with type arguments.
         ) as IrFunction
+
+        val evaluationStatements = evaluateArguments(irCall, copyFunctionDeclaration)           // And list of evaluation statements.
 
         val statements = (copyFunctionDeclaration.body as IrBlockBody).statements           // IR statements from function copy.
         val returnType = copyFunctionDeclaration.descriptor.returnType!!                    // Substituted return type.

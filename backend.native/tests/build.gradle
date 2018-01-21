@@ -2096,6 +2096,11 @@ task inline_localFunctionInInitializerBlock(type: RunKonanTest) {
     source = "codegen/inline/localFunctionInInitializerBlock.kt"
 }
 
+task inline_lambdaInDefaultValue(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/inline/lambdaInDefaultValue.kt"
+}
+
 task deserialized_inline0(type: RunKonanTest) {
     source = "serialization/deserialized_inline0.kt"
 }

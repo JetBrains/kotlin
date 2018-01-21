@@ -18,7 +18,7 @@ import global.*
 import kotlinx.cinterop.*
 import platform.posix.*
 
-fun Int.ensureUnixCallResult(op: String, predicate: (Int) -> Boolean = { x -> x == 0} ): Int {
+inline fun Int.ensureUnixCallResult(op: String, predicate: (Int) -> Boolean = { x -> x == 0} ): Int {
     if (!predicate(this)) {
         throw Error("$op: ${strerror(posix_errno())!!.toKString()}")
     }
