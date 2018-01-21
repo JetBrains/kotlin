@@ -49,8 +49,6 @@ class KotlinCallCompleter(
         // this is needed at least for non-local return checker, because when we analyze lambda we should already bind descriptor for outer call
         candidate?.resolvedCall?.let { resolutionCallbacks.bindStubResolvedCallForCandidate(it) }
 
-        val diagnosticsFromResolutionParts = candidate?.diagnosticsFromResolutionParts ?: emptyList<KotlinCallDiagnostic>()
-
         if (candidate == null || candidate.csBuilder.hasContradiction) {
             val candidateForCompletion = candidate ?: factory.createErrorCandidate().forceResolution()
             candidateForCompletion.prepareForCompletion(expectedType, resolutionCallbacks)
@@ -62,34 +60,19 @@ class KotlinCallCompleter(
                 resolutionCallbacks
             )
 
-            val systemStorage = candidate?.getSystem()?.asReadOnlyStorage() ?: ConstraintStorage.Empty
-            return CallResolutionResult(
-                CallResolutionResult.Type.ERROR,
-                candidate?.resolvedCall,
-                diagnosticHolder.getDiagnostics() + diagnosticsFromResolutionParts,
-                systemStorage
-            )
+            return candidate.asCallResolutionResult(CallResolutionResult.Type.ERROR, diagnosticHolder)
         }
 
         val completionType = candidate.prepareForCompletion(expectedType, resolutionCallbacks)
         val constraintSystem = candidate.getSystem()
         runCompletion(candidate.resolvedCall, completionType, diagnosticHolder, constraintSystem, resolutionCallbacks)
 
-        return if (completionType == ConstraintSystemCompletionMode.FULL) {
-            CallResolutionResult(
-                CallResolutionResult.Type.COMPLETED,
-                candidate.resolvedCall,
-                diagnosticHolder.getDiagnostics() + diagnosticsFromResolutionParts,
-                constraintSystem.asReadOnlyStorage()
-            )
-        } else {
-            CallResolutionResult(
-                CallResolutionResult.Type.PARTIAL,
-                candidate.resolvedCall,
-                diagnosticHolder.getDiagnostics() + diagnosticsFromResolutionParts,
-                constraintSystem.asReadOnlyStorage()
-            )
-        }
+        val callResolutionType = if (completionType == ConstraintSystemCompletionMode.FULL)
+            CallResolutionResult.Type.COMPLETED
+        else
+            CallResolutionResult.Type.PARTIAL
+
+        return candidate.asCallResolutionResult(callResolutionType, diagnosticHolder)
     }
 
     fun createAllCandidatesResult(
@@ -164,5 +147,20 @@ class KotlinCallCompleter(
         } else {
             ConstraintSystemCompletionMode.PARTIAL
         }
+    }
+
+    private fun KotlinResolutionCandidate?.asCallResolutionResult(
+        type: CallResolutionResult.Type,
+        diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder
+    ): CallResolutionResult {
+        val diagnosticsFromResolutionParts = this?.diagnosticsFromResolutionParts ?: emptyList<KotlinCallDiagnostic>()
+        val systemStorage = this?.getSystem()?.asReadOnlyStorage() ?: ConstraintStorage.Empty
+
+        return CallResolutionResult(
+            type,
+            this?.resolvedCall,
+            diagnosticsHolder.getDiagnostics() + diagnosticsFromResolutionParts,
+            systemStorage
+        )
     }
 }
