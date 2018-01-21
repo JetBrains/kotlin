@@ -18,6 +18,16 @@ val intellijSeparateSdks: Boolean by rootProject.extra
 val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
 val installIntellijUltimate = intellijUltimateEnabled
 
+logger.info("intellijUltimateEnabled: $intellijUltimateEnabled")
+
+logger.info("intellijVersion: $intellijVersion")
+logger.info("androidStudioRelease: $androidStudioRelease")
+logger.info("androidStudioBuild: $androidStudioBuild")
+
+logger.info("intellijSeparateSdks: $intellijSeparateSdks")
+logger.info("installIntellijCommunity: $installIntellijCommunity")
+logger.info("installIntellijUltimate: $installIntellijUltimate")
+
 val studioOs by lazy {
     when {
         OperatingSystem.current().isWindows -> "windows"
