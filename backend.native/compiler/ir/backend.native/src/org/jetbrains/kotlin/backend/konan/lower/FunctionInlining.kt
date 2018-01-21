@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
+import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -44,6 +47,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
@@ -223,11 +227,12 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
 
     //-------------------------------------------------------------------------//
 
-    private class ParameterToArgument(val parameterDescriptor: ValueDescriptor,
+    private class ParameterToArgument(val parameterDescriptor: ParameterDescriptor,
                                       val argumentExpression : IrExpression) {
 
         val isInlinableLambda : Boolean
             get() {
+                if (!InlineUtil.isInlineParameter(parameterDescriptor))                 return false
                 if (argumentExpression !is IrBlock)                                     return false    // Lambda must be represented with IrBlock.
                 if (argumentExpression.origin != IrStatementOrigin.LAMBDA &&                            // Origin must be LAMBDA or ANONYMOUS.
                     argumentExpression.origin != IrStatementOrigin.ANONYMOUS_FUNCTION)  return false
@@ -237,15 +242,13 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
                 val irCallableReference = statements[1]                                     // Lambda callable reference.
                 if (irFunction !is IrFunction)                   return false               // First statement of the block must be lambda declaration.
                 if (irCallableReference !is IrCallableReference) return false               // Second statement of the block must be CallableReference.
-                if (parameterDescriptor is ValueParameterDescriptor &&
-                    parameterDescriptor.isNoinline)              return false               // If parameter marked as "noinline" - do not inline.
                 return true                                                                 // The expression represents lambda.
             }
     }
 
     //-------------------------------------------------------------------------//
 
-    private fun buildParameterToArgument(irCall     : IrCall,                               // Call site.
+    private fun buildParameterToArgument(irCall    : IrCall,                                // Call site.
                                          irFunction: IrFunction                             // Function to be called.
     ): List<ParameterToArgument> {
 

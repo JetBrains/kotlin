@@ -2101,6 +2101,11 @@ task inline_lambdaInDefaultValue(type: RunKonanTest) {
     source = "codegen/inline/lambdaInDefaultValue.kt"
 }
 
+task inline_lambdaAsAny(type: RunKonanTest) {
+    goldValue = "Ok\n"
+    source = "codegen/inline/lambdaAsAny.kt"
+}
+
 task deserialized_inline0(type: RunKonanTest) {
     source = "serialization/deserialized_inline0.kt"
 }
