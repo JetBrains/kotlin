@@ -21,6 +21,7 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.visibleName
+import java.io.File
 
 enum class Produce(val cliOption: String, val kind: CompilerOutputKind) {
     PROGRAM("program", CompilerOutputKind.PROGRAM),
@@ -179,6 +180,9 @@ open class KonanCompileProgramTask: KonanCompileTask() {
 
 open class KonanCompileDynamicTask: KonanCompileTask() {
     override val produce: Produce  get() = Produce.DYNAMIC
+
+    val headerFile: File
+        @OutputFile get() = destinationDir.resolve("$artifactPrefix${artifactName}_api.h")
 }
 
 open class KonanCompileFrameworkTask: KonanCompileTask() {

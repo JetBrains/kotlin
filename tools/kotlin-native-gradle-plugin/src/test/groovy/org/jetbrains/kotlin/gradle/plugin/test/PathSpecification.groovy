@@ -38,6 +38,9 @@ class PathSpecification extends BaseKonanSpecification {
                                 if (!target.artifact.exists()) throw new Exception("Artifact doesn't exist. Type: \${artifact.name}, target: \${target.target}")
                             }
                         }
+                        for (target in konanArtifacts.dynamic) {
+                            if (!target.headerFile.exists()) throw new Exception("Header file doesn't exist. Target: \${target.target}")
+                        }
                     }
                 }
             """.stripIndent())
