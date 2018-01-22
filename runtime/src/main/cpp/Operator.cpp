@@ -397,12 +397,12 @@ KInt   Kotlin_Float_bits              (KFloat a) {
 }
 
 KFloat Kotlin_Float_fromBits          (KInt a) {
-    union {
-        KFloat f;
-        KInt i;
-    } alias;
-    alias.i = a;
-    return alias.f;
+  union {
+    KFloat f;
+    KInt i;
+  } alias;
+  alias.i = a;
+  return alias.f;
 }
 
 KBoolean Kotlin_Float_isNaN           (KFloat a)          { return isnan(a); }
@@ -485,12 +485,12 @@ KLong   Kotlin_Double_bits             (KDouble a) {
 }
 
 KDouble Kotlin_Double_fromBits         (KLong a) {
-    union {
-        KDouble d;
-        KLong l;
-    } alias;
-    alias.l = a;
-    return alias.d;
+  union {
+    KDouble d;
+    KLong l;
+  } alias;
+  alias.l = a;
+  return alias.d;
 }
 
 KBoolean Kotlin_Double_isNaN           (KDouble a)          { return isnan(a); }
