@@ -37,7 +37,7 @@ class AndroidOClassLoadingAdapter : AbstractAndroidClassLoadingAdapter() {
         }
     }
 
-    override fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderHandler {
+    override fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference {
         val process = context.debugProcess
         val inMemoryClassLoaderClass = resolveClassLoaderClass(context) ?: error("InMemoryDexClassLoader class not found")
         val constructorMethod = inMemoryClassLoaderClass.concreteMethodByName(
@@ -52,6 +52,6 @@ class AndroidOClassLoadingAdapter : AbstractAndroidClassLoadingAdapter() {
 
         DebuggerUtilsEx.keep(newClassLoader, context)
 
-        return ClassLoaderHandler(newClassLoader as ClassLoaderReference)
+        return newClassLoader as ClassLoaderReference
     }
 }

@@ -17,24 +17,24 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator
 
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.sun.jdi.ClassLoaderReference
 import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
-import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassLoaderHandler
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassLoadingAdapter
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
 
-fun loadClassesSafely(evaluationContext: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderHandler? {
-    try {
-        return loadClasses(evaluationContext, classes)
+fun loadClassesSafely(evaluationContext: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference? {
+    return try {
+        loadClasses(evaluationContext, classes)
     } catch (e: Throwable) {
         LOG.debug("Failed to evaluate expression", e)
-        return null
+        null
     }
 }
 
-fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderHandler? {
-    if (classes.isEmpty()) return ClassLoaderHandler(evaluationContext.classLoader)
-
-    return ClassLoadingAdapter.loadClasses(evaluationContext, classes)?.apply {
-        evaluationContext.classLoader = this.reference
+fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference? {
+    if (classes.isEmpty()) {
+        return null
     }
+
+    return ClassLoadingAdapter.loadClasses(evaluationContext, classes)
 }
