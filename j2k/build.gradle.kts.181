@@ -19,6 +19,7 @@ dependencies {
     testCompile(project(":compiler:light-classes"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
+    testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl") }
 
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":idea:idea-jvm"))
