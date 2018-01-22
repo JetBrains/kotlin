@@ -13,7 +13,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit:junit"))
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "log4j") }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "platform-api", "platform-impl", "java-api", "java-impl", "idea", "log4j") }
 }
 
 sourceSets {
