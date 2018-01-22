@@ -57,7 +57,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
         }
 
         @JvmStatic
-        fun buildReplacement(expression: KtBinaryExpression): KtStringTemplateExpression {
+        protected fun buildReplacement(expression: KtBinaryExpression): KtStringTemplateExpression {
             val rightText = buildText(expression.right, false)
             return fold(expression.left, rightText, KtPsiFactory(expression))
         }
@@ -75,7 +75,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
             }
         }
 
-        private fun buildText(expr: KtExpression?, forceBraces: Boolean): String {
+        fun buildText(expr: KtExpression?, forceBraces: Boolean): String {
             if (expr == null) return ""
             val expression = KtPsiUtil.safeDeparenthesize(expr)
             val expressionText = expression.text
@@ -130,7 +130,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
             return "\${$expressionText}"
         }
 
-        fun isApplicableToNoParentCheck(expression: KtBinaryExpression): Boolean {
+        private fun isApplicableToNoParentCheck(expression: KtBinaryExpression): Boolean {
             if (expression.operationToken != KtTokens.PLUS) return false
             val expressionType = expression.analyze(BodyResolveMode.PARTIAL).getType(expression)
             if (!KotlinBuiltIns.isString(expressionType)) return false

@@ -429,6 +429,18 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             doTest(fileName);
         }
 
+        @TestMetadata("lineWithMultiStringLiteral.kt")
+        public void testLineWithMultiStringLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/lineWithMultiStringLiteral.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lineWithMultiStringLiteralAndVariable.kt")
+        public void testLineWithMultiStringLiteralAndVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/lineWithMultiStringLiteralAndVariable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("secondLineVariable.kt")
         public void testSecondLineVariable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/secondLineVariable.kt");
