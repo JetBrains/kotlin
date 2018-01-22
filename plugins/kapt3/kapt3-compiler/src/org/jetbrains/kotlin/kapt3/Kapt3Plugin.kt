@@ -38,6 +38,20 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.ANNOTATION_PROCESSORS_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.ANNOTATION_PROCESSOR_CLASSPATH_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.APT_MODE_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.APT_ONLY_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.APT_OPTIONS_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.CLASS_OUTPUT_DIR_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.CORRECT_ERROR_TYPES_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.INCREMENTAL_DATA_OUTPUT_DIR_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.JAVAC_CLI_OPTIONS_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.MAP_DIAGNOSTIC_LOCATIONS_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.SOURCE_OUTPUT_DIR_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.STUBS_OUTPUT_DIR_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.USE_LIGHT_ANALYSIS_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.VERBOSE_MODE_OPTION
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -50,47 +64,47 @@ import java.util.*
 
 object Kapt3ConfigurationKeys {
     val SOURCE_OUTPUT_DIR: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("source files output directory")
+            CompilerConfigurationKey.create<String>(SOURCE_OUTPUT_DIR_OPTION.description)
 
     val CLASS_OUTPUT_DIR: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("class files output directory")
+            CompilerConfigurationKey.create<String>(CLASS_OUTPUT_DIR_OPTION.description)
 
     val STUBS_OUTPUT_DIR: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("stubs output directory")
+            CompilerConfigurationKey.create<String>(STUBS_OUTPUT_DIR_OPTION.description)
 
     val INCREMENTAL_DATA_OUTPUT_DIR: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("incremental data output directory")
+            CompilerConfigurationKey.create<String>(INCREMENTAL_DATA_OUTPUT_DIR_OPTION.description)
 
     val ANNOTATION_PROCESSOR_CLASSPATH: CompilerConfigurationKey<List<String>> =
-            CompilerConfigurationKey.create<List<String>>("annotation processor classpath")
+            CompilerConfigurationKey.create<List<String>>(ANNOTATION_PROCESSOR_CLASSPATH_OPTION.description)
 
     val APT_OPTIONS: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("annotation processing options")
+            CompilerConfigurationKey.create<String>(APT_OPTIONS_OPTION.description)
 
     val JAVAC_CLI_OPTIONS: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("javac CLI options")
+            CompilerConfigurationKey.create<String>(JAVAC_CLI_OPTIONS_OPTION.description)
 
     val ANNOTATION_PROCESSORS: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("annotation processor qualified names")
+            CompilerConfigurationKey.create<String>(ANNOTATION_PROCESSORS_OPTION.description)
 
     val VERBOSE_MODE: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("verbose mode")
+            CompilerConfigurationKey.create<String>(VERBOSE_MODE_OPTION.description)
 
     @Deprecated("Use APT_MODE instead.")
     val APT_ONLY: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("do only annotation processing")
+            CompilerConfigurationKey.create<String>(APT_ONLY_OPTION.description)
 
     val APT_MODE: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("annotation processing mode")
+            CompilerConfigurationKey.create<String>(APT_MODE_OPTION.description)
 
     val USE_LIGHT_ANALYSIS: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("do not analyze declaration bodies if can")
+            CompilerConfigurationKey.create<String>(USE_LIGHT_ANALYSIS_OPTION.description)
 
     val CORRECT_ERROR_TYPES: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("replace error types with ones from the declaration sources")
+            CompilerConfigurationKey.create<String>(CORRECT_ERROR_TYPES_OPTION.description)
 
     val MAP_DIAGNOSTIC_LOCATIONS: CompilerConfigurationKey<String> =
-        CompilerConfigurationKey.create<String>("map diagnostic reported on kapt stubs to original locations in Kotlin sources")
+        CompilerConfigurationKey.create<String>(MAP_DIAGNOSTIC_LOCATIONS_OPTION.description)
 }
 
 class Kapt3CommandLineProcessor : CommandLineProcessor {
