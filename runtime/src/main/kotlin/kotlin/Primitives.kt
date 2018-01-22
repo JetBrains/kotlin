@@ -975,8 +975,7 @@ public final class Float : Number(), Comparable<Float> {
         /**
          * A constant holding the "not a number" value of Float.
          */
-        @Suppress("DIVISION_BY_ZERO")
-        public val NaN: Float = 0.0f / 0.0f
+        public val NaN: Float = kotlinx.cinterop.bitsToFloat(0x7fc00000)
     }
 
     /**
@@ -1194,8 +1193,7 @@ public final class Double : Number(), Comparable<Double> {
         /**
          * A constant holding the "not a number" value of Double.
          */
-        @Suppress("DIVISION_BY_ZERO")
-        public val NaN: Double = 0.0 / 0.0
+        public val NaN: Double = kotlinx.cinterop.bitsToDouble(0x7ff8000000000000L)
     }
 
     /**

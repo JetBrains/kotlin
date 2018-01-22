@@ -370,12 +370,22 @@ KFloat  Kotlin_Float_dec              (KFloat a           ) { return --a; }
 KFloat  Kotlin_Float_unaryPlus        (KFloat a           ) { return  +a; }
 KFloat  Kotlin_Float_unaryMinus       (KFloat a           ) { return  -a; }
 
-KByte   Kotlin_Float_toByte           (KFloat a           ) { return a; }
-KShort  Kotlin_Float_toShort          (KFloat a           ) { return a; }
-KInt    Kotlin_Float_toInt            (KFloat a           ) { return a; }
-KLong   Kotlin_Float_toLong           (KFloat a           ) { return a; }
+KInt    Kotlin_Float_toInt            (KFloat a           ) {
+  if (isnan(a)) return 0;
+  if (a >= (KFloat) INT_MAX) return INT_MAX;
+  if (a <= (KFloat) INT_MIN) return INT_MIN;
+  return a;
+}
+KLong   Kotlin_Float_toLong           (KFloat a           ) {
+  if (isnan(a)) return 0;
+  if (a >= (KFloat) LONG_MAX) return LONG_MAX;
+  if (a <= (KFloat) LONG_MIN) return LONG_MIN;
+  return a;
+}
 KFloat  Kotlin_Float_toFloat          (KFloat a           ) { return a; }
 KDouble Kotlin_Float_toDouble         (KFloat a           ) { return a; }
+KByte   Kotlin_Float_toByte           (KFloat a           ) { return (KByte)  Kotlin_Float_toInt(a); }
+KShort  Kotlin_Float_toShort          (KFloat a           ) { return (KShort) Kotlin_Float_toInt(a); }
 
 KInt   Kotlin_Float_bits              (KFloat a) {
   union {
@@ -448,10 +458,20 @@ KDouble Kotlin_Double_dec              (KDouble a           ) { return --a; }
 KDouble Kotlin_Double_unaryPlus        (KDouble a           ) { return  +a; }
 KDouble Kotlin_Double_unaryMinus       (KDouble a           ) { return  -a; }
 
-KByte   Kotlin_Double_toByte           (KDouble a           ) { return a; }
-KShort  Kotlin_Double_toShort          (KDouble a           ) { return a; }
-KInt    Kotlin_Double_toInt            (KDouble a           ) { return a; }
-KLong   Kotlin_Double_toLong           (KDouble a           ) { return a; }
+KInt    Kotlin_Double_toInt            (KDouble a ) {
+  if (isnan(a)) return 0;
+  if (a >= (KDouble) INT_MAX) return INT_MAX;
+  if (a <= (KDouble) INT_MIN) return INT_MIN;
+  return a;
+}
+KLong   Kotlin_Double_toLong           (KDouble a           ) {
+  if (isnan(a)) return 0;
+  if (a >= (KDouble) LONG_MAX) return LONG_MAX;
+  if (a <= (KDouble) LONG_MIN) return LONG_MIN;
+  return a;
+}
+KByte   Kotlin_Double_toByte           (KDouble a           ) { return (KByte)  Kotlin_Double_toInt(a); }
+KShort  Kotlin_Double_toShort          (KDouble a           ) { return (KShort) Kotlin_Double_toInt(a); }
 KFloat  Kotlin_Double_toFloat          (KDouble a           ) { return a; }
 KDouble Kotlin_Double_toDouble         (KDouble a           ) { return a; }
 

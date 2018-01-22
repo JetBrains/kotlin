@@ -1449,6 +1449,27 @@ task hash0(type: RunKonanTest) {
     source = "runtime/basic/hash0.kt"
 }
 
+task ieee754(type: RunKonanTest) {
+    goldValue = "Infinity 2147483647 -1 -1\n" +
+            "3.4028235E38\n" +
+            "NAN2SHORT:: 0\n" +
+            "MAX2SHORT:: -1\n" +
+            "2147483647 -1\n" +
+            "FLOAT:: Infinity   INT:: 2147483647\n" +
+            "FLOAT:: 1.7014117E38   INT:: 2147483647\n" +
+            "FLOAT:: 3.4028235E38   INT:: 2147483647\n" +
+            "FLOAT:: 3.14   INT:: 3\n" +
+            "FLOAT:: NaN   INT:: 0\n" +
+            "FLOAT:: -33333.125   INT:: -33333\n" +
+            "FLOAT:: 1.4E-45   INT:: 0\n" +
+            "FLOAT:: -Infinity   INT:: -2147483648\n" +
+            "FLOAT:: -1.2   INT:: -1\n" +
+            "FLOAT:: -12.6   INT:: -12\n" +
+            "FLOAT:: 2.3   INT:: 2\n" +
+            "OK\n"
+    source = "runtime/basic/ieee754.kt"
+}
+
 task array_list1(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "runtime/collections/array_list1.kt"
