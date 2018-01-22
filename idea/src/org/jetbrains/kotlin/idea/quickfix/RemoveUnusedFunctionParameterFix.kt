@@ -38,15 +38,15 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val primaryConstructor = element.parent?.parent as? KtPrimaryConstructor
-        val parameterList = element.parent as? KtParameterList
         val context = element.analyze()
         val parameterDescriptor = context[BindingContext.VALUE_PARAMETER, element] as? ValueParameterDescriptor ?: return
         ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
+        val parameterList = element.parent as? KtParameterList
         val nextParameter = parameterList?.parameters?.getOrNull(parameterDescriptor.index)
         if (nextParameter != null) {
             editor?.caretModel?.moveToOffset(nextParameter.startOffset)
         }
+        val primaryConstructor = element.parent?.parent as? KtPrimaryConstructor
         if (primaryConstructor != null) {
             val removeConstructorIntention = RemoveEmptyPrimaryConstructorIntention()
             if (removeConstructorIntention.isApplicableTo(primaryConstructor)) {
