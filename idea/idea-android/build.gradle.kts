@@ -21,9 +21,9 @@ dependencies {
     compile(androidDxJar())
 
     compileOnly(project(":kotlin-android-extensions-runtime"))
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "extensions", "util", "guava", "android-base-common", rootProject = rootProject) }
+    compileOnly(intellijDep()) { includeJars("openapi", "java-api", "java-impl", "platform-api", "platform-impl", "idea", "extensions", "util", "guava", "android-base-common", rootProject = rootProject) }
     compileOnly(intellijPluginDep("android")) {
-        includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
+        includeJars("android", "android-common", "android-base-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
     }
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
@@ -37,8 +37,9 @@ dependencies {
 
     testCompile(intellijDep()) { includeJars("gson", rootProject = rootProject) }
     testCompile(intellijPluginDep("properties"))
+    testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl", "java-api", "java-impl") }
     testCompileOnly(intellijPluginDep("android")) {
-        includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
+        includeJars("android", "android-common", "android-base-common", "build-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
     }
 
     testRuntime(projectDist(":kotlin-reflect"))

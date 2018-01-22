@@ -17,9 +17,9 @@ dependencies {
     compile(project(":idea:idea-gradle"))
     compile(project(":plugins:android-extensions-compiler"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
-    compileOnly(intellijPluginDep("android")) { includeJars("android", "android-common", "sdk-common", "sdk-tools") }
+    compileOnly(intellijPluginDep("android")) { includeJars("android", "android-common", "android-base-common", "sdk-common", "sdk-tools") }
     compileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
-    compileOnly(intellijDep()) { includeJars("extensions", "openapi", "util", "idea", "android-base-common", rootProject = rootProject) }
+    compileOnly(intellijDep()) { includeJars("extensions", "openapi", "platform-api", "platform-impl", "java-api", "util", "idea", "android-base-common", rootProject = rootProject) }
 
     testCompile(project(":compiler:tests-common"))
     testCompile(project(":compiler:cli"))
@@ -34,7 +34,7 @@ dependencies {
     testRuntime(projectDist(":kotlin-reflect"))
     testCompile(intellijPluginDep("android")) { includeJars("android", "android-common", "sdk-common", "sdk-tools") }
     testCompile(intellijPluginDep("Groovy")) { includeJars("Groovy") }
-    testCompile(intellijDep()) { includeJars("extensions") }
+    testCompile(intellijDep()) { includeJars("platform-api", "platform-impl", "extensions") }
 
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":plugins:android-extensions-jps"))
