@@ -186,6 +186,8 @@ val relocateCoreSources by task<Copy> {
     from("$core/deserialization/src")
     from("$core/util.runtime/src")
 
+    exclude("META-INF/services/**")
+
     into(relocatedCoreSrc)
     includeEmptyDirs = false
 
