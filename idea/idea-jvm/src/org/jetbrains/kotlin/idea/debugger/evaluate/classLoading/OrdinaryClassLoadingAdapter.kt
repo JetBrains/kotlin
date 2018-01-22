@@ -41,7 +41,7 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
         return (hasAdditionalClasses || hasLoops) && context.classLoader != null && !context.debugProcess.isDexDebug()
     }
 
-    override fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderHandler {
+    override fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference {
         val process = context.debugProcess
 
         val classLoader = try {
@@ -68,7 +68,7 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
             throw EvaluateException("Error during classes definition " + e, e)
         }
 
-        return ClassLoaderHandler(classLoader)
+        return classLoader
     }
 
     private fun defineClasses(

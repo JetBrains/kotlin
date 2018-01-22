@@ -21,6 +21,7 @@ import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.sun.jdi.ArrayReference
 import com.sun.jdi.ArrayType
+import com.sun.jdi.ClassLoaderReference
 import com.sun.jdi.Value
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Label
@@ -34,7 +35,7 @@ interface ClassLoadingAdapter {
                 AndroidOClassLoadingAdapter(),
                 OrdinaryClassLoadingAdapter())
 
-        fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderHandler? {
+        fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference? {
             val hasAdditionalClasses = classes.size > 1
             val hasLoops = classes.isNotEmpty() && doesContainLoops(classes.first { it.isMainClass() }.bytes)
 
@@ -76,7 +77,7 @@ interface ClassLoadingAdapter {
 
     fun isApplicable(context: EvaluationContextImpl, hasAdditionalClasses: Boolean, hasLoops: Boolean): Boolean
 
-    fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderHandler
+    fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference
 
     fun mirrorOfByteArray(bytes: ByteArray, context: EvaluationContextImpl, process: DebugProcessImpl): ArrayReference {
         val arrayClass = process.findClass(context, "byte[]", context.classLoader) as ArrayType
