@@ -14,4 +14,4 @@ public final class A {
 public open class B {
     public constructor B()
 }
-public typealias ANested</*0*/ T>  = A.Nested<T>
+public typealias ANested</*0*/ T> = A.Nested<T>

@@ -1,10 +1,10 @@
 package
 
-public typealias A</*0*/ T>  = kotlin.Array<T>
-public typealias AA</*0*/ T>  = A<A<T>>
+public typealias A</*0*/ T> = kotlin.Array<T>
+public typealias AA</*0*/ T> = A<A<T>>
 public typealias AAN = AA<kotlin.Nothing>
 public typealias AAN2 = A<A<kotlin.Nothing>>
 public typealias AN = A<kotlin.Nothing>
-public typealias First</*0*/ X, /*1*/ Y>  = kotlin.collections.List<X>
+public typealias First</*0*/ X, /*1*/ Y> = kotlin.collections.List<X>
 public typealias UnusedAN1 = First<kotlin.Int, kotlin.Array<kotlin.Nothing>>
 public typealias UnusedAN2 = First<kotlin.Int, A<kotlin.Nothing>>

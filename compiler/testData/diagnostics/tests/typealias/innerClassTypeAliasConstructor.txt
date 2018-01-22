@@ -34,6 +34,6 @@ public final class Outer {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
-public typealias GI</*0*/ T>  = Generic<T>.Inner
+public typealias GI</*0*/ T> = Generic<T>.Inner
 public typealias GIntI = Generic<kotlin.Int>.Inner
 public typealias OI = Outer.Inner

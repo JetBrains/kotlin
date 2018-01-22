@@ -33,5 +33,5 @@ public final class GenericClassWithCompanion</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
-public typealias GenericTestObject</*0*/ T>  = AnObject
-public typealias TestGCWC</*0*/ T>  = GenericClassWithCompanion<T>
+public typealias GenericTestObject</*0*/ T> = AnObject
+public typealias TestGCWC</*0*/ T> = GenericClassWithCompanion<T>

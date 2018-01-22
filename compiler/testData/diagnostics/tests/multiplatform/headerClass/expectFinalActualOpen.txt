@@ -36,4 +36,4 @@ public open class JavaBar {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias Bar = JavaBar
+public actual typealias Bar = JavaBar

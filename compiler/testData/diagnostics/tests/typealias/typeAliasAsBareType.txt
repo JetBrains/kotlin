@@ -14,11 +14,11 @@ public fun testWrong1(/*0*/ x: kotlin.collections.Map<kotlin.Any, kotlin.Any>): 
 public fun testWrong2(/*0*/ x: kotlin.collections.Map<kotlin.Any, kotlin.Any>): kotlin.Boolean
 public fun testWrong3(/*0*/ x: kotlin.collections.Map<kotlin.Any, kotlin.Any>): kotlin.Boolean
 public fun testWrong4(/*0*/ x: kotlin.collections.List<kotlin.Any>): kotlin.Boolean
-public typealias Dictionary</*0*/ T>  = kotlin.collections.MutableMap<kotlin.String, T>
-public typealias L</*0*/ T>  = kotlin.collections.List<T>
-public typealias LStar</*0*/ T>  = kotlin.collections.List<*>
-public typealias MMTT</*0*/ T>  = kotlin.collections.MutableMap<T, T>
-public typealias MyList</*0*/ T, /*1*/ X>  = kotlin.collections.List<X>
-public typealias NL</*0*/ T>  = kotlin.collections.List<T>?
-public typealias ReadableList</*0*/ T>  = kotlin.collections.MutableList<out T>
-public typealias WriteableMap</*0*/ K, /*1*/ V>  = kotlin.collections.MutableMap<in K, V>
+public typealias Dictionary</*0*/ T> = kotlin.collections.MutableMap<kotlin.String, T>
+public typealias L</*0*/ T> = kotlin.collections.List<T>
+public typealias LStar</*0*/ T> = kotlin.collections.List<*>
+public typealias MMTT</*0*/ T> = kotlin.collections.MutableMap<T, T>
+public typealias MyList</*0*/ T, /*1*/ X> = kotlin.collections.List<X>
+public typealias NL</*0*/ T> = kotlin.collections.List<T>?
+public typealias ReadableList</*0*/ T> = kotlin.collections.MutableList<out T>
+public typealias WriteableMap</*0*/ K, /*1*/ V> = kotlin.collections.MutableMap<in K, V>

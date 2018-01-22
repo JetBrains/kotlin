@@ -838,10 +838,11 @@ internal class DescriptorRendererImpl(
     private fun renderTypeAlias(typeAlias: TypeAliasDescriptor, builder: StringBuilder) {
         builder.renderAnnotations(typeAlias)
         renderVisibility(typeAlias.visibility, builder)
+        renderMemberModifiers(typeAlias, builder)
         builder.append(renderKeyword("typealias")).append(" ")
         renderName(typeAlias, builder)
 
-        renderTypeParameters(typeAlias.declaredTypeParameters, builder, true)
+        renderTypeParameters(typeAlias.declaredTypeParameters, builder, false)
         renderCapturedTypeParametersIfRequired(typeAlias, builder)
 
         builder.append(" = ").append(renderType(typeAlias.underlyingType))

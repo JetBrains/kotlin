@@ -19,7 +19,7 @@ expect class C3<D, E : D>
                ^
 compiler/testData/multiplatform/incompatibleClasses/common.kt:18:16: error: expected class 'C4' has no actual declaration in module
 The following declaration is incompatible because upper bounds of type parameters are different:
-    public typealias C4<F>  = C4Impl<F>
+    public actual typealias C4<F> = C4Impl<F>
 
 expect class C4<F>
                ^

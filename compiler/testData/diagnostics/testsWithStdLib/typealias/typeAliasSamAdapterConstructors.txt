@@ -4,5 +4,5 @@ public val test1: java.lang.Runnable
 public val test2: java.util.Comparator<kotlin.String>
 public val test3: java.util.Comparator<kotlin.String>
 public typealias ComparatorStrT = ComparatorT<kotlin.String>
-public typealias ComparatorT</*0*/ T>  = java.util.Comparator<T>
+public typealias ComparatorT</*0*/ T> = java.util.Comparator<T>
 public typealias RunnableT = java.lang.Runnable

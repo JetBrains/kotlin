@@ -6,11 +6,11 @@ public final class TC</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias TCAlias</*0*/ T, /*1*/ C>  = TC<T, C>
-public typealias TCAliasC</*0*/ C>  = TC<kotlin.Any, C>
-public typealias TCAliasC1</*0*/ C>  = TCAlias<kotlin.Any, C>
-public typealias TCAliasT</*0*/ T>  = TC<T, kotlin.Any>
-public typealias TCAliasT1</*0*/ T>  = TCAlias<T, kotlin.Any>
+public typealias TCAlias</*0*/ T, /*1*/ C> = TC<T, C>
+public typealias TCAliasC</*0*/ C> = TC<kotlin.Any, C>
+public typealias TCAliasC1</*0*/ C> = TCAlias<kotlin.Any, C>
+public typealias TCAliasT</*0*/ T> = TC<T, kotlin.Any>
+public typealias TCAliasT1</*0*/ T> = TCAlias<T, kotlin.Any>
 public typealias Test1 = TC<kotlin.Any, kotlin.Any>
 public typealias Test10 = TCAliasC1<kotlin.collections.Collection<kotlin.Any>>
 public typealias Test2 = TC<kotlin.Any, kotlin.collections.Collection<kotlin.Any>>
