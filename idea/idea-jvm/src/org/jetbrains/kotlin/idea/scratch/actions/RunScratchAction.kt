@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
 import org.jetbrains.kotlin.idea.scratch.getScratchPanelFromSelectedEditor
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
-import org.jetbrains.kotlin.idea.scratch.ui.scratchTopPanel
+import org.jetbrains.kotlin.idea.scratch.printDebugMessage
 
 class RunScratchAction : AnAction(
     KotlinBundle.message("scratch.run.button"),
@@ -44,6 +44,8 @@ class RunScratchAction : AnAction(
         val provider = ScratchFileLanguageProvider.get(scratchFile.psiFile.language) ?: return
 
         val handler = provider.getOutputHandler()
+
+        org.jetbrains.kotlin.idea.scratch.LOG.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
 
         val module = scratchTopPanel.getModule()
         if (module == null) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.scratch
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
@@ -13,6 +14,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
 import org.jetbrains.kotlin.psi.UserDataProperty
+
+internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.scratch")
+internal fun Logger.printDebugMessage(str: String) {
+    if (isDebugEnabled) debug("SCRATCH: $str")
+}
 
 fun getEditorWithoutScratchPanel(project: Project, virtualFile: VirtualFile): TextEditor? {
     val allTextEditors = getAllTextEditors(project, virtualFile)

@@ -25,11 +25,13 @@ import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.SOURCE_CHARS
 import org.jetbrains.kotlin.console.XML_REPLACEMENTS
 import org.jetbrains.kotlin.console.actions.logError
+import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
 import org.jetbrains.kotlin.idea.scratch.ScratchExecutor
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputType
+import org.jetbrains.kotlin.idea.scratch.printDebugMessage
 import org.jetbrains.kotlin.idea.scratch.ui.scratchTopPanel
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
@@ -49,6 +51,8 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         val module = file.scratchTopPanel?.getModule() ?: return error(file, "Module should be selected")
         val cmdLine = KotlinConsoleKeeper.createCommandLine(module)
 
+        LOG.printDebugMessage("Execute REPL: ${cmdLine.commandLineString}")
+
         osProcessHandler = ReplOSProcessHandler(cmdLine)
         osProcessHandler.startNotify()
 
@@ -61,6 +65,8 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
     }
 
     private fun sendCommandToProcess(command: String) {
+        LOG.printDebugMessage("Send to REPL: ${command}")
+
         val processInputOS = osProcessHandler.processInput ?: return logError(this::class.java, "<p>Broken execute stream</p>")
         val charset = osProcessHandler.charset ?: Charsets.UTF_8
 
@@ -132,6 +138,8 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
             val root = output.firstChild as Element
             val outputType = root.getAttribute("type")
             val content = StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS)
+
+            LOG.printDebugMessage("REPL output: $outputType $content")
 
             if (outputType in setOf("SUCCESS", "COMPILE_ERROR", "INTERNAL_ERROR", "RUNTIME_ERROR", "READLINE_END")) {
                 history.entryProcessed()

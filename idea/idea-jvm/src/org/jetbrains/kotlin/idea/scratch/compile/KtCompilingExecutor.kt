@@ -21,7 +21,6 @@ import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.compiler.ex.CompilerPathsEx
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.util.io.FileUtil
@@ -38,12 +37,14 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
+import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.scratch.ScratchExecutor
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputType
+import org.jetbrains.kotlin.idea.scratch.printDebugMessage
 import org.jetbrains.kotlin.idea.scratch.ui.scratchTopPanel
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -54,8 +55,6 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import java.io.File
 
 class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
-    private val log = Logger.getInstance(this.javaClass)
-
     override fun execute() {
         handlers.forEach { it.onStart(file) }
 
@@ -70,6 +69,8 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             is KtScratchSourceFileProcessor.Result.Error -> return error(result.message)
             is KtScratchSourceFileProcessor.Result.OK -> {
                 ApplicationManager.getApplication().invokeLater {
+                    LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
+
                     val modifiedScratchSourceFile =
                         KtPsiFactory(file.psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, file.psiFile)
 
@@ -77,13 +78,17 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                         val tempDir = compileFileToTempDir(modifiedScratchSourceFile) ?: return@invokeLater
 
                         try {
-                            val handler = CapturingProcessHandler(createCommandLine(module, result.mainClassName, tempDir.path))
+                            val commandLine = createCommandLine(module, result.mainClassName, tempDir.path)
+
+                            LOG.printDebugMessage(commandLine.commandLineString)
+
+                            val handler = CapturingProcessHandler(commandLine)
                             ProcessOutputParser().parse(handler.runProcess())
                         } finally {
                             tempDir.delete()
                         }
                     } catch (e: Throwable) {
-                        log.info(result.code, e)
+                        LOG.info(result.code, e)
                         handlers.forEach { it.error(file, e.message ?: "Couldn't compile ${file.psiFile.name}") }
                     } finally {
                         handlers.forEach { it.onFinish(file) }
@@ -98,6 +103,8 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
 
         val resolutionFacade = psiFile.getResolutionFacade()
         val (bindingContext, files) = DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, psiFile, false)
+
+        LOG.printDebugMessage("Analyzed files: \n${files.joinToString("\n") { it.virtualFilePath }}")
 
         val generateClassFilter = object : GenerationState.GenerateClassFilter() {
             override fun shouldGeneratePackagePart(ktFile: KtFile) = ktFile == psiFile
@@ -124,11 +131,16 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
         val classFiles = state.factory.asList().filterClassFiles()
 
         val dir = FileUtil.createTempDirectory("compile", "scratch")
+
+        LOG.printDebugMessage("Temp output dir: ${dir.path}")
+
         for (classFile in classFiles) {
             val tmpOutFile = File(dir, classFile.relativePath)
             tmpOutFile.parentFile.mkdirs()
             tmpOutFile.createNewFile()
             tmpOutFile.writeBytes(classFile.asByteArray())
+
+            LOG.printDebugMessage("Generated class file: ${classFile.relativePath}")
         }
         return dir
     }
@@ -216,6 +228,8 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             var results = arrayListOf<String>()
             var userOutput = arrayListOf<String>()
             for (line in out.split("\n")) {
+                LOG.printDebugMessage("Compiling executor output: $line")
+
                 if (isOutputEnd(line)) {
                     return
                 }
