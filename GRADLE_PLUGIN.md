@@ -39,8 +39,10 @@ In this case the compiler will not be downloaded by the plugin.
 The Kotlin/Native Gradle plugin allows one to build artifacts of the following types:
 
 * Executable
-* Library
+* KLibrary - a library used by Kotlin/Native compiler (`*.klib`)
 * Interoperability library - a special type of library providing an interoperability with some native API. See [`INTEROP.md`](INTEROP.md) for details
+* Dynamic library (`*.so`/`*.dylib`/`*.dll`)
+* Objective-C framework
 * LLVM bitcode
 
 All Kotlin/Native artifacts should be declared in the `konanArtifacts` block. Note that the `konanInterop` script block was removed in
@@ -51,6 +53,8 @@ v0.3.4. Use the `interop` method of the `konanArtifact` block instead:
         library('bar')  // library 'bar'
         bitcode('baz')  // bitcode file 'baz'
         interop('qux')  // interoperability library 'qux'. Use it instead of konanInterop block.
+        dynamic('quux') // dynamic library
+        framework ('quuux') // Objective-C framework
 	}
 
 All artifacts except interop libraries are built by the Kotlin/Native compiler. Such an artifact may be configured using its script block.
@@ -103,9 +107,27 @@ an interoperability library:
 ## Building for different targets
 
 All the artifacts declared in a project may be built for different targets. By default they are built only for `host` target i.e. a
-computer used for building. One may change the target list using the `konan.targets` project extension:
+computer used for building. One may change the default  target list using the `konan.targets` project extension:
 
     konan.targets = [ 'linux', 'android_arm64', 'android_arm32' ]
+
+One may specify a custom target set for each particular artifact using `targets` parameter of an artifact declaration:
+
+    konan.targets = [ 'linux', 'android_arm64' ]
+
+    konanArtifacts {
+        // This artifact has no custom targets and will be built
+        // for all the default ones: 'linux', 'android_arm64'
+        program('foo') { /* ... */ }
+
+        // This artifact will be built only for Linux and Wasm32
+        program('bar', targets: ['linux', 'wasm32']) { /* ... */ }
+
+        // An Objective-C framework cannot be built for Linux and Wasm32 thus
+        // these targets will be skipped and the artifact will be built only for iOS
+        framework('baz', targets: [ 'linux', 'wasm32', 'iphone' ]) { /* ... */ }
+    }
+
 
 The plugin creates tasks to compile each artifact for all targets supported by current host and declared in the `konan.targets` list.
 One may perform additional configuration for a target using `target` method of an artifact configuration block:
@@ -186,14 +208,14 @@ and set dependencies between building tasks.
 * Specify only name of a library. In this case the compiler will look for the library in its repositories.
 
     ```
-        libraries {
-            klib 'foo'
-            klibs 'lib1', 'lib2'
+    libraries {
+        klib 'foo'
+        klibs 'lib1', 'lib2'
 
-            // One may specify additional repositories
-            // All objects accepted by the Project.file method may be used here
-            useRepo 'build/libraries'
-        }
+        // One may specify additional repositories
+        // All objects accepted by the Project.file method may be used here
+        useRepo 'build/libraries'
+    }
     ```
 
 ## Tasks
@@ -205,21 +227,22 @@ for each an artifact defined in a `konanArtifacts` block. Such a task may have d
 
     ##### Properties available for a compiler task (executable, library or bitcode building task):
 
-    |Property             |Type                        |Description                                         |
-    |---------------------|----------------------------|----------------------------------------------------|
-    |`target             `|`String`                    |Target the artifact is built for. Read only         |
-    |`artifactName       `|`String`                    |Base name for the output file (without an extension)|
-    |`destinationDir     `|`File`                      |Directory to place the output artifact              |
-    |`artifact           `|`File`                      |The output artifact. Read only                      |
-    |`srcFiles           `|`Collection<FileCollection>`|Compiled files                                      |
-    |`nativeLibraries    `|`Collection<FileCollection>`|*.bc libraries used by the artifact                 |
-    |`linkerOpts         `|`List<String>`              |Additional options passed to the linker             |
-    |`enableDebug        `|`boolean`                   |Is the debugging support enabled                    |
-    |`noStdLib           `|`boolean`                   |Is the artifact not linked with stdlib              |
-    |`noMain             `|`boolean`                   |Is the `main` function provided by a library used   |
-    |`enableOptimizations`|`boolean`                   |Are the optimizations enabled                       |
-    |`enableAssertions   `|`boolean`                   |Is the assertion support enabled                    |
-    |`measureTime        `|`boolean`                   |Does the compiler print phase time                  |
+    |Property             |Type                        |Description                                               |
+    |---------------------|----------------------------|----------------------------------------------------------|
+    |`target             `|`String`                    |Target the artifact is built for. Read only               |
+    |`artifactName       `|`String`                    |Base name for the output file (without an extension)      |
+    |`destinationDir     `|`File`                      |Directory to place the output artifact                    |
+    |`artifact           `|`File`                      |The output artifact. Read only                            |
+    |`headerFile         `|`File`                      |The output C header. Only for dynamic libraries, read only|
+    |`srcFiles           `|`Collection<FileCollection>`|Compiled files                                            |
+    |`nativeLibraries    `|`Collection<FileCollection>`|*.bc libraries used by the artifact                       |
+    |`linkerOpts         `|`List<String>`              |Additional options passed to the linker                   |
+    |`enableDebug        `|`boolean`                   |Is the debugging support enabled                          |
+    |`noStdLib           `|`boolean`                   |Is the artifact not linked with stdlib                    |
+    |`noMain             `|`boolean`                   |Is the `main` function provided by a library used         |
+    |`enableOptimizations`|`boolean`                   |Are the optimizations enabled                             |
+    |`enableAssertions   `|`boolean`                   |Is the assertion support enabled                          |
+    |`measureTime        `|`boolean`                   |Does the compiler print phase time                        |
 
     ##### Properties available for a cinterop task (task building an interoperability library):
 
@@ -261,6 +284,42 @@ parameters can be passed using the `runArgs` project property:
 The plugin also edits the default `build` and `clean` tasks so that the first one allows one to build all the artifacts supported
 (it's dependent on the `compileKonan` task) and the second one removes the files created by the Kotlin/Native build.
 
+## Building dynamic libraries and frameworks
+
+Kotlin/Native supports building artifacts to be used by other native languages. There are two types of such artifacts:
+Objective-C framework and dynamic library.
+
+* **Dynamic library.** A dynamic library may be built using the `dynamic` artifact block. This block contains the same
+options as other ones (except `interop`) allowing one to specify source files, compiler options and libraries used.
+Each task building a dynamic library produces two files: the library itself (a `*.so`/`*.dylib`/`*.dll` file depending
+on the target platform) and a C language header. Both of them may be accessed via properties of a building task
+(both properties have type `File`):
+    
+    ```
+    konanArtifacts {
+        // Build a dynamic library 
+        dynamic('foo') { /* ... */ }
+    }
+    
+    konanArtifacts.foo.getByTarget('host').artifact    // Points to the library file
+    konanArtifacts.foo.getByTarget('host').headerFile  // Points to the header file 
+    ```
+Using a dynamic library is shown in the [python extension sample](samples/python_extension).
+    
+* **Framework.** An Objective-C framework can be built using the `framework` artifact block. This block contains the
+same options as other ones. One may access the framework built using `artifact` property of the building task
+(see the [**Tasks**](#Tasks) section). Unlike other artifacts this property points to a directory instead of a regular file.
+    
+    ```
+    konanArtifacts {
+        // Build an Objective-C framework
+        framework('foo') { /* ... */ }
+    }
+    
+    konanArtifacts.foo.getByTarget('host').artifact // Points to the framework directory
+    ```
+Using a framework is shown in the [calculator sample](samples/calculator).
+
 ## Additional options
 
 You can also pass additional command line keys to the compiler or cinterop tool using the `extraOpts` expression
@@ -294,7 +353,7 @@ tables below.
 
 ## Plugin DSL
 
-    // Targets to build for.
+    // Default targets to build for.
     konan.targets = ['macbook', 'linux', 'wasm32']
 
     // Language and API version.
@@ -302,7 +361,8 @@ tables below.
     konan.apiVersion = 'version'
 
     konanArtifacts {
-        program('foo') {
+        // Targets to build this artifact for (optional, override the konan.targets list)
+        program('foo', targets: ['android_arm32', 'android_arm64']) {
 
             // Directory with source files. The default path is src/main/kotlin.
             srcDir 'src/other'
@@ -395,6 +455,16 @@ tables below.
         bitcode('baz') {
             // Bitcode has the same parameters as an executable
             // The default baseDir is build/konan/bitcode
+        }
+
+        dynamic('quux') {
+            // Dynamic library has the same parameters as an executable
+            // The default baseDir is build/konan/bin
+        }
+
+        framework('quuux') {
+            // Framework has the same parameters as an executable
+            // The default baseDir is build/konan/bin
         }
 
         interop('qux') {
