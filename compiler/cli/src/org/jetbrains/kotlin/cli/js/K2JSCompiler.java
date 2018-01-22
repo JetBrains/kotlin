@@ -146,6 +146,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return translator.translateUnits(reporter, translationUnits, mainCallParameters, jsAnalysisResult);
         }
 
+        CollectionsKt.sortBy(allKotlinFiles, ktFile -> VfsUtilCore.virtualToIoFile(ktFile.getVirtualFile()));
         return translator.translate(reporter, allKotlinFiles, mainCallParameters, jsAnalysisResult);
     }
 
