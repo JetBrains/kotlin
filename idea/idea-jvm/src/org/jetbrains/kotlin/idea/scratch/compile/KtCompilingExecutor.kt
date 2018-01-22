@@ -70,25 +70,25 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             is KtScratchSourceFileProcessor.Result.Error -> return error(result.message)
             is KtScratchSourceFileProcessor.Result.OK -> {
                 ApplicationManager.getApplication().invokeLater {
-                        val modifiedScratchSourceFile =
-                            KtPsiFactory(file.psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, file.psiFile)
+                    val modifiedScratchSourceFile =
+                        KtPsiFactory(file.psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, file.psiFile)
+
+                    try {
+                        val tempDir = compileFileToTempDir(modifiedScratchSourceFile) ?: return@invokeLater
 
                         try {
-                            val tempDir = compileFileToTempDir(modifiedScratchSourceFile) ?: return@invokeLater
-
-                            try {
-                                val handler = CapturingProcessHandler(createCommandLine(module, result.mainClassName, tempDir.path))
-                                ProcessOutputParser().parse(handler.runProcess())
-                            } finally {
-                                tempDir.delete()
-                            }
-                        } catch (e: Throwable) {
-                            log.info(result.code, e)
-                            handlers.forEach { it.error(file, e.message ?: "Couldn't compile ${file.psiFile.name}") }
+                            val handler = CapturingProcessHandler(createCommandLine(module, result.mainClassName, tempDir.path))
+                            ProcessOutputParser().parse(handler.runProcess())
                         } finally {
-                            handlers.forEach { it.onFinish(file) }
+                            tempDir.delete()
                         }
+                    } catch (e: Throwable) {
+                        log.info(result.code, e)
+                        handlers.forEach { it.error(file, e.message ?: "Couldn't compile ${file.psiFile.name}") }
+                    } finally {
+                        handlers.forEach { it.onFinish(file) }
                     }
+                }
             }
         }
     }
