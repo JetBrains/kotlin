@@ -34,7 +34,7 @@ dependencies {
 
     compile(ideaSdkCoreDeps("intellij-core", "util", "annotations"))
 
-    compileOnly(ideaSdkDeps("openapi", "idea", "velocity", "boot", "gson", "swingx-core", "jsr305", "forms_rt"))
+    compileOnly(ideaSdkDeps("openapi", "idea", "platform-api", "velocity", "boot", "gson", "swingx-core", "jsr305", "forms_rt"))
 
     compile(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
     compile(ideaPluginDeps("copyright", plugin = "copyright"))
