@@ -16,11 +16,12 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
-class IterableWithIndexForLoopGenerator(
+class IteratorWithIndexForLoopGenerator(
     codegen: ExpressionCodegen,
     forExpression: KtForExpression,
     loopParameter: KtDestructuringDeclaration,
-    rangeCall: ResolvedCall<out CallableDescriptor>
+    rangeCall: ResolvedCall<out CallableDescriptor>,
+    private val iteratorOwnerType: Type
 ) : AbstractWithIndexForLoopGenerator(codegen, forExpression, loopParameter, rangeCall) {
     private var iteratorVar = -1
 
@@ -37,8 +38,8 @@ class IterableWithIndexForLoopGenerator(
             .store(StackValue.constant(0, Type.INT_TYPE), v)
 
         iteratorVar = createLoopTempVariable(asmTypeForIterator)
-        codegen.generateCallReceiver(rangeCall).put(Type.getType(Iterable::class.java), v)
-        v.invokeinterface("java/lang/Iterable", "iterator", "()Ljava/util/Iterator;")
+        codegen.generateCallReceiver(rangeCall).put(iteratorOwnerType, v)
+        v.invokeinterface(iteratorOwnerType.internalName, "iterator", "()Ljava/util/Iterator;")
         StackValue.local(iteratorVar, asmTypeForIterator).store(StackValue.onStack(asmTypeForIterator), v)
     }
 

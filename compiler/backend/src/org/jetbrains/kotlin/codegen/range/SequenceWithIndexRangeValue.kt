@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 
-class IterableWithIndexRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>) : AbstractDestructuredPairRangeValue(rangeCall) {
+class SequenceWithIndexRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>) : AbstractDestructuredPairRangeValue(rangeCall) {
 
     override fun createDestructuredPairForLoopGenerator(
         codegen: ExpressionCodegen,
@@ -24,7 +24,7 @@ class IterableWithIndexRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
     ): ForLoopGenerator =
         IteratorWithIndexForLoopGenerator(
             codegen, forExpression, loopParameter, rangeCall,
-            iteratorOwnerType = Type.getType(java.lang.Iterable::class.java)
+            iteratorOwnerType = Type.getType(Sequence::class.java)
         )
 
 }

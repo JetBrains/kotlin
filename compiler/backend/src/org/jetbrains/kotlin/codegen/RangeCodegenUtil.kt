@@ -70,22 +70,22 @@ fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
     val builtIns = rangeTypeDescriptor.builtIns
 
     return when {
-        isTopLevelInPackage(rangeTypeDescriptor, "CharRange", "kotlin.ranges") -> builtIns.charType
-        isTopLevelInPackage(rangeTypeDescriptor, "IntRange", "kotlin.ranges") -> builtIns.intType
-        isTopLevelInPackage(rangeTypeDescriptor, "LongRange", "kotlin.ranges") -> builtIns.longType
+        rangeTypeDescriptor.isTopLevelInPackage("CharRange", "kotlin.ranges") -> builtIns.charType
+        rangeTypeDescriptor.isTopLevelInPackage("IntRange", "kotlin.ranges") -> builtIns.intType
+        rangeTypeDescriptor.isTopLevelInPackage("LongRange", "kotlin.ranges") -> builtIns.longType
 
-        isTopLevelInPackage(rangeTypeDescriptor, "CharProgression", "kotlin.ranges") -> builtIns.charType
-        isTopLevelInPackage(rangeTypeDescriptor, "IntProgression", "kotlin.ranges") -> builtIns.intType
-        isTopLevelInPackage(rangeTypeDescriptor, "LongProgression", "kotlin.ranges") -> builtIns.longType
+        rangeTypeDescriptor.isTopLevelInPackage("CharProgression", "kotlin.ranges") -> builtIns.charType
+        rangeTypeDescriptor.isTopLevelInPackage("IntProgression", "kotlin.ranges") -> builtIns.intType
+        rangeTypeDescriptor.isTopLevelInPackage("LongProgression", "kotlin.ranges") -> builtIns.longType
 
-        isTopLevelInPackage(rangeTypeDescriptor, "ClosedFloatRange", "kotlin.ranges") -> builtIns.floatType
-        isTopLevelInPackage(rangeTypeDescriptor, "ClosedDoubleRange", "kotlin.ranges") -> builtIns.doubleType
+        rangeTypeDescriptor.isTopLevelInPackage("ClosedFloatRange", "kotlin.ranges") -> builtIns.floatType
+        rangeTypeDescriptor.isTopLevelInPackage("ClosedDoubleRange", "kotlin.ranges") -> builtIns.doubleType
 
-        isTopLevelInPackage(rangeTypeDescriptor, "ClosedRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
+        rangeTypeDescriptor.isTopLevelInPackage("ClosedRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
 
-        isTopLevelInPackage(rangeTypeDescriptor, "ClosedFloatingPointRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
+        rangeTypeDescriptor.isTopLevelInPackage("ClosedFloatingPointRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
 
-        isTopLevelInPackage(rangeTypeDescriptor, "ComparableRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
+        rangeTypeDescriptor.isTopLevelInPackage("ComparableRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
 
         else -> null
     }
@@ -113,7 +113,7 @@ private inline fun CallableDescriptor.isTopLevelExtensionOnType(
     packageFQN: String,
     receiverTypePredicate: (KotlinType) -> Boolean
 ): Boolean {
-    if (!isTopLevelInPackage(this, name, packageFQN)) return false
+    if (!this.isTopLevelInPackage(name, packageFQN)) return false
     val extensionReceiverType = original.extensionReceiverParameter?.type ?: return false
     return receiverTypePredicate(extensionReceiverType)
 }
@@ -153,6 +153,12 @@ fun isIterableWithIndex(descriptor: CallableDescriptor) =
         KotlinBuiltIns.isIterableOrNullableIterable(it)
     }
 
+fun isSequenceWithIndex(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("withIndex", "kotlin.sequences") {
+        val typeDescriptor = it.constructor.declarationDescriptor ?: return false
+        typeDescriptor.isTopLevelInPackage("Sequence", "kotlin.sequences")
+    }
+
 fun isCharSequenceIndices(descriptor: CallableDescriptor) =
     descriptor.isTopLevelExtensionOnType("indices", "kotlin.text") {
         KotlinBuiltIns.isCharSequenceOrNullableCharSequence(it)
@@ -168,13 +174,13 @@ fun isComparableRangeTo(descriptor: CallableDescriptor) =
         val extensionReceiverTypeDescriptor = it.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
         val upperBoundType = extensionReceiverTypeDescriptor.upperBounds.singleOrNull() ?: return false
         val upperBoundClassDescriptor = upperBoundType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
-        isTopLevelInPackage(upperBoundClassDescriptor, "Comparable", "kotlin")
+        upperBoundClassDescriptor.isTopLevelInPackage("Comparable", "kotlin")
     }
 
 fun isClosedRangeContains(descriptor: CallableDescriptor): Boolean {
     if (descriptor.name.asString() != "contains") return false
     val containingClassDescriptor = descriptor.containingDeclaration as? ClassDescriptor ?: return false
-    if (!isTopLevelInPackage(containingClassDescriptor, "ClosedRange", "kotlin.ranges")) return false
+    if (!containingClassDescriptor.isTopLevelInPackage("ClosedRange", "kotlin.ranges")) return false
 
     return true
 }
@@ -218,21 +224,21 @@ private fun isPrimitiveNumberType(type: KotlinType) =
 fun isClosedFloatingPointRangeContains(descriptor: CallableDescriptor): Boolean {
     if (descriptor.name.asString() != "contains") return false
     val containingClassDescriptor = descriptor.containingDeclaration as? ClassDescriptor ?: return false
-    if (!isTopLevelInPackage(containingClassDescriptor, "ClosedFloatingPointRange", "kotlin.ranges")) return false
+    if (!containingClassDescriptor.isTopLevelInPackage("ClosedFloatingPointRange", "kotlin.ranges")) return false
 
     return true
 }
 
 fun getClosedFloatingPointRangeElementType(rangeType: KotlinType): KotlinType? {
     val classDescriptor = rangeType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
-    if (!isTopLevelInPackage(classDescriptor, "ClosedFloatingPointRange", "kotlin.ranges")) return null
+    if (!classDescriptor.isTopLevelInPackage("ClosedFloatingPointRange", "kotlin.ranges")) return null
     return rangeType.arguments.singleOrNull()?.type
 }
 
-private fun isTopLevelInPackage(descriptor: DeclarationDescriptor, name: String, packageName: String): Boolean {
-    if (name != descriptor.name.asString()) return false
+private fun DeclarationDescriptor.isTopLevelInPackage(name: String, packageName: String): Boolean {
+    if (name != this.name.asString()) return false
 
-    val containingDeclaration = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
+    val containingDeclaration = containingDeclaration as? PackageFragmentDescriptor ?: return false
     val packageFqName = containingDeclaration.fqName.asString()
     return packageName == packageFqName
 }
