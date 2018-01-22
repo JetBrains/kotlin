@@ -20,10 +20,10 @@ import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
+import org.jetbrains.kotlin.idea.refactoring.getLineCount
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 class JoinToStringTemplateHandler : JoinRawLinesHandlerDelegate {
@@ -35,16 +35,66 @@ class JoinToStringTemplateHandler : JoinRawLinesHandlerDelegate {
         val index = if (c == '\n') start - 1 else start
 
         val plus = file.findElementAt(index)?.takeIf { it.node?.elementType == KtTokens.PLUS } ?: return -1
-        val expression = (plus.parent.parent as? KtBinaryExpression) ?: return -1
-        val left = expression.left ?: return -1
-        val right = expression.right ?: return -1
-        if (left !is KtStringTemplateExpression || right !is KtStringTemplateExpression) return -1
-        if (!ConvertToStringTemplateIntention.isApplicableToNoParentCheck(expression)) return -1
+        val binaryExpr = (plus.parent.parent as? KtBinaryExpression) ?: return -1
+        if (!binaryExpr.joinable()) return -1
 
-        val offset = left.endOffset - 1
-        expression.replace(ConvertToStringTemplateIntention.buildReplacement(expression))
-        return offset
+        val lineCount = binaryExpr.getLineCount()
+        val targetBinaryExpr = binaryExpr.expand(lineCount + 1)
+        val (left, rightText) = targetBinaryExpr.collect(lineCount)
+        return when (left) {
+            is KtStringTemplateExpression -> {
+                val offset = left.endOffset - 1
+                targetBinaryExpr.replace(createStringTemplate(left, rightText))
+                offset
+            }
+            is KtBinaryExpression -> {
+                val leftRight = left.right
+                if (leftRight is KtStringTemplateExpression) {
+                    val offset = leftRight.endOffset - 1
+                    leftRight.replace(createStringTemplate(leftRight, rightText))
+                    targetBinaryExpr.replace(left)
+                    offset
+                } else {
+                    -1
+                }
+            }
+            else -> -1
+        }
+    }
+
+    private fun createStringTemplate(left: KtStringTemplateExpression, rightText: String): KtStringTemplateExpression {
+        val leftText = ConvertToStringTemplateIntention.buildText(left, false)
+        return KtPsiFactory(left).createExpression("\"$leftText$rightText\"") as KtStringTemplateExpression
     }
 
     override fun tryJoinLines(document: Document, file: PsiFile, start: Int, end: Int): Int = -1
 }
+
+private fun KtBinaryExpression.joinable(): Boolean {
+    if (operationToken != KtTokens.PLUS) return false
+    if (right !is KtStringTemplateExpression) return false
+    val left = left
+    return when (left) {
+        is KtStringTemplateExpression -> true
+        is KtBinaryExpression -> left.right is KtStringTemplateExpression
+        else -> false
+    }
+}
+
+private fun KtBinaryExpression.expand(limitLineCount: Int): KtBinaryExpression {
+    val parent = parent
+    return if (parent is KtBinaryExpression && parent.joinable() && parent.lineCount() == limitLineCount)
+        parent.expand(limitLineCount)
+    else
+        this
+}
+
+private fun KtBinaryExpression.collect(limitLineCount: Int): Pair<KtExpression?, String> {
+    val rightText = ConvertToStringTemplateIntention.buildText(right, false)
+    val left = left
+    return if (left is KtBinaryExpression && left.joinable() && getLineCount() >= limitLineCount)
+        left.collect(limitLineCount).let { it.first to it.second + rightText }
+    else
+        left to rightText
+}
+
