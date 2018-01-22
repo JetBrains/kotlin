@@ -75,7 +75,8 @@ fun createFileFacadeStub(
     val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName)
     setupFileStub(fileStub, packageFqName)
     val container = ProtoContainer.Package(
-            packageFqName, c.nameResolver, c.typeTable, JvmPackagePartSource(JvmClassName.byClassId(ClassId.topLevel(facadeFqName)), null)
+        packageFqName, c.nameResolver, c.typeTable,
+        JvmPackagePartSource(JvmClassName.byClassId(ClassId.topLevel(facadeFqName)), null, packageProto, c.nameResolver)
     )
     createDeclarationsStubs(fileStub, c, container, packageProto)
     return fileStub
@@ -95,8 +96,10 @@ fun createMultifileClassStub(
         val partHeader = partFile.classHeader
         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(partHeader.data!!, partHeader.strings!!)
         val partContext = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
-        val container = ProtoContainer.Package(packageFqName, partContext.nameResolver, partContext.typeTable,
-                                               JvmPackagePartSource(partFile))
+        val container = ProtoContainer.Package(
+            packageFqName, partContext.nameResolver, partContext.typeTable,
+            JvmPackagePartSource(partFile, packageProto, nameResolver)
+        )
         createDeclarationsStubs(fileStub, partContext, container, packageProto)
     }
     return fileStub
