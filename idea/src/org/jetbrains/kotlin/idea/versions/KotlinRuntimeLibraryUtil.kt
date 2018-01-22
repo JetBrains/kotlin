@@ -177,7 +177,7 @@ private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
                 "Only library roots were requested, and only class files should be indexed with the $id key. " +
                         "File: ${indexedFile.path}"
             )
-            badRoots.add(BinaryVersionedFile(VfsUtil.getLocalFile(libraryRoot), version, supportedVersion))
+            badRoots.add(BinaryVersionedFile(com.intellij.util.PathUtil.getLocalFile(libraryRoot), version, supportedVersion))
         }
     }
 
