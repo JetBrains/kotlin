@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.js.jsOrJsImpl
 import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
+import org.jetbrains.kotlin.idea.run.addBuildTask
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 
 class KotlinProtractorRunConfigurationProducer :
@@ -57,6 +58,7 @@ class KotlinProtractorRunConfigurationProducer :
                 envData = jsModule.getNodeJsEnvironmentVars()
         )
         configuration.name = configuration.suggestedName()
+        configuration.addBuildTask()
         return true
     }
 }
