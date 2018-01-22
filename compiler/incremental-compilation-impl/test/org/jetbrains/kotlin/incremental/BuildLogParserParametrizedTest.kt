@@ -31,11 +31,13 @@ class BuildLogParserParametrizedTest {
 
     @Test
     fun testParser() {
+        fun String.normalizeSeparators() = replace("\r\n", "\n").trim()
+
         val testDir = File(TEST_ROOT, testDirName)
         val logFile = File(testDir, LOG_FILE_NAME)
         assert(logFile.isFile) { "Log file: $logFile does not exist" }
 
-        val actualNormalized = dumpBuildLog(parseTestBuildLog(logFile)).replace("\r\n", "\n").trim()
+        val actualNormalized = dumpBuildLog(parseTestBuildLog(logFile)).normalizeSeparators()
         val expectedFile = File(testDir, EXPECTED_PARSED_LOG_FILE_NAME)
 
         if (!expectedFile.isFile) {
@@ -45,11 +47,11 @@ class BuildLogParserParametrizedTest {
             throw AssertionError("Expected file log did not exist, created: $expectedFile")
         }
 
-        val expectedNormalized = expectedFile.readText().replace("\r\n", "\n").trim()
+        val expectedNormalized = expectedFile.readText().normalizeSeparators()
         Assert.assertEquals("Parsed content was unexpected: ", expectedNormalized, actualNormalized)
 
         // parse expected, dump again and compare (to check that dumped log can be parsed again)
-        val reparsedActualNormalized = dumpBuildLog(parseTestBuildLog(expectedFile)).trim()
+        val reparsedActualNormalized = dumpBuildLog(parseTestBuildLog(expectedFile)).normalizeSeparators()
         Assert.assertEquals("Reparsed content was unexpected: ", expectedNormalized, reparsedActualNormalized)
     }
 
