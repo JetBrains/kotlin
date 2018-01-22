@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.nodejs
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
@@ -24,7 +25,10 @@ sealed class TestElementPath {
 
     companion object {
         fun isModuleAssociatedDir(element: PsiElement, module: Module): Boolean {
-            return element is PsiDirectory && module.getModuleDir() == element.virtualFile.path
+            if (element !is PsiDirectory) return false
+            val virtualFile = element.virtualFile
+            return (module.getModuleDir() == virtualFile.path
+                    || virtualFile == ModuleRootManager.getInstance(module).contentRoots.singleOrNull())
         }
 
         fun forElement(element: PsiElement, module: Module): TestElementPath? {
