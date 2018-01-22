@@ -138,6 +138,8 @@ val reflectShadowJar by task<ShadowJar> {
         include("META-INF/services/**")
     }
 
+    exclude("**/*.proto")
+
     transform(KotlinModuleShadowTransformer(logger))
 
     configurations = listOf(shadows)
