@@ -21,13 +21,17 @@ import com.intellij.openapi.roots.CompilerModuleExtension
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.implementingModules
+import org.jetbrains.kotlin.idea.framework.isGradleModule
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.plugins.gradle.settings.GradleSystemRunningSettings
 
 val Module.jsTestOutputFilePath: String?
     get() {
-        (KotlinFacet.get(this)?.configuration?.settings?.testOutputPath)?.let { return it }
+        if (!shouldUseJpsOutput) {
+            (KotlinFacet.get(this)?.configuration?.settings?.testOutputPath)?.let { return it }
+        }
 
         val compilerExtension = CompilerModuleExtension.getInstance(this)
         val outputDir = compilerExtension?.compilerOutputUrlForTests ?: return null
@@ -39,3 +43,6 @@ fun Module.jsOrJsImpl() = when (TargetPlatformDetector.getPlatform(this)) {
     is JsPlatform -> this
     else -> null
 }
+
+val Module.shouldUseJpsOutput: Boolean
+    get() = !(isGradleModule() && GradleSystemRunningSettings.getInstance().isUseGradleAwareMake)
