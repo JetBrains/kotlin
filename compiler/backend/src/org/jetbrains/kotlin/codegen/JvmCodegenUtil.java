@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.*;
@@ -57,6 +58,7 @@ import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_CALL;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 
 public class JvmCodegenUtil {
@@ -329,5 +331,11 @@ public class JvmCodegenUtil {
         if (receiver instanceof TransientReceiver) return null;
 
         return receiver;
+    }
+
+    public static boolean isCompanionObjectInInterfaceNotIntrinsic(@NotNull DeclarationDescriptor companionObject) {
+        return isCompanionObject(companionObject) &&
+               isJvmInterface(companionObject.getContainingDeclaration()) &&
+               !JvmAbi.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
     }
 }

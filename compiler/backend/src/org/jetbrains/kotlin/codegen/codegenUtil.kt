@@ -429,7 +429,7 @@ fun ExpressionCodegen.generateCallSingleArgument(call: ResolvedCall<out Callable
 
 fun ClassDescriptor.isPossiblyUninitializedSingleton() =
         DescriptorUtils.isEnumEntry(this) ||
-        DescriptorUtils.isCompanionObject(this) && DescriptorUtils.isInterface(this.containingDeclaration)
+        DescriptorUtils.isCompanionObject(this) && JvmCodegenUtil.isJvmInterface(this.containingDeclaration)
 
 val CodegenContext<*>.parentContextsWithSelf
     get() = generateSequence(this) { it.parentContext }

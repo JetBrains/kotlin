@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassOrEnumClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 
 public final class JvmAbi {
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
@@ -117,11 +116,5 @@ public final class JvmAbi {
 
     public static boolean isMappedIntrinsicCompanionObject(@NotNull ClassDescriptor companionObject) {
         return CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject(companionObject);
-    }
-
-    public static boolean isCompanionObjectInInterfaceNotIntrinsic(@NotNull DeclarationDescriptor companionObject) {
-        return isCompanionObject(companionObject) &&
-               isInterface(companionObject.getContainingDeclaration()) &&
-               !isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
     }
 }
