@@ -175,7 +175,7 @@ class ClassFileToSourceStubConverter(
         val classes = JavacList.of<JCTree>(classDeclaration)
 
         val topLevel = treeMaker.TopLevelJava9Aware(packageClause, nonEmptyImports + classes)
-        topLevel.docComments = kdocCommentKeeper.docCommentTable
+        topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
 
         KaptJavaFileObject(topLevel, classDeclaration).apply {
             topLevel.sourcefile = this

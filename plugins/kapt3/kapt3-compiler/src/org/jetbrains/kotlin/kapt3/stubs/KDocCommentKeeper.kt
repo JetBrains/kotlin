@@ -23,19 +23,53 @@ import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.DCTree
 import com.sun.tools.javac.tree.DocCommentTable
 import com.sun.tools.javac.tree.JCTree
+import com.sun.tools.javac.tree.TreeScanner
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class KDocCommentKeeper(private val kaptContext: KaptContext<*>) {
-    val docCommentTable: DocCommentTable = KaptDocCommentTable()
+    private val docCommentTable = KaptDocCommentTable()
+
+    fun getDocTable(file: JCTree.JCCompilationUnit): DocCommentTable {
+        val map = docCommentTable.takeIf { it.map.isNotEmpty() } ?: return docCommentTable
+
+        // Enum values with doc comments are rendered incorrectly in javac pretty print,
+        // so we delete the comments.
+        file.accept(object : TreeScanner() {
+            var removeComments = false
+
+            override fun visitVarDef(def: JCTree.JCVariableDecl) {
+                if (!removeComments && (def.modifiers.flags and Opcodes.ACC_ENUM.toLong()) != 0L) {
+                    map.removeComment(def)
+
+                    removeComments = true
+                    super.visitVarDef(def)
+                    removeComments = false
+                    return
+                }
+
+                super.visitVarDef(def)
+            }
+
+            override fun scan(tree: JCTree?) {
+                if (removeComments && tree != null) {
+                    map.removeComment(tree)
+                }
+
+                super.scan(tree)
+            }
+        })
+
+        return docCommentTable
+    }
 
     fun saveKDocComment(tree: JCTree, node: Any) {
         val origin = kaptContext.origins[node] ?: return
@@ -65,10 +99,6 @@ class KDocCommentKeeper(private val kaptContext: KaptContext<*>) {
         docCommentTable.putComment(tree, KDocComment(extractCommentText(docComment)))
     }
 
-    fun saveComment(tree: JCTree, comment: String) {
-        docCommentTable.putComment(tree, KDocComment(comment))
-    }
-
     private fun extractCommentText(docComment: KDoc): String {
         return docComment.children.dropWhile { it is PsiWhiteSpace || it.isKDocStart() }
                 .dropLastWhile { it is PsiWhiteSpace || it.isKDocEnd() }
@@ -86,8 +116,11 @@ private class KDocComment(val body: String) : Tokens.Comment {
     override fun isDeprecated() = false
 }
 
-private class KaptDocCommentTable : DocCommentTable {
-    private val table = mutableMapOf<JCTree, Tokens.Comment>()
+private class KaptDocCommentTable(map: Map<JCTree, Tokens.Comment> = emptyMap()) : DocCommentTable {
+    private val table = map.toMutableMap()
+
+    val map: Map<JCTree, Tokens.Comment>
+        get() = table
 
     override fun hasComment(tree: JCTree) = tree in table
     override fun getComment(tree: JCTree) = table[tree]
@@ -96,6 +129,10 @@ private class KaptDocCommentTable : DocCommentTable {
     override fun getCommentTree(tree: JCTree): DCTree.DCDocComment? = null
 
     override fun putComment(tree: JCTree, c: Tokens.Comment) {
-        table.put(tree, c)
+        table[tree] = c
+    }
+
+    fun removeComment(tree: JCTree) {
+        table.remove(tree)
     }
 }

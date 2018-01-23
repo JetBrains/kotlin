@@ -43,3 +43,20 @@ class Test4 {
     // method simple comment
     fun method() {}
 }
+
+enum class EnumError {
+    One {
+        override fun doIt() = ""
+
+        class OneOne {
+            /** Documentation for 'test'. */
+            fun test() {}
+        }
+    },
+    Two {
+        /** Documentation for 'doIt'. */
+        override fun doIt() = ""
+    };
+
+    abstract fun doIt(): String
+}
