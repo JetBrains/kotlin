@@ -40,47 +40,47 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 object JsAnalyzerFacade : AnalyzerFacade() {
 
     override fun <M : ModuleInfo> createResolverForModule(
-            moduleInfo: M,
-            moduleDescriptor: ModuleDescriptorImpl,
-            moduleContext: ModuleContext,
-            moduleContent: ModuleContent,
-            platformParameters: PlatformAnalysisParameters,
-            targetEnvironment: TargetEnvironment,
-            resolverForProject: ResolverForProject<M>,
-            languageSettingsProvider: LanguageSettingsProvider,
-            packagePartProvider: PackagePartProvider
+        moduleInfo: M,
+        moduleDescriptor: ModuleDescriptorImpl,
+        moduleContext: ModuleContext,
+        moduleContent: ModuleContent,
+        platformParameters: PlatformAnalysisParameters,
+        targetEnvironment: TargetEnvironment,
+        resolverForProject: ResolverForProject<M>,
+        languageSettingsProvider: LanguageSettingsProvider,
+        packagePartProvider: PackagePartProvider
     ): ResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
-                project,
-                moduleContext.storageManager,
-                syntheticFiles,
-                if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope,
-                moduleInfo
+            project,
+            moduleContext.storageManager,
+            syntheticFiles,
+            if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope,
+            moduleInfo
         )
 
         val container = createContainerForLazyResolve(
-                moduleContext,
-                declarationProviderFactory,
-                BindingTraceContext(),
-                JsPlatform,
-                TargetPlatformVersion.NoVersion,
-                targetEnvironment,
-                languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
+            moduleContext,
+            declarationProviderFactory,
+            BindingTraceContext(),
+            JsPlatform,
+            TargetPlatformVersion.NoVersion,
+            targetEnvironment,
+            languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
         )
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 
         if (moduleInfo is LibraryModuleInfo && moduleInfo.platform == JsPlatform) {
             val providers = moduleInfo.getLibraryRoots()
-                    .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) }
-                    .filter { it.version.isCompatible() }
-                    .mapNotNull {
-                        KotlinJavascriptSerializationUtil.readModule(
-                                it.body, moduleContext.storageManager, moduleDescriptor, container.get<DeserializationConfiguration>(),
-                                LookupTracker.DO_NOTHING
-                        ).data
-                    }
+                .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) }
+                .filter { it.version.isCompatible() }
+                .mapNotNull {
+                    KotlinJavascriptSerializationUtil.readModule(
+                        it.body, moduleContext.storageManager, moduleDescriptor, container.get<DeserializationConfiguration>(),
+                        LookupTracker.DO_NOTHING
+                    ).data
+                }
 
             if (providers.isNotEmpty()) {
                 packageFragmentProvider = CompositePackageFragmentProvider(listOf(packageFragmentProvider) + providers)
