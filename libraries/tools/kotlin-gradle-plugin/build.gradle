@@ -19,7 +19,6 @@ configurePublishing(project)
 repositories {
     jcenter()
     mavenLocal()
-    maven { url 'http://repository.jetbrains.com/utils/' }
     maven { url 'https://maven.google.com' }
 }
 

@@ -6,7 +6,6 @@ configurePublishing(project)
 
 repositories {
     mavenLocal()
-    maven { url 'http://repository.jetbrains.com/utils/' }
 }
 
 dependencies {
