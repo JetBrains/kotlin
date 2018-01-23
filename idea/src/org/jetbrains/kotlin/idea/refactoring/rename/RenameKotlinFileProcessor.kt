@@ -40,7 +40,7 @@ class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
 
     override fun canProcessElement(element: PsiElement) = element is KtFile && ProjectRootsUtil.isInProjectSource(element)
 
-    override fun prepareRenaming(element: PsiElement?,
+    override fun prepareRenaming(element: PsiElement,
                                  newName: String,
                                  allRenames: MutableMap<PsiElement, String>,
                                  scope: SearchScope) {
