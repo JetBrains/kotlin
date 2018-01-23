@@ -163,16 +163,8 @@ public abstract class KotlinTemplateContextType extends TemplateContextType {
 
         @Override
         protected boolean isInContext(@NotNull PsiElement element) {
-            PsiElement parentStatement = PsiTreeUtil.findFirstParent(element, e -> {
-                if (!(e instanceof KtExpression)) return false;
-                PsiElement parent = e.getParent();
-                ASTNode node = parent.getNode();
-                return parent instanceof KtBlockExpression ||
-                       parent instanceof KtContainerNodeForControlStructureBody ||
-                       parent instanceof KtWhenEntry ||
-                       (node != null && KtNodeTypes.THEN == node.getElementType()) ||
-                       (node != null && KtNodeTypes.ELSE == node.getElementType());
-            });
+            PsiElement parentStatement = PsiTreeUtil.findFirstParent(element, e ->
+                    e instanceof KtExpression && KtPsiUtil.isStatementContainer(e.getParent()));
 
             if (parentStatement == null) return false;
 
