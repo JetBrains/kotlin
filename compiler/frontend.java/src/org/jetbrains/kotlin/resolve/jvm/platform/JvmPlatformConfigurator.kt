@@ -30,61 +30,61 @@ import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 object JvmPlatformConfigurator : PlatformConfigurator(
-        DynamicTypesSettings(),
-        additionalDeclarationCheckers = listOf(
-                PlatformStaticAnnotationChecker(),
-                JvmNameAnnotationChecker(),
-                VolatileAnnotationChecker(),
-                SynchronizedAnnotationChecker(),
-                LocalFunInlineChecker(),
-                ExternalFunChecker(),
-                OverloadsAnnotationChecker(),
-                JvmFieldApplicabilityChecker(),
-                TypeParameterBoundIsNotArrayChecker(),
-                JvmSyntheticApplicabilityChecker(),
-                StrictfpApplicabilityChecker(),
-                ExpectedActualDeclarationChecker
-        ),
+    DynamicTypesSettings(),
+    additionalDeclarationCheckers = listOf(
+        PlatformStaticAnnotationChecker(),
+        JvmNameAnnotationChecker(),
+        VolatileAnnotationChecker(),
+        SynchronizedAnnotationChecker(),
+        LocalFunInlineChecker(),
+        ExternalFunChecker(),
+        OverloadsAnnotationChecker(),
+        JvmFieldApplicabilityChecker(),
+        TypeParameterBoundIsNotArrayChecker(),
+        JvmSyntheticApplicabilityChecker(),
+        StrictfpApplicabilityChecker(),
+        ExpectedActualDeclarationChecker
+    ),
 
-        additionalCallCheckers = listOf(
-                JavaAnnotationCallChecker(),
-                JavaClassOnCompanionChecker(),
-                ProtectedInSuperClassCompanionCallChecker(),
-                UnsupportedSyntheticCallableReferenceChecker(),
-                SuperCallWithDefaultArgumentsChecker(),
-                ProtectedSyntheticExtensionCallChecker,
-                ReifiedTypeParameterSubstitutionChecker(),
-                RuntimeAssertionsOnExtensionReceiverCallChecker,
-                ApiVersionIsAtLeastArgumentsChecker
-        ),
+    additionalCallCheckers = listOf(
+        JavaAnnotationCallChecker(),
+        JavaClassOnCompanionChecker(),
+        ProtectedInSuperClassCompanionCallChecker(),
+        UnsupportedSyntheticCallableReferenceChecker(),
+        SuperCallWithDefaultArgumentsChecker(),
+        ProtectedSyntheticExtensionCallChecker,
+        ReifiedTypeParameterSubstitutionChecker(),
+        RuntimeAssertionsOnExtensionReceiverCallChecker,
+        ApiVersionIsAtLeastArgumentsChecker
+    ),
 
-        additionalTypeCheckers = listOf(
-                JavaNullabilityChecker(),
-                RuntimeAssertionsTypeChecker,
-                JavaGenericVarianceViolationTypeChecker,
-                JavaTypeAccessibilityChecker(),
-                JvmArrayVariableInLoopAssignmentChecker
-        ),
+    additionalTypeCheckers = listOf(
+        JavaNullabilityChecker(),
+        RuntimeAssertionsTypeChecker,
+        JavaGenericVarianceViolationTypeChecker,
+        JavaTypeAccessibilityChecker(),
+        JvmArrayVariableInLoopAssignmentChecker
+    ),
 
-        additionalClassifierUsageCheckers = listOf(
-        ),
+    additionalClassifierUsageCheckers = listOf(
+    ),
 
-        additionalAnnotationCheckers = listOf(
-                RepeatableAnnotationChecker,
-                FileClassAnnotationsChecker
-        ),
+    additionalAnnotationCheckers = listOf(
+        RepeatableAnnotationChecker,
+        FileClassAnnotationsChecker
+    ),
 
-        identifierChecker = JvmSimpleNameBacktickChecker,
+    identifierChecker = JvmSimpleNameBacktickChecker,
 
-        overloadFilter = JvmOverloadFilter,
+    overloadFilter = JvmOverloadFilter,
 
-        platformToKotlinClassMap = JavaToKotlinClassMap,
+    platformToKotlinClassMap = JavaToKotlinClassMap,
 
-        delegationFilter = JvmDelegationFilter,
+    delegationFilter = JvmDelegationFilter,
 
-        overridesBackwardCompatibilityHelper = JvmOverridesBackwardCompatibilityHelper,
+    overridesBackwardCompatibilityHelper = JvmOverridesBackwardCompatibilityHelper,
 
-        declarationReturnTypeSanitizer = JvmDeclarationReturnTypeSanitizer
+    declarationReturnTypeSanitizer = JvmDeclarationReturnTypeSanitizer
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useImpl<JvmReflectionAPICallChecker>()
