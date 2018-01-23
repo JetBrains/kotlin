@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.liveTemplates;
 
 import com.intellij.codeInsight.template.EverywhereContextType;
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.openapi.util.Condition;
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -30,6 +30,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -162,11 +163,15 @@ public abstract class KotlinTemplateContextType extends TemplateContextType {
 
         @Override
         protected boolean isInContext(@NotNull PsiElement element) {
-            PsiElement parentStatement = PsiTreeUtil.findFirstParent(element, new Condition<PsiElement>() {
-                @Override
-                public boolean value(PsiElement element) {
-                    return element instanceof KtExpression && (element.getParent() instanceof KtBlockExpression);
-                }
+            PsiElement parentStatement = PsiTreeUtil.findFirstParent(element, e -> {
+                if (!(e instanceof KtExpression)) return false;
+                PsiElement parent = e.getParent();
+                ASTNode node = parent.getNode();
+                return parent instanceof KtBlockExpression ||
+                       parent instanceof KtContainerNodeForControlStructureBody ||
+                       parent instanceof KtWhenEntry ||
+                       (node != null && KtNodeTypes.THEN == node.getElementType()) ||
+                       (node != null && KtNodeTypes.ELSE == node.getElementType());
             });
 
             if (parentStatement == null) return false;
