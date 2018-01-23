@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.translate.utils
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.backend.common.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -166,7 +165,7 @@ fun JsFunction.fillCoroutineMetadata(
         descriptor: FunctionDescriptor,
         hasController: Boolean
 ) {
-    val suspendPropertyDescriptor = context.currentModule.getPackage(COROUTINES_INTRINSICS_PACKAGE_FQ_NAME)
+    val suspendPropertyDescriptor = context.currentModule.getPackage(DescriptorUtils.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME)
             .memberScope
             .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND).first()
 
