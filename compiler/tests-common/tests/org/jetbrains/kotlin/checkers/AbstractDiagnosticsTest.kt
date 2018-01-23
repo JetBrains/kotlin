@@ -105,7 +105,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             val separateModules = groupedByModule.size == 1 && groupedByModule.keys.single() == null
             val result = analyzeModuleContents(
                 moduleContext, ktFiles, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                languageVersionSettings, separateModules
+                languageVersionSettings, separateModules, loadJvmTarget(testFilesInModule)
             )
             if (oldModule != result.moduleDescriptor) {
                 // For common modules, we use DefaultAnalyzerFacade who creates ModuleDescriptor instances by itself
@@ -239,6 +239,24 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         )
     }
 
+    protected open fun loadJvmTarget(module: List<TestFile>): JvmTarget {
+        var result: JvmTarget? = null
+        for (file in module) {
+            val current = file.jvmTarget
+            if (current != null) {
+                if (result != null && result != current) {
+                    Assert.fail(
+                        "More than one file in the module has $JVM_TARGET directive specified. " +
+                                "This is not supported. Please move all directives into one file"
+                    )
+                }
+                result = current
+            }
+        }
+
+        return result ?: JvmTarget.JVM_1_6
+    }
+
     private fun checkDynamicCallDescriptors(expectedFile: File, testFiles: List<TestFile>) {
         val serializer = RecursiveDescriptorComparator(RECURSIVE_ALL)
 
@@ -276,7 +294,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         files: List<KtFile>,
         moduleTrace: BindingTrace,
         languageVersionSettings: LanguageVersionSettings,
-        separateModules: Boolean
+        separateModules: Boolean,
+        jvmTarget: JvmTarget
     ): AnalysisResult {
         @Suppress("NAME_SHADOWING")
         var files = files
@@ -293,7 +312,10 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 moduleContext.project,
                 files,
                 moduleTrace,
-                environment.configuration.copy().apply { this.languageVersionSettings = languageVersionSettings },
+                environment.configuration.copy().apply {
+                    this.languageVersionSettings = languageVersionSettings
+                    this.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
+                },
                 environment::createPackagePartProvider
             )
         }
@@ -329,7 +351,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             ExpectActualTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
             moduleClassResolver,
-            JvmTarget.JVM_1_6,
+            jvmTarget,
             languageVersionSettings
         )
 

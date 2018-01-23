@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.checkers
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -59,7 +60,8 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
             files: List<KtFile>,
             moduleTrace: BindingTrace,
             languageVersionSettings: LanguageVersionSettings,
-            separateModules: Boolean
+            separateModules: Boolean,
+            jvmTarget: JvmTarget
     ): JsAnalysisResult {
         // TODO: support LANGUAGE directive in JS diagnostic tests
         moduleTrace.record<ModuleDescriptor, ModuleKind>(MODULE_KIND, moduleContext.module, getModuleKind(files))
