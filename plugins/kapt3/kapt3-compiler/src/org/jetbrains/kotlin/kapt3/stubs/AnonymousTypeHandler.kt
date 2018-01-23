@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.kapt3.stubs
 
 import com.sun.tools.javac.code.BoundKind
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isAnonymousObject
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.replace
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class AnonymousTypeHandler(private val converter: ClassFileToSourceStubConverter) {
     fun <T : JCTree.JCExpression?> getNonAnonymousType(descriptor: DeclarationDescriptor?, f: () -> T): T {
@@ -62,6 +64,16 @@ class AnonymousTypeHandler(private val converter: ClassFileToSourceStubConverter
     private fun convertPossiblyAnonymousType(type: KotlinType): KotlinType {
         val declaration = type.constructor.declarationDescriptor as? ClassDescriptor ?: return type
 
+        if (KotlinBuiltIns.isArray(type)) {
+            val elementTypeProjection = type.arguments.singleOrNull()
+            if (elementTypeProjection != null && !elementTypeProjection.isStarProjection) {
+                return type.builtIns.getArrayType(
+                    elementTypeProjection.projectionKind,
+                    convertPossiblyAnonymousType(elementTypeProjection.type)
+                )
+            }
+        }
+
         val actualType = when {
             isAnonymousObject(declaration) -> findMostSuitableParentForAnonymousType(declaration)
             else -> type
@@ -91,9 +103,22 @@ class AnonymousTypeHandler(private val converter: ClassFileToSourceStubConverter
     }
 
     private fun convertKotlinType(type: KotlinType): JCTree.JCExpression {
+        val treeMaker = converter.treeMaker
+
+        if (KotlinBuiltIns.isArray(type)) {
+            val elementTypeProjection = type.arguments.single()
+
+            val elementType = if (elementTypeProjection.isStarProjection || elementTypeProjection.projectionKind == Variance.IN_VARIANCE) {
+                type.builtIns.anyType
+            } else {
+                elementTypeProjection.type
+            }
+
+            return treeMaker.TypeArray(convertKotlinType(elementType))
+        }
+
         val typeMapper = converter.kaptContext.generationState.typeMapper
 
-        val treeMaker = converter.treeMaker
         // Primitive types can't be anonymous, so if we get here, we want to map a class type or its generic argument
         val selfType = treeMaker.Type(typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT))
         if (type.arguments.isEmpty()) return selfType
