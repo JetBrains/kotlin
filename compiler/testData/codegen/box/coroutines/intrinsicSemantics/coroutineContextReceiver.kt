@@ -6,16 +6,36 @@ import kotlin.coroutines.experimental.intrinsics.*
 import kotlin.test.assertEquals
 
 class Controller {
-    suspend fun controllerSuspendHere() = if(coroutineContext != EmptyCoroutineContext) "$coroutineContext != $EmptyCoroutineContext" else "OK"
+    suspend fun controllerSuspendHereOld() =
+        if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
+            "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
+        else
+            "OK"
 
-    suspend fun controllerMultipleArgs(a: Any, b: Any, c: Any) = if(coroutineContext != EmptyCoroutineContext) "$coroutineContext != $EmptyCoroutineContext" else "OK"
+    suspend fun controllerMultipleArgsOld(a: Any, b: Any, c: Any) =
+        if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
+            "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
+        else
+            "OK"
+
+    suspend fun controllerSuspendHereNew() =
+        if (kotlin.coroutines.experimental.coroutineContext != EmptyCoroutineContext)
+            "${kotlin.coroutines.experimental.coroutineContext} != $EmptyCoroutineContext"
+        else
+            "OK"
+
+    suspend fun controllerMultipleArgsNew(a: Any, b: Any, c: Any) =
+        if (kotlin.coroutines.experimental.coroutineContext != EmptyCoroutineContext)
+            "${kotlin.coroutines.experimental.coroutineContext} != $EmptyCoroutineContext"
+        else
+            "OK"
 
     fun builder(c: suspend Controller.() -> String): String {
         var fromSuspension: String? = null
 
-        c.startCoroutine(this, object: Continuation<String> {
+        c.startCoroutine(this, object : Continuation<String> {
             override val context: CoroutineContext
-                get() =  EmptyCoroutineContext
+                get() = EmptyCoroutineContext
 
             override fun resumeWithException(exception: Throwable) {
                 fromSuspension = "Exception: " + exception.message!!
@@ -32,12 +52,40 @@ class Controller {
 
 fun box(): String {
     val c = Controller()
-    var res = c.builder { controllerSuspendHere() }
-    if (res != "OK") { return "fail 1 $res"}
-    res = c.builder { controllerMultipleArgs(1,1,1) }
-    if (res != "OK") { return "fail 2 $res"}
-    res = c.builder { if(coroutineContext != EmptyCoroutineContext) "$coroutineContext != $EmptyCoroutineContext" else "OK" }
-    if (res != "OK") { return "fail 3 $res"}
+    var res = c.builder { controllerSuspendHereOld() }
+    if (res != "OK") {
+        return "fail 1 $res"
+    }
+    res = c.builder { controllerMultipleArgsOld(1, 1, 1) }
+    if (res != "OK") {
+        return "fail 2 $res"
+    }
+    res = c.builder {
+        if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
+            "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
+        else
+            "OK"
+    }
+    if (res != "OK") {
+        return "fail 3 $res"
+    }
+    res = c.builder { controllerSuspendHereNew() }
+    if (res != "OK") {
+        return "fail 4 $res"
+    }
+    res = c.builder { controllerMultipleArgsNew(1, 1, 1) }
+    if (res != "OK") {
+        return "fail 5 $res"
+    }
+    res = c.builder {
+        if (kotlin.coroutines.experimental.coroutineContext != EmptyCoroutineContext)
+            "${kotlin.coroutines.experimental.coroutineContext} != $EmptyCoroutineContext"
+        else
+            "OK"
+    }
+    if (res != "OK") {
+        return "fail 6 $res"
+    }
 
     return "OK"
 }

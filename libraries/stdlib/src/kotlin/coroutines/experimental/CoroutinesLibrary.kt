@@ -18,8 +18,9 @@
 package kotlin.coroutines.experimental
 
 import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 import kotlin.coroutines.experimental.intrinsics.createCoroutineUnchecked
+import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+import kotlin.internal.InlineOnly
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -86,12 +87,28 @@ public fun <T> (suspend () -> T).createCoroutine(
  * from a different thread of execution. Repeated invocation of any resume function produces [IllegalStateException].
  */
 @SinceKotlin("1.1")
-public inline suspend fun <T> suspendCoroutine(crossinline block: (Continuation<T>) -> Unit): T =
+public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<T>) -> Unit): T =
         suspendCoroutineOrReturn { c: Continuation<T> ->
             val safe = SafeContinuation(c)
             block(safe)
             safe.getResult()
         }
+
+/**
+ * Continuation context of current coroutine.
+ *
+ * This allows the user code to not pass an extra [CoroutineContext] parameter in basic coroutine builders
+ * like [launch](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/launch.html)
+ * and [async](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/async.html),
+ * but still provide easy access to coroutine context.
+ */
+@SinceKotlin("1.2")
+@Suppress("WRONG_MODIFIER_TARGET")
+@InlineOnly
+public suspend inline val coroutineContext: CoroutineContext
+    get() {
+        throw NotImplementedError("Implemented as intrinsic")
+    }
 
 // INTERNAL DECLARATIONS
 

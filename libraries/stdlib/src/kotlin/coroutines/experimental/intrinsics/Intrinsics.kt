@@ -40,7 +40,7 @@ import kotlin.coroutines.experimental.*
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 @Suppress("UNUSED_PARAMETER")
-public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+public suspend inline fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
         suspendCoroutineUninterceptedOrReturn { cont -> block(cont.intercepted()) }
 
 /**
@@ -51,7 +51,7 @@ public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Conti
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
-public inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
         throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
 
 /**
@@ -72,7 +72,12 @@ public inline fun <T> Continuation<T>.intercepted(): Continuation<T> =
  */
 @SinceKotlin("1.2")
 @Suppress("WRONG_MODIFIER_TARGET")
-public inline suspend val coroutineContext: CoroutineContext
+@Deprecated(
+    "Use kotlin.coroutines.experimental.coroutineContext instead",
+    ReplaceWith("kotlin.coroutines.experimental.coroutineContext"),
+    DeprecationLevel.WARNING
+)
+public suspend inline val coroutineContext: CoroutineContext
     get() {
         throw NotImplementedError("Implemented as intrinsic")
     }

@@ -71,7 +71,7 @@ val COROUTINE_CONTEXT_ASM_TYPE = DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.chil
 val COROUTINE_IMPL_ASM_TYPE = COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImpl")).topLevelClassAsmType()
 
 private val COROUTINES_INTRINSICS_FILE_FACADE_INTERNAL_NAME =
-        COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.child(Name.identifier("IntrinsicsKt")).topLevelClassAsmType()
+    DescriptorUtils.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.child(Name.identifier("IntrinsicsKt")).topLevelClassAsmType()
 
 private val INTERNAL_COROUTINE_INTRINSICS_OWNER_INTERNAL_NAME =
         COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineIntrinsics")).topLevelClassInternalName()

@@ -93,6 +93,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("CoroutineContext.kt")
+        public void testCoroutineContext() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/CoroutineContext.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DataClassMembers.kt")
         public void testDataClassMembers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/DataClassMembers.kt");
