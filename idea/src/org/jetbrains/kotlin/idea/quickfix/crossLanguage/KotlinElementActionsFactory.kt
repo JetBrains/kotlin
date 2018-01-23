@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeParameterImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.annotations.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.KotlinType
@@ -244,10 +245,15 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
 
         val modifier = request.modifier
         val shouldPresent = request.shouldPresent
-        val (kToken, shouldPresentMapped) = if (JvmModifier.FINAL == modifier)
-            KtTokens.OPEN_KEYWORD to !shouldPresent
-        else
-            javaPsiModifiersMapping[modifier] to shouldPresent
+        //TODO: make similar to `createAddMethodActions`
+        val (kToken, shouldPresentMapped) = when {
+            modifier == JvmModifier.FINAL -> KtTokens.OPEN_KEYWORD to !shouldPresent
+            modifier == JvmModifier.PUBLIC && shouldPresent ->
+                kModifierOwner.visibilityModifierType()
+                    ?.takeIf { it != KtTokens.DEFAULT_VISIBILITY_KEYWORD }
+                    ?.let { it to false } ?: return emptyList()
+            else -> javaPsiModifiersMapping[modifier] to shouldPresent
+        }
         if (kToken == null) return emptyList()
 
         val action = if (shouldPresentMapped)
