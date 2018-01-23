@@ -67,7 +67,7 @@ class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
             return false
         }
 
-        val resourceDirectories = AndroidFacet.getInstance(element)?.allResourceDirectories ?: return false
+        val resourceDirectories = AndroidFacet.getInstance(element)?.resourceFolderManager?.folders ?: return false
         val resourceDirectory = virtualFile.parent?.parent ?: return false
         return resourceDirectories.any { it == resourceDirectory }
     }
