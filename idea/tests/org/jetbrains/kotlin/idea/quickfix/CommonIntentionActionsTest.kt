@@ -111,13 +111,80 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim(), true)
     }
 
+    fun testMakePrivatePublic() {
+        myFixture.configureByText(
+            "foo.kt", """class Foo {
+                        |    private fun <caret>bar(){}
+                        |}""".trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createModifierActions(
+                myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)
+            ).findWithText("Remove 'private' modifier")
+        )
+        myFixture.checkResult(
+            """class Foo {
+              |    fun <caret>bar(){}
+              |}""".trim().trimMargin(), true
+        )
+    }
+
+    fun testMakeProtectedPublic() {
+        myFixture.configureByText(
+            "foo.kt", """open class Foo {
+                        |    protected fun <caret>bar(){}
+                        |}""".trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createModifierActions(
+                myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)
+            ).findWithText("Remove 'protected' modifier")
+        )
+        myFixture.checkResult(
+            """open class Foo {
+              |    fun <caret>bar(){}
+              |}""".trim().trimMargin(), true
+        )
+    }
+
+    fun testMakeInternalPublic() {
+        myFixture.configureByText(
+            "foo.kt", """class Foo {
+                        |    internal fun <caret>bar(){}
+                        |}""".trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createModifierActions(
+                myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)
+            ).findWithText("Remove 'internal' modifier")
+        )
+        myFixture.checkResult(
+            """class Foo {
+              |    fun <caret>bar(){}
+              |}""".trim().trimMargin(), true
+        )
+    }
+
+    fun testDontMakePublicPublic() {
+        myFixture.configureByText(
+            "foo.kt", """class Foo {
+                        |    fun <caret>bar(){}
+                        |}""".trim().trimMargin()
+        )
+
+        assertEmpty(createModifierActions(myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)))
+    }
+
     fun testDontMakeFunInObjectsOpen() {
         myFixture.configureByText("foo.kt", """
         object Foo {
             fun bar<caret>(){}
         }
         """.trim())
-        Assert.assertTrue(createModifierActions(myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.FINAL, false)).isEmpty())
+        assertEmpty(createModifierActions(myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.FINAL, false)))
     }
 
     fun testAddVoidVoidMethod() {
