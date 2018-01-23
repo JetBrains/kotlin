@@ -12063,6 +12063,27 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/inlineClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineClasses extends AbstractDiagnosticsTest {
+            public void testAllFilesPresentInInlineClasses() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("basicInlineClassDeclaration.kt")
+            public void testBasicInlineClassDeclaration() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inlineClasses/basicInlineClassDeclaration.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("basicInlineClassDeclarationDisabled.kt")
+            public void testBasicInlineClassDeclarationDisabled() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inlineClasses/basicInlineClassDeclarationDisabled.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/inner")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
