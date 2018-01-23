@@ -596,6 +596,30 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 doTest(fileName);
             }
 
+            @TestMetadata("functions_LL13.kt")
+            public void testFunctions_LL13() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/functions_LL13.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("interfaceCompanion_LL12.kt")
+            public void testInterfaceCompanion_LL12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/interfaceCompanion_LL12.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("interfaceCompanion_LL13_16.kt")
+            public void testInterfaceCompanion_LL13_16() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/interfaceCompanion_LL13_16.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("interfaceCompanion_LL13_18.kt")
+            public void testInterfaceCompanion_LL13_18() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/interfaceCompanion_LL13_18.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localFun.kt")
             public void testLocalFun() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/localFun.kt");

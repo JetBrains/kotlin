@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -51,7 +54,12 @@ class LocalFunInlineChecker : SimpleDeclarationChecker {
     }
 }
 
-class PlatformStaticAnnotationChecker : SimpleDeclarationChecker {
+class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVersionSettings) : SimpleDeclarationChecker {
+
+    private val isLessJVM18 = jvmTarget.bytecodeVersion < JvmTarget.JVM_1_8.bytecodeVersion
+
+    private val supportJvmStaticInInterface = languageVersionSettings.supportsFeature(LanguageFeature.JvmStaticInInterface)
+
 
     override fun check(
         declaration: KtDeclaration,
@@ -75,13 +83,24 @@ class PlatformStaticAnnotationChecker : SimpleDeclarationChecker {
         diagnosticHolder: DiagnosticSink
     ) {
         val container = descriptor.containingDeclaration
-        val insideObject = container != null && DescriptorUtils.isNonCompanionObject(container)
-        val insideCompanionObjectInClass =
-            container != null && DescriptorUtils.isCompanionObject(container) &&
-                    DescriptorUtils.isClassOrEnumClass(container.containingDeclaration)
+        val insideObject = DescriptorUtils.isObject(container)
+        val insideCompanionObjectInInterface = DescriptorUtils.isCompanionObject(container) &&
+                DescriptorUtils.isInterface(container!!.containingDeclaration)
 
-        if (!insideObject && !insideCompanionObjectInClass) {
-            diagnosticHolder.report(ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT.on(declaration))
+        if (!insideObject || insideCompanionObjectInInterface) {
+            if (insideCompanionObjectInInterface &&
+                supportJvmStaticInInterface &&
+                descriptor is DeclarationDescriptorWithVisibility) {
+                checkVisibility(descriptor, diagnosticHolder, declaration)
+                if (isLessJVM18) {
+                    diagnosticHolder.report(ErrorsJvm.JVM_STATIC_IN_INTERFACE_1_6.on(declaration))
+                }
+            } else {
+                diagnosticHolder.report(
+                    (if (supportJvmStaticInInterface) ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION
+                    else ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION).on(declaration)
+                )
+            }
         }
 
         val checkDeclaration = when (declaration) {
@@ -89,12 +108,24 @@ class PlatformStaticAnnotationChecker : SimpleDeclarationChecker {
             else -> declaration
         }
 
-        if (insideObject && checkDeclaration.modifierList?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
+        if (DescriptorUtils.isNonCompanionObject(container) && checkDeclaration.modifierList?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
             diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration))
         }
 
         if (descriptor is PropertyDescriptor && (descriptor.isConst || descriptor.hasJvmFieldAnnotation())) {
             diagnosticHolder.report(ErrorsJvm.JVM_STATIC_ON_CONST_OR_JVM_FIELD.on(declaration))
+        }
+    }
+
+    private fun checkVisibility(
+        descriptor: DeclarationDescriptorWithVisibility,
+        diagnosticHolder: DiagnosticSink,
+        declaration: KtDeclaration
+    ) {
+        if (descriptor.visibility != Visibilities.PUBLIC) {
+            diagnosticHolder.report(ErrorsJvm.JVM_STATIC_ON_NON_PUBLIC_MEMBER.on(declaration))
+        } else if (descriptor is PropertyDescriptor) {
+            descriptor.setter?.let { checkVisibility(it, diagnosticHolder, declaration) }
         }
     }
 }
@@ -129,8 +160,7 @@ class JvmNameAnnotationChecker : SimpleDeclarationChecker {
         }
 
         if (descriptor is CallableMemberDescriptor) {
-            val callableMemberDescriptor = descriptor
-            if (DescriptorUtils.isOverride(callableMemberDescriptor) || callableMemberDescriptor.isOverridable) {
+            if (DescriptorUtils.isOverride(descriptor) || descriptor.isOverridable) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             }
         }

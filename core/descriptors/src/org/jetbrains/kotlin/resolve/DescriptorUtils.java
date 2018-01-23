@@ -290,7 +290,7 @@ public class DescriptorUtils {
                descriptor.getName().equals(SpecialNames.ANONYMOUS_FUNCTION);
     }
 
-    public static boolean isNonCompanionObject(@NotNull DeclarationDescriptor descriptor) {
+    public static boolean isNonCompanionObject(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isCompanionObject();
     }
 

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings
 object JvmPlatformConfigurator : PlatformConfigurator(
     DynamicTypesSettings(),
     additionalDeclarationCheckers = listOf(
-        PlatformStaticAnnotationChecker(),
         JvmNameAnnotationChecker(),
         VolatileAnnotationChecker(),
         SynchronizedAnnotationChecker(),
@@ -87,6 +86,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
     declarationReturnTypeSanitizer = JvmDeclarationReturnTypeSanitizer
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
+        container.useImpl<JvmStaticChecker>()
         container.useImpl<JvmReflectionAPICallChecker>()
         container.useImpl<JavaSyntheticScopes>()
         container.useImpl<SamConversionResolverImpl>()
