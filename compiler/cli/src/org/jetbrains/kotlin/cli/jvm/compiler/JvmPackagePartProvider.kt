@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageParts
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import java.io.EOFException
 
@@ -31,7 +32,7 @@ class JvmPackagePartProvider(
         languageVersionSettings: LanguageVersionSettings,
         private val scope: GlobalSearchScope
 ) : PackagePartProvider {
-    private data class ModuleMappingInfo(val root: VirtualFile, val mapping: ModuleMapping)
+    private data class ModuleMappingInfo(val root: VirtualFile, val mapping: ModuleMapping, val name: String)
 
     private val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
@@ -68,6 +69,12 @@ class JvmPackagePartProvider(
         return result
     }
 
+    override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
+        return loadedModules.mapNotNull { (_, mapping, name) ->
+            if (name == moduleName) mapping.moduleData.annotations else null
+        }.flatten()
+    }
+
     fun addRoots(roots: List<JavaRoot>) {
         for ((root, type) in roots) {
             if (type != JavaRoot.RootType.BINARY) continue
@@ -83,7 +90,7 @@ class JvmPackagePartProvider(
                 catch (e: EOFException) {
                     throw RuntimeException("Error on reading package parts from $moduleFile in $root", e)
                 }
-                loadedModules.add(ModuleMappingInfo(root, mapping))
+                loadedModules.add(ModuleMappingInfo(root, mapping, moduleFile.nameWithoutExtension))
             }
         }
     }

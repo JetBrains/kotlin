@@ -1,0 +1,7 @@
+compiler/testData/experimental/jsExperimentalModule/usage.kt:5:15: error: this declaration is experimental and its usage must be marked with '@lib.ExperimentalAPI'
+fun fail(foo: Foo) {
+              ^
+compiler/testData/experimental/jsExperimentalModule/usage.kt:6:5: error: this declaration is experimental and its usage must be marked with '@lib.ExperimentalAPI'
+    bar()
+    ^
+COMPILATION_ERROR
