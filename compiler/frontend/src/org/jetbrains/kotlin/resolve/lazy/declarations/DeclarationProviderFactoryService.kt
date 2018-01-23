@@ -50,7 +50,7 @@ abstract class DeclarationProviderFactoryService {
         }
 
         private fun filteringScope(syntheticFiles: Collection<KtFile>, baseScope: GlobalSearchScope): GlobalSearchScope {
-            if (syntheticFiles.isEmpty()) {
+            if (syntheticFiles.isEmpty() || baseScope == GlobalSearchScope.EMPTY_SCOPE) {
                 return baseScope
             }
             return SyntheticFilesFilteringScope(syntheticFiles, baseScope)
