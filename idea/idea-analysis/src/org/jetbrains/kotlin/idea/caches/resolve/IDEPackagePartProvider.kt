@@ -21,6 +21,7 @@ import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex
 import org.jetbrains.kotlin.load.kotlin.PackageParts
+import org.jetbrains.kotlin.name.ClassId
 
 class IDEPackagePartProvider(val scope: GlobalSearchScope) : PackagePartProvider {
     override fun findPackageParts(packageFqName: String): List<String> =
@@ -31,4 +32,8 @@ class IDEPackagePartProvider(val scope: GlobalSearchScope) : PackagePartProvider
 
     private fun getPackageParts(packageFqName: String): MutableList<PackageParts> =
             FileBasedIndex.getInstance().getValues(KotlinModuleMappingIndex.KEY, packageFqName, scope)
+
+    override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
+        throw UnsupportedOperationException()
+    }
 }
