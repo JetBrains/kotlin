@@ -2631,7 +2631,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (thisOrOuterClass.equals(context.getThisDescriptor()) &&
-            !CodegenUtilKt.isJvmStaticInObjectOrClass(context.getFunctionDescriptor())) {
+            !CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(context.getFunctionDescriptor())) {
             return StackValue.local(0, typeMapper.mapType(thisOrOuterClass));
         }
         else if (shouldGenerateSingletonAsThisOrOuterFromContext(thisOrOuterClass)) {

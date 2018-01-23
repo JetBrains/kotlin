@@ -92,7 +92,7 @@ public class CallReceiver extends StackValue {
 
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
-        if (CodegenUtilKt.isJvmStaticInObjectOrClass(descriptor)) {
+        if (CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(descriptor)) {
             return Type.VOID_TYPE;
         }
 
