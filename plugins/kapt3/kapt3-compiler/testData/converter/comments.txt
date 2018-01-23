@@ -12,6 +12,23 @@ public abstract @interface Anno {
 
 import java.lang.System;
 
+@kotlin.Metadata()
+public enum EnumError {
+    /*public static final*/ One /* = new EnumError() */,
+    /*public static final*/ Two /* = new EnumError() */;
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.String doIt();
+
+    EnumError() {
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
 /**
  * Obj.
  */
