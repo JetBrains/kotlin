@@ -51,6 +51,7 @@ dependencies {
     testRuntime(project(":allopen-ide-plugin"))
 
     testRuntime(intellijPluginDep("android"))
+    testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("copyright"))
     testRuntime(intellijPluginDep("coverage"))
     testRuntime(intellijPluginDep("gradle"))
