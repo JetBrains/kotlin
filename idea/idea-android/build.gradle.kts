@@ -35,7 +35,7 @@ dependencies {
     testCompile(projectTests(":idea:idea-gradle"))
     testCompile(commonDep("junit:junit"))
 
-    testCompile(intellijDep()) { includeJars("gson", rootProject = rootProject) }
+    testCompile(intellijDep()) { includeJars("android-base-common", "gson", rootProject = rootProject) }
     testCompile(intellijPluginDep("properties"))
     testCompileOnly(intellijPluginDep("android")) {
         includeJars("android", "android-common", "build-common", "common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api", rootProject = rootProject)
