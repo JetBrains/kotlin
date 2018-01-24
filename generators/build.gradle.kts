@@ -15,7 +15,7 @@ dependencies {
     compile(projectTests(":kotlin-noarg-compiler-plugin"))
     compile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     compile(projectTests(":generators:test-generator"))
-    //compileOnly(intellijDep("jps-build-test"))
+    compileOnly(intellijDep("jps-build-test"))
     compileOnly(project(":kotlin-reflect-api"))
     testCompile(intellijDep("jps-build-test"))
     testRuntime(intellijDep()) { includeJars("idea_rt") }
