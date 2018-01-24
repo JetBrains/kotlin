@@ -233,8 +233,6 @@ data class ModuleContent(
 interface PlatformAnalysisParameters
 
 interface ModuleInfo {
-    val isLibrary: Boolean
-        get() = false
     val name: Name
     val displayedName: String get() = name.asString()
     fun dependencies(): List<ModuleInfo>

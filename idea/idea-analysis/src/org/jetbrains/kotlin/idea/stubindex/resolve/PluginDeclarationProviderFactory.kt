@@ -61,10 +61,9 @@ class PluginDeclarationProviderFactory(
         fileBasedDeclarationProviderFactory.packageExists(fqName) || stubBasedPackageExists(fqName)
 
     private fun stubBasedPackageExists(name: FqName): Boolean {
-        return if (moduleInfo is ModuleSourceInfo)
-            project.service<PerModulePackageCacheService>().packageExists(name, moduleInfo)
-        else
-            PackageIndexUtil.packageExists(name, indexedFilesScope, project)
+        // We're only looking for source-based declarations
+        val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return false
+        return project.service<PerModulePackageCacheService>().packageExists(name, moduleSourceInfo)
     }
 
     private fun getStubBasedPackageMemberDeclarationProvider(name: FqName): PackageMemberDeclarationProvider? {

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
 import org.jetbrains.kotlin.config.TargetPlatformVersion
@@ -56,7 +55,7 @@ object JsAnalyzerFacade : AnalyzerFacade() {
             project,
             moduleContext.storageManager,
             syntheticFiles,
-            if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope,
+            moduleContentScope,
             moduleInfo
         )
 

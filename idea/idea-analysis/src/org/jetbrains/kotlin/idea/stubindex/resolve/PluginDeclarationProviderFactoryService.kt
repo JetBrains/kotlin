@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.stubindex.resolve
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -28,11 +29,25 @@ import org.jetbrains.kotlin.storage.StorageManager
 class PluginDeclarationProviderFactoryService : DeclarationProviderFactoryService() {
 
     override fun create(
-            project: Project,
-            storageManager: StorageManager,
-            syntheticFiles: Collection<KtFile>,
-            filesScope: GlobalSearchScope,
-            moduleInfo: ModuleInfo
-    ): DeclarationProviderFactory =
-        PluginDeclarationProviderFactory(project, KotlinSourceFilterScope.sources(filesScope, project), storageManager, syntheticFiles, moduleInfo)
+        project: Project,
+        storageManager: StorageManager,
+        syntheticFiles: Collection<KtFile>,
+        filesScope: GlobalSearchScope,
+        moduleInfo: ModuleInfo
+    ): DeclarationProviderFactory {
+        if (syntheticFiles.isEmpty() && moduleInfo !is ModuleSourceInfo) {
+            // No actual source declarations for libraries
+            // Even in case of libraries sources they should be obtained through the classpath with subsequent decompiling
+            // Anyway, we'll filter them out with `KotlinSourceFilterScope.sources` call below
+            return DeclarationProviderFactory.EMPTY
+        }
+
+        return PluginDeclarationProviderFactory(
+            project,
+            KotlinSourceFilterScope.projectSources(filesScope, project),
+            storageManager,
+            syntheticFiles,
+            moduleInfo
+        )
+    }
 }

@@ -221,9 +221,6 @@ class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo, 
 
     override fun contentScope(): GlobalSearchScope = LibraryWithoutSourceScope(project, library)
 
-    override val isLibrary: Boolean
-        get() = true
-
     override fun dependencies(): List<IdeaModuleInfo> {
         val result = LinkedHashSet<IdeaModuleInfo>()
         result.add(this)
@@ -260,9 +257,6 @@ data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaM
     override val name: Name = Name.special("<sources for library ${library.name}>")
 
     override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(LibrarySourceScope(project, library), project)
-
-    override val isLibrary: Boolean
-        get() = true
 
     override fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> {
         return listOf(LibraryInfo(project, library))
