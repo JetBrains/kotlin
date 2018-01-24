@@ -25,19 +25,19 @@ package kotlin.collections
  *
  * This implementation preserves the insertion order of elements during the iteration.
  */
-public open class LinkedHashSet<E> : HashSet<E> {
+public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
 
     internal constructor(map: LinkedHashMap<E, Any>) : super(map)
 
     /**
      * Constructs a new empty [LinkedHashSet].
      */
-    constructor() : super(LinkedHashMap<E, Any>())
+    actual constructor() : super(LinkedHashMap<E, Any>())
 
     /**
      * Constructs a new [LinkedHashSet] filled with the elements of the specified collection.
      */
-    constructor(elements: Collection<E>) : super(LinkedHashMap<E, Any>()) {
+    actual constructor(elements: Collection<E>) : super(LinkedHashMap<E, Any>()) {
         addAll(elements)
     }
     /**
@@ -48,7 +48,9 @@ public open class LinkedHashSet<E> : HashSet<E> {
      *
      * @throws IllegalArgumentException if the initial capacity or load factor are negative
      */
-    constructor(initialCapacity: Int, loadFactor: Float = 0.0f) : super(LinkedHashMap<E, Any>(initialCapacity, loadFactor))
+    actual constructor(initialCapacity: Int, loadFactor: Float) : super(LinkedHashMap<E, Any>(initialCapacity, loadFactor))
+
+    actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
 
 //    public override fun clone(): Any {
 //        return LinkedHashSet(this)

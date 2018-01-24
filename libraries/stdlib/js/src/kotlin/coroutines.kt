@@ -52,21 +52,21 @@ private val RESUMED: Any? = Any()
 private class Fail(val exception: Throwable)
 
 @PublishedApi
-internal class SafeContinuation<in T>
-internal constructor(
+internal actual class SafeContinuation<in T>
+internal actual constructor(
         private val delegate: Continuation<T>,
         initialResult: Any?
 ) : Continuation<T> {
 
     @PublishedApi
-    internal constructor(delegate: Continuation<T>) : this(delegate, UNDECIDED)
+    internal actual constructor(delegate: Continuation<T>) : this(delegate, UNDECIDED)
 
-    public override val context: CoroutineContext
+    public actual override val context: CoroutineContext
         get() = delegate.context
 
     private var result: Any? = initialResult
 
-    override fun resume(value: T) {
+    actual override fun resume(value: T) {
         when {
             result === UNDECIDED -> {
                 result = value
@@ -81,7 +81,7 @@ internal constructor(
         }
     }
 
-    override fun resumeWithException(exception: Throwable) {
+    actual override fun resumeWithException(exception: Throwable) {
         when {
             result === UNDECIDED -> {
                 result = Fail(exception)
@@ -97,7 +97,7 @@ internal constructor(
     }
 
     @PublishedApi
-    internal fun getResult(): Any? {
+    internal actual fun getResult(): Any? {
         if (result === UNDECIDED) {
             result = COROUTINE_SUSPENDED
         }

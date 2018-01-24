@@ -17,47 +17,49 @@
 package kotlin.text
 
 
-public interface Appendable {
-    fun append(csq: CharSequence?): Appendable
-    fun append(csq: CharSequence?, start: Int, end: Int): Appendable
-    fun append(c: Char): Appendable
+public actual interface Appendable {
+    public actual fun append(csq: CharSequence?): Appendable
+    public actual fun append(csq: CharSequence?, start: Int, end: Int): Appendable
+    public actual fun append(c: Char): Appendable
 }
 
-public class StringBuilder(content: String = "") : Appendable, CharSequence {
-    constructor(@Suppress("UNUSED_PARAMETER") capacity: Int) : this() {}
+public actual class StringBuilder(content: String) : Appendable, CharSequence {
+    actual constructor(@Suppress("UNUSED_PARAMETER") capacity: Int) : this() {}
 
-    constructor(content: CharSequence) : this(content.toString()) {}
+    actual constructor(content: CharSequence) : this(content.toString()) {}
+
+    actual constructor() : this("")
 
     private var string: String = content
 
-    override val length: Int
+    actual override val length: Int
         get() = string.asDynamic().length
 
-    override fun get(index: Int): Char = string[index]
+    actual override fun get(index: Int): Char = string[index]
 
-    override fun subSequence(start: Int, end: Int): CharSequence = string.substring(start, end)
+    actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = string.substring(startIndex, endIndex)
 
-    override fun append(c: Char): StringBuilder {
+    actual override fun append(c: Char): StringBuilder {
         string += c
         return this
     }
 
-    override fun append(csq: CharSequence?): StringBuilder {
+    actual override fun append(csq: CharSequence?): StringBuilder {
         string += csq.toString()
         return this
     }
 
-    override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder {
+    actual override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder {
         string += csq.toString().substring(start, end)
         return this
     }
 
-    fun append(obj: Any?): StringBuilder {
+    actual fun append(obj: Any?): StringBuilder {
         string += obj.toString()
         return this
     }
 
-    fun reverse(): StringBuilder {
+    actual fun reverse(): StringBuilder {
         string = string.asDynamic().split("").reverse().join("")
         return this
     }

@@ -23,42 +23,47 @@ package kotlin.collections
  * There is no speed advantage to pre-allocating array sizes in JavaScript, so this implementation does not include any of the
  * capacity and "growth increment" concepts.
  */
-public open class ArrayList<E> internal constructor(private var array: Array<Any?>) : AbstractMutableList<E>(), RandomAccess {
+public actual open class ArrayList<E> internal constructor(private var array: Array<Any?>) : AbstractMutableList<E>(), MutableList<E>, RandomAccess {
 
     /**
      * Creates an empty [ArrayList].
-     * @param capacity initial capacity (ignored)
      */
-    public constructor(@Suppress("UNUSED_PARAMETER") capacity: Int = 0) : this(emptyArray()) {}
+    public actual constructor() : this(emptyArray()) {}
+
+    /**
+     * Creates an empty [ArrayList].
+     * @param initialCapacity initial capacity (ignored)
+     */
+    public actual constructor(@Suppress("UNUSED_PARAMETER") initialCapacity: Int) : this(emptyArray()) {}
     /**
      * Creates an [ArrayList] filled from the [elements] collection.
      */
-    public constructor(elements: Collection<E>) : this(elements.toTypedArray<Any?>()) {}
+    public actual constructor(elements: Collection<E>) : this(elements.toTypedArray<Any?>()) {}
 
     /** Does nothing in this ArrayList implementation. */
-    public fun trimToSize() {}
+    public actual fun trimToSize() {}
     /** Does nothing in this ArrayList implementation. */
-    public fun ensureCapacity(@Suppress("UNUSED_PARAMETER") minCapacity: Int) {}
+    public actual fun ensureCapacity(@Suppress("UNUSED_PARAMETER") minCapacity: Int) {}
 
-    override val size: Int get() = array.size
-    override fun get(index: Int): E = array[rangeCheck(index)] as E
-    override fun set(index: Int, element: E): E {
+    actual override val size: Int get() = array.size
+    actual override fun get(index: Int): E = array[rangeCheck(index)] as E
+    actual override fun set(index: Int, element: E): E {
         rangeCheck(index)
         return array[index].apply { array[index] = element } as E
     }
 
-    override fun add(element: E): Boolean {
+    actual override fun add(element: E): Boolean {
         array.asDynamic().push(element)
         modCount++
         return true
     }
 
-    override fun add(index: Int, element: E): Unit {
+    actual override fun add(index: Int, element: E): Unit {
         array.asDynamic().splice(insertionRangeCheck(index), 0, element)
         modCount++
     }
 
-    override fun addAll(elements: Collection<E>): Boolean {
+    actual override fun addAll(elements: Collection<E>): Boolean {
         if (elements.isEmpty()) return false
 
         array += elements.toTypedArray<Any?>()
@@ -66,7 +71,7 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
         return true
     }
 
-    override fun addAll(index: Int, elements: Collection<E>): Boolean {
+    actual override fun addAll(index: Int, elements: Collection<E>): Boolean {
         insertionRangeCheck(index)
 
         if (index == size) return addAll(elements)
@@ -81,7 +86,7 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
         return true
     }
 
-    override fun removeAt(index: Int): E {
+    actual override fun removeAt(index: Int): E {
         rangeCheck(index)
         modCount++
         return if (index == lastIndex)
@@ -90,7 +95,7 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
             array.asDynamic().splice(index, 1)[0]
     }
 
-    override fun remove(element: E): Boolean {
+    actual override fun remove(element: E): Boolean {
         for (index in array.indices) {
             if (array[index] == element) {
                 array.asDynamic().splice(index, 1)
@@ -106,15 +111,15 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
         array.asDynamic().splice(fromIndex, toIndex - fromIndex)
     }
 
-    override fun clear() {
+    actual override fun clear() {
         array = emptyArray()
         modCount++
     }
 
 
-    override fun indexOf(element: E): Int = array.indexOf(element)
+    actual override fun indexOf(element: E): Int = array.indexOf(element)
 
-    override fun lastIndexOf(element: E): Int = array.lastIndexOf(element)
+    actual override fun lastIndexOf(element: E): Int = array.lastIndexOf(element)
 
     override fun toString() = arrayToString(array)
     override fun toArray(): Array<Any?> = js("[]").slice.call(array)

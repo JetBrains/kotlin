@@ -21,66 +21,66 @@ package kotlin.text
 /**
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
  */
-public fun String.toBoolean(): Boolean = toLowerCase() == "true"
+public actual fun String.toBoolean(): Boolean = toLowerCase() == "true"
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public fun String.toByte(): Byte = toByteOrNull() ?: numberFormatError(this)
+public actual fun String.toByte(): Byte = toByteOrNull() ?: numberFormatError(this)
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-public fun String.toByte(radix: Int): Byte = toByteOrNull(radix) ?: numberFormatError(this)
+public actual fun String.toByte(radix: Int): Byte = toByteOrNull(radix) ?: numberFormatError(this)
 
 
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public fun String.toShort(): Short = toShortOrNull() ?: numberFormatError(this)
+public actual fun String.toShort(): Short = toShortOrNull() ?: numberFormatError(this)
 
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-public fun String.toShort(radix: Int): Short = toShortOrNull(radix) ?: numberFormatError(this)
+public actual fun String.toShort(radix: Int): Short = toShortOrNull(radix) ?: numberFormatError(this)
 
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public fun String.toInt(): Int = toIntOrNull() ?: numberFormatError(this)
+public actual fun String.toInt(): Int = toIntOrNull() ?: numberFormatError(this)
 
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-public fun String.toInt(radix: Int): Int = toIntOrNull(radix) ?: numberFormatError(this)
+public actual fun String.toInt(radix: Int): Int = toIntOrNull(radix) ?: numberFormatError(this)
 
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public fun String.toLong(): Long = toLongOrNull() ?: numberFormatError(this)
+public actual fun String.toLong(): Long = toLongOrNull() ?: numberFormatError(this)
 
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-public fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?: numberFormatError(this)
+public actual fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?: numberFormatError(this)
 
 /**
  * Parses the string as a [Double] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public fun String.toDouble(): Double = (+(this.asDynamic())).unsafeCast<Double>().also {
+public actual fun String.toDouble(): Double = (+(this.asDynamic())).unsafeCast<Double>().also {
     if (it.isNaN() && !this.isNaN() || it == 0.0 && this.isBlank())
         numberFormatError(this)
 }
@@ -90,13 +90,13 @@ public fun String.toDouble(): Double = (+(this.asDynamic())).unsafeCast<Double>(
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toFloat(): Float = toDouble().unsafeCast<Float>()
+public actual inline fun String.toFloat(): Float = toDouble().unsafeCast<Float>()
 
 /**
  * Parses the string as a [Double] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-public fun String.toDoubleOrNull(): Double? = (+(this.asDynamic())).unsafeCast<Double>().takeIf {
+public actual fun String.toDoubleOrNull(): Double? = (+(this.asDynamic())).unsafeCast<Double>().takeIf {
     !(it.isNaN() && !this.isNaN() || it == 0.0 && this.isBlank())
 }
 
@@ -105,7 +105,7 @@ public fun String.toDoubleOrNull(): Double? = (+(this.asDynamic())).unsafeCast<D
  * or `null` if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toFloatOrNull(): Float? = toDoubleOrNull().unsafeCast<Float?>()
+public actual inline fun String.toFloatOrNull(): Float? = toDoubleOrNull().unsafeCast<Float?>()
 
 
 private fun String.isNaN(): Boolean = when(this.toLowerCase()) {
@@ -117,14 +117,14 @@ private fun String.isNaN(): Boolean = when(this.toLowerCase()) {
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
  */
 @PublishedApi
-internal fun checkRadix(radix: Int): Int {
+internal actual fun checkRadix(radix: Int): Int {
     if(radix !in 2..36) {
         throw IllegalArgumentException("radix $radix was not in valid range 2..36")
     }
     return radix
 }
 
-internal fun digitOf(char: Char, radix: Int): Int = when {
+internal actual fun digitOf(char: Char, radix: Int): Int = when {
     char >= '0' && char <= '9' -> char - '0'
     char >= 'A' && char <= 'Z' -> char - 'A' + 10
     char >= 'a' && char <= 'z' -> char - 'a' + 10

@@ -98,16 +98,16 @@ private var output = run {
 private inline fun String(value: Any?): String = js("String")(value)
 
 /** Prints a newline to the standard output stream. */
-public fun println() {
+public actual fun println() {
     output.println()
 }
 
 /** Prints the given message and newline to the standard output stream. */
-public fun println(message: Any?) {
+public actual fun println(message: Any?) {
     output.println(message)
 }
 
 /** Prints the given message to the standard output stream. */
-public fun print(message: Any?) {
+public actual fun print(message: Any?) {
     output.print(message)
 }
