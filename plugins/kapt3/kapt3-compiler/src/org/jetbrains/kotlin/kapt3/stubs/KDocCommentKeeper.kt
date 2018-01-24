@@ -96,7 +96,35 @@ class KDocCommentKeeper(private val kaptContext: KaptContext<*>) {
             return
         }
 
-        docCommentTable.putComment(tree, KDocComment(extractCommentText(docComment)))
+        docCommentTable.putComment(tree, KDocComment(escapeNestedComments(extractCommentText(docComment))))
+    }
+
+    private fun escapeNestedComments(text: String): String {
+        val result = StringBuilder()
+
+        var index = 0
+        var commentLevel = 0
+
+        while (index < text.length) {
+            val currentChar = text[index]
+            fun nextChar() = text.getOrNull(index + 1)
+
+            if (currentChar == '/' && nextChar() == '*') {
+                commentLevel++
+                index++
+                result.append("/ *")
+            } else if (currentChar == '*' && nextChar() == '/') {
+                commentLevel = maxOf(0, commentLevel - 1)
+                index++
+                result.append("* /")
+            } else {
+                result.append(currentChar)
+            }
+
+            index++
+        }
+
+        return result.toString()
     }
 
     private fun extractCommentText(docComment: KDoc): String {

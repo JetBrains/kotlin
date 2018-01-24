@@ -60,3 +60,8 @@ enum class EnumError {
 
     abstract fun doIt(): String
 }
+
+/**
+ * `/* Failure */`
+ */
+interface TestComponent

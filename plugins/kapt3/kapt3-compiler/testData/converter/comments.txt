@@ -182,3 +182,15 @@ public final class Test4 {
         super();
     }
 }
+
+////////////////////
+
+
+import java.lang.System;
+
+/**
+ * * `/ * Failure * /`
+ */
+@kotlin.Metadata()
+public abstract interface TestComponent {
+}
