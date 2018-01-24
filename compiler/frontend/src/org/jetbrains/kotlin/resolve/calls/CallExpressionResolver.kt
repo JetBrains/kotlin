@@ -185,11 +185,11 @@ class CallExpressionResolver(
     }
 
     fun getCallExpressionTypeInfo(
-        callExpression: KtCallExpression, receiver: ReceiverValue?,
-        callOperationNode: ASTNode?, context: ExpressionTypingContext
+        callExpression: KtCallExpression,
+        context: ExpressionTypingContext
     ): KotlinTypeInfo {
         val typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(
-            callExpression, receiver, callOperationNode, context, context.dataFlowInfo
+            callExpression, null, null, context, context.dataFlowInfo
         )
         if (context.contextDependency == INDEPENDENT) {
             dataFlowAnalyzer.checkType(typeInfo.type, callExpression, context)
