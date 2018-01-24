@@ -92,12 +92,12 @@ class PatternResolver(
         return results.resultingDescriptor.returnType
     }
 
-    fun getComponentsTypeInfo(callElement: KtPatternTypedTuple, entries: List<KtPatternEntry>, state: PatternResolveState) =
+    fun getComponentsTypes(callElement: KtPatternTypedTuple, entries: List<KtPatternEntry>, state: PatternResolveState) =
             TransientReceiver(state.expectedType).let { receiver ->
                 entries.mapIndexed { i, entry ->
                     getComponentTypeInfo(callElement, entry, receiver, getComponentName(i), state)
                 }.map {
-                    ConditionalTypeInfo(it, ConditionalDataFlowInfo.EMPTY)
+                    it
                 }
             }
 
@@ -195,29 +195,30 @@ fun <T, E : PsiElement> T?.errorIfNull(element: E, state: PatternResolveState, e
     it ?: state.context.trace.report(error.on(element, element))
 }
 
-fun ConditionalTypeInfo.and(vararg children: ConditionalTypeInfo?): ConditionalTypeInfo {
-    return this.and(children.asSequence())
+fun ConditionalTypeInfo.concat(vararg children: ConditionalTypeInfo?): ConditionalTypeInfo {
+    return this.concat(children.asSequence())
 }
 
-fun ConditionalTypeInfo.and(children: Iterable<ConditionalTypeInfo?>): ConditionalTypeInfo {
-    return this.and(children.asSequence())
+fun ConditionalTypeInfo.concat(children: Iterable<ConditionalTypeInfo?>): ConditionalTypeInfo {
+    return this.concat(children.asSequence())
 }
 
-fun ConditionalTypeInfo.and(children: Sequence<ConditionalTypeInfo?>): ConditionalTypeInfo {
+fun ConditionalTypeInfo.concat(children: Sequence<ConditionalTypeInfo?>): ConditionalTypeInfo {
     val dataFlowInfo = children.map { it?.dataFlowInfo }
-    return this.replaceDataFlowInfo(this.dataFlowInfo.and(dataFlowInfo))
+    return this.replaceDataFlowInfo(this.dataFlowInfo.concat(dataFlowInfo))
 }
 
-fun ConditionalDataFlowInfo.and(vararg dataFlowInfo: ConditionalDataFlowInfo?): ConditionalDataFlowInfo {
-    return this.and(dataFlowInfo.asSequence())
+fun ConditionalDataFlowInfo.concat(vararg dataFlowInfo: ConditionalDataFlowInfo?): ConditionalDataFlowInfo {
+    return this.concat(dataFlowInfo.asSequence())
 }
 
-fun ConditionalDataFlowInfo.and(dataFlowInfo: Iterable<ConditionalDataFlowInfo?>): ConditionalDataFlowInfo {
-    return this.and(dataFlowInfo.asSequence())
+fun ConditionalDataFlowInfo.concat(dataFlowInfo: Iterable<ConditionalDataFlowInfo?>): ConditionalDataFlowInfo {
+    return this.concat(dataFlowInfo.asSequence())
 }
 
-fun ConditionalDataFlowInfo.and(dataFlowInfo: Sequence<ConditionalDataFlowInfo?>): ConditionalDataFlowInfo {
-    return (sequenceOf(this) + dataFlowInfo).filterNotNull().reduce { info, it -> info.and(it) }
+fun ConditionalDataFlowInfo.concat(dataFlowInfo: Sequence<ConditionalDataFlowInfo?>): ConditionalDataFlowInfo {
+    return (sequenceOf(this) + dataFlowInfo).filterNotNull().reduce { info, it ->
+        ConditionalDataFlowInfo(info.thenInfo.or(it.thenInfo), info.elseInfo.and(it.elseInfo)) }
 }
 
 class PatternScope private constructor(

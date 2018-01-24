@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
-import org.jetbrains.kotlin.types.expressions.and
+import org.jetbrains.kotlin.types.expressions.concat
 
 class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElement(node), KtVariableDeclaration {
     override fun getName(): String? {
@@ -208,7 +208,7 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElement(node), KtVa
         val typeReferenceType = typeReferenceInfo?.type
         (typeReferenceType ?: constraintType)?.let {
             val info = ConditionalTypeInfo(it, ConditionalDataFlowInfo.EMPTY)
-            info.and(typeReferenceInfo, constraintInfo)
+            info.concat(typeReferenceInfo, constraintInfo)
         }
     }
 
@@ -217,6 +217,6 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElement(node), KtVa
         val constraintInfo = constraint?.resolve(resolver, state)
         val info = resolver.resolveType(this, state)
         resolver.defineVariable(this, state)
-        return info.and(typeInfo, constraintInfo)
+        return info.concat(typeInfo, constraintInfo)
     }
 }

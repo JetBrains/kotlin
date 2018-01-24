@@ -41,6 +41,6 @@ class KtPatternConstraint(node: ASTNode) : KtPatternElement(node) {
         val element = element.errorIfNull(this, state, Errors.EXPECTED_CONSTRAINT_ELEMENT)
         val elementTypeInfo = element?.resolve(resolver, state)
         val thisTypeInfo = resolver.resolveType(this, state)
-        return thisTypeInfo.and(elementTypeInfo)
+        return thisTypeInfo.concat(elementTypeInfo)
     }
 }

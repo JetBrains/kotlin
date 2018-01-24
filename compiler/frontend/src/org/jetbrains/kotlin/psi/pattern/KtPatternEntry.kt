@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
-import org.jetbrains.kotlin.types.expressions.and
+import org.jetbrains.kotlin.types.expressions.concat
 
 class KtPatternEntry(node: ASTNode) : KtPatternElement(node) {
 
@@ -44,6 +44,6 @@ class KtPatternEntry(node: ASTNode) : KtPatternElement(node) {
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
         val entryInfo = element?.resolve(resolver, state)
         val thisInfo = resolver.resolveType(this, state)
-        return thisInfo.and(entryInfo)
+        return thisInfo.concat(entryInfo)
     }
 }

@@ -39,13 +39,13 @@ class KtPatternTypedTuple(node: ASTNode) : KtPatternElement(node) {
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
         val typeReferenceInfo = typeReference?.resolve(resolver, state.setIsTuple())
-        val info = resolver.resolveType(this, state).and(typeReferenceInfo)
+        val info = resolver.resolveType(this, state).concat(typeReferenceInfo)
         val entries = tuple?.entries.errorIfNull(this, state, Errors.EXPECTED_PATTERN_TUPLE_INSTANCE) ?: return info
         val receiverType = resolver.getComponentsTypeInfoReceiver(this, state.replaceType(info.type)) ?: info.type
         state.context.trace.record(BindingContext.PATTERN_COMPONENTS_RECEIVER_TYPE, this, receiverType)
-        val typesInfo = resolver.getComponentsTypeInfo(this, entries, state.replaceType(receiverType))
-        return info.and(typesInfo.zip(entries) { typeInfo, entry ->
-            entry.resolve(resolver, state.next(typeInfo.type))
+        val types = resolver.getComponentsTypes(this, entries, state.replaceType(receiverType))
+        return info.concat(types.zip(entries) { type, entry ->
+            entry.resolve(resolver, state.next(type))
         })
     }
 }

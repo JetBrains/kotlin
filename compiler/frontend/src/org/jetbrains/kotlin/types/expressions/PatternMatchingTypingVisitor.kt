@@ -382,16 +382,28 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 }
 
                 // This works for simple pattern
-                val rhsType = context.trace[BindingContext.TYPE, condition.typeReference]
-                if (subjectExpression != null) {
-                    val rttiInformation = RttiExpressionInformation(
-                            subject = subjectExpression,
-                            sourceType = subjectType,
-                            targetType = rhsType,
-                            operation = if (condition.isNegated) RttiOperation.NOT_IS else RttiOperation.IS
-                    )
-                    components.rttiExpressionCheckers.forEach {
-                        it.check(rttiInformation, condition, context.trace)
+                condition.typeReference?.let { typeReference ->
+                    // ToDo(sergei) remove from this
+                    val (_, result) = checkTypeForIs(context, condition, condition.isNegated, subjectType, typeReference, true, subjectDataFlowValue)
+                    newDataFlowInfo = if (condition.isNegated) {
+                        ConditionalDataFlowInfo(result.elseInfo, result.thenInfo)
+                    }
+                    else {
+                        result
+                    }
+                    // ToDo(sergei) to this
+
+                    val rhsType = context.trace[BindingContext.TYPE, typeReference]
+                    if (subjectExpression != null) {
+                        val rttiInformation = RttiExpressionInformation(
+                                subject = subjectExpression,
+                                sourceType = subjectType,
+                                targetType = rhsType,
+                                operation = if (condition.isNegated) RttiOperation.NOT_IS else RttiOperation.IS
+                        )
+                        components.rttiExpressionCheckers.forEach {
+                            it.check(rttiInformation, condition, context.trace)
+                        }
                     }
                 }
             }

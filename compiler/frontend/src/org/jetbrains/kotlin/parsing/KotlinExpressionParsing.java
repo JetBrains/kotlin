@@ -73,6 +73,13 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             COLON
     );
 
+    static final TokenSet LITERAL_CONSTANT_FIRST = TokenSet.create(
+            TRUE_KEYWORD, FALSE_KEYWORD,
+            OPEN_QUOTE,
+            INTEGER_LITERAL, CHARACTER_LITERAL, FLOAT_LITERAL,
+            NULL_KEYWORD
+    );
+
     /*package*/ static final TokenSet EXPRESSION_FIRST = TokenSet.create(
             // Prefix
             MINUS, PLUS, MINUSMINUS, PLUSPLUS,

@@ -25289,6 +25289,24 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("test15.kt")
+            public void testTest15() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test15.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("test16.kt")
+            public void testTest16() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test16.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("test17.kt")
+            public void testTest17() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test17.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("test2.kt")
             public void testTest2() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test2.kt");

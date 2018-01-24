@@ -2052,6 +2052,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private boolean atTruePatternExpression() {
+        if (atSet(KotlinExpressionParsing.LITERAL_CONSTANT_FIRST)) return true;
         if (!at(EQ_KEYWORD) && !at(NOT_EQ)) return false;
         PsiBuilder.Marker marker = mark();
         advance(); // EQ_KEYWORD or NOT_EQUALS
