@@ -1,7 +1,6 @@
+// !LANGUAGE: +MultiPlatformProjects
 // EXPECTED_REACHABLE_NODES: 1173
-// MULTIPLATFORM
 
-// MODULE: lib
 // FILE: lib.kt
 import kotlin.test.Test
 
@@ -9,7 +8,6 @@ expect class PlatformTest {
     @Test fun platformTest()
 }
 
-// MODULE: main(lib)
 // FILE: main.kt
 import kotlin.test.Test
 
