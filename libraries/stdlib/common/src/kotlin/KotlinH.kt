@@ -25,6 +25,8 @@ expect interface Comparator<T> {
     fun compare(a: T, b: T): Int
 }
 
+// TODO: Satisfied with SAM-constructor for Comparator interface in JVM
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T>
 
 // From kotlin.kt
