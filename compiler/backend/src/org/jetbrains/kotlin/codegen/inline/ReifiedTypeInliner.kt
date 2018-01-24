@@ -261,7 +261,7 @@ val MethodInsnNode.reificationArgument: ReificationArgument?
         return ReificationArgument(parameterName, nullable, arrayDepth)
     }
 
-private val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind? get() =
+val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind? get() =
     previous?.previous?.intConstant?.let {
         ReifiedTypeInliner.OperationKind.values().getOrNull(it)
     }

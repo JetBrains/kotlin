@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen.optimization.nullCheck
 
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.inline.operationKind
 import org.jetbrains.kotlin.codegen.optimization.boxing.*
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.isPseudo
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
@@ -53,14 +56,23 @@ class NullabilityInterpreter : OptimizationBasicInterpreter() {
         val defaultResult = super.unaryOperation(insn, value)
         val resultType = defaultResult?.type
 
-        return when {
-            insn.opcode == Opcodes.CHECKCAST ->
-                value
-            insn.opcode == Opcodes.NEWARRAY || insn.opcode == Opcodes.ANEWARRAY ->
+        return when (insn.opcode) {
+            Opcodes.CHECKCAST ->
+                if (insn.isReifiedSafeAs())
+                    StrictBasicValue(resultType)
+                else
+                    value
+            Opcodes.NEWARRAY, Opcodes.ANEWARRAY ->
                 NotNullBasicValue(resultType)
             else ->
                 defaultResult
         }
+    }
+
+    private fun AbstractInsnNode.isReifiedSafeAs(): Boolean {
+        val marker = previous as? MethodInsnNode ?: return false
+        return ReifiedTypeInliner.isOperationReifiedMarker(marker)
+                && marker.operationKind == ReifiedTypeInliner.OperationKind.SAFE_AS
     }
 
     override fun naryOperation(insn: AbstractInsnNode, values: List<BasicValue>): BasicValue? {
