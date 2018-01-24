@@ -380,6 +380,20 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                         condDataFlowInfo
                     newScope = scope
                 }
+
+                // This works for simple pattern
+                val rhsType = context.trace[BindingContext.TYPE, condition.typeReference]
+                if (subjectExpression != null) {
+                    val rttiInformation = RttiExpressionInformation(
+                            subject = subjectExpression,
+                            sourceType = subjectType,
+                            targetType = rhsType,
+                            operation = if (condition.isNegated) RttiOperation.NOT_IS else RttiOperation.IS
+                    )
+                    components.rttiExpressionCheckers.forEach {
+                        it.check(rttiInformation, condition, context.trace)
+                    }
+                }
             }
 
             override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {

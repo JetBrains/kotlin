@@ -20,13 +20,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class TypeReconstructionResult {
     private final KotlinType resultingType;
-    private final int argumentsNumber;
-    private final int inferredArgumentsNumber;
+    private final boolean allArgumentsNotInferred;
+    private final boolean allArgumentsInferred;
 
-    public TypeReconstructionResult(@Nullable KotlinType resultingType, int argumentsNumber, int inferredArgumentsNumber) {
+    public TypeReconstructionResult(@Nullable KotlinType resultingType, boolean allArgumentsNotInferred, boolean allArgumentsInferred) {
         this.resultingType = resultingType;
-        this.argumentsNumber = argumentsNumber;
-        this.inferredArgumentsNumber = inferredArgumentsNumber;
+        this.allArgumentsNotInferred = allArgumentsNotInferred;
+        this.allArgumentsInferred = allArgumentsInferred;
     }
 
     @Nullable
@@ -34,19 +34,11 @@ public class TypeReconstructionResult {
         return resultingType;
     }
 
-    public int getArgumentsNumber() {
-        return argumentsNumber;
-    }
-
-    public int getInferredArgumentsNumber() {
-        return inferredArgumentsNumber;
-    }
-
     public boolean isAllArgumentsNotInferred() {
-        return getInferredArgumentsNumber() == 0;
+        return allArgumentsNotInferred;
     }
 
     public boolean isAllArgumentsInferred() {
-        return getArgumentsNumber() == getInferredArgumentsNumber();
+        return allArgumentsInferred;
     }
 }

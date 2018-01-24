@@ -187,7 +187,7 @@ object CastDiagnosticsUtil {
                     variable.typeConstructor,
                     TypeUtils.makeStarProjection(variable)
                 )
-                notInferredArgumentsNumber += 0
+                ++notInferredArgumentsNumber
             }
         }
 
@@ -195,7 +195,9 @@ object CastDiagnosticsUtil {
         // Let's make a type by substituting them: List<T> -> List<Foo>
         val substituted = TypeSubstitutor.create(substitution).substitute(subtypeWithVariables, Variance.INVARIANT)
 
-        return TypeReconstructionResult(substituted, variables.size, notInferredArgumentsNumber)
+        val allArgumentsInferred = notInferredArgumentsNumber == 0
+        val allArgumentsNotInferred = notInferredArgumentsNumber == variables.size
+        return TypeReconstructionResult(substituted, allArgumentsNotInferred, allArgumentsInferred)
     }
 
     private fun allParametersReified(subtype: KotlinType) = subtype.constructor.parameters.all { it.isReified }

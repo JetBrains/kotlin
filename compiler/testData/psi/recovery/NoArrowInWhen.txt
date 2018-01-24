@@ -27,10 +27,14 @@ KtFile: NoArrowInWhen.kt
           WHEN_CONDITION_IS_PATTERN
             PsiElement(is)('is')
             PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('JetProperty')
+            PATTERN
+              PATTERN_ENTRY
+                PATTERN_CONSTRAINT
+                  PATTERN_TYPE_REFERENCE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('JetProperty')
           PsiWhiteSpace(' ')
           PsiErrorElement:Expecting '->'
             PsiElement(when)('when')

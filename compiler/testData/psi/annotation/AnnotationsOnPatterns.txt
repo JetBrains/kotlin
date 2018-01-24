@@ -28,22 +28,26 @@ KtFile: AnnotationsOnPatterns.kt
           WHEN_CONDITION_IS_PATTERN
             PsiElement(is)('is')
             PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              MODIFIER_LIST
-                ANNOTATION
-                  PsiElement(AT)('@')
-                  PsiElement(LBRACKET)('[')
-                  ANNOTATION_ENTRY
-                    CONSTRUCTOR_CALLEE
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('a')
-                  PsiElement(RBRACKET)(']')
-              PsiWhiteSpace(' ')
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
+            PATTERN
+              PATTERN_ENTRY
+                PATTERN_CONSTRAINT
+                  PATTERN_TYPE_REFERENCE
+                    TYPE_REFERENCE
+                      MODIFIER_LIST
+                        ANNOTATION
+                          PsiElement(AT)('@')
+                          PsiElement(LBRACKET)('[')
+                          ANNOTATION_ENTRY
+                            CONSTRUCTOR_CALLEE
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('a')
+                          PsiElement(RBRACKET)(']')
+                      PsiWhiteSpace(' ')
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('T')
           PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
