@@ -12082,6 +12082,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inlineClasses/basicInlineClassDeclarationDisabled.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("inlineClassDeclarationCheck.kt")
+            public void testInlineClassDeclarationCheck() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inlineClasses/inlineClassDeclarationCheck.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/inner")
