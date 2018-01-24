@@ -65,7 +65,7 @@
         <attribute name="version"/>
         <attribute name="bin" default="true"/>
         <attribute name="src" default="true"/>
-        <attribute name="server" default="https://repo1.maven.org/maven2/"/>
+        <attribute name="server" default="https://repo1.maven.org/maven2"/>
         <attribute name="jar.name.base" default="@{lib}-@{version}"/>
         <attribute name="target.jar.name.base" default="@{jar.name.base}"/>
         <attribute name="path" default="@{prefix}/@{lib}/@{version}/@{jar.name.base}"/>
