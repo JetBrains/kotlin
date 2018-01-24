@@ -1,6 +1,8 @@
-description = 'Kotlin Standard Library'
+description = 'Kotlin Standard Library for JVM'
 
-apply plugin: 'kotlin'
+apply plugin: 'kotlin-platform-jvm'
+
+archivesBaseName = 'kotlin-stdlib'
 
 configureJvm6Project(project)
 configureDist(project)
@@ -20,22 +22,16 @@ sourceSets {
             }
         }
     }
-    builtins {
-        java {
-            srcDir "${rootDir}/core/builtins/src"
-            srcDir "jvm/runtime"
-        }
-    }
     main {
         java {
             srcDir "${rootDir}/core/builtins/src"
-            srcDir "jvm/runtime"
+            srcDir 'runtime'
             srcDir 'src'
         }
     }
     experimental {
         kotlin {
-            srcDir "experimental"
+            srcDir "../experimental"
         }
     }
     test {
@@ -45,22 +41,17 @@ sourceSets {
     }
     java9 {
         java {
-            srcDir 'jvm/java9'
+            srcDir 'java9'
         }
     }
 }
 
 dependencies {
-    builtinsCompile group: 'org.jetbrains', name: 'annotations', version:'13.0'
-    compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
-    compile sourceSets.builtins.output
-    
-    testCompile project(':kotlin-test:kotlin-test-junit')
-}
+    expectedBy project(":kotlin-stdlib-common")
 
-configurations {
-    mainJar
-    builtins
+    compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
+
+    testCompile project(':kotlin-test:kotlin-test-junit')
 }
 
 jar {
@@ -83,11 +74,6 @@ task distJar(type: Jar) {
     // from sourceSets.java9.output
 }
 
-task builtinsJar(type: Jar) {
-    baseName = "builtins"
-    from("${rootDir}/dist/builtins")
-    from sourceSets.builtins.output
-}
 
 sourcesJar {
     from "${rootDir}/core/builtins/native"
@@ -96,8 +82,6 @@ sourcesJar {
 artifacts {
     archives sourcesJar
     archives javadocJar
-    mainJar jar
-    builtins builtinsJar
 }
 
 dist {
@@ -122,21 +106,11 @@ task dexMethodCount(type: DexMethodCount) {
 }
 check.dependsOn(dexMethodCount)
 
-compileBuiltinsKotlin {
-    dependsOn ":core:builtins:serialize"
-    kotlinOptions {
-        freeCompilerArgs = [
-                "-version",
-                "-Xallow-kotlin-package",
-                "-Xdump-declarations-to=${buildDir}/runtime-declarations.json",
-                "-cp", "${rootDir}/dist/builtins",
-                "-module-name", "kotlin-runtime"
-        ]
-    }
-}
 compileKotlin {
-    dependsOn ":core:builtins:serialize"
+    dependsOn(":core:builtins:serialize")
     dependsOn(":prepare:build.version:writeStdlibVersion")
+    dependsOn(":kotlin-stdlib-common:preprocessSourcesMain")
+    classpath += files("${rootDir}/dist/builtins")
     kotlinOptions {
         freeCompilerArgs = [
                 "-version",
@@ -144,11 +118,15 @@ compileKotlin {
                 "-Xmultifile-parts-inherit",
                 "-Xnormalize-constructor-calls=enable",
                 "-Xdump-declarations-to=${buildDir}/stdlib-declarations.json",
-                "-cp", "${rootDir}/dist/builtins",
-                "-module-name", project.name
+                "-module-name", "kotlin-stdlib"
         ]
     }
 }
+
+compileTestKotlin {
+    dependsOn(":kotlin-stdlib-common:preprocessSourcesTest")
+}
+
 
 compileExperimentalKotlin {
     kotlinOptions {

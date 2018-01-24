@@ -34,7 +34,7 @@ class RuntimePublicAPITest {
 
     @Test fun kotlinStdlibRuntimeMerged() {
         snapshotAPIAndCompare(
-            "../../stdlib/build/libs", "kotlin-stdlib",
+            "../../stdlib/jvm/build/libs", "kotlin-stdlib",
             listOf("../stdlib-declarations.json", "../stdlib-experimental-declarations.json"),
             listOf("kotlin.jvm.internal")
         )
