@@ -94,6 +94,8 @@ class CoroutineTransformerMethodVisitor(
             continuationIndex = methodNode.maxLocals++
 
             prepareMethodNodePreludeForNamedFunction(methodNode)
+        } else {
+            ReturnUnitMethodTransformer.cleanUpReturnsUnitMarkers(methodNode, ReturnUnitMethodTransformer.findReturnsUnitMarks(methodNode))
         }
 
         for (suspensionPoint in suspensionPoints) {

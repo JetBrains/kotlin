@@ -124,10 +124,10 @@ object ReturnUnitMethodTransformer : MethodTransformer() {
     private fun findReturnUnitSequences(methodNode: MethodNode): Collection<AbstractInsnNode> =
         methodNode.instructions.asSequence().filter { it.isUnitInstance() && it.next?.opcode == Opcodes.ARETURN }.toList()
 
-    private fun findReturnsUnitMarks(methodNode: MethodNode): Collection<AbstractInsnNode> =
+    internal fun findReturnsUnitMarks(methodNode: MethodNode): Collection<AbstractInsnNode> =
         methodNode.instructions.asSequence().filter(::isReturnsUnitMarker).toList()
 
-    private fun cleanUpReturnsUnitMarkers(methodNode: MethodNode, unitMarks: Collection<AbstractInsnNode>) {
+    internal fun cleanUpReturnsUnitMarkers(methodNode: MethodNode, unitMarks: Collection<AbstractInsnNode>) {
         unitMarks.forEach { methodNode.instructions.removeAll(listOf(it.previous, it)) }
     }
 }
