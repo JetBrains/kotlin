@@ -37,7 +37,7 @@ dependencies {
     compile(projectTests(":plugins:uast-kotlin"))
     compile(projectTests(":js:js.tests"))
     compile(projectTests(":generators:test-generator"))
-    //compileOnly(intellijDep("jps-build-test"))
+    compileOnly(intellijDep("jps-build-test"))
     compileOnly(project(":kotlin-reflect-api"))
 
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
