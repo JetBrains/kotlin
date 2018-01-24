@@ -800,22 +800,35 @@ public fun CharSequence.commonSuffixWith(other: CharSequence, ignoreCase: Boolea
 
 // indexOfAny()
 
-private fun CharSequence.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, Char>? {
+private fun CharSequence.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase: Boolean, last: Boolean): Int {
     if (!ignoreCase && chars.size == 1 && this is String) {
         val char = chars.single()
         val index = if (!last) nativeIndexOf(char, startIndex) else nativeLastIndexOf(char, startIndex)
-        return if (index < 0) null else index to char
+        return if (index < 0) -1 else index
     }
 
-    val indices = if (!last) startIndex.coerceAtLeast(0)..lastIndex else startIndex.coerceAtMost(lastIndex) downTo 0
-    for (index in indices) {
-        val charAtIndex = get(index)
-        val matchingCharIndex = chars.indexOfFirst { it.equals(charAtIndex, ignoreCase) }
-        if (matchingCharIndex >= 0)
-            return index to chars[matchingCharIndex]
+    // Split it to two loops to avoid implicit IntRange allocation
+    when (last) {
+        true -> {
+            for (index in startIndex.coerceAtMost(lastIndex) downTo 0) {
+                val charAtIndex = get(index)
+                val matchingCharIndex = chars.indexOfFirst { it.equals(charAtIndex, ignoreCase) }
+                if (matchingCharIndex >= 0)
+                    return index
+            }
+        }
+
+        false -> {
+            for (index in startIndex.coerceAtLeast(0)..lastIndex) {
+                val charAtIndex = get(index)
+                val matchingCharIndex = chars.indexOfFirst { it.equals(charAtIndex, ignoreCase) }
+                if (matchingCharIndex >= 0)
+                    return index
+            }
+        }
     }
 
-    return null
+    return -1
 }
 
 /**
@@ -827,7 +840,7 @@ private fun CharSequence.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase
  *
  */
 public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
-    findAnyOf(chars, startIndex, ignoreCase, last = false)?.first ?: -1
+    findAnyOf(chars, startIndex, ignoreCase, last = false)
 
 /**
  * Finds the index of the last occurrence of any of the specified [chars] in this char sequence,
@@ -839,7 +852,7 @@ public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignore
  *
  */
 public fun CharSequence.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
-    findAnyOf(chars, startIndex, ignoreCase, last = true)?.first ?: -1
+    findAnyOf(chars, startIndex, ignoreCase, last = true)
 
 
 private fun CharSequence.indexOf(other: CharSequence, startIndex: Int, endIndex: Int, ignoreCase: Boolean, last: Boolean = false): Int {
@@ -1109,7 +1122,8 @@ private class DelimitedRangesSequence(private val input: CharSequence, private v
 private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
     require(limit >= 0, { "Limit must be non-negative, but was $limit." })
 
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimiters, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to 1 } })
+    return DelimitedRangesSequence(this, startIndex, limit, { startIndex ->
+        findAnyOf(delimiters, startIndex, ignoreCase = ignoreCase, last = false).let { if (it == -1) null else it to 1 } })
 }
 
 
