@@ -37,7 +37,8 @@ import org.jetbrains.org.objectweb.asm.tree.*
 
 class RedundantNullCheckMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        while (TransformerPass(internalClassName, methodNode).run()) {}
+        while (TransformerPass(internalClassName, methodNode).run()) {
+        }
     }
 
     private class TransformerPass(val internalClassName: String, val methodNode: MethodNode) {
@@ -79,10 +80,10 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
         }
 
         private fun AbstractInsnNode.isOptimizable() =
-                opcode == Opcodes.IFNULL ||
-                opcode == Opcodes.IFNONNULL ||
-                opcode == Opcodes.INSTANCEOF ||
-                isCheckExpressionValueIsNotNull()
+            opcode == Opcodes.IFNULL ||
+                    opcode == Opcodes.IFNONNULL ||
+                    opcode == Opcodes.INSTANCEOF ||
+                    isCheckExpressionValueIsNotNull()
 
         private fun transformTrivialChecks(nullabilityMap: Map<AbstractInsnNode, StrictBasicValue>) {
             for ((insn, value) in nullabilityMap) {
@@ -108,8 +109,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                 popReferenceValueBefore(insn)
                 if (alwaysTrue) {
                     set(insn, JumpInsnNode(Opcodes.GOTO, insn.label))
-                }
-                else {
+                } else {
                     remove(insn)
                 }
             }
@@ -120,8 +120,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
             if (nullability == Nullability.NULL) {
                 changes = true
                 transformTrivialInstanceOf(insn, false)
-            }
-            else if (nullability == Nullability.NOT_NULL && value.type.internalName == insn.desc) {
+            } else if (nullability == Nullability.NOT_NULL && value.type.internalName == insn.desc) {
                 changes = true
                 transformTrivialInstanceOf(insn, true)
             }
@@ -160,8 +159,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                             val previous = insn.previous ?: continue@insnLoop
                             if (previous.opcode == Opcodes.ALOAD) {
                                 addDependentCheck(insn, previous as VarInsnNode)
-                            }
-                            else if (previous.opcode == Opcodes.DUP) {
+                            } else if (previous.opcode == Opcodes.DUP) {
                                 val previous2 = previous.previous ?: continue@insnLoop
                                 if (previous2.opcode == Opcodes.ALOAD) {
                                     addDependentCheck(insn, previous2 as VarInsnNode)
@@ -184,8 +182,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                             val insn1 = ldcInsn.previous ?: continue@insnLoop
                             if (insn1.opcode == Opcodes.ALOAD) {
                                 aLoadInsn = insn1 as VarInsnNode
-                            }
-                            else if (insn1.opcode == Opcodes.DUP) {
+                            } else if (insn1.opcode == Opcodes.DUP) {
                                 val insn2 = insn1.previous ?: continue@insnLoop
                                 if (insn2.opcode == Opcodes.ALOAD) {
                                     aLoadInsn = insn2 as VarInsnNode
@@ -227,7 +224,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                     Opcodes.INVOKESTATIC -> {
                         when {
                             insn.isCheckParameterIsNotNull() ||
-                            insn.isCheckExpressionValueIsNotNull() ->
+                                    insn.isCheckExpressionValueIsNotNull() ->
                                 injectAssumptionsForNotNullAssertion(varIndex, insn)
                             insn.isPseudo(PseudoInsn.STORE_NOT_NULL) ->
                                 injectCodeForStoreNotNull(insn)
@@ -318,8 +315,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                     methodNode.instructions.add(newLabel)
                     next.label = newLabel
                     insertAfterNotNull = newLabel
-                }
-                else {
+                } else {
                     originalLabel = null
                     insertAfterNotNull = next
                 }
@@ -395,41 +391,41 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
 }
 
 internal fun AbstractInsnNode.isInstanceOfOrNullCheck() =
-        opcode == Opcodes.INSTANCEOF ||
-        opcode == Opcodes.IFNULL ||
-        opcode == Opcodes.IFNONNULL
+    opcode == Opcodes.INSTANCEOF ||
+            opcode == Opcodes.IFNULL ||
+            opcode == Opcodes.IFNONNULL
 
 internal fun AbstractInsnNode.isCheckParameterIsNotNull() =
-        isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
-            owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
-            name == "checkParameterIsNotNull" &&
-            desc == "(Ljava/lang/Object;Ljava/lang/String;)V"
-        }
+    isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
+        owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
+                name == "checkParameterIsNotNull" &&
+                desc == "(Ljava/lang/Object;Ljava/lang/String;)V"
+    }
 
 internal fun AbstractInsnNode.isCheckExpressionValueIsNotNull() =
-        isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
-            owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
-            name == "checkExpressionValueIsNotNull" &&
-            desc == "(Ljava/lang/Object;Ljava/lang/String;)V"
-        }
+    isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
+        owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
+                name == "checkExpressionValueIsNotNull" &&
+                desc == "(Ljava/lang/Object;Ljava/lang/String;)V"
+    }
 
 internal fun AbstractInsnNode.isThrowIntrinsic() =
-        isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
-            owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
-            name in THROW_INTRINSIC_METHOD_NAMES
-        }
+    isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
+        owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
+                name in THROW_INTRINSIC_METHOD_NAMES
+    }
 
 internal val THROW_INTRINSIC_METHOD_NAMES =
-        setOf(
-                "throwNpe",
-                "throwUninitializedProperty",
-                "throwUninitializedPropertyAccessException",
-                "throwAssert",
-                "throwIllegalArgument",
-                "throwIllegalState",
-                "throwParameterIsNullException",
-                "throwUndefinedForReified"
-        )
+    setOf(
+        "throwNpe",
+        "throwUninitializedProperty",
+        "throwUninitializedPropertyAccessException",
+        "throwAssert",
+        "throwIllegalArgument",
+        "throwIllegalState",
+        "throwParameterIsNullException",
+        "throwUndefinedForReified"
+    )
 
 internal fun InsnList.popReferenceValueBefore(insn: AbstractInsnNode) {
     val prev = insn.previous

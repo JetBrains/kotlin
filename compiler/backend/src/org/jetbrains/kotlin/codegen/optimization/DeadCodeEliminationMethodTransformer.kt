@@ -55,15 +55,15 @@ class DeadCodeEliminationMethodTransformer : MethodTransformer() {
     }
 
     private fun shouldRemove(insn: AbstractInsnNode, index: Int, frames: Array<out Any?>): Boolean =
-            when (insn) {
-                is LabelNode ->
-                    // Do not remove label nodes because they can be referred by try/catch blocks or local variables table
-                    false
-                is LineNumberNode ->
-                    isDeadLineNumber(insn, index, frames)
-                else ->
-                    frames[index] == null
-            }
+        when (insn) {
+            is LabelNode ->
+                // Do not remove label nodes because they can be referred by try/catch blocks or local variables table
+                false
+            is LineNumberNode ->
+                isDeadLineNumber(insn, index, frames)
+            else ->
+                frames[index] == null
+        }
 
     private fun isDeadLineNumber(insn: LineNumberNode, index: Int, frames: Array<out Any?>): Boolean {
         // Line number node is "dead" if the corresponding line number interval

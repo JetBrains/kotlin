@@ -17,13 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.codegen.optimization.common.ProperTrackedReferenceValue
-import org.jetbrains.kotlin.codegen.optimization.common.ReferenceTrackingInterpreter
-import org.jetbrains.kotlin.codegen.optimization.common.ReferenceValueDescriptor
-import org.jetbrains.kotlin.codegen.optimization.common.TrackedReferenceValue
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
-import org.jetbrains.kotlin.codegen.optimization.common.removeEmptyCatchBlocks
-import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
+import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
@@ -71,10 +65,10 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
         var cleanVarInstruction: VarInsnNode? = null
 
         fun canRewrite(): Boolean =
-                !hazard &&
-                initCallInsn != null &&
-                localVar != null &&
-                localVarIndex >= 0
+            !hazard &&
+                    initCallInsn != null &&
+                    localVar != null &&
+                    localVarIndex >= 0
 
         override fun onUseAsTainted() {
             hazard = true
@@ -118,10 +112,10 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
 
         private inner class Interpreter : ReferenceTrackingInterpreter() {
             override fun newOperation(insn: AbstractInsnNode): BasicValue =
-                    refValuesByNewInsn[insn]?.let { descriptor ->
-                        ProperTrackedReferenceValue(descriptor.refType, descriptor)
-                    }
-                    ?: super.newOperation(insn)
+                refValuesByNewInsn[insn]?.let { descriptor ->
+                    ProperTrackedReferenceValue(descriptor.refType, descriptor)
+                }
+                        ?: super.newOperation(insn)
 
             override fun processRefValueUsage(value: TrackedReferenceValue, insn: AbstractInsnNode, position: Int) {
                 for (descriptor in value.descriptors) {
@@ -179,7 +173,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
         }
 
         private fun BasicValue.getCapturedVarOrNull() =
-                safeAs<ProperTrackedReferenceValue>()?.descriptor?.safeAs<CapturedVarDescriptor>()
+            safeAs<ProperTrackedReferenceValue>()?.descriptor?.safeAs<CapturedVarDescriptor>()
 
         private fun assignLocalVars() {
             for (localVar in methodNode.localVariables) {
@@ -195,8 +189,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
 
                 if (descriptor.localVar == null) {
                     descriptor.localVar = localVar
-                }
-                else {
+                } else {
                     descriptor.hazard = true
                 }
             }
@@ -210,8 +203,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
                     refValue.localVarIndex = methodNode.maxLocals
                     methodNode.maxLocals += 2
                     localVar.index = refValue.localVarIndex
-                }
-                else {
+                } else {
                     refValue.localVarIndex = localVar.index
                 }
 
@@ -223,7 +215,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
                 }
 
                 val cleanInstructions = findCleanInstructions(refValue, oldVarIndex, methodNode.instructions)
-                if (cleanInstructions.size > 1 ) {
+                if (cleanInstructions.size > 1) {
                     refValue.hazard = true
                     continue
                 }
@@ -235,12 +227,14 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
             return InsnSequence(instructions).filterIsInstance<VarInsnNode>().filter {
                 it.opcode == Opcodes.ASTORE && it.`var` == oldVarIndex
             }.filter {
-                it.previous?.opcode == Opcodes.ACONST_NULL
-            }.filter {
-                val operationIndex = instructions.indexOf(it)
-                val localVariableNode = refValue.localVar!!
-                instructions.indexOf(localVariableNode.start) < operationIndex && operationIndex < instructions.indexOf(localVariableNode.end)
-            }.toList()
+                    it.previous?.opcode == Opcodes.ACONST_NULL
+                }.filter {
+                    val operationIndex = instructions.indexOf(it)
+                    val localVariableNode = refValue.localVar!!
+                    instructions.indexOf(localVariableNode.start) < operationIndex && operationIndex < instructions.indexOf(
+                        localVariableNode.end
+                    )
+                }.toList()
         }
 
         private fun rewrite() {

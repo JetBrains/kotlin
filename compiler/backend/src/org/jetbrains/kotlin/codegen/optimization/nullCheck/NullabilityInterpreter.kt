@@ -47,7 +47,7 @@ class NullabilityInterpreter : OptimizationBasicInterpreter() {
     }
 
     private fun Type?.isReferenceType() =
-            this?.sort.let { it == Type.OBJECT || it == Type.ARRAY }
+        this?.sort.let { it == Type.OBJECT || it == Type.ARRAY }
 
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? {
         val defaultResult = super.unaryOperation(insn, value)
@@ -82,29 +82,29 @@ class NullabilityInterpreter : OptimizationBasicInterpreter() {
     }
 
     override fun merge(v: BasicValue, w: BasicValue): BasicValue =
-            when {
-                v is NullBasicValue && w is NullBasicValue ->
-                    NullBasicValue
-                v is NullBasicValue || w is NullBasicValue ->
-                    StrictBasicValue.REFERENCE_VALUE
-                v is ProgressionIteratorBasicValue && w is ProgressionIteratorBasicValue ->
-                    mergeNotNullValuesOfSameKind(v, w)
-                v is ProgressionIteratorBasicValue && w is NotNullBasicValue ->
-                    NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
-                w is ProgressionIteratorBasicValue && v is NotNullBasicValue ->
-                    NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
-                v is NotNullBasicValue && w is NotNullBasicValue ->
-                    mergeNotNullValuesOfSameKind(v, w)
-                else ->
-                    super.merge(v, w)
-            }
+        when {
+            v is NullBasicValue && w is NullBasicValue ->
+                NullBasicValue
+            v is NullBasicValue || w is NullBasicValue ->
+                StrictBasicValue.REFERENCE_VALUE
+            v is ProgressionIteratorBasicValue && w is ProgressionIteratorBasicValue ->
+                mergeNotNullValuesOfSameKind(v, w)
+            v is ProgressionIteratorBasicValue && w is NotNullBasicValue ->
+                NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
+            w is ProgressionIteratorBasicValue && v is NotNullBasicValue ->
+                NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
+            v is NotNullBasicValue && w is NotNullBasicValue ->
+                mergeNotNullValuesOfSameKind(v, w)
+            else ->
+                super.merge(v, w)
+        }
 
     private fun mergeNotNullValuesOfSameKind(v: StrictBasicValue, w: StrictBasicValue) =
-            if (v.type == w.type) v else NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
+        if (v.type == w.type) v else NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
 
 }
 
 
 fun TypeInsnNode.getObjectType(): Type =
-        Type.getObjectType(desc)
+    Type.getObjectType(desc)
 

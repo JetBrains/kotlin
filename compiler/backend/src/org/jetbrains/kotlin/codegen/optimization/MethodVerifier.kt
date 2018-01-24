@@ -24,8 +24,7 @@ class MethodVerifier(private val checkPoint: String) : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
         try {
             analyze(internalClassName, methodNode, BasicVerifier())
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             throw AssertionError("$checkPoint: incorrect bytecode", e)
         }
     }

@@ -30,6 +30,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 public class ProgressionIteratorBasicValue extends StrictBasicValue {
     private final static ImmutableMap<String, Type> VALUES_TYPENAME_TO_TYPE;
+
     static {
         ImmutableMap.Builder<String, Type> builder = ImmutableMap.builder();
         for (PrimitiveType primitiveType : RangeCodegenUtilKt.getSupportedRangeTypes()) {
@@ -39,6 +40,7 @@ public class ProgressionIteratorBasicValue extends StrictBasicValue {
     }
 
     private static final ImmutableMap<PrimitiveType, ProgressionIteratorBasicValue> ITERATOR_VALUE_BY_ELEMENT_PRIMITIVE_TYPE;
+
     static {
         ImmutableMap.Builder<PrimitiveType, ProgressionIteratorBasicValue> builder = ImmutableMap.builder();
         for (PrimitiveType elementType : RangeCodegenUtilKt.getSupportedRangeTypes()) {

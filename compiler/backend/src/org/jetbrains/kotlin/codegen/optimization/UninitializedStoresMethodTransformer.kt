@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class UninitializedStoresMethodTransformer(
-        private val mode: JVMConstructorCallNormalizationMode
+    private val mode: JVMConstructorCallNormalizationMode
 ) : MethodTransformer() {
 
     override fun transform(internalClassName: String, methodNode: MethodNode) {
