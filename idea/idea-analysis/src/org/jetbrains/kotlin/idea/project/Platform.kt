@@ -50,6 +50,14 @@ private val multiPlatformProjectsArg: String by lazy {
     CommonCompilerArguments::multiPlatform.annotations.filterIsInstance<Argument>().single().value
 }
 
+private val effectSystemArg: String by lazy {
+    CommonCompilerArguments::effectSystem.annotations.filterIsInstance<Argument>().single().value
+}
+
+private val readDeserializedContractsArg: String by lazy {
+    CommonCompilerArguments::readDeserializedContracts.annotations.filterIsInstance<Argument>().single().value
+}
+
 fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
     val languageLevel = getLibraryLanguageLevel(this, null, facetSettings.targetPlatformKind)
@@ -172,6 +180,15 @@ private fun getExtraLanguageFeatures(
             compilerSettings?.additionalArguments?.contains(multiPlatformProjectsArg) == true ||
             (module != null && module.implementsCommonModule)) {
             put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
+        }
+
+        if (compilerSettings?.additionalArguments?.contains(effectSystemArg) == true) {
+            put(LanguageFeature.UseReturnsEffect, LanguageFeature.State.ENABLED)
+            put(LanguageFeature.UseCallsInPlaceEffect, LanguageFeature.State.ENABLED)
+        }
+
+        if (compilerSettings?.additionalArguments?.contains(readDeserializedContractsArg) == true) {
+            put(LanguageFeature.ReadDeserializedContracts, LanguageFeature.State.ENABLED)
         }
     }
 }
