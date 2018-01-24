@@ -550,6 +550,27 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
     }
 
+    @TestMetadata("compiler/testData/writeSignature/inlineClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClasses extends AbstractWriteSignatureTest {
+        public void testAllFilesPresentInInlineClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simpleSignatureWithInlineClassTypesAsPrimitive.kt")
+        public void testSimpleSignatureWithInlineClassTypesAsPrimitive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/inlineClasses/simpleSignatureWithInlineClassTypesAsPrimitive.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleSignatureWithInlineClassTypesAsReference.kt")
+        public void testSimpleSignatureWithInlineClassTypesAsReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/inlineClasses/simpleSignatureWithInlineClassTypesAsReference.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/writeSignature/nothing")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
