@@ -19,42 +19,33 @@ package org.jetbrains.kotlin.psi.pattern
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.expressions.*
 
-class KtPatternTypedTuple(node: ASTNode) : KtPatternEntry(node) {
+class KtPatternTypedTuple(node: ASTNode) : KtPatternElement(node) {
 
-    val typeReference: KtTypeReference?
-        get() = findChildByType(KtNodeTypes.TYPE_REFERENCE)
+    val typeReference: KtPatternTypeReference?
+        get() = findChildByType(KtNodeTypes.PATTERN_TYPE_REFERENCE)
 
     val tuple: KtPatternTuple?
         get() = findChildByType(KtNodeTypes.PATTERN_TUPLE)
 
-    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
-        return visitor.visitPatternTypedTuple(this, data)
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) =  visitor.visitPatternTypedTuple(this, data)
+
+    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
+        typeReference?.getTypeInfo(resolver, state)
     }
 
-    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo = resolver.restoreOrCreate(this, state) {
-        typeReference?.let { typeReference ->
-            resolver.getTypeInfo(typeReference, state).also {
-                it.type.errorIfNull(typeReference, state, Errors.NON_DERIVABLE_TYPE)
-            }
-        }
-    }
-
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
-        val info = resolver.resolveType(this, state)
-        val expressions = tuple?.expressions.errorIfNull(this, state, Errors.EXPECTED_PATTERN_TUPLE_INSTANCE) ?: return info
-        if (expressions.isEmpty()) {
-            state.context.trace.report(Errors.PATTERN_EMPTY_TUPLE.on(this, this))
-        }
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
+        val typeReferenceInfo = typeReference?.resolve(resolver, state.setIsTuple())
+        val info = resolver.resolveType(this, state).and(typeReferenceInfo)
+        val entries = tuple?.entries.errorIfNull(this, state, Errors.EXPECTED_PATTERN_TUPLE_INSTANCE) ?: return info
         val receiverType = resolver.getComponentsTypeInfoReceiver(this, state.replaceType(info.type)) ?: info.type
         state.context.trace.record(BindingContext.PATTERN_COMPONENTS_RECEIVER_TYPE, this, receiverType)
-        val typesInfo = resolver.getComponentsTypeInfo(this, expressions, state.replaceType(receiverType))
-        return info.and(typesInfo.zip(expressions) { typeInfo, expression ->
-            expression.resolve(resolver, state.next(typeInfo.type))
+        val typesInfo = resolver.getComponentsTypeInfo(this, entries, state.replaceType(receiverType))
+        return info.and(typesInfo.zip(entries) { typeInfo, entry ->
+            entry.resolve(resolver, state.next(typeInfo.type))
         })
     }
 }

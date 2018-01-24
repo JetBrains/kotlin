@@ -19,23 +19,22 @@ package org.jetbrains.kotlin.psi.pattern
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
 class KtPatternTuple(node: ASTNode) : KtPatternElement(node) {
 
+    val entries: List<KtPatternEntry>
+        get() = findChildrenByType(KtNodeTypes.PATTERN_ENTRY)
+
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPatternTuple(this, data)
 
-    val expressions: List<KtPatternExpression>
-        get() = findChildrenByType(KtNodeTypes.PATTERN_EXPRESSION)
-
-
-    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
+    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
         throw UnsupportedOperationException("use KtPattenTypedTuple.getTypeInfo")
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
         throw UnsupportedOperationException("use KtPattenTypedTuple.resolve")
     }
 }

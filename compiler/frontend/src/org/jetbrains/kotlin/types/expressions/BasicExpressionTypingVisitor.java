@@ -315,7 +315,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
 
         KotlinType subjectType = typeInfo.getType();
-        KotlinType targetType = reconstructBareType(right, possiblyBareTarget, subjectType, context.trace, components.builtIns);
+        KotlinType targetType = reconstructBareType(right, possiblyBareTarget, subjectType, context.trace, components.builtIns, true);
 
         if (subjectType != null) {
             checkBinaryWithTypeRHS(expression, context, targetType, subjectType);

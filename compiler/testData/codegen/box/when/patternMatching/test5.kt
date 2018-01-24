@@ -8,10 +8,10 @@ fun box() : String {
     val x: Int = Random().nextInt(5)
 
     val str = when (x) {
-        match 0 -> "zero"
-        match 1 -> "one"
-        match 2 -> "two"
-        match _ -> "many"
+        0 -> "zero"
+        1 -> "one"
+        2 -> "two"
+        is _ -> "many"
         else -> throw java.lang.IllegalStateException("Unexpected else")
     }
 

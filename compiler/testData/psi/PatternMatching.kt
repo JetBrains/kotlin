@@ -1,3 +1,4 @@
+
 data class A(val a: Int, val b: Int)
 
 class B(val a: Int, val b: Int) {
@@ -40,4 +41,13 @@ fun box() : String {
         else -> return "match fail"
     }
     return "fail when generation"
+}
+
+fun matcher(any: Any?, y: Any?) = when(any) {
+    is eq y -> "is eq y"
+    is String -> "is String"
+    !is Pair(1, _), !is Pair(_, 2) -> "!is Pair(1, _), !is Pair(_, 2)"
+    is Pair(_, !eq 2) -> throw java.lang.UnsupportedOperationException("unexpected case")
+    is Pair(1, 2) -> "is Pair(1, 2)"
+    else -> throw java.lang.UnsupportedOperationException("unexpected case")
 }

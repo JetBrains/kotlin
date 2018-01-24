@@ -3,8 +3,8 @@
 fun box(): String {
     val x: Any = Pair(10, 2)
     when (x) {
-        match Pair<*, *>(a, b) -> return "OK"
-        match a -> return "FAIL"
+        is Pair(val a, val b) -> return "OK"
+        is val a -> return "FAIL"
     }
     return "FAIL"
 }

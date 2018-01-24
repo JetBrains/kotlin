@@ -8,10 +8,10 @@ fun box(): String {
     val a = 10
     val x = Any();
     val b = when (x) {
-        match A(a, b: Int) -> a
-        match Pair<*, *>(c, d) -> a + a
-        match A(a) -> a
-        match Pair<*, *>(a: Int, b: Int) -> a + b
+        is A(val a, val b: Int) -> a
+        is Pair(val c, val d) -> a + a
+        is A(val a) -> a
+        is Pair(val a: Int, val b: Int) -> a + b
         else -> return "OK"
     }
     return "FAIL"

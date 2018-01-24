@@ -13,8 +13,8 @@ class Computer() : Device {
 }
 
 fun goIdle(device: Device) = when (device) {
-    match p: Phone -> p.screenOff
-    match c: Computer -> c.screenSaverOn
+    is val p: Phone -> p.screenOff
+    is val c: Computer -> c.screenSaverOn
     else -> throw java.lang.IllegalStateException("Unexpected else")
 }
 

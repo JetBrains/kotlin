@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.pattern.KtWhenConditionMatchPattern
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionInformation
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiOperation
@@ -56,7 +55,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val typeReference = expression.typeReference
         if (typeReference != null && knownType != null) {
             val dataFlowValue = DataFlowValueFactory.createDataFlowValue(leftHandSide, knownType, context)
-            val (_, conditionInfo) = checkTypeForIs(context, expression, expression.isNegated, knownType, typeReference, dataFlowValue)
+            val (_, conditionInfo) = checkTypeForIs(context, expression, expression.isNegated, knownType, typeReference, true, dataFlowValue)
             val newDataFlowInfo = conditionInfo.thenInfo.and(typeInfo.dataFlowInfo)
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo)
         }
@@ -315,12 +314,10 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         var entryInfo: ConditionalDataFlowInfo? = null
         var entryScope: LexicalScope? = null
         var contextForCondition = context
-        for (condition in whenEntry.conditions) {
-            if (condition.isMatch && whenEntry.conditions.size > 1) {
-                context.trace.report(NOT_ALLOW_OR_CONDITIONS_WITH_MATCH.on(whenEntry, condition))
-            }
+        val conditions = whenEntry.conditions
+        for (condition in conditions) {
             val (conditionInfo, scope) = checkWhenCondition(
-                subjectExpression, subjectType, condition,
+                conditions.size, subjectExpression, subjectType, condition,
                 contextForCondition, subjectDataFlowValue
             )
             entryScope = scope
@@ -336,6 +333,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     }
 
     private fun checkWhenCondition(
+        num_conditions: Int,
         subjectExpression: KtExpression?,
         subjectType: KotlinType,
         condition: KtWhenCondition,
@@ -370,38 +368,16 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 if (subjectExpression == null) {
                     context.trace.report(EXPECTED_CONDITION.on(condition))
                 }
-                val typeReference = condition.typeReference
-                if (typeReference != null) {
-                    val (_, result) = checkTypeForIs(context, condition, condition.isNegated, subjectType, typeReference, subjectDataFlowValue)
-                    newDataFlowInfo = if (condition.isNegated) {
-                        ConditionalDataFlowInfo(result.elseInfo, result.thenInfo)
-                    } else {
-                        result
-                    }
-                    val rhsType = context.trace[BindingContext.TYPE, typeReference]
-                    if (subjectExpression != null) {
-                        val rttiInformation = RttiExpressionInformation(
-                            subject = subjectExpression,
-                            sourceType = subjectType,
-                            targetType = rhsType,
-                            operation = if (condition.isNegated) RttiOperation.NOT_IS else RttiOperation.IS
-                        )
-                        components.rttiExpressionCheckers.forEach {
-                            it.check(rttiInformation, condition, context.trace)
-                        }
-                    }
-                }
-            }
-
-            override fun visitWhenConditionMatchPattern(condition: KtWhenConditionMatchPattern) {
-                if (subjectExpression == null) {
-                    context.trace.report(EXPECTED_CONDITION.on(condition))
-                }
+                val allowDefinition = num_conditions == 1 && !condition.isNegated
                 condition.pattern?.let {
                     val visitor = this@PatternMatchingTypingVisitor
                     val resolver = PatternResolver(visitor, components, facade)
-                    val (typeInfo, scope) = resolver.resolve(context, it, subjectType, true, subjectDataFlowValue)
-                    newDataFlowInfo = ConditionalDataFlowInfo(typeInfo.dataFlowInfo)
+                    val (typeInfo, scope) = resolver.resolve(context, it, subjectType, allowDefinition, condition.isNegated, subjectDataFlowValue)
+                    val condDataFlowInfo = typeInfo.dataFlowInfo
+                    newDataFlowInfo = if (condition.isNegated)
+                        ConditionalDataFlowInfo(condDataFlowInfo.elseInfo, condDataFlowInfo.thenInfo)
+                    else
+                        condDataFlowInfo
                     newScope = scope
                 }
             }
@@ -470,6 +446,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         negated: Boolean,
         subjectType: KotlinType,
         typeReferenceAfterIs: KtTypeReference,
+        checkArgumentsOnRHS: Boolean,
         subjectDataFlowValue: DataFlowValue
     ): Pair<KotlinType, ConditionalDataFlowInfo> {
         val typeResolutionContext =

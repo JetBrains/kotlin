@@ -35,11 +35,14 @@ import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
 import org.jetbrains.kotlin.psi.addRemoveModifier.removeModifier
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
 import org.jetbrains.kotlin.psi.typeRefHelpers.setTypeReference
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.ConditionalDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
+import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
+import org.jetbrains.kotlin.types.expressions.and
 
-class KtPatternVariableDeclaration(node: ASTNode) : KtPatternEntry(node), KtVariableDeclaration {
+class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElement(node), KtVariableDeclaration {
     override fun getName(): String? {
         val identifier = nameIdentifier
         if (identifier != null) {
@@ -182,20 +185,38 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternEntry(node), KtVari
         return if (enclosingBlock != null) LocalSearchScope(enclosingBlock) else super.getUseScope()
     }
 
-    val patternTypeReference: KtPatternTypeReference?
-        get() = findChildByType(KtNodeTypes.PATTERN_TYPE_REFERENCE)
-
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitPatternVariableDeclaration(this, data)
     }
 
+    val isEmpty: Boolean
+        get() = isSingleUnderscore && patternTypeReference == null && constraint == null
+
+    val patternTypeReference: KtPatternTypeReference?
+        get() = findChildByType(KtNodeTypes.PATTERN_TYPE_REFERENCE)
+
+    val constraint: KtPatternConstraint?
+        get() = findChildByType(KtNodeTypes.PATTERN_CONSTRAINT)
+
+    val parentEntry: KtPatternEntry?
+        get() = (parent as? KtPatternEntry)
+
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        patternTypeReference?.getTypeInfo(resolver, state)
+        val typeReferenceInfo = patternTypeReference?.getTypeInfo(resolver, state)
+        val constraintInfo = constraint?.getTypeInfo(resolver, state)
+        val constraintType = constraintInfo?.type
+        val typeReferenceType = typeReferenceInfo?.type
+        (typeReferenceType ?: constraintType)?.let {
+            val info = ConditionalTypeInfo(it, ConditionalDataFlowInfo.EMPTY)
+            info.and(typeReferenceInfo, constraintInfo)
+        }
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
+        val typeInfo = patternTypeReference?.resolve(resolver, state)
+        val constraintInfo = constraint?.resolve(resolver, state)
         val info = resolver.resolveType(this, state)
         resolver.defineVariable(this, state)
-        return info
+        return info.and(typeInfo, constraintInfo)
     }
 }

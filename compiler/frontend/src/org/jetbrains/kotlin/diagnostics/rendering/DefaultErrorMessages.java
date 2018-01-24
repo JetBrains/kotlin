@@ -73,8 +73,9 @@ public class DefaultErrorMessages {
     static {
         MAP.put(NON_DERIVABLE_TYPE, "Non-derivable type for: {0}", ELEMENT_TEXT);
         MAP.put(EXPECTED_PATTERN_TUPLE_INSTANCE, "Expected pattern tuple instance in typed tuple: {0}", ELEMENT_TEXT);
-        MAP.put(PATTERN_EMPTY_TUPLE, "Unexpected pattern tuple without destruction elements: {0}", ELEMENT_TEXT);
-        MAP.put(NOT_ALLOW_OR_CONDITIONS_WITH_MATCH, "Not allow or-conditions with pattern matching: {0}", ELEMENT_TEXT);
+        MAP.put(EXPECTED_PATTERN_TYPE_REFERENCE_ELEMENT, "Expected pattern type reference element: {0}", ELEMENT_TEXT);
+        MAP.put(EXPECTED_PATTERN_EXPRESSION_ELEMENT, "Expected expression element: {0}", ELEMENT_TEXT);
+        MAP.put(EXPECTED_CONSTRAINT_ELEMENT, "Expected constraint element: {0}", ELEMENT_TEXT);
         MAP.put(NOT_ALLOW_PROPERTY_DEFINITION, "Not allow property definition: {0}", ELEMENT_TEXT);
 
         MAP.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", ELEMENT_TEXT);

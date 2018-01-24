@@ -261,6 +261,7 @@ LONELY_BACKTICK=`
 "var"        { return KtTokens.VAR_KEYWORD ;}
 "fun"        { return KtTokens.FUN_KEYWORD ;}
 "for"        { return KtTokens.FOR_KEYWORD ;}
+"eq"         { return KtTokens.EQ_KEYWORD ;}
 "is"         { return KtTokens.IS_KEYWORD ;}
 "in"         { return KtTokens.IN_KEYWORD ;}
 "if"         { return KtTokens.IF_KEYWORD ;}
@@ -271,12 +272,14 @@ LONELY_BACKTICK=`
 {IDENTIFIER} { return KtTokens.IDENTIFIER; }
 \!in{IDENTIFIER_PART}        { yypushback(3); return KtTokens.EXCL; }
 \!is{IDENTIFIER_PART}        { yypushback(3); return KtTokens.EXCL; }
+\!eq{IDENTIFIER_PART}        { yypushback(3); return KtTokens.EXCL; }
 
 "..."        { return KtTokens.RESERVED  ; }
 "==="        { return KtTokens.EQEQEQ    ; }
 "!=="        { return KtTokens.EXCLEQEQEQ; }
 "!in"        { return KtTokens.NOT_IN; }
 "!is"        { return KtTokens.NOT_IS; }
+"!eq"        { return KtTokens.NOT_EQ; }
 "as?"        { return KtTokens.AS_SAFE; }
 "++"         { return KtTokens.PLUSPLUS  ; }
 "--"         { return KtTokens.MINUSMINUS; }

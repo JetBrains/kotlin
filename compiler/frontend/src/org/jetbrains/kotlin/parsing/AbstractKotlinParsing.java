@@ -210,6 +210,11 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         return tokenMatches(token, expectation);
     }
 
+    protected boolean atSingleUnderscore() {
+        if (!at(IDENTIFIER)) return false;
+        return "_".equals(myBuilder.getTokenText());
+    }
+
     /**
      * Side-effect-free version of atSet()
      */

@@ -3,8 +3,8 @@
 import kotlin.test.assertEquals
 
 fun matcher(value: Any?) = when (value) {
-    match Pair<*, *>(a: Pair<*, *> @ Pair<*, *>(b: Int, _), :Int) -> listOf(0, a, b)
-    match x -> listOf(1, x)
+    is Pair(val a = Pair(val b: Int, _), Int()) -> listOf(0, a, b)
+    is val x -> listOf(1, x)
     else -> throw java.lang.IllegalStateException("Unexpected else")
 }
 

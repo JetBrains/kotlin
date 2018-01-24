@@ -18,32 +18,29 @@ package org.jetbrains.kotlin.psi.pattern
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
-import org.jetbrains.kotlin.types.expressions.PatternResolveState
-import org.jetbrains.kotlin.types.expressions.PatternResolver
-import org.jetbrains.kotlin.types.expressions.and
+import org.jetbrains.kotlin.types.expressions.*
 
 class KtPatternConstraint(node: ASTNode) : KtPatternElement(node) {
 
-    val entry: KtPatternEntry?
-        get() = findChildByClass(KtPatternEntry::class.java)
+    val typeReference: KtPatternTypeReference?
+        get() = findChildByType(KtNodeTypes.PATTERN_TYPE_REFERENCE)
 
-    val guard: KtPatternGuard?
-        get() = findChildByType(KtNodeTypes.PATTERN_GUARD)
+    val element: KtPatternElement?
+        get() = findChildByClass(KtPatternElement::class.java)
 
-    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
-        return visitor.visitPatternConstraint(this, data)
-    }
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPatternConstraint(this, data)
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        entry?.getTypeInfo(resolver, state)
+        val element = element.errorIfNull(this, state, Errors.EXPECTED_CONSTRAINT_ELEMENT)
+        element?.getTypeInfo(resolver, state)
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
-        val entryInfo = entry?.resolve(resolver, state)
-        val guardInfo = guard?.resolve(resolver, state)
-        val thisInfo = resolver.resolveType(this, state)
-        return thisInfo.and(entryInfo, guardInfo)
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
+        val element = element.errorIfNull(this, state, Errors.EXPECTED_CONSTRAINT_ELEMENT)
+        val elementTypeInfo = element?.resolve(resolver, state)
+        val thisTypeInfo = resolver.resolveType(this, state)
+        return thisTypeInfo.and(elementTypeInfo)
     }
 }

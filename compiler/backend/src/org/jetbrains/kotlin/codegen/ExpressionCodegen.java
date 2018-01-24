@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor;
@@ -90,8 +91,8 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Label;
@@ -4217,66 +4218,54 @@ The "returned" value of try expression with no finally is either the last expres
         }
     }
 
-    public static void forceAssert(boolean cond, String errorMessage) {
-        if (!cond) {
+    private static void forceAssert(boolean cond, String errorMessage) {
+        if (!cond)
             throw new AssertionError(errorMessage);
-        }
     }
 
-    private StackValue generateMatchPattern(StackValue expressionToMatch, KtWhenConditionMatchPattern condition) {
-        KtPattern pattern = condition.getPattern();
-        forceAssert(pattern != null, "Pattern in match condition must be defined " + condition.getText());
-        KtPatternExpression expression = pattern.getExpression();
-        forceAssert(expression != null, "Expression in pattern must be defined " + pattern.getText());
+    private StackValue generateMatchPattern(StackValue expressionToMatch, KtPattern pattern, boolean negated) {
+        KtPatternEntry entry = pattern.getEntry();
+        KtPatternGuard guard = pattern.getGuard();
+        forceAssert(entry != null, "expression in pattern must be defined " + pattern.getText());
         pattern.getInnerVariableDeclarations().stream()
                 .filter(UnderscoreUtilKt::isNotSingleUnderscore)
                 .forEach(this::putLocalVariableIntoFrameMap);
-        return generateMatchExpression(expressionToMatch, expression);
-    }
-
-    private StackValue generateMatchExpression(StackValue expressionToMatch, KtPatternExpression expression) {
-        return new ConstantLocalVariable(myFrameMap, expressionToMatch, expressionToMatch.type, Type.BOOLEAN_TYPE, loadExpression ->
-                expression.getConstraints().stream()
-                        .map(constraint -> generateMatchConstraint(loadExpression, constraint))
-                        .reduce(StackValue::and)
-                        .orElseThrow(() -> new IllegalArgumentException("Unexpected pattern expression arguments")));
+        StackValue value = generateMatchEntry(expressionToMatch, entry);
+        if (guard != null)
+            value = StackValue.and(value, generateMatchGuard(guard));
+        return negated ? StackValue.not(value) : value;
     }
 
     private StackValue generateMatchConstraint(StackValue expressionToMatch, KtPatternConstraint constraint) {
-        KtPatternEntry entry = constraint.getEntry();
-        KtPatternGuard guard = constraint.getGuard();
-        StackValue result;
-        forceAssert(entry != null, "constraint entry must be defined");
-        if (entry instanceof KtPatternTypeReference) {
-            result = generateMatchTypeReference(expressionToMatch, (KtPatternTypeReference) entry);
+        KtPatternElement element = constraint.getElement();
+        forceAssert(element != null, "element in constraint must be defined" + constraint.getText());
+        if (element instanceof KtPatternExpression) {
+            return generateMatchPatternExpression(expressionToMatch, (KtPatternExpression) element);
+        } else if (element instanceof KtPatternTypedTuple) {
+            return generateMatchTypedTuple(expressionToMatch, (KtPatternTypedTuple) element);
+        } else if (element instanceof KtPatternTypeReference) {
+            return generateMatchTypeReference(expressionToMatch, (KtPatternTypeReference) element);
         }
-        else if (entry instanceof KtPatternStringExpression) {
-            result = generateMatchStringExpression(expressionToMatch, (KtPatternStringExpression) entry);
+        throw new IllegalArgumentException("unexpected constraint element " + element.getClass().getName());
+    }
+
+    private StackValue generateMatchEntry(StackValue expressionToMatch, KtPatternEntry constraint) {
+        KtPatternElement element = constraint.getElement();
+        forceAssert(element != null, "constraint element must be defined");
+        if (element instanceof KtPatternConstraint) {
+            return generateMatchConstraint(expressionToMatch, (KtPatternConstraint) element);
         }
-        else if (entry instanceof KtPatternConstantExpression) {
-            result = generateMatchConstantExpression(expressionToMatch, (KtPatternConstantExpression) entry);
+        else if (element instanceof KtPatternVariableDeclaration) {
+            return generateMatchVariableDeclaration(expressionToMatch, (KtPatternVariableDeclaration) element);
+        } else if (element instanceof KtPatternTypeReference) {
+            return generateMatchTypeReference(expressionToMatch, (KtPatternTypeReference) element);
         }
-        else if (entry instanceof KtPatternTypedTuple) {
-            result = generateMatchTypedTuple(expressionToMatch, (KtPatternTypedTuple) entry);
-        }
-        else if (entry instanceof KtPatternVariableDeclaration) {
-            result = generateMatchVariableDeclaration(expressionToMatch, (KtPatternVariableDeclaration) entry);
-        }
-        else if (entry instanceof KtPatternHashExpression) {
-            result = generateMatchHashExpression(expressionToMatch, (KtPatternHashExpression) entry);
-        }
-        else {
-            throw new IllegalArgumentException("Unexpected constraint entry " + entry.getClass().getName());
-        }
-        if (guard != null) {
-            result = StackValue.and(result, generateMatchGuard(guard));
-        }
-        return result;
+        throw new IllegalArgumentException("unexpected entry element " + element.getClass().getName());
     }
 
     private StackValue generateMatchGuard(KtPatternGuard guard) {
-        KtExpression expression = guard.getCondition();
-        forceAssert(expression != null, "Guard condition must exist " + guard.getText());
+        KtExpression expression = guard.getExpression();
+        forceAssert(expression != null, "guard condition must exist " + guard.getText());
         return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
             StackValue value = generateExpressionMatch(null, null, expression);
             value.put(Type.BOOLEAN_TYPE, v);
@@ -4286,7 +4275,7 @@ The "returned" value of try expression with no finally is either the last expres
 
     private StackValue generateMatchTypeReference(StackValue expressionToMatch, KtPatternTypeReference entry) {
         KtTypeReference typeReference = entry.getTypeReference();
-        forceAssert(typeReference != null, "Type reference must exist " + entry.getText());
+        forceAssert(typeReference != null, "type reference must exist " + entry.getText());
         return generateMatchTypeReference(expressionToMatch, typeReference);
     }
 
@@ -4294,26 +4283,19 @@ The "returned" value of try expression with no finally is either the last expres
         return generateIsCheck(expressionToMatch, typeReference, false);
     }
 
-    private StackValue generateMatchStringExpression(StackValue expressionToMatch, KtPatternStringExpression entry) {
-        KtExpression expression = entry.getString();
-        forceAssert(expression != null, "String expression must exist " + entry.getText());
-        return generateEqualsForStackValueWithNoExpression(expressionToMatch, expression);
-    }
+    private StackValue generateMatchTypedTuple(StackValue expressionToMatch, KtPatternTypedTuple typedTuple) {
+        KtPatternTuple tuple = typedTuple.getTuple();
+        forceAssert(tuple != null, "pattern tuple is null for " + typedTuple.getText());
+        List<KtPatternEntry> entries = tuple.getEntries();
+        KtPatternTypeReference typeReference = typedTuple.getTypeReference();
 
-    private StackValue generateMatchConstantExpression(StackValue expressionToMatch, KtPatternConstantExpression entry) {
-        KtExpression expression = entry.getConstant();
-        forceAssert(expression != null, "Constant expression must exist " + entry.getText());
-        return generateEqualsForStackValueWithNoExpression(expressionToMatch, expression);
-    }
+        if (entries.size() == 0) {
+            if (typeReference != null)
+                return generateMatchTypeReference(expressionToMatch, typeReference);
+            return StackValue.constant(true, Type.BOOLEAN_TYPE);
+        }
 
-    private StackValue generateMatchTypedTuple(StackValue expressionToMatch, KtPatternTypedTuple entry) {
-        KtPatternTuple tuple = entry.getTuple();
-        forceAssert(tuple != null, "Pattern tuple is null for " + entry.getText());
-        List<KtPatternExpression> expressions = tuple.getExpressions();
-        assert expressions.size() > 0 : "Pattern tuple must be not empty";
-        KtTypeReference typeReference = entry.getTypeReference();
-
-        Pair<ReceiverValue, StackValue> receiverAndValue = generatePatternDeconstructReceiver(expressionToMatch, entry);
+        Pair<ReceiverValue, StackValue> receiverAndValue = generatePatternDeconstructReceiver(expressionToMatch, typedTuple);
         ReceiverValue receiver = receiverAndValue.getFirst();
         StackValue receiverStackValue = receiverAndValue.getSecond();
         Type receiverType = receiverStackValue.type;
@@ -4321,13 +4303,14 @@ The "returned" value of try expression with no finally is either the last expres
 
         StackValue match = new ConstantLocalVariable(myFrameMap, receiverStackValue, receiverType, Type.BOOLEAN_TYPE, loadReceiver -> {
             StackValue result = null;
-            for (KtPatternExpression expression : expressions) {
-                // it possible if expression is KtPatternVariableDeclaration without type matching
-                if (expression.getText().equals("_")) continue;
-                ResolvedCall<FunctionDescriptor> componentCall = bindingContext.get(PATTERN_COMPONENT_RESOLVED_CALL, expression);
-                forceAssert(componentCall != null, "Resolved call is null for " + expression.getText());
+            for (KtPatternEntry entry : entries) {
+                // it possible if expression is KtPatternVariableDeclaration is empty, etc is '_' token
+                KtPatternVariableDeclaration declaration = entry.getDeclaration();
+                if (declaration != null && declaration.isEmpty()) continue;
+                ResolvedCall<FunctionDescriptor> componentCall = bindingContext.get(PATTERN_COMPONENT_RESOLVED_CALL, entry);
+                forceAssert(componentCall != null, "resolved call is null for " + entry.getText());
                 StackValue expressionValue = invokeFunction(receiverCall, componentCall, loadReceiver);
-                StackValue matchExpression = generateMatchExpression(expressionValue, expression);
+                StackValue matchExpression = generateMatchEntry(expressionValue, entry);
                 result = result == null ? matchExpression : StackValue.and(result, matchExpression);
             }
             return result;
@@ -4337,14 +4320,12 @@ The "returned" value of try expression with no finally is either the last expres
             StackValue checkTupleType = generateMatchTypeReference(expressionToMatch, typeReference);
             return StackValue.and(checkTupleType, match);
         }
-        else {
-            return match;
-        }
+        return match;
     }
 
     private Pair<ReceiverValue, StackValue> generatePatternDeconstructReceiver(StackValue expressionToMatch, KtPatternTypedTuple entry) {
-        KotlinTypeInfo receiverTypeInfo = bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, entry);
-        forceAssert(receiverTypeInfo != null, "Element type info is null for " + entry.getText());
+        ConditionalTypeInfo receiverTypeInfo = bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, entry);
+        forceAssert(receiverTypeInfo != null, "element type info is null for " + entry.getText());
         StackValue receiverValue = expressionToMatch;
         ResolvedCall<FunctionDescriptor> deconstructCall = bindingContext.get(PATTERN_DECONSTRUCT_RESOLVED_CALL, entry);
         if (deconstructCall != null) {
@@ -4353,35 +4334,43 @@ The "returned" value of try expression with no finally is either the last expres
             receiverValue = invokeFunction(call, deconstructCall, receiverValue);
         }
         KotlinType receiverType = bindingContext.get(PATTERN_COMPONENTS_RECEIVER_TYPE, entry);
-        forceAssert(receiverType != null, "Receiver type is null for " + entry.getText());
+        forceAssert(receiverType != null, "receiver type is null for " + entry.getText());
         ReceiverValue receiver = new TransientReceiver(receiverType);
         return new Pair<>(receiver, receiverValue);
     }
 
-    private StackValue generateMatchVariableDeclaration(StackValue expressionToMatch, KtPatternVariableDeclaration entry) {
-        KtPatternTypeReference typeReference = entry.getPatternTypeReference();
-        StackValue value = StackValue.constant(true, Type.BOOLEAN_TYPE);
-        if (typeReference != null) {
-            value = generateMatchTypeReference(expressionToMatch, typeReference);
-        }
+    private StackValue generateMatchVariableDeclaration(StackValue expressionToMatch, KtPatternVariableDeclaration declaration) {
+        KtPatternConstraint constraint = declaration.getConstraint();
+        KtPatternTypeReference typeReference = declaration.getPatternTypeReference();
+        StackValue matchTypeReference = StackValue.constant(true, Type.BOOLEAN_TYPE);
+        StackValue matchConstraint = StackValue.constant(true, Type.BOOLEAN_TYPE);
+        if (typeReference != null)
+            matchTypeReference = generateMatchTypeReference(expressionToMatch, typeReference);
+        if (constraint != null)
+            matchConstraint = generateMatchConstraint(expressionToMatch, constraint);
+        StackValue value = StackValue.and(matchTypeReference, matchConstraint);
         return Trigger.Companion.make(value, Type.BOOLEAN_TYPE, v -> {
-            if (UnderscoreUtilKt.isNotSingleUnderscore(entry)) {
-                initializeLocalVariable(entry, expressionToMatch);
-            }
+            if (UnderscoreUtilKt.isNotSingleUnderscore(declaration))
+                initializeLocalVariable(declaration, expressionToMatch);
             return null;
         });
     }
 
-    private StackValue generateMatchHashExpression(StackValue expressionToMatch, KtPatternHashExpression entry) {
+    private StackValue generateMatchPatternExpression(StackValue expressionToMatch, KtPatternExpression entry) {
         KtExpression expression = entry.getExpression();
-        forceAssert(expression != null, "Hash expression must exist " + entry.getText());
-        return generateEqualsForStackValueWithNoExpression(expressionToMatch, expression);
+        forceAssert(expression != null, "expression must exist " + entry.getText());
+        KtToken token = entry.isNegated() ? KtTokens.EXCLEQ : KtTokens.EQEQ;
+        return generateEqualsForStackValueWithNoExpression(expressionToMatch, expression, token);
     }
 
-    private StackValue generateEqualsForStackValueWithNoExpression(@NotNull StackValue pregeneratedLeft, @NotNull KtExpression right) {
+    private StackValue generateEqualsForStackValueWithNoExpression(
+            @NotNull StackValue pregeneratedLeft,
+            @NotNull KtExpression right,
+            @NotNull IElementType opToken
+    ) {
         KotlinType pregeneratedType = bindingContext.get(PATTERN_SUBJECT_TYPE, right);
-        forceAssert(pregeneratedType != null, "Pattern simple-expression must be analysed " + right.getText());
-        return generateEqualsForStackValueWithNoExpression(pregeneratedLeft, pregeneratedType, right, KtTokens.EQEQ);
+        forceAssert(pregeneratedType != null, "pattern simple-expression must be analysed " + right.getText());
+        return generateEqualsForStackValueWithNoExpression(pregeneratedLeft, pregeneratedType, right, opToken);
     }
 
     private StackValue generateEqualsForStackValueWithNoExpression(
@@ -4665,15 +4654,13 @@ The "returned" value of try expression with no finally is either the last expres
         StackValue.Local match = subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType);
         if (condition instanceof KtWhenConditionIsPattern) {
             KtWhenConditionIsPattern patternCondition = (KtWhenConditionIsPattern) condition;
-            return generateIsCheck(match, patternCondition.getTypeReference(), patternCondition.isNegated());
+            KtPattern pattern = patternCondition.getPattern();
+            forceAssert(pattern != null, "Pattern in match condition must be defined " + condition.getText());
+            return generateMatchPattern(match, pattern, patternCondition.isNegated());
         }
         else if (condition instanceof KtWhenConditionWithExpression) {
             KtExpression patternExpression = ((KtWhenConditionWithExpression) condition).getExpression();
             return generateExpressionMatch(match, subjectExpression, patternExpression);
-        }
-        else if (condition instanceof KtWhenConditionMatchPattern) {
-            KtWhenConditionMatchPattern patternCondition = (KtWhenConditionMatchPattern) condition;
-            return generateMatchPattern(match, patternCondition);
         }
         else {
             throw new UnsupportedOperationException("unsupported kind of when condition");

@@ -11,9 +11,9 @@ data class SMS(val caller: String, val message: String) : Notification
 data class VoiceRecording(val contactName: String, val link: String) : Notification
 
 fun showNotification(notification: Notification): String = when(notification) {
-    match Email(email, title, _) -> "You got an email from $email with title: $title"
-    match SMS(number, message) -> "You got an SMS from $number! Message: $message"
-    match VoiceRecording(name, link) -> "You received a Voice Recording from $name! Click the link to hear it: $link"
+    is Email(val email, val title, _) -> "You got an email from $email with title: $title"
+    is SMS(val number, val message) -> "You got an SMS from $number! Message: $message"
+    is VoiceRecording(val name, val link) -> "You received a Voice Recording from $name! Click the link to hear it: $link"
     else -> throw java.lang.IllegalStateException("Unexpected else")
 }
 

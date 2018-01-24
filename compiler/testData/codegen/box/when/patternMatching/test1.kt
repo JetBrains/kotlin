@@ -5,6 +5,10 @@ import kotlin.test.assertEquals
 data class A(val a: Int, val b: Int)
 
 class B(val a: Int, val b: Int) {
+    operator fun component1() = a + 1231
+
+    operator fun component2() = b + 2318
+
     operator fun deconstruct() = A(a, b)
 }
 
@@ -12,12 +16,12 @@ fun matcher(value: Any?, p1: Int, p2: Int, p3: Int, p4: Int): List<Int> = when (
     is String -> listOf(0)
     is val m = B(val a, p2 + p3) -> listOf(1, a)
     is val m = A(val a, p2 + p3) -> listOf(2, a)
-    is val m = Pair<*, *>(5, 7) -> listOf(3)
-    is val m = Pair<*, *>(val a: Int, p1) -> listOf(4, a)
-    is val m = List<*>(Int(), Int()) ->listOf(5)
-    is val m = Pair<*, *>(val a: Int, val b: Int) && a > p1 -> listOf(6, a, b)
-    is val m = Pair<*, *>("some string $p4 with parameter", _) -> listOf(7)
-    is val m = Pair<*, *>(Int(), Pair<*, *>(val a: Int, val b: Int)) -> listOf(8, a, b)
+    is val m = Pair(5, 7) -> listOf(3)
+    is val m = Pair(val a: Int, p1) -> listOf(4, a)
+    is val m = List(Int(), Int()) ->listOf(5)
+    is val m = Pair(val a: Int, val b: Int) && a > p1 -> listOf(6, a, b)
+    is val m = Pair("some string $p4 with parameter", _) -> listOf(7)
+    is val m = Pair(Int(), Pair(val a: Int, val b: Int)) -> listOf(8, a, b)
     is val m -> listOf(9)
     else -> throw java.lang.IllegalStateException("Unexpected else")
 }

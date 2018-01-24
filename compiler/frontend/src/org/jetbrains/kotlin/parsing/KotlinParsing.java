@@ -1895,21 +1895,23 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /**
      * pattern
-     * : patternConstraint (guard)?
+     * : patternEntry (guard)?
      * ;
      * <p>
-     * patternConstraint
+     * patternEntry
      * : patternDeclaration
-     * : patternExpression
+     * : patternConstraint
      * ;
      * <p>
      * patternVariableDeclaration
-     * : "val" identifier (":" typeRef)? ("=" patternExpression)?
+     * : "val" identifier (":" typeRef)? ("=" patternConstraint)?
      * ;
      * <p>
-     * patternExpression
+     * patternConstraint
+     * : patternTypeReference <!if (isTopLevel)!>
      * : patternTypedTuple
      * : ("eq")? expression
+     * : ("!eq")? expression
      * ;
      * <p>
      * patternTypedTuple
@@ -1917,8 +1919,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * : simpleTypeRef? tuple
      * ;
      * <p>
+     * patternTypeReference
+     * : typeRef
+     * ;
+     * <p>
      * tuple
-     * : "(" patternConstraint{","}? ")"
+     * : "(" patternEntry{","}? ")"
      * ;
      * <p>
      * guard
@@ -1927,61 +1933,65 @@ public class KotlinParsing extends AbstractKotlinParsing {
      */
     public void parsePattern() {
         PsiBuilder.Marker patternMarker = mark();
-        parsePatternConstraint(true);
-        if (at(OROR)) {
+        parsePatternEntry(true);
+        if (at(ANDAND)) {
             parsePatternGuard();
         }
         patternMarker.done(PATTERN);
     }
 
-    private void parsePatternConstraint(boolean isTopLevelPattern) {
+    private void parsePatternEntry(boolean isTopLevelPattern) {
         PsiBuilder.Marker patternMarker = mark();
-        if (at(VAL_KEYWORD)) {
+        if (at(VAL_KEYWORD) || atSingleUnderscore()) {
             parsePatternVariableDeclaration(isTopLevelPattern);
         }
         else {
-            parsePatternExpression(isTopLevelPattern);
+            parsePatternConstraint(isTopLevelPattern);
         }
-        patternMarker.done(PATTERN_CONSTRAINT);
+        patternMarker.done(PATTERN_ENTRY);
     }
 
     private void parsePatternVariableDeclaration(boolean isTopLevelPattern) {
-        assert _at(VAL_KEYWORD);
-
         PsiBuilder.Marker patternMarker = mark();
-        advance(); // VAL_KEYWORD
-        expect(IDENTIFIER, "expected identifier after val keyword");
-        if (at(COLON)) {
-            advance(); // COLON
-            parseTypeRef();
+        if (atSingleUnderscore()) {
+            advance(); // IDENTIFIER
         }
-        if (at(EQ)) {
-            advance(); // EQ
-            parsePatternExpression(isTopLevelPattern);
+        else {
+            expect(VAL_KEYWORD, "expected val keyword in begin of variable declaration");
+            expect(IDENTIFIER, "expected identifier after val keyword");
+            if (at(COLON)) {
+                advance(); // COLON
+                parsePatternTypeReference();
+            }
+            if (at(EQ)) {
+                advance(); // EQ
+                parsePatternConstraint(isTopLevelPattern);
+            }
         }
         patternMarker.done(PATTERN_VARIABLE_DECLARATION);
     }
 
-    private void parsePatternExpression(boolean isTopLevelPattern) {
+    private void parsePatternConstraint(boolean isTopLevelPattern) {
         PsiBuilder.Marker patternMarker = mark();
-        if (at(EQ_KEYWORD)) {
-            advance(); // EQ_KEYWORD
-            myExpressionParsing.parseExpression();
-        } if (!tryParsePatternTypedTuple()) {
+        if (atTruePatternExpression()) {
+            parsePatternExpression();
+        }
+        else if (!tryParsePatternTypedTuple()) {
             if (isTopLevelPattern) {
-                parseTypeRef();
-            } else {
-                myExpressionParsing.parseExpression();
+                parsePatternTypeReference();
+            }
+            else {
+                parsePatternExpression();
             }
         }
-        patternMarker.done(PATTERN_EXPRESSION);
+        patternMarker.done(PATTERN_CONSTRAINT);
     }
 
     private boolean tryParsePatternTypedTuple() {
         PsiBuilder.Marker patternMarker = mark();
         if (at(LPAR)) {
             advance(); // LPAR
-            parseTypeRef();
+            parsePatternTypeReference();
             if (at(RPAR) && at(1, LPAR)) {
                 advance(); // RPAR
             }
@@ -1991,7 +2001,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
         }
         else {
-            parseTypeRef();
+            parsePatternTypeReference();
         }
         if (!at(LPAR)) {
             patternMarker.rollbackTo();
@@ -2003,29 +2013,51 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private void parsePatternTuple() {
-        assert _at(LPAR);
-
         PsiBuilder.Marker tupleMarker = mark();
-        advance(); // LPAR
-        while (at(COMMA)) errorAndAdvance("Expected pattern parameter before ','");
-        do {
+        expect(LPAR, "expected '(' in begin of tuple");
+        while (at(COMMA)) errorAndAdvance("expected pattern parameter before ','");
+        while (!at(RPAR)) {
+            parsePatternEntry(false);
             if (at(COMMA)) {
                 advance(); // COMMA
             }
-            parsePatternConstraint(false);
+            else {
+                break;
+            }
         }
-        while (at(COMMA));
-        expect(RPAR, "Expected ')' token at end of destructing tuple");
+        expect(RPAR, "expected ')' token at end of destructing tuple");
         tupleMarker.done(PATTERN_TUPLE);
     }
 
     private void parsePatternGuard() {
-        assert _at(OROR);
-
         PsiBuilder.Marker patternMarker = mark();
-        advance(); // OROR
-        myExpressionParsing.parseCondition();
+        expect(ANDAND, "expected operator '&&' in begin of guard");
+        myExpressionParsing.parseExpression();
         patternMarker.done(PATTERN_GUARD);
+    }
+
+    private void parsePatternTypeReference() {
+        PsiBuilder.Marker patternMarker = mark();
+        parseTypeRef();
+        patternMarker.done(PATTERN_TYPE_REFERENCE);
+    }
+
+    private void parsePatternExpression() {
+        PsiBuilder.Marker patternMarker = mark();
+        if (at(EQ_KEYWORD) || at(NOT_EQ)) {
+            advance(); // EQ_KEYWORD or NOT_EQUALS
+        }
+        myExpressionParsing.parseExpression();
+        patternMarker.done(PATTERN_EXPRESSION);
+    }
+
+    private boolean atTruePatternExpression() {
+        if (!at(EQ_KEYWORD) && !at(NOT_EQ)) return false;
+        PsiBuilder.Marker marker = mark();
+        advance(); // EQ_KEYWORD or NOT_EQUALS
+        boolean result = atSet(KotlinExpressionParsing.EXPRESSION_FIRST);
+        marker.rollbackTo();
+        return result;
     }
 
     /*

@@ -17,13 +17,33 @@
 package org.jetbrains.kotlin.psi.pattern
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtVisitor
+import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
+import org.jetbrains.kotlin.types.expressions.PatternResolveState
+import org.jetbrains.kotlin.types.expressions.PatternResolver
+import org.jetbrains.kotlin.types.expressions.and
 
-abstract class KtPatternEntry(node: ASTNode) : KtPatternElement(node) {
-    val parentExpression: KtPatternExpression?
-        get() = (parent as? KtPatternConstraint)?.parent as? KtPatternExpression
+class KtPatternEntry(node: ASTNode) : KtPatternElement(node) {
 
-    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
-        return visitor.visitPatternEntry(this, data)
+    val constraint: KtPatternConstraint?
+        get() = findChildByType(KtNodeTypes.PATTERN_CONSTRAINT)
+
+    val declaration: KtPatternVariableDeclaration?
+        get() = findChildByType(KtNodeTypes.PATTERN_VARIABLE_DECLARATION)
+
+    val element: KtPatternElement?
+        get() = findChildByClass(KtPatternElement::class.java)
+
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPatternEntry(this, data)
+
+    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
+        element?.getTypeInfo(resolver, state)
+    }
+
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
+        val entryInfo = element?.resolve(resolver, state)
+        val thisInfo = resolver.resolveType(this, state)
+        return thisInfo.and(entryInfo)
     }
 }

@@ -17,25 +17,22 @@
 package org.jetbrains.kotlin.psi.pattern
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
 class KtPatternGuard(node: ASTNode) : KtPatternElement(node) {
 
-    val condition: KtExpression?
-        get() = findExpressionUnder(KtNodeTypes.CONDITION)
+    val expression: KtExpression?
+        get() = findChildByClass(KtExpression::class.java)
 
-    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
-        return visitor.visitPatternGuard(this, data)
-    }
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPatternGuard(this, data)
 
-    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
-        val dataFlow = resolver.checkExpression(this.condition, state)
-        return KotlinTypeInfo(resolver.builtIns.nothingType, dataFlow)
+    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
+        val dataFlow = resolver.checkCondition(this.expression, state)
+        ConditionalTypeInfo(resolver.builtIns.nothingType, dataFlow)
     }
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {

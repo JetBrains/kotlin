@@ -21,29 +21,24 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 import org.jetbrains.kotlin.types.expressions.errorIfNull
 
-class KtPatternTypeReference(node: ASTNode) : KtPatternEntry(node) {
+class KtPatternTypeReference(node: ASTNode) : KtPatternElement(node) {
 
     val typeReference: KtTypeReference?
         get() = findChildByType(KtNodeTypes.TYPE_REFERENCE)
 
-    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
-        return visitor.visitPatternTypeReference(this, data)
-    }
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPatternTypeReference(this, data)
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        typeReference?.let { typeReference ->
-            resolver.getTypeInfo(typeReference, state).also {
-                it.type.errorIfNull(typeReference, state, Errors.NON_DERIVABLE_TYPE)
-            }
-        }
+        val typeReference = typeReference.errorIfNull(this, state, Errors.EXPECTED_PATTERN_TYPE_REFERENCE_ELEMENT)
+        typeReference?.let { resolver.getTypeInfo(it, state) }
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
         return resolver.resolveType(this, state)
     }
 }

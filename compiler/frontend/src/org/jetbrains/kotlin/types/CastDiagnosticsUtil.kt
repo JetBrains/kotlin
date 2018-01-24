@@ -179,7 +179,7 @@ object CastDiagnosticsUtil {
 
         // If some of the parameters are not determined by unification, it means that these parameters are lost,
         // let's put stars instead, so that we can only cast to something like List<*>, e.g. (a: Any) as List<*>
-        var allArgumentsInferred = true
+        var notInferredArgumentsNumber = 0
         for (variable in variables) {
             val value = substitution[variable.typeConstructor]
             if (value == null) {
@@ -187,7 +187,7 @@ object CastDiagnosticsUtil {
                     variable.typeConstructor,
                     TypeUtils.makeStarProjection(variable)
                 )
-                allArgumentsInferred = false
+                notInferredArgumentsNumber += 0
             }
         }
 
@@ -195,7 +195,7 @@ object CastDiagnosticsUtil {
         // Let's make a type by substituting them: List<T> -> List<Foo>
         val substituted = TypeSubstitutor.create(substitution).substitute(subtypeWithVariables, Variance.INVARIANT)
 
-        return TypeReconstructionResult(substituted, allArgumentsInferred)
+        return TypeReconstructionResult(substituted, variables.size, notInferredArgumentsNumber)
     }
 
     private fun allParametersReified(subtype: KotlinType) = subtype.constructor.parameters.all { it.isReified }

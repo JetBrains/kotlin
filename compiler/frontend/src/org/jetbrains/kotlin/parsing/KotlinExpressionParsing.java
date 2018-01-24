@@ -171,6 +171,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         RANGE(KtTokens.RANGE),
         SIMPLE_NAME(IDENTIFIER),
         ELVIS(KtTokens.ELVIS),
+        // PATTERN_EQ_OR_NOT_EQ(EQ_KEYWORD, NOT_EQ),
         IN_OR_IS(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS) {
             @Override
             public KtNodeType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
@@ -957,7 +958,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             advance(); // IN_KEYWORD or NOT_IN
             mark.done(OPERATION_REFERENCE);
 
-
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting an element");
             }
@@ -968,7 +968,13 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
         else if (at(IS_KEYWORD) || at(NOT_IS)) {
             advance(); // IS_KEYWORD or NOT_IS
-            myKotlinParsing.parsePattern();
+
+            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
+                error("Expecting a type");
+            }
+            else {
+                myKotlinParsing.parsePattern();
+            }
             condition.done(WHEN_CONDITION_IS_PATTERN);
         }
         else {

@@ -17,22 +17,10 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.KtTokens;
 
 public abstract class KtWhenCondition extends KtElementImpl {
     public KtWhenCondition(@NotNull ASTNode node) {
         super(node);
-    }
-
-    public boolean isMatch() {
-        return getMatchKeyword() != null;
-    }
-
-    @Nullable
-    public PsiElement getMatchKeyword() {
-        return findChildByType(KtTokens.MATCH_KEYWORD);
     }
 }

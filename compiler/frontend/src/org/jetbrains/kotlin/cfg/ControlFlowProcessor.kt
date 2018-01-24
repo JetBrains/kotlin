@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.pattern.KtWhenConditionMatchPattern
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -143,30 +142,20 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             override fun visitWhenConditionIsPattern(condition: KtWhenConditionIsPattern) {
                 mark(condition)
                 createNonSyntheticValue(condition, MagicKind.IS, getSubjectExpression(condition))
-            }
-
-            override fun visitWhenConditionMatchPattern(condition: KtWhenConditionMatchPattern) {
-                createNonSyntheticValue(condition, MagicKind.MATCH, getSubjectExpression(condition))
-                for (expression in condition.pattern.innerNotPatternExpressions) {
-                    generateInstructions(expression)
-                    createNonSyntheticValue(condition, MagicKind.MATCH, expression)
-                }
-                for (declaration in condition.pattern.innerVariableDeclarations) {
+                val pattern = condition.pattern!!
+                for (declaration in pattern.innerVariableDeclarations) {
                     builder.declareVariable(declaration)
-
-                    val initializer = declaration.parentExpression
-
+                    val initializer = declaration.parentEntry
                     val resolvedCall = trace.get(BindingContext.PATTERN_COMPONENT_RESOLVED_CALL, initializer)
-
-                    val writtenValue: PseudoValue?
-                    writtenValue = if (resolvedCall != null) {
+                    val writtenValue = if (resolvedCall != null)
                         builder.call(declaration, resolvedCall, getReceiverValues(resolvedCall), emptyMap()).outputValue
-                    }
-                    else {
+                    else
                         initializer?.let { createSyntheticValue(declaration, MagicKind.UNRESOLVED_CALL, it) }
-                    }
-
                     generateInitializer(declaration, writtenValue ?: createSyntheticValue(declaration, MagicKind.FAKE_INITIALIZER))
+                }
+                for (expression in pattern.innerNotPatternExpressions) {
+                    generateInstructions(expression)
+                    createNonSyntheticValue(condition, MagicKind.IS, expression)
                 }
             }
 

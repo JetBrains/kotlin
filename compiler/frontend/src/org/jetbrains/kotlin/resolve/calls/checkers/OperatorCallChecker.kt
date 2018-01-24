@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
+import org.jetbrains.kotlin.psi.pattern.KtPatternTypedTuple
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -57,7 +58,9 @@ class OperatorCallChecker : CallChecker {
             }
         }
 
-        if (call.callElement is KtDestructuringDeclarationEntry || call is CallTransformer.CallForImplicitInvoke) {
+        if (call.callElement is KtDestructuringDeclarationEntry
+            || call.callElement is KtPatternTypedTuple
+            || call is CallTransformer.CallForImplicitInvoke) {
             if (!functionDescriptor.isOperator) {
                 report(reportOn, functionDescriptor, context.trace)
             }

@@ -128,7 +128,6 @@ enum class MagicKind(val sideEffectFree: Boolean = false) {
     NOT_NULL_ASSERTION(),
     EQUALS_IN_WHEN_CONDITION(),
     IS(),
-    MATCH(),
     CAST(),
     UNBOUND_CALLABLE_REFERENCE(true),
     BOUND_CALLABLE_REFERENCE(true),

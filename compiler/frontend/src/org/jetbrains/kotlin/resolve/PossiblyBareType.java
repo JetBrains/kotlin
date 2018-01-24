@@ -97,7 +97,7 @@ public class PossiblyBareType {
 
     @NotNull
     public TypeReconstructionResult reconstruct(@NotNull KotlinType subjectType) {
-        if (!isBare()) return new TypeReconstructionResult(getActualType(), true);
+        if (!isBare()) return new TypeReconstructionResult(getActualType(), 0, 0);
 
         TypeReconstructionResult reconstructionResult = CastDiagnosticsUtil.findStaticallyKnownSubtype(
                 TypeUtils.makeNotNullable(subjectType),
@@ -108,7 +108,9 @@ public class PossiblyBareType {
         if (type == null) return reconstructionResult;
 
         KotlinType resultingType = TypeUtils.makeNullableAsSpecified(type, isBareTypeNullable());
-        return new TypeReconstructionResult(resultingType, reconstructionResult.isAllArgumentsInferred());
+        int argumentsNumber = reconstructionResult.getArgumentsNumber();
+        int inferredArgumentsNumber = reconstructionResult.getInferredArgumentsNumber();
+        return new TypeReconstructionResult(resultingType, argumentsNumber, inferredArgumentsNumber);
     }
 
     @Override
