@@ -10,7 +10,7 @@ dependencies {
     compile(project(":js:js.parser"))
     compile(project(":js:js.serializer"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("guava-21.0") }
+    compileOnly(intellijDep()) { includeJars("guava", rootProject = rootProject) }
 }
 
 sourceSets {

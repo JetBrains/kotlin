@@ -28,7 +28,7 @@ dependencies {
     testCompile(androidDxJar()) { isTransitive = false }
     testCompile(intellijCoreDep()) { includeJars("intellij-core"); isTransitive = false }
     testCompile(intellijDep()) {
-        includeJars("openapi", "idea", "idea_rt", "guava-21.0", "trove4j", "picocontainer", "asm-all")
+        includeJars("openapi", "idea", "idea_rt", "guava", "trove4j", "picocontainer", "asm-all", rootProject = rootProject)
         isTransitive = false
     }
 }

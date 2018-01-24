@@ -13,7 +13,7 @@ dependencies {
     compile(project(":compiler:cli"))
     compile(project(":kotlin-build-common"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("annotations.jar") }
+    compileOnly(intellijDep()) { includeJars("annotations") }
 
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))

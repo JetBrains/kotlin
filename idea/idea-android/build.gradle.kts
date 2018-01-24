@@ -22,7 +22,7 @@ dependencies {
 
     compile(androidDxJar())
 
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "extensions", "util", "guava-21.0", "android-base-common", rootProject = rootProject) }
+    compileOnly(intellijDep()) { includeJars("openapi", "idea", "extensions", "util", "guava", "android-base-common", rootProject = rootProject) }
     compileOnly(intellijPluginDep("android")) {
         includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
     }
@@ -36,7 +36,7 @@ dependencies {
     testCompile(projectTests(":idea:idea-gradle"))
     testCompile(commonDep("junit:junit"))
 
-    testCompile(intellijDep()) { includeJars("gson-2.8.2") }
+    testCompile(intellijDep()) { includeJars("gson", rootProject = rootProject) }
     testCompile(intellijPluginDep("properties"))
     testCompileOnly(intellijPluginDep("android")) {
         includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")

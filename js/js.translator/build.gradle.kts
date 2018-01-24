@@ -17,7 +17,7 @@ dependencies {
     compile(project(":js:js.frontend"))
     compile(project(":js:js.parser"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("trove4j", "guava-21.0") }
+    compileOnly(intellijDep()) { includeJars("trove4j", "guava", rootProject = rootProject) }
 }
 
 sourceSets {

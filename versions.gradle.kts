@@ -36,6 +36,11 @@ when (platform) {
         }
     }
     "173" -> {
+        extra["versions.jar.guava"] = "21.0"
+        extra["versions.jar.groovy-all"] = "2.4.12"
+        extra["versions.jar.lombok-ast"] = "0.2.3"
+        extra["versions.jar.swingx-core"] = "1.6.2"
+        extra["versions.jar.kxml2"] = "2.3.0"
         extra["versions.jar.streamex"] = "0.6.5"
         extra["versions.jar.gson"] = "2.8.2"
         for (jar in gradleJars) {
@@ -44,6 +49,11 @@ when (platform) {
         extra["ignore.jar.lombok-ast-0.2.3"] = true
     }
     "172" -> {
+        extra["versions.jar.guava"] = "21.0"
+        extra["versions.jar.groovy-all"] = "2.4.6"
+        extra["versions.jar.lombok-ast"] = "0.2.3"
+        extra["versions.jar.swingx-core"] = "1.6.2"
+        extra["versions.jar.kxml2"] = "2.3.0"
         extra["versions.jar.streamex"] = "0.6.2"
         extra["versions.jar.gson"] = "2.5"
         for (jar in gradleJars) {
@@ -51,6 +61,11 @@ when (platform) {
         }
     }
     "171" -> {
+        extra["versions.jar.guava"] = "19.0"
+        extra["versions.jar.groovy-all"] = "2.4.6"
+        extra["versions.jar.lombok-ast"] = "0.2.3"
+        extra["versions.jar.swingx-core"] = "1.6.2"
+        extra["versions.jar.kxml2"] = "2.3.0"
         extra["versions.jar.streamex"] = "0.6.2"
         extra["versions.jar.gson"] = "2.5"
         for (jar in gradleJars) {
@@ -58,6 +73,11 @@ when (platform) {
         }
     }
     "AS30" -> {
+        extra["versions.jar.guava"] = "19.0"
+        extra["versions.jar.groovy-all"] = "2.4.6"
+        extra["versions.jar.lombok-ast"] = "0.2.3"
+        extra["versions.jar.swingx-core"] = "1.6.2"
+        extra["versions.jar.kxml2"] = "2.3.0"
         extra["versions.jar.streamex"] = "0.6.2"
         extra["versions.jar.gson"] = "2.5"
         for (jar in gradleJars) {
@@ -67,6 +87,10 @@ when (platform) {
         extra["ignore.jar.common"] = true
     }
     "AS31" -> {
+        extra["versions.jar.guava"] = "21.0"
+        extra["versions.jar.groovy-all"] = "2.4.12"
+        extra["versions.jar.swingx-core"] = "1.6.2"
+        extra["versions.jar.kxml2"] = "2.3.0"
         extra["versions.jar.streamex"] = "0.6.5"
         extra["versions.jar.gson"] = "2.8.2"
         for (jar in gradleJars) {
@@ -74,6 +98,7 @@ when (platform) {
         }
 
         extra["ignore.jar.common"] = true
+        extra["ignore.jar.lombok-ast"] = true
     }
 }
 
