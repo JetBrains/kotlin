@@ -51,6 +51,7 @@ dependencies {
     testRuntime(intellijPluginDep("java-decompiler"))
     //testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
+    testRuntime(intellijPluginDep("smali"))
 }
 
 sourceSets {
