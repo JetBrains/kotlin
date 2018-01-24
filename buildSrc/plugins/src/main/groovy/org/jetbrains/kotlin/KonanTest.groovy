@@ -75,9 +75,9 @@ abstract class KonanTest extends JavaExec {
         }
     }
 
-    KonanTest(){
-        // We don't build the compiler if a custom konan.home path is specified.
-        if (!project.hasProperty("konan.home")) {
+    KonanTest() {
+        // We don't build the compiler if a custom dist path is specified.
+        if (!project.ext.useCustomDist) {
             dependsOn(project.rootProject.tasks['dist'])
         }
     }
