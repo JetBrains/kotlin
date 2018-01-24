@@ -51,7 +51,7 @@ public annotation class JvmStatic
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmName(val name: String)
+public actual annotation class JvmName(actual val name: String)
 
 /**
  * Instructs the Kotlin compiler to generate a multifile class with top-level functions and properties declared in this file as one of its parts.
@@ -60,7 +60,7 @@ public annotation class JvmName(val name: String)
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-public annotation class JvmMultifileClass
+public actual annotation class JvmMultifileClass
 
 /**
  * Changes the fully qualified name of the JVM package of the .class file generated from this file.
@@ -110,7 +110,7 @@ public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmField
+public actual annotation class JvmField
 
 /**
  * Instructs compiler to generate or omit wildcards for type arguments corresponding to parameters with

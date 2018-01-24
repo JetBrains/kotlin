@@ -16,5 +16,7 @@
 
 package kotlin.text
 
-@SinceKotlin("1.1") public typealias Appendable = java.lang.Appendable
-@SinceKotlin("1.1") public typealias StringBuilder = java.lang.StringBuilder
+@SinceKotlin("1.1") public actual typealias Appendable = java.lang.Appendable
+
+@Suppress("ACTUAL_WITHOUT_EXPECT") // TODO: some supertypes are missing
+@SinceKotlin("1.1") public actual typealias StringBuilder = java.lang.StringBuilder
