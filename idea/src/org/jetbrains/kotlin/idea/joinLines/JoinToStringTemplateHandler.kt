@@ -35,16 +35,29 @@ class JoinToStringTemplateHandler : JoinRawLinesHandlerDelegate {
         val index = if (c == '\n') start - 1 else start
 
         val plus = file.findElementAt(index)?.takeIf { it.node?.elementType == KtTokens.PLUS } ?: return -1
-        val binaryExpr = (plus.parent.parent as? KtBinaryExpression) ?: return -1
+        var binaryExpr = (plus.parent.parent as? KtBinaryExpression) ?: return -1
         if (!binaryExpr.joinable()) return -1
 
         val lineCount = binaryExpr.getLineCount()
-        val targetBinaryExpr = binaryExpr.expand(lineCount + 1)
-        val (left, rightText) = targetBinaryExpr.collect(lineCount)
+        val nextLineCount = lineCount + 1
+
+        var parent = binaryExpr.parent
+        while (parent is KtBinaryExpression && parent.joinable() && parent.lineCount() == nextLineCount) {
+            binaryExpr = parent
+            parent = parent.parent
+        }
+
+        var rightText = ConvertToStringTemplateIntention.buildText(binaryExpr.right, false)
+        var left = binaryExpr.left
+        while (left is KtBinaryExpression && left.joinable() && left.parent.getLineCount() >= lineCount) {
+            rightText = ConvertToStringTemplateIntention.buildText(left.right, false) + rightText
+            left = left.left
+        }
+
         return when (left) {
             is KtStringTemplateExpression -> {
                 val offset = left.endOffset - 1
-                targetBinaryExpr.replace(createStringTemplate(left, rightText))
+                binaryExpr.replace(createStringTemplate(left, rightText))
                 offset
             }
             is KtBinaryExpression -> {
@@ -52,7 +65,7 @@ class JoinToStringTemplateHandler : JoinRawLinesHandlerDelegate {
                 if (leftRight is KtStringTemplateExpression) {
                     val offset = leftRight.endOffset - 1
                     leftRight.replace(createStringTemplate(leftRight, rightText))
-                    targetBinaryExpr.replace(left)
+                    binaryExpr.replace(left)
                     offset
                 } else {
                     -1
@@ -80,21 +93,3 @@ private fun KtBinaryExpression.joinable(): Boolean {
         else -> false
     }
 }
-
-private fun KtBinaryExpression.expand(limitLineCount: Int): KtBinaryExpression {
-    val parent = parent
-    return if (parent is KtBinaryExpression && parent.joinable() && parent.lineCount() == limitLineCount)
-        parent.expand(limitLineCount)
-    else
-        this
-}
-
-private fun KtBinaryExpression.collect(limitLineCount: Int): Pair<KtExpression?, String> {
-    val rightText = ConvertToStringTemplateIntention.buildText(right, false)
-    val left = left
-    return if (left is KtBinaryExpression && left.joinable() && getLineCount() >= limitLineCount)
-        left.collect(limitLineCount).let { it.first to it.second + rightText }
-    else
-        left to rightText
-}
-
