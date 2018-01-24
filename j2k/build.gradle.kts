@@ -17,7 +17,6 @@ dependencies {
     testCompile(project(":compiler:light-classes"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
-    testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":plugins:android-extensions-ide"))

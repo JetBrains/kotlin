@@ -57,7 +57,6 @@ dependencies {
     testCompile(ideaSdkDeps("openapi", "idea", "util", "asm-all", "commons-httpclient-3.1-patched"))
 
     testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(projectDist(":kotlin-daemon-client"))
     testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))
     testRuntime(ideaSdkCoreDeps("*.jar"))

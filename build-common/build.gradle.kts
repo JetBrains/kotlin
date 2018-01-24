@@ -18,7 +18,6 @@ dependencies {
     testCompile(protobufFull())
     testCompile(projectDist(":kotlin-stdlib"))
     testCompileOnly(ideaSdkDeps("openapi"))
-    testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(projectDist(":kotlin-reflect"))
 }
 

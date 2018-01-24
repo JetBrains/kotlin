@@ -25,7 +25,6 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":generators:test-generator"))
-    testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(projectDist(":kotlin-stdlib"))
     testRuntime(projectDist(":kotlin-stdlib-js"))
     testRuntime(projectDist(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned

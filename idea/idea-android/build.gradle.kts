@@ -30,7 +30,6 @@ dependencies {
     testCompile(commonDep("junit:junit"))
 
     testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":plugins:kapt3-idea"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
