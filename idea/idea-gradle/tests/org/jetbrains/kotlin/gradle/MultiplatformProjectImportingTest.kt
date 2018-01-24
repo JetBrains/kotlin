@@ -534,6 +534,57 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
     }
 
     @Test
+    fun testJsProductionOutputFile() {
+        createProjectSubFile(
+                "settings.gradle",
+                "include ':project1', ':project2', ':project3'"
+        )
+
+        val kotlinVersion = "1.1.51"
+
+        createProjectSubFile("build.gradle", """
+            buildscript {
+                repositories {
+                    jcenter()
+                    maven { url 'https://maven.google.com' }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                    classpath 'com.android.tools.build:gradle:2.3.3'
+                }
+            }
+
+            project('project1') {
+                apply plugin: 'kotlin-platform-common'
+            }
+
+            project('project2') {
+                repositories {
+                    mavenCentral()
+                }
+
+                apply plugin: 'kotlin-platform-js'
+
+                dependencies {
+                    implement project(':project1')
+                }
+            }
+        """)
+
+        importProject()
+
+        TestCase.assertEquals(
+                projectPath + "/project2/build/classes/main/project2.js",
+                PathUtil.toSystemIndependentName(KotlinFacet.get (getModule("project2_main"))!!.configuration.settings.productionOutputPath)
+        )
+        TestCase.assertEquals(
+                projectPath + "/project2/build/classes/main/project2.js",
+                PathUtil.toSystemIndependentName(KotlinFacet.get (getModule("project2_test"))!!.configuration.settings.productionOutputPath)
+        )
+    }
+
+    @Test
     fun testJsTestOutputFileInProjectWithAndroid() {
         createProjectSubFile(
                 "settings.gradle",

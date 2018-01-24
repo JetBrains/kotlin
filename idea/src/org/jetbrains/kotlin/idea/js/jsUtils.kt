@@ -38,6 +38,17 @@ val Module.jsTestOutputFilePath: String?
         return JpsPathUtil.urlToPath("$outputDir/${name}_test.js")
     }
 
+val Module.jsProductionOutputFilePath: String?
+    get() {
+        if (!shouldUseJpsOutput) {
+            (KotlinFacet.get(this)?.configuration?.settings?.productionOutputPath)?.let { return it }
+        }
+
+        val compilerExtension = CompilerModuleExtension.getInstance(this)
+        val outputDir = compilerExtension?.compilerOutputUrl ?: return null
+        return JpsPathUtil.urlToPath("$outputDir/$name.js")
+    }
+
 fun Module.jsOrJsImpl() = when (TargetPlatformDetector.getPlatform(this)) {
     is TargetPlatform.Common -> implementingModules.firstOrNull { TargetPlatformDetector.getPlatform(it) is JsPlatform }
     is JsPlatform -> this

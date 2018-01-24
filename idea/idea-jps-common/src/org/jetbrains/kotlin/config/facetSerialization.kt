@@ -110,6 +110,9 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
             XmlSerializer.deserializeInto(compilerArguments!!, it)
             compilerArguments!!.detectVersionAutoAdvance()
         }
+        productionOutputPath = element.getChild("productionOutputPath")?.let {
+            PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
+        } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
         testOutputPath = element.getChild("testOutputPath")?.let {
             PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
         } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
@@ -236,6 +239,11 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
     implementedModuleName?.let {
         element.addContent(Element("implements").apply { addContent(it) })
+    }
+    productionOutputPath?.let {
+        if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {
+            element.addContent(Element("productionOutputPath").apply { addContent(PathUtil.toSystemIndependentName(it)) })
+        }
     }
     testOutputPath?.let {
         if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {

@@ -209,7 +209,8 @@ private fun configureFacetByGradleModule(
 
     with(kotlinFacet.configuration.settings) {
         implementedModuleName = (sourceSetNode ?: moduleNode).implementedModuleName
-        testOutputPath = getExplicitTestOutputPath(moduleNode, platformKind)
+        productionOutputPath = getExplicitOutputPath(moduleNode, platformKind, "main")
+        testOutputPath = getExplicitOutputPath(moduleNode, platformKind, "test")
     }
 
     kotlinFacet.noVersionAutoAdvance()
@@ -217,9 +218,9 @@ private fun configureFacetByGradleModule(
     return kotlinFacet
 }
 
-private fun getExplicitTestOutputPath(moduleNode: DataNode<ModuleData>, platformKind: TargetPlatformKind<*>?): String? {
+private fun getExplicitOutputPath(moduleNode: DataNode<ModuleData>, platformKind: TargetPlatformKind<*>?, sourceSet: String): String? {
     if (platformKind !is TargetPlatformKind.JavaScript) return null
-    val k2jsArgumentList = moduleNode.compilerArgumentsBySourceSet?.get("test")?.currentArguments ?: return null
+    val k2jsArgumentList = moduleNode.compilerArgumentsBySourceSet?.get(sourceSet)?.currentArguments ?: return null
     return K2JSCompilerArguments().apply { parseCommandLineArguments(k2jsArgumentList, this) }.outputFile
 }
 
