@@ -126,7 +126,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
         when:
         def project = KonanProject.createWithInterop(projectDirectory, ArtifactType.LIBRARY) { KonanProject it ->
             it.generateSrcFile(["src", "foo", "kotlin"], 'bar.kt', """
-                fun main(args: Array<String>) { println("Hello!") }
+                fun foo(args: Array<String>) { println("Hello!") }
             """.stripIndent())
         }
         def results = buildTwice(project) { KonanProject it ->
