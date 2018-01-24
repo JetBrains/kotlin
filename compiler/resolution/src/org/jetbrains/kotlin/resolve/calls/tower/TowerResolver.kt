@@ -94,7 +94,7 @@ class TowerResolver {
         name: Name
     ): Collection<C> = scopeTower.run(processor, AllCandidatesCollector(), false, name)
 
-    fun <C : Candidate> ImplicitScopeTower.run(
+    private fun <C : Candidate> ImplicitScopeTower.run(
         processor: ScopeTowerProcessor<C>,
         resultCollector: ResultCollector<C>,
         useOrder: Boolean,
