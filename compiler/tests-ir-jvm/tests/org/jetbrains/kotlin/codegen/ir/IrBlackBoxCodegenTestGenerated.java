@@ -6571,6 +6571,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/simple.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("suspendModifier.kt")
+            public void testSuspendModifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/suspendModifier.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations")
