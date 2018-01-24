@@ -38,7 +38,7 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
     ): Pair<FunctionDescriptor.UserDataKey<*>, LazyContractProvider>? {
         if (!proto.hasContract()) return null
 
-        if (!configuration.returnsEffectAllowed && !configuration.callsInPlaceEffectAllowed) return null
+        if (!configuration.readDeserializedContracts) return null
 
         val worker = ContractDeserializationWorker(typeTable, typeDeserializer, ownerFunction)
         val contract = worker.deserializeContract(proto.contract)

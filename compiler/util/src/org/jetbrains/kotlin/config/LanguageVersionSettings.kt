@@ -67,8 +67,6 @@ enum class LanguageFeature(
     DefaultMethodsCallFromJava6TargetError(KOTLIN_1_2),
 
     BooleanElvisBoundSmartCasts(KOTLIN_1_3),
-    ReturnsEffect(KOTLIN_1_3),
-    CallsInPlaceEffect(KOTLIN_1_3),
     RestrictionOfValReassignmentViaBackingField(KOTLIN_1_3),
     NestedClassesInEnumEntryShouldBeInner(KOTLIN_1_3),
     ProhibitDataClassesOverridingCopy(KOTLIN_1_3),
@@ -79,6 +77,11 @@ enum class LanguageFeature(
     NestedClassesInAnnotations(KOTLIN_1_3),
 
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
+
+    ReadDeserializedContracts(KOTLIN_1_3),
+    UseReturnsEffect(KOTLIN_1_3),
+    UseCallsInPlaceEffect(KOTLIN_1_3),
+    AllowContractsForCustomFunctions(KOTLIN_1_3),
 
     // Experimental features
 

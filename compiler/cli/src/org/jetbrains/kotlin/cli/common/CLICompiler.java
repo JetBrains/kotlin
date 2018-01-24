@@ -44,7 +44,6 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
 import static org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFallback;
@@ -218,8 +217,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         }
 
         if (arguments.getEffectSystem()) {
-            extraLanguageFeatures.put(LanguageFeature.CallsInPlaceEffect, LanguageFeature.State.ENABLED);
-            extraLanguageFeatures.put(LanguageFeature.ReturnsEffect, LanguageFeature.State.ENABLED);
+            extraLanguageFeatures.put(LanguageFeature.UseCallsInPlaceEffect, LanguageFeature.State.ENABLED);
+            extraLanguageFeatures.put(LanguageFeature.UseReturnsEffect, LanguageFeature.State.ENABLED);
+        }
+
+        if (arguments.getReadDeserializedContracts()) {
+            extraLanguageFeatures.put(LanguageFeature.ReadDeserializedContracts, LanguageFeature.State.ENABLED);
         }
 
 

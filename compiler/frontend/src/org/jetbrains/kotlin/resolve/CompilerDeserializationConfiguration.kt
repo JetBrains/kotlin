@@ -31,7 +31,5 @@ class CompilerDeserializationConfiguration(languageVersionSettings: LanguageVers
 
     override val isJvmPackageNameSupported = languageVersionSettings.supportsFeature(LanguageFeature.JvmPackageName)
 
-    override val returnsEffectAllowed: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect)
-
-    override val callsInPlaceEffectAllowed: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.CallsInPlaceEffect)
+    override val readDeserializedContracts: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.ReadDeserializedContracts)
 }

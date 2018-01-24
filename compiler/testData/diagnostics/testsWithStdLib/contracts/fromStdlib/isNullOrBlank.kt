@@ -1,4 +1,4 @@
-// !LANGUAGE: +ReturnsEffect
+// !LANGUAGE: +ReadDeserializedContracts +UseReturnsEffect
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 fun testIsNullOrBlank(x: String?) {

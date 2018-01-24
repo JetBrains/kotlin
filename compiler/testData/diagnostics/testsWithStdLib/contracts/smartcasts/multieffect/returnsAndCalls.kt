@@ -1,4 +1,4 @@
-// !LANGUAGE: +CallsInPlaceEffect +ReturnsEffect
+// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +UseCallsInPlaceEffect
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.internal.contracts.*

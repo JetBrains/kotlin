@@ -131,6 +131,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var effectSystem: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xread-deserialized-contracts",
+        description = "Enable reading of contracts from metadata"
+    )
+    var readDeserializedContracts: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)

@@ -1,4 +1,4 @@
-// !LANGUAGE: +CallsInPlaceEffect
+// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
 
 import kotlin.internal.contracts.*
 
