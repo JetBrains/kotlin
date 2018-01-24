@@ -132,7 +132,13 @@ fun <T : Any> mapType(
             if (descriptor.isInline && !mode.needInlineClassWrapping) {
                 val underlyingType = descriptor.underlyingRepresentation()?.type
                 if (underlyingType != null) {
-                    return mapType(underlyingType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
+                    if (!kotlinType.isMarkedNullable) {
+                        return mapType(underlyingType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
+                    }
+
+                    if (!underlyingType.isMarkedNullable && !KotlinBuiltIns.isPrimitiveType(underlyingType)) {
+                        return mapType(underlyingType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
+                    }
                 }
             }
 
