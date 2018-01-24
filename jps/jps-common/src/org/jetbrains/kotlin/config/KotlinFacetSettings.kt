@@ -194,6 +194,7 @@ class KotlinFacetSettings {
 
     var implementedModuleName: String? = null
 
+    var productionOutputPath: String? = null
     var testOutputPath: String? = null
 }
 
