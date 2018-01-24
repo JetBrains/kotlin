@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -30,7 +31,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
             super.defaultBuildOptions().copy(
                     withBuildCache = true,
                     androidGradlePluginVersion = "3.0.0",
-                    androidHome = File(ANDROID_HOME_PATH))
+                    androidHome = KotlinTestUtils.findAndroidSdk())
 
     @Parameterized.Parameter
     lateinit var testCase: TestCase
