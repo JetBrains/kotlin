@@ -914,7 +914,7 @@ fun checkSuperMethods(
 
 fun checkSuperMethodsWithPopup(
         declaration: KtNamedDeclaration,
-        deepestSuperMethods: List<PsiMethod>,
+        deepestSuperMethods: List<PsiElement>,
         actionString: String,
         editor: Editor,
         action: (List<PsiElement>) -> Unit
@@ -923,7 +923,12 @@ fun checkSuperMethodsWithPopup(
 
     val superMethod = deepestSuperMethods.first()
 
-    val superClass = superMethod.containingClass ?: return action(listOf(declaration))
+    val (superClass, isAbstract) = when (superMethod) {
+        is PsiMember -> superMethod.containingClass to superMethod.hasModifierProperty(PsiModifier.ABSTRACT)
+        is KtNamedDeclaration -> superMethod.containingClassOrObject to superMethod.isAbstract()
+        else -> null
+    } ?: return action(listOf(declaration))
+    if (superClass == null) return action(listOf(declaration))
 
     if (ApplicationManager.getApplication().isUnitTestMode) return action(deepestSuperMethods)
 
@@ -946,7 +951,7 @@ fun checkSuperMethodsWithPopup(
     val renameCurrent = actionString + " only current $kind"
     val title = buildString {
         append(declaration.name)
-        append(if (superMethod.hasModifierProperty(PsiModifier.ABSTRACT)) " implements " else " overrides ")
+        append(if (isAbstract) " implements " else " overrides ")
         append(ElementDescriptionUtil.getElementDescription(superMethod, UsageViewTypeLocation.INSTANCE))
         append(" of ")
         append(SymbolPresentationUtil.getSymbolPresentableText(superClass))

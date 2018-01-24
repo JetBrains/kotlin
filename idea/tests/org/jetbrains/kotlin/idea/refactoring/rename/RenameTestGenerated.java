@@ -469,6 +469,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("privateFunInMultifileFacade/privateFunInMultifileFacade.test")
+    public void testPrivateFunInMultifileFacade_privateFunInMultifileFacade() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/privateFunInMultifileFacade/privateFunInMultifileFacade.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("privateTopLevelDeclarationsNoConflict/privateTopLevelDeclarationsNoConflict.test")
     public void testPrivateTopLevelDeclarationsNoConflict_PrivateTopLevelDeclarationsNoConflict() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/privateTopLevelDeclarationsNoConflict/privateTopLevelDeclarationsNoConflict.test");

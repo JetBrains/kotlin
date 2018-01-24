@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.refactoring.checkSuperMethodsWithPopup
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMethodsKotlinAware
+import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMethodsNoWrapping
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
@@ -147,18 +148,21 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
 
         substituteForExpectOrActual(element)?.let { return preprocessAndPass(it) }
 
-        val wrappedMethod = wrapPsiMethod(element) ?: return
-
-        val deepestSuperMethods = findDeepestSuperMethodsKotlinAware(wrappedMethod)
+        val wrappedMethod = wrapPsiMethod(element)
+        val deepestSuperMethods = if (wrappedMethod != null) {
+            findDeepestSuperMethodsKotlinAware(wrappedMethod)
+        } else {
+            findDeepestSuperMethodsNoWrapping(element)
+        }
         when {
             deepestSuperMethods.isEmpty() -> preprocessAndPass(element)
-            wrappedMethod.isConstructor || element !is KtNamedFunction -> {
+            wrappedMethod != null && (wrappedMethod.isConstructor || element !is KtNamedFunction) -> {
                 javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor, Pass(::preprocessAndPass))
             }
             else -> {
-                val declaration = element.unwrapped as? KtNamedDeclaration ?: return
+                val declaration = element.unwrapped as? KtNamedFunction ?: return
                 checkSuperMethodsWithPopup(declaration, deepestSuperMethods.toList(), "Rename", editor) {
-                    preprocessAndPass(if (it.size > 1) FunctionWithSupersWrapper(element, it) else wrappedMethod)
+                    preprocessAndPass(if (it.size > 1) FunctionWithSupersWrapper(declaration, it) else wrappedMethod ?: element)
                 }
             }
         }
