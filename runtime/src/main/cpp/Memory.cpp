@@ -29,6 +29,8 @@
 #include "Memory.h"
 #include "MemoryPrivate.hpp"
 #include "Natives.h"
+#include "Porting.h"
+
 
 // If garbage collection algorithm for cyclic garbage to be used.
 // We are using the Bacon's algorithm for GC, see
@@ -38,6 +40,8 @@
 #define TRACE_MEMORY 0
 // Collect memory manager events statistics.
 #define COLLECT_STATISTIC 0
+// Auto-adjust GC thresholds.
+#define GC_ERGONOMICS 1
 
 ContainerHeader ObjHeader::theStaticObjectsContainer = {
   CONTAINER_TAG_PERMANENT | CONTAINER_TAG_INCREMENT
@@ -66,8 +70,16 @@ inline int atomicAdd(int* where, int what) {
 
 #if USE_GC
 // Collection threshold default (collect after having so many elements in the
-// release candidates set). Better be a prime number.
-constexpr size_t kGcThreshold = 9341;
+// release candidates set).
+constexpr size_t kGcThreshold = 4 * 1024;
+#if GC_ERGONOMICS
+// Ergonomic thresholds.
+// If GC to computations time ratio is above that value,
+// increase GC threshold by 1.5 times.
+constexpr double kGcToComputeRatioThreshold = 0.5;
+// Never exceed this value when increasing GC threshold.
+constexpr size_t kMaxErgonomicThreshold = 1024 * 1024;
+#endif  // GC_ERGONOMICS
 
 typedef KStdDeque<ContainerHeader*> ContainerHeaderDeque;
 #endif
@@ -253,6 +265,11 @@ struct MemoryState {
   size_t gcThreshold;
   // If collection is in progress.
   bool gcInProgress;
+
+#if GC_ERGONOMICS
+  uint64_t lastGcTimestamp;
+#endif
+
 #endif // USE_GC
 
 #if COLLECT_STATISTIC
@@ -486,7 +503,7 @@ inline void IncrementRC(ContainerHeader* container) {
   container->incRefCount();
 }
 
-inline void DecrementRC(ContainerHeader* container) {
+inline void DecrementRC(ContainerHeader* container, bool useCycleCollector) {
   if (container->decRefCount() == 0) {
     FreeContainer(container);
   }
@@ -503,17 +520,17 @@ inline void IncrementRC(ContainerHeader* container) {
   container->setColor(CONTAINER_TAG_GC_BLACK);
 }
 
-inline void DecrementRC(ContainerHeader* container) {
+inline void DecrementRC(ContainerHeader* container, bool useCycleCollector) {
   if (container->decRefCount() == 0) {
     FreeContainer(container);
-  } else { // Possible root.
+  } else if (useCycleCollector) { // Possible root.
     if (container->color() != CONTAINER_TAG_GC_PURPLE) {
       container->setColor(CONTAINER_TAG_GC_PURPLE);
       if (!container->buffered()) {
         container->setBuffered();
         auto state = memoryState;
         state->toFree->push_back(container);
-        if (state->gcSuspendCount == 0 && freeableSize(state) > state->gcThreshold) {
+        if (state->gcSuspendCount == 0 && freeableSize(state) >= state->gcThreshold) {
           GarbageCollect();
         }
       }
@@ -523,6 +540,7 @@ inline void DecrementRC(ContainerHeader* container) {
 
 inline void initThreshold(MemoryState* state, uint32_t gcThreshold) {
   state->gcThreshold = gcThreshold;
+  state->toFree->reserve(gcThreshold);
 }
 #endif // USE_GC
 
@@ -720,7 +738,7 @@ inline void AddRef(ContainerHeader* header) {
   }
 }
 
-inline void Release(ContainerHeader* header) {
+inline void Release(ContainerHeader* header, bool useCycleCollector) {
   // Looking at container type we may want to skip Release() totally
   // (non-escaping stack objects, constant objects).
   switch (header->refCount_ & CONTAINER_TAG_MASK) {
@@ -728,7 +746,7 @@ inline void Release(ContainerHeader* header) {
     case CONTAINER_TAG_STACK:
       break;
     case CONTAINER_TAG_NORMAL:
-      DecrementRC(header);
+      DecrementRC(header, useCycleCollector);
       break;
     default:
       RuntimeAssert(false, "unknown container type");
@@ -940,7 +958,9 @@ inline void AddRef(const ObjHeader* object) {
 
 inline void ReleaseRef(const ObjHeader* object) {
   MEMORY_LOG("ReleaseRef on %p in %p\n", object, object->container())
-  Release(object->container());
+  // Use cycle collector only for objects having object fields, or if container is multiobject.
+  auto container = object->container();
+  Release(container, (object->type_info()->objOffsetsCount_ > 0) || (container->objectCount() > 1));
 }
 
 void AddRefFromAssociatedObject(const ObjHeader* object) {
@@ -1152,6 +1172,10 @@ void GarbageCollect() {
 
   MEMORY_LOG("Garbage collect\n")
 
+#if GC_ERGONOMICS
+  auto gcStartTime = konan::getTimeMicros();
+#endif
+
   state->gcInProgress = true;
 
   while (state->toFree->size() > 0) {
@@ -1160,6 +1184,21 @@ void GarbageCollect() {
   }
 
   state->gcInProgress = false;
+
+#if GC_ERGONOMICS
+  auto gcEndTime = konan::getTimeMicros();
+  auto gcToComputeRatio = double(gcEndTime - gcStartTime) / (gcStartTime - state->lastGcTimestamp + 1);
+  if (gcToComputeRatio > kGcToComputeRatioThreshold) {
+     auto newThreshold = state->gcThreshold * 3 / 2 + 1;
+     if (newThreshold < kMaxErgonomicThreshold) {
+        MEMORY_LOG("Adjusting GC threshold to %d\n", newThreshold);
+        initThreshold(state, newThreshold);
+     }
+  }
+  MEMORY_LOG("Garbage collect: GC length=%lld sinceLast=%lld\n",
+             (gcEndTime - gcStartTime), gcStartTime - state->lastGcTimestamp);
+  state->lastGcTimestamp = gcEndTime;
+#endif
 }
 
 #endif // USE_GC
@@ -1235,7 +1274,7 @@ KNativePtr CreateStablePointer(KRef any) {
 void DisposeStablePointer(KNativePtr pointer) {
   if (pointer == nullptr) return;
   KRef ref = reinterpret_cast<KRef>(pointer);
-  Release(ref->container());
+  ReleaseRef(ref);
 }
 
 OBJ_GETTER(DerefStablePointer, KNativePtr pointer) {

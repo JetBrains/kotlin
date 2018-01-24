@@ -212,12 +212,15 @@ uint64_t getTimeMillis() {
     Konan_date_now(&now);
     return now;
 }
+
 uint64_t getTimeMicros() {
     return getTimeMillis() * 1000ULL;
 }
+
 uint64_t getTimeNanos() {
     return getTimeMillis() * 1000000ULL;
 }
+
 #else
 // Time operations.
 using namespace std::chrono;
