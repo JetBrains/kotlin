@@ -80,10 +80,10 @@ public inline fun Map<String, String>.toProperties(): Properties
 // creates a singleton copy of map, if there is specialization available in target platform, otherwise returns itself
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-internal inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = toSingletonMap()
+internal actual inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = toSingletonMap()
 
 // creates a singleton copy of map
 @kotlin.jvm.JvmVersion
-internal fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
+internal actual fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
         = with (entries.iterator().next()) { java.util.Collections.singletonMap(key, value) }
 

@@ -76,7 +76,7 @@ public inline fun Char.isJavaIdentifierStart(): Boolean = Character.isJavaIdenti
  * Determines whether a character is whitespace according to the Unicode standard.
  * Returns `true` if the character is whitespace.
  */
-public fun Char.isWhitespace(): Boolean = Character.isWhitespace(this) || Character.isSpaceChar(this)
+public actual fun Char.isWhitespace(): Boolean = Character.isWhitespace(this) || Character.isSpaceChar(this)
 
 /**
  * Returns `true` if this character is upper case.
@@ -94,13 +94,13 @@ public inline fun Char.isLowerCase(): Boolean = Character.isLowerCase(this)
  * Converts this character to uppercase.
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.toUpperCase(): Char = Character.toUpperCase(this)
+public actual inline fun Char.toUpperCase(): Char = Character.toUpperCase(this)
 
 /**
  * Converts this character to lowercase.
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.toLowerCase(): Char = Character.toLowerCase(this)
+public actual inline fun Char.toLowerCase(): Char = Character.toLowerCase(this)
 
 /**
  * Returns `true` if this character is a titlecase character.
@@ -130,13 +130,13 @@ public val Char.directionality: CharDirectionality get() = CharDirectionality.va
  * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.isHighSurrogate(): Boolean = Character.isHighSurrogate(this)
+public actual inline fun Char.isHighSurrogate(): Boolean = Character.isHighSurrogate(this)
 
 /**
  * Returns `true` if this character is a Unicode low-surrogate code unit (also known as trailing-surrogate code unit).
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.isLowSurrogate(): Boolean = Character.isLowSurrogate(this)
+public actual inline fun Char.isLowSurrogate(): Boolean = Character.isLowSurrogate(this)
 
 // TODO Provide name for JVM7+
 ///**
@@ -146,13 +146,13 @@ public inline fun Char.isLowSurrogate(): Boolean = Character.isLowSurrogate(this
 
 
 
-internal fun digitOf(char: Char, radix: Int): Int = Character.digit(char.toInt(), radix)
+internal actual fun digitOf(char: Char, radix: Int): Int = Character.digit(char.toInt(), radix)
 
 /**
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
  */
 @PublishedApi
-internal fun checkRadix(radix: Int): Int {
+internal actual fun checkRadix(radix: Int): Int {
     if(radix !in Character.MIN_RADIX..Character.MAX_RADIX) {
         throw IllegalArgumentException("radix $radix was not in valid range ${Character.MIN_RADIX..Character.MAX_RADIX}")
     }

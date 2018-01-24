@@ -31,17 +31,17 @@ public inline fun <T> java.util.Enumeration<T>.toList(): List<T> = java.util.Col
 
 @JvmVersion
 @kotlin.internal.InlineOnly
-internal inline fun copyToArrayImpl(collection: Collection<*>): Array<Any?> =
+internal actual inline fun copyToArrayImpl(collection: Collection<*>): Array<Any?> =
     kotlin.jvm.internal.collectionToArray(collection)
 
 @JvmVersion
 @kotlin.internal.InlineOnly
-internal inline fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> =
+internal actual inline fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> =
     kotlin.jvm.internal.collectionToArray(collection, array as Array<Any?>) as Array<T>
 
 // copies typed varargs array to array of objects
 @JvmVersion
-internal fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<Any?> =
+internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
     if (isVarargs && this.javaClass == Array<Any?>::class.java)
     // if the array came from varargs and already is array of Any, copying isn't required
         @Suppress("UNCHECKED_CAST") (this as Array<Any?>)

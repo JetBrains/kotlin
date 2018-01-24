@@ -19,7 +19,7 @@ package kotlin
  * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
  */
 @kotlin.jvm.JvmVersion
-public fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
+public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -32,7 +32,7 @@ public fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initia
  * Also this behavior can be changed in the future.
  */
 @kotlin.jvm.JvmVersion
-public fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
+public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
     when (mode) {
         LazyThreadSafetyMode.SYNCHRONIZED -> SynchronizedLazyImpl(initializer)
         LazyThreadSafetyMode.PUBLICATION -> SafePublicationLazyImpl(initializer)
@@ -51,7 +51,7 @@ public fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
  * Also this behavior can be changed in the future.
  */
 @kotlin.jvm.JvmVersion
-public fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer, lock)
+public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer, lock)
 
 
 

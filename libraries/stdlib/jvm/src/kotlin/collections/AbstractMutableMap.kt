@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:JvmVersion
 package kotlin.collections
 
@@ -12,7 +17,7 @@ import java.util.AbstractMap
  * @param V the type of map values. The map is invariant on its value type.
  */
 @SinceKotlin("1.1")
-public abstract class AbstractMutableMap<K, V> protected constructor() : MutableMap<K, V>, AbstractMap<K, V>() {
+public actual abstract class AbstractMutableMap<K, V> protected actual constructor() : MutableMap<K, V>, AbstractMap<K, V>() {
     /**
      * Associates the specified [value] with the specified [key] in the map.
      *
@@ -21,5 +26,5 @@ public abstract class AbstractMutableMap<K, V> protected constructor() : Mutable
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
-    abstract override fun put(key: K, value: V): V?
+    actual abstract override fun put(key: K, value: V): V?
 }

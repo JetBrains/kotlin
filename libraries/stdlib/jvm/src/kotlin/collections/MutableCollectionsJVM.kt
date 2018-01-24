@@ -26,7 +26,7 @@ public inline fun <T> MutableList<T>.sort(comparison: (T, T) -> Int): Unit = thr
  * Sorts elements in the list in-place according to their natural sort order.
  */
 @kotlin.jvm.JvmVersion
-public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
+public actual fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
     if (size > 1) java.util.Collections.sort(this)
 }
 
@@ -34,7 +34,7 @@ public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
  * Sorts elements in the list in-place according to the order specified with [comparator].
  */
 @kotlin.jvm.JvmVersion
-public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
+public actual fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
     if (size > 1) java.util.Collections.sort(this, comparator)
 }
 
@@ -46,7 +46,7 @@ public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
 @SinceKotlin("1.2")
-public inline fun <T> MutableList<T>.fill(value: T) {
+public actual inline fun <T> MutableList<T>.fill(value: T) {
     java.util.Collections.fill(this, value)
 }
 
@@ -57,7 +57,7 @@ public inline fun <T> MutableList<T>.fill(value: T) {
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
 @SinceKotlin("1.2")
-public inline fun <T> MutableList<T>.shuffle() {
+public actual inline fun <T> MutableList<T>.shuffle() {
     java.util.Collections.shuffle(this)
 }
 
@@ -76,7 +76,7 @@ public inline fun <T> MutableList<T>.shuffle(random: java.util.Random) {
  */
 @kotlin.jvm.JvmVersion
 @SinceKotlin("1.2")
-public fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
+public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
 
 /**
  * Returns a new list with the elements of this list randomly shuffled

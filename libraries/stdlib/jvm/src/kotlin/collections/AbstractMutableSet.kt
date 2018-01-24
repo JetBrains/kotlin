@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:JvmVersion
 package kotlin.collections
 
@@ -9,7 +14,7 @@ import java.util.AbstractSet
  * @param E the type of elements contained in the set. The set is invariant on its element type.
  */
 @SinceKotlin("1.1")
-public abstract class AbstractMutableSet<E> protected constructor() : MutableSet<E>, AbstractSet<E>() {
+public actual abstract class AbstractMutableSet<E> protected actual constructor() : MutableSet<E>, AbstractSet<E>() {
     /**
      * Adds the specified element to the set.
      *
@@ -18,5 +23,5 @@ public abstract class AbstractMutableSet<E> protected constructor() : MutableSet
      *
      * @return `true` if the element has been added, `false` if the element is already contained in the set.
      */
-    abstract override fun add(element: E): Boolean
+    actual abstract override fun add(element: E): Boolean
 }

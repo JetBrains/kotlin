@@ -30,7 +30,7 @@ import kotlin.coroutines.experimental.*
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
 @kotlin.internal.InlineOnly
-public inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
+public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
         completion: Continuation<T>
 ): Any? = (this as Function1<Continuation<T>, Any?>).invoke(completion)
 
@@ -44,7 +44,7 @@ public inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
 @kotlin.internal.InlineOnly
-public inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
+public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
         receiver: R,
         completion: Continuation<T>
 ): Any? = (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
@@ -64,7 +64,7 @@ public inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
-public fun <T> (suspend () -> T).createCoroutineUnchecked(
+public actual fun <T> (suspend () -> T).createCoroutineUnchecked(
         completion: Continuation<T>
 ): Continuation<Unit> =
         if (this !is kotlin.coroutines.experimental.jvm.internal.CoroutineImpl)
@@ -87,7 +87,7 @@ public fun <T> (suspend () -> T).createCoroutineUnchecked(
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
-public fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
+public actual fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
         receiver: R,
         completion: Continuation<T>
 ): Continuation<Unit> =

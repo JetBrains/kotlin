@@ -57,7 +57,7 @@ public inline fun Long.toString(radix: Int): String = java.lang.Long.toString(th
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
+public actual inline fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
@@ -65,7 +65,7 @@ public inline fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(t
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
+public actual inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
@@ -75,7 +75,7 @@ public inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun String.toByte(radix: Int): Byte = java.lang.Byte.parseByte(this, checkRadix(radix))
+public actual inline fun String.toByte(radix: Int): Byte = java.lang.Byte.parseByte(this, checkRadix(radix))
 
 
 /**
@@ -84,7 +84,7 @@ public inline fun String.toByte(radix: Int): Byte = java.lang.Byte.parseByte(thi
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun String.toShort(): Short = java.lang.Short.parseShort(this)
+public actual inline fun String.toShort(): Short = java.lang.Short.parseShort(this)
 
 /**
  * Parses the string as a [Short] number and returns the result.
@@ -94,7 +94,7 @@ public inline fun String.toShort(): Short = java.lang.Short.parseShort(this)
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun String.toShort(radix: Int): Short = java.lang.Short.parseShort(this, checkRadix(radix))
+public actual inline fun String.toShort(radix: Int): Short = java.lang.Short.parseShort(this, checkRadix(radix))
 
 /**
  * Parses the string as an [Int] number and returns the result.
@@ -102,7 +102,7 @@ public inline fun String.toShort(radix: Int): Short = java.lang.Short.parseShort
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun String.toInt(): Int = java.lang.Integer.parseInt(this)
+public actual inline fun String.toInt(): Int = java.lang.Integer.parseInt(this)
 
 /**
  * Parses the string as an [Int] number and returns the result.
@@ -112,7 +112,7 @@ public inline fun String.toInt(): Int = java.lang.Integer.parseInt(this)
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun String.toInt(radix: Int): Int = java.lang.Integer.parseInt(this, checkRadix(radix))
+public actual inline fun String.toInt(radix: Int): Int = java.lang.Integer.parseInt(this, checkRadix(radix))
 
 /**
  * Parses the string as a [Long] number and returns the result.
@@ -120,7 +120,7 @@ public inline fun String.toInt(radix: Int): Int = java.lang.Integer.parseInt(thi
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun String.toLong(): Long = java.lang.Long.parseLong(this)
+public actual inline fun String.toLong(): Long = java.lang.Long.parseLong(this)
 
 /**
  * Parses the string as a [Long] number and returns the result.
@@ -130,7 +130,7 @@ public inline fun String.toLong(): Long = java.lang.Long.parseLong(this)
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun String.toLong(radix: Int): Long = java.lang.Long.parseLong(this, checkRadix(radix))
+public actual inline fun String.toLong(radix: Int): Long = java.lang.Long.parseLong(this, checkRadix(radix))
 
 /**
  * Parses the string as a [Float] number and returns the result.
@@ -138,7 +138,7 @@ public inline fun String.toLong(radix: Int): Long = java.lang.Long.parseLong(thi
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun String.toFloat(): Float = java.lang.Float.parseFloat(this)
+public actual inline fun String.toFloat(): Float = java.lang.Float.parseFloat(this)
 
 /**
  * Parses the string as a [Double] number and returns the result.
@@ -146,7 +146,7 @@ public inline fun String.toFloat(): Float = java.lang.Float.parseFloat(this)
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
+public actual inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 
 
 /**
@@ -155,7 +155,7 @@ public inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
-public fun String.toFloatOrNull(): Float? = screenFloatValue(this, java.lang.Float::parseFloat)
+public actual fun String.toFloatOrNull(): Float? = screenFloatValue(this, java.lang.Float::parseFloat)
 
 /**
  * Parses the string as a [Double] number and returns the result
@@ -163,7 +163,7 @@ public fun String.toFloatOrNull(): Float? = screenFloatValue(this, java.lang.Flo
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
-public fun String.toDoubleOrNull(): Double? = screenFloatValue(this, java.lang.Double::parseDouble)
+public actual fun String.toDoubleOrNull(): Double? = screenFloatValue(this, java.lang.Double::parseDouble)
 
 /**
  * Parses the string as a [java.math.BigInteger] number and returns the result.

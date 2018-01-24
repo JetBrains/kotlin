@@ -14,32 +14,32 @@ import java.util.regex.Pattern
  * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
  */
 @kotlin.internal.InlineOnly
-internal inline fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).indexOf(ch.toInt(), fromIndex)
+internal actual inline fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).indexOf(ch.toInt(), fromIndex)
 
 /**
  * Returns the index within this string of the first occurrence of the specified substring, starting from the specified offset.
  */
 @kotlin.internal.InlineOnly
-internal inline fun String.nativeIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).indexOf(str, fromIndex)
+internal actual inline fun String.nativeIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).indexOf(str, fromIndex)
 
 /**
  * Returns the index within this string of the last occurrence of the specified character.
  */
 @kotlin.internal.InlineOnly
-internal inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(ch.toInt(), fromIndex)
+internal actual inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(ch.toInt(), fromIndex)
 
 /**
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
  */
 @kotlin.internal.InlineOnly
-internal inline fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(str, fromIndex)
+internal actual inline fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(str, fromIndex)
 
 /**
  * Returns `true` if this string is equal to [other], optionally ignoring character case.
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
-public fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean {
+public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean {
     if (this === null)
         return other === null
     return if (!ignoreCase)
@@ -51,7 +51,7 @@ public fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  */
-public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
+public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
     if (!ignoreCase)
         return (this as java.lang.String).replace(oldChar, newChar)
     else
@@ -62,14 +62,14 @@ public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = fa
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
  * with the specified [newValue] string.
  */
-public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
+public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
         splitToSequence(oldValue, ignoreCase = ignoreCase).joinToString(separator = newValue)
 
 
 /**
  * Returns a new string with the first occurrence of [oldChar] replaced with [newChar].
  */
-public fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
+public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
     val index = indexOf(oldChar, ignoreCase = ignoreCase)
     return if (index < 0) this else this.replaceRange(index, index + 1, newChar.toString())
 }
@@ -78,7 +78,7 @@ public fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean
  * Returns a new string obtained by replacing the first occurrence of the [oldValue] substring in this string
  * with the specified [newValue] string.
  */
-public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
+public actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
     val index = indexOf(oldValue, ignoreCase = ignoreCase)
     return if (index < 0) this else this.replaceRange(index, index + oldValue.length, newValue)
 }
@@ -87,13 +87,13 @@ public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
+public actual inline fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
 
 /**
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
+public actual inline fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
 
 /**
  * Returns a new character array containing the characters from this string.
@@ -159,7 +159,7 @@ public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String>
  * Returns a substring of this string that starts at the specified [startIndex] and continues to the end of the string.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.substring(startIndex: Int): String = (this as java.lang.String).substring(startIndex)
+public actual inline fun String.substring(startIndex: Int): String = (this as java.lang.String).substring(startIndex)
 
 /**
  * Returns the substring of this string starting at the [startIndex] and ending right before the [endIndex].
@@ -168,7 +168,7 @@ public inline fun String.substring(startIndex: Int): String = (this as java.lang
  * @param endIndex the end index (exclusive).
  */
 @kotlin.internal.InlineOnly
-public inline fun String.substring(startIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(startIndex, endIndex)
+public actual inline fun String.substring(startIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(startIndex, endIndex)
 
 /**
  * Returns `true` if this string starts with the specified prefix.
@@ -318,7 +318,7 @@ public inline fun String.intern(): String = (this as java.lang.String).intern()
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
  */
-public fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
+public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
 
 /**
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
@@ -333,7 +333,7 @@ public inline fun String.offsetByCodePoints(index: Int, codePointOffset: Int): I
  * @param otherOffset the start offset in the other char sequence of the substring to compare.
  * @param length the length of the substring to compare.
  */
-public fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean {
+public actual fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean {
     if (this is String && other is String)
         return this.regionMatches(thisOffset, other, otherOffset, length, ignoreCase)
     else
@@ -388,7 +388,7 @@ public inline fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
  *
  * @sample samples.text.Strings.capitalize
  */
-public fun String.capitalize(): String {
+public actual fun String.capitalize(): String {
     return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
 }
 
@@ -398,7 +398,7 @@ public fun String.capitalize(): String {
  *
  * @sample samples.text.Strings.decapitalize
  */
-public fun String.decapitalize(): String {
+public actual fun String.decapitalize(): String {
     return if (isNotEmpty() && this[0].isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 
@@ -407,7 +407,7 @@ public fun String.decapitalize(): String {
  * @throws [IllegalArgumentException] when n < 0.
  * @sample samples.text.Strings.repeat
  */
-public fun CharSequence.repeat(n: Int): String {
+public actual fun CharSequence.repeat(n: Int): String {
     require (n >= 0) { "Count 'n' must be non-negative, but was $n." }
 
     return when (n) {

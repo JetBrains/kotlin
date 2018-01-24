@@ -13,7 +13,7 @@ import java.nio.charset.CharsetDecoder
 
 /** Prints the given message to the standard output stream. */
 @kotlin.internal.InlineOnly
-public inline fun print(message: Any?) {
+public actual inline fun print(message: Any?) {
     System.out.print(message)
 }
 
@@ -73,7 +73,7 @@ public inline fun print(message: CharArray) {
 
 /** Prints the given message and newline to the standard output stream. */
 @kotlin.internal.InlineOnly
-public inline fun println(message: Any?) {
+public actual inline fun println(message: Any?) {
     System.out.println(message)
 }
 
@@ -133,7 +133,7 @@ public inline fun println(message: CharArray) {
 
 /** Prints a newline to the standard output stream. */
 @kotlin.internal.InlineOnly
-public inline fun println() {
+public actual inline fun println() {
     System.out.println()
 }
 

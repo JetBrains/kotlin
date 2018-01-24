@@ -20,10 +20,10 @@ public inline fun<T> java.util.Enumeration<T>.asSequence(): Sequence<T> = this.i
 
 
 @kotlin.jvm.JvmVersion
-internal class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
+internal actual class ConstrainedOnceSequence<T> actual constructor(sequence: Sequence<T>) : Sequence<T> {
     private val sequenceRef = java.util.concurrent.atomic.AtomicReference(sequence)
 
-    override fun iterator(): Iterator<T> {
+    actual override fun iterator(): Iterator<T> {
         val sequence = sequenceRef.getAndSet(null) ?: throw IllegalStateException("This sequence can be consumed only once.")
         return sequence.iterator()
     }

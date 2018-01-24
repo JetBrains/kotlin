@@ -17,4 +17,5 @@
 package kotlin.io
 
 // to use in shared code without imports
-internal typealias Serializable = java.io.Serializable
+@Suppress("ACTUAL_WITHOUT_EXPECT") // internal expect is not matched with internal typealias to public type
+internal actual typealias Serializable = java.io.Serializable
