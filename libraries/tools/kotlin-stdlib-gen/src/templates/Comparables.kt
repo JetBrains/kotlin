@@ -179,6 +179,7 @@ object ComparableOps : TemplateGroupBase() {
                 }
             }
         }
+        on(Platform.JS) { /* just to make expect, KT-22520 */ }
         body(Generic) {
             "return if (a <= b) a else b"
         }
@@ -203,6 +204,7 @@ object ComparableOps : TemplateGroupBase() {
         body {
             "return minOf(a, minOf(b, c))"
         }
+        on(Platform.JS) { /* just to make expect, KT-22520 */ }
         specialFor(Primitives) {
             if (primitive in shortIntPrimitives) {
                 body { "return Math.min(a.toInt(), Math.min(b.toInt(), c.toInt())).to$primitive()" }
@@ -291,6 +293,7 @@ object ComparableOps : TemplateGroupBase() {
                 }
             }
         }
+        on(Platform.JS) { /* just to make expect, KT-22520 */ }
         body(Generic) {
             "return if (a >= b) a else b"
         }
@@ -315,6 +318,7 @@ object ComparableOps : TemplateGroupBase() {
         body {
             "return maxOf(a, maxOf(b, c))"
         }
+        on(Platform.JS) { /* just to make expect, KT-22520 */ }
         specialFor(Primitives) {
             if (primitive in shortIntPrimitives) {
                 body { "return Math.max(a.toInt(), Math.max(b.toInt(), c.toInt())).to$primitive()" }

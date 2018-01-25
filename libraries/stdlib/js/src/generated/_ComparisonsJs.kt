@@ -15,6 +15,15 @@ import kotlin.comparisons.*
 
 /**
  * Returns the greater of two values.
+ * If values are equal, returns the first one.
+ */
+@SinceKotlin("1.1")
+public actual fun <T: Comparable<T>> maxOf(a: T, b: T): T {
+    return if (a >= b) a else b
+}
+
+/**
+ * Returns the greater of two values.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -71,6 +80,14 @@ public actual inline fun maxOf(a: Double, b: Double): Double {
  * Returns the greater of three values.
  */
 @SinceKotlin("1.1")
+public actual fun <T: Comparable<T>> maxOf(a: T, b: T, c: T): T {
+    return maxOf(a, maxOf(b, c))
+}
+
+/**
+ * Returns the greater of three values.
+ */
+@SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun maxOf(a: Byte, b: Byte, c: Byte): Byte {
     return Math.max(a.toInt(), b.toInt(), c.toInt()).unsafeCast<Byte>()
@@ -99,6 +116,15 @@ public actual inline fun maxOf(a: Int, b: Int, c: Int): Int {
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
+public actual inline fun maxOf(a: Long, b: Long, c: Long): Long {
+    return maxOf(a, maxOf(b, c))
+}
+
+/**
+ * Returns the greater of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
 public actual inline fun maxOf(a: Float, b: Float, c: Float): Float {
     return Math.max(a, b, c)
 }
@@ -110,6 +136,15 @@ public actual inline fun maxOf(a: Float, b: Float, c: Float): Float {
 @kotlin.internal.InlineOnly
 public actual inline fun maxOf(a: Double, b: Double, c: Double): Double {
     return Math.max(a, b, c)
+}
+
+/**
+ * Returns the smaller of two values.
+ * If values are equal, returns the first one.
+ */
+@SinceKotlin("1.1")
+public actual fun <T: Comparable<T>> minOf(a: T, b: T): T {
+    return if (a <= b) a else b
 }
 
 /**
@@ -170,6 +205,14 @@ public actual inline fun minOf(a: Double, b: Double): Double {
  * Returns the smaller of three values.
  */
 @SinceKotlin("1.1")
+public actual fun <T: Comparable<T>> minOf(a: T, b: T, c: T): T {
+    return minOf(a, minOf(b, c))
+}
+
+/**
+ * Returns the smaller of three values.
+ */
+@SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun minOf(a: Byte, b: Byte, c: Byte): Byte {
     return Math.min(a.toInt(), b.toInt(), c.toInt()).unsafeCast<Byte>()
@@ -191,6 +234,15 @@ public actual inline fun minOf(a: Short, b: Short, c: Short): Short {
 @kotlin.internal.InlineOnly
 public actual inline fun minOf(a: Int, b: Int, c: Int): Int {
     return Math.min(a, b, c)
+}
+
+/**
+ * Returns the smaller of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public actual inline fun minOf(a: Long, b: Long, c: Long): Long {
+    return minOf(a, minOf(b, c))
 }
 
 /**
