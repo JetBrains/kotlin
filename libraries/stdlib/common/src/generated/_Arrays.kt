@@ -5570,6 +5570,7 @@ public expect fun CharArray.contentToString(): String
 /**
  * Returns new array which is a copy of the original array.
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.copyOf(): Array<T>
 
 /**
@@ -5655,11 +5656,13 @@ public expect fun CharArray.copyOf(newSize: Int): CharArray
 /**
  * Returns new array which is a copy of the original array, resized to the given [newSize].
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.copyOf(newSize: Int): Array<T?>
 
 /**
  * Returns new array which is a copy of range of original array.
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T>
 
 /**
@@ -5957,6 +5960,7 @@ public val CharArray.lastIndex: Int
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect operator fun <T> Array<T>.plus(element: T): Array<T>
 
 /**
@@ -6002,6 +6006,7 @@ public expect operator fun CharArray.plus(element: Char): CharArray
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T>
 
 /**
@@ -6047,6 +6052,7 @@ public expect operator fun CharArray.plus(elements: Collection<Char>): CharArray
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T>
 
 /**
@@ -6092,6 +6098,7 @@ public expect operator fun CharArray.plus(elements: CharArray): CharArray
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.plusElement(element: T): Array<T>
 
 /**

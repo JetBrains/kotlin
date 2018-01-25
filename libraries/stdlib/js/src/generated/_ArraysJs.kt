@@ -415,7 +415,7 @@ public actual fun CharArray.contentToString(): String {
 /**
  * Returns new array which is a copy of the original array.
  */
-@Suppress("NOTHING_TO_INLINE")
+@Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
 public actual inline fun <T> Array<out T>.copyOf(): Array<T> {
     return this.asDynamic().slice()
 }
@@ -540,6 +540,7 @@ public actual fun CharArray.copyOf(newSize: Int): CharArray {
 /**
  * Returns new array which is a copy of the original array, resized to the given [newSize].
  */
+@Suppress("ACTUAL_WITHOUT_EXPECT")
 public actual fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
     return arrayCopyResize(this, newSize, null)
 }
@@ -547,7 +548,7 @@ public actual fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
 /**
  * Returns new array which is a copy of range of original array.
  */
-@Suppress("NOTHING_TO_INLINE")
+@Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
 public actual inline fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
     return this.asDynamic().slice(fromIndex, toIndex)
 }
@@ -616,7 +617,7 @@ public actual fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-@Suppress("NOTHING_TO_INLINE")
+@Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
 public actual inline operator fun <T> Array<out T>.plus(element: T): Array<T> {
     return this.asDynamic().concat(arrayOf(element))
 }
@@ -688,6 +689,7 @@ public actual inline operator fun CharArray.plus(element: Char): CharArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
+@Suppress("ACTUAL_WITHOUT_EXPECT")
 public actual operator fun <T> Array<out T>.plus(elements: Collection<T>): Array<T> {
     return arrayPlusCollection(this, elements)
 }
@@ -751,7 +753,7 @@ public actual operator fun CharArray.plus(elements: Collection<Char>): CharArray
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
-@Suppress("NOTHING_TO_INLINE")
+@Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
 public actual inline operator fun <T> Array<out T>.plus(elements: Array<out T>): Array<T> {
     return this.asDynamic().concat(elements)
 }
@@ -823,7 +825,7 @@ public actual inline operator fun CharArray.plus(elements: CharArray): CharArray
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-@Suppress("NOTHING_TO_INLINE")
+@Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
 public actual inline fun <T> Array<out T>.plusElement(element: T): Array<T> {
     return this.asDynamic().concat(arrayOf(element))
 }

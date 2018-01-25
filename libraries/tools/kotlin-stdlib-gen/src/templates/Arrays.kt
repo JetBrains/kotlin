@@ -249,11 +249,17 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.JS) {
             family = ArraysOfObjects
             inline(suppressWarning = true)
+            suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
             returns("Array<T>")
             body {
                 """
                 return this.asDynamic().concat(arrayOf(element))
                 """
+            }
+        }
+        on(Platform.Common) {
+            specialFor(InvariantArraysOfObjects) {
+                suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
             }
         }
     }
@@ -280,6 +286,7 @@ object ArrayOps : TemplateGroupBase() {
             inline(suppressWarning = true)
             specialFor(InvariantArraysOfObjects) {
                 family = ArraysOfObjects
+                suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
                 returns("Array<T>")
             }
 
@@ -288,6 +295,11 @@ object ArrayOps : TemplateGroupBase() {
                     "return this.asDynamic().concat(arrayOf(element))"
                 else
                     "return plus(${primitive.name.toLowerCase()}ArrayOf(element))"
+            }
+        }
+        on(Platform.Common) {
+            specialFor(InvariantArraysOfObjects) {
+                suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
             }
         }
     }
@@ -315,6 +327,7 @@ object ArrayOps : TemplateGroupBase() {
 //                    annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
             specialFor(InvariantArraysOfObjects) {
                 family = ArraysOfObjects
+                suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
                 returns("Array<T>")
             }
             when (primitive) {
@@ -322,6 +335,11 @@ object ArrayOps : TemplateGroupBase() {
                     body { "return arrayPlusCollection(this, elements)" }
                 else ->
                     body { "return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)" }
+            }
+        }
+        on(Platform.Common) {
+            specialFor(InvariantArraysOfObjects) {
+                suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
             }
         }
     }
@@ -352,11 +370,17 @@ object ArrayOps : TemplateGroupBase() {
             inline(suppressWarning = true)
             specialFor(InvariantArraysOfObjects) {
                 family = ArraysOfObjects
+                suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
                 returns("Array<T>")
                 body { """return this.asDynamic().concat(elements)""" }
             }
             specialFor(ArraysOfPrimitives) {
                 body { """return primitiveArrayConcat(this, elements)""" }
+            }
+        }
+        on(Platform.Common) {
+            specialFor(InvariantArraysOfObjects) {
+                suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
             }
         }
     }
@@ -371,6 +395,7 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.JS) {
             specialFor(InvariantArraysOfObjects) {
                 family = ArraysOfObjects
+                suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
                 returns("Array<T>")
             }
             when(primitive) {
@@ -385,6 +410,11 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.JVM) {
             inlineOnly()
             body { "return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)" }
+        }
+        on(Platform.Common) {
+            specialFor(InvariantArraysOfObjects) {
+                suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
+            }
         }
     }
 
@@ -402,6 +432,7 @@ object ArrayOps : TemplateGroupBase() {
             specialFor(InvariantArraysOfObjects) {
                 family = ArraysOfObjects
                 returns("Array<T>")
+                suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
             }
             when (primitive) {
                 null -> {
@@ -414,6 +445,11 @@ object ArrayOps : TemplateGroupBase() {
                     inline(suppressWarning = true)
                     body { "return this.asDynamic().slice()" }
                 }
+            }
+        }
+        on(Platform.Common) {
+            specialFor(InvariantArraysOfObjects) {
+                suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
             }
         }
     }
@@ -443,6 +479,7 @@ object ArrayOps : TemplateGroupBase() {
             returns("Array<T?>")
             on(Platform.JS) {
                 family = ArraysOfObjects
+                suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
                 body { "return arrayCopyResize(this, newSize, null)" }
             }
         }
@@ -450,6 +487,11 @@ object ArrayOps : TemplateGroupBase() {
             inlineOnly()
             body {
                 "return java.util.Arrays.copyOf(this, newSize)"
+            }
+        }
+        on(Platform.Common) {
+            specialFor(InvariantArraysOfObjects) {
+                suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
             }
         }
     }
