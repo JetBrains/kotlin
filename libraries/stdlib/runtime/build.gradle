@@ -44,6 +44,7 @@ compileKotlin {
                 "-Xallow-kotlin-package",
                 "-Xnormalize-constructor-calls=enable",
                 "-Xdump-declarations-to=${buildDir}/runtime-declarations.json",
+                "-Xmulti-platform",
                 "-cp", "${rootDir}/dist/builtins",
                 "-module-name", project.name
         ]

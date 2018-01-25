@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("ACTUAL_WITHOUT_EXPECT") // for building kotlin-runtime
+
 package kotlin.text
 
 @SinceKotlin("1.1") public actual typealias Appendable = java.lang.Appendable

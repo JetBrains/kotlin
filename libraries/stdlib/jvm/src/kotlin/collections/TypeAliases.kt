@@ -1,5 +1,7 @@
 @file:kotlin.jvm.JvmVersion
 
+@file:Suppress("ACTUAL_WITHOUT_EXPECT") // for building kotlin-stdlib-minimal-for-test
+
 package kotlin.collections
 
 @SinceKotlin("1.1") public actual typealias RandomAccess = java.util.RandomAccess
