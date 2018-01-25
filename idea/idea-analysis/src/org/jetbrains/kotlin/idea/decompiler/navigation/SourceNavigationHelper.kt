@@ -18,7 +18,6 @@ import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getBinaryLibrariesModuleInfos
 import org.jetbrains.kotlin.idea.caches.resolve.getLibrarySourcesModuleInfos
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 
@@ -199,20 +197,6 @@ object SourceNavigationHelper {
     ) = sourceClassOrObject.declarations.filterIsInstance(declarationClass).filter {
         declaration ->
         name == declaration.nameAsSafeName
-    }
-
-    fun getOriginalPsiClassOrCreateLightClass(classOrObject: KtClassOrObject): PsiClass? {
-        val fqName = classOrObject.fqName
-        if (fqName != null) {
-            val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())
-            if (javaClassId != null) {
-                return JavaPsiFacade.getInstance(classOrObject.project).findClass(
-                        javaClassId.asSingleFqName().asString(),
-                        GlobalSearchScope.allScope(classOrObject.project)
-                )
-            }
-        }
-        return classOrObject.toLightClass()
     }
 
     fun getOriginalClass(classOrObject: KtClassOrObject): PsiClass? {
