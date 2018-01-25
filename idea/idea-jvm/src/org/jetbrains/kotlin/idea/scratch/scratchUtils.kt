@@ -9,9 +9,9 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
 import org.jetbrains.kotlin.psi.UserDataProperty
 
@@ -20,21 +20,16 @@ internal fun Logger.printDebugMessage(str: String) {
     if (isDebugEnabled) debug("SCRATCH: $str")
 }
 
-fun getEditorWithoutScratchPanel(project: Project, virtualFile: VirtualFile): TextEditor? {
-    val allTextEditors = getAllTextEditors(project, virtualFile)
-    for (editor in allTextEditors) {
-        if (editor.scratchTopPanel != null) return null
-    }
-    return allTextEditors.firstOrNull()
+fun getEditorWithoutScratchPanel(fileManager: FileEditorManager, virtualFile: VirtualFile): TextEditor? {
+    val editor = fileManager.getSelectedEditor(virtualFile) as? TextEditor
+    if (editor?.scratchTopPanel != null) return null
+    return editor
 }
 
-fun getEditorWithScratchPanel(project: Project, virtualFile: VirtualFile): Pair<TextEditor, ScratchTopPanel>? {
-    val firstWithPanel = getAllTextEditors(project, virtualFile).firstOrNull { it.scratchTopPanel != null }
-    return firstWithPanel?.let { firstWithPanel to firstWithPanel.scratchTopPanel!! }
-}
-
-fun getScratchPanel(psiFile: PsiFile): ScratchTopPanel? {
-    return getAllTextEditors(psiFile.project, psiFile.virtualFile).mapNotNull { it.scratchTopPanel }.firstOrNull()
+fun getEditorWithScratchPanel(fileManager: FileEditorManager, virtualFile: VirtualFile): Pair<TextEditor, ScratchTopPanel>? {
+    val editor = fileManager.getSelectedEditor(virtualFile) as? TextEditor ?: return null
+    val scratchTopPanel = editor.scratchTopPanel ?: return null
+    return editor to scratchTopPanel
 }
 
 fun getAllEditorsWithScratchPanel(project: Project): List<Pair<TextEditor, ScratchTopPanel>> =
@@ -43,23 +38,20 @@ fun getAllEditorsWithScratchPanel(project: Project): List<Pair<TextEditor, Scrat
         if (panel != null) it to panel else null
     }
 
-fun getScratchPanelFromSelectedEditor(project: Project): ScratchTopPanel? =
-    FileEditorManager.getInstance(project).selectedEditors.asSequence()
-        .filterIsInstance<TextEditor>()
-        .mapNotNull { it.scratchTopPanel }
-        .firstOrNull()
-
-private fun getAllTextEditors(project: Project, virtualFile: VirtualFile) =
-    FileEditorManager.getInstance(project).getAllEditors(virtualFile).filterIsInstance<TextEditor>().asSequence()
+fun TextEditor.getScratchPanel(): ScratchTopPanel? {
+    return scratchTopPanel
+}
 
 fun TextEditor.addScratchPanel(panel: ScratchTopPanel) {
     scratchTopPanel = panel
-    FileEditorManager.getInstance(panel.scratchFile.psiFile.project).addTopComponent(this, panel)
+    FileEditorManager.getInstance(panel.scratchFile.project).addTopComponent(this, panel)
+
+    Disposer.register(this, panel)
 }
 
 fun TextEditor.removeScratchPanel(panel: ScratchTopPanel) {
     scratchTopPanel = null
-    FileEditorManager.getInstance(panel.scratchFile.psiFile.project).removeTopComponent(this, panel)
+    FileEditorManager.getInstance(panel.scratchFile.project).removeTopComponent(this, panel)
 }
 
 private var TextEditor.scratchTopPanel: ScratchTopPanel? by UserDataProperty<TextEditor, ScratchTopPanel>(Key.create("scratch.panel"))

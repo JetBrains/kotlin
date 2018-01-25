@@ -23,11 +23,11 @@ import com.intellij.openapi.compiler.CompilerManager
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
-import org.jetbrains.kotlin.idea.scratch.getScratchPanelFromSelectedEditor
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
 import org.jetbrains.kotlin.idea.scratch.printDebugMessage
+import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
 
-class RunScratchAction : AnAction(
+class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
     KotlinBundle.message("scratch.run.button"),
     KotlinBundle.message("scratch.run.button"),
     AllIcons.Actions.Execute
@@ -35,19 +35,19 @@ class RunScratchAction : AnAction(
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
 
-        val scratchTopPanel = getScratchPanelFromSelectedEditor(project) ?: return
-        val scratchFile = scratchTopPanel.scratchFile
+        val scratchFile = scratchPanel.scratchFile
+        val psiFile = scratchFile.getPsiFile() ?: return
 
-        val isMakeBeforeRun = scratchTopPanel.isMakeBeforeRun()
-        val isRepl = scratchTopPanel.isRepl()
+        val isMakeBeforeRun = scratchPanel.isMakeBeforeRun()
+        val isRepl = scratchPanel.isRepl()
 
-        val provider = ScratchFileLanguageProvider.get(scratchFile.psiFile.language) ?: return
+        val provider = ScratchFileLanguageProvider.get(psiFile.language) ?: return
 
         val handler = provider.getOutputHandler()
 
         org.jetbrains.kotlin.idea.scratch.LOG.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
 
-        val module = scratchTopPanel.getModule()
+        val module = scratchPanel.getModule()
         if (module == null) {
             handler.error(scratchFile, "Module should be selected")
             handler.onFinish(scratchFile)
@@ -57,7 +57,7 @@ class RunScratchAction : AnAction(
         val runnable = r@ {
             val executor = if (isRepl) provider.createReplExecutor(scratchFile) else provider.createCompilingExecutor(scratchFile)
             if (executor == null) {
-                handler.error(scratchFile, "Couldn't run ${scratchFile.psiFile.name}")
+                handler.error(scratchFile, "Couldn't run ${psiFile.name}")
                 handler.onFinish(scratchFile)
                 return@r
             }

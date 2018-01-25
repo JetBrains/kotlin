@@ -23,7 +23,10 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.idea.scratch.*
+import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
+import org.jetbrains.kotlin.idea.scratch.getAllEditorsWithScratchPanel
+import org.jetbrains.kotlin.idea.scratch.getEditorWithoutScratchPanel
+import org.jetbrains.kotlin.idea.scratch.removeScratchPanel
 
 class ScratchFileHook(project: Project) : AbstractProjectComponent(project) {
 
@@ -36,28 +39,21 @@ class ScratchFileHook(project: Project) : AbstractProjectComponent(project) {
     }
 
     private inner class ScratchEditorListener : FileEditorManagerListener {
-        private fun isPluggable(file: VirtualFile): Boolean {
-            if (!file.isValid) return false
-            if (!ScratchFileService.isInScratchRoot(file)) return false
-            val psiFile = PsiManager.getInstance(myProject).findFile(file) ?: return false
-            return ScratchFileLanguageProvider.get(psiFile.fileType) != null
-        }
-
         override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
             if (!isPluggable(file)) return
 
-            val panel = ScratchTopPanel.createPanel(myProject, file) ?: return
-            getEditorWithoutScratchPanel(myProject, file)?.let { editor ->
-                editor.addScratchPanel(panel)
-            }
+            val editor = getEditorWithoutScratchPanel(source, file) ?: return
+
+            ScratchTopPanel.createPanel(myProject, file, editor)
         }
 
-        override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
-            if (!isPluggable(file)) return
+        override fun fileClosed(source: FileEditorManager, file: VirtualFile) {}
+    }
 
-            getEditorWithScratchPanel(myProject, file)?.let { (editor, panel) ->
-                editor.removeScratchPanel(panel)
-            }
-        }
+    private fun isPluggable(file: VirtualFile): Boolean {
+        if (!file.isValid) return false
+        if (!ScratchFileService.isInScratchRoot(file)) return false
+        val psiFile = PsiManager.getInstance(myProject).findFile(file) ?: return false
+        return ScratchFileLanguageProvider.get(psiFile.fileType) != null
     }
 }

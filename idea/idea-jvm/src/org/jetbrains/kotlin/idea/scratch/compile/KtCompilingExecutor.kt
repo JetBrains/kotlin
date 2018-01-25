@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputType
 import org.jetbrains.kotlin.idea.scratch.printDebugMessage
-import org.jetbrains.kotlin.idea.scratch.ui.scratchTopPanel
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -58,9 +57,10 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
     override fun execute() {
         handlers.forEach { it.onStart(file) }
 
-        val module = file.scratchTopPanel?.getModule() ?: return error("Module should be selected")
+        val module = file.getModule() ?: return error("Module should be selected")
+        val psiFile = file.getPsiFile() ?: return error("Couldn't find psiFile for current editor")
 
-        if (!checkForErrors(file.psiFile as KtFile)) {
+        if (!checkForErrors(psiFile as KtFile)) {
             return error("Compilation Error")
         }
 
@@ -72,7 +72,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                     LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
 
                     val modifiedScratchSourceFile =
-                        KtPsiFactory(file.psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, file.psiFile)
+                        KtPsiFactory(psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, psiFile)
 
                     try {
                         val tempDir = compileFileToTempDir(modifiedScratchSourceFile) ?: return@invokeLater
@@ -89,7 +89,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                         }
                     } catch (e: Throwable) {
                         LOG.info(result.code, e)
-                        handlers.forEach { it.error(file, e.message ?: "Couldn't compile ${file.psiFile.name}") }
+                        handlers.forEach { it.error(file, e.message ?: "Couldn't compile ${psiFile.name}") }
                     } finally {
                         handlers.forEach { it.onFinish(file) }
                     }
@@ -114,7 +114,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
         }
 
         val state = GenerationState.Builder(
-            file.psiFile.project,
+            file.project,
             ClassBuilderFactories.binaries(false),
             resolutionFacade.moduleDescriptor,
             bindingContext,
@@ -178,9 +178,10 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             val bindingContext = analysisResult.bindingContext
             val diagnostics = bindingContext.diagnostics.filter { it.severity == Severity.ERROR }
             if (diagnostics.isNotEmpty()) {
+                val scratchPsiFile = file.getPsiFile()
                 diagnostics.forEach { diagnostic ->
                     val errorText = DefaultErrorMessages.render(diagnostic)
-                    if (psiFile == file.psiFile) {
+                    if (psiFile == scratchPsiFile) {
                         if (diagnostic.psiElement.containingFile == psiFile) {
                             val scratchExpression = file.findExpression(diagnostic.psiElement)
                             handlers.forEach {

@@ -18,12 +18,15 @@ package org.jetbrains.kotlin.idea.scratch.ui
 
 
 import com.intellij.application.options.ModulesComboBox
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.components.panels.HorizontalLayout
 import org.jetbrains.annotations.TestOnly
@@ -31,18 +34,20 @@ import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
-import org.jetbrains.kotlin.idea.scratch.getScratchPanel
+import org.jetbrains.kotlin.idea.scratch.addScratchPanel
+import org.jetbrains.kotlin.idea.scratch.removeScratchPanel
 import javax.swing.*
 
-val ScratchFile.scratchTopPanel: ScratchTopPanel?
-    get() = getScratchPanel(psiFile)?.takeIf { it.scratchFile == this@scratchTopPanel }
+class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel(HorizontalLayout(5)), Disposable {
+    override fun dispose() {
+        scratchFile.editor.removeScratchPanel(this)
+    }
 
-class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel(HorizontalLayout(5)) {
     companion object {
-        fun createPanel(project: Project, virtualFile: VirtualFile): ScratchTopPanel? {
-            val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return null
-            val scratchFile = ScratchFileLanguageProvider.createFile(psiFile) ?: return null
-            return ScratchTopPanel(scratchFile)
+        fun createPanel(project: Project, virtualFile: VirtualFile, editor: TextEditor) {
+            val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return
+            val scratchFile = ScratchFileLanguageProvider.get(psiFile.language)?.createFile(project, editor) ?: return
+            editor.addScratchPanel(ScratchTopPanel(scratchFile))
         }
     }
 
@@ -53,7 +58,7 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     init {
         add(createActionsToolbar())
 
-        moduleChooser = createModuleChooser(scratchFile.psiFile.project)
+        moduleChooser = createModuleChooser(scratchFile.project)
         add(JLabel("Use classpath of module"))
         add(moduleChooser)
 
@@ -76,9 +81,13 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         moduleChooser.selectedModule = module
     }
 
-    fun addModuleListener(f: (Module) -> Unit) {
+    fun addModuleListener(f: (PsiFile, Module) -> Unit) {
         moduleChooser.addActionListener {
-            moduleChooser.selectedModule?.let { f(it) }
+            val selectedModule = moduleChooser.selectedModule
+            val psiFile = scratchFile.getPsiFile()
+            if (selectedModule != null && psiFile != null) {
+                f(psiFile, selectedModule)
+            }
         }
     }
 
@@ -97,9 +106,9 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
 
     private fun createActionsToolbar(): JComponent {
         val toolbarGroup = DefaultActionGroup().apply {
-            add(RunScratchAction())
+            add(RunScratchAction(this@ScratchTopPanel))
             addSeparator()
-            add(ClearScratchAction())
+            add(ClearScratchAction(this@ScratchTopPanel))
         }
 
         return ActionManager.getInstance().createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, toolbarGroup, true).component
@@ -108,7 +117,6 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     private fun createModuleChooser(project: Project): ModulesComboBox {
         return ModulesComboBox().apply {
             fillModules(project)
-            selectedIndex = 0
         }
     }
 }

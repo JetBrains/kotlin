@@ -22,12 +22,8 @@ import com.intellij.openapi.editor.EditorCustomElementRenderer
 import com.intellij.openapi.editor.impl.ComplementaryFontsRegistry
 import com.intellij.openapi.editor.impl.FontInfo
 import com.intellij.openapi.editor.markup.TextAttributes
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.ui.Colors
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
@@ -56,7 +52,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     }
 
     override fun error(file: ScratchFile, message: String) {
-        ScratchToolWindow.addMessageToToolWindow(file.psiFile.project, message, ConsoleViewContentType.ERROR_OUTPUT)
+        ScratchToolWindow.addMessageToToolWindow(file.project, message, ConsoleViewContentType.ERROR_OUTPUT)
     }
 
     override fun onFinish(file: ScratchFile) {
@@ -64,15 +60,13 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     }
 
     override fun clear(file: ScratchFile) {
-        clearInlays(file.psiFile.project, file.psiFile.virtualFile)
-        ScratchToolWindow.clearToolWindow(file.psiFile.project)
+        clearInlays(file.editor)
+        ScratchToolWindow.clearToolWindow(file.project)
     }
 
     private fun createInlay(file: ScratchFile, line: Int, inlayText: String, outputType: ScratchOutputType) {
         UIUtil.invokeLaterIfNeeded {
-            val project = file.psiFile.project
-            val textEditor = FileEditorManager.getInstance(project).getSelectedEditor(file.psiFile.virtualFile) as? TextEditor ?: return@invokeLaterIfNeeded
-            val editor = textEditor.editor
+            val editor = file.editor.editor
 
             val lineStartOffset = editor.document.getLineStartOffset(line)
             val lineEndOffset = editor.document.getLineEndOffset(line)
@@ -96,19 +90,18 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
         }
     }
 
-    fun maxLineLength(file: ScratchFile): Int {
-        val doc = PsiDocumentManager.getInstance(file.psiFile.project).getDocument(file.psiFile) ?: return -1
+    private fun maxLineLength(file: ScratchFile): Int {
+        val doc = file.editor.editor.document
         return (0 until doc.lineCount)
             .map { doc.getLineEndOffset(it) - doc.getLineStartOffset(it) }
             .max()
                 ?: -1
     }
 
-    private fun clearInlays(project: Project, file: VirtualFile) {
+    private fun clearInlays(editor: TextEditor) {
         UIUtil.invokeLaterIfNeeded {
-            val editors = FileEditorManager.getInstance(project).getEditors(file)
-            editors.filterIsInstance<TextEditor>()
-                .flatMap { it.editor.inlayModel.getInlineElementsInRange(0, it.editor.document.textLength) }
+            editor
+                .editor.inlayModel.getInlineElementsInRange(0, editor.editor.document.textLength)
                 .filter { it.renderer is ScratchFileRenderer }
                 .forEach { Disposer.dispose(it) }
         }

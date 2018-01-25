@@ -16,20 +16,21 @@
 
 package org.jetbrains.kotlin.idea.scratch
 
+import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
-class KtScratchFile(psiFile: KtFile) : ScratchFile(psiFile) {
-
-    override fun getExpressions(): List<ScratchExpression> {
+class KtScratchFile(project: Project, editor: TextEditor) : ScratchFile(project, editor) {
+    override fun getExpressions(psiFile: PsiFile): List<ScratchExpression> {
         // todo multiple expressions at one line
         val doc = PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile) ?: return emptyList()
         var line = 0

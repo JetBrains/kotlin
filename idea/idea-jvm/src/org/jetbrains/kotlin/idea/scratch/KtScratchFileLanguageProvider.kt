@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.scratch
 
+import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.scratch.compile.KtCompilingExecutor
 import org.jetbrains.kotlin.idea.scratch.output.InlayScratchOutputHandler
@@ -23,8 +25,8 @@ import org.jetbrains.kotlin.idea.scratch.repl.KtScratchReplExecutor
 import org.jetbrains.kotlin.psi.KtFile
 
 class KtScratchFileLanguageProvider : ScratchFileLanguageProvider() {
-    override fun createFile(psiFile: PsiFile): ScratchFile? {
-        return (psiFile as? KtFile)?.let { KtScratchFile(psiFile) }
+    override fun createFile(project: Project, editor: TextEditor): ScratchFile? {
+        return KtScratchFile(project, editor)
     }
 
     override fun createReplExecutor(file: ScratchFile) = KtScratchReplExecutor(file)
