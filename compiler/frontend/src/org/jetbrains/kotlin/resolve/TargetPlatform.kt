@@ -100,7 +100,8 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
     CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker, MissingDependencyClassChecker,
     CallableReferenceCompatibilityChecker(), LateinitIntrinsicApplicabilityChecker,
-    UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker()
+    UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker(),
+    LambdaWithSuspendModifierCallChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
