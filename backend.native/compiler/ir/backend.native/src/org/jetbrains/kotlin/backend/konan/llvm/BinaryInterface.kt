@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
+import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
 import org.jetbrains.kotlin.backend.konan.isExternalObjCClass
@@ -47,6 +48,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
  * and so should be computable from the descriptor itself without checking a backend state.
  */
 internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
+    assert(!this.isExpectMember) { this }
+
     if (this.annotations.findAnnotation(symbolNameAnnotation) != null) {
         // Treat any `@SymbolName` declaration as exported.
         return true

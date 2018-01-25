@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.LlvmSymbolOrigin
-import org.jetbrains.kotlin.backend.konan.descriptors.SyntheticModules
-import org.jetbrains.kotlin.backend.konan.descriptors.origin
-import org.jetbrains.kotlin.backend.konan.descriptors.stdlibModule
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
@@ -30,6 +27,8 @@ internal interface LlvmImports {
 
 internal val DeclarationDescriptor.llvmSymbolOrigin: LlvmSymbolOrigin
     get() {
+        assert(!this.isExpectMember) { this }
+
         val module = this.module
         val moduleOrigin = module.origin
         when (moduleOrigin) {

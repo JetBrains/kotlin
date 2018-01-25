@@ -18,11 +18,10 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.isKotlinObjCClass
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -384,8 +383,12 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         val descriptor = declaration.descriptor
         val llvmFunctionType = getLlvmFunctionType(descriptor)
 
+        if ((descriptor is ConstructorDescriptor && descriptor.getObjCInitMethod() != null)) {
+            return
+        }
+
         val llvmFunction = if (descriptor.isExternal) {
-            if (descriptor.isIntrinsic) {
+            if (descriptor.isIntrinsic || descriptor.getExternalObjCMethodInfo() != null) {
                 return
             }
 
@@ -395,7 +398,14 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             )
         } else {
             val symbolName = if (descriptor.isExported()) {
-                descriptor.symbolName
+                descriptor.symbolName.also {
+                    if (!MainFunctionDetector.isMain(descriptor)) {
+                        assert(LLVMGetNamedFunction(context.llvm.llvmModule, it) == null) { it }
+                    } else {
+                        // As a workaround, allow `main` functions to clash because frontend accepts this.
+                        // See [OverloadResolver.isTopLevelMainInDifferentFiles] usage.
+                    }
+                }
             } else {
                 "kfun:" + qualifyInternalName(descriptor)
             }

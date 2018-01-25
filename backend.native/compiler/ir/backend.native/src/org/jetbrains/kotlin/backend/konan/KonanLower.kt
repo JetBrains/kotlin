@@ -41,6 +41,10 @@ internal class KonanLower(val context: Context) {
     fun lowerModule(irModule: IrModuleFragment) {
         val phaser = PhaseManager(context)
 
+        phaser.phase(KonanPhase.REMOVE_EXPECT_DECLARATIONS) {
+            irModule.files.forEach(ExpectDeclarationsRemoving(context)::lower)
+        }
+
         phaser.phase(KonanPhase.TEST_PROCESSOR) {
             TestProcessor(context).process(irModule)
         }

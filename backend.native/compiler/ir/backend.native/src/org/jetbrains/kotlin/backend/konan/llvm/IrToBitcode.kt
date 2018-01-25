@@ -444,6 +444,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return
         }
 
+        if (declaration.descriptor.getObjCInitMethod() != null) {
+            // Do not generate any ctors for external Objective-C classes.
+            return
+        }
+
         val constructorDescriptor = declaration.descriptor
         val classDescriptor = constructorDescriptor.constructedClass
         if (constructorDescriptor.isPrimary) {

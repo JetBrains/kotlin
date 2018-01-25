@@ -344,3 +344,6 @@ val ClassDescriptor.enumEntries: List<ClassDescriptor>
                 .filterIsInstance<ClassDescriptor>()
                 .filter { it.kind == ClassKind.ENUM_ENTRY }
     }
+
+internal val DeclarationDescriptor.isExpectMember: Boolean
+    get() = this is MemberDescriptor && this.isExpect

@@ -1918,6 +1918,11 @@ task memory_escape2(type: RunKonanTest) {
     source = "runtime/memory/escape2.kt"
 }
 
+task mpp1(type: RunStandaloneKonanTest) {
+    source = "codegen/mpp/mpp1.kt"
+    flags = ['-tr', '-Xmulti-platform']
+}
+
 task unit1(type: RunKonanTest) {
     goldValue = "First\nkotlin.Unit\n"
     source = "codegen/basics/unit1.kt"
