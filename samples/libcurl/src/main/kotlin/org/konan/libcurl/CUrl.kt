@@ -19,6 +19,10 @@ class CUrl(val url: String)  {
     val header = Event<String>()
     val data = Event<String>()
 
+    fun nobody(){
+        curl_easy_setopt(curl, CURLOPT_NOBODY, 1L)
+    }
+
     fun fetch() {
         val res = curl_easy_perform(curl)
         if (res != CURLE_OK)
