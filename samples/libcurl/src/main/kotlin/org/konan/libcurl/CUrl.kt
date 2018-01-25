@@ -14,10 +14,13 @@ class CUrl(val url: String)  {
         val header = staticCFunction(::header_callback)
         curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header)
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, stableRef.asCPointer())
+        val write_data = staticCFunction(::write_callback)
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data)
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, stableRef.asCPointer())
     }
 
     val header = Event<String>()
-    val data = Event<String>()
+    val body = Event<String>()
 
     fun nobody(){
         curl_easy_setopt(curl, CURLOPT_NOBODY, 1L)
@@ -50,13 +53,14 @@ fun header_callback(buffer: CPointer<ByteVar>?, size: size_t, nitems: size_t, us
     return size * nitems
 }
 
-/*
-fun write_callback(buffer: COpaquePointer?, size: size_t, nitems: size_t, userdata: COpaquePointer?): size_t {
+
+fun write_callback(buffer: CPointer<ByteVar>?, size: size_t, nitems: size_t, userdata: COpaquePointer?): size_t {
     if (buffer == null) return 0
+    val data = buffer.toKString((size * nitems).toInt()).trim()
     if (userdata != null) {
         val curl = userdata.asStableRef<CUrl>().get()
-        curl.data(buffer.)
+        curl.body(data)
     }
     return size * nitems
 }
-*/
+

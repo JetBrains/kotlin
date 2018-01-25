@@ -8,13 +8,15 @@ fun main(args: Array<String>) {
     curl.header += {
         println("[H] $it")
     }
+
+    curl.body += {
+        println("[B] $it")
+    }
+
     curl.fetch()
     curl.close()
 
-/*
-    val write_data = staticCFunction(::write_data)
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-*/
+
 }
 
 fun help() {
