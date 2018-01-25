@@ -14051,21 +14051,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSubstringWithIndexingOperation"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("nonOneSecondArgument.kt")
-        public void testNonOneSecondArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithIndexingOperation/nonOneSecondArgument.kt");
+        @TestMetadata("oneFirstTwoSecondArgument.kt")
+        public void testOneFirstTwoSecondArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithIndexingOperation/oneFirstTwoSecondArgument.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("nonZeroFirstArgument.kt")
-        public void testNonZeroFirstArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithIndexingOperation/nonZeroFirstArgument.kt");
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithIndexingOperation/simple.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("replaceWithIndexingOperation.kt")
-        public void testReplaceWithIndexingOperation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithIndexingOperation/replaceWithIndexingOperation.kt");
+        @TestMetadata("zeroFirstTenSecondArgument.kt")
+        public void testZeroFirstTenSecondArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithIndexingOperation/zeroFirstTenSecondArgument.kt");
             doTest(fileName);
         }
     }

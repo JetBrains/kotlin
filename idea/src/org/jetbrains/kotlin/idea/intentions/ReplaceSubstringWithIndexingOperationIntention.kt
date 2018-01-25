@@ -25,14 +25,18 @@ class ReplaceSubstringWithIndexingOperationIntention : ReplaceSubstringIntention
 
     override fun applicabilityRangeInner(element: KtDotQualifiedExpression): TextRange? {
         val arguments = element.callExpression?.valueArguments ?: return null
-        if (arguments.size != 2 || !element.isFirstArgumentZero() || !element.isSecondArgumentOne()) return null
+        if (arguments.size != 2) return null
+
+        val arg1 = element.getValueArgument(0) ?: return null
+        val arg2 = element.getValueArgument(1) ?: return null
+        if (arg1 + 1 != arg2) return null
+
         return getTextRange(element)
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
-        element.replaceWith(
-                "$0[$1]",
-                element.getArgumentExpression(0))
+        val expression = element.callExpression?.valueArguments?.firstOrNull()?.getArgumentExpression() ?: return
+        element.replaceWith("$0[$1]", expression)
     }
 
     private fun KtDotQualifiedExpression.isSubstringMethod(): Boolean {
@@ -40,17 +44,12 @@ class ReplaceSubstringWithIndexingOperationIntention : ReplaceSubstringIntention
         return (resolvedCall.resultingDescriptor.fqNameUnsafe.asString() == "kotlin.text.substring")
     }
 
-    private fun KtDotQualifiedExpression.isSecondArgumentOne(): Boolean {
+    private fun KtDotQualifiedExpression.getValueArgument(index: Int): Int? {
         val bindingContext = analyze()
-        val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return false
-        val expression = resolvedCall.call.valueArguments[1].getArgumentExpression() as? KtConstantExpression ?: return false
-
-        val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext) ?: return false
-        val constantType = bindingContext.getType(expression) ?: return false
-        return constant.getValue(constantType) == 1
-    }
-
-    private fun KtDotQualifiedExpression.getArgumentExpression(index: Int): KtExpression {
-        return callExpression!!.valueArguments[index].getArgumentExpression()!!
+        val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return null
+        val expression = resolvedCall.call.valueArguments[index].getArgumentExpression() as? KtConstantExpression ?: return null
+        val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext) ?: return null
+        val constantType = bindingContext.getType(expression) ?: return null
+        return constant.getValue(constantType) as Int
     }
 }
