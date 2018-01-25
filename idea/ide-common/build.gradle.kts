@@ -16,4 +16,4 @@ sourceSets {
     "test" {}
 }
 
-dist(targetName = "kotlin-code-insight-base.jar")
+dist(targetName = "kotlin-code-insight.jar")

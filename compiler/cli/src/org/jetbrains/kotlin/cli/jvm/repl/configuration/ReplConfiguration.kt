@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.cli.jvm.repl.configuration
 
 import org.jetbrains.kotlin.cli.jvm.repl.ReplExceptionReporter
 import org.jetbrains.kotlin.cli.jvm.repl.messages.*
-import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader
+import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplReader
 import org.jetbrains.kotlin.cli.jvm.repl.writer.ReplWriter
 
 interface ReplConfiguration {
+    val reader: ReplReader
     val writer: ReplWriter
     val exceptionReporter: ReplExceptionReporter
-    val commandReader: ReplCommandReader
+
     val allowIncompleteLines: Boolean
 
     val executionInterceptor: SnippetExecutionInterceptor

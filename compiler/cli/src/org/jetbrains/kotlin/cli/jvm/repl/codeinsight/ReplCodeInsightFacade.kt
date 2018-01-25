@@ -33,8 +33,6 @@ import java.io.File
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Modifier
 import java.lang.reflect.Proxy.getProxyClass
-import java.net.URLDecoder
-import java.nio.charset.Charset
 
 interface ReplCodeInsightFacade {
     fun complete(expression: KtSimpleNameExpression, identifierPart: String): Collection<DeclarationDescriptor>
@@ -46,16 +44,7 @@ class ReplCodeInsightFacadeImpl(replCodeAnalyzer: ReplCodeAnalyzer) : ReplCodeIn
                 DescriptorKindFilter.CALLABLES_MASK or DescriptorKindFilter.CLASSIFIERS_MASK)
 
         fun create(replCodeAnalyzer: ReplCodeAnalyzer): ReplCodeInsightFacade {
-//            val kotlinCompilerJarFile = findJarByClass(ReplCodeAnalyzer::class.java)
-//                                        ?: return error("Can't find kotlin-compiler.jar")
-
-            val kotlinCompilerJarFile = File("/Users/yan/jb/kotlin/dist/kotlinc/lib/kotlin-compiler.jar")
-
-            val kotlinCodeInsightFile = File(kotlinCompilerJarFile.parentFile, "kotlin-code-insight-base.jar")
-            if (!kotlinCodeInsightFile.exists()) {
-                error("Can't find kotlin-code-insight-base.jar")
-            }
-
+            val kotlinCodeInsightFile = getKotlinCodeInsightJar()
             val classLoaderWithCodeInsight = ReplClassLoader(listOf(kotlinCodeInsightFile), replCodeAnalyzer.javaClass.classLoader)
 
             fun addClass(className: String) {
@@ -69,10 +58,10 @@ class ReplCodeInsightFacadeImpl(replCodeAnalyzer: ReplCodeAnalyzer) : ReplCodeIn
             addClass("org.jetbrains.kotlin.cli.jvm.repl.codeinsight.ResolutionFacadeForRepl")
 
             val actualImplementation = Class.forName(ReplCodeInsightFacadeImpl::class.java.name, true, classLoaderWithCodeInsight)
-                    .constructors.single().newInstance(replCodeAnalyzer)
+                    .declaredConstructors.single().newInstance(replCodeAnalyzer)
 
             val proxyClass = getProxyClass(ReplCodeInsightFacadeImpl::class.java.classLoader, ReplCodeInsightFacade::class.java)
-            val proxy = proxyClass.constructors.single().newInstance(InvocationHandler { proxy, method, args ->
+            val proxy = proxyClass.constructors.single().newInstance(InvocationHandler { _, method, args ->
                 val isStatic = Modifier.isStatic(method.modifiers)
 
                 fun parameterTypesMatches(first: Array<Class<*>>, second: Array<Class<*>>): Boolean {
@@ -88,14 +77,35 @@ class ReplCodeInsightFacadeImpl(replCodeAnalyzer: ReplCodeAnalyzer) : ReplCodeIn
             return proxy as ReplCodeInsightFacade
         }
 
-        private fun findJarByClass(klass: Class<*>): File? {
-            val classFileName = klass.name.substringAfterLast(".") + ".class"
-            val resource = klass.getResource(classFileName) ?: return null
-            val uri = resource.toString()
-            if (!uri.startsWith("jar:file:")) return null
+        private fun getKotlinCodeInsightJar(): File {
+            System.getProperty("kotlin.code.insight.jar")?.let { return File(it) }
 
-            val fileName = URLDecoder.decode(uri.removePrefix("jar:file:").substringBefore("!"), Charset.defaultCharset().name())
-            return File(fileName)
+            val kotlinCompilerJarFile = getClasspathEntry(ReplCodeAnalyzer::class.java) ?: error("Can't find Kotlin compiler")
+
+            val kotlinCodeInsightFile = File(kotlinCompilerJarFile.parentFile, "kotlin-code-insight.jar")
+            if (!kotlinCodeInsightFile.exists()) {
+                error("Can't find kotlin-code-insight.jar")
+            }
+
+            return kotlinCodeInsightFile
+        }
+
+        private fun getClasspathEntry(clazz: Class<*>): File? {
+            val classFileName = clazz.name.replace('.', '/') + ".class"
+            val resource = clazz.classLoader.getResource(classFileName) ?: return null
+
+            return File(
+                when (resource.protocol?.toLowerCase()) {
+                    "file" -> resource.path
+                        ?.takeIf { it.endsWith(classFileName) }
+                        ?.removeSuffix(classFileName)
+                    "jar" -> resource.path
+                        .takeIf { it.startsWith("file:", ignoreCase = true) }
+                        ?.drop("file:".length)
+                        ?.substringBefore("!/")
+                    else -> null
+                }
+            )
         }
     }
 
@@ -105,18 +115,18 @@ class ReplCodeInsightFacadeImpl(replCodeAnalyzer: ReplCodeAnalyzer) : ReplCodeIn
             replCodeAnalyzer.module)
 
     override fun complete(expression: KtSimpleNameExpression, identifierPart: String): Collection<DeclarationDescriptor> {
-        val nameFilter: (Name) -> Boolean = { name -> applicableNameFor(identifierPart, name) }
-
         // TODO do not filter out
-        return referenceVariantsHelper.getReferenceVariants(expression, CALLABLES_AND_CLASSIFIERS, nameFilter)
+        return referenceVariantsHelper.getReferenceVariants(expression, CALLABLES_AND_CLASSIFIERS, NameFilter(identifierPart))
     }
 
-    private fun applicableNameFor(prefix: String, name: Name): Boolean {
-        return !name.isSpecial && applicableNameFor(prefix, name.identifier)
-    }
+    class NameFilter(val prefix: String) : (Name) -> Boolean {
+        override fun invoke(name: Name): Boolean {
+            return !name.isSpecial && applicableNameFor(prefix, name.identifier)
+        }
 
-    private fun applicableNameFor(prefix: String, completion: String): Boolean {
-        return completion.startsWith(prefix) || completion.toLowerCase().startsWith(prefix)
+        private fun applicableNameFor(prefix: String, completion: String): Boolean {
+            return completion.startsWith(prefix) || completion.toLowerCase().startsWith(prefix)
+        }
     }
 }
 

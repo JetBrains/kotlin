@@ -23,6 +23,8 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
+    runtime(projectDist(":kotlin-reflect"))
+
     // Used in REPL code insight
     compileOnly(project(":idea:idea-core"))
 

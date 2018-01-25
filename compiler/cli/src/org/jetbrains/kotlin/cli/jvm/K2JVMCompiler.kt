@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
+import org.jetbrains.kotlin.cli.jvm.repl.KotlinRepl
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -103,7 +103,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     messageCollector.report(ERROR, "Specify script source path to evaluate")
                     return COMPILATION_ERROR
                 }
-                ReplFromTerminal.run(rootDisposable, configuration)
+                KotlinRepl.run(rootDisposable, configuration)
                 return ExitCode.OK
             }
         }

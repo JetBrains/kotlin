@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
+import org.jetbrains.kotlin.cli.jvm.repl.codeinsight.ReplCodeInsightFacadeImpl
 import org.jetbrains.kotlin.cli.jvm.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -134,8 +135,24 @@ class ReplInterpreter(
         }
     }
 
+    fun complete(line: String): Collection<DeclarationDescriptor> {
+        val compilerState = evalState.asState<GenericReplCompilerState>()
+
+        val codeFragment = KtPsiFactory(compilerState.analyzerEngine.project).createExpressionCodeFragment(line, null)
+        compilerState.analyzerEngine.setDelegateFactory(codeFragment.containingKtFile)
+
+        val targetIdentifier =
+            codeFragment.findElementAt(codeFragment.textLength - 1)
+                ?.getNonStrictParentOfType(KtSimpleNameExpression::class.java)
+                    ?: return emptyList()
+
+        val codeInsightFacade = ReplCodeInsightFacadeImpl.create(compilerState.analyzerEngine)
+        return codeInsightFacade.complete(targetIdentifier, "o")
+    }
+
     fun doc(rawFqName: String): String? {
         val compilerState = evalState.asState<GenericReplCompilerState>()
+
         val bindingContext = compilerState.analyzerEngine.trace.bindingContext
         val moduleDescriptor = compilerState.analyzerEngine.module
         val qualifiedExpressionResolver = compilerState.analyzerEngine.qualifiedExpressionResolver

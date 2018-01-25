@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.repl.configuration
 import org.jetbrains.kotlin.cli.jvm.repl.IdeReplExceptionReporter
 import org.jetbrains.kotlin.cli.jvm.repl.ReplExceptionReporter
 import org.jetbrains.kotlin.cli.jvm.repl.messages.IdeDiagnosticMessageHolder
-import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader
-import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader
-import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplSystemInWrapper
+import org.jetbrains.kotlin.cli.jvm.repl.reader.*
 import org.jetbrains.kotlin.cli.jvm.repl.writer.IdeSystemOutWrapperReplWriter
 import org.jetbrains.kotlin.cli.jvm.repl.writer.ReplWriter
 
@@ -44,7 +42,7 @@ class IdeReplConfiguration : ReplConfiguration {
 
     override val writer: ReplWriter
     override val exceptionReporter: ReplExceptionReporter
-    override val commandReader: ReplCommandReader
+    override val reader: ReplReader
 
     val sinWrapper: ReplSystemInWrapper
 
@@ -62,6 +60,6 @@ class IdeReplConfiguration : ReplConfiguration {
 
         writer = soutWrapper
         exceptionReporter = IdeReplExceptionReporter(writer)
-        commandReader = IdeReplCommandReader()
+        reader = IdeReplReader()
     }
 }

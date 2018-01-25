@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.repl.configuration
 
 import org.jetbrains.kotlin.cli.jvm.repl.ReplExceptionReporter
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ConsoleDiagnosticMessageHolder
-import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplCommandReader
+import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplReader
 import org.jetbrains.kotlin.cli.jvm.repl.writer.ConsoleReplWriter
 
 class ConsoleReplConfiguration : ReplConfiguration {
@@ -27,7 +27,7 @@ class ConsoleReplConfiguration : ReplConfiguration {
     override val exceptionReporter
         get() = ReplExceptionReporter
 
-    override val commandReader = ConsoleReplCommandReader()
+    override val reader = ConsoleReplReader()
 
     override val allowIncompleteLines: Boolean
         get() = true
