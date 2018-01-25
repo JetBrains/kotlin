@@ -15,6 +15,7 @@
  */
 
 @file:JvmVersion
+@file:JvmMultifileClass
 @file:JvmName("MathKt")
 
 package kotlin.math
