@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiModifiableCodeBlock;
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +29,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 
 import java.util.List;
 
-public class KtLambdaExpression extends LazyParseablePsiElement implements KtExpression {
+public class KtLambdaExpression extends LazyParseablePsiElement implements KtExpression, PsiModifiableCodeBlock {
     public KtLambdaExpression(CharSequence text) {
         super(KtNodeTypes.LAMBDA_EXPRESSION, text);
     }
@@ -103,5 +105,10 @@ public class KtLambdaExpression extends LazyParseablePsiElement implements KtExp
     @Override
     public KtElement getPsiOrParent() {
         return this;
+    }
+
+    @Override
+    public boolean shouldChangeModificationCount(PsiElement place) {
+        return false;
     }
 }
