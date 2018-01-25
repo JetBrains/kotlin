@@ -128,6 +128,18 @@ public class ForeignAnnotationsNoAnnotationInClasspathTestGenerated extends Abst
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("elvis.kt")
+            public void testElvis() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/elvis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localInference.kt")
+            public void testLocalInference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/localInference.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nullabilityGenerics.kt")
             public void testNullabilityGenerics() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/nullabilityGenerics.kt");
@@ -137,6 +149,12 @@ public class ForeignAnnotationsNoAnnotationInClasspathTestGenerated extends Abst
             @TestMetadata("nullabilityNicknames.kt")
             public void testNullabilityNicknames() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/nullabilityNicknames.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("safeCalls.kt")
+            public void testSafeCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/safeCalls.kt");
                 doTest(fileName);
             }
 
