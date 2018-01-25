@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -246,52 +235,8 @@ public class FunctionCodegen {
                 origin.getOriginKind() != JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL;
 
         if (isOpenSuspendInClass) {
-            mv.visitCode();
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
-            int index = 1;
-            for (Type type : asmMethod.getArgumentTypes()) {
-                mv.visitVarInsn(type.getOpcode(Opcodes.ILOAD), index);
-                index += type.getSize();
-            }
-
-            Method asmMethodForOpenSuspendImpl = CoroutineCodegenUtilKt.getImplForOpenMethod(asmMethod, v.getThisName());
-            // remove generic signature as it's unnecessary for synthetic methods
-            JvmMethodSignature jvmSignatureForOpenSuspendImpl =
-                    new JvmMethodGenericSignature(
-                            asmMethodForOpenSuspendImpl,
-                            jvmSignature.getValueParameters(),
-                            null
-                    );
-
-            mv.visitMethodInsn(
-                    Opcodes.INVOKESTATIC,
-                    v.getThisName(), asmMethodForOpenSuspendImpl.getName(), asmMethodForOpenSuspendImpl.getDescriptor(),
-                    false
-            );
-
-            mv.visitInsn(Opcodes.ARETURN);
-            mv.visitEnd();
-
-            int flagsForOpenSuspendImpl = flags;
-            flagsForOpenSuspendImpl |= Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC;
-            flagsForOpenSuspendImpl &= ~getVisibilityAccessFlag(functionDescriptor);
-            flagsForOpenSuspendImpl |= AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
-
-            MethodVisitor mvForOpenSuspendImpl = strategy.wrapMethodVisitor(
-                    v.newMethod(origin,
-                                flagsForOpenSuspendImpl,
-                                asmMethodForOpenSuspendImpl.getName(),
-                                asmMethodForOpenSuspendImpl.getDescriptor(),
-                                null,
-                                getThrownExceptions(functionDescriptor, typeMapper)
-                    ),
-                    flagsForOpenSuspendImpl, asmMethodForOpenSuspendImpl.getName(),
-                    asmMethodForOpenSuspendImpl.getDescriptor()
-            );
-
-            generateMethodBody(
-                    origin, functionDescriptor, methodContext, strategy, mvForOpenSuspendImpl, jvmSignatureForOpenSuspendImpl,
-                    staticInCompanionObject
+            generateOpenMethodInSuspendClass(
+                    origin, functionDescriptor, methodContext, strategy, mv, jvmSignature, asmMethod, flags, staticInCompanionObject
             );
         }
         else {
@@ -300,6 +245,66 @@ public class FunctionCodegen {
             );
         }
 
+    }
+
+    private void generateOpenMethodInSuspendClass(
+            @NotNull JvmDeclarationOrigin origin,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull MethodContext methodContext,
+            @NotNull FunctionGenerationStrategy strategy,
+            @NotNull MethodVisitor mv,
+            @NotNull JvmMethodSignature jvmSignature,
+            @NotNull Method asmMethod,
+            int flags,
+            boolean staticInCompanionObject
+    ) {
+        mv.visitCode();
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        int index = 1;
+        for (Type type : asmMethod.getArgumentTypes()) {
+            mv.visitVarInsn(type.getOpcode(Opcodes.ILOAD), index);
+            index += type.getSize();
+        }
+
+        Method asmMethodForOpenSuspendImpl = CoroutineCodegenUtilKt.getImplForOpenMethod(asmMethod, v.getThisName());
+        // remove generic signature as it's unnecessary for synthetic methods
+        JvmMethodSignature jvmSignatureForOpenSuspendImpl =
+                new JvmMethodGenericSignature(
+                        asmMethodForOpenSuspendImpl,
+                        jvmSignature.getValueParameters(),
+                        null
+                );
+
+        mv.visitMethodInsn(
+                Opcodes.INVOKESTATIC,
+                v.getThisName(), asmMethodForOpenSuspendImpl.getName(), asmMethodForOpenSuspendImpl.getDescriptor(),
+                false
+        );
+
+        mv.visitInsn(Opcodes.ARETURN);
+        mv.visitEnd();
+
+        int flagsForOpenSuspendImpl = flags;
+        flagsForOpenSuspendImpl |= Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC;
+        flagsForOpenSuspendImpl &= ~getVisibilityAccessFlag(functionDescriptor);
+        flagsForOpenSuspendImpl |= AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
+
+        MethodVisitor mvForOpenSuspendImpl = strategy.wrapMethodVisitor(
+                v.newMethod(origin,
+                            flagsForOpenSuspendImpl,
+                            asmMethodForOpenSuspendImpl.getName(),
+                            asmMethodForOpenSuspendImpl.getDescriptor(),
+                            null,
+                            getThrownExceptions(functionDescriptor, typeMapper)
+                ),
+                flagsForOpenSuspendImpl, asmMethodForOpenSuspendImpl.getName(),
+                asmMethodForOpenSuspendImpl.getDescriptor()
+        );
+
+        generateMethodBody(
+                origin, functionDescriptor, methodContext, strategy, mvForOpenSuspendImpl, jvmSignatureForOpenSuspendImpl,
+                staticInCompanionObject
+        );
     }
 
     private void generateMethodBody(
