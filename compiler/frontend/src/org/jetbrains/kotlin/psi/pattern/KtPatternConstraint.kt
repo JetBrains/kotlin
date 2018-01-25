@@ -20,7 +20,10 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.types.expressions.*
+import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
+import org.jetbrains.kotlin.types.expressions.PatternResolveState
+import org.jetbrains.kotlin.types.expressions.PatternResolver
+import org.jetbrains.kotlin.types.expressions.errorIfNull
 
 class KtPatternConstraint(node: ASTNode) : KtPatternElement(node) {
 
@@ -41,6 +44,6 @@ class KtPatternConstraint(node: ASTNode) : KtPatternElement(node) {
         val element = element.errorIfNull(this, state, Errors.EXPECTED_CONSTRAINT_ELEMENT)
         val elementTypeInfo = element?.resolve(resolver, state)
         val thisTypeInfo = resolver.resolveType(this, state)
-        return thisTypeInfo.concat(elementTypeInfo)
+        return thisTypeInfo.and(elementTypeInfo)
     }
 }

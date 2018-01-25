@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.expressions.*
+import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
+import org.jetbrains.kotlin.types.expressions.PatternResolveState
+import org.jetbrains.kotlin.types.expressions.PatternResolver
+import org.jetbrains.kotlin.types.expressions.errorIfNull
 
 class KtPatternTypedTuple(node: ASTNode) : KtPatternElement(node) {
 
@@ -39,12 +42,12 @@ class KtPatternTypedTuple(node: ASTNode) : KtPatternElement(node) {
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
         val typeReferenceInfo = typeReference?.resolve(resolver, state.setIsTuple())
-        val info = resolver.resolveType(this, state).concat(typeReferenceInfo)
+        val info = resolver.resolveType(this, state).and(typeReferenceInfo)
         val entries = tuple?.entries.errorIfNull(this, state, Errors.EXPECTED_PATTERN_TUPLE_INSTANCE) ?: return info
         val receiverType = resolver.getComponentsTypeInfoReceiver(this, state.replaceType(info.type)) ?: info.type
         state.context.trace.record(BindingContext.PATTERN_COMPONENTS_RECEIVER_TYPE, this, receiverType)
         val types = resolver.getComponentsTypes(this, entries, state.replaceType(receiverType))
-        return info.concat(types.zip(entries) { type, entry ->
+        return info.and(types.zip(entries) { type, entry ->
             entry.resolve(resolver, state.next(type))
         })
     }

@@ -383,16 +383,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
                 // This works for simple pattern
                 condition.typeReference?.let { typeReference ->
-                    // ToDo(sergei) remove from this
-                    val (_, result) = checkTypeForIs(context, condition, condition.isNegated, subjectType, typeReference, true, subjectDataFlowValue)
-                    newDataFlowInfo = if (condition.isNegated) {
-                        ConditionalDataFlowInfo(result.elseInfo, result.thenInfo)
-                    }
-                    else {
-                        result
-                    }
-                    // ToDo(sergei) to this
-
                     val rhsType = context.trace[BindingContext.TYPE, typeReference]
                     if (subjectExpression != null) {
                         val rttiInformation = RttiExpressionInformation(

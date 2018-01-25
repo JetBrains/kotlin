@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
-import org.jetbrains.kotlin.types.expressions.concat
 
 class KtPattern(node: ASTNode) : KtPatternElement(node) {
 
@@ -52,6 +51,6 @@ class KtPattern(node: ASTNode) : KtPatternElement(node) {
         val entryInfo = entry?.resolve(resolver, state)
         val guardInfo = guard?.resolve(resolver, state)
         val thisInfo = resolver.resolveType(this, state)
-        return thisInfo.concat(entryInfo, guardInfo)
+        return thisInfo.and(entryInfo, guardInfo)
     }
 }

@@ -380,7 +380,7 @@ public class ArgumentTypeResolver {
 
             CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument));
             if (scope != null) {
-                newContext = context.replaceScope(scope);
+                newContext = newContext.replaceScope(scope);
             }
             // Here we go inside arguments and determine additional data flow information for them
             KotlinTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, resolveArgumentsMode);

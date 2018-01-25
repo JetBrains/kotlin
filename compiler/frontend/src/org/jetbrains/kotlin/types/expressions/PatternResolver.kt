@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ConditionalDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker
@@ -46,6 +47,20 @@ class ConditionalTypeInfo(
     fun replaceType(type: KotlinType) = ConditionalTypeInfo(type, dataFlowInfo)
 
     fun replaceDataFlowInfo(dataFlowInfo: ConditionalDataFlowInfo) = ConditionalTypeInfo(type, dataFlowInfo)
+
+    fun and(vararg children: ConditionalTypeInfo?): ConditionalTypeInfo {
+        return and(children.asSequence())
+    }
+
+    fun and(children: Iterable<ConditionalTypeInfo?>): ConditionalTypeInfo {
+        return and(children.asSequence())
+    }
+
+    fun and(children: Sequence<ConditionalTypeInfo?>): ConditionalTypeInfo {
+        val dataInfo = sequenceOf(dataFlowInfo) + children.map { it?.dataFlowInfo }
+        val dataFlowInfo = dataInfo.filterNotNull().reduce(ConditionalDataFlowInfo::and)
+        return replaceDataFlowInfo(dataFlowInfo)
+    }
 }
 
 class PatternResolver(
@@ -170,7 +185,7 @@ class PatternResolver(
     }
 
     fun defineVariable(declaration: KtPatternVariableDeclaration, state: PatternResolveState) {
-        if (declaration.isEmpty) return
+        if (declaration.isSingleUnderscore) return
         val trace = state.context.trace
         if (!state.allowDefinition) {
             trace.report(Errors.NOT_ALLOW_PROPERTY_DEFINITION.on(declaration, declaration))
@@ -193,32 +208,6 @@ fun <T> T?.errorAndReplaceIfNull(
 
 fun <T, E : PsiElement> T?.errorIfNull(element: E, state: PatternResolveState, error: DiagnosticFactory1<E, E>) = this.also {
     it ?: state.context.trace.report(error.on(element, element))
-}
-
-fun ConditionalTypeInfo.concat(vararg children: ConditionalTypeInfo?): ConditionalTypeInfo {
-    return this.concat(children.asSequence())
-}
-
-fun ConditionalTypeInfo.concat(children: Iterable<ConditionalTypeInfo?>): ConditionalTypeInfo {
-    return this.concat(children.asSequence())
-}
-
-fun ConditionalTypeInfo.concat(children: Sequence<ConditionalTypeInfo?>): ConditionalTypeInfo {
-    val dataFlowInfo = children.map { it?.dataFlowInfo }
-    return this.replaceDataFlowInfo(this.dataFlowInfo.concat(dataFlowInfo))
-}
-
-fun ConditionalDataFlowInfo.concat(vararg dataFlowInfo: ConditionalDataFlowInfo?): ConditionalDataFlowInfo {
-    return this.concat(dataFlowInfo.asSequence())
-}
-
-fun ConditionalDataFlowInfo.concat(dataFlowInfo: Iterable<ConditionalDataFlowInfo?>): ConditionalDataFlowInfo {
-    return this.concat(dataFlowInfo.asSequence())
-}
-
-fun ConditionalDataFlowInfo.concat(dataFlowInfo: Sequence<ConditionalDataFlowInfo?>): ConditionalDataFlowInfo {
-    return (sequenceOf(this) + dataFlowInfo).filterNotNull().reduce { info, it ->
-        ConditionalDataFlowInfo(info.thenInfo.or(it.thenInfo), info.elseInfo.and(it.elseInfo)) }
 }
 
 class PatternScope private constructor(
