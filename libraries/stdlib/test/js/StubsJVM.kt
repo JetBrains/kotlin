@@ -17,7 +17,7 @@
 @file:JvmVersion
 package test.collections.js
 
-public fun <V> stringMapOf(vararg pairs: Pair<String, V>): HashMap<String, V> = hashMapOf<String, V>(*pairs)
-public fun <V> linkedStringMapOf(vararg pairs: Pair<String, V>): LinkedHashMap<String, V> = linkedMapOf(*pairs)
-public fun stringSetOf(vararg elements: String): HashSet<String> = hashSetOf(*elements)
-public fun linkedStringSetOf(vararg elements: String): LinkedHashSet<String> = linkedSetOf(*elements)
+public actual fun <V> stringMapOf(vararg pairs: Pair<String, V>): HashMap<String, V> = hashMapOf<String, V>(*pairs)
+public actual fun <V> linkedStringMapOf(vararg pairs: Pair<String, V>): LinkedHashMap<String, V> = linkedMapOf(*pairs)
+public actual fun stringSetOf(vararg elements: String): HashSet<String> = hashSetOf(*elements)
+public actual fun linkedStringSetOf(vararg elements: String): LinkedHashSet<String> = linkedSetOf(*elements)
