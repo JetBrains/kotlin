@@ -82,15 +82,17 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
     private fun loadDefinitions(): List<KotlinScriptDefinition> {
         val kotlinDslDependencySelector = Regex("^gradle-(?:kotlin-dsl|core).*\\.jar\$")
         val kotlinDslAdditionalResolverCp = ::kotlinStdlibAndCompiler
+
+        // KotlinBuildScript should be last because it has wide scriptFilePattern
         val kotlinDslTemplates = loadGradleTemplates(
-                templateClass = "org.gradle.kotlin.dsl.KotlinBuildScript",
-                dependencySelector = kotlinDslDependencySelector,
-                additionalResolverClasspath = kotlinDslAdditionalResolverCp
+            templateClass = "org.gradle.kotlin.dsl.KotlinSettingsScript",
+            dependencySelector = kotlinDslDependencySelector,
+            additionalResolverClasspath = kotlinDslAdditionalResolverCp
 
         ) + loadGradleTemplates(
-                templateClass = "org.gradle.kotlin.dsl.KotlinSettingsScript",
-                dependencySelector = kotlinDslDependencySelector,
-                additionalResolverClasspath = kotlinDslAdditionalResolverCp
+            templateClass = "org.gradle.kotlin.dsl.KotlinBuildScript",
+            dependencySelector = kotlinDslDependencySelector,
+            additionalResolverClasspath = kotlinDslAdditionalResolverCp
         )
         if (kotlinDslTemplates.isNotEmpty()) {
             return kotlinDslTemplates
