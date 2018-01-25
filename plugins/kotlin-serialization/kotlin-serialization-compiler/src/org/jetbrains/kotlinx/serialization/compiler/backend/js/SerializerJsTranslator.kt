@@ -308,9 +308,15 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                         }
                         // char unboxing crutch
                         if (KotlinBuiltIns.isCharOrNullableChar(property.type)) {
+                            // can't use KotlinCompilerVersion.VERSION because javac inlines final string literal :(
+                            val coerceTo = if (KotlinVersion.CURRENT.run { major == 1 && minor == 2 && patch in (0..10) }) {
+                                context.currentModule.builtIns.charType
+                            } else {
+                                TranslationUtils.getReturnTypeForCoercion(property.descriptor)
+                            }
                             +JsAstUtils.assignment(
                                     localProps[i],
-                                    TranslationUtils.coerce(context, localProps[i], context.currentModule.builtIns.charType)
+                                    TranslationUtils.coerce(context, localProps[i], coerceTo)
                             ).makeStmt()
                         }
 
