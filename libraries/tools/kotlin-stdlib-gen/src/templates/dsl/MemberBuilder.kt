@@ -73,6 +73,7 @@ class MemberBuilder(
     var returns: String? = null; private set
     var body: String? = null; private set
     val annotations: MutableList<String> = mutableListOf()
+    val suppressions: MutableList<String> = mutableListOf()
 
     fun sourceFile(file: SourceFile) { sourceFile = file }
 
@@ -89,7 +90,7 @@ class MemberBuilder(
         inline = value
         if (suppressWarning) {
             require(value == Inline.Yes)
-            annotation("""@Suppress("NOTHING_TO_INLINE")""")
+            inline = Inline.YesSuppressWarning
         }
     }
     fun inlineOnly() { inline = Inline.Only }
@@ -111,6 +112,10 @@ class MemberBuilder(
 
     fun annotation(annotation: String) {
         annotations += annotation
+    }
+
+    fun suppress(diagnostic: String) {
+        suppressions += diagnostic
     }
 
     fun sequenceClassification(vararg sequenceClass: SequenceClass) {
@@ -324,8 +329,15 @@ class MemberBuilder(
 
         annotations.forEach { builder.append(it.trimIndent()).append('\n') }
 
-        if (inline == Inline.Only) {
-            builder.append("@kotlin.internal.InlineOnly").append('\n')
+        when (inline) {
+            Inline.Only -> builder.append("@kotlin.internal.InlineOnly").append('\n')
+            Inline.YesSuppressWarning -> suppressions.add("NOTHING_TO_INLINE")
+        }
+
+        if (suppressions.isNotEmpty()) {
+            suppressions.joinTo(builder, separator = ", ", prefix = "@Suppress(", postfix = ")\n") {
+                """"$it""""
+            }
         }
 
         listOfNotNull(
