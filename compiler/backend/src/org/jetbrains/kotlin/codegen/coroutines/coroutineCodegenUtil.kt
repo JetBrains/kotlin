@@ -59,13 +59,14 @@ const val EXCEPTION_FIELD_NAME = "exception"
 
 @JvmField
 val COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME =
-        DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("jvm")).child(Name.identifier("internal"))
+    DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("jvm")).child(Name.identifier("internal"))
 
 @JvmField
 val CONTINUATION_ASM_TYPE = DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME.topLevelClassAsmType()
 
 @JvmField
-val COROUTINE_CONTEXT_ASM_TYPE = DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineContext")).topLevelClassAsmType()
+val COROUTINE_CONTEXT_ASM_TYPE =
+    DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineContext")).topLevelClassAsmType()
 
 @JvmField
 val COROUTINE_IMPL_ASM_TYPE = COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImpl")).topLevelClassAsmType()
@@ -74,7 +75,7 @@ private val COROUTINES_INTRINSICS_FILE_FACADE_INTERNAL_NAME =
     DescriptorUtils.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.child(Name.identifier("IntrinsicsKt")).topLevelClassAsmType()
 
 private val INTERNAL_COROUTINE_INTRINSICS_OWNER_INTERNAL_NAME =
-        COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineIntrinsics")).topLevelClassInternalName()
+    COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineIntrinsics")).topLevelClassInternalName()
 
 private val NORMALIZE_CONTINUATION_METHOD_NAME = "normalizeContinuation"
 private val GET_CONTEXT_METHOD_NAME = "getContext"
@@ -94,41 +95,42 @@ val INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME = object : FunctionDescriptor.UserD
 // So this function returns resolved call with descriptor looking like `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
 // and fake `this` expression that used as argument for second parameter
 fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
-        project: Project,
-        bindingContext: BindingContext
+    project: Project,
+    bindingContext: BindingContext
 ): ResolvedCallWithRealDescriptor? {
     if (this is VariableAsFunctionResolvedCall) {
         val replacedFunctionCall =
-                functionCall.replaceSuspensionFunctionWithRealDescriptor(project, bindingContext)
-                ?: return null
+            functionCall.replaceSuspensionFunctionWithRealDescriptor(project, bindingContext)
+                    ?: return null
 
         @Suppress("UNCHECKED_CAST")
         return replacedFunctionCall.copy(
-                VariableAsFunctionResolvedCallImpl(
-                        replacedFunctionCall.resolvedCall as MutableResolvedCall<FunctionDescriptor>,
-                        variableCall.asMutableResolvedCall(bindingContext)
-                )
+            VariableAsFunctionResolvedCallImpl(
+                replacedFunctionCall.resolvedCall as MutableResolvedCall<FunctionDescriptor>,
+                variableCall.asMutableResolvedCall(bindingContext)
+            )
         )
     }
     val function = candidateDescriptor as? FunctionDescriptor ?: return null
     if (!function.isSuspend || function.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) return null
 
     val newCandidateDescriptor =
-            when (function) {
-                is FunctionImportedFromObject ->
-                    getOrCreateJvmSuspendFunctionView(function.callableFromObject, bindingContext).asImportedFromObject()
-                is SimpleFunctionDescriptor ->
-                    getOrCreateJvmSuspendFunctionView(function, bindingContext)
-                else ->
-                    throw AssertionError("Unexpected suspend function descriptor: $function")
-            }
+        when (function) {
+            is FunctionImportedFromObject ->
+                getOrCreateJvmSuspendFunctionView(function.callableFromObject, bindingContext).asImportedFromObject()
+            is SimpleFunctionDescriptor ->
+                getOrCreateJvmSuspendFunctionView(function, bindingContext)
+            else ->
+                throw AssertionError("Unexpected suspend function descriptor: $function")
+        }
 
     val newCall = ResolvedCallImpl(
-            call,
-            newCandidateDescriptor,
-            dispatchReceiver, extensionReceiver, explicitReceiverKind,
-            null, DelegatingBindingTrace(BindingTraceContext().bindingContext, "Temporary trace for unwrapped suspension function"),
-            TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY))
+        call,
+        newCandidateDescriptor,
+        dispatchReceiver, extensionReceiver, explicitReceiverKind,
+        null, DelegatingBindingTrace(BindingTraceContext().bindingContext, "Temporary trace for unwrapped suspension function"),
+        TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
+    )
 
     this.valueArguments.forEach {
         newCall.recordValueArgument(newCandidateDescriptor.valueParameters[it.key.index], it.value)
@@ -138,15 +140,17 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
     val arguments = psiFactory.createCallArguments("(this)").arguments.single()
     val thisExpression = arguments.getArgumentExpression()!!
     newCall.recordValueArgument(
-            newCandidateDescriptor.valueParameters.last(),
-            ExpressionValueArgument(arguments))
+        newCandidateDescriptor.valueParameters.last(),
+        ExpressionValueArgument(arguments)
+    )
 
     val newTypeArguments = newCandidateDescriptor.typeParameters.map {
         Pair(it, typeArguments[candidateDescriptor.typeParameters[it.index]]!!.asTypeProjection())
     }.toMap()
 
     newCall.setResultingSubstitutor(
-            TypeConstructorSubstitution.createByParametersMap(newTypeArguments).buildSubstitutor())
+        TypeConstructorSubstitution.createByParametersMap(newTypeArguments).buildSubstitutor()
+    )
 
     return ResolvedCallWithRealDescriptor(newCall, thisExpression)
 }
@@ -161,19 +165,19 @@ private fun ResolvedCall<VariableDescriptor>.asMutableResolvedCall(bindingContex
 
 private fun NewResolvedCallImpl<VariableDescriptor>.asDummyOldResolvedCall(bindingContext: BindingContext): ResolvedCallImpl<VariableDescriptor> {
     return ResolvedCallImpl(
-            call,
-            candidateDescriptor,
-            dispatchReceiver, extensionReceiver, explicitReceiverKind,
-            null, DelegatingBindingTrace(bindingContext, "Trace for old call"),
-            TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
+        call,
+        candidateDescriptor,
+        dispatchReceiver, extensionReceiver, explicitReceiverKind,
+        null, DelegatingBindingTrace(bindingContext, "Trace for old call"),
+        TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
     )
 }
 
 fun ResolvedCall<*>.isSuspendNoInlineCall() =
-        resultingDescriptor.safeAs<FunctionDescriptor>()
-                ?.let {
-                    it.isSuspend && (!it.isInline || it.isBuiltInSuspendCoroutineOrReturnInJvm() || it.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm())
-                } == true
+    resultingDescriptor.safeAs<FunctionDescriptor>()
+        ?.let {
+            it.isSuspend && (!it.isInline || it.isBuiltInSuspendCoroutineOrReturnInJvm() || it.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm())
+        } == true
 
 fun CallableDescriptor.isSuspendFunctionNotSuspensionView(): Boolean {
     if (this !is FunctionDescriptor) return false
@@ -193,14 +197,14 @@ fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(function: D, bind
     bindingContext?.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, function)?.let { return it as D }
 
     val continuationParameter = ValueParameterDescriptorImpl(
-            function, null, function.valueParameters.size, Annotations.EMPTY, Name.identifier("continuation"),
-            // Add j.l.Object to invoke(), because that is the type of parameters we have in FunctionN+1
-            if (function.containingDeclaration.safeAs<ClassDescriptor>()?.defaultType?.isBuiltinFunctionalType == true)
-                function.builtIns.nullableAnyType
-            else
-                function.getContinuationParameterTypeOfSuspendFunction(),
-            /* declaresDefaultValue = */ false, /* isCrossinline = */ false,
-            /* isNoinline = */ false, /* varargElementType = */ null, SourceElement.NO_SOURCE
+        function, null, function.valueParameters.size, Annotations.EMPTY, Name.identifier("continuation"),
+        // Add j.l.Object to invoke(), because that is the type of parameters we have in FunctionN+1
+        if (function.containingDeclaration.safeAs<ClassDescriptor>()?.defaultType?.isBuiltinFunctionalType == true)
+            function.builtIns.nullableAnyType
+        else
+            function.getContinuationParameterTypeOfSuspendFunction(),
+        /* declaresDefaultValue = */ false, /* isCrossinline = */ false,
+        /* isNoinline = */ false, /* varargElementType = */ null, SourceElement.NO_SOURCE
     )
 
     return function.createCustomCopy {
@@ -213,18 +217,18 @@ fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(function: D, bind
 }
 
 typealias FunctionDescriptorCopyBuilderToFunctionDescriptorCopyBuilder =
-    FunctionDescriptor.CopyBuilder<out FunctionDescriptor>.(FunctionDescriptor)
+        FunctionDescriptor.CopyBuilder<out FunctionDescriptor>.(FunctionDescriptor)
         -> FunctionDescriptor.CopyBuilder<out FunctionDescriptor>
 
 fun <D : FunctionDescriptor> D.createCustomCopy(
-        copySettings: FunctionDescriptorCopyBuilderToFunctionDescriptorCopyBuilder
+    copySettings: FunctionDescriptorCopyBuilderToFunctionDescriptorCopyBuilder
 ): D {
 
     val newOriginal =
-            if (original !== this)
-                original.createCustomCopy(copySettings)
-            else
-                null
+        if (original !== this)
+            original.createCustomCopy(copySettings)
+        else
+            null
 
     val result = newCopyBuilder().copySettings(this).setOriginal(newOriginal).build()!!
 
@@ -235,52 +239,52 @@ fun <D : FunctionDescriptor> D.createCustomCopy(
 }
 
 private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction() =
-        module.getContinuationOfTypeOrAny(returnType!!)
+    module.getContinuationOfTypeOrAny(returnType!!)
 
 fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType) =
-        module.findContinuationClassDescriptorOrNull(NoLookupLocation.FROM_BACKEND)?.defaultType?.let {
-            KotlinTypeFactory.simpleType(
-                    it,
-                    arguments = listOf(kotlinType.asTypeProjection())
-            )
-        } ?: module.builtIns.nullableAnyType
+    module.findContinuationClassDescriptorOrNull(NoLookupLocation.FROM_BACKEND)?.defaultType?.let {
+        KotlinTypeFactory.simpleType(
+            it,
+            arguments = listOf(kotlinType.asTypeProjection())
+        )
+    } ?: module.builtIns.nullableAnyType
 
 fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() =
-        getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)?.isBuiltInSuspendCoroutineOrReturn() == true
+    getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)?.isBuiltInSuspendCoroutineOrReturn() == true
 
 fun createMethodNodeForSuspendCoroutineOrReturn(
-        functionDescriptor: FunctionDescriptor,
-        typeMapper: KotlinTypeMapper
+    functionDescriptor: FunctionDescriptor,
+    typeMapper: KotlinTypeMapper
 ): MethodNode {
     assert(functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm()) {
         "functionDescriptor must be kotlin.coroutines.intrinsics.suspendOrReturn"
     }
 
     val node =
-            MethodNode(
-                    Opcodes.ASM5,
-                    Opcodes.ACC_STATIC,
-                    "fake",
-                    typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
-            )
+        MethodNode(
+            Opcodes.ASM5,
+            Opcodes.ACC_STATIC,
+            "fake",
+            typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
+        )
 
     node.visitVarInsn(Opcodes.ALOAD, 0)
     node.visitVarInsn(Opcodes.ALOAD, 1)
 
     node.visitMethodInsn(
-            Opcodes.INVOKESTATIC,
-            INTERNAL_COROUTINE_INTRINSICS_OWNER_INTERNAL_NAME,
-            NORMALIZE_CONTINUATION_METHOD_NAME,
-            Type.getMethodDescriptor(CONTINUATION_ASM_TYPE, CONTINUATION_ASM_TYPE),
-            false
+        Opcodes.INVOKESTATIC,
+        INTERNAL_COROUTINE_INTRINSICS_OWNER_INTERNAL_NAME,
+        NORMALIZE_CONTINUATION_METHOD_NAME,
+        Type.getMethodDescriptor(CONTINUATION_ASM_TYPE, CONTINUATION_ASM_TYPE),
+        false
     )
 
     node.visitMethodInsn(
-            Opcodes.INVOKEINTERFACE,
-            typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
-            OperatorNameConventions.INVOKE.identifier,
-            "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}",
-            true
+        Opcodes.INVOKEINTERFACE,
+        typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
+        OperatorNameConventions.INVOKE.identifier,
+        "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}",
+        true
     )
     node.visitInsn(Opcodes.ARETURN)
     node.visitMaxs(2, 2)
@@ -289,32 +293,32 @@ fun createMethodNodeForSuspendCoroutineOrReturn(
 }
 
 fun FunctionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm() =
-        getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)?.isBuiltInSuspendCoroutineUninterceptedOrReturn() == true
+    getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)?.isBuiltInSuspendCoroutineUninterceptedOrReturn() == true
 
 fun createMethodNodeForIntercepted(
-        functionDescriptor: FunctionDescriptor,
-        typeMapper: KotlinTypeMapper
+    functionDescriptor: FunctionDescriptor,
+    typeMapper: KotlinTypeMapper
 ): MethodNode {
     assert(functionDescriptor.isBuiltInIntercepted()) {
         "functionDescriptor must be kotlin.coroutines.intrinsics.intercepted"
     }
 
     val node =
-            MethodNode(
-                    Opcodes.ASM5,
-                    Opcodes.ACC_STATIC,
-                    "fake",
-                    typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
-            )
+        MethodNode(
+            Opcodes.ASM5,
+            Opcodes.ACC_STATIC,
+            "fake",
+            typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
+        )
 
     node.visitVarInsn(Opcodes.ALOAD, 0)
 
     node.visitMethodInsn(
-            Opcodes.INVOKESTATIC,
-            INTERNAL_COROUTINE_INTRINSICS_OWNER_INTERNAL_NAME,
-            NORMALIZE_CONTINUATION_METHOD_NAME,
-            Type.getMethodDescriptor(CONTINUATION_ASM_TYPE, CONTINUATION_ASM_TYPE),
-            false
+        Opcodes.INVOKESTATIC,
+        INTERNAL_COROUTINE_INTRINSICS_OWNER_INTERNAL_NAME,
+        NORMALIZE_CONTINUATION_METHOD_NAME,
+        Type.getMethodDescriptor(CONTINUATION_ASM_TYPE, CONTINUATION_ASM_TYPE),
+        false
     )
     node.visitInsn(Opcodes.ARETURN)
     node.visitMaxs(1, 1)
@@ -328,22 +332,22 @@ fun createMethodNodeForCoroutineContext(functionDescriptor: FunctionDescriptor):
     }
 
     val node =
-            MethodNode(
-                    Opcodes.ASM5,
-                    Opcodes.ACC_STATIC,
-                    "fake",
-                    Type.getMethodDescriptor(COROUTINE_CONTEXT_ASM_TYPE, CONTINUATION_ASM_TYPE),
-                    null, null
-            )
+        MethodNode(
+            Opcodes.ASM5,
+            Opcodes.ACC_STATIC,
+            "fake",
+            Type.getMethodDescriptor(COROUTINE_CONTEXT_ASM_TYPE, CONTINUATION_ASM_TYPE),
+            null, null
+        )
 
     node.visitVarInsn(Opcodes.ALOAD, 0)
 
     node.visitMethodInsn(
-            Opcodes.INVOKEINTERFACE,
-            CONTINUATION_ASM_TYPE.internalName,
-            GET_CONTEXT_METHOD_NAME,
-            Type.getMethodDescriptor(COROUTINE_CONTEXT_ASM_TYPE),
-            true
+        Opcodes.INVOKEINTERFACE,
+        CONTINUATION_ASM_TYPE.internalName,
+        GET_CONTEXT_METHOD_NAME,
+        Type.getMethodDescriptor(COROUTINE_CONTEXT_ASM_TYPE),
+        true
     )
     node.visitInsn(Opcodes.ARETURN)
     node.visitMaxs(1, 1)
@@ -353,30 +357,30 @@ fun createMethodNodeForCoroutineContext(functionDescriptor: FunctionDescriptor):
 
 
 fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(
-        functionDescriptor: FunctionDescriptor,
-        typeMapper: KotlinTypeMapper
+    functionDescriptor: FunctionDescriptor,
+    typeMapper: KotlinTypeMapper
 ): MethodNode {
     assert(functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm()) {
         "functionDescriptor must be kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn"
     }
 
     val node =
-            MethodNode(
-                    Opcodes.ASM5,
-                    Opcodes.ACC_STATIC,
-                    "fake",
-                    typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
-            )
+        MethodNode(
+            Opcodes.ASM5,
+            Opcodes.ACC_STATIC,
+            "fake",
+            typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
+        )
 
     node.visitVarInsn(Opcodes.ALOAD, 0)
     node.visitVarInsn(Opcodes.ALOAD, 1)
 
     node.visitMethodInsn(
-            Opcodes.INVOKEINTERFACE,
-            typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
-            OperatorNameConventions.INVOKE.identifier,
-            "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}",
-            true
+        Opcodes.INVOKEINTERFACE,
+        typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
+        OperatorNameConventions.INVOKE.identifier,
+        "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}",
+        true
     )
     node.visitInsn(Opcodes.ARETURN)
     node.visitMaxs(2, 2)
@@ -386,21 +390,21 @@ fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(
 
 @Suppress("UNCHECKED_CAST")
 fun <D : CallableDescriptor?> D.unwrapInitialDescriptorForSuspendFunction(): D =
-        this.safeAs<SimpleFunctionDescriptor>()?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) as D ?: this
+    this.safeAs<SimpleFunctionDescriptor>()?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) as D ?: this
 
 
 fun FunctionDescriptor.getOriginalSuspendFunctionView(bindingContext: BindingContext): FunctionDescriptor =
-        if (isSuspend)
-            getOrCreateJvmSuspendFunctionView(unwrapInitialDescriptorForSuspendFunction().original, bindingContext)
-        else
-            this
+    if (isSuspend)
+        getOrCreateJvmSuspendFunctionView(unwrapInitialDescriptorForSuspendFunction().original, bindingContext)
+    else
+        this
 
 fun InstructionAdapter.loadCoroutineSuspendedMarker() {
     invokestatic(
-            COROUTINES_INTRINSICS_FILE_FACADE_INTERNAL_NAME.internalName,
-            "get$COROUTINE_SUSPENDED_NAME",
-            Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE),
-            false
+        COROUTINES_INTRINSICS_FILE_FACADE_INTERNAL_NAME.internalName,
+        "get$COROUTINE_SUSPENDED_NAME",
+        Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE),
+        false
     )
 }
 
@@ -411,12 +415,12 @@ fun InstructionAdapter.invokeDoResumeWithUnit(thisName: String) {
     aconst(null)
 
     invokevirtual(
-            thisName,
-            DO_RESUME_METHOD_NAME,
-            Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE, AsmTypes.JAVA_THROWABLE_TYPE),
-            false
+        thisName,
+        DO_RESUME_METHOD_NAME,
+        Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE, AsmTypes.JAVA_THROWABLE_TYPE),
+        false
     )
 }
 
 fun Method.getImplForOpenMethod(ownerInternalName: String) =
-        Method("$name\$suspendImpl", returnType, arrayOf(Type.getObjectType(ownerInternalName)) + argumentTypes)
+    Method("$name\$suspendImpl", returnType, arrayOf(Type.getObjectType(ownerInternalName)) + argumentTypes)
