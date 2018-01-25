@@ -37,9 +37,9 @@ val SUSPEND_COROUTINE_UNINTERCEPTED_OR_RETURN_NAME = Name.identifier("suspendCor
 fun FunctionDescriptor.isBuiltInIntercepted(): Boolean {
     if (name != INTERCEPTED_NAME) return false
     val original =
-            module.getPackage(COROUTINES_INTRINSICS_PACKAGE_FQ_NAME).memberScope
-                    .getContributedFunctions(INTERCEPTED_NAME, NoLookupLocation.FROM_BACKEND)
-                    .singleOrNull() as CallableDescriptor
+        module.getPackage(COROUTINES_INTRINSICS_PACKAGE_FQ_NAME).memberScope
+            .getContributedFunctions(INTERCEPTED_NAME, NoLookupLocation.FROM_BACKEND)
+            .singleOrNull() as CallableDescriptor
     return DescriptorEquivalenceForOverrides.areEquivalent(original, this)
 }
 
@@ -49,14 +49,14 @@ fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturn(): Boolean {
     val originalDeclaration = getBuiltInSuspendCoroutineOrReturn() ?: return false
 
     return DescriptorEquivalenceForOverrides.areEquivalent(
-            originalDeclaration, this
+        originalDeclaration, this
     )
 }
 
 fun FunctionDescriptor.getBuiltInSuspendCoroutineOrReturn() =
-        module.getPackage(COROUTINES_INTRINSICS_PACKAGE_FQ_NAME).memberScope
-                .getContributedFunctions(SUSPEND_COROUTINE_OR_RETURN_NAME, NoLookupLocation.FROM_BACKEND)
-                .singleOrNull()
+    module.getPackage(COROUTINES_INTRINSICS_PACKAGE_FQ_NAME).memberScope
+        .getContributedFunctions(SUSPEND_COROUTINE_OR_RETURN_NAME, NoLookupLocation.FROM_BACKEND)
+        .singleOrNull()
 
 fun FunctionDescriptor.isBuiltInCoroutineContext(): Boolean {
     val fqNameSafe = (this as? PropertyGetterDescriptor)?.correspondingProperty?.fqNameSafe
@@ -66,7 +66,7 @@ fun FunctionDescriptor.isBuiltInCoroutineContext(): Boolean {
 fun FunctionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean {
     if (name != SUSPEND_COROUTINE_UNINTERCEPTED_OR_RETURN_NAME) return false
     val original = module.getPackage(COROUTINES_INTRINSICS_PACKAGE_FQ_NAME).memberScope
-            .getContributedFunctions(SUSPEND_COROUTINE_UNINTERCEPTED_OR_RETURN_NAME, NoLookupLocation.FROM_BACKEND)
-            .singleOrNull() as CallableDescriptor
+        .getContributedFunctions(SUSPEND_COROUTINE_UNINTERCEPTED_OR_RETURN_NAME, NoLookupLocation.FROM_BACKEND)
+        .singleOrNull() as CallableDescriptor
     return DescriptorEquivalenceForOverrides.areEquivalent(original, this)
 }
