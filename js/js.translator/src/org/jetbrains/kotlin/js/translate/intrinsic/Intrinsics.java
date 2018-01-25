@@ -34,11 +34,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression;
 public final class Intrinsics {
     private final FunctionIntrinsics functionIntrinsics = new FunctionIntrinsics();
     private final BinaryOperationIntrinsics binaryOperationIntrinsics = new BinaryOperationIntrinsics();
-    private final ObjectIntrinsics objectIntrinsics;
-
-    public Intrinsics() {
-        objectIntrinsics = new ObjectIntrinsics();
-    }
+    private final ObjectIntrinsics objectIntrinsics = new ObjectIntrinsics();
 
     @NotNull
     public BinaryOperationIntrinsic getBinaryOperationIntrinsic(

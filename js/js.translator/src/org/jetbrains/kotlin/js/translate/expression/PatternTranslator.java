@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
-import org.jetbrains.kotlin.js.patterns.typePredicates.TypePredicatesKt;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -211,9 +210,9 @@ public final class PatternTranslator extends AbstractTranslator {
 
         }
 
-        if (TypePredicatesKt.getCHAR_SEQUENCE().test(type)) return namer().isCharSequence();
+        if (KotlinBuiltIns.isCharSequenceOrNullableCharSequence(type)) return namer().isCharSequence();
 
-        if (TypePredicatesKt.getCOMPARABLE().test(type)) return namer().isComparable();
+        if (KotlinBuiltIns.isConstructedFromGivenClass(type, KotlinBuiltIns.FQ_NAMES.comparable)) return namer().isComparable();
 
         return null;
     }

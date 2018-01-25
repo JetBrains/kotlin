@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
-//TODO: find should be usages
 public final class BuiltInPropertyIntrinsic extends FunctionIntrinsicWithReceiverComputed {
 
     @NotNull

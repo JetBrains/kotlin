@@ -34,7 +34,7 @@ abstract class FunctionIntrinsic {
             override fun exists() = false
 
             override fun apply(callInfo: CallInfo, arguments: List<JsExpression>, context: TranslationContext) =
-                    throw UnsupportedOperationException("FunctionIntrinsic#NO_INTRINSIC_#apply")
+                throw UnsupportedOperationException("FunctionIntrinsic#NO_INTRINSIC_#apply")
 
         }
 

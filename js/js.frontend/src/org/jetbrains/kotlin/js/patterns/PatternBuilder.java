@@ -195,19 +195,12 @@ public final class PatternBuilder {
 
         private String receiverFqName;
 
-        private boolean checkOverridden;
-
         public DescriptorPredicateImpl(String... names) {
             this.names = names;
         }
 
         public DescriptorPredicateImpl isExtensionOf(String receiverFqName) {
             this.receiverFqName = receiverFqName;
-            return this;
-        }
-
-        public DescriptorPredicateImpl checkOverridden() {
-            this.checkOverridden = true;
             return this;
         }
 
@@ -249,14 +242,6 @@ public final class PatternBuilder {
             for (CallableMemberDescriptor real : OverridingUtil.getOverriddenDeclarations(functionDescriptor)) {
                 if (matches(real)) {
                     return true;
-                }
-            }
-
-            if (checkOverridden) {
-                for (CallableDescriptor overridden : DescriptorUtils.getAllOverriddenDescriptors(functionDescriptor)) {
-                    if (matches(overridden)) {
-                        return true;
-                    }
                 }
             }
 
