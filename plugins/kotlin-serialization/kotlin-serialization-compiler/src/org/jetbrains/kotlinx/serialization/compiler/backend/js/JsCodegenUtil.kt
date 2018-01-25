@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.js
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 internal class JsBlockBuilder {
@@ -92,3 +94,11 @@ internal fun propNotSeenTest(seenVar: JsNameRef, index: Int): JsBinaryOperation 
         ),
         JsIntLiteral(0)
 )
+
+internal fun TranslationContext.serializerObjectGetter(serializer: ClassDescriptor): JsExpression {
+    return ReferenceTranslator.translateAsValueReference(serializer, this)
+}
+
+internal fun TranslationContext.translateQualifiedReference(clazz: ClassDescriptor): JsExpression {
+    return ReferenceTranslator.translateAsTypeReference(clazz, this)
+}

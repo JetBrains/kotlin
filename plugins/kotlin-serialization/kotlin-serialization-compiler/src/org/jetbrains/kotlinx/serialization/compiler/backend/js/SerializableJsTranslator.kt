@@ -47,13 +47,13 @@ class SerializableJsTranslator(val declaration: KtPureClassOrObject,
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) {
 
         val missingExceptionClassRef = serializableDescriptor.getClassFromSerializationPackage("MissingFieldException")
-                .let { context.getQualifiedReference(it) }
+                .let { context.translateQualifiedReference(it) }
 
         val f = context.buildFunction(constructorDescriptor) { jsFun, context ->
             val thiz = jsFun.scope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME).makeRef()
             val context = context.innerContextWithAliased(serializableDescriptor.thisAsReceiverParameter, thiz)
 
-            +JsVars(JsVars.JsVar(thiz.name, Namer.createObjectWithPrototypeFrom(context.getQualifiedReference(serializableDescriptor))))
+            +JsVars(JsVars.JsVar(thiz.name, Namer.createObjectWithPrototypeFrom(context.getInnerNameForDescriptor(serializableDescriptor).makeRef())))
             val seenVar = jsFun.parameters[0].name.makeRef()
             for ((index, prop) in properties.serializableProperties.withIndex()) {
                 val paramRef = jsFun.parameters[index + 1].name.makeRef()

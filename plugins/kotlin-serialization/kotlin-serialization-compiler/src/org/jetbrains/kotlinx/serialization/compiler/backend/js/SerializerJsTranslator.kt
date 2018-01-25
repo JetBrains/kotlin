@@ -80,7 +80,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                 val argExprs = args.map { arg ->
                     Translation.translateAsExpression(arg.getArgumentExpression()!!, context)
                 }
-                val classRef = context.getQualifiedReference(annotationClass)
+                val classRef = context.translateQualifiedReference(annotationClass)
                 val invok = JsInvocation(JsNameRef(context.getNameForDescriptor(pushFunc), serialClassDescRef), JsNew(classRef, argExprs))
                 translator.addInitializerStatement(invok.makeStmt())
             }
@@ -101,7 +101,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         val f = context.buildFunction(typedConstructorDescriptor) { jsFun, context ->
             val thiz = jsFun.scope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME).makeRef()
 
-            +JsVars(JsVars.JsVar(thiz.name, JsNew(getQualifiedClassReferenceName(serializerDescriptor))))
+            +JsVars(JsVars.JsVar(thiz.name, JsNew(context.getInnerNameForDescriptor(serializerDescriptor).makeRef())))
             jsFun.parameters.forEachIndexed { i, parameter ->
                 val thisFRef = JsNameRef(context.scope().declareName("$typeArgPrefix$i"), thiz)
                 +JsAstUtils.assignment(thisFRef, JsNameRef(parameter.name)).makeStmt()
@@ -170,19 +170,15 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         +JsInvocation(JsNameRef(wEndFunc, localOutputRef), serialClassDescRef).makeStmt()
     }
 
-    private fun getQualifiedClassReferenceName(classDescriptor: ClassDescriptor): JsExpression {
-        return context.getQualifiedReference(classDescriptor)
-    }
-
     private fun serializerInstance(serializerClass: ClassDescriptor?, module: ModuleDescriptor, kType: KotlinType, genericIndex: Int? = null): JsExpression? {
-        val nullableSerClass = getQualifiedClassReferenceName(requireNotNull(
+        val nullableSerClass = context.translateQualifiedReference(requireNotNull(
                 module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, Name.identifier("NullableSerializer")))))
         if (serializerClass == null) {
             if (genericIndex == null) return null
             return JsNameRef(context.scope().declareName("$typeArgPrefix$genericIndex"), JsThisRef())
         }
         if (serializerClass.kind == ClassKind.OBJECT) {
-            return getQualifiedClassReferenceName(serializerClass)
+            return context.serializerObjectGetter(serializerClass)
         }
         else {
             var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
@@ -197,9 +193,9 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
             val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
             val ref = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
                 val desc = KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor(serializerClass, serializableDescriptor)
-                JsInvocation(context.getInnerNameForDescriptor(desc).makeRef(), args)
+                JsInvocation(context.getInnerReference(desc), args)
             } else {
-                JsNew(getQualifiedClassReferenceName(serializerClass), args)
+                JsNew(context.translateQualifiedReference(serializerClass), args)
             }
             return ref
         }
@@ -207,7 +203,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
 
     private fun createGetKClassExpression(classDescriptor: ClassDescriptor): JsExpression =
             JsInvocation(context.namer().kotlin("getKClass"),
-                         getQualifiedClassReferenceName(classDescriptor))
+                         context.translateQualifiedReference(classDescriptor))
 
 
     override fun generateLoad(function: FunctionDescriptor) = generateFunction(function) { jsFun, context ->
@@ -335,7 +331,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                 // default: throw
                 default {
                     val excClassRef = serializableDescriptor.getClassFromSerializationPackage("UnknownFieldException")
-                            .let { context.getQualifiedReference(it) }
+                            .let { context.translateQualifiedReference(it) }
                     +JsThrow(JsNew(excClassRef, listOf(indexVar)))
                 }
             }
