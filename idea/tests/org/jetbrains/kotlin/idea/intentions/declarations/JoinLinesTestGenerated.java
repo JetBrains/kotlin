@@ -458,5 +458,11 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/threeLines.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("threeLines2.kt")
+        public void testThreeLines2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/threeLines2.kt");
+            doTest(fileName);
+        }
     }
 }

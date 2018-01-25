@@ -49,7 +49,9 @@ class JoinToStringTemplateHandler : JoinRawLinesHandlerDelegate {
 
         var rightText = ConvertToStringTemplateIntention.buildText(binaryExpr.right, false)
         var left = binaryExpr.left
-        while (left is KtBinaryExpression && left.joinable() && left.parent.getLineCount() >= lineCount) {
+        while (left is KtBinaryExpression && left.joinable()) {
+            val leftLeft = (left as? KtBinaryExpression)?.left ?: break
+            if (leftLeft.lineCount() < lineCount) break
             rightText = ConvertToStringTemplateIntention.buildText(left.right, false) + rightText
             left = left.left
         }
