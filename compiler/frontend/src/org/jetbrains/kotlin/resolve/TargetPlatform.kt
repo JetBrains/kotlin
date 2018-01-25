@@ -91,7 +91,7 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker, MissingDependencyClassChecker,
     CallableReferenceCompatibilityChecker(), LateinitIntrinsicApplicabilityChecker,
     UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker(),
-    PrimitiveNumericComparisonCallChecker
+    PrimitiveNumericComparisonCallChecker, LambdaWithSuspendModifierCallChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
