@@ -126,12 +126,12 @@ object MockLibraryUtil {
     }
 
     @JvmStatic
-    fun compileJsLibraryToJar(sourcesPath: String, jarName: String, addSources: Boolean): File {
+    fun compileJsLibraryToJar(sourcesPath: String, jarName: String, addSources: Boolean, extraOptions: List<String> = emptyList()): File {
         val contentDir = KotlinTestUtils.tmpDir("testLibrary-" + jarName)
 
         val outDir = File(contentDir, "out")
         val outputFile = File(outDir, jarName + ".js")
-        compileKotlin2JS(sourcesPath, outputFile)
+        compileKotlin2JS(sourcesPath, outputFile, extraOptions)
 
         return createJarFile(contentDir, outDir, jarName, sourcesPath.takeIf { addSources })
     }
@@ -189,8 +189,8 @@ object MockLibraryUtil {
         runJvmCompiler(args)
     }
 
-    private fun compileKotlin2JS(sourcesPath: String, outputFile: File) {
-        runJsCompiler(listOf("-meta-info", "-output", outputFile.absolutePath, sourcesPath))
+    private fun compileKotlin2JS(sourcesPath: String, outputFile: File, extraOptions: List<String>) {
+        runJsCompiler(listOf("-meta-info", "-output", outputFile.absolutePath, sourcesPath, *extraOptions.toTypedArray()))
     }
 
     fun compileKotlinModule(buildFilePath: String) {
