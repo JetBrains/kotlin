@@ -15,6 +15,7 @@
  */
 
 #include <math.h>
+#include <limits.h>
 
 #include "Natives.h"
 #include "Exceptions.h"
