@@ -30,7 +30,7 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
 
     val KEY: ID<String, PackageParts> = ID.create(KotlinModuleMappingIndex::class.java.canonicalName)
 
-    private val KEY_DESCRIPTOR = object : KeyDescriptor<String> {
+    internal val STRING_KEY_DESCRIPTOR = object : KeyDescriptor<String> {
         override fun save(output: DataOutput, value: String) = IOUtil.writeUTF(output, value)
 
         override fun read(input: DataInput) = IOUtil.readUTF(input)
@@ -63,7 +63,7 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
 
     override fun dependsOnFileContent() = true
 
-    override fun getKeyDescriptor() = KEY_DESCRIPTOR
+    override fun getKeyDescriptor() = STRING_KEY_DESCRIPTOR
 
     override fun getValueExternalizer() = VALUE_EXTERNALIZER
 
