@@ -4,6 +4,6 @@ class SimpleAnnotated {
         println("Hello, world!")
     }
 
-    @SinceKotlin("1.0")
+    @kotlin.SinceKotlin("1.0")
     val property: String = "Mary"
 }
