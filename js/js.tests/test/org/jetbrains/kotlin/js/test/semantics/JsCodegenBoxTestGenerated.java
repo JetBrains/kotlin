@@ -25331,6 +25331,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("test16.1.1.kt")
+            public void testTest16_1_1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test16.1.1.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("test17.0.0.kt")
             public void testTest17_0_0() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test17.0.0.kt");
@@ -25352,12 +25358,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("test17.1.1.kt")
             public void testTest17_1_1() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test17.1.1.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("test18.kt")
-            public void testTest18() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test18.kt");
                 doTest(fileName);
             }
 
