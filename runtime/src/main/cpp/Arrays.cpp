@@ -29,14 +29,14 @@ static inline void copyImpl(KConstRef thiz, KInt fromIndex,
   const ArrayHeader* array = thiz->array();
   ArrayHeader* destinationArray = destination->array();
   if (count < 0 ||
-        fromIndex < 0 || count > array->count_ - fromIndex ||
-        toIndex < 0 || count > destinationArray->count_ - toIndex) {
+      fromIndex < 0 || count > array->count_ - fromIndex ||
+      toIndex < 0 || count > destinationArray->count_ - toIndex) {
       ThrowArrayIndexOutOfBoundsException();
   }
 
   memmove(PrimitiveArrayAddressOfElementAt<T>(destinationArray, toIndex),
           PrimitiveArrayAddressOfElementAt<T>(array, fromIndex),
-             count * sizeof(T));
+          count * sizeof(T));
 }
 
 extern "C" {

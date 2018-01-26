@@ -166,7 +166,7 @@ static void initializeClass(Class clazz);
   // TODO: should we call NSObject.init ?
   UpdateRef(&result->kotlinObj, obj);
 
-  if (!isPermanent(obj)) {
+  if (!obj->permanent()) {
     RuntimeAssert(HasAssociatedObjectField(obj), "");
     SetAssociatedObject(obj, result);
   }
@@ -177,7 +177,7 @@ static void initializeClass(Class clazz);
 
 -(instancetype)retain {
   ObjHeader* obj = kotlinObj;
-  if (isPermanent(obj)) { // TODO: consider storing `isPermanent` to self field.
+  if (obj->permanent()) { // TODO: consider storing `isPermanent` to self field.
     [super retain];
   } else {
     AddRefFromAssociatedObject(obj);
@@ -187,7 +187,7 @@ static void initializeClass(Class clazz);
 
 -(oneway void)release {
   ObjHeader* obj = kotlinObj;
-  if (isPermanent(obj)) {
+  if (obj->permanent()) {
     [super release];
   } else {
     ReleaseRefFromAssociatedObject(kotlinObj);
@@ -195,7 +195,7 @@ static void initializeClass(Class clazz);
 }
 
 -(void)releaseAsAssociatedObject {
-  RuntimeAssert(!isPermanent(kotlinObj), "");
+  RuntimeAssert(!kotlinObj->permanent(), "");
   [super release];
 }
 

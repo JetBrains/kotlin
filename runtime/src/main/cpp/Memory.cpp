@@ -582,7 +582,7 @@ void dumpWorker(const char* prefix, ContainerHeader* header, ContainerHeaderSet*
   traverseContainerReferredObjects(header, [prefix, seen](ObjHeader* ref) {
     auto child = ref->container();
     RuntimeAssert(!isArena(child), "A reference to local object is encountered");
-    if (!isPermanent(child) && (seen->count(child) == 0)) {
+    if (!child->permanent() && (seen->count(child) == 0)) {
       dumpWorker(prefix, child, seen);
     }
   });
@@ -618,7 +618,7 @@ void MarkGray(ContainerHeader* container) {
   traverseContainerReferredObjects(container, [](ObjHeader* ref) {
     auto childContainer = ref->container();
     RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
-    if (!isPermanent(childContainer)) {
+    if (!childContainer->permanent()) {
       childContainer->decRefCount();
       MarkGray<useColor>(childContainer);
     }
@@ -637,7 +637,7 @@ void ScanBlack(ContainerHeader* container) {
   traverseContainerReferredObjects(container, [](ObjHeader* ref) {
     auto childContainer = ref->container();
     RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
-    if (!isPermanent(childContainer)) {
+    if (!childContainer->permanent()) {
       childContainer->incRefCount();
       if (useColor) {
         if (childContainer->color() != CONTAINER_TAG_GC_BLACK)
@@ -701,7 +701,7 @@ void Scan(ContainerHeader* container) {
   traverseContainerReferredObjects(container, [](ObjHeader* ref) {
     auto childContainer = ref->container();
     RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
-    if (!isPermanent(childContainer)) {
+    if (!childContainer->permanent()) {
       Scan(childContainer);
     }
   });
@@ -715,7 +715,7 @@ void CollectWhite(MemoryState* state, ContainerHeader* container) {
   traverseContainerReferredObjects(container, [state](ObjHeader* ref) {
     auto childContainer = ref->container();
     RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
-    if (!isPermanent(childContainer)) {
+    if (!childContainer->permanent()) {
       CollectWhite(state, childContainer);
     }
   });
@@ -799,7 +799,7 @@ ContainerHeader* AllocContainer(size_t size) {
 }
 
 void FreeContainer(ContainerHeader* header) {
-  RuntimeAssert(!isPermanent(header), "this kind of container shalln't be freed");
+  RuntimeAssert(!header->permanent(), "this kind of container shalln't be freed");
   auto state = memoryState;
 
   CONTAINER_FREE_EVENT(state, header)
@@ -1080,7 +1080,7 @@ OBJ_GETTER(InitInstance,
 }
 
 bool HasReservedObjectTail(ObjHeader* obj) {
-  return kObjectReservedTailSize != 0 && !isPermanent(obj);
+  return kObjectReservedTailSize != 0 && !obj->permanent();
 }
 
 void* GetReservedObjectTail(ObjHeader* obj) {
@@ -1300,7 +1300,7 @@ bool hasExternalRefs(ContainerHeader* container, ContainerHeaderSet* visited) {
   bool result = container->refCount() != 0;
   traverseContainerReferredObjects(container, [&result, visited](ObjHeader* ref) {
     auto child = ref->container();
-    if (!isPermanent(child) && (visited->find(child) == visited->end())) {
+    if (!child->permanent() && (visited->find(child) == visited->end())) {
       result |= hasExternalRefs(child, visited);
     }
   });

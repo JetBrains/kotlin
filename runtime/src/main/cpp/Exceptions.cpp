@@ -117,9 +117,7 @@ _Unwind_Reason_Code unwindCallback(
 
 }  // namespace
 
-#ifdef __cplusplus
 extern "C" {
-#endif
 
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
@@ -219,6 +217,4 @@ void SetKonanTerminateHandler() {
 
 #endif // KONAN_OBJC_INTEROP
 
-#ifdef __cplusplus
 } // extern "C"
-#endif

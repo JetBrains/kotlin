@@ -17,8 +17,16 @@
 #include "Types.h"
 
 #ifdef KONAN_WASM
+
+#ifdef __cplusplus
 extern "C" {
-    KDouble     ReturnSlot_getDouble();
-    void        ReturnSlot_setDouble(KInt upper, KInt lower);
-}
 #endif
+
+KDouble ReturnSlot_getDouble();
+void ReturnSlot_setDouble(KInt upper, KInt lower);
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif
+
+#endif  // KONAN_WASM

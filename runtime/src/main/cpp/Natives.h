@@ -63,8 +63,7 @@ inline T* PrimitiveArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
 }
 
 template <typename T>
-inline const T* PrimitiveArrayAddressOfElementAt(
-    const ArrayHeader* obj, KInt index) {
+inline const T* PrimitiveArrayAddressOfElementAt(const ArrayHeader* obj, KInt index) {
   return reinterpret_cast<const T*>(obj + 1) + index;
 }
 

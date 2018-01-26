@@ -24,15 +24,15 @@
 // Must fit in two bits.
 typedef enum {
   // Those bit masks are applied to refCount_ field.
-
   // Container is normal thread local container.
   CONTAINER_TAG_NORMAL = 0,
-  // Container shall be atomically refcounted, currently disabled.
-  // CONTAINER_TAG_SHARED = 1,
+  // Container is frozen, could only refer to other frozen objects.
+  // Refcounter update is atomics.
+  CONTAINER_TAG_FROZEN = 1,
   // Those container tags shall not be refcounted.
-  // Permanent object, cannot refer to non-permanent objects, so no need to cleanup those.
+  // Permanent container, cannot refer to non-permanent containers, so no need to cleanup those.
   CONTAINER_TAG_PERMANENT = 2,
-  // Stack objects, no need to free, children cleanup still shall be there.
+  // Stack container, no need to free, children cleanup still shall be there.
   CONTAINER_TAG_STACK = 3,
   // Shift to get actual counter.
   CONTAINER_TAG_SHIFT = 2,
@@ -61,63 +61,77 @@ typedef uint32_t container_size_t;
 
 // Header of all container objects. Contains reference counter.
 struct ContainerHeader {
-  // Reference counter of container. Uses CONTAINER_TAG_SHIFT,lower bits of counter
+  // Reference counter of container. Uses CONTAINER_TAG_SHIFT, lower bits of counter
   // for container type (for polymorphism in ::Release()).
   uint32_t refCount_;
   // Number of objects in the container.
   uint32_t objectCount_;
 
+  inline bool permanent() const {
+    return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_PERMANENT;
+  }
+
   inline unsigned refCount() const {
     return refCount_ >> CONTAINER_TAG_SHIFT;
   }
+
   inline void incRefCount() {
     refCount_ += CONTAINER_TAG_INCREMENT;
   }
+
   inline int decRefCount() {
     refCount_ -= CONTAINER_TAG_INCREMENT;
     return refCount_ >> CONTAINER_TAG_SHIFT;
   }
+
   inline unsigned tag() const {
     return refCount_ & CONTAINER_TAG_MASK;
   }
+
   inline unsigned objectCount() const {
     return objectCount_ >> CONTAINER_TAG_GC_SHIFT;
   }
+
   inline void incObjectCount() {
     objectCount_ += CONTAINER_TAG_GC_INCREMENT;
   }
+
   inline void setObjectCount(int count) {
     objectCount_ = count << CONTAINER_TAG_GC_SHIFT;
   }
+
   inline unsigned color() const {
     return objectCount_ & CONTAINER_TAG_GC_COLOR_MASK;
   }
+
   inline void setColor(unsigned color) {
     objectCount_ = (objectCount_ & ~CONTAINER_TAG_GC_COLOR_MASK) | color;
   }
+
   inline bool buffered() const {
     return (objectCount_ & CONTAINER_TAG_GC_BUFFERED) != 0;
   }
+
   inline void setBuffered() {
     objectCount_ |= CONTAINER_TAG_GC_BUFFERED;
   }
+
   inline void resetBuffered() {
     objectCount_ &= ~CONTAINER_TAG_GC_BUFFERED;
   }
+
   inline bool marked() const {
     return (objectCount_ & CONTAINER_TAG_GC_MARKED) != 0;
   }
+
   inline void mark() {
     objectCount_ |= CONTAINER_TAG_GC_MARKED;
   }
+
   inline void unMark() {
     objectCount_ &= ~CONTAINER_TAG_GC_MARKED;
   }
 };
-
-inline bool isPermanent(const ContainerHeader* header) {
-  return (header->refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_PERMANENT;
-}
 
 struct ArrayHeader;
 
@@ -155,11 +169,11 @@ struct ObjHeader {
   // Unsafe cast to ArrayHeader. Use carefully!
   ArrayHeader* array() { return reinterpret_cast<ArrayHeader*>(this); }
   const ArrayHeader* array() const { return reinterpret_cast<const ArrayHeader*>(this); }
-};
 
-inline bool isPermanent(const ObjHeader* obj) {
-  return isPermanent(obj->container());
-}
+  inline bool permanent() const {
+    return container()->permanent();
+  }
+};
 
 // Header of value type array objects. Keep layout in sync with that of object header.
 struct ArrayHeader {
@@ -280,13 +294,16 @@ class ArenaContainer {
 
  private:
   void* place(container_size_t size);
+
   bool allocContainer(container_size_t minSize);
+
   void setMeta(ObjHeader* obj, const TypeInfo* typeInfo) {
     obj->container_offset_negative_ =
         reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(currentChunk_->asHeader());
     obj->set_type_info(typeInfo);
     RuntimeAssert(obj->container() == currentChunk_->asHeader(), "Placement must match");
   }
+
   ContainerChunk* currentChunk_;
   uint8_t* current_;
   uint8_t* end_;

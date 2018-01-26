@@ -26,8 +26,8 @@ struct RuntimeState {
 
 typedef void (*Initializer)(int initialize);
 struct InitNode {
-    Initializer      init;
-    InitNode* next;
+  Initializer      init;
+  InitNode* next;
 };
 
 namespace {

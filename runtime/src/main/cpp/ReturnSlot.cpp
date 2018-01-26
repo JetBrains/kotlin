@@ -18,18 +18,21 @@
 
 #ifdef KONAN_WASM
 namespace  {
-    THREAD_LOCAL_VARIABLE long long storage;
-}
+
+THREAD_LOCAL_VARIABLE long long storage;
+
+}  // namespace
 
 extern "C" {
 
-    KDouble ReturnSlot_getDouble() {
-        return *reinterpret_cast<KDouble*>(&::storage);
-    }
-
-    void ReturnSlot_setDouble(KInt upper, KInt lower) {
-        reinterpret_cast<KInt*>(&::storage)[0] = lower;
-        reinterpret_cast<KInt*>(&::storage)[1] = upper;
-    }
+KDouble ReturnSlot_getDouble() {
+  return *reinterpret_cast<KDouble*>(&::storage);
 }
-#endif
+
+void ReturnSlot_setDouble(KInt upper, KInt lower) {
+  reinterpret_cast<KInt*>(&::storage)[0] = lower;
+  reinterpret_cast<KInt*>(&::storage)[1] = upper;
+}
+
+}  // extern "C"
+#endif  // KONAN_WASM
