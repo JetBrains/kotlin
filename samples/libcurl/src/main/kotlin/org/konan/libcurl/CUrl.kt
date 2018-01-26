@@ -30,7 +30,7 @@ class CUrl(val url: String)  {
     fun fetch() {
         val res = curl_easy_perform(curl)
         if (res != CURLE_OK)
-            println("curl_easy_perform() failed: ${curl_easy_strerror(res)}")
+            println("curl_easy_perform() failed: ${curl_easy_strerror(res)?.toKString()}")
     }
 
     fun close() {
