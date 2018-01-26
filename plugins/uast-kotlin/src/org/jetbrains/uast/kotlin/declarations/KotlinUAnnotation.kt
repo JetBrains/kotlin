@@ -18,12 +18,13 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 
 abstract class KotlinUAnnotationBase(
     final override val psi: KtElement,
     givenParent: UElement?
-) : KotlinAbstractUElement(givenParent), UAnnotation {
+) : KotlinAbstractUElement(givenParent), UAnnotationEx, UAnchorOwner {
 
     abstract override val javaPsi: PsiAnnotation?
 
@@ -115,10 +116,20 @@ class KotlinUAnnotation(
 
     override fun annotationUseSiteTarget() = annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget()
 
+    override val uastAnchor by lazy {
+        KotlinUIdentifier(
+            javaPsi?.nameReferenceElement?.referenceNameElement,
+            annotationEntry.typeReference?.typeElement?.let {
+                (it as? KtUserType)?.referenceExpression?.getReferencedNameElement() ?: it.navigationElement
+            },
+            this
+        )
+    }
+
 }
 
 class KotlinUNestedAnnotation(
-    original: KtCallExpression,
+    private val original: KtCallExpression,
     givenParent: UElement?,
     private val classDescriptor: ClassDescriptor?
 ) : KotlinUAnnotationBase(original, givenParent) {
@@ -127,6 +138,14 @@ class KotlinUNestedAnnotation(
         get() = classDescriptor
 
     override fun annotationUseSiteTarget(): AnnotationUseSiteTarget? = null
+
+    override val uastAnchor by lazy {
+        KotlinUIdentifier(
+            javaPsi?.nameReferenceElement?.referenceNameElement,
+            (original.calleeExpression as? KtNameReferenceExpression)?.getReferencedNameElement(),
+            this
+        )
+    }
 
 }
 
