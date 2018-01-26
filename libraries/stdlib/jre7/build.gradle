@@ -22,7 +22,9 @@ sourceSets {
         kotlin {
             srcDir 'test'
             if(!System.properties.'idea.active') {
-                srcDir '../test'
+                srcDir '../jvm/test'
+                srcDir '../common/test'
+                srcDir '../common/build/common-test-sources'
             }
         }
     }
@@ -57,7 +59,8 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    dependsOn(":kotlin-stdlib-common:preprocessSourcesTest")
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform"]
 }
 
 kotlin.experimental.coroutines 'enable'
