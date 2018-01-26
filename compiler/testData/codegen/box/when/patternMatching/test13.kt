@@ -14,6 +14,8 @@ fun box(): String {
     assertEquals(matcher("10", "10"), "is eq y")
     assertEquals(matcher("10", "20"), "is String")
     assertEquals(matcher(1, 4), "!is Pair(1, _), !is Pair(_, 2)")
-    assertEquals(matcher(1, 2), "is Pair(1, 2)")
+    assertEquals(matcher(1, 2), "!is Pair(1, _), !is Pair(_, 2)")
+    assertEquals(matcher(Pair(1, 4), null), "!is Pair(1, _), !is Pair(_, 2)")
+    assertEquals(matcher(Pair(1, 2), null), "is Pair(1, 2)")
     return "OK"
 }

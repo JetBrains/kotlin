@@ -149,7 +149,7 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElement(node), KtVa
     }
 
     override fun isVar(): Boolean {
-        return getParentOfPatternParentNode()?.findChildByType(KtTokens.VAR_KEYWORD) != null
+        return findChildByType<PsiElement?>(KtTokens.VAR_KEYWORD) != null
     }
 
     override fun getInitializer(): KtExpression? {
@@ -160,16 +160,8 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElement(node), KtVa
         return false
     }
 
-    private fun getParentOfPatternParentNode(): ASTNode? {
-        var pattern: PsiElement? = this
-        while (pattern != null && pattern !is KtPattern) {
-            pattern = pattern.parent
-        }
-        return pattern?.parent?.node
-    }
-
     override fun getValOrVarKeyword(): PsiElement? {
-        return getParentOfPatternParentNode()?.findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD))?.psi
+        return findChildByType<PsiElement?>(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD))
     }
 
     override fun getFqName(): FqName? {
