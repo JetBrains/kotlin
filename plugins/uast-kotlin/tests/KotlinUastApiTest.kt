@@ -304,8 +304,10 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 val lightAnnotation = convertedUAnnotation.getAsJavaPsiElement(PsiAnnotation::class.java)
                         ?: throw AssertionError("can't get lightAnnotation from $convertedUAnnotation")
                 assertEquals("Annotation", lightAnnotation.qualifiedName)
+                assertEquals("Annotation", (convertedUAnnotation as UAnchorOwner).uastAnchor?.sourcePsi?.text)
             }
     }
+
 
     @Test
     fun testParametersDisorder() = doTest("ParametersDisorder") { _, file ->
