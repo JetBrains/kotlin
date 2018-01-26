@@ -23,7 +23,6 @@ fun matcher(value: Any?, p1: Int, p2: Int, p3: Int, p4: Int): List<Int> = when (
     is val m = Pair("some string $p4 with parameter", _) -> listOf(7)
     is val m = Pair(Int(), Pair(val a: Int, val b: Int)) -> listOf(8, a, b)
     is val m -> listOf(9)
-    else -> throw java.lang.IllegalStateException("Unexpected else")
 }
 
 fun box() : String {

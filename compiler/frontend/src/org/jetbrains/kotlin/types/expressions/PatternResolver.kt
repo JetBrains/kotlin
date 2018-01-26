@@ -173,7 +173,13 @@ class PatternResolver(
 
     fun resolveType(element: KtPatternElement, state: PatternResolveState): ConditionalTypeInfo {
         val info = element.getTypeInfo(this, state)
-        PatternMatchingTypingVisitor.checkTypeCompatibility(state.context, info.type, state.expectedType, element)
+        val context = state.context
+        val type = info.type
+        val expectedType = state.expectedType
+        when (element) {
+            is KtPatternTypeReference, is KtPatternVariableDeclaration, is KtPatternTypedTuple ->
+                PatternMatchingTypingVisitor.checkTypeCompatibility(context, type, expectedType, element)
+        }
         return info
     }
 

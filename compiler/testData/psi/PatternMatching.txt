@@ -1413,7 +1413,7 @@ KtFile: PatternMatching.kt
                     PATTERN_ENTRY
                       PATTERN_CONSTRAINT
                         PATTERN_EXPRESSION
-                          PsiElement(!eq)('!eq')
+                          PsiElement(eq)('eq')
                           PsiWhiteSpace(' ')
                           INTEGER_CONSTANT
                             PsiElement(INTEGER_LITERAL)('2')

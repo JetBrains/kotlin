@@ -21479,159 +21479,99 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/when/patternMatching"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
-            @TestMetadata("test1.kt")
-            public void testTest1() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test1.kt");
+            @TestMetadata("complexMatch.kt")
+            public void testComplexMatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/complexMatch.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test10.kt")
-            public void testTest10() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test10.kt");
+            @TestMetadata("elseMatch.kt")
+            public void testElseMatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/elseMatch.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test11.kt")
-            public void testTest11() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test11.kt");
+            @TestMetadata("equalsWithConstants.kt")
+            public void testEqualsWithConstants() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/equalsWithConstants.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test12.kt")
-            public void testTest12() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test12.kt");
+            @TestMetadata("expressions.kt")
+            public void testExpressions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/expressions.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test13.kt")
-            public void testTest13() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test13.kt");
+            @TestMetadata("fullIsPatternVariants.kt")
+            public void testFullIsPatternVariants() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/fullIsPatternVariants.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test14.kt")
-            public void testTest14() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test14.kt");
+            @TestMetadata("nullableMatch.kt")
+            public void testNullableMatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/nullableMatch.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test15.0.0.kt")
-            public void testTest15_0_0() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test15.0.0.kt");
+            @TestMetadata("orPatterns.kt")
+            public void testOrPatterns() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/orPatterns.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test15.0.1.kt")
-            public void testTest15_0_1() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test15.0.1.kt");
+            @TestMetadata("otherSmartCasts.kt")
+            public void testOtherSmartCasts() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/otherSmartCasts.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test15.1.0.kt")
-            public void testTest15_1_0() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test15.1.0.kt");
+            @TestMetadata("patternVariablesInGuards.kt")
+            public void testPatternVariablesInGuards() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/patternVariablesInGuards.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test15.1.1.kt")
-            public void testTest15_1_1() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test15.1.1.kt");
+            @TestMetadata("scalaExample.kt")
+            public void testScalaExample() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/scalaExample.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test16.0.0.kt")
-            public void testTest16_0_0() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test16.0.0.kt");
+            @TestMetadata("smallScalaExample.kt")
+            public void testSmallScalaExample() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smallScalaExample.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test16.0.1.kt")
-            public void testTest16_0_1() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test16.0.1.kt");
+            @TestMetadata("smartCastsByPatterns.kt")
+            public void testSmartCastsByPatterns() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smartCastsByPatterns.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test16.1.0.kt")
-            public void testTest16_1_0() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test16.1.0.kt");
+            @TestMetadata("smartCastsInDestructuring.kt")
+            public void testSmartCastsInDestructuring() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smartCastsInDestructuring.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test16.1.1.kt")
-            public void testTest16_1_1() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test16.1.1.kt");
+            @TestMetadata("smartCastsInGuards.kt")
+            public void testSmartCastsInGuards() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smartCastsInGuards.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test17.0.0.kt")
-            public void testTest17_0_0() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test17.0.0.kt");
+            @TestMetadata("smartCastsOnPatternVariables.kt")
+            public void testSmartCastsOnPatternVariables() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smartCastsOnPatternVariables.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("test17.0.1.kt")
-            public void testTest17_0_1() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test17.0.1.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("test17.1.0.kt")
-            public void testTest17_1_0() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test17.1.0.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("test17.1.1.kt")
-            public void testTest17_1_1() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test17.1.1.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("test2.kt")
-            public void testTest2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test2.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("test3.kt")
-            public void testTest3() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test3.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("test4.kt")
-            public void testTest4() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test4.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("test5.kt")
-            public void testTest5() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test5.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("test6.kt")
-            public void testTest6() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test6.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("test7.kt")
-            public void testTest7() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test7.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("test8.kt")
-            public void testTest8() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test8.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("test9.kt")
-            public void testTest9() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test9.kt");
+            @TestMetadata("smartDestructuring.kt")
+            public void testSmartDestructuring() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smartDestructuring.kt");
                 doTest(fileName);
             }
         }

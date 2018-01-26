@@ -1911,7 +1911,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * : patternTypeReference <!if (isTopLevel)!>
      * : patternTypedTuple
      * : ("eq")? expression
-     * : ("!eq")? expression
      * ;
      * <p>
      * patternTypedTuple

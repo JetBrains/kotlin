@@ -12,7 +12,6 @@ fun box() : String {
         is 1 -> "one"
         is 2 -> "two"
         is _ -> "many"
-        else -> throw java.lang.IllegalStateException("Unexpected else")
     }
 
     when (x) {
