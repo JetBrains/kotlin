@@ -70,6 +70,11 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
     val classObjectType = codegen.runtime.getStructType("_class_t")
 
+    fun exportClass(name: String) {
+        context.llvm.usedGlobals += getClassGlobal(name, isMetaclass = false).llvm
+        context.llvm.usedGlobals += getClassGlobal(name, isMetaclass = true).llvm
+    }
+
     private fun getClassGlobal(name: String, isMetaclass: Boolean): ConstPointer {
         val prefix = if (isMetaclass) {
             "OBJC_METACLASS_\$_"

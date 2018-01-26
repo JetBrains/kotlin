@@ -18,7 +18,7 @@ package kotlin.collections
 
 class HashSet<K> internal constructor(
         val backing: HashMap<K, *>
-) : MutableSet<K>, AbstractMutableCollection<K>() {
+) : MutableSet<K>, AbstractMutableCollection<K>(), konan.internal.KonanSet<K> {
 
     constructor() : this(HashMap<K, Nothing>())
 
@@ -31,6 +31,7 @@ class HashSet<K> internal constructor(
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.isEmpty()
     override fun contains(element: K): Boolean = backing.containsKey(element)
+    override fun getElement(element: K): K? = backing.getKey(element)
     override fun clear() = backing.clear()
     override fun add(element: K): Boolean = backing.addKey(element) >= 0
     override fun remove(element: K): Boolean = backing.removeKey(element) >= 0

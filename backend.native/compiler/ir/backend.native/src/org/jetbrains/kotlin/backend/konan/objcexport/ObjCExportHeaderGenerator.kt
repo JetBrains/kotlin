@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
+import org.jetbrains.kotlin.backend.konan.reportCompilationWarning
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
@@ -38,19 +38,53 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class ObjCExportHeaderGenerator(val context: Context) {
     val mapper: ObjCExportMapper = object : ObjCExportMapper {
-        override fun isRepresentedAsObjCInterface(descriptor: ClassDescriptor): Boolean {
-            val objCType = mapReferenceType(descriptor.defaultType)
-            return objCType is ObjCClassType && objCType.className == translateClassName(descriptor)
-        }
-
         override fun getCategoryMembersFor(descriptor: ClassDescriptor) =
                 extensions[descriptor].orEmpty()
+
+        override val specialMappedTypes get() = customTypeMappers.keys
     }
 
     val namer = ObjCExportNamer(context, mapper)
 
     val generatedClasses = mutableSetOf<ClassDescriptor>()
     val topLevel = mutableMapOf<FqName, MutableList<CallableMemberDescriptor>>()
+
+    val customTypeMappers: Map<ClassDescriptor, CustomTypeMapper> = with (context.builtIns) {
+        val result = mutableListOf<CustomTypeMapper>()
+
+        val generator = this@ObjCExportHeaderGenerator
+
+        result += CustomTypeMapper.Collection(generator, list, "NSArray")
+        result += CustomTypeMapper.Collection(generator, mutableList, "NSMutableArray")
+        result += CustomTypeMapper.Collection(generator, set, "NSSet")
+        result += CustomTypeMapper.Collection(generator, mutableSet, namer.mutableSetName)
+        result += CustomTypeMapper.Collection(generator, map, "NSDictionary")
+        result += CustomTypeMapper.Collection(generator, mutableMap, namer.mutableMapName)
+
+        for (descriptor in listOf(boolean, char, byte, short, int, long, float, double)) {
+            // TODO: Kotlin code doesn't have any checkcasts on unboxing,
+            // so it is possible that it expects boxed number of other type and unboxes it incorrectly.
+            // TODO: NSNumber seem to have different equality semantics.
+            result += CustomTypeMapper.Simple(descriptor, "NSNumber")
+        }
+
+        result += CustomTypeMapper.Simple(string, "NSString")
+
+        (0 .. mapper.maxFunctionTypeParameterCount).forEach {
+            result += CustomTypeMapper.Function(generator, it)
+        }
+
+        result.associateBy { it.mappedClassDescriptor }
+    }
+
+    val hiddenTypes: Set<ClassDescriptor> = run {
+        val customMappedTypes = customTypeMappers.keys
+
+        customMappedTypes
+                .flatMap { it.getAllSuperClassifiers().toList() }
+                .map { it as ClassDescriptor }
+                .toSet() - customMappedTypes
+    }
 
     private val kotlinAnyName = namer.kotlinAnyName
 
@@ -175,7 +209,7 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
         val name = namer.getPackageName(packageFqName)
         stubs.addBuiltBy {
             +"__attribute__((objc_subclassing_restricted))"
-            +"@interface $name : KotlinBase" // TODO: stop inheriting KotlinBase.
+            +"@interface $name : ${namer.kotlinAnyName}" // TODO: stop inheriting KotlinBase.
 
             translateMembers(declarations)
 
@@ -443,6 +477,21 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
         add("@end;")
         add("")
 
+        // TODO: add comment to the header.
+        add("@interface $kotlinAnyName (${kotlinAnyName}Copying) <NSCopying>")
+        add("@end;")
+        add("")
+
+        add("__attribute__((objc_runtime_name(\"KotlinMutableSet\")))")
+        add("@interface ${namer.mutableSetName}<ObjectType> : NSMutableSet<ObjectType>") // TODO: only if appears
+        add("@end;")
+        add("")
+
+        add("__attribute__((objc_runtime_name(\"KotlinMutableDictionary\")))")
+        add("@interface ${namer.mutableMapName}<KeyType, ObjectType> : NSMutableDictionary<KeyType, ObjectType>") // TODO: only if appears
+        add("@end;")
+        add("")
+
         stubs.forEach {
             addAll(it.lines)
             add("")
@@ -452,19 +501,34 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
     }
 }
 
-private sealed class ObjCType {
+internal sealed class ObjCType {
     final override fun toString(): String = this.render()
 
     open fun render(varName: String): String = "${this.render()} $varName"
     abstract fun render(): String
 }
 
-private sealed class ObjCReferenceType(kotlinType: KotlinType) : ObjCType() {
+internal sealed class ObjCReferenceType(kotlinType: KotlinType) : ObjCType() {
     val attributes = if (TypeUtils.isNullableType(kotlinType)) " _Nullable" else ""
 }
 
-private class ObjCClassType(kotlinType: KotlinType, val className: String) : ObjCReferenceType(kotlinType) {
-    override fun render() = "$className*$attributes"
+private class ObjCClassType(
+        kotlinType: KotlinType,
+        val className: String,
+        val typeArguments: List<ObjCReferenceType> = emptyList()
+) : ObjCReferenceType(kotlinType) {
+
+    override fun render() = buildString {
+        append(className)
+        if (typeArguments.isNotEmpty()) {
+            append("<")
+            typeArguments.joinTo(this) { it.render() }
+            append(">")
+        }
+        append('*')
+
+        append(attributes)
+    }
 }
 
 private class ObjCProtocolType(kotlinType: KotlinType, val protocolName: String) : ObjCReferenceType(kotlinType) {
@@ -502,43 +566,101 @@ private object ObjCVoidType : ObjCType() {
     override fun render(varName: String) = error("variables can't have `void` type")
 }
 
+internal interface CustomTypeMapper {
+    val mappedClassDescriptor: ClassDescriptor
+    fun mapType(type: KotlinType, mappedSuperType: KotlinType): ObjCReferenceType
+
+    class Simple(
+            override val mappedClassDescriptor: ClassDescriptor,
+            private val objCClassName: String
+    ) : CustomTypeMapper {
+
+        override fun mapType(type: KotlinType, mappedSuperType: KotlinType): ObjCReferenceType =
+                ObjCClassType(type, objCClassName)
+    }
+
+    class Collection(
+            private val generator: ObjCExportHeaderGenerator,
+            override val mappedClassDescriptor: ClassDescriptor,
+            private val objCClassName: String
+    ) : CustomTypeMapper {
+        override fun mapType(type: KotlinType, mappedSuperType: KotlinType): ObjCReferenceType {
+            val typeArguments = mappedSuperType.arguments.map {
+                val argument = it.type
+                if (TypeUtils.isNullableType(argument)) {
+                    // Kotlin `null` keys and values are represented as `NSNull` singleton.
+                    ObjCIdType(generator.context.builtIns.anyType)
+                } else {
+                    generator.mapReferenceType(argument)
+                }
+            }
+
+            return ObjCClassType(type, objCClassName, typeArguments)
+        }
+    }
+
+    class Function(
+            private val generator: ObjCExportHeaderGenerator,
+            parameterCount: Int
+    ) : CustomTypeMapper {
+        override val mappedClassDescriptor = generator.context.builtIns.getFunction(parameterCount)
+
+        override fun mapType(type: KotlinType, mappedSuperType: KotlinType): ObjCReferenceType {
+            val functionType = mappedSuperType
+
+            val returnType = functionType.getReturnTypeFromFunctionType()
+            val parameterTypes = listOfNotNull(functionType.getReceiverTypeFromFunctionType()) +
+                    functionType.getValueParameterTypesFromFunctionType().map { it.type }
+
+            return ObjCBlockPointerType(
+                    type,
+                    generator.mapReferenceType(returnType),
+                    parameterTypes.map { generator.mapReferenceType(it) }
+            )
+        }
+    }
+}
+
 private fun ObjCExportHeaderGenerator.mapReferenceType(kotlinType: KotlinType): ObjCReferenceType {
-    // TODO: translate `where T : BaseClass, T : SomeInterface` to `BaseClass* <SomeInterface>`
+
+    val typeToMapper = (listOf(kotlinType) + kotlinType.supertypes()).mapNotNull { type ->
+        val mapper = customTypeMappers[type.constructor.declarationDescriptor]
+        if (mapper != null) {
+            type to mapper
+        } else {
+            null
+        }
+    }.toMap()
+
+    val mostSpecificTypeToMapper = typeToMapper.filter { (_, mapper) ->
+        typeToMapper.values.all { it.mappedClassDescriptor == mapper.mappedClassDescriptor ||
+                !it.mappedClassDescriptor.isSubclassOf(mapper.mappedClassDescriptor) }
+
+        // E.g. if both List and MutableList are present, then retain only MutableList.
+    }
+
+    if (mostSpecificTypeToMapper.size > 1) {
+        val types = mostSpecificTypeToMapper.keys.toList()
+        val firstType = types[0]
+        val secondType = types[1]
+
+        context.reportCompilationWarning(
+                "Exposed type '$kotlinType' is '$firstType' and '$secondType' at the same time. " +
+                        "This most likely wouldn't work as expected.")
+
+        // TODO: the same warning for such classes.
+    }
+
+    mostSpecificTypeToMapper.entries.firstOrNull()?.let { (type, mapper) ->
+        return mapper.mapType(kotlinType, type)
+    }
+
     val classDescriptor = kotlinType.getErasedTypeClass()
 
-    if (classDescriptor.isSubclassOf(context.builtIns.list)) {
-        return ObjCClassType(kotlinType, "NSArray")
-    }
+    // TODO: translate `where T : BaseClass, T : SomeInterface` to `BaseClass* <SomeInterface>`
 
-
-    // TODO: Kotlin code doesn't have any checkcasts on unboxing,
-    // so it is possible that it expects boxed number of other type and unboxes it incorrectly.
-
-    if (classDescriptor.isSubclassOf(context.builtIns.number) ||
-            classDescriptor == context.builtIns.boolean ||
-            classDescriptor == context.builtIns.char) return ObjCClassType(kotlinType, "NSNumber")
-
-    when (classDescriptor) {
-        context.builtIns.any -> return ObjCIdType(kotlinType)
-        context.builtIns.string -> return ObjCClassType(kotlinType, "NSString")
-    }
-
-    val functionType = if (kotlinType.isFunctionType) {
-        kotlinType
-    } else {
-        kotlinType.supertypes().firstOrNull { it.isFunctionType }
-        // TODO: may be incorrect if type has more then one function supertype.
-    }
-    if (functionType != null) {
-        val returnType = functionType.getReturnTypeFromFunctionType()
-        val parameterTypes = listOfNotNull(functionType.getReceiverTypeFromFunctionType()) +
-                functionType.getValueParameterTypesFromFunctionType().map { it.type }
-
-        return ObjCBlockPointerType(
-                kotlinType,
-                mapReferenceType(returnType),
-                parameterTypes.map { mapReferenceType(it) }
-        )
+    if (classDescriptor == context.builtIns.any || classDescriptor in hiddenTypes) {
+        return ObjCIdType(kotlinType)
     }
 
     if (classDescriptor !in generatedClasses) {

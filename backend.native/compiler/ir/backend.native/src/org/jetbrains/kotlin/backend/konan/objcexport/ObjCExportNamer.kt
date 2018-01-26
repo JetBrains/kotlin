@@ -34,6 +34,9 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
     private val commonPackageSegments = context.moduleDescriptor.guessMainPackage().pathSegments()
     private val topLevelNamePrefix = context.moduleDescriptor.namePrefix
 
+    val mutableSetName = "${topLevelNamePrefix}MutableSet"
+    val mutableMapName = "${topLevelNamePrefix}MutableDictionary"
+
     private val methodSelectors = object : Mapping<FunctionDescriptor, String>() {
 
         // Try to avoid clashing with critical NSObject instance methods:
@@ -231,6 +234,8 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
         val any = context.builtIns.any
 
         classNames.forceAssign(any, kotlinAnyName)
+        classNames.forceAssign(context.builtIns.mutableSet, mutableSetName)
+        classNames.forceAssign(context.builtIns.mutableMap, mutableMapName)
 
         fun ClassDescriptor.method(name: String) =
                 this.unsubstitutedMemberScope.getContributedFunctions(

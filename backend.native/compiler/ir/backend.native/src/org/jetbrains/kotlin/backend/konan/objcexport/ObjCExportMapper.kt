@@ -21,18 +21,27 @@ import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.correspondingValueType
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
+import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.isObjCObjectType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal interface ObjCExportMapper {
-    fun isRepresentedAsObjCInterface(descriptor: ClassDescriptor): Boolean
     fun getCategoryMembersFor(descriptor: ClassDescriptor): List<CallableMemberDescriptor>
+    val maxFunctionTypeParameterCount get() = 22
+    val specialMappedTypes: Set<ClassDescriptor>
 }
+
+private fun ObjCExportMapper.isRepresentedAsObjCInterface(descriptor: ClassDescriptor): Boolean =
+        !descriptor.isInterface && !isSpecialMapped(descriptor)
+
+private fun ObjCExportMapper.isSpecialMapped(descriptor: ClassDescriptor): Boolean =
+        descriptor.getAllSuperClassifiers().any { it in specialMappedTypes }
 
 internal fun ObjCExportMapper.getClassIfCategory(descriptor: CallableMemberDescriptor): ClassDescriptor? {
     if (descriptor.dispatchReceiverParameter != null) return null
@@ -55,7 +64,7 @@ internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Bool
         descriptor.isEffectivelyPublicApi && !descriptor.defaultType.isObjCObjectType() && when (descriptor.kind) {
             ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
             ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
-        }
+        } && !isSpecialMapped(descriptor)
 
 private fun ObjCExportMapper.isBase(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.overriddenDescriptors.all { !shouldBeExposed(it) }

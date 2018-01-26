@@ -368,6 +368,24 @@ class HashMap<K, V> private constructor(
         return valuesArray!![index] == entry.value
     }
 
+    internal fun getEntry(entry: Map.Entry<K, V>): MutableMap.MutableEntry<K, V>? {
+        val index = findKey(entry.key)
+        return if (index < 0 || valuesArray!![index] != entry.value) {
+            null
+        } else {
+            EntryRef(this, index)
+        }
+    }
+
+    internal fun getKey(key: K): K? {
+        val index = findKey(key)
+        return if (index >= 0) {
+            keysArray[index]!!
+        } else {
+            null
+        }
+    }
+
     private fun contentEquals(other: Map<*, *>): Boolean = size == other.size && containsAllEntries(other.entries)
 
     internal fun containsAllEntries(m: Collection<Map.Entry<*, *>>): Boolean {
@@ -644,11 +662,12 @@ internal class HashMapValues<V> internal constructor(
 
 internal class HashMapEntrySet<K, V> internal constructor(
         val backing: HashMap<K, V>
-) : MutableSet<MutableMap.MutableEntry<K, V>> {
+) : MutableSet<MutableMap.MutableEntry<K, V>>, konan.internal.KonanSet<MutableMap.MutableEntry<K, V>> {
 
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.isEmpty()
     override fun contains(element: MutableMap.MutableEntry<K, V>): Boolean = backing.containsEntry(element)
+    override fun getElement(element: MutableMap.MutableEntry<K, V>): MutableMap.MutableEntry<K, V>? = backing.getEntry(element)
     override fun clear() = backing.clear()
     override fun add(element: MutableMap.MutableEntry<K, V>): Boolean = backing.putEntry(element)
     override fun remove(element: MutableMap.MutableEntry<K, V>): Boolean = backing.removeEntry(element)

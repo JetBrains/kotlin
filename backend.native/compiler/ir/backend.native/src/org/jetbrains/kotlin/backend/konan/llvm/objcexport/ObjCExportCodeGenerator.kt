@@ -178,6 +178,9 @@ internal class ObjCExportCodeGenerator(
             dataGenerator.emitEmptyClass(namer.getPackageName(fqName), namer.kotlinAnyName)
         }
 
+        dataGenerator.exportClass("KotlinMutableSet")
+        dataGenerator.exportClass("KotlinMutableDictionary")
+
         emitSpecialClassesConvertions()
 
         objCTypeAdapters += createTypeAdapter(context.builtIns.any)
@@ -375,7 +378,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(objCValueType: ObjCValueTyp
 private fun ObjCExportCodeGenerator.emitFunctionConverters() {
     val generator = BlockAdapterToFunctionGenerator(this)
 
-    (0 .. 22).forEach { numberOfParameters ->
+    (0 .. mapper.maxFunctionTypeParameterCount).forEach { numberOfParameters ->
         val converter = generator.run { generateConvertFunctionToBlock(numberOfParameters) }
         setObjCExportTypeInfo(context.builtIns.getFunction(numberOfParameters), constPointer(converter))
     }
@@ -399,7 +402,7 @@ private fun ObjCExportCodeGenerator.emitKotlinFunctionAdaptersToBlock() {
     val ptr = staticData.placeGlobalArray(
             "",
             pointerType(runtime.typeInfoType),
-            (0 .. 22).map {
+            (0 .. mapper.maxFunctionTypeParameterCount).map {
                 generateKotlinFunctionAdapterToBlock(it)
             }
     ).pointer.getElementPtr(0)
@@ -417,6 +420,31 @@ private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
     setObjCExportTypeInfo(
             context.builtIns.list,
             constPointer(context.llvm.Kotlin_Interop_CreateNSArrayFromKList)
+    )
+
+    setObjCExportTypeInfo(
+            context.builtIns.mutableList,
+            constPointer(context.llvm.Kotlin_Interop_CreateNSMutableArrayFromKList)
+    )
+
+    setObjCExportTypeInfo(
+            context.builtIns.set,
+            constPointer(context.llvm.Kotlin_Interop_CreateNSSetFromKSet)
+    )
+
+    setObjCExportTypeInfo(
+            context.builtIns.mutableSet,
+            constPointer(context.llvm.Kotlin_Interop_CreateKotlinMutableSetFromKSet)
+    )
+
+    setObjCExportTypeInfo(
+            context.builtIns.map,
+            constPointer(context.llvm.Kotlin_Interop_CreateNSDictionaryFromKMap)
+    )
+
+    setObjCExportTypeInfo(
+            context.builtIns.mutableMap,
+            constPointer(context.llvm.Kotlin_Interop_CreateKotlinMutableDictonaryFromKMap)
     )
 
     ObjCValueType.values().forEach {

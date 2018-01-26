@@ -20,14 +20,14 @@
 #if KONAN_OBJC_INTEROP
 
 #import <Foundation/NSObject.h>
-#import <Foundation/NSArray.h>
 #import <Foundation/NSValue.h>
 #import <Foundation/NSString.h>
-#import <Foundation/NSNull.h>
 #import <Foundation/NSMethodSignature.h>
 #import <Foundation/NSException.h>
 #import <objc/runtime.h>
 #import <dispatch/dispatch.h>
+
+#import "ObjCExport.h"
 #import "MemoryPrivate.hpp"
 #import "Runtime.h"
 #import "Utils.h"
@@ -92,18 +92,6 @@ static void setAssociatedTypeInfo(Class clazz, const TypeInfo* typeInfo) {
   objc_setAssociatedObject(clazz, &associatedTypeInfoKey, [NSValue valueWithPointer:typeInfo], OBJC_ASSOCIATION_RETAIN);
 }
 
-inline static bool HasAssociatedObjectField(ObjHeader* obj) {
-  return HasReservedObjectTail(obj);
-}
-
-inline static void SetAssociatedObject(ObjHeader* obj, id value) {
-  *reinterpret_cast<id*>(GetReservedObjectTail(obj)) = value;
-}
-
-static inline id GetAssociatedObject(ObjHeader* obj) {
-  return *reinterpret_cast<id*>(GetReservedObjectTail(obj));
-}
-
 extern "C" id Kotlin_ObjCExport_GetAssociatedObject(ObjHeader* obj) {
   return GetAssociatedObject(obj);
 }
@@ -118,12 +106,7 @@ inline static OBJ_GETTER(AllocInstanceWithAssociatedObject, const TypeInfo* type
 static Class getOrCreateClass(const TypeInfo* typeInfo);
 static void initializeClass(Class clazz);
 
-@protocol ConvertibleToKotlin
-@required
--(KRef)toKotlin:(KRef*)OBJ_RESULT;
-@end;
-
-@interface KotlinBase : NSObject <ConvertibleToKotlin>
+@interface KotlinBase : NSObject <ConvertibleToKotlin, NSCopying>
 @end;
 
 @implementation KotlinBase {
@@ -197,6 +180,11 @@ static void initializeClass(Class clazz);
 -(void)releaseAsAssociatedObject {
   RuntimeAssert(!kotlinObj->permanent(), "");
   [super release];
+}
+
+- (instancetype)copyWithZone:(NSZone *)zone {
+  // TODO: write documentation.
+  return [self retain];
 }
 
 @end;
@@ -324,9 +312,7 @@ static void initializeClass(Class clazz) {
 @interface NSObject (NSObjectToKotlin) <ConvertibleToKotlin>
 @end;
 
-extern "C" id objc_retain(id self);
 extern "C" id objc_retainBlock(id self);
-extern "C" void objc_release(id self);
 extern "C" id objc_retainAutoreleaseReturnValue(id self);
 
 @implementation NSObject (NSObjectToKotlin)
@@ -348,27 +334,6 @@ extern "C" OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str);
 @implementation NSString (NSStringToKotlin)
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
   RETURN_RESULT_OF(Kotlin_Interop_CreateKStringFromNSString, self);
-}
-@end;
-
-@interface NSArray (NSArrayToKotlin) <ConvertibleToKotlin>
-@end;
-
-extern "C" void Kotlin_NSArrayList_constructor(ObjHeader* obj);
-
-extern const TypeInfo *theNSArrayListTypeInfo;
-
-@implementation NSArray (NSArrayToKotlin)
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
-  ObjHeader* result = AllocInstanceWithAssociatedObject(theNSArrayListTypeInfo, objc_retain(self), OBJ_RESULT);
-
-  Kotlin_NSArrayList_constructor(result);
-
-  return result;
-}
-
--(void)releaseAsAssociatedObject {
-  objc_release(self);
 }
 @end;
 
@@ -423,47 +388,6 @@ static Class __NSCFBooleanClass = nullptr;
     default:  return [super toKotlin:OBJ_RESULT];
   }
 }
-@end;
-
-@interface KListNSArray : NSArray <ConvertibleToKotlin>
-@end;
-
-extern "C" OBJ_GETTER(Kotlin_List_get, ObjHeader* list, KInt index);
-extern "C" KInt Kotlin_List_getSize(ObjHeader* list);
-
-extern "C" id Kotlin_ObjCExport_refToObjC(ObjHeader* obj);
-
-@implementation KListNSArray {
-  ObjHeader* list;
-}
-
--(void)dealloc {
-  UpdateRef(&list, nullptr);
-  [super dealloc];
-}
-
-+(id)createWithKList:(ObjHeader*)list {
-  KListNSArray* result = [[[KListNSArray alloc] init] autorelease];
-  UpdateRef(&result->list, list);
-  return result;
-}
-
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
-  RETURN_OBJ(list);
-}
-
--(id)objectAtIndex:(NSUInteger)index {
-  ObjHolder kotlinValueHolder;
-  ObjHeader* kotlinValue = Kotlin_List_get(list, index, kotlinValueHolder.slot());
-  if (kotlinValue == nullptr) return [NSNull null];
-
-  return Kotlin_ObjCExport_refToObjC(kotlinValue);
-}
-
--(NSUInteger)count {
-  return Kotlin_List_getSize(list);
-}
-
 @end;
 
 @interface NSBlock <NSObject>
@@ -567,10 +491,6 @@ static const TypeInfo* getFunctionTypeInfoForBlock(id block) {
 
 @end;
 
-extern "C" id Kotlin_Interop_CreateNSArrayFromKList(ObjHeader* obj) {
-  return [KListNSArray createWithKList:obj];
-}
-
 static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj);
 
 extern "C" id Kotlin_ObjCExport_refToObjC(ObjHeader* obj) {
@@ -603,14 +523,35 @@ static id convertKotlinObject(ObjHeader* obj) {
   return [clazz createWrapper:obj];
 }
 
+extern "C" id Kotlin_Interop_CreateNSStringFromKString(KRef str);
+
+static convertReferenceToObjC findConverterFromInterfaces(const TypeInfo* typeInfo) {
+  const TypeInfo* foundTypeInfo = nullptr;
+
+  for (int i = 0; i < typeInfo->implementedInterfacesCount_; ++i) {
+    const TypeInfo* interfaceTypeInfo = typeInfo->implementedInterfaces_[i];
+    if (interfaceTypeInfo->writableInfo_->objCExport.convert != nullptr) {
+      if (foundTypeInfo == nullptr || IsSubInterface(interfaceTypeInfo, foundTypeInfo)) {
+        foundTypeInfo = interfaceTypeInfo;
+      } else if (!IsSubInterface(foundTypeInfo, interfaceTypeInfo)) {
+        [NSException raise:NSGenericException
+            format:@"Can't convert to Objective-C Kotlin object that is '%@' and '%@' and the same time",
+            Kotlin_Interop_CreateNSStringFromKString(foundTypeInfo->relativeName_),
+            Kotlin_Interop_CreateNSStringFromKString(interfaceTypeInfo->relativeName_)];
+      }
+    }
+  }
+
+  return foundTypeInfo == nullptr ?
+    nullptr :
+    (convertReferenceToObjC)foundTypeInfo->writableInfo_->objCExport.convert;
+}
+
 static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj) {
   const TypeInfo* typeInfo = obj->type_info();
   convertReferenceToObjC converter = nullptr;
 
-  for (int i = 0; i < typeInfo->implementedInterfacesCount_; ++i) {
-    converter = (convertReferenceToObjC)typeInfo->implementedInterfaces_[i]->writableInfo_->objCExport.convert;
-    if (converter != nullptr) break;
-  }
+  converter = findConverterFromInterfaces(typeInfo);
 
   if (converter == nullptr) {
     getOrCreateClass(typeInfo);
@@ -620,18 +561,6 @@ static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj) {
   typeInfo->writableInfo_->objCExport.convert = (void*)converter;
 
   return converter(obj);
-}
-
-extern "C" KInt Kotlin_NSArrayList_getSize(ObjHeader* obj) {
-  NSArray* array = (NSArray*) GetAssociatedObject(obj);
-  return [array count];
-}
-
-extern "C" OBJ_GETTER(Kotlin_NSArrayList_getElement, ObjHeader* obj, KInt index) {
-  NSArray* array = (NSArray*) GetAssociatedObject(obj);
-  id element = [array objectAtIndex:index];
-  if (element == NSNull.null) RETURN_OBJ(nullptr);
-  RETURN_RESULT_OF(Kotlin_ObjCExport_refFromObjC, element);
 }
 
 static const TypeInfo* createTypeInfo(
@@ -966,18 +895,6 @@ extern "C" void Kotlin_ObjCExport_AbstractMethodCalled(id self, SEL selector) {
   [NSException raise:NSGenericException
         format:@"[%s %s] is abstract",
         class_getName(object_getClass(self)), sel_getName(selector)];
-}
-
-#else  // KONAN_OBJC_INTEROP
-
-extern "C" KInt Kotlin_NSArrayList_getSize(ObjHeader* obj) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return -1;
-}
-
-extern "C" OBJ_GETTER(Kotlin_NSArrayList_getElement, ObjHeader* obj, KInt index) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
 }
 
 #endif // KONAN_OBJC_INTEROP

@@ -88,6 +88,7 @@ extern const TypeInfo* theObjCPointerHolderTypeInfo;
 KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE;
 void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);
 KBoolean IsArray(KConstRef obj) RUNTIME_PURE;
+bool IsSubInterface(const TypeInfo* thiz, const TypeInfo* other) RUNTIME_PURE;
 
 #ifdef __cplusplus
 }
