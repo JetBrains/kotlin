@@ -349,6 +349,11 @@ task function_defaults10(type: RunKonanTest) {
     source = "codegen/function/defaults10.kt"
 }
 
+task function_defaults_from_fake_override(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/function/defaultsFromFakeOverride.kt"
+}
+
 task sum_3const(type: RunKonanTest) {
     source = "codegen/function/sum_3const.kt"
 }
