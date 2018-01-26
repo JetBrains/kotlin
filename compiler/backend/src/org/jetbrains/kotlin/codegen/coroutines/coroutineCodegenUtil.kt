@@ -175,11 +175,16 @@ private fun NewResolvedCallImpl<VariableDescriptor>.asDummyOldResolvedCall(bindi
     )
 }
 
-fun ResolvedCall<*>.isSuspendNoInlineCall() =
-    resultingDescriptor.safeAs<FunctionDescriptor>()
+fun ResolvedCall<*>.isSuspendNoInlineCall(): Boolean {
+    val isCrossinline =
+        safeAs<VariableAsFunctionResolvedCall>()?.variableCall?.resultingDescriptor?.safeAs<ValueParameterDescriptor>()?.isCrossinline
+                ?: false
+    return resultingDescriptor.safeAs<FunctionDescriptor>()
         ?.let {
-            it.isSuspend && (!it.isInline || it.isBuiltInSuspendCoroutineOrReturnInJvm() || it.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm())
+            val inline = it.isInline || isCrossinline
+            it.isSuspend && (!inline || it.isBuiltInSuspendCoroutineOrReturnInJvm() || it.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm())
         } == true
+}
 
 fun CallableDescriptor.isSuspendFunctionNotSuspensionView(): Boolean {
     if (this !is FunctionDescriptor) return false
