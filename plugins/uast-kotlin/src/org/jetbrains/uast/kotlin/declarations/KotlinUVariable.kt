@@ -100,7 +100,8 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
 
     override fun equals(other: Any?) = other is AbstractKotlinUVariable && psi == other.psi
 
-    class WrappedUAnnotation(psiAnnotation: PsiAnnotation, override val uastParent: UElement) : UAnnotation, JvmDeclarationUElement {
+    class WrappedUAnnotation(psiAnnotation: PsiAnnotation, override val uastParent: UElement) : UAnnotation, UAnchorOwner,
+        JvmDeclarationUElement {
 
         override val javaPsi: PsiAnnotation = psiAnnotation
         override val psi: PsiAnnotation = javaPsi
@@ -109,6 +110,8 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
         override val attributeValues: List<UNamedExpression> by lz {
             psi.parameterList.attributes.map { WrappedUNamedExpression(it, this) }
         }
+
+        override val uastAnchor by lazy { KotlinUIdentifier(javaPsi.nameReferenceElement?.referenceNameElement, null, this) }
 
         class WrappedUNamedExpression(pair: PsiNameValuePair, override val uastParent: UElement?) : UNamedExpression, JvmDeclarationUElement {
             override val name: String? = pair.name
@@ -217,7 +220,8 @@ class KotlinReceiverUParameter(
 
 }
 
-class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override val uastParent: UElement) : UAnnotation, JvmDeclarationUElement {
+class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override val uastParent: UElement) : UAnnotationEx, UAnchorOwner,
+    JvmDeclarationUElement {
 
     private fun getTargetType(annotatedElement: PsiElement): KotlinType? {
         if (annotatedElement is KtTypeReference) {
@@ -235,6 +239,8 @@ class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override va
         }?.let { return it }
         return null
     }
+
+    override val uastAnchor: UIdentifier? = null
 
     val nullability by lz { getTargetType(annotatedElement)?.nullability() }
 

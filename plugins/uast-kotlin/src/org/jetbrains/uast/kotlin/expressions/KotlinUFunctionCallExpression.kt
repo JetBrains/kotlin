@@ -101,7 +101,7 @@ class KotlinUFunctionCallExpression(
     }
 
     private fun createVarargsHolder(arguments: List<ValueArgument>, parent: UElement?): KotlinUExpressionList =
-        KotlinUExpressionList(null, VARARGS, parent).apply {
+        KotlinUExpressionList(null, UastSpecialExpressionKind.VARARGS, parent).apply {
             expressions = arguments.map { KotlinConverter.convertOrEmpty(it.getArgumentExpression(), parent) }
         }
 
@@ -160,6 +160,3 @@ class KotlinUFunctionCallExpression(
     }
 
 }
-
-@Deprecated("will be replaced by one from uast api when it comes")
-val VARARGS = UastSpecialExpressionKind("varargs")

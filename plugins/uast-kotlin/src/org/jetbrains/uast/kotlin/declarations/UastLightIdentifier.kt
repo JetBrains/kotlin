@@ -18,7 +18,6 @@ package org.jetbrains.uast.kotlin.declarations
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -35,7 +34,7 @@ class UastLightIdentifier(lightOwner: PsiNameIdentifierOwner, ktDeclaration: KtN
 }
 
 class KotlinUIdentifier private constructor(
-    override val javaPsi: PsiIdentifier?,
+    override val javaPsi: PsiElement?,
     override val sourcePsi: PsiElement?,
     override val psi: PsiElement?,
     givenParent: UElement?
@@ -47,6 +46,6 @@ class KotlinUIdentifier private constructor(
 
     override val uastParent: UElement? by lazy { givenParent ?: sourcePsi?.parent?.toUElement() }
 
-    constructor(javaPsi: PsiIdentifier?, sourcePsi: PsiElement?, uastParent: UElement?) : this(javaPsi, sourcePsi, javaPsi, uastParent)
+    constructor(javaPsi: PsiElement?, sourcePsi: PsiElement?, uastParent: UElement?) : this(javaPsi, sourcePsi, javaPsi, uastParent)
     constructor(sourcePsi: PsiElement?, uastParent: UElement?) : this(null, sourcePsi, sourcePsi, uastParent)
 }
