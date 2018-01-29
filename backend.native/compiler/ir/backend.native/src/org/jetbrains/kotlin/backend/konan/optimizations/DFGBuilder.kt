@@ -38,12 +38,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -350,6 +347,14 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     expressions += expression
             }
 
+            if (expression is IrCall && expression.symbol == scheduleImplSymbol) {
+                // Producer of scheduleImpl is called externally, we need to reflect this somehow.
+                @Suppress("DEPRECATION")
+                val producerInvocation = IrCallImpl(expression.startOffset, expression.endOffset, scheduleImplProducerInvokeDescriptor)
+                producerInvocation.dispatchReceiver = expression.getValueArgument(2)
+                expressions += producerInvocation
+            }
+
             if (expression is IrReturnableBlock) {
                 returnableBlocks.put(expression.descriptor, expression)
                 returnableBlockValues.put(expression, mutableListOf())
@@ -412,6 +417,12 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
     private val arrayGetSymbol = context.ir.symbols.arrayGet
     private val arraySetSymbol = context.ir.symbols.arraySet
+    private val scheduleImplSymbol = context.ir.symbols.scheduleImpl
+    private val scheduleImplProducerParam = scheduleImplSymbol.descriptor.valueParameters[2].also {
+        assert(it.name.asString() == "producer")
+    }
+    private val scheduleImplProducerInvokeDescriptor = scheduleImplProducerParam.type.memberScope
+            .getContributedFunctions(Name.identifier("invoke"), NoLookupLocation.FROM_BACKEND).single()
 
     private inner class FunctionDFGBuilder(val expressionValuesExtractor: ExpressionValuesExtractor,
                                            val variableValues: VariableValues,
