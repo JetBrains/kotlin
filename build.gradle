@@ -17,7 +17,6 @@ import groovy.io.FileType
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.util.*
-import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.*
 
 defaultTasks 'clean', 'dist'
 
@@ -68,7 +67,7 @@ allprojects {
 
 void setupHostAndTarget() {
     ext.hostName = TargetManager.hostName
-    ext.targetList = TargetManager.enabled.collect { getVisibleName(it) } as List
+    ext.targetList = TargetManager.enabled.collect { it.visibleName } as List
 }
 
 void setupClang(Project project) {
@@ -136,15 +135,15 @@ void loadCommandLineProperties() {
 
 class PlatformInfo {
     boolean isMac() {
-        return TargetManager.host == KonanTarget.MACBOOK
+        return TargetManager.hostIsMac
     }
 
     boolean isWindows() {
-        return TargetManager.host == KonanTarget.MINGW
+        return TargetManager.hostIsMingw
     }
 
     boolean isLinux() {
-        return TargetManager.host == KonanTarget.LINUX
+        return TargetManager.hostIsLinux
     }
 
     Throwable unsupportedPlatformException() {

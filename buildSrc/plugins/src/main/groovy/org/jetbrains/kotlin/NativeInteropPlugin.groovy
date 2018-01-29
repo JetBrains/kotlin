@@ -30,7 +30,6 @@ import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
-import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.*
 
 class NamedNativeInteropConfig implements Named {
 
@@ -148,7 +147,7 @@ class NamedNativeInteropConfig implements Named {
     }
 
     File getNativeLibsDir() {
-        def target = getVisibleName(new TargetManager(target).target)
+        def target = new TargetManager(target).target.visibleName
         return new File(project.buildDir, "nativelibs/$target")
     }
 

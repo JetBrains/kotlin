@@ -17,3 +17,7 @@
 package org.jetbrains.kotlin.konan.util
 
 val <T : Enum<T>> T.visibleName get() = name.toLowerCase() 
+interface Named {
+    val name: String
+    val visibleName get() = name
+}

@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.konan.util.Named
+import org.jetbrains.kotlin.konan.target.KonanTarget.*
 
 enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSuffix: String) {
     OSX     ("kexe", "lib", "dylib"),
@@ -36,18 +38,27 @@ enum class Architecture(val bitness: Int) {
     WASM32(32);
 }
 
-enum class KonanTarget(val family: Family, val architecture: Architecture, val detailedName: String, var enabled: Boolean = false) {
-    ANDROID_ARM32(  Family.ANDROID,     Architecture.ARM32,     "android_arm32"),
-    ANDROID_ARM64(  Family.ANDROID,     Architecture.ARM64,     "android_arm64"),
-    IPHONE(         Family.IOS,         Architecture.ARM64,     "ios"),
-    IPHONE_SIM(     Family.IOS,         Architecture.X64,       "ios_sim"),
-    LINUX(          Family.LINUX,       Architecture.X64,       "linux"),
-    MINGW(          Family.WINDOWS,     Architecture.X64,       "mingw"),
-    MACBOOK(        Family.OSX,         Architecture.X64,       "osx"),
-    RASPBERRYPI(    Family.LINUX,       Architecture.ARM32,     "raspberrypi"),
-    LINUX_MIPS32(   Family.LINUX,       Architecture.MIPS32,    "linux_mips32"),
-    LINUX_MIPSEL32( Family.LINUX,       Architecture.MIPSEL32,  "linux_mipsel32"),
-    WASM32(         Family.WASM,        Architecture.WASM32,    "wasm32");
+sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture, val detailedName: String, var enabled: Boolean = false) : Named {
+    object ANDROID_ARM32 :  KonanTarget( "android_arm32",   Family.ANDROID,     Architecture.ARM32,     "android_arm32")
+    object ANDROID_ARM64 :  KonanTarget( "android_arm64",   Family.ANDROID,     Architecture.ARM64,     "android_arm64")
+    object IPHONE :         KonanTarget( "iphone",          Family.IOS,         Architecture.ARM64,     "ios")
+    object IPHONE_SIM :     KonanTarget( "iphone_sim",      Family.IOS,         Architecture.X64,       "ios_sim")
+    object LINUX :          KonanTarget( "linux",           Family.LINUX,       Architecture.X64,       "linux")
+    object MINGW :          KonanTarget( "mingw",           Family.WINDOWS,     Architecture.X64,       "mingw")
+    object MACBOOK :        KonanTarget( "macbook",         Family.OSX,         Architecture.X64,       "osx")
+    object RASPBERRYPI :    KonanTarget( "raspberrypi",     Family.LINUX,       Architecture.ARM32,     "raspberrypi")
+    object LINUX_MIPS32 :   KonanTarget( "linux_mips32",    Family.LINUX,       Architecture.MIPS32,    "linux_mips32")
+    object LINUX_MIPSEL32 : KonanTarget( "linux_mipsel32",  Family.LINUX,       Architecture.MIPSEL32,  "linux_mipsel32")
+    object WASM32 :         KonanTarget( "wasm32",          Family.WASM,        Architecture.WASM32,    "wasm32")
+
+    companion object {
+        protected val memberObjects = mutableListOf<KonanTarget>()
+        fun values() = memberObjects
+    }
+
+    init {
+       memberObjects.add(this)
+    }
 }
 
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
@@ -194,7 +205,11 @@ class TargetManager(val userRequest: String? = null) {
 
         @JvmStatic
         val enabled: List<KonanTarget> 
-            get() = KonanTarget.values().asList().filter { it.enabled }
+            get() = KonanTarget.values().filter { it.enabled }
+
+        val hostIsMac   = (host == KonanTarget.MACBOOK)
+        val hostIsLinux = (host == KonanTarget.LINUX)
+        val hostIsMingw = (host == KonanTarget.MINGW)
     }
 }
 
