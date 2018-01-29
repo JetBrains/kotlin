@@ -9,11 +9,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.uast.UFile
-import org.jetbrains.uast.UIdentifier
-import org.jetbrains.uast.sourcePsiElement
+import org.jetbrains.uast.*
 import org.jetbrains.uast.test.env.assertEqualsToFile
-import org.jetbrains.uast.toUElementOfType
+import org.jetbrains.uast.visitor.AbstractUastVisitor
+import org.junit.ComparisonFailure
 import java.io.File
 
 interface IdentifiersTestBase {
@@ -40,10 +39,44 @@ interface IdentifiersTestBase {
         return builder.toString()
     }
 
+    private fun UFile.testIdentifiersParents() {
+        accept(object : AbstractUastVisitor() {
+            override fun visitElement(node: UElement): Boolean {
+                if (node is UAnchorOwner) {
+                    val uastAnchor = node.uastAnchor ?: return false
+                    assertParents(node, uastAnchor)
+                    val uastAnchorFromSource = (uastAnchor.sourcePsi ?: return false).toUElementOfType<UIdentifier>()
+                    assertParents(node, uastAnchorFromSource)
+                }
+                return false
+            }
+        })
+    }
+
+    fun assertParents(node: UAnchorOwner, uastAnchor: UIdentifier?) {
+        //skipping such elements because they are ambiguous (properties and getters for instance)
+        if (node.sourcePsi.toUElement() != node) return
+        if (uastAnchor == null)
+            throw AssertionError("no uast anchor for ${node.uastAnchor?.sourcePsi}(${node.uastAnchor?.sourcePsi?.javaClass}) for node = $node")
+        val nodeParents = node.withContainingElements.log()
+        val anchorParentParents = uastAnchor.uastParent?.withContainingElements?.log() ?: ""
+        // dropping node itself because we allow children to share identifiers with parents (primary constructor for instance)
+        val parentsSuffix = node.withContainingElements.drop(1).log()
+        if (!anchorParentParents.endsWith(parentsSuffix))
+            throw ComparisonFailure(
+                "wrong parents for '${uastAnchor.sourcePsi?.text}' owner: $node[${node.sourcePsi}[${node.sourcePsi?.text}]]",
+                nodeParents,
+                anchorParentParents
+            )
+    }
+
+    private fun Sequence<UElement>.log() = this.joinToString { it.asLogString() }
+
     fun check(testName: String, file: UFile) {
         val valuesFile = getIdentifiersFile(testName)
 
         assertEqualsToFile("Identifiers", valuesFile, file.asIdentifiersWithParents())
+        file.testIdentifiersParents()
     }
 
 }
