@@ -15,7 +15,6 @@ apply { plugin("kotlin") }
 val antLauncherJar by configurations.creating
 
 dependencies {
-    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep())
 
     testCompile(protobufFull())

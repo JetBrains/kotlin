@@ -9,7 +9,6 @@ val androidSdk by configurations.creating
 val androidJar by configurations.creating
 
 dependencies {
-    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep())
 
     compile(project(":compiler:util"))

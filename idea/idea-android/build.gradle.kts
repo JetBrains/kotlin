@@ -6,7 +6,6 @@ apply { plugin("kotlin") }
 val androidSdk by configurations.creating
 
 dependencies {
-    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep())
 
     compileOnly(project(":kotlin-reflect-api"))
