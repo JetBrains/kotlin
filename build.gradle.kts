@@ -18,7 +18,6 @@ val springClasspath by configurations.creating
 
 dependencies {
     if (intellijUltimateEnabled) {
-        testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
         testRuntime(intellijUltimateDep())
     }
 
