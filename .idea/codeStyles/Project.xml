@@ -63,6 +63,7 @@
       <option name="CONTINUATION_INDENT_IN_SUPERTYPE_LISTS" value="false" />
       <option name="CONTINUATION_INDENT_IN_IF_CONDITIONS" value="false" />
       <option name="WRAP_EXPRESSION_BODY_FUNCTIONS" value="1" />
+      <option name="IF_RPAREN_ON_NEW_LINE" value="true" />
     </JetCodeStyleSettings>
     <MarkdownNavigatorCodeStyleSettings>
       <option name="RIGHT_MARGIN" value="72" />
