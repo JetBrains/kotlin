@@ -68,7 +68,8 @@ fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpressio
         (usage.node as UserDataHolderBase).copyCopyableDataTo(replaced.node as UserDataHolderBase)
     }
 
-    return psiFactory.createExpressionByPattern("{ $0 }", lambdaExpression.bodyExpression!!, reformat = reformat) as KtLambdaExpression
+    val lambdaBodyExpression = lambdaExpression.bodyExpression!!.statements.single()
+    return psiFactory.createExpressionByPattern("{ $0 }", lambdaBodyExpression, reformat = reformat) as KtLambdaExpression
 }
 
 fun generateLambda(
