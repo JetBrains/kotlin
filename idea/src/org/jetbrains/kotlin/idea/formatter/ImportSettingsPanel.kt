@@ -69,8 +69,10 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     }
     private val starImportPackageTable = ImportLayoutPanel.createTableForPackageEntries(starImportPackageEntryTable, dummyImportLayoutPanel)
 
-    private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector("Top-level Symbols")
-    private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector("Java Statics and Enum Members")
+    private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector(
+        "Top-level Symbols", KotlinCodeStyleSettings.DEFAULT.NAME_COUNT_TO_USE_STAR_IMPORT)
+    private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector(
+        "Java Statics and Enum Members", KotlinCodeStyleSettings.DEFAULT.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS)
 
     init {
         layout = BorderLayout()
@@ -160,11 +162,11 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         }
     }
 
-    private class NameCountToUseStarImportSelector(title: String) : OptionGroup(title) {
+    private class NameCountToUseStarImportSelector(title: String, default: Int) : OptionGroup(title) {
         private val rbUseSingleImports = JRadioButton("Use single name import")
         private val rbUseStarImports = JRadioButton("Use import with '*'")
         private val rbUseStarImportsIfAtLeast = JRadioButton("Use import with '*' when at least ")
-        private val starImportLimitModel = SpinnerNumberModel(2, 2, 100, 1)
+        private val starImportLimitModel = SpinnerNumberModel(default, 2, 100, 1)
         private val starImportLimitField = JSpinner(starImportLimitModel)
 
         init {
