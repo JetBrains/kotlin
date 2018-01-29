@@ -293,6 +293,7 @@ internal object KotlinConverter {
         is KtContainerNode -> unwrapElements(element.parent)
         is KtSimpleNameStringTemplateEntry -> unwrapElements(element.parent)
         is KtLightParameterList -> unwrapElements(element.parent)
+        is KtTypeElement -> unwrapElements(element.parent)
         else -> element
     }
 
@@ -353,7 +354,7 @@ internal object KotlinConverter {
             is KtImportDirective -> el<UImportStatement>(build(::KotlinUImportStatement))
             else -> {
                 if (element is LeafPsiElement) {
-                    if (element.elementType == KtTokens.IDENTIFIER)
+                    if (element.elementType == KtTokens.IDENTIFIER || element.elementType == KtTokens.CONSTRUCTOR_KEYWORD)
                     el<UIdentifier>(build(::KotlinUIdentifier))
                     else if (element.elementType == KtTokens.LBRACKET && element.parent is KtCollectionLiteralExpression)
                         el<UIdentifier> {
