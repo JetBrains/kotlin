@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
         AfterAnalysisHighlightingVisitor(holder, bindingContext) {
@@ -73,37 +75,26 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
     private fun highlightCall(callee: PsiElement, resolvedCall: ResolvedCall<out CallableDescriptor>) {
         val calleeDescriptor = resolvedCall.resultingDescriptor
 
-        if (applyHighlighterExtensions(callee, calleeDescriptor)) return
-
-        if (calleeDescriptor.isDynamic()) {
-            highlightName(callee, DYNAMIC_FUNCTION_CALL)
-        }
-        else if (resolvedCall is VariableAsFunctionResolvedCall) {
-            val container = calleeDescriptor.containingDeclaration
-            val containedInFunctionClassOrSubclass = container is ClassDescriptor && container.defaultType.isFunctionTypeOrSubtype
-            highlightName(callee, if (containedInFunctionClassOrSubclass)
-                VARIABLE_AS_FUNCTION_CALL
-            else
-                VARIABLE_AS_FUNCTION_LIKE_CALL)
-        }
-        else {
-            if (calleeDescriptor is ConstructorDescriptor) {
-                highlightName(callee, CONSTRUCTOR_CALL)
+        val key = Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullResult { extension ->
+            extension.highlightCall(callee, resolvedCall)
+        } ?: when {
+            calleeDescriptor.isDynamic() -> DYNAMIC_FUNCTION_CALL
+            resolvedCall is VariableAsFunctionResolvedCall -> {
+                val container = calleeDescriptor.containingDeclaration
+                val containedInFunctionClassOrSubclass = container is ClassDescriptor && container.defaultType.isFunctionTypeOrSubtype
+                if (containedInFunctionClassOrSubclass)
+                    VARIABLE_AS_FUNCTION_CALL
+                else
+                    VARIABLE_AS_FUNCTION_LIKE_CALL
             }
-            else if (calleeDescriptor is FunctionDescriptor) {
-                val attributesKey = when {
-                    calleeDescriptor.extensionReceiverParameter != null ->
-                        EXTENSION_FUNCTION_CALL
-
-                    DescriptorUtils.isTopLevelDeclaration(calleeDescriptor) ->
-                        PACKAGE_FUNCTION_CALL
-
-                    else ->
-                        FUNCTION_CALL
-                }
-
-                highlightName(callee, attributesKey)
-            }
+            calleeDescriptor is ConstructorDescriptor -> CONSTRUCTOR_CALL
+            calleeDescriptor !is FunctionDescriptor -> null
+            calleeDescriptor.extensionReceiverParameter != null -> EXTENSION_FUNCTION_CALL
+            DescriptorUtils.isTopLevelDeclaration(calleeDescriptor) -> PACKAGE_FUNCTION_CALL
+            else -> FUNCTION_CALL
+        }
+        if (key != null) {
+            highlightName(callee, key)
         }
     }
 }

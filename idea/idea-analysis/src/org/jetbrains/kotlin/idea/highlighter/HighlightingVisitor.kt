@@ -24,16 +24,17 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class HighlightingVisitor protected constructor(
-        private val holder: AnnotationHolder
+    private val holder: AnnotationHolder
 ) : KtVisitorVoid() {
 
     protected fun createInfoAnnotation(element: PsiElement, message: String? = null): Annotation =
-            createInfoAnnotation(element.textRange, message)
+        createInfoAnnotation(element.textRange, message)
 
     protected fun createInfoAnnotation(textRange: TextRange, message: String? = null): Annotation =
-            holder.createInfoAnnotation(textRange, message)
+        holder.createInfoAnnotation(textRange, message)
 
     protected fun highlightName(element: PsiElement, attributesKey: TextAttributesKey, message: String? = null) {
         if (NameHighlighter.namesHighlightingEnabled && !element.textRange.isEmpty) {
@@ -49,13 +50,14 @@ abstract class HighlightingVisitor protected constructor(
 
     protected fun applyHighlighterExtensions(element: PsiElement, descriptor: DeclarationDescriptor): Boolean {
         if (!NameHighlighter.namesHighlightingEnabled) return false
-        for (extension in Extensions.getExtensions(HighlighterExtension.EP_NAME)) {
-            val key = extension.highlightReference(element, descriptor)
-            if (key != null) {
-                highlightName(element, key)
-                return true
-            }
+
+        Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullResult { extension ->
+            extension.highlightDeclaration(element, descriptor)
+        }?.let { key ->
+            highlightName(element, key)
+            return true
         }
+
         return false
     }
 }
