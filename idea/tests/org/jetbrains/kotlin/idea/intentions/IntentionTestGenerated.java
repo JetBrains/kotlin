@@ -12129,6 +12129,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("elseInPlusAssignExpression.kt")
+        public void testElseInPlusAssignExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/elseInPlusAssignExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("for.kt")
         public void testFor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/for.kt");

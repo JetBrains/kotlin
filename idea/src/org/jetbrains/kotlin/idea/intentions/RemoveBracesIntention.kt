@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Remove braces") {
 
@@ -71,7 +70,8 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
 
         if (construct is KtIfExpression &&
             container.node.elementType == KtNodeTypes.ELSE &&
-            construct.getStrictParentOfType<KtDotQualifiedExpression>() != null) {
+            construct.parent is KtExpression &&
+            construct.parent !is KtStatementExpression) {
             construct.replace(factory.createExpressionByPattern("($0)", construct))
         }
     }
