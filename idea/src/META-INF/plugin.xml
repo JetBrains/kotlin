@@ -10,6 +10,9 @@
 
   <depends>com.intellij.modules.platform</depends>
 
+  <!-- required for Kotlin/Native plugin -->
+  <depends optional="true">org.jetbrains.kotlin.native.platform.deps</depends>
+
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
   <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
