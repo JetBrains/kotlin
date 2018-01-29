@@ -28,11 +28,9 @@ class RedundantSetterInspection : AbstractKotlinInspection(), CleanupLocalInspec
 private fun KtPropertyAccessor.isRedundantSetter(): Boolean {
     if (!isSetter) return false
     if (annotationEntries.isNotEmpty()) return false
-    if (property.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
     if (hasLowerVisibilityThanProperty()) return false
     val expression = bodyExpression ?: return true
     if (expression is KtBlockExpression) {
-        if (expression.statements.isEmpty()) return true
         val statement = expression.statements.takeIf { it.size == 1 }?.firstOrNull() ?: return false
         val parameter = valueParameters.takeIf { it.size == 1 }?.firstOrNull() ?: return false
         val binaryExpression = statement as? KtBinaryExpression ?: return false
