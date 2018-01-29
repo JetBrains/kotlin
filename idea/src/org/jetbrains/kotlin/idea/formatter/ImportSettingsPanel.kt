@@ -25,7 +25,6 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.PackageEntryTable
 import com.intellij.ui.OptionGroup
 import com.intellij.ui.components.JBScrollPane
-import org.jdom.Element
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
@@ -122,11 +121,37 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     }
 
     fun isModified(settings: KotlinCodeStyleSettings): Boolean {
-        val tempSettings = KotlinCodeStyleSettings(commonSettings)
-        apply(tempSettings, dropEmptyPackages = false)
-        val root = Element("fake")
-        tempSettings.writeExternal(root, settings)
-        return root.children.isNotEmpty()
+        return with(settings) {
+            var isModified: Boolean = false
+            isModified = isModified || nameCountToUseStarImportSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT
+            isModified = isModified || nameCountToUseStarImportForMembersSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
+            isModified = isModified || isModified(cbImportNestedClasses, IMPORT_NESTED_CLASSES)
+            isModified = isModified || isModified(starImportPackageEntryTable, PACKAGES_TO_USE_STAR_IMPORTS)
+
+            isModified
+        }
+    }
+
+    companion object {
+        private fun isModified(checkBox: JCheckBox, value: Boolean): Boolean {
+            return checkBox.isSelected != value
+        }
+
+        private fun isModified(list: PackageEntryTable, table: PackageEntryTable): Boolean {
+            if (list.entryCount != table.entryCount) {
+                return true
+            }
+
+            for (i in 0 until list.entryCount) {
+                val entry1 = list.getEntryAt(i)
+                val entry2 = table.getEntryAt(i)
+                if (entry1 != entry2) {
+                    return true
+                }
+            }
+
+            return false
+        }
     }
 
     private class NameCountToUseStarImportSelector(title: String) : OptionGroup(title) {
