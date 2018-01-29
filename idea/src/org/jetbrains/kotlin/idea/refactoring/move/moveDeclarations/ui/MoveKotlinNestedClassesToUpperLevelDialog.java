@@ -376,6 +376,8 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         settings.MOVE_TO_UPPER_LEVEL_SEARCH_FOR_TEXT = searchForTextOccurrencesCheckBox.isSelected();
         settings.MOVE_TO_UPPER_LEVEL_SEARCH_IN_COMMENTS = searchInCommentsCheckBox.isSelected();
 
+        String newClassName = getClassName();
+
         KotlinMoveTarget moveTarget;
         if (target instanceof PsiDirectory) {
             final PsiDirectory targetDir = (PsiDirectory) target;
@@ -383,10 +385,8 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
             final FqName targetPackageFqName = getTargetPackageFqName(target);
             if (targetPackageFqName == null) return;
 
-            String innerClassName = innerClass.getName();
-            if (innerClassName == null) return;
             final String targetFileName = KotlinNameSuggester.INSTANCE.suggestNameByName(
-                    innerClassName,
+                    newClassName,
                     new Function1<String, Boolean>() {
                         @Override
                         public Boolean invoke(String s) {
@@ -412,7 +412,6 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         }
 
         String outerInstanceParameterName = passOuterClassCheckBox.isSelected() ? getParameterName() : null;
-        String newClassName = getClassName();
         MoveDeclarationsDelegate delegate = new MoveDeclarationsDelegate.NestedClass(newClassName, outerInstanceParameterName);
         MoveDeclarationsDescriptor moveDescriptor = new MoveDeclarationsDescriptor(
                 project,
