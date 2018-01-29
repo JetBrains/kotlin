@@ -28,7 +28,6 @@ dependencies {
         testRuntime(project(it))
     }
     testRuntime(intellijDep())
-    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(projectDist(":kotlin-reflect"))
 }
 
