@@ -2,6 +2,7 @@ description = 'Kotlin Common Standard Library'
 
 apply plugin: 'kotlin-platform-common'
 
+configureDist(project)
 configurePublishing(project)
 
 def commonSrcDir = "${buildDir}/common-sources"

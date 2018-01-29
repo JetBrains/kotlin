@@ -3,6 +3,7 @@ description 'Kotlin Script Runtime'
 apply plugin: 'kotlin'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
 
 dependencies {

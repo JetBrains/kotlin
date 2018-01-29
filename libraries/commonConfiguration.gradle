@@ -103,6 +103,24 @@ ext.signPom = { Project project, MavenDeployer deployer ->
     }
 }
 
+ext.configureDist = { Project project ->
+    project.configure(project) {
+        configurations {
+            distJar
+        }
+
+        task dist(type: Copy, dependsOn: assemble) {
+            rename "-${java.util.regex.Pattern.quote(version)}", ''
+            into distLibDir
+            afterEvaluate {
+                project.artifacts {
+                    distJar file: file("$distLibDir${File.separator}${archivesBaseName}.jar"), builtBy: "dist"
+                }
+            }
+        }
+    }
+}
+
 ext.configurePublishing = { Project project ->
     project.configure(project) {
         apply plugin: 'maven'
@@ -117,20 +135,6 @@ ext.configurePublishing = { Project project ->
 
             signArchives {
                 enabled signing.required
-            }
-        }
-
-        configurations {
-            distJar
-        }
-
-        task dist(type: Copy, dependsOn: assemble) {
-            rename "-${java.util.regex.Pattern.quote(version)}", ''
-            into distLibDir
-            afterEvaluate {
-                project.artifacts {
-                    distJar file: file("$distLibDir${File.separator}${archivesBaseName}.jar"), builtBy: "dist"
-                }
             }
         }
 

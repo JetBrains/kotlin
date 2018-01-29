@@ -2,6 +2,7 @@ description = 'Kotlin Test for JS'
 
 apply plugin: 'kotlin-platform-js'
 
+configureDist(project)
 configurePublishing(project)
 
 dependencies {

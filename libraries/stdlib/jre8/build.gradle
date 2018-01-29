@@ -3,6 +3,7 @@ description = 'Kotlin Standard Library JRE 8 extension (deprecated)'
 apply plugin: 'kotlin'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
 ext.javaHome = JDK_18
 ext.jvmTarget = "1.8"

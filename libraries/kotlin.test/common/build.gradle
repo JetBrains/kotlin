@@ -2,6 +2,7 @@ description = 'Kotlin Test Common'
 
 apply plugin: 'kotlin-platform-common'
 
+configureDist(project)
 configurePublishing(project)
 
 
