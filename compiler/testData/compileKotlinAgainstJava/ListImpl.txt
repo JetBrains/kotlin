@@ -60,6 +60,7 @@ public/*package*/ abstract class ListImpl : java.util.ArrayList<kotlin.String!> 
     invisible_fake final /*fake_override*/ val EMPTY_ELEMENTDATA: kotlin.Array<(out) kotlin.Any!>!
     invisible_fake const final /*fake_override*/ val MAX_ARRAY_SIZE: kotlin.Int
     invisible_fake const final /*fake_override*/ val serialVersionUID: kotlin.Long
+    invisible_fake open /*fake_override*/ fun calculateCapacity(/*0*/ kotlin.Array<(out) kotlin.Any!>!, /*1*/ kotlin.Int): kotlin.Int
     invisible_fake open /*fake_override*/ fun </*0*/ T : kotlin.Any!> finishToArray(/*0*/ kotlin.Array<(out) T!>!, /*1*/ kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
     invisible_fake open /*fake_override*/ fun hugeCapacity(/*0*/ kotlin.Int): kotlin.Int
     invisible_fake open /*fake_override*/ fun subListRangeCheck(/*0*/ kotlin.Int, /*1*/ kotlin.Int, /*2*/ kotlin.Int): kotlin.Unit
