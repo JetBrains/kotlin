@@ -23,6 +23,7 @@ import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
+    public static final KotlinCodeStyleSettings DEFAULT = new KotlinCodeStyleSettings(new CodeStyleSettings());
 
     public final PackageEntryTable PACKAGES_TO_USE_STAR_IMPORTS = new PackageEntryTable();
     public boolean SPACE_AROUND_RANGE = false;
