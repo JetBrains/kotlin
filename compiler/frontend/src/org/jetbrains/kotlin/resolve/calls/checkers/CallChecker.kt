@@ -36,11 +36,10 @@ interface CallChecker {
     fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext)
 }
 
-class CallCheckerContext(
+class CallCheckerContext @JvmOverloads constructor(
     val resolutionContext: ResolutionContext<*>,
-    override val trace: BindingTrace,
-    override val languageVersionSettings: LanguageVersionSettings,
-    override val deprecationResolver: DeprecationResolver
+    override val deprecationResolver: DeprecationResolver,
+    override val trace: BindingTrace = resolutionContext.trace
 ) : CheckerContext {
     val scope: LexicalScope
         get() = resolutionContext.scope
@@ -51,11 +50,8 @@ class CallCheckerContext(
     val isAnnotationContext: Boolean
         get() = resolutionContext.isAnnotationContext
 
-    constructor(
-        c: ResolutionContext<*>,
-        languageVersionSettings: LanguageVersionSettings,
-        deprecationResolver: DeprecationResolver
-    ) : this(c, c.trace, languageVersionSettings, deprecationResolver)
+    override val languageVersionSettings: LanguageVersionSettings
+        get() = resolutionContext.languageVersionSettings
 }
 
 // Use this utility to avoid premature computation of deferred return type of a resolved callable descriptor.

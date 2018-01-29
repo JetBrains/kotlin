@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.replaceReturnType
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -50,15 +49,13 @@ class ResolvedAtomCompleter(
     private val resultSubstitutor: NewTypeSubstitutor,
     private val trace: BindingTrace,
     private val topLevelCallContext: BasicCallResolutionContext,
-
     private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     private val expressionTypingServices: ExpressionTypingServices,
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
-    languageVersionSettings: LanguageVersionSettings,
     deprecationResolver: DeprecationResolver
 ) {
-    private val callCheckerContext = CallCheckerContext(topLevelCallContext, languageVersionSettings, deprecationResolver)
+    private val callCheckerContext = CallCheckerContext(topLevelCallContext, deprecationResolver)
 
     private fun complete(resolvedAtom: ResolvedAtom) {
         when (resolvedAtom) {

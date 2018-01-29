@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -59,20 +57,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
-
 class KotlinToResolvedCallTransformer(
     private val callCheckers: Iterable<CallChecker>,
-    private val languageFeatureSettings: LanguageVersionSettings,
     private val dataFlowAnalyzer: DataFlowAnalyzer,
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
     private val deprecationResolver: DeprecationResolver,
     private val expressionTypingServices: ExpressionTypingServices,
     private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
-    private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
-    private val effectSystem: EffectSystem
+    private val additionalDiagnosticReporter: AdditionalDiagnosticReporter
 ) {
-
     companion object {
         private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
             get() = false
@@ -104,8 +98,7 @@ class KotlinToResolvedCallTransformer(
                 val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
                     resultSubstitutor, context.trace, context, this,
-                    expressionTypingServices, argumentTypeResolver, doubleColonExpressionResolver,
-                    languageFeatureSettings, deprecationResolver
+                    expressionTypingServices, argumentTypeResolver, doubleColonExpressionResolver, deprecationResolver
                 )
 
                 for (subKtPrimitive in candidate.subResolvedAtoms) {
