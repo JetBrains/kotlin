@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 
-class UnfoldReturnToIfIntention : SelfTargetingRangeIntention<KtReturnExpression>(KtReturnExpression::class.java, "Replace return with 'if' expression"), LowPriorityAction {
+class UnfoldReturnToIfIntention : LowPriorityAction, SelfTargetingRangeIntention<KtReturnExpression>(
+    KtReturnExpression::class.java, "Replace return with 'if' expression"
+) {
     override fun applicabilityRange(element: KtReturnExpression): TextRange? {
         val ifExpression = element.returnedExpression as? KtIfExpression ?: return null
         return TextRange(element.startOffset, ifExpression.ifKeyword.endOffset)

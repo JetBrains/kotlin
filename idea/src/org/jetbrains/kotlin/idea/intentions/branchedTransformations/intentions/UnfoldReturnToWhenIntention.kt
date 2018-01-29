@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class UnfoldReturnToWhenIntention : SelfTargetingRangeIntention<KtReturnExpression>(KtReturnExpression::class.java, "Replace return with 'when' expression"), LowPriorityAction {
+class UnfoldReturnToWhenIntention : LowPriorityAction, SelfTargetingRangeIntention<KtReturnExpression>(
+    KtReturnExpression::class.java, "Replace return with 'when' expression"
+) {
     override fun applicabilityRange(element: KtReturnExpression): TextRange? {
         val whenExpr = element.returnedExpression as? KtWhenExpression ?: return null
         if (!KtPsiUtil.checkWhenExpressionHasSingleElse(whenExpr)) return null
