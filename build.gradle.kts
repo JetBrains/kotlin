@@ -259,7 +259,9 @@ fun Project.allprojectsRecursive(body: Project.() -> Unit) {
 
 fun Task.listConfigurationContents(configName: String) {
     doFirst {
-        println("$configName configuration files:\n${project.configurations[configName].allArtifacts.files.files.joinToString("\n  ", "  ")}")
+        project.configurations.findByName(configName)?.let {
+            println("$configName configuration files:\n${it.allArtifacts.files.files.joinToString("\n  ", "  ")}")
+        }
     }
 }
 
