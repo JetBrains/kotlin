@@ -19,4 +19,8 @@ class KotlinUastIdentifiersTest : AbstractKotlinIdentifiersTest() {
     fun testConstructors() = doTest("Constructors")
 
 
+    @Test
+    fun testSimpleAnnotated() = doTest("SimpleAnnotated")
+
+
 }

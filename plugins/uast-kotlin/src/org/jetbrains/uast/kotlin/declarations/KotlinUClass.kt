@@ -163,6 +163,14 @@ open class KotlinConstructorUMethod(
         }
     }
 
+    override val uastAnchor: KotlinUIdentifier by lazy {
+        KotlinUIdentifier(
+            psi.nameIdentifier,
+            if (isPrimary) ktClass?.nameIdentifier else (psi.kotlinOrigin as? KtSecondaryConstructor)?.getConstructorKeyword(),
+            this
+        )
+    }
+
     override val javaPsi = psi
 
     override val sourcePsi = psi.kotlinOrigin
