@@ -232,7 +232,10 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? =
 fun KtModifierListOwner.canBePrivate() = modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) != true
 
 fun KtModifierListOwner.canBeProtected(): Boolean {
-    val parent = this.parent
+    val parent = when (this) {
+        is KtPropertyAccessor -> this.property.parent
+        else -> this.parent
+    }
     return when (parent) {
         is KtClassBody -> parent.parent is KtClass
         is KtParameterList -> parent.parent is KtPrimaryConstructor
