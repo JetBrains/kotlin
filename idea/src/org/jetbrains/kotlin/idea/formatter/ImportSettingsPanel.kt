@@ -65,7 +65,7 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     private val starImportPackageEntryTable = PackageEntryTable()
     private val dummyImportLayoutPanel = object : ImportLayoutPanel() {
         override fun areStaticImportsEnabled() = false
-        override fun refresh() { }
+        override fun refresh() {}
     }
     private val starImportPackageTable = ImportLayoutPanel.createTableForPackageEntries(starImportPackageEntryTable, dummyImportLayoutPanel)
 
@@ -109,15 +109,11 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         }
     }
 
-    fun apply(settings: KotlinCodeStyleSettings, dropEmptyPackages: Boolean = true) {
+    fun apply(settings: KotlinCodeStyleSettings) {
         settings.NAME_COUNT_TO_USE_STAR_IMPORT = nameCountToUseStarImportSelector.value
         settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = nameCountToUseStarImportForMembersSelector.value
         settings.IMPORT_NESTED_CLASSES = cbImportNestedClasses.isSelected
-
-        if (dropEmptyPackages) {
-            starImportPackageEntryTable.removeEmptyPackages()
-        }
-        settings.PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(starImportPackageEntryTable)
+        settings.PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(getCopyWithoutEmptyPackages(starImportPackageEntryTable))
     }
 
     fun isModified(settings: KotlinCodeStyleSettings): Boolean {
@@ -126,7 +122,7 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             isModified = isModified || nameCountToUseStarImportSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT
             isModified = isModified || nameCountToUseStarImportForMembersSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
             isModified = isModified || isModified(cbImportNestedClasses, IMPORT_NESTED_CLASSES)
-            isModified = isModified || isModified(starImportPackageEntryTable, PACKAGES_TO_USE_STAR_IMPORTS)
+            isModified = isModified || isModified(getCopyWithoutEmptyPackages(starImportPackageEntryTable), PACKAGES_TO_USE_STAR_IMPORTS)
 
             isModified
         }
@@ -151,6 +147,16 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             }
 
             return false
+        }
+
+        private fun getCopyWithoutEmptyPackages(table: PackageEntryTable): PackageEntryTable {
+            try {
+                val copy = table.clone() as PackageEntryTable
+                copy.removeEmptyPackages()
+                return copy
+            } catch (ignored: CloneNotSupportedException) {
+                throw IllegalStateException("Clone should be supported")
+            }
         }
     }
 
@@ -193,17 +199,17 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
                     else -> starImportLimitModel.number as Int
                 }
             }
-           set(value) {
-               when (value) {
-                   Int.MAX_VALUE -> rbUseSingleImports.isSelected = true
+            set(value) {
+                when (value) {
+                    Int.MAX_VALUE -> rbUseSingleImports.isSelected = true
 
-                   1 -> rbUseStarImports.isSelected = true
+                    1 -> rbUseStarImports.isSelected = true
 
-                   else -> {
-                       rbUseStarImportsIfAtLeast.isSelected = true
-                       starImportLimitField.value = value
-                   }
-               }
-           }
+                    else -> {
+                        rbUseStarImportsIfAtLeast.isSelected = true
+                        starImportLimitField.value = value
+                    }
+                }
+            }
     }
 }
