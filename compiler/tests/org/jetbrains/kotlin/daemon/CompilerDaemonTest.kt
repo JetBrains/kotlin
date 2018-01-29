@@ -403,6 +403,39 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
+    fun testDaemonCancelShutdownOnANewClient() {
+        val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1000, shutdownDelayMilliseconds = 3000, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+        val clientFlag = createTempFile(getTestName(true), "-client.alive")
+        val clientFlag2 = createTempFile(getTestName(true), "-client.alive")
+        try {
+            withLogFile("kotlin-daemon-test") { logFile ->
+                val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
+                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, clientFlag, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+                assertNotNull("failed to connect daemon", daemon)
+                daemon?.leaseCompileSession(null)
+
+                clientFlag.delete()
+
+                Thread.sleep(2100) // allow deleted file detection, should be 2 * DAEMON_PERIODIC_CHECK_INTERVAL_MS + o
+                // TODO: consider possibility to set DAEMON_PERIODIC_CHECK_INTERVAL_MS from tests, to allow shorter sleeps
+
+                val daemon2 = KotlinCompilerClient.connectToCompileService(compilerId, clientFlag2, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+                assertNotNull("failed to connect daemon", daemon2)
+                daemon2?.leaseCompileSession(null)
+
+                Thread.sleep(3000) // allow to trigger delayed shutdown timer
+
+                logFile.assertLogContainsSequence("No more clients left",
+                                                  "Delayed shutdown in 3000ms",
+                                                  "Cancel delayed shutdown due to a new activity")
+            }
+        }
+        finally {
+            clientFlag.delete()
+            clientFlag2.delete()
+        }
+    }
+
     /** Testing that running daemon in the child process doesn't block on s child process.waitFor()
      *  that may happen on windows if simple processBuilder.start is used due to handles inheritance:
      *  - process A starts process B using ProcessBuilder and waits for it using process.waitFor()
