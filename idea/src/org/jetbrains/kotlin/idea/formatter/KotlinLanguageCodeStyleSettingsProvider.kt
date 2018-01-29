@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.application.options.IndentOptionsEditor
 import com.intellij.application.options.SmartIndentOptionsEditor
+import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
@@ -314,6 +315,12 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         KotlinCodeStyleSettings::WRAP_ELVIS_EXPRESSIONS,
                         "Elvis expressions",
                         options = *arrayOf(CodeStyleSettingsCustomizable.WRAP_OPTIONS_FOR_SINGLETON, CodeStyleSettingsCustomizable.WRAP_VALUES_FOR_SINGLETON)
+                )
+                @Suppress("InvalidBundleOrProperty")
+                showCustomOption(
+                        KotlinCodeStyleSettings::IF_RPAREN_ON_NEW_LINE,
+                        ApplicationBundle.message("wrapping.rpar.on.new.line"),
+                        CodeStyleSettingsCustomizable.WRAPPING_IF_STATEMENT
                 )
                 showCustomOption(
                         KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_IF_CONDITIONS,
