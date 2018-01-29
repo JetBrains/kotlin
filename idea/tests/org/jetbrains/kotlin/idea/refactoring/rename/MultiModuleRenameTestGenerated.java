@@ -31,6 +31,18 @@ public class MultiModuleRenameTestGenerated extends AbstractMultiModuleRenameTes
         doTest(fileName);
     }
 
+    @TestMetadata("headerAndImplClassByImplTypeAlias/headerAndImplClassByImplTypeAlias.test")
+    public void testHeaderAndImplClassByImplTypeAlias_HeaderAndImplClassByImplTypeAlias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headerAndImplClassByImplTypeAlias/headerAndImplClassByImplTypeAlias.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headerAndImplTypeAliasByImplClass/headerAndImplTypeAliasByImplClass.test")
+    public void testHeaderAndImplTypeAliasByImplClass_HeaderAndImplTypeAliasByImplClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headerAndImplTypeAliasByImplClass/headerAndImplTypeAliasByImplClass.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("headersAndImplsByHeaderClass/headersAndImplsByHeaderClass.test")
     public void testHeadersAndImplsByHeaderClass_HeadersAndImplsByHeaderClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByHeaderClass/headersAndImplsByHeaderClass.test");
@@ -136,6 +148,12 @@ public class MultiModuleRenameTestGenerated extends AbstractMultiModuleRenameTes
     @TestMetadata("headersAndImplsByImplVal/headersAndImplsByImplVal.test")
     public void testHeadersAndImplsByImplVal_HeadersAndImplsByImplVal() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplVal/headersAndImplsByImplVal.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("implClassAndTypeAliasByHeaderClass/implClassAndTypeAliasByHeaderClass.test")
+    public void testImplClassAndTypeAliasByHeaderClass_ImplClassAndTypeAliasByHeaderClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/implClassAndTypeAliasByHeaderClass/implClassAndTypeAliasByHeaderClass.test");
         doTest(fileName);
     }
 
