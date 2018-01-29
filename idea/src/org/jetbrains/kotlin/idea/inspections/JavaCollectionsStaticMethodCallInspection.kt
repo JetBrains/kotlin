@@ -40,10 +40,12 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
             if (!canReplaceWithStdLib(expression, fqName, args)) return
 
             val methodName = fqName.split(".").last()
-            holder.registerProblem(expression,
-                                   "Java Collections static method call should be replaced with Kotlin stdlib",
-                                   ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                   ReplaceWithStdLibFix(methodName, firstArg.text))
+            holder.registerProblem(
+                expression,
+                "Java Collections static method call should be replaced with Kotlin stdlib",
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                ReplaceWithStdLibFix(methodName, firstArg.text)
+            )
         })
     }
 
@@ -91,13 +93,14 @@ private class ReplaceWithStdLibFix(private val methodName: String, private val r
         val secondArg = valueArguments.getOrNull(1)?.getArgumentExpression()
         val factory = KtPsiFactory(project)
         val newExpression = if (secondArg != null) {
-            if (methodName == "sort")
+            if (methodName == "sort") {
                 factory.createExpressionByPattern("$0.sortWith(Comparator $1)", firstArg, secondArg.text)
-            else
+            } else {
                 factory.createExpressionByPattern("$0.$methodName($1)", firstArg, secondArg)
-        }
-        else
+            }
+        } else {
             factory.createExpressionByPattern("$0.$methodName()", firstArg)
+        }
         expression.replace(newExpression)
     }
 }
