@@ -5,5 +5,5 @@ interface A {
 
 class X : A {
     override var myVar: Boolean = false
-        <caret>set(value) {}
+    <caret>set(value) {}
 }
