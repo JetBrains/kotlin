@@ -85,7 +85,9 @@ private fun KtAnnotationEntry.getRequiredAnnotationTargets(annotationClass: KtCl
 }
 
 private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
-    val annotatedElement = getStrictParentOfType<KtModifierList>()?.owner as? KtElement ?: return emptyList()
+    val annotatedElement = getStrictParentOfType<KtModifierList>()?.owner as? KtElement
+            ?: getStrictParentOfType<KtAnnotatedExpression>()?.baseExpression
+            ?: return emptyList()
     return AnnotationChecker.getDeclarationSiteActualTargetList(annotatedElement, null, BindingTraceContext())
 }
 
@@ -101,8 +103,7 @@ private fun KtClass.addAnnotationTargets(annotationTargets: List<KotlinTarget>, 
     if (valueArgumentList == null) {
         val text = annotationTargets.toArgumentListString()
         targetAnnotationEntry.add(psiFactory.createCallArguments(text))
-    }
-    else {
+    } else {
         val arguments = targetAnnotationEntry.valueArguments.mapNotNull { it.getArgumentExpression()?.text }
         for (target in annotationTargets) {
             val text = target.asNameString()
@@ -111,8 +112,6 @@ private fun KtClass.addAnnotationTargets(annotationTargets: List<KotlinTarget>, 
     }
 }
 
-private fun List<KotlinTarget>.toArgumentListString() =
-        joinToString(separator = ", ", prefix = "(", postfix = ")") { it.asNameString() }
+private fun List<KotlinTarget>.toArgumentListString() = joinToString(separator = ", ", prefix = "(", postfix = ")") { it.asNameString() }
 
-private fun KotlinTarget.asNameString() =
-        "${KotlinBuiltIns.FQ_NAMES.annotationTarget.shortName().asString()}.$name"
+private fun KotlinTarget.asNameString() = "${KotlinBuiltIns.FQ_NAMES.annotationTarget.shortName().asString()}.$name"
