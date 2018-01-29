@@ -10316,6 +10316,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("useInlineFunctionInsideInlineClass.kt")
+        public void testUseInlineFunctionInsideInlineClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClass.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/innerNested")
