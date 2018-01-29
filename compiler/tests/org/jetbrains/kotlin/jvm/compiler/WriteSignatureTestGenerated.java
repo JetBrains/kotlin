@@ -558,6 +558,12 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("basicInlineClassDeclarationCodegen.kt")
+        public void testBasicInlineClassDeclarationCodegen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/inlineClasses/basicInlineClassDeclarationCodegen.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullableInlineClassType.kt")
         public void testNullableInlineClassType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/inlineClasses/nullableInlineClassType.kt");

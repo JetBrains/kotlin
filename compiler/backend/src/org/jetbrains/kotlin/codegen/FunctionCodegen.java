@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -172,7 +173,8 @@ public class FunctionCodegen {
             @NotNull FunctionGenerationStrategy strategy
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
-        if (isInterface(functionDescriptor.getContainingDeclaration()) &&
+        DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
+        if (isInterface(containingDeclaration) &&
             functionDescriptor.getVisibility() == Visibilities.PRIVATE &&
             !processInterfaceMember(functionDescriptor, contextKind, state)) {
             return;
@@ -230,21 +232,55 @@ public class FunctionCodegen {
         boolean isOpenSuspendInClass =
                 functionDescriptor.isSuspend() &&
                 functionDescriptor.getModality() != Modality.ABSTRACT && isOverridable(functionDescriptor) &&
-                !isInterface(functionDescriptor.getContainingDeclaration()) &&
-                !(functionDescriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor) &&
+                !isInterface(containingDeclaration) &&
+                !(containingDeclaration instanceof PackageFragmentDescriptor) &&
                 origin.getOriginKind() != JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL;
+
+        boolean isMethodInInlineClassWrapper =
+                isClass(containingDeclaration) &&
+                ((ClassDescriptor) containingDeclaration).isInline() &&
+                contextKind != OwnerKind.ERASED_INLINE_CLASS &&
+                functionDescriptor instanceof SimpleFunctionDescriptor;
 
         if (isOpenSuspendInClass) {
             generateOpenMethodInSuspendClass(
                     origin, functionDescriptor, methodContext, strategy, mv, jvmSignature, asmMethod, flags, staticInCompanionObject
             );
         }
+        else if (isMethodInInlineClassWrapper) {
+            generateMethodInsideInlineClassWrapper(origin, functionDescriptor, (ClassDescriptor) containingDeclaration, mv);
+        }
         else {
             generateMethodBody(
                     origin, functionDescriptor, methodContext, strategy, mv, jvmSignature, staticInCompanionObject
             );
         }
+    }
 
+    private void generateMethodInsideInlineClassWrapper(
+            @NotNull JvmDeclarationOrigin origin,
+            @NotNull FunctionDescriptor functionDescriptor,
+            ClassDescriptor containingDeclaration,
+            MethodVisitor mv
+    ) {
+        mv.visitCode();
+
+        Type inlineErasedType = typeMapper.mapErasedInlineClass(containingDeclaration);
+        Method erasedMethodImpl = typeMapper.mapAsmMethod(functionDescriptor.getOriginal(), OwnerKind.ERASED_INLINE_CLASS);
+
+        Type fieldOwnerType = typeMapper.mapClass(containingDeclaration);
+
+        ValueParameterDescriptor valueRepresentation = InlineClassesUtilsKt.underlyingRepresentation(containingDeclaration);
+        if (valueRepresentation == null) return;
+
+        Type fieldType = typeMapper.mapType(valueRepresentation);
+
+        generateDelegateToStaticErasedVersion(
+                mv, erasedMethodImpl, inlineErasedType.getInternalName(),
+                fieldOwnerType, valueRepresentation.getName().asString(), fieldType
+        );
+
+        endVisit(mv, null, origin.getElement());
     }
 
     private void generateOpenMethodInSuspendClass(
@@ -790,6 +826,35 @@ public class FunctionCodegen {
         }
         iv.visitMethodInsn(opcode, classToDelegateTo, asmMethod.getName(), asmMethod.getDescriptor(), isInterface);
         iv.areturn(asmMethod.getReturnType());
+    }
+
+    private static void generateDelegateToStaticErasedVersion(
+            @NotNull MethodVisitor mv,
+            @NotNull Method erasedStaticAsmMethod,
+            @NotNull String classToDelegateTo,
+            @NotNull Type fieldOwnerType,
+            @NotNull String fieldName,
+            @NotNull Type fieldType
+    ) {
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        Type[] argTypes = erasedStaticAsmMethod.getArgumentTypes();
+
+        Label label = new Label();
+        iv.visitLabel(label);
+        iv.visitLineNumber(1, label);
+
+        iv.load(0, AsmTypes.OBJECT_TYPE);
+        iv.visitFieldInsn(Opcodes.GETFIELD, fieldOwnerType.getInternalName(), fieldName, fieldType.getDescriptor());
+
+        int k = 1;
+        for (int i = 1; i < argTypes.length; i++) {
+            Type argType = argTypes[i];
+            iv.load(k, argType);
+            k += argType.getSize();
+        }
+
+        iv.invokestatic(classToDelegateTo, erasedStaticAsmMethod.getName(), erasedStaticAsmMethod.getDescriptor(), false);
+        iv.areturn(erasedStaticAsmMethod.getReturnType());
     }
 
     private static void generateDelegateToStaticMethodBody(

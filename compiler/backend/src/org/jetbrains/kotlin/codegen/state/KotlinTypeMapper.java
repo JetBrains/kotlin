@@ -402,6 +402,10 @@ public class KotlinTypeMapper {
         return mapType(descriptor.getReturnType());
     }
 
+    public Type mapErasedInlineClass(@NotNull ClassDescriptor descriptor) {
+        return Type.getObjectType(mapClass(descriptor).getInternalName() + JvmAbi.ERASED_INLINE_CLASS_SUFFIX);
+    }
+
     @NotNull
     public JvmMethodGenericSignature mapAnnotationParameterSignature(@NotNull PropertyDescriptor descriptor) {
         JvmSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
@@ -728,10 +732,13 @@ public class KotlinTypeMapper {
                 }
             }
             else {
+                boolean isInsideInlineClass = currentOwner.isInline();
+
                 boolean isStaticInvocation = (isStaticDeclaration(functionDescriptor) &&
                                               !(functionDescriptor instanceof ImportedFromObjectCallableDescriptor)) ||
                                              isStaticAccessor(functionDescriptor) ||
-                                             CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);
+                                             CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor) ||
+                                             isInsideInlineClass;
                 if (isStaticInvocation) {
                     invokeOpcode = INVOKESTATIC;
                     isInterfaceMember = currentIsInterface && currentOwner instanceof JavaClassDescriptor;
@@ -753,12 +760,14 @@ public class KotlinTypeMapper {
                                                     ? overriddenSpecialBuiltinFunction.getOriginal()
                                                     : functionDescriptor.getOriginal();
 
-                signature = mapSignatureSkipGeneric(functionToCall);
+                signature = isInsideInlineClass
+                            ? mapSignatureForInlineErasedClassSkipGeneric(functionToCall)
+                            : mapSignatureSkipGeneric(functionToCall);
 
                 ClassDescriptor receiver = (currentIsInterface && !originalIsInterface) || currentOwner instanceof FunctionClassDescriptor
                                            ? declarationOwner
                                            : currentOwner;
-                owner = mapClass(receiver);
+                owner = isInsideInlineClass ? mapErasedInlineClass(receiver) : mapClass(receiver);
                 thisClass = owner;
             }
         }
@@ -972,6 +981,10 @@ public class KotlinTypeMapper {
         return mapSignatureSkipGeneric(f, OwnerKind.IMPLEMENTATION);
     }
 
+    public JvmMethodSignature mapSignatureForInlineErasedClassSkipGeneric(@NotNull FunctionDescriptor f) {
+        return mapSignatureSkipGeneric(f, OwnerKind.ERASED_INLINE_CLASS);
+    }
+
     @NotNull
     public JvmMethodSignature mapSignatureSkipGeneric(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind) {
         return mapSignature(f, kind, true);
@@ -1066,6 +1079,10 @@ public class KotlinTypeMapper {
                 ReceiverTypeAndTypeParameters receiverTypeAndTypeParameters = TypeMapperUtilsKt.patchTypeParametersForDefaultImplMethod(directMember);
                 writeFormalTypeParameters(CollectionsKt.plus(receiverTypeAndTypeParameters.getTypeParameters(), directMember.getTypeParameters()), sw);
                 thisIfNeeded = receiverTypeAndTypeParameters.getReceiverType();
+            }
+            else if (OwnerKind.ERASED_INLINE_CLASS == kind) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) directMember.getContainingDeclaration();
+                thisIfNeeded = classDescriptor.getDefaultType();
             }
             else {
                 writeFormalTypeParameters(directMember.getTypeParameters(), sw);

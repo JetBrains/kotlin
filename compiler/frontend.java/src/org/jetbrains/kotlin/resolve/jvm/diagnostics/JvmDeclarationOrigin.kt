@@ -1,24 +1,12 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.jvm.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -41,7 +29,8 @@ enum class JvmDeclarationOriginKind {
     MULTIFILE_CLASS_PART,
     SYNTHETIC, // this means that there's no proper descriptor for this jvm declaration,
     COLLECTION_STUB,
-    AUGMENTED_BUILTIN_API
+    AUGMENTED_BUILTIN_API,
+    ERASED_INLINE_CLASS
 }
 
 class JvmDeclarationOrigin(
@@ -91,3 +80,6 @@ fun Synthetic(element: PsiElement?, descriptor: CallableMemberDescriptor): JvmDe
 val CollectionStub = JvmDeclarationOrigin(COLLECTION_STUB, null, null)
 
 fun AugmentedBuiltInApi(descriptor: CallableDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(AUGMENTED_BUILTIN_API, null, descriptor)
+
+fun ErasedInlineClassOrigin(element: PsiElement?, descriptor: ClassDescriptor): JvmDeclarationOrigin =
+    JvmDeclarationOrigin(ERASED_INLINE_CLASS, element, descriptor)
