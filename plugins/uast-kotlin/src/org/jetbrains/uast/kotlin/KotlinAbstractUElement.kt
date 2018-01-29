@@ -167,6 +167,12 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         }
     }
 
+    if (result is UBlockExpression && element is UDeclaration) {
+        result.expressions
+            .find { (it is UDeclarationsExpression) && it.declarations.contains(element) }
+            .let { return it }
+    }
+
     return result
 }
 
