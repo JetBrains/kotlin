@@ -59,22 +59,22 @@ dependencies {
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-preloader"))
 
-    // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
-    testCompile(project(":plugins:android-extensions-compiler"))
-    testCompile(project(":plugins:android-extensions-ide")) { isTransitive = false }
-    testCompile(project(":allopen-ide-plugin")) { isTransitive = false }
-    testCompile(project(":kotlin-allopen-compiler-plugin"))
-    testCompile(project(":noarg-ide-plugin")) { isTransitive = false }
-    testCompile(project(":kotlin-noarg-compiler-plugin"))
-    testCompile(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
-    testCompile(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
-    testCompile(project(":kotlin-sam-with-receiver-compiler-plugin"))
-    testCompile(project(":idea:idea-android")) { isTransitive = false }
-    testCompile(project(":plugins:lint")) { isTransitive = false }
-    testCompile(project(":plugins:uast-kotlin"))
+    testCompile(project(":kotlin-sam-with-receiver-compiler-plugin")) { isTransitive = false }
+
+    testRuntime(project(":plugins:android-extensions-compiler"))
+    testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
+    testRuntime(project(":allopen-ide-plugin")) { isTransitive = false }
+    testRuntime(project(":kotlin-allopen-compiler-plugin"))
+    testRuntime(project(":noarg-ide-plugin")) { isTransitive = false }
+    testRuntime(project(":kotlin-noarg-compiler-plugin"))
+    testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
+    testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
+    testRuntime(project(":idea:idea-android")) { isTransitive = false }
+    testRuntime(project(":plugins:lint")) { isTransitive = false }
+    testRuntime(project(":plugins:uast-kotlin"))
 
     (rootProject.extra["compilerModules"] as Array<String>).forEach {
-        testCompile(project(it))
+        testRuntime(project(it))
     }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijPluginDep("IntelliLang"))
