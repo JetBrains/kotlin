@@ -18,17 +18,18 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.impl.ResolveScopeManager
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.configureAs
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import kotlin.test.assertNotNull
 
-class LightClassesClasspathSortingTest : KotlinCodeInsightTestCase() {
+class LightClassesClasspathSortingTest : KotlinLightCodeInsightFixtureTestCase() {
+
     fun testExplicitClass() {
         doTest("test1.A")
     }
@@ -40,13 +41,11 @@ class LightClassesClasspathSortingTest : KotlinCodeInsightTestCase() {
     private fun doTest(fqName: String) {
         // Same classes are in sources and in compiled Kotlin library. Test that light classes from sources have a priority.
 
-        // Configure library first to make classes be indexed before correspondent classes from sources
         val dirName = getTestName(true)
-        module.configureAs(getProjectDescriptor(dirName))
 
         val testDirRoot = File(testDataPath)
         val filePaths = File(testDirRoot, dirName).listFiles().map { it.toRelativeString(testDirRoot) }.toTypedArray()
-        configureByFiles(null, *filePaths)
+        myFixture.configureByFiles(*filePaths)
 
         checkLightClassBeforeDecompiled(fqName)
     }
@@ -60,13 +59,14 @@ class LightClassesClasspathSortingTest : KotlinCodeInsightTestCase() {
         assert(psiClass !is KtLightClassForDecompiledDeclaration) { "Should not be decompiled light class: $fqName ${psiClass::class.java}" }
     }
 
-    private fun getProjectDescriptor(dir: String) =
-        SdkAndMockLibraryProjectDescriptor(
-            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/lightClassesOrder/$dir",
+    override fun getProjectDescriptor(): LightProjectDescriptor {
+        return SdkAndMockLibraryProjectDescriptor(
+            "$testDataPath${getTestName(true)}",
             true
         )
+    }
 
-    override fun getTestDataPath(): String? {
-        return PluginTestCaseBase.getTestDataPathBase() + "/decompiler/lightClassesOrder/"
+    override fun getTestDataPath(): String {
+        return KotlinTestUtils.getHomeDirectory() + "/idea/testData/decompiler/lightClassesOrder/"
     }
 }
