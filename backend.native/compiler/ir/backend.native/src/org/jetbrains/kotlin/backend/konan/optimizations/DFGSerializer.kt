@@ -35,7 +35,7 @@ private val intArrayDataOffset  = theUnsafe.arrayBaseOffset(IntArray::class.java
 private val charArrayDataOffset = theUnsafe.arrayBaseOffset(CharArray::class.java).toLong()
 private val stringValueOffset   = theUnsafe.objectFieldOffset(String::class.java.getDeclaredField("value"))
 
-private val VERSION = 1
+private val VERSION = 2
 
 internal object DFGSerializer {
 
