@@ -21,156 +21,157 @@ import org.jetbrains.kotlin.konan.file.File
 class ClangArgs(private val configurables: Configurables) : Configurables by configurables {
 
     val targetArg = if (configurables is NonAppleConfigurables)
-        configurables.targetArg 
-        else null
+        configurables.targetArg
+    else null
 
-    val specificClangArgs: List<String> get() {
-        val result = when (target) {
+    val specificClangArgs: List<String>
+        get() {
+            val result = when (target) {
+                KonanTarget.LINUX ->
+                    listOf("--sysroot=$absoluteTargetSysRoot")
+                KonanTarget.RASPBERRYPI ->
+                    listOf("-target", targetArg!!,
+                            "-mfpu=vfp", "-mfloat-abi=hard",
+                            "--sysroot=$absoluteTargetSysRoot",
+                            // TODO: those two are hacks.
+                            "-I$absoluteTargetSysRoot/usr/include/c++/4.8.3",
+                            "-I$absoluteTargetSysRoot/usr/include/c++/4.8.3/arm-linux-gnueabihf")
+
+                KonanTarget.LINUX_MIPS32 ->
+                    listOf("-target", targetArg!!,
+                            "--sysroot=$absoluteTargetSysRoot",
+                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4",
+                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4/mips-unknown-linux-gnu")
+
+                KonanTarget.LINUX_MIPSEL32 ->
+                    listOf("-target", targetArg!!,
+                            "--sysroot=$absoluteTargetSysRoot",
+                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4",
+                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4/mipsel-unknown-linux-gnu")
+
+                KonanTarget.MINGW ->
+                    listOf("-target", targetArg!!, "--sysroot=$absoluteTargetSysRoot", "-Xclang", "-flto-visibility-public-std")
+
+                KonanTarget.MACBOOK ->
+                    listOf("--sysroot=$absoluteTargetSysRoot", "-mmacosx-version-min=10.11")
+
+                KonanTarget.IPHONE ->
+                    listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=8.0.0")
+
+                KonanTarget.IPHONE_SIM ->
+                    listOf("-stdlib=libc++", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=8.0.0")
+
+                KonanTarget.ANDROID_ARM32 ->
+                    listOf("-target", targetArg!!,
+                            "--sysroot=$absoluteTargetSysRoot",
+                            // HACKS!
+                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x",
+                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x/arm-linux-androideabi")
+
+                KonanTarget.ANDROID_ARM64 ->
+                    listOf("-target", targetArg!!,
+                            "--sysroot=$absoluteTargetSysRoot",
+                            // HACKS!
+                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x",
+                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x/aarch64-linux-android")
+
+                KonanTarget.WASM32 ->
+                    listOf("-target", targetArg!!, "-O1", "-fno-rtti", "-fno-exceptions",
+                            "-D_LIBCPP_ABI_VERSION=2", "-D_LIBCPP_NO_EXCEPTIONS=1",
+                            "-nostdinc", "-Xclang", "-nobuiltininc", "-Xclang", "-nostdsysteminc",
+                            "-Xclang", "-isystem$absoluteTargetSysRoot/include/libcxx", "-Xclang", "-isystem$absoluteTargetSysRoot/lib/libcxxabi/include",
+                            "-Xclang", "-isystem$absoluteTargetSysRoot/include/compat", "-Xclang", "-isystem$absoluteTargetSysRoot/include/libc")
+            }
+            return result
+        }
+
+    val clangArgsSpecificForKonanSources
+        get() = when (target) {
             KonanTarget.LINUX ->
-                listOf("--sysroot=$absoluteTargetSysRoot")
+                listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64")
+
             KonanTarget.RASPBERRYPI ->
-                listOf("-target", targetArg!!,
-                        "-mfpu=vfp", "-mfloat-abi=hard",
-                        "--sysroot=$absoluteTargetSysRoot",
-                        // TODO: those two are hacks.
-                        "-I$absoluteTargetSysRoot/usr/include/c++/4.8.3",
-                        "-I$absoluteTargetSysRoot/usr/include/c++/4.8.3/arm-linux-gnueabihf")
+                listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
 
             KonanTarget.LINUX_MIPS32 ->
-                listOf("-target", targetArg!!,
-                        "--sysroot=$absoluteTargetSysRoot",
-                        "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4",
-                        "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4/mips-unknown-linux-gnu")
+                listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
 
             KonanTarget.LINUX_MIPSEL32 ->
-                listOf("-target", targetArg!!,
-                        "--sysroot=$absoluteTargetSysRoot",
-                        "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4",
-                        "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4/mipsel-unknown-linux-gnu")
+                listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
 
             KonanTarget.MINGW ->
-                listOf("-target", targetArg!!, "--sysroot=$absoluteTargetSysRoot", "-Xclang", "-flto-visibility-public-std")
+                listOf("-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1")
 
             KonanTarget.MACBOOK ->
-                listOf("--sysroot=$absoluteTargetSysRoot", "-mmacosx-version-min=10.11")
+                listOf("-DKONAN_OSX=1", "-DKONAN_OBJC_INTEROP=1")
 
             KonanTarget.IPHONE ->
-                listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=8.0.0")
+                listOf("-DKONAN_OBJC_INTEROP=1")
 
             KonanTarget.IPHONE_SIM ->
-                listOf("-stdlib=libc++", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=8.0.0")
+                listOf("-DKONAN_OBJC_INTEROP=1")
 
             KonanTarget.ANDROID_ARM32 ->
-                listOf("-target", targetArg!!,
-                        "--sysroot=$absoluteTargetSysRoot",
-                        // HACKS!
-                        "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x",
-                        "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x/arm-linux-androideabi")
+                listOf("-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32", "-DKONAN_ANDROID")
 
             KonanTarget.ANDROID_ARM64 ->
-                listOf("-target", targetArg!!,
-                        "--sysroot=$absoluteTargetSysRoot",
-                        // HACKS!
-                        "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x",
-                        "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x/aarch64-linux-android")
+                listOf("-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64", "-DKONAN_ANDROID")
 
             KonanTarget.WASM32 ->
-                listOf("-target", targetArg!!, "-O1", "-fno-rtti", "-fno-exceptions",
-                        "-D_LIBCPP_ABI_VERSION=2", "-D_LIBCPP_NO_EXCEPTIONS=1",
-                        "-nostdinc", "-Xclang", "-nobuiltininc", "-Xclang", "-nostdsysteminc",
-                        "-Xclang", "-isystem$absoluteTargetSysRoot/include/libcxx", "-Xclang", "-isystem$absoluteTargetSysRoot/lib/libcxxabi/include",
-                        "-Xclang", "-isystem$absoluteTargetSysRoot/include/compat", "-Xclang", "-isystem$absoluteTargetSysRoot/include/libc")
+                listOf("-DKONAN_WASM=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
+                        "-DKONAN_INTERNAL_DLMALLOC=1", "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1")
         }
-        return result
-    }
-
-    val clangArgsSpecificForKonanSources get() = when (target) {
-        KonanTarget.LINUX ->
-            listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64")
-
-        KonanTarget.RASPBERRYPI ->
-            listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
-
-        KonanTarget.LINUX_MIPS32 ->
-            listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
-
-        KonanTarget.LINUX_MIPSEL32 ->
-            listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
-
-        KonanTarget.MINGW ->
-            listOf("-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1")
-
-        KonanTarget.MACBOOK ->
-            listOf("-DKONAN_OSX=1", "-DKONAN_OBJC_INTEROP=1")
-
-        KonanTarget.IPHONE ->
-            listOf("-DKONAN_OBJC_INTEROP=1")
-
-        KonanTarget.IPHONE_SIM ->
-            listOf("-DKONAN_OBJC_INTEROP=1")
-
-        KonanTarget.ANDROID_ARM32 ->
-            listOf("-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32", "-DKONAN_ANDROID")
-
-        KonanTarget.ANDROID_ARM64 ->
-            listOf("-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64", "-DKONAN_ANDROID")
-
-        KonanTarget.WASM32 ->
-            listOf("-DKONAN_WASM=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
-                    "-DKONAN_INTERNAL_DLMALLOC=1", "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1")
-    }
 
     private val host = TargetManager.host
 
-    private val binDir = when(host) {
+    private val binDir = when (host) {
         KonanTarget.LINUX -> "$absoluteTargetToolchain/bin"
         KonanTarget.MINGW -> "$absoluteTargetToolchain/bin"
         KonanTarget.MACBOOK -> "$absoluteTargetToolchain/usr/bin"
         else -> throw TargetSupportException("Unexpected host platform")
     }
 
-    private val extraHostClangArgs = 
-        if (configurables is LinuxBasedConfigurables) {
-            listOf("--gcc-toolchain=${configurables.absoluteGccToolchain}")
-        } else {
-            emptyList()
-        }
+    private val extraHostClangArgs =
+            if (configurables is LinuxBasedConfigurables) {
+                listOf("--gcc-toolchain=${configurables.absoluteGccToolchain}")
+            } else {
+                emptyList()
+            }
 
     val commonClangArgs = listOf("-B$binDir") + extraHostClangArgs
 
     val clangPaths = listOf("$absoluteLlvmHome/bin", binDir)
 
-    private val jdkHome = File.jdkHome.absoluteFile.parent
-
-    val hostCompilerArgsForJni = listOf("", TargetManager.jniHostPlatformIncludeDir).map { "-I$jdkHome/include/$it" }.toTypedArray()
-
-    val clangArgs = 
-        (commonClangArgs + specificClangArgs).toTypedArray()
-
-    val clangArgsForKonanSources =
-        clangArgs + clangArgsSpecificForKonanSources
-
-    val targetLibclangArgs: List<String> get() {
-        // libclang works not exactly the same way as the clang binary and
-        // (in particular) uses different default header search path.
-        // See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
-        // We workaround the problem with -isystem flag below.
-        val llvmVersion = llvmVersion
-        val llvmHome = absoluteLlvmHome
-        val isystemArgs = listOf("-isystem", "$llvmHome/lib/clang/$llvmVersion/include")
-
-        return isystemArgs + clangArgs.toList()
+    private val jdkDir by lazy {
+        val home = File.javaHome.absoluteFile
+        if (home.child("include").exists)
+            home.absolutePath
+        else
+            home.parentFile.absolutePath
     }
 
+    val hostCompilerArgsForJni = listOf("", TargetManager.jniHostPlatformIncludeDir).map { "-I$jdkDir/include/$it" }.toTypedArray()
+
+    val clangArgs = (commonClangArgs + specificClangArgs).toTypedArray()
+
+    val clangArgsForKonanSources =
+            clangArgs + clangArgsSpecificForKonanSources
+
+    val targetLibclangArgs: List<String> =
+            // libclang works not exactly the same way as the clang binary and
+            // (in particular) uses different default header search path.
+            // See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
+            // We workaround the problem with -isystem flag below.
+            listOf("-isystem", "$absoluteLlvmHome/lib/clang/$llvmVersion/include", *clangArgs)
+
     val targetClangCmd
-        = listOf("${absoluteLlvmHome}/bin/clang") + clangArgs
+            = listOf("${absoluteLlvmHome}/bin/clang") + clangArgs
 
     val targetClangXXCmd
-        = listOf("${absoluteLlvmHome}/bin/clang++") + clangArgs
+            = listOf("${absoluteLlvmHome}/bin/clang++") + clangArgs
 
     fun clangC(vararg userArgs: String) = targetClangCmd + userArgs.asList()
 
     fun clangCXX(vararg userArgs: String) = targetClangXXCmd + userArgs.asList()
-
 }
 

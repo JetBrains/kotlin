@@ -23,29 +23,34 @@ import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.TargetManager
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 
-class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: String?, runnerProvidedKonanHome: String) {
+class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: String?,
+                 runnerProvidedKonanHome: String, val flavor: KotlinPlatform) {
 
     private val targetManager = TargetManager(userProvidedTargetName)
     private val host = TargetManager.host
     private val target = targetManager.target
 
     private val konanHome = File(runnerProvidedKonanHome).absolutePath
-    private val konanPropertiesFile = userProvidedKonanProperties ?. File() ?: File(konanHome, "konan/konan.properties")
+    private val konanPropertiesFile = userProvidedKonanProperties?.File() ?: File(konanHome, "konan/konan.properties")
     private val properties = konanPropertiesFile.loadProperties()
 
     private val dependencies = DependencyProcessor.defaultDependenciesRoot
 
     private val platform = PlatformManager(properties, dependencies.path).platform(target)
 
-    val substitutions = mapOf<String, String> (
-        "target" to target.detailedName,
-        "arch" to target.architecture.visibleName)
+    val substitutions = mapOf<String, String>(
+            "target" to target.detailedName,
+            "arch" to target.architecture.visibleName)
 
     fun downloadDependencies() = platform.downloadDependencies()
 
-    val defaultCompilerOpts = 
-        platform.clang.targetLibclangArgs.toList()
+    val defaultCompilerOpts =
+            platform.clang.targetLibclangArgs.toList()
+
+    val platformCompilerOpts = if (flavor == KotlinPlatform.JVM)
+            platform.clang.hostCompilerArgsForJni.toList() else emptyList()
 
     val llvmHome = platform.absoluteLlvmHome
     val sysRoot = platform.absoluteTargetSysRoot

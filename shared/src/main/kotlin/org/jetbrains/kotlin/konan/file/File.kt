@@ -148,7 +148,7 @@ data class File constructor(internal val javaPath: Path) {
         val userHome
             get() = File(System.getProperty("user.home"))
 
-        val jdkHome
+        val javaHome
             get() = File(System.getProperty("java.home"))
 
     }

@@ -250,7 +250,8 @@ private fun processCLib(args: Array<String>): Array<String>? {
     val tool = ToolConfig(
         arguments.target,
         arguments.properties,
-        System.getProperty("konan.home")
+        System.getProperty("konan.home"),
+        flavor
     )
     tool.downloadDependencies()
 
@@ -317,7 +318,7 @@ private fun processCLib(args: Array<String>): Array<String>? {
     val library = NativeLibrary(
             includes = headerFiles,
             additionalPreambleLines = def.defHeaderLines,
-            compilerArgs = compilerOpts,
+            compilerArgs = compilerOpts + tool.platformCompilerOpts,
             headerToIdMapper = HeaderToIdMapper(sysRoot = tool.sysRoot),
             language = language,
             excludeSystemLibs = excludeSystemLibs,

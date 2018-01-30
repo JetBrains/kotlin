@@ -924,13 +924,7 @@ class StubGenerator(
                 addAll(configuration.library.includes)
             },
 
-            compilerArgs = configuration.library.compilerArgs + when (platform) {
-                KotlinPlatform.JVM -> listOf("", "linux", "darwin", "win32").map {
-                    val javaHome = System.getProperty("java.home")
-                    "-I$javaHome/../include/$it"
-                }
-                KotlinPlatform.NATIVE -> emptyList()
-            },
+            compilerArgs = configuration.library.compilerArgs,
 
             additionalPreambleLines = configuration.library.additionalPreambleLines +
                     when (configuration.library.language) {
