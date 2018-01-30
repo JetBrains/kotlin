@@ -29,19 +29,18 @@ import com.intellij.usageView.UsageViewDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.replaceUsages
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
-import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 class KotlinInlineCallableProcessor(
-        project: Project,
-        private val replacementStrategy: UsageReplacementStrategy,
-        private val declaration: KtCallableDeclaration,
-        private val reference: KtSimpleNameReference?,
-        private val inlineThisOnly: Boolean,
-        private val deleteAfter: Boolean,
-        private val statementToDelete: KtBinaryExpression? = null
+    project: Project,
+    private val replacementStrategy: UsageReplacementStrategy,
+    private val declaration: KtCallableDeclaration,
+    private val reference: KtSimpleNameReference?,
+    private val inlineThisOnly: Boolean,
+    private val deleteAfter: Boolean,
+    private val statementToDelete: KtBinaryExpression? = null
 ) : BaseRefactoringProcessor(project) {
 
     private val kind = when (declaration) {
@@ -64,34 +63,33 @@ class KotlinInlineCallableProcessor(
     override fun performRefactoring(usages: Array<out UsageInfo>) {
         val simpleNameUsages = usages.mapNotNull { it.element as? KtSimpleNameExpression }
         replacementStrategy.replaceUsages(
-                simpleNameUsages,
-                declaration,
-                myProject,
-                commandName,
-                postAction = {
-                    if (deleteAfter) {
-                        if (usages.size == simpleNameUsages.size) {
-                            val containingClass = declaration.containingClassOrObject
-                            if (containingClass is KtObjectDeclaration
-                                && containingClass.isCompanion()
-                                && containingClass.declarations.size == 1) {
-                                containingClass.delete()
-                            } else {
-                                declaration.delete()
-                            }
-                            statementToDelete?.delete()
+            simpleNameUsages,
+            declaration,
+            myProject,
+            commandName,
+            postAction = {
+                if (deleteAfter) {
+                    if (usages.size == simpleNameUsages.size) {
+                        val containingClass = declaration.containingClassOrObject
+                        if (containingClass is KtObjectDeclaration
+                            && containingClass.isCompanion()
+                            && containingClass.declarations.size == 1) {
+                            containingClass.delete()
+                        } else {
+                            declaration.delete()
                         }
-                        else {
-                            CommonRefactoringUtil.showErrorHint(
-                                    declaration.project,
-                                    null,
-                                    "Cannot inline ${usages.size - simpleNameUsages.size}/${usages.size} usages",
-                                    "Inline $kind",
-                                    null
-                            )
-                        }
+                        statementToDelete?.delete()
+                    } else {
+                        CommonRefactoringUtil.showErrorHint(
+                            declaration.project,
+                            null,
+                            "Cannot inline ${usages.size - simpleNameUsages.size}/${usages.size} usages",
+                            "Inline $kind",
+                            null
+                        )
                     }
                 }
+            }
         )
     }
 
@@ -100,10 +98,10 @@ class KotlinInlineCallableProcessor(
     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
         return object : UsageViewDescriptor {
             override fun getCommentReferencesText(usagesCount: Int, filesCount: Int) =
-                    RefactoringBundle.message("comments.elements.header", UsageViewBundle.getOccurencesString(usagesCount, filesCount))
+                RefactoringBundle.message("comments.elements.header", UsageViewBundle.getOccurencesString(usagesCount, filesCount))
 
             override fun getCodeReferencesText(usagesCount: Int, filesCount: Int) =
-                    RefactoringBundle.message("invocations.to.be.inlined", UsageViewBundle.getReferencesString(usagesCount, filesCount))
+                RefactoringBundle.message("invocations.to.be.inlined", UsageViewBundle.getReferencesString(usagesCount, filesCount))
 
             override fun getElements() = arrayOf(declaration)
 
