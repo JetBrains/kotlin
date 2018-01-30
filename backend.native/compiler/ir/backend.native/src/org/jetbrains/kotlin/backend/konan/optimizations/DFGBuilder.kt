@@ -240,7 +240,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
             override fun visitFunction(declaration: IrFunction) {
                 declaration.body?.let {
-                    DEBUG_OUTPUT(1) {
+                    DEBUG_OUTPUT(0) {
                         println("Analysing function ${declaration.descriptor}")
                         println("IR: ${ir2stringWhole(declaration)}")
                     }
@@ -250,7 +250,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
             override fun visitField(declaration: IrField) {
                 declaration.initializer?.let {
-                    DEBUG_OUTPUT(1) {
+                    DEBUG_OUTPUT(0) {
                         println("Analysing global field ${declaration.descriptor}")
                         println("IR: ${ir2stringWhole(declaration)}")
                     }
@@ -263,7 +263,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 val visitor = ElementFinderVisitor()
                 body.acceptVoid(visitor)
 
-                DEBUG_OUTPUT(1) {
+                DEBUG_OUTPUT(0) {
                     println("FIRST PHASE")
                     visitor.variableValues.elementData.forEach { t, u ->
                         println("VAR $t:")
@@ -279,7 +279,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 // Compute transitive closure of possible values for variables.
                 visitor.variableValues.computeClosure()
 
-                DEBUG_OUTPUT(1) {
+                DEBUG_OUTPUT(0) {
                     println("SECOND PHASE")
                     visitor.variableValues.elementData.forEach { t, u ->
                         println("VAR $t:")
@@ -292,7 +292,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 val function = FunctionDFGBuilder(expressionValuesExtractor, visitor.variableValues,
                         descriptor, visitor.expressions, visitor.returnValues, visitor.thrownValues).build()
 
-                DEBUG_OUTPUT(1) {
+                DEBUG_OUTPUT(0) {
                     function.debugOutput()
                 }
 
@@ -300,7 +300,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             }
         }, data = null)
 
-        DEBUG_OUTPUT(2) {
+        DEBUG_OUTPUT(1) {
             println("SYMBOL TABLE:")
             symbolTable.classMap.forEach { descriptor, type ->
                 println("    DESCRIPTOR: $descriptor")
@@ -481,7 +481,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 return variables[descriptor as VariableDescriptor]!!
             }
             return nodes.getOrPut(expression) {
-                DEBUG_OUTPUT(1) {
+                DEBUG_OUTPUT(0) {
                     println("Converting expression")
                     println(ir2stringWhole(expression))
                 }

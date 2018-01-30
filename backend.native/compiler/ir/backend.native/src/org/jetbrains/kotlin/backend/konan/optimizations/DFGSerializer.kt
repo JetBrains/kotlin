@@ -694,7 +694,7 @@ internal object DFGSerializer {
         val symbolTable = moduleDFG.symbolTable
         val typeMap = (symbolTable.classMap.values + DataFlowIR.Type.Virtual).distinct().withIndex().associateBy({ it.value }, { it.index })
         val functionSymbolMap = symbolTable.functionMap.values.distinct().withIndex().associateBy({ it.value }, { it.index })
-        DEBUG_OUTPUT(1) {
+        DEBUG_OUTPUT(0) {
             println("TYPES: ${typeMap.size}, " +
                     "FUNCTIONS: ${functionSymbolMap.size}, " +
                     "PRIVATE FUNCTIONS: ${functionSymbolMap.keys.count { it is DataFlowIR.FunctionSymbol.Private }}, " +
@@ -841,7 +841,7 @@ internal object DFGSerializer {
         context.librariesWithDependencies.forEach { library ->
             val libraryDataFlowGraph = library.dataFlowGraph
 
-            DEBUG_OUTPUT(1) {
+            DEBUG_OUTPUT(0) {
                 println("Data flow graph size for lib '${library.libraryName}': ${libraryDataFlowGraph?.size ?: 0}")
             }
 
@@ -909,7 +909,7 @@ internal object DFGSerializer {
                     }
                 }
 
-                DEBUG_OUTPUT(1) {
+                DEBUG_OUTPUT(0) {
                     println("Lib: ${library.libraryName}, types: ${types.size}, functions: ${functionSymbols.size}")
                 }
 
@@ -1106,6 +1106,16 @@ internal object DFGSerializer {
                             body           = deserializeBody(it.body)
                     )
                     functions.put(symbol, function)
+                }
+            }
+        }
+
+        DEBUG_OUTPUT(1) {
+            allTypes.forEach {
+                println(it)
+                println("    SUPER TYPES:")
+                it.superTypes.forEach {
+                    println("        $it")
                 }
             }
         }
