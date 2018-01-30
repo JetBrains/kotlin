@@ -96,8 +96,8 @@ internal class CallGraphBuilder(val context: Context,
         val rootSet = if (hasMain) {
             listOf(symbolTable.mapFunction(findMainEntryPoint(context)!!).resolved()) +
                     moduleDFG.functions
-                            .filter { it.value.isGlobalInitializer }
                             .map { it.key }
+                            .filter { it.isGlobalInitializer }
         } else {
             moduleDFG.functions.keys.filterIsInstance<DataFlowIR.FunctionSymbol.Public>()
         }

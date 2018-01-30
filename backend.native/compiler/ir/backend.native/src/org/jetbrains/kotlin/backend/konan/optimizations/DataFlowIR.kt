@@ -114,9 +114,11 @@ internal object DataFlowIR {
         var numberOfFunctions = 0
     }
 
-    abstract class FunctionSymbol(val numberOfParameters: Int, val name: String?) {
-        class External(val hash: Long, numberOfParameters: Int, val escapes: Int?, val pointsTo: IntArray?, name: String? = null)
-            : FunctionSymbol(numberOfParameters, name) {
+    abstract class FunctionSymbol(val numberOfParameters: Int, val isGlobalInitializer: Boolean, val name: String?) {
+        class External(val hash: Long, numberOfParameters: Int, isGlobalInitializer: Boolean,
+                       val escapes: Int?, val pointsTo: IntArray?, name: String? = null)
+            : FunctionSymbol(numberOfParameters, isGlobalInitializer, name) {
+
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is External) return false
@@ -133,11 +135,13 @@ internal object DataFlowIR {
             }
         }
 
-        abstract class Declared(numberOfParameters: Int, val module: Module, val symbolTableIndex: Int, name: String?)
-            : FunctionSymbol(numberOfParameters, name)
+        abstract class Declared(numberOfParameters: Int, val module: Module, val symbolTableIndex: Int,
+                                isGlobalInitializer: Boolean, name: String?)
+            : FunctionSymbol(numberOfParameters, isGlobalInitializer, name)
 
-        class Public(val hash: Long, numberOfParameters: Int, module: Module, symbolTableIndex: Int, name: String? = null)
-            : Declared(numberOfParameters, module, symbolTableIndex, name) {
+        class Public(val hash: Long, numberOfParameters: Int, module: Module, symbolTableIndex: Int,
+                     isGlobalInitializer: Boolean, name: String? = null)
+            : Declared(numberOfParameters, module, symbolTableIndex, isGlobalInitializer, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
@@ -154,8 +158,9 @@ internal object DataFlowIR {
             }
         }
 
-        class Private(val index: Int, numberOfParameters: Int, module: Module, symbolTableIndex: Int, name: String? = null)
-            : Declared(numberOfParameters, module, symbolTableIndex, name) {
+        class Private(val index: Int, numberOfParameters: Int, module: Module, symbolTableIndex: Int,
+                      isGlobalInitializer: Boolean, name: String? = null)
+            : Declared(numberOfParameters, module, symbolTableIndex, isGlobalInitializer, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -229,10 +234,8 @@ internal object DataFlowIR {
     class FunctionBody(val nodes: List<Node>, val returns: Node.Variable, val throws: Node.Variable)
 
     class Function(val symbol: FunctionSymbol,
-                   val isGlobalInitializer: Boolean,
                    val numberOfParameters: Int,
                    val body: FunctionBody) {
-
 
         fun debugOutput() {
             println("FUNCTION $symbol")
@@ -511,8 +514,11 @@ internal object DataFlowIR {
         fun mapFunction(descriptor: CallableDescriptor) = descriptor.original.let {
             functionMap.getOrPut(it) {
                 when (it) {
-                    is PropertyDescriptor ->
-                        FunctionSymbol.Private(privateFunIndex++, 0, module, -1, takeName { "${it.symbolName}_init" })
+                    is PropertyDescriptor -> {
+                        // A global property initializer.
+                        assert (it.dispatchReceiverParameter == null) { "All local properties initializers should've been lowered" }
+                        FunctionSymbol.Private(privateFunIndex++, 0, module, -1, true, takeName { "${it.symbolName}_init" })
+                    }
 
                     is FunctionDescriptor -> {
                         val name = if (it.isExported()) it.symbolName else it.internalName
@@ -524,7 +530,7 @@ internal object DataFlowIR {
                             val escapesBitMask = (escapesAnnotation?.allValueArguments?.get(escapesWhoDescriptor.name) as? ConstantValue<Int>)?.value
                             @Suppress("UNCHECKED_CAST")
                             val pointsToBitMask = (pointsToAnnotation?.allValueArguments?.get(pointsToOnWhomDescriptor.name) as? ConstantValue<List<IntValue>>)?.value
-                            FunctionSymbol.External(name.localHash.value, numberOfParameters, escapesBitMask,
+                            FunctionSymbol.External(name.localHash.value, numberOfParameters, false, escapesBitMask,
                                     pointsToBitMask?.let { it.map { it.value }.toIntArray() }, takeName { name })
                         } else {
                             val isAbstract = it.modality == Modality.ABSTRACT
@@ -536,9 +542,9 @@ internal object DataFlowIR {
                                 ++module.numberOfFunctions
                             val symbolTableIndex = if (!placeToFunctionsTable) -1 else couldBeCalledVirtuallyIndex++
                             if (it.isExported())
-                                FunctionSymbol.Public(name.localHash.value, numberOfParameters, module, symbolTableIndex, takeName { name })
+                                FunctionSymbol.Public(name.localHash.value, numberOfParameters, module, symbolTableIndex, false, takeName { name })
                             else
-                                FunctionSymbol.Private(privateFunIndex++, numberOfParameters, module, symbolTableIndex, takeName { name })
+                                FunctionSymbol.Private(privateFunIndex++, numberOfParameters, module, symbolTableIndex, false, takeName { name })
                         }
                     }
 
