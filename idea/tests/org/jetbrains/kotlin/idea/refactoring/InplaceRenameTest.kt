@@ -83,7 +83,31 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     }
 
     fun testNoReformat() {
-        doTestInplaceRename("subject2", MemberInplaceRenameHandler())
+        doTestMemberInplaceRename("subject2")
+    }
+
+    fun testInvokeToFoo() {
+        doTestMemberInplaceRename("foo")
+    }
+
+    fun testInvokeToGet() {
+        doTestMemberInplaceRename("get")
+    }
+
+    fun testInvokeToPlus() {
+        doTestMemberInplaceRename("plus")
+    }
+
+    fun testGetToFoo() {
+        doTestMemberInplaceRename("foo")
+    }
+
+    fun testGetToInvoke() {
+        doTestMemberInplaceRename("invoke")
+    }
+
+    fun testGetToPlus() {
+        doTestMemberInplaceRename("plus")
     }
 
     private fun doTestImplicitLambdaParameter(newName: String) {
@@ -134,6 +158,10 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
 
 
         checkResultByFile(getTestName(false) + ".kt.after")
+    }
+
+    private fun doTestMemberInplaceRename(newName: String?) {
+        doTestInplaceRename(newName, MemberInplaceRenameHandler())
     }
 
     private fun doTestInplaceRename(newName: String?, handler: VariableInplaceRenameHandler = VariableInplaceRenameHandler()) {
