@@ -217,6 +217,10 @@ internal object DataFlowIR {
 
         class FieldWrite(val receiver: Edge?, val field: Field, val value: Edge) : Node()
 
+        class ArrayRead(val array: Edge, val index: Edge, val callSite: IrCall?) : Node()
+
+        class ArrayWrite(val array: Edge, val index: Edge, val value: Edge) : Node()
+
         class Variable(values: List<Edge>, val temp: Boolean) : Node() {
             val values = mutableListOf<Edge>().also { it += values }
         }
@@ -331,6 +335,43 @@ internal object DataFlowIR {
                         result.appendln()
                     else
                         result.appendln(" CASTED TO ${node.receiver.castToType}")
+                    print("            VALUE #${ids[node.value.node]!!}")
+                    if (node.value.castToType == null)
+                        result.appendln()
+                    else
+                        result.appendln(" CASTED TO ${node.value.castToType}")
+                    result.toString()
+                }
+
+                is Node.ArrayRead -> {
+                    val result = StringBuilder()
+                    result.appendln("        ARRAY READ")
+                    result.append("            ARRAY #${ids[node.array.node]}")
+                    if (node.array.castToType == null)
+                        result.appendln()
+                    else
+                        result.appendln(" CASTED TO ${node.array.castToType}")
+                    result.append("            INDEX #${ids[node.index.node]!!}")
+                    if (node.index.castToType == null)
+                        result.appendln()
+                    else
+                        result.appendln(" CASTED TO ${node.index.castToType}")
+                    result.toString()
+                }
+
+                is Node.ArrayWrite -> {
+                    val result = StringBuilder()
+                    result.appendln("        ARRAY WRITE")
+                    result.append("            ARRAY #${ids[node.array.node]}")
+                    if (node.array.castToType == null)
+                        result.appendln()
+                    else
+                        result.appendln(" CASTED TO ${node.array.castToType}")
+                    result.append("            INDEX #${ids[node.index.node]!!}")
+                    if (node.index.castToType == null)
+                        result.appendln()
+                    else
+                        result.appendln(" CASTED TO ${node.index.castToType}")
                     print("            VALUE #${ids[node.value.node]!!}")
                     if (node.value.castToType == null)
                         result.appendln()

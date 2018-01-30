@@ -160,6 +160,14 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
         symbol.descriptor to symbolTable.referenceSimpleFunction(functionDescriptor)
     }.toMap()
 
+    val arrayGet = array.descriptor.unsubstitutedMemberScope
+            .getContributedFunctions(Name.identifier("get"), NoLookupLocation.FROM_BACKEND)
+            .single().let { symbolTable.referenceSimpleFunction(it) }
+
+    val arraySet = array.descriptor.unsubstitutedMemberScope
+            .getContributedFunctions(Name.identifier("set"), NoLookupLocation.FROM_BACKEND)
+            .single().let { symbolTable.referenceSimpleFunction(it) }
+
     val valuesForEnum = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("valuesForEnum").single())
 
