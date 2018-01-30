@@ -76,7 +76,7 @@ class PatternResolver(
         return typeInfo to scope
     }
 
-    fun getComponentsTypeInfoReceiver(typedTuple: KtPatternTypedTuple, receiverType: KotlinType, context: ResolutionContext<*>): KotlinType? {
+    fun getDeconstructType(typedTuple: KtPatternTypedTuple, receiverType: KotlinType, context: ResolutionContext<*>): KotlinType? {
         val receiver = TransientReceiver(receiverType)
         val results = components.fakeCallResolver.resolveFakeCall(
                 context = context,

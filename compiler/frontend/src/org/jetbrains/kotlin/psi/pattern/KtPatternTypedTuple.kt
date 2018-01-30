@@ -46,12 +46,13 @@ class KtPatternTypedTuple(node: ASTNode) : KtPatternElementImpl(node) {
         val typeReferenceInfo = typeReference?.resolve(resolver, state.setIsTuple())
         val info = resolver.resolveType(this, state).and(typeReferenceInfo)
         val entries = tuple?.entries.errorIfNull(this, state, Errors.EXPECTED_PATTERN_TUPLE_INSTANCE) ?: return info
-        val receiverType = resolver.getComponentsTypeInfoReceiver(this, info.type, context) ?: info.type
+        val receiverType = resolver.getDeconstructType(this, info.type, context) ?: info.type
         context.trace.record(BindingContext.PATTERN_COMPONENTS_RECEIVER_TYPE, this, receiverType)
         val types = resolver.getComponentsTypes(this, entries, receiverType, context)
-        return (sequenceOf(info) + types.zip(entries) { type, entry ->
+        val componentInfo = types.zip(entries) { type, entry ->
             val subjectValue = DataFlowValueFactory.createDataFlowValue(entry, type, context)
             entry.resolve(resolver, state.replaceSubject(subjectValue, type))
-        }).reduce({ acc, it -> acc.and(it) })
+        }
+        return (sequenceOf(info) + componentInfo).reduce({ acc, it -> acc.and(it) })
     }
 }
