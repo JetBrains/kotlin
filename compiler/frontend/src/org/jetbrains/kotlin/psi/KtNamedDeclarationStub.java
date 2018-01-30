@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi;
 
+import com.google.common.collect.ImmutableSet;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.LocalSearchScope;
@@ -32,6 +33,9 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
+
+import java.util.Set;
 
 import static org.jetbrains.kotlin.psi.KtPsiFactoryKt.KtPsiFactory;
 
@@ -78,16 +82,26 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
         return findChildByType(KtTokens.IDENTIFIER);
     }
 
+    private static final Set<String> FUNCTIONLIKE_CONVENTIONS = ImmutableSet.of(
+            OperatorNameConventions.INVOKE.asString(),
+            OperatorNameConventions.GET.asString()
+    );
+
+    private static boolean shouldDropOperatorKeyword(String oldName, String newName) {
+        return !OperatorConventions.isConventionName(Name.identifier(newName)) ||
+               FUNCTIONLIKE_CONVENTIONS.contains(oldName) != FUNCTIONLIKE_CONVENTIONS.contains(newName);
+    }
+
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
         PsiElement identifier = getNameIdentifier();
         if (identifier == null) return null;
 
         KtModifierList modifierList = getModifierList();
-        if (modifierList != null &&
-            modifierList.hasModifier(KtTokens.OPERATOR_KEYWORD) &&
-            !OperatorConventions.isConventionName(Name.identifier(name))) {
-            removeModifier(KtTokens.OPERATOR_KEYWORD);
+        if (modifierList != null && modifierList.hasModifier(KtTokens.OPERATOR_KEYWORD)) {
+            if (shouldDropOperatorKeyword(getName(), name)) {
+                removeModifier(KtTokens.OPERATOR_KEYWORD);
+            }
         }
 
         PsiElement newIdentifier = KtPsiFactory(this).createNameIdentifierIfPossible(name);
