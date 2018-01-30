@@ -27,9 +27,10 @@ import llvm.*
  */
 internal fun StaticData.placeGlobalConstArray(name: String,
                                               elemType: LLVMTypeRef,
-                                              elements: List<ConstValue>): ConstPointer {
-    if (elements.isNotEmpty()) {
-        val global = this.placeGlobalArray(name, elemType, elements)
+                                              elements: List<ConstValue>,
+                                              isExported: Boolean = false): ConstPointer {
+    if (elements.isNotEmpty() || isExported) {
+        val global = this.placeGlobalArray(name, elemType, elements, isExported)
         global.setConstant(true)
         return global.pointer.getElementPtr(0)
     } else {

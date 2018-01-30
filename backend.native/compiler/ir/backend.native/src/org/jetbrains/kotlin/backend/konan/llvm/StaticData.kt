@@ -162,9 +162,9 @@ internal class StaticData(override val context: Context): ContextUtils {
     /**
      * Creates array-typed global with given name and value.
      */
-    fun placeGlobalArray(name: String, elemType: LLVMTypeRef?, elements: List<ConstValue>): Global {
+    fun placeGlobalArray(name: String, elemType: LLVMTypeRef?, elements: List<ConstValue>, isExported: Boolean = false): Global {
         val initializer = ConstArray(elemType, elements)
-        val global = placeGlobal(name, initializer)
+        val global = placeGlobal(name, initializer, isExported)
 
         return global
     }

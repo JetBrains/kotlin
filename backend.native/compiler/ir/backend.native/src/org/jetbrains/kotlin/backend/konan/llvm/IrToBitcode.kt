@@ -79,9 +79,8 @@ internal fun emitLLVM(context: Context) {
         moduleDFG = ModuleDFGBuilder(context, irModule).build()
     }
 
-    phaser.phase(KonanPhase.SERIALIZE_DFG) {
-        DFGSerializer.serialize(context, moduleDFG!!)
-    }
+    val lifetimes = mutableMapOf<IrElement, Lifetime>()
+    val codegenVisitor = CodeGeneratorVisitor(context, lifetimes)
 
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     var externalModulesDFG: ExternalModulesDFG? = null
@@ -89,17 +88,26 @@ internal fun emitLLVM(context: Context) {
         externalModulesDFG = DFGSerializer.deserialize(context, moduleDFG!!.symbolTable.privateTypeIndex, moduleDFG!!.symbolTable.privateFunIndex)
     }
 
-    val lifetimes = mutableMapOf<IrElement, Lifetime>()
-    val codegenVisitor = CodeGeneratorVisitor(context, lifetimes)
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     var devirtualizationAnalysisResult: Map<DataFlowIR.Node.VirtualCall, Devirtualization.DevirtualizedCallSite>? = null
     phaser.phase(KonanPhase.DEVIRTUALIZATION) {
-        devirtualizationAnalysisResult = Devirtualization.analyze(context, moduleDFG!!, externalModulesDFG!!)
+        devirtualizationAnalysisResult = Devirtualization.run(irModule, context, moduleDFG!!, externalModulesDFG!!)
+
+        val privateFunctions = moduleDFG!!.symbolTable.getPrivateFunctionsTableForExport()
+
+        codegenVisitor.codegen.staticData.placeGlobalConstArray(irModule.descriptor.privateFunctionsTableSymbolName, int8TypePtr,
+                privateFunctions.map { constPointer(codegenVisitor.codegen.functionLlvmValue(it)).bitcast(int8TypePtr) },
+                isExported = true
+        )
     }
 
     phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {
         val callGraph = CallGraphBuilder(context, moduleDFG!!, externalModulesDFG!!).build()
         EscapeAnalysis.computeLifetimes(moduleDFG!!, externalModulesDFG!!, callGraph, lifetimes)
+    }
+
+    phaser.phase(KonanPhase.SERIALIZE_DFG) {
+        DFGSerializer.serialize(context, moduleDFG!!)
     }
 
     phaser.phase(KonanPhase.CODEGEN) {
@@ -1945,12 +1953,34 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return evaluateIntrinsicCall(callee, argsWithContinuationIfNeeded)
         }
 
+        if (callee is IrPrivateFunctionCall)
+            return evaluatePrivateFunctionCall(callee, argsWithContinuationIfNeeded, resultLifetime)
+
         when (descriptor) {
             is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall      (callee, argsWithContinuationIfNeeded)
             is ConstructorDescriptor           -> return evaluateConstructorCall   (callee, argsWithContinuationIfNeeded)
             else                               -> return evaluateSimpleFunctionCall(
                     descriptor, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifier)
         }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluatePrivateFunctionCall(callee: IrPrivateFunctionCall, args: List<LLVMValueRef>, resultLifetime: Lifetime): LLVMValueRef {
+        val functionsListName = callee.moduleDescriptor.privateFunctionsTableSymbolName
+        // LLVM inlines access to this global array (with -opt option on).
+        val functionsList =
+                if (callee.moduleDescriptor == context.irModule!!.descriptor)
+                    LLVMGetNamedGlobal(context.llvmModule, functionsListName)
+                else
+                    codegen.importGlobal(functionsListName, LLVMArrayType(int8TypePtr, callee.totalFunctions)!!, callee.moduleDescriptor.llvmSymbolOrigin)
+        val functionIndex    = Int32(callee.functionIndex).llvm
+        val functionPlacePtr = LLVMBuildGEP(functionGenerationContext.builder, functionsList, cValuesOf(kImmZero, functionIndex), 2, "")!!
+        val functionPtr      = functionGenerationContext.load(functionPlacePtr)
+
+        val functionPtrType  = pointerType(codegen.getLlvmFunctionType(callee.descriptor))
+        val function         = functionGenerationContext.bitcast(functionPtrType, functionPtr)
+        return call(callee.descriptor, function, args, resultLifetime)
     }
 
     //-------------------------------------------------------------------------//

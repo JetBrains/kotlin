@@ -16,16 +16,20 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallWithIndexedArgumentsBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.konan.file.File
@@ -176,4 +180,33 @@ class IrSuspendableExpressionImpl(startOffset: Int, endOffset: Int, type: Kotlin
         suspensionPointId = suspensionPointId.transform(transformer, data)
         result = result.transform(transformer, data)
     }
+}
+
+internal interface IrPrivateFunctionCall : IrCall {
+    val moduleDescriptor: ModuleDescriptor
+    val totalFunctions: Int
+    val functionIndex: Int
+}
+
+internal class IrPrivateFunctionCallImpl(startOffset: Int,
+                                         endOffset: Int,
+                                         type: KotlinType,
+                                         override val symbol: IrFunctionSymbol,
+                                         override val descriptor: FunctionDescriptor,
+                                         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+                                         override val moduleDescriptor: ModuleDescriptor,
+                                         override val totalFunctions: Int,
+                                         override val functionIndex: Int
+) : IrPrivateFunctionCall,
+        IrCallWithIndexedArgumentsBase(startOffset, endOffset, type, symbol.descriptor.valueParameters.size, typeArguments) {
+
+    override val superQualifierSymbol: IrClassSymbol?
+        get() = null
+
+    override val superQualifier: ClassDescriptor?
+        get() = null
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+            visitor.visitCall(this, data)
+
 }
