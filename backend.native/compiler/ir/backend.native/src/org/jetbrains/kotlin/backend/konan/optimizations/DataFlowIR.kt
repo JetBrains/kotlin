@@ -551,5 +551,19 @@ internal object DataFlowIR {
                 }
             }
         }
+
+        fun getPrivateFunctionsTableForExport() =
+                functionMap
+                        .asSequence()
+                        .filter { it.key is FunctionDescriptor }
+                        .filter { it.value.let { it is DataFlowIR.FunctionSymbol.Declared && it.symbolTableIndex >= 0 } }
+                        .sortedBy { (it.value as DataFlowIR.FunctionSymbol.Declared).symbolTableIndex }
+                        .apply {
+                            forEachIndexed { index, entry ->
+                                assert((entry.value  as DataFlowIR.FunctionSymbol.Declared).symbolTableIndex == index) { "Inconsistent function table" }
+                            }
+                        }
+                        .map { it.key as FunctionDescriptor }
+                        .toList()
     }
 }

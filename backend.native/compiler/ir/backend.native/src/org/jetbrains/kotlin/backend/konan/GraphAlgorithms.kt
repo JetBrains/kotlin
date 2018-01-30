@@ -65,7 +65,7 @@ internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(
                 findMultiNodesOrder(it)
         }
 
-        return DirectedGraphCondensation(multiNodesOrder)
+        return DirectedGraphCondensation(multiNodesOrder.reversed())
     }
 
     private fun findOrder(node: N) {

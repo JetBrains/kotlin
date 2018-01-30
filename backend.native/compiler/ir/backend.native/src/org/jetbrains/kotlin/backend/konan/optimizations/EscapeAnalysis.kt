@@ -275,7 +275,7 @@ internal object EscapeAnalysis {
                 )
             }
 
-            for (multiNode in condensation.topologicalOrder)
+            for (multiNode in condensation.topologicalOrder.reversed())
                 analyze(callGraph, multiNode)
         }
 

@@ -91,6 +91,12 @@ internal fun emitLLVM(context: Context) {
 
     val lifetimes = mutableMapOf<IrElement, Lifetime>()
     val codegenVisitor = CodeGeneratorVisitor(context, lifetimes)
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    var devirtualizationAnalysisResult: Map<DataFlowIR.Node.VirtualCall, Devirtualization.DevirtualizedCallSite>? = null
+    phaser.phase(KonanPhase.DEVIRTUALIZATION) {
+        devirtualizationAnalysisResult = Devirtualization.analyze(context, moduleDFG!!, externalModulesDFG!!)
+    }
+
     phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {
         val callGraph = CallGraphBuilder(context, moduleDFG!!, externalModulesDFG!!).build()
         EscapeAnalysis.computeLifetimes(moduleDFG!!, externalModulesDFG!!, callGraph, lifetimes)
