@@ -569,3 +569,5 @@ fun KtExpression.getLabeledParent(labelName: String): KtLabeledExpression? {
     }
     return null
 }
+
+fun PsiElement.astReplace(newElement: PsiElement) = parent.node.replaceChild(node, newElement.node)

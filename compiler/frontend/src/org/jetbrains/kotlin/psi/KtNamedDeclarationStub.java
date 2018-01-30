@@ -92,7 +92,7 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
 
         PsiElement newIdentifier = KtPsiFactory(this).createNameIdentifierIfPossible(name);
         if (newIdentifier != null) {
-            identifier.replace(newIdentifier);
+            KtPsiUtilKt.astReplace(identifier, newIdentifier);
         }
         else {
             identifier.delete();
