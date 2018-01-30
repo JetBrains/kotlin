@@ -116,7 +116,7 @@ class LocalVariableResolver(
                 // We can comment this condition to take them into account, like here: var s: String? = "xyz"
                 // In this case s will be not-nullable until it is changed
                 if (property.typeReference == null) {
-                    val variableDataFlowValue = DataFlowValueFactory.createDataFlowValueForProperty(
+                    val variableDataFlowValue = DataFlowValueFactory.createDataFlowValue(
                         property, propertyDescriptor, context.trace.bindingContext,
                         DescriptorUtils.getContainingModuleOrNull(scope.ownerDescriptor)
                     )

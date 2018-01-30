@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 import org.jetbrains.kotlin.types.expressions.errorIfNull
 
-class KtPatternExpression(node: ASTNode) : KtPatternElement(node) {
+class KtPatternExpression(node: ASTNode) : KtPatternElementImpl(node) {
 
     val expression: KtExpression?
         get() = findChildByClass(KtExpression::class.java)

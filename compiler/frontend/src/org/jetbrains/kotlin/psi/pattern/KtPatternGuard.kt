@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
-class KtPatternGuard(node: ASTNode) : KtPatternElement(node) {
+class KtPatternGuard(node: ASTNode) : KtPatternElementImpl(node) {
 
     val expression: KtExpression?
         get() = findChildByClass(KtExpression::class.java)

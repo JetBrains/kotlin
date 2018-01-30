@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
-class KtPatternTuple(node: ASTNode) : KtPatternElement(node) {
+class KtPatternTuple(node: ASTNode) : KtPatternElementImpl(node) {
 
     val entries: List<KtPatternEntry>
         get() = findChildrenByType(KtNodeTypes.PATTERN_ENTRY)

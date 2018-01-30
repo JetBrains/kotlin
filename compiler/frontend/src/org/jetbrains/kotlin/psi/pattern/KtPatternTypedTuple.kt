@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 import org.jetbrains.kotlin.types.expressions.errorIfNull
 
-class KtPatternTypedTuple(node: ASTNode) : KtPatternElement(node) {
+class KtPatternTypedTuple(node: ASTNode) : KtPatternElementImpl(node) {
 
     val typeReference: KtPatternTypeReference?
         get() = findChildByType(KtNodeTypes.PATTERN_TYPE_REFERENCE)
@@ -35,7 +35,7 @@ class KtPatternTypedTuple(node: ASTNode) : KtPatternElement(node) {
     val tuple: KtPatternTuple?
         get() = findChildByType(KtNodeTypes.PATTERN_TUPLE)
 
-    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) =  visitor.visitPatternTypedTuple(this, data)
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPatternTypedTuple(this, data)
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
         typeReference?.getTypeInfo(resolver, state)
@@ -49,9 +49,9 @@ class KtPatternTypedTuple(node: ASTNode) : KtPatternElement(node) {
         val receiverType = resolver.getComponentsTypeInfoReceiver(this, info.type, context) ?: info.type
         context.trace.record(BindingContext.PATTERN_COMPONENTS_RECEIVER_TYPE, this, receiverType)
         val types = resolver.getComponentsTypes(this, entries, receiverType, context)
-        return info.and(types.zip(entries) { type, entry ->
+        return (sequenceOf(info) + types.zip(entries) { type, entry ->
             val subjectValue = DataFlowValueFactory.createDataFlowValue(entry, type, context)
             entry.resolve(resolver, state.replaceSubject(subjectValue, type))
-        })
+        }).reduce({ acc, it -> acc.and(it) })
     }
 }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
-class KtPattern(node: ASTNode) : KtPatternElement(node) {
+class KtPattern(node: ASTNode) : KtPatternElementImpl(node) {
 
     val innerNotPatternExpressions: List<KtExpression>
         get() = collectDescendantsOfType({ it is KtPatternElement }, { it !is KtPatternElement })

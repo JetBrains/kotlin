@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.pattern.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ConditionalDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -42,28 +43,10 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
-class ConditionalTypeInfo(
-        val type: KotlinType,
-        val dataFlowInfo: ConditionalDataFlowInfo
-) {
-
-    fun replaceType(type: KotlinType) = ConditionalTypeInfo(type, dataFlowInfo)
-
-    fun replaceDataFlowInfo(dataFlowInfo: ConditionalDataFlowInfo) = ConditionalTypeInfo(type, dataFlowInfo)
-
-    fun and(vararg children: ConditionalTypeInfo?): ConditionalTypeInfo {
-        return and(children.asSequence())
-    }
-
-    fun and(children: Iterable<ConditionalTypeInfo?>): ConditionalTypeInfo {
-        return and(children.asSequence())
-    }
-
-    fun and(children: Sequence<ConditionalTypeInfo?>): ConditionalTypeInfo {
-        val dataInfo = sequenceOf(dataFlowInfo) + children.map { it?.dataFlowInfo }
-        val dataFlowInfo = dataInfo.filterNotNull().reduce(ConditionalDataFlowInfo::and)
-        return replaceDataFlowInfo(dataFlowInfo)
-    }
+class ConditionalTypeInfo(val type: KotlinType, val dataFlowInfo: ConditionalDataFlowInfo) {
+    fun and(other: ConditionalTypeInfo?) = other?.let {
+        ConditionalTypeInfo(type, dataFlowInfo and it.dataFlowInfo)
+    } ?: this
 }
 
 class PatternResolver(
@@ -200,11 +183,13 @@ class PatternResolver(
             return ConditionalTypeInfo(type, ConditionalDataFlowInfo.EMPTY)
         }
         val scope = state.scope
-        val variableDescriptor = components.localVariableResolver.resolveLocalVariableDescriptorWithType(scope, declaration, type, trace)
-        ExpressionTypingUtils.checkVariableShadowing(scope, trace, variableDescriptor)
-        scope.add(variableDescriptor)
-        val variableValue = DataFlowValueFactory.createDataFlowValue(declaration, type, context)
-        val dataFlowInfo = context.dataFlowInfo.assign(variableValue, state.subjectValue, components.languageVersionSettings)
+        val descriptor = components.localVariableResolver.resolveLocalVariableDescriptorWithType(scope, declaration, type, trace)
+        ExpressionTypingUtils.checkVariableShadowing(scope, trace, descriptor)
+        scope.add(descriptor)
+        val variableDataFlowValue = DataFlowValueFactory.createDataFlowValue(
+                declaration, descriptor, context.trace.bindingContext,
+                DescriptorUtils.getContainingModuleOrNull(scope.ownerDescriptor))
+        val dataFlowInfo = context.dataFlowInfo.assign(variableDataFlowValue, state.subjectValue, components.languageVersionSettings)
         return ConditionalTypeInfo(type, ConditionalDataFlowInfo(dataFlowInfo, context.dataFlowInfo))
     }
 }
@@ -220,7 +205,7 @@ fun <T, E : PsiElement> T?.errorIfNull(element: E, state: PatternResolveState, e
     it ?: state.context.trace.report(error.on(element, element))
 }
 
-class PatternScope (
+class PatternScope(
         outer: LexicalScope,
         redeclarationChecker: TraceBasedLocalRedeclarationChecker
 ) : LexicalWritableScope(

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 import org.jetbrains.kotlin.types.expressions.errorIfNull
 
-class KtPatternConstraint(node: ASTNode) : KtPatternElement(node) {
+class KtPatternConstraint(node: ASTNode) : KtPatternElementImpl(node) {
 
     val typeReference: KtPatternTypeReference?
         get() = findChildByType(KtNodeTypes.PATTERN_TYPE_REFERENCE)

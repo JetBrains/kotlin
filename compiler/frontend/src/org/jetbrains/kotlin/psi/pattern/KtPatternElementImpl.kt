@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,7 @@
 
 package org.jetbrains.kotlin.psi.pattern
 
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
-import org.jetbrains.kotlin.types.expressions.PatternResolveState
-import org.jetbrains.kotlin.types.expressions.PatternResolver
+import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.psi.KtExpressionImpl
 
-interface KtPatternElement : KtExpression {
-
-    fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo
-
-    fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo
-}
+abstract class KtPatternElementImpl(node: ASTNode) : KtExpressionImpl(node), KtPatternElement

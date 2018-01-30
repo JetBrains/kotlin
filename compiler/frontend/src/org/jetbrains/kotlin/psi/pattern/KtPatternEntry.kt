@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
-class KtPatternEntry(node: ASTNode) : KtPatternElement(node) {
+class KtPatternEntry(node: ASTNode) : KtPatternElementImpl(node) {
 
     private val simpleConstraint: KtPatternConstraint?
         get() = findChildByType(KtNodeTypes.PATTERN_CONSTRAINT)

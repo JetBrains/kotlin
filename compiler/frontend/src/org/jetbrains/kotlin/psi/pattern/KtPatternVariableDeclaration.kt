@@ -38,10 +38,11 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.setTypeReference
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ConditionalDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
+import org.jetbrains.kotlin.types.expressions.PatternMatchingTypingVisitor
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
-class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElement(node), KtVariableDeclaration {
+class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElementImpl(node), KtVariableDeclaration {
     override fun getName(): String? {
         val identifier = nameIdentifier
         if (identifier != null) {
@@ -109,7 +110,7 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElement(node), KtVa
     }
 
     override fun getTypeReference(): KtTypeReference? {
-        return patternTypeReference?.typeReference
+        return (patternTypeReference ?: constraint?.typeReference)?.typeReference
     }
 
     override fun setTypeReference(typeRef: KtTypeReference?): KtTypeReference? {
@@ -197,9 +198,12 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElement(node), KtVa
         val constraintInfo = constraint?.getTypeInfo(resolver, state)
         val constraintType = constraintInfo?.type
         val typeReferenceType = typeReferenceInfo?.type
+        if (typeReferenceInfo != null && constraintInfo != null) {
+            PatternMatchingTypingVisitor.checkTypeCompatibility(state.context, typeReferenceInfo.type, constraintInfo.type, this)
+        }
         (typeReferenceType ?: constraintType)?.let {
             val info = ConditionalTypeInfo(it, ConditionalDataFlowInfo.EMPTY)
-            info.and(typeReferenceInfo, constraintInfo)
+            info.and(typeReferenceInfo).and(constraintInfo)
         }
     }
 
@@ -208,6 +212,6 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElement(node), KtVa
         val constraintInfo = constraint?.resolve(resolver, state)
         val info = resolver.resolveType(this, state)
         val defineInfo = resolver.defineVariable(this, state)
-        return info.and(typeInfo, constraintInfo, defineInfo)
+        return info.and(typeInfo).and(constraintInfo).and(defineInfo)
     }
 }
