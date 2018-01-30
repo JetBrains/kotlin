@@ -61,47 +61,48 @@ import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
 class KotlinPullUpHelper(
-        private val javaData: PullUpData,
-        private val data: KotlinPullUpData
+    private val javaData: PullUpData,
+    private val data: KotlinPullUpData
 ) : PullUpHelper<MemberInfoBase<PsiMember>> {
     private fun KtExpression.isMovable(): Boolean {
         return accept(
-                object: KtVisitor<Boolean, Nothing?>() {
-                    override fun visitKtElement(element: KtElement, arg: Nothing?): Boolean {
-                        return element.allChildren.all { (it as? KtElement)?.accept(this, arg) ?: true }
+            object : KtVisitor<Boolean, Nothing?>() {
+                override fun visitKtElement(element: KtElement, arg: Nothing?): Boolean {
+                    return element.allChildren.all { (it as? KtElement)?.accept(this, arg) ?: true }
+                }
+
+                override fun visitKtFile(file: KtFile, data: Nothing?) = false
+
+                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, arg: Nothing?): Boolean {
+                    val resolvedCall = expression.getResolvedCall(data.resolutionFacade.analyze(expression)) ?: return true
+                    val receiver = (resolvedCall.getExplicitReceiverValue() as? ExpressionReceiver)?.expression
+                    if (receiver != null && receiver !is KtThisExpression && receiver !is KtSuperExpression) return true
+
+                    var descriptor: DeclarationDescriptor = resolvedCall.resultingDescriptor
+                    if (descriptor is ConstructorDescriptor) {
+                        descriptor = descriptor.containingDeclaration
                     }
-
-                    override fun visitKtFile(file: KtFile, data: Nothing?) = false
-
-                    override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, arg: Nothing?): Boolean {
-                        val resolvedCall = expression.getResolvedCall(data.resolutionFacade.analyze(expression)) ?: return true
-                        val receiver = (resolvedCall.getExplicitReceiverValue() as? ExpressionReceiver)?.expression
-                        if (receiver != null && receiver !is KtThisExpression && receiver !is KtSuperExpression) return true
-
-                        var descriptor: DeclarationDescriptor = resolvedCall.resultingDescriptor
-                        if (descriptor is ConstructorDescriptor) {
-                            descriptor = descriptor.containingDeclaration
-                        }
-                        // todo: local functions
-                        if (descriptor is ValueParameterDescriptor) return true
-                        if (descriptor is ClassDescriptor && !descriptor.isInner) return true
-                        if (descriptor is MemberDescriptor) {
-                            if (descriptor.source.getPsi() in propertiesToMoveInitializers) return true
-                            descriptor = descriptor.containingDeclaration
-                        }
-                        return descriptor is PackageFragmentDescriptor
-                               || (descriptor is ClassDescriptor && DescriptorUtils.isSubclass(data.targetClassDescriptor, descriptor))
+                    // todo: local functions
+                    if (descriptor is ValueParameterDescriptor) return true
+                    if (descriptor is ClassDescriptor && !descriptor.isInner) return true
+                    if (descriptor is MemberDescriptor) {
+                        if (descriptor.source.getPsi() in propertiesToMoveInitializers) return true
+                        descriptor = descriptor.containingDeclaration
                     }
-                },
-                null
+                    return descriptor is PackageFragmentDescriptor
+                            || (descriptor is ClassDescriptor && DescriptorUtils.isSubclass(data.targetClassDescriptor, descriptor))
+                }
+            },
+            null
         )
     }
 
     private fun getCommonInitializer(
-            currentInitializer: KtExpression?,
-            scope: KtBlockExpression?,
-            propertyDescriptor: PropertyDescriptor,
-            elementsToRemove: MutableSet<KtElement>): KtExpression? {
+        currentInitializer: KtExpression?,
+        scope: KtBlockExpression?,
+        propertyDescriptor: PropertyDescriptor,
+        elementsToRemove: MutableSet<KtElement>
+    ): KtExpression? {
         if (scope == null) return currentInitializer
 
         var initializerCandidate: KtExpression? = null
@@ -121,15 +122,13 @@ class KotlinPullUpHelper(
 
                         initializerCandidate = statement
                         elementsToRemove.add(statement)
-                    }
-                    else {
+                    } else {
                         if (!KotlinPsiUnifier.DEFAULT.unify(statement, currentInitializer).matched) return null
 
                         initializerCandidate = currentInitializer
                         elementsToRemove.add(statement)
                     }
-                }
-                else if (!KotlinPsiUnifier.DEFAULT.unify(statement, initializerCandidate).matched) return null
+                } else if (!KotlinPsiUnifier.DEFAULT.unify(statement, initializerCandidate).matched) return null
             }
         }
 
@@ -137,15 +136,17 @@ class KotlinPullUpHelper(
     }
 
     private data class InitializerInfo(
-            val initializer: KtExpression?,
-            val usedProperties: Set<KtProperty>,
-            val usedParameters: Set<KtParameter>,
-            val elementsToRemove: Set<KtElement>
+        val initializer: KtExpression?,
+        val usedProperties: Set<KtProperty>,
+        val usedParameters: Set<KtParameter>,
+        val elementsToRemove: Set<KtElement>
     )
 
-    private fun getInitializerInfo(property: KtProperty,
-                                   propertyDescriptor: PropertyDescriptor,
-                                   targetConstructor: KtElement): InitializerInfo? {
+    private fun getInitializerInfo(
+        property: KtProperty,
+        propertyDescriptor: PropertyDescriptor,
+        targetConstructor: KtElement
+    ): InitializerInfo? {
         val sourceConstructors = targetToSourceConstructors[targetConstructor] ?: return null
         val elementsToRemove = LinkedHashSet<KtElement>()
         val commonInitializer = sourceConstructors.fold(null as KtExpression?) { commonInitializer, constructor ->
@@ -181,39 +182,39 @@ class KotlinPullUpHelper(
 
     private val propertiesToMoveInitializers = with(data) {
         membersToMove
-                .filterIsInstance<KtProperty>()
-                .filter {
-                    val descriptor = memberDescriptors[it] as? PropertyDescriptor
-                    descriptor != null && data.sourceClassContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor] ?: false
-                }
+            .filterIsInstance<KtProperty>()
+            .filter {
+                val descriptor = memberDescriptors[it] as? PropertyDescriptor
+                descriptor != null && data.sourceClassContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor] ?: false
+            }
     }
 
     private val targetToSourceConstructors = LinkedHashMap<KtElement, MutableList<KtElement>>().let { result ->
         if (!data.isInterfaceTarget && data.targetClass is KtClass) {
             result[data.targetClass.primaryConstructor ?: data.targetClass] = ArrayList<KtElement>()
             data.sourceClass.accept(
-                    object : KtTreeVisitorVoid() {
-                        private fun processConstructorReference(expression: KtReferenceExpression, callingConstructorElement: KtElement) {
-                            val descriptor = data.resolutionFacade.analyze(expression)[BindingContext.REFERENCE_TARGET, expression]
-                            val constructorElement = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
-                            if (constructorElement == data.targetClass
-                                || (constructorElement as? KtConstructor<*>)?.getContainingClassOrObject() == data.targetClass) {
-                                result.getOrPut(constructorElement as KtElement, { ArrayList() }).add(callingConstructorElement)
-                            }
-                        }
-
-                        override fun visitSuperTypeCallEntry(specifier: KtSuperTypeCallEntry) {
-                            val constructorRef = specifier.calleeExpression.constructorReferenceExpression ?: return
-                            val containingClass = specifier.getStrictParentOfType<KtClassOrObject>() ?: return
-                            val callingConstructorElement = containingClass.primaryConstructor ?: containingClass
-                            processConstructorReference(constructorRef, callingConstructorElement)
-                        }
-
-                        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
-                            val constructorRef = constructor.getDelegationCall().calleeExpression ?: return
-                            processConstructorReference(constructorRef, constructor)
+                object : KtTreeVisitorVoid() {
+                    private fun processConstructorReference(expression: KtReferenceExpression, callingConstructorElement: KtElement) {
+                        val descriptor = data.resolutionFacade.analyze(expression)[BindingContext.REFERENCE_TARGET, expression]
+                        val constructorElement = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
+                        if (constructorElement == data.targetClass
+                            || (constructorElement as? KtConstructor<*>)?.getContainingClassOrObject() == data.targetClass) {
+                            result.getOrPut(constructorElement as KtElement, { ArrayList() }).add(callingConstructorElement)
                         }
                     }
+
+                    override fun visitSuperTypeCallEntry(specifier: KtSuperTypeCallEntry) {
+                        val constructorRef = specifier.calleeExpression.constructorReferenceExpression ?: return
+                        val containingClass = specifier.getStrictParentOfType<KtClassOrObject>() ?: return
+                        val callingConstructorElement = containingClass.primaryConstructor ?: containingClass
+                        processConstructorReference(constructorRef, callingConstructorElement)
+                    }
+
+                    override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
+                        val constructorRef = constructor.getDelegationCall().calleeExpression ?: return
+                        processConstructorReference(constructorRef, constructor)
+                    }
+                }
             )
         }
         result
@@ -227,12 +228,12 @@ class KotlinPullUpHelper(
                 propertyToInitializerInfo[property] = getInitializerInfo(property, propertyDescriptor, targetConstructor) ?: continue
             }
             val unmovableProperties = RefactoringUtil.transitiveClosure(
-                    object : RefactoringUtil.Graph<KtProperty> {
-                        override fun getVertices() = propertyToInitializerInfo.keys
+                object : RefactoringUtil.Graph<KtProperty> {
+                    override fun getVertices() = propertyToInitializerInfo.keys
 
-                        override fun getTargets(source: KtProperty) = propertyToInitializerInfo[source]?.usedProperties
-                    },
-                    { !propertyToInitializerInfo.containsKey(it) }
+                    override fun getTargets(source: KtProperty) = propertyToInitializerInfo[source]?.usedProperties
+                },
+                { !propertyToInitializerInfo.containsKey(it) }
             )
 
             propertyToInitializerInfo.keys.removeAll(unmovableProperties)
@@ -248,10 +249,10 @@ class KotlinPullUpHelper(
             // Add dummy light field since PullUpProcessor won't invoke moveFieldInitializations() if no PsiFields are present
             if (dummyField == null) {
                 val factory = JavaPsiFacade.getElementFactory(newMember.project)
-                val dummyField = object: LightField(
-                        newMember.manager,
-                        factory.createField("dummy", PsiType.BOOLEAN),
-                        factory.createClass("Dummy")
+                val dummyField = object : LightField(
+                    newMember.manager,
+                    factory.createField("dummy", PsiType.BOOLEAN),
+                    factory.createClass("Dummy")
                 ) {
                     // Prevent processing by JavaPullUpHelper
                     override fun getLanguage() = KotlinLanguage.INSTANCE
@@ -272,7 +273,11 @@ class KotlinPullUpHelper(
 
     private fun liftToProtected(declaration: KtNamedDeclaration, ignoreUsages: Boolean = false) {
         if (!declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) return
-        if (ignoreUsages || willBeUsedInSourceClass(declaration, data.sourceClass, data.membersToMove)) declaration.addModifier(KtTokens.PROTECTED_KEYWORD)
+        if (ignoreUsages || willBeUsedInSourceClass(
+                declaration,
+                data.sourceClass,
+                data.membersToMove
+            )) declaration.addModifier(KtTokens.PROTECTED_KEYWORD)
     }
 
     override fun setCorrectVisibility(info: MemberInfoBase<PsiMember>) {
@@ -285,19 +290,19 @@ class KotlinPullUpHelper(
 
         if (member.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
             member.accept(
-                    object: KtVisitorVoid() {
-                        override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
-                            when (declaration) {
-                                is KtClass -> {
-                                    liftToProtected(declaration)
-                                    declaration.declarations.forEach { it.accept(this) }
-                                }
-                                is KtNamedFunction, is KtProperty -> {
-                                    liftToProtected(declaration, declaration == member && info.isToAbstract)
-                                }
+                object : KtVisitorVoid() {
+                    override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
+                        when (declaration) {
+                            is KtClass -> {
+                                liftToProtected(declaration)
+                                declaration.declarations.forEach { it.accept(this) }
+                            }
+                            is KtNamedFunction, is KtProperty -> {
+                                liftToProtected(declaration, declaration == member && info.isToAbstract)
                             }
                         }
                     }
+                }
             )
         }
     }
@@ -306,8 +311,10 @@ class KotlinPullUpHelper(
 
     }
 
-    private fun fixOverrideAndGetClashingSuper(sourceMember: KtCallableDeclaration,
-                                               targetMember: KtCallableDeclaration): KtCallableDeclaration? {
+    private fun fixOverrideAndGetClashingSuper(
+        sourceMember: KtCallableDeclaration,
+        targetMember: KtCallableDeclaration
+    ): KtCallableDeclaration? {
         val memberDescriptor = data.memberDescriptors[sourceMember] as CallableMemberDescriptor
 
         if (memberDescriptor.overriddenDescriptors.isEmpty()) {
@@ -329,7 +336,13 @@ class KotlinPullUpHelper(
         when (data.targetClass) {
             is KtClass -> {
                 data.sourceClass.removeSuperTypeListEntry(currentSpecifier)
-                addSuperTypeEntry(currentSpecifier, data.targetClass, data.targetClassDescriptor, data.sourceClassContext, data.sourceToTargetClassSubstitutor)
+                addSuperTypeEntry(
+                    currentSpecifier,
+                    data.targetClass,
+                    data.targetClassDescriptor,
+                    data.sourceClassContext,
+                    data.sourceToTargetClassSubstitutor
+                )
             }
 
             is PsiClass -> {
@@ -337,9 +350,9 @@ class KotlinPullUpHelper(
 
                 val sourcePsiClass = data.sourceClass.toLightClass() ?: return
                 val superRef = sourcePsiClass.implementsList
-                                       ?.referenceElements
-                                       ?.firstOrNull { it.resolve()?.unwrapped == realMemberPsi }
-                                ?: return
+                    ?.referenceElements
+                    ?.firstOrNull { it.resolve()?.unwrapped == realMemberPsi }
+                        ?: return
                 val superTypeForTarget = substitutor.substitute(elementFactory.createType(superRef))
 
                 data.sourceClass.removeSuperTypeListEntry(currentSpecifier)
@@ -357,8 +370,7 @@ class KotlinPullUpHelper(
     private fun removeOriginalMemberOrAddOverride(member: KtCallableDeclaration) {
         if (member.isAbstract()) {
             member.deleteWithCompanion()
-        }
-        else {
+        } else {
             member.addModifier(KtTokens.OVERRIDE_KEYWORD)
             KtTokens.VISIBILITY_MODIFIERS.types.forEach { member.removeModifier(it as KtModifierKeywordToken) }
             (member as? KtNamedFunction)?.valueParameters?.forEach { it.dropDefaultValue() }
@@ -388,8 +400,7 @@ class KotlinPullUpHelper(
                 }
                 if (member is KtParameter) {
                     (member.parent as? KtParameterList)?.removeParameter(member)
-                }
-                else {
+                } else {
                     member.deleteWithCompanion()
                 }
                 newField
@@ -426,7 +437,7 @@ class KotlinPullUpHelper(
     override fun move(info: MemberInfoBase<PsiMember>, substitutor: PsiSubstitutor) {
         val member = info.member.toKtDeclarationWrapperAware() ?: return
 
-        if ((member is KtClass || member is KtPsiClassWrapper) && info.overrides != null)  {
+        if ((member is KtClass || member is KtPsiClassWrapper) && info.overrides != null) {
             moveSuperInterface(member, substitutor)
             return
         }
@@ -465,11 +476,17 @@ class KotlinPullUpHelper(
                 else -> false
             }
 
-            val classToAddTo = if (member.isCompanionMemberOf(data.sourceClass)) data.targetClass.getOrCreateCompanionObject() else data.targetClass
+            val classToAddTo =
+                if (member.isCompanionMemberOf(data.sourceClass)) data.targetClass.getOrCreateCompanionObject() else data.targetClass
 
             if (toAbstract) {
                 if (!originalIsAbstract) {
-                    makeAbstract(memberCopy, data.memberDescriptors[member] as CallableMemberDescriptor, data.sourceToTargetClassSubstitutor, data.targetClass)
+                    makeAbstract(
+                        memberCopy,
+                        data.memberDescriptors[member] as CallableMemberDescriptor,
+                        data.sourceToTargetClassSubstitutor,
+                        data.targetClass
+                    )
                 }
 
                 movedMember = doAddCallableMember(memberCopy, clashingSuper, classToAddTo)
@@ -478,8 +495,7 @@ class KotlinPullUpHelper(
                 }
 
                 removeOriginalMemberOrAddOverride(member)
-            }
-            else {
+            } else {
                 movedMember = doAddCallableMember(memberCopy, clashingSuper, classToAddTo)
                 if (member is KtParameter && movedMember is KtParameter) {
                     member.valOrVarKeyword?.delete()
@@ -495,18 +511,17 @@ class KotlinPullUpHelper(
 
                         val parameterIndex = movedMember.parameterIndex()
                         val prevParameterDescriptor = superResolvedCall.resultingDescriptor.valueParameters.getOrNull(parameterIndex - 1)
-                        val prevArgument = superResolvedCall.valueArguments[prevParameterDescriptor]?.arguments?.singleOrNull() as? KtValueArgument
+                        val prevArgument =
+                            superResolvedCall.valueArguments[prevParameterDescriptor]?.arguments?.singleOrNull() as? KtValueArgument
                         val newArgumentName = if (prevArgument != null && prevArgument.isNamed()) Name.identifier(member.name!!) else null
                         val newArgument = psiFactory.createArgument(psiFactory.createExpression(member.name!!), newArgumentName)
                         if (prevArgument == null) {
                             argumentList.addArgument(newArgument)
-                        }
-                        else {
+                        } else {
                             argumentList.addArgumentAfter(newArgument, prevArgument)
                         }
                     }
-                }
-                else {
+                } else {
                     member.deleteWithCompanion()
                 }
             }
@@ -532,8 +547,7 @@ class KotlinPullUpHelper(
 
             applyMarking(movedMember, data.sourceToTargetClassSubstitutor, data.targetClassDescriptor)
             addMovedMember(movedMember)
-        }
-        finally {
+        } finally {
             clearMarking(markedElements)
         }
     }
@@ -582,7 +596,10 @@ class KotlinPullUpHelper(
                 info.usedParameters.forEach {
                     val newParameter = addParameter(it)
                     val originalType = data.sourceClassContext[BindingContext.VALUE_PARAMETER, it]!!.type
-                    newParameter.setType(data.sourceToTargetClassSubstitutor.substitute(originalType, Variance.INVARIANT) ?: originalType, false)
+                    newParameter.setType(
+                        data.sourceToTargetClassSubstitutor.substitute(originalType, Variance.INVARIANT) ?: originalType,
+                        false
+                    )
                     newParameter.typeReference!!.addToShorteningWaitSet()
                 }
             }
@@ -593,8 +610,7 @@ class KotlinPullUpHelper(
                     is KtSecondaryConstructor -> {
                         if (it.hasImplicitDelegationCall()) {
                             it.replaceImplicitDelegationCallWithExplicit(false)
-                        }
-                        else {
+                        } else {
                             it.getDelegationCall()
                         }
                     }
@@ -610,15 +626,15 @@ class KotlinPullUpHelper(
 
         for ((constructorElement, propertyToInitializerInfo) in targetConstructorToPropertyInitializerInfoMap.entries) {
             val properties = propertyToInitializerInfo.keys.sortedWith(
-                    Comparator<KtProperty> { property1, property2 ->
-                        val info1 = propertyToInitializerInfo[property1]!!
-                        val info2 = propertyToInitializerInfo[property2]!!
-                        when {
-                            property2 in info1.usedProperties -> -1
-                            property1 in info2.usedProperties -> 1
-                            else -> 0
-                        }
+                Comparator<KtProperty> { property1, property2 ->
+                    val info1 = propertyToInitializerInfo[property1]!!
+                    val info2 = propertyToInitializerInfo[property2]!!
+                    when {
+                        property2 in info1.usedProperties -> -1
+                        property1 in info2.usedProperties -> 1
+                        else -> 0
                     }
+                }
             )
 
             for (oldProperty in properties) {
