@@ -210,9 +210,6 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     descriptor  = functionReferenceClassDescriptor
             )
 
-            functionReferenceClass.createParameterDeclarations()
-
-            functionReferenceThis = functionReferenceClass.thisReceiver!!.symbol
 
             val constructorBuilder = createConstructorBuilder()
 
@@ -234,6 +231,10 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     ).filterNotNull().toList()
             functionReferenceClassDescriptor.initialize(
                     SimpleMemberScope(contributedDescriptors), setOf(constructorBuilder.symbol.descriptor), null)
+
+            functionReferenceClass.createParameterDeclarations()
+
+            functionReferenceThis = functionReferenceClass.thisReceiver!!.symbol
 
             functionReferenceClass.addFakeOverrides()
 

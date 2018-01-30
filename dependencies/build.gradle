@@ -129,8 +129,8 @@ uploads.each { target ->
                 'doc'     : project.configurations.getByName("kotlin_${target}_doc").files.collect {it.path},
                 'pom'     : project.configurations.getByName("kotlin_${target}_pom").files.collect {it.path},
                 'override': project.hasProperty("override") && project["override"]
-
         ]
+        startParameter.useEmptySettings()
     }
 }
 

@@ -516,7 +516,8 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
                 startOffset = expression.startOffset,
                 endOffset   = expression.endOffset,
                 type        = newExpressionType,
-                descriptor  = classDescriptor
+                descriptor  = classDescriptor,
+                classType   = expression.classType
             )
         }
 

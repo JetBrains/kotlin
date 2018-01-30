@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.KotlinType
 
 //-----------------------------------------------------------------------------//
@@ -99,6 +100,8 @@ class IrFileImpl(entry: SourceManager.FileEntry) : IrFile {
 
     //-------------------------------------------------------------------------//
 
+    override val fqName: FqName
+        get() = TODO("not implemented")
     override val fileAnnotations: MutableList<AnnotationDescriptor>
         get() = TODO("not implemented")
     override val symbol: IrFileSymbol

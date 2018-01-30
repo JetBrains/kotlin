@@ -251,7 +251,6 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                     ClassKind.CLASS, listOf(descriptor.defaultType), SourceElement.NO_SOURCE, false)
             val defaultClass = IrClassImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, defaultClassDescriptor)
 
-            defaultClass.createParameterDeclarations()
 
             val constructors = mutableSetOf<ClassConstructorDescriptor>()
 
@@ -283,6 +282,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                     .toList()
             defaultClassDescriptor.initialize(SimpleMemberScope(contributedDescriptors), constructors, null)
 
+            defaultClass.createParameterDeclarations()
             defaultClass.addFakeOverrides()
 
             return defaultClass

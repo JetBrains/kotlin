@@ -304,7 +304,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
                 context.interopBuiltIns.objCMethodImp.defaultType,
                 mapOf("selector" to selector, "encoding" to encoding)
                         .mapKeys { Name.identifier(it.key) }
-                        .mapValues { StringValue(it.value, context.builtIns) },
+                        .mapValues { StringValue(it.value) },
                 SourceElement.NO_SOURCE
         )
 

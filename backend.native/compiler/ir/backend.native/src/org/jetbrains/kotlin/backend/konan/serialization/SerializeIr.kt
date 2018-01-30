@@ -806,7 +806,7 @@ internal class IrDeserializer(val context: Context,
 
     fun deserializeClassReference(proto: KonanIr.IrClassReference, start: Int, end: Int, type: KotlinType): IrClassReference {
         val descriptor = deserializeDescriptor(proto.classDescriptor) as ClassifierDescriptor
-        return IrClassReferenceImpl(start, end, type, descriptor)
+        return IrClassReferenceImpl(start, end, type, descriptor, descriptor.defaultType)
     }
 
     fun deserializeCall(proto: KonanIr.IrCall, start: Int, end: Int, type: KotlinType): IrCall {

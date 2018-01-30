@@ -337,9 +337,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     descriptor  = coroutineClassDescriptor
             )
 
-            coroutineClass.createParameterDeclarations()
-
-            coroutineClassThis = coroutineClass.thisReceiver!!.symbol
 
             val overriddenMap = mutableMapOf<CallableMemberDescriptor, CallableMemberDescriptor>()
             val constructors = mutableSetOf<ClassConstructorDescriptor>()
@@ -385,6 +382,10 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     inheritedFromCoroutineImpl + invokeMethodBuilder?.symbol?.descriptor
                     ).filterNotNull().toList()
             coroutineClassDescriptor.initialize(SimpleMemberScope(contributedDescriptors), constructors, null)
+
+            coroutineClass.createParameterDeclarations()
+
+            coroutineClassThis = coroutineClass.thisReceiver!!.symbol
 
             coroutineClass.addFakeOverrides()
 

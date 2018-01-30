@@ -105,7 +105,7 @@ fun createKonanPackageFragmentProvider(
         LocalClassifierTypeSettings.Default, 
         ErrorReporter.DO_NOTHING,
         LookupTracker.DO_NOTHING, NullFlexibleTypeDeserializer,
-        emptyList(), notFoundClasses, ContractDeserializer.DEFAULT)
+        emptyList(), notFoundClasses, ContractDeserializer.DEFAULT, extensionRegistryLite = KonanSerializerProtocol.extensionRegistry )
 
         for (packageFragment in packageFragments) {
             packageFragment.components = components

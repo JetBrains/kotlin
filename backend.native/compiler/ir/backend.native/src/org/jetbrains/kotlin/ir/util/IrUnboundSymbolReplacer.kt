@@ -208,7 +208,7 @@ private class IrUnboundSymbolReplacer(
 
         expression.transformChildrenVoid(this)
         return with(expression) {
-            IrClassReferenceImpl(startOffset, endOffset, type, symbol)
+            IrClassReferenceImpl(startOffset, endOffset, type, symbol, symbol.descriptor.defaultType)
         }
     }
 
