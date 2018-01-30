@@ -1942,7 +1942,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private void parsePatternEntry(boolean isTopLevelPattern) {
         PsiBuilder.Marker patternMarker = mark();
         if (at(VAL_KEYWORD) || atSingleUnderscore()) {
-            parsePatternVariableDeclaration(isTopLevelPattern);
+            parsePatternVariableDeclaration();
         }
         else {
             parsePatternConstraint(isTopLevelPattern);
@@ -1950,7 +1950,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         patternMarker.done(PATTERN_ENTRY);
     }
 
-    private void parsePatternVariableDeclaration(boolean isTopLevelPattern) {
+    private void parsePatternVariableDeclaration() {
         PsiBuilder.Marker patternMarker = mark();
         if (atSingleUnderscore()) {
             advance(); // IDENTIFIER
@@ -1964,7 +1964,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
             if (at(EQ)) {
                 advance(); // EQ
-                parsePatternConstraint(isTopLevelPattern);
+                parsePatternConstraint(false);
             }
         }
         patternMarker.done(PATTERN_VARIABLE_DECLARATION);
@@ -1975,15 +1975,32 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (atTruePatternExpression()) {
             parsePatternExpression();
         }
-        else if (!tryParsePatternTypedTuple()) {
-            if (isTopLevelPattern) {
-                parsePatternTypeReference();
-            }
-            else {
-                parsePatternExpression();
-            }
+        else if (isTopLevelPattern && tryParsePatternTopLevelTypeReference()) {
+            // nothing
+        }
+        else if (tryParsePatternTypedTuple()) {
+            // nothing
+        }
+        else if (isTopLevelPattern) {
+            parsePatternTypeReference();
+        }
+        else {
+            parsePatternExpression();
         }
         patternMarker.done(PATTERN_CONSTRAINT);
+    }
+
+    private boolean tryParsePatternTopLevelTypeReference() {
+        PsiBuilder.Marker patternMarker = mark();
+        parsePatternTypeReference();
+        boolean success = at(ARROW);
+        if (!success) {
+            patternMarker.rollbackTo();
+        }
+        else {
+            patternMarker.drop();
+        }
+        return success;
     }
 
     private boolean tryParsePatternTypedTuple() {

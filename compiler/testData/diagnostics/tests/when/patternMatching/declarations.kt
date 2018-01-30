@@ -14,10 +14,10 @@ fun foo(x: Any?, a: Int) = when (x) {
     is <!COMPONENT_FUNCTION_MISSING!>B(val <!NAME_SHADOWING!>a<!>: Int)<!> -> a
     is <!COMPONENT_FUNCTION_ON_NULLABLE, COMPONENT_FUNCTION_ON_NULLABLE!>Pair?(val <!NAME_SHADOWING!>a<!>: Int, val b: Int)<!> -> a + b
     is <!UNRESOLVED_REFERENCE!>pair<!>(val <!NAME_SHADOWING!>a<!>: Int, val b: Int) -> a + b
-    is Pair(val <!NAME_SHADOWING!>a<!>: Int, val b: Int) && a > b -> a + b
-    is Pair(10, 20) -> a + <!UNRESOLVED_REFERENCE!>b<!>
-    is <!NO_TYPE_ARGUMENTS_ON_RHS!>Pair<!> -> 1
-    is Pair(_, val <!NAME_SHADOWING, UNUSED_VARIABLE!>a<!>: Pair<*, *>) -> 1
+    is <!DUPLICATE_LABEL_IN_WHEN!>Pair<!>(val <!NAME_SHADOWING!>a<!>: Int, val b: Int) && a > b -> a + b
+    is <!USELESS_IS_CHECK, DUPLICATE_LABEL_IN_WHEN!>Pair<!>(10, 20) -> a + <!UNRESOLVED_REFERENCE!>b<!>
+    is <!USELESS_IS_CHECK, DUPLICATE_LABEL_IN_WHEN, NO_TYPE_ARGUMENTS_ON_RHS!>Pair<!> -> 1
+    is <!USELESS_IS_CHECK, DUPLICATE_LABEL_IN_WHEN!>Pair<!>(_, val <!NAME_SHADOWING, UNUSED_VARIABLE!>a<!>: Pair<*, *>) -> 1
     is C<*, *> -> 2
     is val <!NAME_SHADOWING!>a<!>: Int -> a
     else -> 1

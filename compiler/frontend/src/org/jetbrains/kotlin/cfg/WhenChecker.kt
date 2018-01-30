@@ -153,6 +153,9 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
     private val KtWhenCondition.negated
         get() = (this as? KtWhenConditionIsPattern)?.isNegated ?: false
 
+    private val KtWhenCondition.simple
+        get() = (this as? KtWhenConditionIsPattern)?.isSimple ?: true
+
     private fun KtWhenCondition.isRelevant(checkedDescriptor: ClassDescriptor) =
         this !is KtWhenConditionWithExpression ||
                 DescriptorUtils.isObject(checkedDescriptor) ||
@@ -186,6 +189,7 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
         for (whenEntry in whenExpression.entries) {
             for (condition in whenEntry.conditions) {
                 val negated = condition.negated
+                if (!condition.simple) continue
                 val checkedDescriptor = condition.getCheckedDescriptor(context) ?: continue
                 val checkedDescriptorSubclasses =
                     if (checkedDescriptor.modality == Modality.SEALED) checkedDescriptor.deepSealedSubclasses
@@ -254,6 +258,19 @@ internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChe
     }
 }
 
+internal object WhenOnPatternExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
+
+    override fun getMissingCases(
+            expression: KtWhenExpression,
+            context: BindingContext,
+            subjectDescriptor: ClassDescriptor?,
+            nullable: Boolean
+    ): List<WhenMissingCase> {
+        return listOf()
+    }
+
+    override fun isApplicable(subjectType: KotlinType) = true
+}
 
 object WhenChecker {
 
@@ -347,7 +364,7 @@ object WhenChecker {
                         val typeWithIsNegation = type to condition.isNegated
                         if (checkedTypes.contains(typeWithIsNegation)) {
                             trace.report(Errors.DUPLICATE_LABEL_IN_WHEN.on(typeReference))
-                        } else {
+                        } else if (condition.isSimple) {
                             checkedTypes.add(typeWithIsNegation)
                         }
                     }

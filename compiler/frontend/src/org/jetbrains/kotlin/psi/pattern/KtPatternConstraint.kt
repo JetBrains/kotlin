@@ -30,6 +30,12 @@ class KtPatternConstraint(node: ASTNode) : KtPatternElement(node) {
     val typeReference: KtPatternTypeReference?
         get() = findChildByType(KtNodeTypes.PATTERN_TYPE_REFERENCE)
 
+    val typedTuple: KtPatternTypedTuple?
+        get() = findChildByType(KtNodeTypes.PATTERN_TYPED_TUPLE)
+
+    val expression: KtPatternExpression?
+        get() = findChildByType(KtNodeTypes.PATTERN_EXPRESSION)
+
     val element: KtPatternElement?
         get() = findChildByClass(KtPatternElement::class.java)
 

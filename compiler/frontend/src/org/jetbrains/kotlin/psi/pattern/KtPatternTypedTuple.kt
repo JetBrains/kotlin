@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
@@ -41,14 +42,16 @@ class KtPatternTypedTuple(node: ASTNode) : KtPatternElement(node) {
     }
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
+        val context = state.context
         val typeReferenceInfo = typeReference?.resolve(resolver, state.setIsTuple())
         val info = resolver.resolveType(this, state).and(typeReferenceInfo)
         val entries = tuple?.entries.errorIfNull(this, state, Errors.EXPECTED_PATTERN_TUPLE_INSTANCE) ?: return info
-        val receiverType = resolver.getComponentsTypeInfoReceiver(this, state.replaceType(info.type)) ?: info.type
-        state.context.trace.record(BindingContext.PATTERN_COMPONENTS_RECEIVER_TYPE, this, receiverType)
-        val types = resolver.getComponentsTypes(this, entries, state.replaceType(receiverType))
+        val receiverType = resolver.getComponentsTypeInfoReceiver(this, info.type, context) ?: info.type
+        context.trace.record(BindingContext.PATTERN_COMPONENTS_RECEIVER_TYPE, this, receiverType)
+        val types = resolver.getComponentsTypes(this, entries, receiverType, context)
         return info.and(types.zip(entries) { type, entry ->
-            entry.resolve(resolver, state.next(type))
+            val subjectValue = DataFlowValueFactory.createDataFlowValue(entry, type, context)
+            entry.resolve(resolver, state.replaceSubject(subjectValue, type))
         })
     }
 }

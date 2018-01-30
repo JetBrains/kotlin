@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi.pattern
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
@@ -25,11 +26,41 @@ import org.jetbrains.kotlin.types.expressions.PatternResolver
 
 class KtPatternEntry(node: ASTNode) : KtPatternElement(node) {
 
-    val constraint: KtPatternConstraint?
+    private val simpleConstraint: KtPatternConstraint?
         get() = findChildByType(KtNodeTypes.PATTERN_CONSTRAINT)
 
-    val declaration: KtPatternVariableDeclaration?
+    private val declaration: KtPatternVariableDeclaration?
         get() = findChildByType(KtNodeTypes.PATTERN_VARIABLE_DECLARATION)
+
+    private val constraint: KtPatternConstraint?
+        get() = declaration?.constraint ?: simpleConstraint
+
+    private val expression: KtPatternExpression?
+        get() = constraint?.expression
+
+    private val typedTuple: KtPatternTypedTuple?
+        get() = constraint?.typedTuple
+
+    private val tuple: KtPatternTuple?
+        get() = typedTuple?.tuple
+
+    private val typedTupleType: KtPatternTypeReference?
+        get() = typedTuple?.typeReference
+
+    private val declarationType: KtPatternTypeReference?
+        get() = declaration?.patternTypeReference
+
+    private val simpleType: KtPatternTypeReference?
+        get() = constraint?.typeReference
+
+    val typeReference: KtTypeReference?
+        get() = (simpleType ?: declarationType ?: typedTupleType)?.typeReference
+
+    val isSimple: Boolean
+        get() = tuple?.entries?.all { it.isSimple && it.typeReference == null && it.expression == null } ?: true
+
+    val isEmptyDeclaration: Boolean
+        get() = declaration?.isEmpty ?: false
 
     val element: KtPatternElement?
         get() = findChildByClass(KtPatternElement::class.java)

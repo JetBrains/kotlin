@@ -207,7 +207,7 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElement(node), KtVa
         val typeInfo = patternTypeReference?.resolve(resolver, state)
         val constraintInfo = constraint?.resolve(resolver, state)
         val info = resolver.resolveType(this, state)
-        resolver.defineVariable(this, state)
-        return info.and(typeInfo, constraintInfo)
+        val defineInfo = resolver.defineVariable(this, state)
+        return info.and(typeInfo, constraintInfo, defineInfo)
     }
 }

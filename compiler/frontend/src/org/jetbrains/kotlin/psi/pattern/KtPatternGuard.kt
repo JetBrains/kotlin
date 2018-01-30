@@ -32,7 +32,7 @@ class KtPatternGuard(node: ASTNode) : KtPatternElement(node) {
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
         val dataFlow = resolver.checkCondition(this.expression, state)
-        ConditionalTypeInfo(resolver.builtIns.nothingType, dataFlow)
+        ConditionalTypeInfo(resolver.builtIns.booleanType, dataFlow)
     }
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {

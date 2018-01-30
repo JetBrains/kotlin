@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi.pattern
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
@@ -39,6 +40,12 @@ class KtPattern(node: ASTNode) : KtPatternElement(node) {
     val guard: KtPatternGuard?
         get() = findChildByType(KtNodeTypes.PATTERN_GUARD)
 
+    val isSimple: Boolean
+        get() = entry?.isSimple?.and(guard == null) ?: true
+
+    val typeReference: KtTypeReference?
+        get() = entry?.typeReference
+
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitPattern(this, data)
     }
@@ -49,8 +56,9 @@ class KtPattern(node: ASTNode) : KtPatternElement(node) {
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
         val entryInfo = entry?.resolve(resolver, state)
-        val guardInfo = guard?.resolve(resolver, state)
         val thisInfo = resolver.resolveType(this, state)
-        return thisInfo.and(entryInfo, guardInfo)
+        val info = thisInfo.and(entryInfo)
+        val guardInfo = guard?.resolve(resolver, state.replaceDataFlow(info.dataFlowInfo.thenInfo))
+        return info.and(guardInfo)
     }
 }

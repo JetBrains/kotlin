@@ -4257,7 +4257,8 @@ The "returned" value of try expression with no finally is either the last expres
         }
         else if (element instanceof KtPatternVariableDeclaration) {
             return generateMatchVariableDeclaration(expressionToMatch, (KtPatternVariableDeclaration) element);
-        } else if (element instanceof KtPatternTypeReference) {
+        }
+        else if (element instanceof KtPatternTypeReference) {
             return generateMatchTypeReference(expressionToMatch, (KtPatternTypeReference) element);
         }
         throw new IllegalArgumentException("unexpected entry element " + element.getClass().getName());
@@ -4305,8 +4306,7 @@ The "returned" value of try expression with no finally is either the last expres
             StackValue result = null;
             for (KtPatternEntry entry : entries) {
                 // it possible if expression is KtPatternVariableDeclaration is empty, etc is '_' token
-                KtPatternVariableDeclaration declaration = entry.getDeclaration();
-                if (declaration != null && declaration.isEmpty()) continue;
+                if (entry.isEmptyDeclaration()) continue;
                 ResolvedCall<FunctionDescriptor> componentCall = bindingContext.get(PATTERN_COMPONENT_RESOLVED_CALL, entry);
                 forceAssert(componentCall != null, "resolved call is null for " + entry.getText());
                 StackValue expressionValue = invokeFunction(receiverCall, componentCall, loadReceiver);
