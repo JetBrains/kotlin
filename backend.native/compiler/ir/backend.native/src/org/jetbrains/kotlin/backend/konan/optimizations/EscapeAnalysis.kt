@@ -267,7 +267,7 @@ internal object EscapeAnalysis {
             }
 
             for (functionSymbol in callGraph.directEdges.keys) {
-                val numberOfParameters = intraproceduralAnalysisResult[functionSymbol]!!.function.numberOfParameters
+                val numberOfParameters = intraproceduralAnalysisResult[functionSymbol]!!.function.parameterTypes.size
                 escapeAnalysisResults[functionSymbol] = FunctionEscapeAnalysisResult(
                         // Assume no edges at the beginning.
                         // Then iteratively add needed.
