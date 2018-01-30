@@ -143,4 +143,4 @@ private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElemen
 }
 
 fun PsiElement.javaResolutionFacade() =
-        KotlinCacheService.getInstance(project).getResolutionFacadeByFile(this.containingFile, JvmPlatform)
+        KotlinCacheService.getInstance(project).getResolutionFacadeByFile(this.originalElement.containingFile, JvmPlatform)
