@@ -101,7 +101,10 @@ class ConfigurePluginUpdatesDialog(project: Project?) : DialogWrapper(project, f
 
     private fun saveSelectedChannel(channel: Int) {
         val hosts = UpdateSettings.getInstance().storedPluginHosts
-        hosts.removeIf { it.startsWith("https://plugins.jetbrains.com/plugins/") && it.endsWith("/6954") }
+        hosts.removeIf {
+            it.startsWith("https://plugins.jetbrains.com/plugins/") &&
+                    (it.endsWith("/6954") || it.endsWith(KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString))
+        }
         when (channel) {
             EAP_1_3.uiIndex -> hosts.add(EAP_1_3.url)
             EAP_1_2.uiIndex -> hosts.add(EAP_1_2.url)
@@ -119,8 +122,8 @@ class ConfigurePluginUpdatesDialog(project: Project?) : DialogWrapper(project, f
     }
 
     enum class EAPChannels(val url: String, val uiIndex: Int) {
-        EAP_1_2("https://plugins.jetbrains.com/plugins/eap-1.2/6954", 1),
-        EAP_1_3("https://plugins.jetbrains.com/plugins/eap-next/6954", 2);
+        EAP_1_2("https://plugins.jetbrains.com/plugins/eap-1.2/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}", 1),
+        EAP_1_3("https://plugins.jetbrains.com/plugins/eap-next/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}", 2);
 
         val hasChannel: Boolean get() = url in UpdateSettings.getInstance().pluginHosts
     }
