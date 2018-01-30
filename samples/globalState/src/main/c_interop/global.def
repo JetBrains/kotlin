@@ -5,6 +5,7 @@ typedef struct {
   int x;
   float f;
   char* string;
+  void* kotlinObject;
 } SharedData;
 
 SharedData sharedData;

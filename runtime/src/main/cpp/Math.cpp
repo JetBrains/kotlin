@@ -248,8 +248,12 @@ KLong Kotlin_math_absl(KLong x) { return llabs(x); }
 
 // kotlin.math isn't supported for WASM.
 namespace {
-    void NotImplemented() { ThrowNotImplementedError(); }
+
+RUNTIME_NORETURN void NotImplemented() {
+  ThrowNotImplementedError();
 }
+
+}  // namespace
 
 KDouble Kotlin_math_sin(KDouble x) { NotImplemented(); }
 KDouble Kotlin_math_cos(KDouble x) { NotImplemented(); }

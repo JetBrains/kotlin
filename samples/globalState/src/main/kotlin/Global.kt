@@ -25,8 +25,15 @@ inline fun Int.ensureUnixCallResult(op: String, predicate: (Int) -> Boolean = { 
     return this
 }
 
-fun dumpShared(prefix: String) =
-        println("$prefix: ${pthread_self().rawValue} x=${sharedData.x} f=${sharedData.f} s=${sharedData.string!!.toKString()}")
+data class SharedDataMember(val double: Double)
+
+data class SharedData(val string: String, val int: Int, val member: SharedDataMember)
+
+fun dumpShared(prefix: String): Unit {
+    println("""
+            $prefix: ${pthread_self().rawValue} x=${sharedData.x} f=${sharedData.f} s=${sharedData.string!!.toKString()}
+            """.trimIndent())
+}
 
 fun main(args: Array<String>) {
     // Arena owning all native allocs.
@@ -36,6 +43,9 @@ fun main(args: Array<String>) {
     sharedData.x = 239
     sharedData.f = 0.5f
     sharedData.string = "Hello Kotlin!".cstr.getPointer(arena)
+    sharedData.kotlinObject = konan.worker.detachObjectGraph {
+        SharedData("A string", 42, SharedDataMember(2.39))
+    }
     dumpShared("thread1")
 
     // Start a new thread, that sees the variable.
@@ -43,12 +53,15 @@ fun main(args: Array<String>) {
     memScoped {
         val thread = alloc<pthread_tVar>()
         pthread_create(thread.ptr, null, staticCFunction {
-            _ ->
+            argC ->
             initRuntimeIfNeeded()
             dumpShared("thread2")
+            val kotlinObject = konan.worker.attachObjectGraph<SharedData>(sharedData.kotlinObject)
+            val arg = konan.worker.attachObjectGraph<SharedDataMember>(argC)
+            println("thread arg is $arg Kotlin object is $kotlinObject")
             // Workaround for compiler issue.
             null as COpaquePointer?
-        }, null).ensureUnixCallResult("pthread_create")
+        }, konan.worker.detachObjectGraph { SharedDataMember(3.14)} ).ensureUnixCallResult("pthread_create")
         pthread_join(thread.value, null).ensureUnixCallResult("pthread_join")
     }
 

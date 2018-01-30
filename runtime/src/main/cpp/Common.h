@@ -18,6 +18,7 @@
 #define RUNTIME_COMMON_H
 
 #define RUNTIME_NOTHROW __attribute__((nothrow))
+#define RUNTIME_NORETURN __attribute__((noreturn))
 #define RUNTIME_CONST __attribute__((const))
 #define RUNTIME_PURE __attribute__((pure))
 #define RUNTIME_USED __attribute__((used))

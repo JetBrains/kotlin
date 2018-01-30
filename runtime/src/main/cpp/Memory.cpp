@@ -1312,7 +1312,6 @@ bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
 #if USE_GC
   if (root != nullptr) {
     auto state = memoryState;
-
     auto container = root->container();
 
     ContainerHeaderSet visited;

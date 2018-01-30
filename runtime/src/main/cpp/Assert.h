@@ -17,7 +17,9 @@
 #ifndef RUNTIME_ASSERT_H
 #define RUNTIME_ASSERT_H
 
-void RuntimeAssertFailed(const char* location, const char* message);
+#include "Common.h"
+
+RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* message);
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)

@@ -34,22 +34,22 @@ void SetKonanTerminateHandler();
 // The functions below are implemented in Kotlin (at package konan.internal).
 
 // Throws null pointer exception. Context is evaluated from caller's address.
-void ThrowNullPointerException();
+void RUNTIME_NORETURN ThrowNullPointerException();
 // Throws array index out of bounds exception.
 // Context is evaluated from caller's address.
-void ThrowArrayIndexOutOfBoundsException();
+void RUNTIME_NORETURN ThrowArrayIndexOutOfBoundsException();
 // Throws class cast exception.
-void ThrowClassCastException();
+void RUNTIME_NORETURN ThrowClassCastException();
 // Throws arithmetic exception.
-void ThrowArithmeticException();
+void RUNTIME_NORETURN ThrowArithmeticException();
 // Throws number format exception.
-void ThrowNumberFormatException();
+void RUNTIME_NORETURN ThrowNumberFormatException();
 // Throws out of memory error.
-void ThrowOutOfMemoryError();
+void RUNTIME_NORETURN ThrowOutOfMemoryError();
 // Throws not implemented error.
-void ThrowNotImplementedError();
+void RUNTIME_NORETURN ThrowNotImplementedError();
 // Throws illegal character conversion exception (used in UTF8/UTF16 conversions).
-void ThrowIllegalCharacterConversionException();
+void RUNTIME_NORETURN ThrowIllegalCharacterConversionException();
 // Prints out mesage of Throwable.
 void PrintThrowable(KRef);
 

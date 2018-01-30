@@ -460,6 +460,19 @@ KInt versionToken() {
   return theState()->versionToken();
 }
 
+OBJ_GETTER(attachObjectGraphInternal, KNativePtr stable) {
+  RETURN_RESULT_OF(AdoptStablePointer, stable);
+}
+
+KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
+   KRef ref = nullptr;
+   WorkerLaunchpad(producer, &ref);
+   if (ref != nullptr) {
+     return transfer(ref, transferMode);
+   } else
+     return nullptr;
+}
+
 #else
 
 KInt startWorker() {
@@ -502,6 +515,16 @@ KInt versionToken() {
   return 0;
 }
 
+OBJ_GETTER(attachObjectGraphInternal, KNativePtr stable) {
+  ThrowWorkerUnsupported();
+  return nullptr;
+}
+
+KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
+   ThrowWorkerUnsupported();
+   return nullptr;
+}
+
 #endif  // WITH_WORKERS
 
 }  // namespace
@@ -540,5 +563,12 @@ KInt Kotlin_Worker_versionToken() {
   return versionToken();
 }
 
+OBJ_GETTER(Kotlin_Worker_attachObjectGraphInternal, KNativePtr stable) {
+  RETURN_RESULT_OF(attachObjectGraphInternal, stable);
+}
+
+KNativePtr Kotlin_Worker_detachObjectGraphInternal(KInt transferMode, KRef producer) {
+  return detachObjectGraphInternal(transferMode, producer);
+}
 
 }  // extern "C"
