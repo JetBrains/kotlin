@@ -40,10 +40,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementOrCallableRef
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
@@ -135,7 +132,12 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
             }
         }
 
-        nameElement.replace(element)
+        if (element.node.elementType == KtTokens.IDENTIFIER) {
+            nameElement.astReplace(element)
+        }
+        else {
+            nameElement.replace(element)
+        }
         return expression
     }
 

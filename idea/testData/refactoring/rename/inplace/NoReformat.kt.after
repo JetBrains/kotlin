@@ -1,0 +1,7 @@
+public class OneLineKotlin {
+    var subject2 = 1
+    var aux = 1
+    public fun simple0() { subject2 }
+    public fun simple1() { subject2 = 2 }
+    public fun simple2() { aux = subject2 }
+} 
