@@ -273,7 +273,7 @@ class DependencyProcessor(dependenciesRoot: File,
     }
 }
 
-private object InternalServer {
+internal object InternalServer {
     private val host = "repo.labs.intellij.net"
     val url = "http://$host/kotlin-native"
 

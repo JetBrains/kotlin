@@ -60,9 +60,43 @@ open class Command(initialCommand: List<String>) {
     }
 
     open fun execute() {
-        if (logger != null) logger!! { command.toList<String>().joinToString(" ") } 
+        log()
 
         val code = runProcess()
+        handleExitCode(code)
+    }
+
+    fun getOutputLines(): List<String> {
+        log()
+
+        val outputFile = createTempFile()
+        outputFile.deleteOnExit()
+
+        try {
+            val builder = ProcessBuilder(command)
+
+            builder.redirectInput(Redirect.INHERIT)
+            builder.redirectError(Redirect.INHERIT)
+            builder.redirectOutput(ProcessBuilder.Redirect.to(outputFile))
+            // Note: getting process output could be done without redirecting to temporary file,
+            // however this would require managing a thread to read `process.inputStream` because
+            // it may have limited capacity.
+
+            val process = builder.start()
+            val code = process.waitFor()
+            handleExitCode(code)
+
+            return outputFile.readLines()
+        } finally {
+            outputFile.delete()
+        }
+    }
+
+    private fun handleExitCode(code: Int) {
         if (code != 0) throw KonanExternalToolFailure("The ${command[0]} command returned non-zero exit code: $code.", command[0])
+    }
+
+    private fun log() {
+        if (logger != null) logger!! { command.toList<String>().joinToString(" ") }
     }
 }

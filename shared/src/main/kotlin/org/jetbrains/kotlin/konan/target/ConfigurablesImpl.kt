@@ -27,9 +27,6 @@ class LinuxMIPSConfigurablesImpl(target: KonanTarget, properties: Properties, ba
 class AndroidConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
     : AndroidConfigurables, KonanPropertiesLoader(target, properties, baseDir)
 
-class AppleConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
-    : AppleConfigurables,  KonanPropertiesLoader(target, properties, baseDir)
-
 class MingwConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
     : MingwConfigurables, KonanPropertiesLoader(target, properties, baseDir)
 

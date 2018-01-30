@@ -31,8 +31,8 @@ interface TargetableExternalStorage {
     fun downloadDependencies()
 }
 
-open class KonanPropertiesLoader(override val target: KonanTarget, val properties: Properties, val baseDir: String? = null) : Configurables {
-    val dependencies get() = hostTargetList("dependencies")
+abstract class KonanPropertiesLoader(override val target: KonanTarget, val properties: Properties, val baseDir: String? = null) : Configurables {
+    open val dependencies get() = hostTargetList("dependencies")
 
     override fun downloadDependencies() {
         dependencyProcessor!!.run()
