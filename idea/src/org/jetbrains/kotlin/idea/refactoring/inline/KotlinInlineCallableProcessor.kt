@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 class KotlinInlineCallableProcessor(
         project: Project,
@@ -70,7 +71,14 @@ class KotlinInlineCallableProcessor(
                 postAction = {
                     if (deleteAfter) {
                         if (usages.size == simpleNameUsages.size) {
-                            declaration.delete()
+                            val containingClass = declaration.containingClassOrObject
+                            if (containingClass is KtObjectDeclaration
+                                && containingClass.isCompanion()
+                                && containingClass.declarations.size == 1) {
+                                containingClass.delete()
+                            } else {
+                                declaration.delete()
+                            }
                             statementToDelete?.delete()
                         }
                         else {
