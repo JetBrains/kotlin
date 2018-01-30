@@ -191,7 +191,7 @@ class KotlinPullUpHelper(
 
     private val targetToSourceConstructors = LinkedHashMap<KtElement, MutableList<KtElement>>().let { result ->
         if (!data.isInterfaceTarget && data.targetClass is KtClass) {
-            result[data.targetClass.primaryConstructor ?: data.targetClass] = ArrayList<KtElement>()
+            result[data.targetClass.primaryConstructor ?: data.targetClass] = ArrayList()
             data.sourceClass.accept(
                 object : KtTreeVisitorVoid() {
                     private fun processConstructorReference(expression: KtReferenceExpression, callingConstructorElement: KtElement) {
@@ -626,7 +626,7 @@ class KotlinPullUpHelper(
 
         for ((constructorElement, propertyToInitializerInfo) in targetConstructorToPropertyInitializerInfoMap.entries) {
             val properties = propertyToInitializerInfo.keys.sortedWith(
-                Comparator<KtProperty> { property1, property2 ->
+                Comparator { property1, property2 ->
                     val info1 = propertyToInitializerInfo[property1]!!
                     val info2 = propertyToInitializerInfo[property2]!!
                     when {
