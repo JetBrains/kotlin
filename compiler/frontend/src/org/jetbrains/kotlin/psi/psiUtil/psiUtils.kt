@@ -95,7 +95,7 @@ fun PsiElement.nextLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
 }
 
 fun <T : PsiElement> PsiElement.getParentOfTypesAndPredicate(
-    strict: Boolean = false, vararg parentClasses: Class<T>, predicate: (T) -> Boolean
+    strict: Boolean = false, vararg parentClasses: Class<out T>, predicate: (T) -> Boolean
 ): T? {
     var element = if (strict) parent else this
     while (element != null) {
