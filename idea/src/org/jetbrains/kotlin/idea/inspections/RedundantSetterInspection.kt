@@ -16,10 +16,12 @@ class RedundantSetterInspection : AbstractKotlinInspection(), CleanupLocalInspec
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return propertyAccessorVisitor { accessor ->
             if (accessor.isRedundantSetter()) {
-                holder.registerProblem(accessor,
-                                       "Redundant setter",
-                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                       RemoveRedundantSetterFix())
+                holder.registerProblem(
+                    accessor,
+                    "Redundant setter",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    RemoveRedundantSetterFix()
+                )
             }
         }
     }
@@ -35,8 +37,8 @@ private fun KtPropertyAccessor.isRedundantSetter(): Boolean {
         val parameter = valueParameters.takeIf { it.size == 1 }?.firstOrNull() ?: return false
         val binaryExpression = statement as? KtBinaryExpression ?: return false
         return binaryExpression.operationToken == KtTokens.EQ
-               && binaryExpression.left?.isFieldText() == true
-               && binaryExpression.right?.mainReference?.resolve() == parameter
+                && binaryExpression.left?.isFieldText() == true
+                && binaryExpression.right?.mainReference?.resolve() == parameter
     }
     return false
 }
