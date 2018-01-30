@@ -95,12 +95,13 @@ class KtLightAnnotationForSourceEntry(
         override fun getReferences() = originalExpression?.references.orEmpty()
         override fun getLanguage() = KotlinLanguage.INSTANCE
         override fun getNavigationElement() = originalExpression
-        override fun isPhysical(): Boolean = originalExpression?.containingFile == kotlinOrigin.containingFile
+        override fun isPhysical(): Boolean = false
         override fun getTextRange() = originalExpression?.textRange ?: TextRange.EMPTY_RANGE
         override fun getStartOffsetInParent() = originalExpression?.startOffsetInParent ?: 0
         override fun getParent() = parent
         override fun getText() = originalExpression?.text.orEmpty()
-        override fun getContainingFile(): PsiFile? = if (isPhysical) kotlinOrigin.containingFile else delegate.containingFile
+        override fun getContainingFile(): PsiFile? = if (originalExpression?.containingFile == kotlinOrigin.containingFile)
+            kotlinOrigin.containingFile else delegate.containingFile
 
         override fun replace(newElement: PsiElement): PsiElement {
             val value = (newElement as? PsiLiteral)?.value as? String ?: return this
@@ -249,8 +250,6 @@ class KtLightAnnotationForSourceEntry(
                 }
                 else -> LightElementValue(value, parent, ktOrigin)
             }
-
-    override fun isPhysical() = true
 
     override fun getName() = null
 
