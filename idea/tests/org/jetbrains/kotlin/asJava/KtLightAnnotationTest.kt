@@ -78,7 +78,6 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         val annotation = myFixture.findClass("AnnotatedClass").methods.first { it.name == "bar" }.parameterList.parameters.single()
                 .expectAnnotations(2).single { it.qualifiedName == "Qualifier" }
         val annotationAttributeVal = annotation.findAttributeValue("value") as PsiElement
-        TestCase.assertTrue(annotationAttributeVal.isPhysical)
         assertTextRangeAndValue("\"foo\"", "foo", annotationAttributeVal)
     }
 
@@ -501,6 +500,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun assertTextAndRange(expected: String, psiElement: PsiElement) {
         TestCase.assertEquals("mismatch for $psiElement of ${psiElement.javaClass}", expected, psiElement.text)
         TestCase.assertEquals(expected, psiElement.textRange.substring(psiElement.containingFile.text))
+        TestCase.assertEquals(psiElement, PsiAnchor.create(psiElement).retrieve())
     }
 
     private fun assertIsKtLightAnnotation(expected: String, psiElement: PsiElement) {
