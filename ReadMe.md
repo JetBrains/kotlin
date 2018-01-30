@@ -46,11 +46,7 @@ You also can use [Gradle properties](https://docs.gradle.org/current/userguide/b
 
 ## Building
 
-To build this project, first time you try to build you need to run this:
-
-    ant -f update_dependencies.xml
-
-which will setup the dependencies on
+On the first project configuration gradle will download and setup the dependencies on
 
 * `intellij-core` is a part of command line compiler and contains only necessary APIs.
 * `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
