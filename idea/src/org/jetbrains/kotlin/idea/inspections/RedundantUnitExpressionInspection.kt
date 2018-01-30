@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -43,16 +44,14 @@ private fun KtReferenceExpression.isRedundantUnit(): Boolean {
         if (this == parent.lastBlockStatementOrThis()) {
             val prev = this.previousStatement() ?: return true
             if (prev.isUnitLiteral()) return true
-            if (prev.getResolvedCall(analyze())?.resultingDescriptor?.returnType?.isUnit() == true) return true
-            if (prev is KtDeclaration) {
-                return if (prev is KtFunction)
-                    parent.parent?.parent?.let { it is KtIfExpression || it is KtWhenExpression } != true
-                else
-                    true
+            val prevType = prev.getResolvedCall(analyze())?.resultingDescriptor?.returnType
+            if (prevType != null) {
+                return prevType.isUnit()
             }
-            return false
+            if (prev !is KtDeclaration) return false
+            if (prev !is KtFunction) return true
+            return parent.getParentOfTypesAndPredicate(true, KtIfExpression::class.java, KtWhenExpression::class.java) { true } == null
         }
-
         return true
     }
     return false
