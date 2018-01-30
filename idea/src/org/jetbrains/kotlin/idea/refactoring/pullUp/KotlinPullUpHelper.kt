@@ -50,10 +50,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.asAssignment
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -359,7 +356,7 @@ class KotlinPullUpHelper(
 
     private fun removeOriginalMemberOrAddOverride(member: KtCallableDeclaration) {
         if (member.isAbstract()) {
-            member.delete()
+            member.deleteWithCompanion()
         }
         else {
             member.addModifier(KtTokens.OVERRIDE_KEYWORD)
@@ -393,7 +390,7 @@ class KotlinPullUpHelper(
                     (member.parent as? KtParameterList)?.removeParameter(member)
                 }
                 else {
-                    member.delete()
+                    member.deleteWithCompanion()
                 }
                 newField
             }
@@ -448,7 +445,7 @@ class KotlinPullUpHelper(
             }
 
             val movedMember = addMemberToTarget(memberCopy, data.targetClass as KtClass) as KtClassOrObject
-            member.delete()
+            member.deleteWithCompanion()
             return movedMember
         }
 
@@ -510,7 +507,7 @@ class KotlinPullUpHelper(
                     }
                 }
                 else {
-                    member.delete()
+                    member.deleteWithCompanion()
                 }
             }
 
@@ -642,3 +639,13 @@ class KotlinPullUpHelper(
 
     }
 }
+
+internal fun KtNamedDeclaration.deleteWithCompanion() {
+    val containingClass = this.containingClassOrObject
+    if (containingClass is KtObjectDeclaration && containingClass.isCompanion() && containingClass.declarations.size == 1) {
+        containingClass.delete()
+    } else {
+        this.delete()
+    }
+}
+

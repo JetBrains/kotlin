@@ -28,10 +28,10 @@ import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.replaceUsages
+import org.jetbrains.kotlin.idea.refactoring.pullUp.deleteWithCompanion
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 class KotlinInlineCallableProcessor(
     project: Project,
@@ -70,14 +70,7 @@ class KotlinInlineCallableProcessor(
             postAction = {
                 if (deleteAfter) {
                     if (usages.size == simpleNameUsages.size) {
-                        val containingClass = declaration.containingClassOrObject
-                        if (containingClass is KtObjectDeclaration
-                            && containingClass.isCompanion()
-                            && containingClass.declarations.size == 1) {
-                            containingClass.delete()
-                        } else {
-                            declaration.delete()
-                        }
+                        declaration.deleteWithCompanion()
                         statementToDelete?.delete()
                     } else {
                         CommonRefactoringUtil.showErrorHint(
