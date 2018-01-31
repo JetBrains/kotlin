@@ -21,4 +21,7 @@ class Foo(val a: String) : Parcelable {
         return 0
     }
 
-<caret>}
+    companion object {
+    <caret>}
+
+}
