@@ -148,8 +148,23 @@ fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, 
     }
 }
 
+val deleteBundledKotlinPlugin by tasks.creating(Delete::class) {
+    shouldRunAfter(unzipIntellijSdk, unzipIntellijUltimateSdk)
+
+    val intellijSdkDir = File(repoDir, intellij.name)
+    val intellijUltimateSdkDir = File(repoDir, intellijUltimate.name)
+
+    if (installIntellijCommunity) {
+        delete(File(intellijSdkDir, "plugins/Kotlin"))
+    }
+
+    if (installIntellijUltimate) {
+        delete(File(intellijUltimateSdkDir, "plugins/Kotlin"))
+    }
+}
+
 val prepareIvyXmls by tasks.creating {
-    dependsOn(unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest)
+    dependsOn(unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest, deleteBundledKotlinPlugin)
 
     val intellijSdkDir = File(repoDir, intellij.name)
     val intellijUltimateSdkDir = File(repoDir, intellijUltimate.name)
@@ -188,9 +203,6 @@ val prepareIvyXmls by tasks.creating {
                         File(intellijSdkDir, "lib"),
                         sourcesFile)
 
-            // Delete bundled Kotlin plugin
-            File(intellijSdkDir, "plugins/Kotlin").deleteRecursively()
-
             File(intellijSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
                 writeIvyXml(it.name, "intellij.plugin.${it.name}", files("$it/lib/"), File(it, "lib"), sourcesFile)
             }
@@ -201,9 +213,6 @@ val prepareIvyXmls by tasks.creating {
                         files("$intellijUltimateSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
                         File(intellijUltimateSdkDir, "lib"),
                         sourcesFile)
-
-            // Delete bundled Kotlin plugin
-            File(intellijUltimateSdkDir, "plugins/Kotlin").deleteRecursively()
 
             File(intellijUltimateSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
                 writeIvyXml(it.name, "intellijUltimate.plugin.${it.name}", files("$it/lib/"), File(it, "lib"), sourcesFile)
