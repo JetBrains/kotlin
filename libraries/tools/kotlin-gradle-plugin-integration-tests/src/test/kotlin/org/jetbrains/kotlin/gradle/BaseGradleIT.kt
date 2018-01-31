@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
-import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.After
