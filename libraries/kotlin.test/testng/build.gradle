@@ -1,0 +1,35 @@
+description = 'Kotlin Test TestNG'
+
+apply plugin: 'kotlin-platform-jvm'
+
+configureJvm6Project(project)
+configurePublishing(project)
+
+
+dependencies {
+    expectedBy project(':kotlin-test:kotlin-test-annotations-common')
+    compile project(':kotlin-test:kotlin-test-jvm')
+    compile('org.testng:testng:6.13.1')
+}
+
+
+jar {
+    manifestAttributes(manifest, project, 'Test')
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+dist {
+    from (jar, sourcesJar)
+}
+
+compileKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-module-name", project.name]
+}
+
+compileTestKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+}
