@@ -190,6 +190,16 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         val shortName = fqName.shortName().asString()
         val psiFactory = KtPsiFactory(this)
         val parent = parent
+
+        if (parent is KtUserType && !fqName.isOneSegmentFQN()) {
+            val qualifier = parent.qualifier
+            val qualifierReference = qualifier?.referenceExpression as? KtNameReferenceExpression
+            if (qualifierReference != null && qualifier.typeArguments.isNotEmpty()) {
+                qualifierReference.changeQualifiedName(fqName.parent())
+                return this
+            }
+        }
+
         var parentDelimiter = "."
         val fqNameBase = when {
             parent is KtCallElement -> {
