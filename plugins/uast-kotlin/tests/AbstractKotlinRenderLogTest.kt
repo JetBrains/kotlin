@@ -3,6 +3,7 @@ package org.jetbrains.uast.test.kotlin
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
@@ -108,7 +109,9 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
 
                 jvmDeclaration.sourcePsi?.let {
                     assertTrue("sourcePsi should be physical but ${it.javaClass} found for [${it.text}] " +
-                               "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}", it is KtElement)
+                                       "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}",
+                               it is KtElement || it is LeafPsiElement
+                    )
                 }
                 jvmDeclaration.javaPsi?.let {
                     assertTrue("javaPsi should be light but ${it.javaClass} found for [${it.text}] " +

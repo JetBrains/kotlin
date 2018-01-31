@@ -257,6 +257,24 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             )
         }
     }
+
+    @Test
+    fun testLiteralArraysTypes() {
+        doTest("AnnotationParameters") { _, file ->
+            file.findElementByTextFromPsi<UCallExpression>("intArrayOf(1, 2, 3)").let { field ->
+                Assert.assertEquals("PsiType:int[]", field.returnType.toString())
+            }
+            file.findElementByTextFromPsi<UCallExpression>("[1, 2, 3]").let { field ->
+                Assert.assertEquals("PsiType:int[]", field.returnType.toString())
+                Assert.assertEquals("PsiType:int", field.typeArguments.single().toString())
+            }
+            file.findElementByTextFromPsi<UCallExpression>("[\"a\", \"b\", \"c\"]").let { field ->
+                Assert.assertEquals("PsiType:String[]", field.returnType.toString())
+                Assert.assertEquals("PsiType:String", field.typeArguments.single().toString())
+            }
+
+        }
+    }
 }
 
 fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T = find { transform(it) == value } ?: throw AssertionError("'$value' not found, only ${this.joinToString { transform(it).toString() }}")

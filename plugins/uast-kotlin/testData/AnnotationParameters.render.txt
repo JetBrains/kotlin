@@ -7,6 +7,10 @@ public final class AnnotationParametersKt {
     @IntRange(from = 0, to = 100)
     @SuppressLint(value = <noref>("Lorem", "Ipsum", "Dolor"))
     public static final fun bar() : void = Unit
+    @RequiresPermission(anyOf = collectionLiteral[1, 2, 3])
+    public static final fun fooWithArrLiteral() : int = 5
+    @RequiresStrPermission(strs = collectionLiteral["a", "b", "c"])
+    public static final fun fooWithStrArrLiteral() : int = 3
 }
 
 public abstract annotation IntRange {
@@ -16,6 +20,10 @@ public abstract annotation IntRange {
 
 public abstract annotation RequiresPermission {
     public abstract fun anyOf() : int[] = UastEmptyExpression
+}
+
+public abstract annotation RequiresStrPermission {
+    public abstract fun strs() : java.lang.String[] = UastEmptyExpression
 }
 
 public abstract annotation WithDefaultValue {
