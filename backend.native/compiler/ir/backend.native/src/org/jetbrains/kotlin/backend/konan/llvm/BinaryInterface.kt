@@ -270,3 +270,6 @@ internal val ClassDescriptor.objectInstanceFieldSymbolName: String
 
 internal val ClassDescriptor.typeInfoHasVtableAttached: Boolean
     get() = !this.isAbstract() && !this.isExternalObjCClass()
+
+internal fun FunctionDescriptor.isExportedForCppRuntime() =
+        annotations.hasAnnotation(exportForCppRuntimeAnnotation)
