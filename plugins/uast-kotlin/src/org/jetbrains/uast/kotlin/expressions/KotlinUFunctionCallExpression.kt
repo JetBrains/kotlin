@@ -73,8 +73,13 @@ class KotlinUFunctionCallExpression(
     }
 
     override val methodIdentifier by lz {
-        val calleeExpression = psi.calleeExpression ?: return@lz null
-        KotlinUIdentifier(calleeExpression, this)
+        val calleeExpression = psi.calleeExpression
+        when (calleeExpression) {
+            null -> null
+            is KtNameReferenceExpression ->
+                KotlinUIdentifier(calleeExpression.getReferencedNameElement(), this /* ReferenceExpression will be the parent */)
+            else -> KotlinUIdentifier(calleeExpression, this)
+        }
     }
 
     override val valueArgumentCount: Int

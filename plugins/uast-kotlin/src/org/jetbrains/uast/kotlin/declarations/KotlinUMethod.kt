@@ -75,7 +75,13 @@ open class KotlinUMethod(
     override val uastAnchor by lazy {
         KotlinUIdentifier(
             nameIdentifier,
-            (sourcePsi as? PsiNameIdentifierOwner)?.nameIdentifier ?: sourcePsi?.navigationElement,
+            sourcePsi.let { sourcePsi ->
+                when (sourcePsi) {
+                    is PsiNameIdentifierOwner -> sourcePsi.nameIdentifier
+                    is KtObjectDeclaration -> sourcePsi.getObjectKeyword()
+                    else -> sourcePsi?.navigationElement
+                }
+            },
             this
         )
     }
