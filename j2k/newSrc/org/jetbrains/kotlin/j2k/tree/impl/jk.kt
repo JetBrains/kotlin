@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiJavaCodeReferenceElement
+import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
@@ -184,7 +187,7 @@ class JKParenthesizedExpressionImpl(override var expression: JKExpression?) : JK
     }
 }
 
-class JKTypeCastExpressionImpl(override var expression: JKExpression?, override var type: JKTypeReference?) : JKTypeCastExpression, JKElementBase() {
+class JKTypeCastExpressionImpl(override var expression: JKExpression?, override var type: JKType?) : JKTypeCastExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeCastExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
@@ -198,10 +201,10 @@ class JKTypeCastExpressionImpl(override var expression: JKExpression?, override 
     }
 }
 
-class JKTypeReferenceImpl(override val parameters: List<JKTypeReference>) : JKTypeReference, JKElementBase() {
+class JKTypeReferenceImpl(override val parameters: List<JKType>) : JKType, JKElementBase() {
 
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeReference(this, data)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitType(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
+import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
@@ -27,8 +28,7 @@ class JKJavaFieldImpl(override var modifierList: JKModifierList,
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaField(this, data)
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
-            = listOfNotNull(type, name, initializer).forEach { it.accept(visitor, data) }
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) = listOfNotNull(type, name, initializer).forEach { it.accept(visitor, data) }
 
     override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
         type = type.transform(transformer, data)
@@ -124,7 +124,16 @@ class JKJavaNewExpressionImpl(override var identifier: JKClassReference,
     }
 }
 
-class JKJavaMethodReferenceImpl() : JKJavaMethodReference, JKElementBase() {
+class JKJavaMethodReferenceImpl(override val nameIdentifier: JKNameIdentifier, override val targetProvider: ReferenceTargetProvider) : JKJavaMethodReference, JKElementBase() {
+    override fun resolve(): JKElement {
+        val resolveCache = targetProvider.resolveCache
+        val conversionCache = targetProvider.conversionCache
+        val psiIdentifier = resolveCache[this] as PsiIdentifier
+        val methodReferenceExpression = psiIdentifier.parent as PsiMethodReferenceExpression
+        val psiMethod = methodReferenceExpression.resolve() as PsiMethod
+        return conversionCache[psiMethod] ?: throw Exception("Resolved to null")
+    }
+
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodReference(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
@@ -132,7 +141,16 @@ class JKJavaMethodReferenceImpl() : JKJavaMethodReference, JKElementBase() {
     }
 }
 
-class JKJavaFieldReferenceImpl() : JKJavaFieldReference, JKElementBase() {
+class JKJavaFieldReferenceImpl(override val nameIdentifier: JKNameIdentifier, override val targetProvider: ReferenceTargetProvider) : JKJavaFieldReference, JKElementBase() {
+    override fun resolve(): JKElement {
+        val resolveCache = targetProvider.resolveCache
+        val conversionCache = targetProvider.conversionCache
+        val psiIdentifier = resolveCache[this] as PsiIdentifier
+        val psiReferenceExpression = psiIdentifier.parent as PsiReferenceExpression
+        val psiField = psiReferenceExpression.resolve() as PsiField
+        return conversionCache[psiField] ?: throw Exception("Resolved to null")
+    }
+
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaFieldReference(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
@@ -140,7 +158,16 @@ class JKJavaFieldReferenceImpl() : JKJavaFieldReference, JKElementBase() {
     }
 }
 
-class JKJavaClassReferenceImpl() : JKJavaClassReference, JKElementBase() {
+class JKJavaClassReferenceImpl(override val nameIdentifier: JKNameIdentifier, override val targetProvider: ReferenceTargetProvider) : JKJavaClassReference, JKElementBase() {
+    override fun resolve(): JKElement {
+        val resolveCache = targetProvider.resolveCache
+        val conversionCache = targetProvider.conversionCache
+        val psiIdentifier = resolveCache[this] as PsiIdentifier
+        val codeReferenceElement = psiIdentifier.parent as PsiJavaCodeReferenceElement
+        val psiClass = codeReferenceElement.resolve() as PsiClass
+        return conversionCache[psiClass] ?: throw Exception("Resolved to null")
+    }
+
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaClassReference(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
