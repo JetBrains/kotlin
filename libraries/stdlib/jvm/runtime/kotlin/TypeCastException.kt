@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package kotlin.jvm;
+package kotlin
 
-public class KotlinReflectionNotSupportedError extends Error {
-    public KotlinReflectionNotSupportedError() {
-        super("Kotlin reflection implementation is not found at runtime. Make sure you have kotlin-reflect.jar in the classpath");
-    }
+public open class TypeCastException : ClassCastException {
+    constructor()
 
-    public KotlinReflectionNotSupportedError(String message) {
-        super(message);
-    }
-
-    public KotlinReflectionNotSupportedError(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public KotlinReflectionNotSupportedError(Throwable cause) {
-        super(cause);
-    }
+    constructor(message: String?) : super(message)
 }

@@ -15,24 +15,16 @@ sourceSets {
     "main" {
         java.apply {
             srcDir(File(buildDir, "src"))
-//            srcDir(File(rootDir, "core", "runtime.jvm", "src"))
-//                    .include("kotlin/TypeAliases.kt",
-//                             "kotlin/text/TypeAliases.kt")
-//            srcDir(File(rootDir, "libraries", "stdlib", "src"))
-//                    .include("kotlin/collections/TypeAliases.kt",
-//                             "kotlin/jvm/JvmVersion.kt",
-//                             "kotlin/util/Standard.kt",
-//                             "kotlin/internal/Annotations.kt")
         }
     }
     "test" {}
 }
 
 val copySources by task<Copy> {
-    from(File(rootDir, "core", "runtime.jvm", "src"))
+    from(project(":kotlin-stdlib").projectDir.resolve("jvm/runtime"))
             .include("kotlin/TypeAliases.kt",
                     "kotlin/text/TypeAliases.kt")
-    from(File(rootDir, "libraries", "stdlib", "src"))
+    from(project(":kotlin-stdlib").projectDir.resolve("src"))
             .include("kotlin/collections/TypeAliases.kt",
                     "kotlin/jvm/JvmVersion.kt",
                     "kotlin/util/Standard.kt",
@@ -57,18 +49,6 @@ tasks.withType<KotlinCompile> {
 val jar = runtimeJar {
     dependsOn(":core:builtins:serialize")
     from(fileTree("${rootProject.extra["distDir"]}/builtins")) { include("kotlin/**") }
-//    dependsOn(":kotlin-stdlib:classes")
-//    project(":kotlin-stdlib").let { p ->
-//        p.pluginManager.withPlugin("java") {
-//            from(p.the<JavaPluginConvention>().sourceSets.getByName("main").output) {
-//                include("kotlin/**/TypeAliases*.class",
-//                        "kotlin/jvm/JvmVersion.class",
-//                        "kotlin/StandardKt*.class",
-//                        "kotlin/NotImplementedError*.class",
-//                        "kotlin/internal/*.class")
-//            }
-//        }
-//    }
 }
 
 val distDir: String by rootProject.extra

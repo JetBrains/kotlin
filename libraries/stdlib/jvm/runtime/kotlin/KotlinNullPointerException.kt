@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package kotlin;
+package kotlin
 
-public class TypeCastException extends ClassCastException {
-    public TypeCastException() {
-    }
+public open class KotlinNullPointerException : NullPointerException {
+    constructor()
 
-    public TypeCastException(String message) {
-        super(message);
-    }
+    constructor(message: String?) : super(message)
 }
