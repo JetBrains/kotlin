@@ -24,6 +24,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.task
 import org.gradle.kotlin.dsl.the
+import org.gradle.kotlin.dsl.*
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
 
@@ -81,3 +82,28 @@ private inline fun String.isFirstChar(f: (Char) -> Boolean) = isNotEmpty() && f(
 
 inline fun <reified T : Task> Project.getOrCreateTask(taskName: String, body: T.() -> Unit): T =
         (tasks.findByName(taskName)?.let { it as T } ?: task<T>(taskName)).apply { body() }
+
+private fun Test.useAndroidConfiguration(systemPropertyName: String, configName: String) {
+    val configuration = with(project) {
+        configurations.getOrCreate(configName)
+            .also {
+                dependencies.add(
+                    configName,
+                    dependencies.project(":custom-dependencies:android-sdk", configuration = configName)
+                )
+            }
+    }
+
+    dependsOn(configuration)
+    doFirst {
+        systemProperty(systemPropertyName, configuration.singleFile.canonicalPath)
+    }
+}
+
+fun Test.useAndroidSdk() {
+    useAndroidConfiguration(systemPropertyName = "android.sdk", configName = "androidSdk")
+}
+
+fun Test.useAndroidJar() {
+    useAndroidConfiguration(systemPropertyName = "android.jar", configName = "androidJar")
+}

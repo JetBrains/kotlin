@@ -5,9 +5,6 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-val androidSdk by configurations.creating
-val androidJar by configurations.creating
-
 dependencies {
     testRuntime(intellijDep())
 
@@ -53,9 +50,6 @@ dependencies {
     testRuntime(intellijPluginDep("java-decompiler"))
     testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
-
-    androidSdk(project(":custom-dependencies:android-sdk", configuration = "androidSdk"))
-    androidJar(project(":custom-dependencies:android-sdk", configuration = "androidJar"))
 }
 
 sourceSets {
@@ -67,11 +61,10 @@ testsJar {}
 
 projectTest {
     dependsOn(":kotlin-android-extensions-runtime:dist")
-    dependsOn(androidSdk)
     workingDir = rootDir
+    useAndroidSdk()
+    useAndroidJar()
     doFirst {
-        systemProperty("android.sdk", androidSdk.singleFile.canonicalPath)
-        systemProperty("android.jar", androidJar.singleFile.canonicalPath)
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }
 }

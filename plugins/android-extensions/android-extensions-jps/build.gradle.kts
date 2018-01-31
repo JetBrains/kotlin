@@ -1,8 +1,6 @@
 
 apply { plugin("kotlin") }
 
-val androidSdk by configurations.creating
-
 dependencies {
     testRuntime(intellijDep())
 
@@ -25,8 +23,6 @@ dependencies {
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijDep("jps-build-test"))
     testRuntime(intellijDep("jps-standalone"))
-
-    androidSdk(project(":custom-dependencies:android-sdk", configuration = "androidSdk"))
 }
 
 sourceSets {
@@ -36,8 +32,8 @@ sourceSets {
 
 projectTest {
     workingDir = rootDir
+    useAndroidSdk()
     doFirst {
-        systemProperty("android.sdk", androidSdk.singleFile.canonicalPath)
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }
 }

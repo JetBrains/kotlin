@@ -3,8 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 apply { plugin("kotlin") }
 
-val androidSdk by configurations.creating
-
 dependencies {
     testRuntime(intellijDep())
 
@@ -59,8 +57,6 @@ dependencies {
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("testng"))
-
-    androidSdk(project(":custom-dependencies:android-sdk", configuration = "androidSdk"))
 }
 
 sourceSets {
@@ -69,10 +65,9 @@ sourceSets {
 }
 
 projectTest {
-    dependsOn(androidSdk)
     workingDir = rootDir
+    useAndroidSdk()
     doFirst {
-        systemProperty("android.sdk", androidSdk.singleFile.canonicalPath)
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }
 }

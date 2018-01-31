@@ -4,7 +4,6 @@ description = "Kotlin Android Extensions Compiler"
 apply { plugin("kotlin") }
 
 val robolectricClasspath by configurations.creating
-val androidJar by configurations.creating
 
 dependencies {
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
@@ -30,7 +29,6 @@ dependencies {
     testRuntime(intellijPluginDep("junit")) { includeJars("idea-junit", "resources_en") }
 
     robolectricClasspath(commonDep("org.robolectric", "robolectric"))
-    androidJar(project(":custom-dependencies:android-sdk", configuration = "androidJar"))
 }
 
 sourceSets {
@@ -54,10 +52,10 @@ projectTest {
     environment("ANDROID_EXTENSIONS_RUNTIME_CLASSES", getSourceSetsFrom(":kotlin-android-extensions-runtime")["main"].output.classesDirs.asPath)
     dependsOn(":dist")
     workingDir = rootDir
+    useAndroidJar()
     doFirst {
         val androidPluginPath = File(intellijRootDir(), "plugins/android").canonicalPath
         systemProperty("ideaSdk.androidPlugin.path", androidPluginPath)
         systemProperty("robolectric.classpath", robolectricClasspath.asPath)
-        systemProperty("android.jar", androidJar.singleFile.canonicalPath)
     }
 }
