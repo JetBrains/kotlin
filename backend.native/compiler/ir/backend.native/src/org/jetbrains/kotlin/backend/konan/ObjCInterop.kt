@@ -130,7 +130,9 @@ class ObjCOverridabilityCondition : ExternalOverridabilityCondition {
             subClassDescriptor: ClassDescriptor?
     ): ExternalOverridabilityCondition.Result {
 
-        assert(superDescriptor.name == subDescriptor.name)
+        if (superDescriptor.name != subDescriptor.name) {
+            return ExternalOverridabilityCondition.Result.UNKNOWN
+        }
 
         val superClass = superDescriptor.containingDeclaration as? ClassDescriptor
         val subClass = subDescriptor.containingDeclaration as? ClassDescriptor
