@@ -17,8 +17,7 @@ val ideaUltimatePluginDir: File by rootProject.extra
 val ideaUltimateSandboxDir: File by rootProject.extra
 
 if (intellijUltimateEnabled) {
-
     runIdeTask("runUltimate", ideaUltimatePluginDir, ideaUltimateSandboxDir) {
-        shouldRunAfter(":ultimate:ideaUltimatePlugin")
+        dependsOn(":dist", ":prepare:idea-plugin:idea-plugin", ":ideaPlugin", ":ultimate:ideaUltimatePlugin")
     }
 }
