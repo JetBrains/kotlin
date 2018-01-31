@@ -16,11 +16,13 @@
 
 package org.jetbrains.uast.kotlin.declarations
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.uast.UElement
@@ -41,10 +43,20 @@ class KotlinUIdentifier private constructor(
 ) : UIdentifier(psi, givenParent) {
 
     init {
-        assert(sourcePsi == null || sourcePsi is LeafPsiElement || sourcePsi is KtElement, { "sourcePsi should be physical" })
+        if (ApplicationManager.getApplication().isUnitTestMode)
+            assert(sourcePsi == null || sourcePsi is LeafPsiElement || (sourcePsi is KtElement && sourcePsi.firstChild == null),
+                   { "sourcePsi should be physical leaf element but got $sourcePsi of (${sourcePsi?.javaClass})" })
     }
 
-    override val uastParent: UElement? by lazy { givenParent ?: sourcePsi?.parent?.toUElement() }
+    override val uastParent: UElement? by lazy {
+        if (givenParent != null) return@lazy givenParent
+        val parent = sourcePsi?.parent ?: return@lazy null
+        val parentParent = parent.parent
+        if (parentParent is KtCallElement && parentParent.calleeExpression == parent) { // method identifiers in calls
+            return@lazy parentParent.toUElement()
+        }
+        return@lazy parent.toUElement()
+    }
 
     constructor(javaPsi: PsiElement?, sourcePsi: PsiElement?, uastParent: UElement?) : this(javaPsi, sourcePsi, javaPsi, uastParent)
     constructor(sourcePsi: PsiElement?, uastParent: UElement?) : this(null, sourcePsi, sourcePsi, uastParent)
