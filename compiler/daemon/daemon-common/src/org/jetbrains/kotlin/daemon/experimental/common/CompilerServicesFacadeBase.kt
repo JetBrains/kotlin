@@ -1,0 +1,72 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.daemon.experimental.common
+
+import io.ktor.network.sockets.Socket
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
+import java.io.Serializable
+import java.rmi.Remote
+import java.rmi.RemoteException
+
+interface CompilerServicesFacadeBase : Remote, Server {
+    /**
+     * Reports different kind of diagnostic messages from compile daemon to compile daemon clients (jps, gradle, ...)
+     */
+    @Throws(RemoteException::class)
+    fun report(category: Int, severity: Int, message: String?, attachment: Serializable?)
+
+    class ReportMessage(
+            val category: Int,
+            val severity: Int,
+            val message: String?,
+            val attachment: Serializable?
+    ) : Message<CompilerServicesFacadeBase> {
+        suspend override fun process(server: CompilerServicesFacadeBase, clientSocket: Socket) =
+                server.report(category, severity, message, attachment)
+    }
+
+}
+
+enum class ReportCategory(val code: Int) {
+    COMPILER_MESSAGE(0),
+    EXCEPTION(1),
+    DAEMON_MESSAGE(2),
+    IC_MESSAGE(3),
+    OUTPUT_MESSAGE(4);
+
+    companion object {
+        fun fromCode(code: Int): ReportCategory? =
+                ReportCategory.values().firstOrNull { it.code == code }
+    }
+}
+
+enum class ReportSeverity(val code: Int) {
+    ERROR(0),
+    WARNING(1),
+    INFO(2),
+    DEBUG(3);
+
+    companion object {
+        fun fromCode(code: Int): ReportSeverity? =
+                ReportSeverity.values().firstOrNull { it.code == code }
+    }
+}
+
+fun CompilerServicesFacadeBase.report(category: ReportCategory, severity: ReportSeverity, message: String? = null, attachment: Serializable? = null) {
+    report(category.code, severity.code, message, attachment)
+}
