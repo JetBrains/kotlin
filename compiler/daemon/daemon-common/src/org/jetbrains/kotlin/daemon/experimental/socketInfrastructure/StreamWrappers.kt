@@ -33,10 +33,7 @@ class ByteReadChannelWrapper(private val readChannel: ByteReadChannel) {
 
     private suspend fun getLength(): Int {
         val packet = readBytes(4)
-        val b1 = packet[0].toInt()
-        val b2 = packet[1].toInt()
-        val b3 = packet[2].toInt()
-        val b4 = packet[3].toInt()
+        val (b1, b2, b3, b4) = packet.map(Byte::toInt)
         return 0xFF and b1 shl 24 or (0xFF and b2 shl 16) or
                 (0xFF and b3 shl 8) or (0xFF and b4)
     }
