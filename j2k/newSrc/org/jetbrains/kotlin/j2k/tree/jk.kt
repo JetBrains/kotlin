@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.j2k.tree
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
@@ -86,7 +87,7 @@ interface JKParenthesizedExpression : JKExpression {
 
 interface JKTypeCastExpression : JKExpression {
     val expression: JKExpression?
-    val type: JKTypeReference?
+    val type: JKType?
 }
 
 interface JKExpressionList : JKElement {
@@ -94,7 +95,8 @@ interface JKExpressionList : JKElement {
 }
 
 interface JKReference : JKElement {
-
+    val targetProvider:ReferenceTargetProvider
+    fun resolve(): JKElement
 }
 
 interface JKExternalReference {
@@ -102,19 +104,39 @@ interface JKExternalReference {
 }
 
 interface JKMethodReference : JKReference {
-
+    val nameIdentifier: JKNameIdentifier
 }
 
 interface JKFieldReference : JKReference {
-
+    val nameIdentifier: JKNameIdentifier
 }
 
 interface JKClassReference : JKReference {
-
+    val nameIdentifier: JKNameIdentifier
 }
 
-interface JKTypeReference : JKReference {
-    val parameters: List<JKTypeReference>
+interface JKType : JKElement {
+    val classReference: JKClassReference
+    val nullability: Nullability
+    val parameters: List<JKType>
+}
+
+interface JKExternalMethodReference : JKExternalReference {
+    val nameIdentifier: JKNameIdentifier
+}
+
+interface JKExternalFieldReference : JKExternalReference {
+    val nameIdentifier: JKNameIdentifier
+}
+
+interface JKExternalClassReference : JKExternalReference {
+    val nameIdentifier: JKNameIdentifier
+}
+
+interface JKExternalTypeReference : JKExternalReference {
+    val classReference: JKClassReference
+    val nullability: Nullability
+    val parameters: List<JKType>
 }
 
 interface JKOperatorIdentifier : JKIdentifier
@@ -157,3 +179,8 @@ interface JKStringLiteralExpression : JKLiteralExpression {
 }
 
 interface JKModalityModifier : JKModifier
+
+interface ReferenceTargetProvider {
+    val resolveCache: Map<JKElement, PsiElement>
+    val conversionCache: Map<PsiElement, JKElement>
+}
