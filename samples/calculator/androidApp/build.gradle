@@ -1,3 +1,17 @@
+buildscript {
+    ext.kotlin_version = '1.2.21'
+
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:3.0.1'
+    }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
@@ -10,6 +24,10 @@ android {
         versionCode 1
         versionName "1.0.0"
     }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 repositories {
@@ -19,7 +37,7 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation project.parent
+    implementation "org.jetbrains.kotlin.konan.samples:arithmetic-parser"
 
     implementation "com.android.support:appcompat-v7:27.0.2"
 }

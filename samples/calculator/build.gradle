@@ -1,31 +1,9 @@
-buildscript {
-    ext.kotlin_version = '1.2.0'
-
-    repositories {
-        google()
-        jcenter()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.android.tools.build:gradle:3.0.1'
-    }
-}
-
-apply plugin: 'kotlin'
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib"
-}
-
 apply plugin: 'konan'
 
 konan.targets = ['iphone', 'iphone_sim']
 
 konanArtifacts {
-    framework('KotlinArithmeticParser')
+    framework('KotlinArithmeticParser') {
+        srcDir 'parser/src/main/kotlin'
+    }
 }

@@ -1,6 +1,6 @@
 # Calculator sample
 
-This example shows how to use Kotlin library (located in [`src`](src/)) in different environments.
+This example shows how to use Kotlin library (located in [parser/src](parser/src/)) in different environments.
 Currently for
 * iOS (see [calculator](calculator/))
 * plain JVM (cli) (see [jvmCliApp](jvmCliApp/))
@@ -28,26 +28,26 @@ The sample consists of:
 2.  Kotlin library source code and build script. It is built into Objective-C
     framework by invoking Gradle from custom "Run Script" build phase, and this
     framework is imported into the Xcode project.
-    
+
 ## Using the same code with Kotlin/JVM
 The library can also be compiled to a `.jar` by Kotlin/JVM compiler with Gradle. 
-Just run from the [sample root dir](../): 
+Just run from the [library dir](parser/): 
 ```
-./gradlew calculator:jar
+../../gradlew jar
 ```
-This will generate a `calculator.jar` in `build/libs/`.
-    
+This will generate an `arithmetic-parser.jar` in `parser/build/libs/`.
+
 ## Plain JVM
 The plain jvm sample (written in Kotlin/JVM) will use the library as a gradle dependency.
 
-To build and run it, use
+To build and run it, go to [jvmCliApp](jvmCliApp/) directory and use
 ```
-./gradlew calculator:jvmCliApp:run
+../../gradlew run
 ```
 
 To build the distribution:
 ```
-./gradlew calculator:jvmCliApp:distZip
+../../gradlew distZip
 ```
 (the result will be available as
 `jvmCliApp/build/distributions/KotlinCalculator.zip`)
@@ -57,5 +57,5 @@ The Android App uses - similar to the plain JVM sample - the library as a gradle
 
 To build and run the Android sample do the following:
 
-1.  Open `samples/` in Android Studio
-2.  Now build and run the androidApp application 
+1.  Open `samples/calculator/androidApp` in Android Studio
+2.  Now build and run the androidApp application
