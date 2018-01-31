@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Konan Calculator</string>
+    <string name="enter_mathematic_exression">Enter mathematic exression:</string>
+</resources>
