@@ -659,7 +659,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         // Preserve symbol from deletion if needed
         if (descriptor.usedAnnotation
-                || (context.isWasmTarget && descriptor.isExportedForCppRuntime())) {
+                || (context.shouldPreserveRuntimeSymbols() && descriptor.isExportedForCppRuntime())) {
             context.llvm.usedFunctions += codegen.llvmFunction(descriptor)
         }
 

@@ -386,8 +386,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         config.configuration.get(KonanConfigKeys.PRODUCE) == CompilerOutputKind.DYNAMIC
     }
 
-    val isWasmTarget: Boolean by lazy {
-        config.targetManager.target == KonanTarget.WASM32
-    }
+    fun shouldPreserveRuntimeSymbols(): Boolean =
+            config.targetManager.target == KonanTarget.WASM32
 }
 
