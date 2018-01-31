@@ -58,7 +58,7 @@ fun f11(a : A?) {
     is B -> <!DEBUG_INFO_SMARTCAST!>a<!>.bar()
     is A -> <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
     is Any -> <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
-    <!USELESS_IS_CHECK!>is Any?<!> -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
+    is <!USELESS_IS_CHECK!>Any?<!> -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
     else -> a?.foo()
   }
 }
@@ -68,7 +68,7 @@ fun f12(a : A?) {
     is B -> <!DEBUG_INFO_SMARTCAST!>a<!>.bar()
     is A -> <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
     is Any -> <!DEBUG_INFO_SMARTCAST!>a<!>.foo();
-    <!USELESS_IS_CHECK!>is Any?<!> -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
+    is <!USELESS_IS_CHECK!>Any?<!> -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
     is C -> <!DEBUG_INFO_SMARTCAST!>a<!>.bar()
     else -> a?.foo()
   }

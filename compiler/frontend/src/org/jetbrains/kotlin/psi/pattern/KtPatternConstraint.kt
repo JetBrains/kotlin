@@ -49,7 +49,7 @@ class KtPatternConstraint(node: ASTNode) : KtPatternElementImpl(node) {
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
         val element = element.errorIfNull(this, state, Errors.EXPECTED_CONSTRAINT_ELEMENT)
         val elementTypeInfo = element?.resolve(resolver, state)
-        val thisTypeInfo = resolver.resolveType(this, state)
+        val thisTypeInfo = getTypeInfo(resolver, state)
         return thisTypeInfo.and(elementTypeInfo)
     }
 }

@@ -113,6 +113,10 @@ class PatternResolver(
     }
 
     fun getTypeInfo(expression: KtExpression, state: PatternResolveState): ConditionalTypeInfo {
+        val subjectType = state.context.trace.bindingContext.get(BindingContext.PATTERN_SUBJECT_TYPE, expression)
+        if (subjectType == null) {
+            state.context.trace.record(BindingContext.PATTERN_SUBJECT_TYPE, expression, state.subject.type)
+        }
         val info = facade.getTypeInfo(expression, state.context)
         val patch = ErrorUtils.createErrorType("${expression.text} return type")
         val type = info.type.errorAndReplaceIfNull(expression, state, Errors.NON_DERIVABLE_TYPE, patch)
@@ -123,26 +127,6 @@ class PatternResolver(
         state.context.trace.bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element)?.let { return it }
         val info = creator() ?: ConditionalTypeInfo(state.subject.type, ConditionalDataFlowInfo.EMPTY)
         state.context.trace.record(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element, info)
-        return info
-    }
-
-    fun resolveType(expression: KtExpression, state: PatternResolveState): ConditionalTypeInfo {
-        val subjectType = state.context.trace.bindingContext.get(BindingContext.PATTERN_SUBJECT_TYPE, expression)
-        if (subjectType == null) {
-            state.context.trace.record(BindingContext.PATTERN_SUBJECT_TYPE, expression, state.subject.type)
-        }
-        return getTypeInfo(expression, state)
-    }
-
-    fun resolveType(element: KtPatternElement, state: PatternResolveState): ConditionalTypeInfo {
-        val info = element.getTypeInfo(this, state)
-        val context = state.context
-        val type = info.type
-        val subjectType = state.subject.type
-        when (element) {
-            is KtPatternTypeReference, is KtPatternVariableDeclaration, is KtPatternTypedTuple ->
-                PatternMatchingTypingVisitor.checkTypeCompatibility(context, type, subjectType, element)
-        }
         return info
     }
 

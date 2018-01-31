@@ -210,7 +210,7 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElementImpl(node), 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
         val typeInfo = patternTypeReference?.resolve(resolver, state)
         val constraintInfo = constraint?.resolve(resolver, state)
-        val info = resolver.resolveType(this, state)
+        val info = getTypeInfo(resolver, state)
         val defineInfo = resolver.defineVariable(this, state)
         return info.and(typeInfo).and(constraintInfo).and(defineInfo)
     }

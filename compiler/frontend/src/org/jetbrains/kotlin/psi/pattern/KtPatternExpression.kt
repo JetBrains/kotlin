@@ -41,8 +41,6 @@ class KtPatternExpression(node: ASTNode) : KtPatternElementImpl(node) {
     }
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
-        val info = resolver.resolveType(this, state)
-        val expression = expression.errorIfNull(this, state, Errors.EXPECTED_PATTERN_EXPRESSION_ELEMENT)
-        return expression?.let { resolver.resolveType(it, state) } ?: info
+        return getTypeInfo(resolver, state)
     }
 }

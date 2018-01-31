@@ -39,6 +39,6 @@ class KtPatternTypeReference(node: ASTNode) : KtPatternElementImpl(node) {
     }
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
-        return resolver.resolveType(this, state)
+        return getTypeInfo(resolver, state)
     }
 }

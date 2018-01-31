@@ -73,7 +73,7 @@ class KtPatternEntry(node: ASTNode) : KtPatternElementImpl(node) {
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
         val entryInfo = element?.resolve(resolver, state)
-        val thisInfo = resolver.resolveType(this, state)
+        val thisInfo = getTypeInfo(resolver, state)
         return thisInfo.and(entryInfo)
     }
 }
