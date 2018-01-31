@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.*
@@ -786,11 +787,17 @@ class DeclarationsChecker(
     }
 
     private fun checkActualFunction(element: KtDeclaration, functionDescriptor: FunctionDescriptor) {
-        for (valueParameter in functionDescriptor.valueParameters) {
-            if (valueParameter.declaresDefaultValue()) {
-                trace.report(
-                    ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS.on(DescriptorToSourceUtils.descriptorToDeclaration(valueParameter) ?: element)
-                )
+        // Actual annotation constructors can have default argument values; their consistency with arguments in the expected annotation
+        // is checked in ExpectedActualDeclarationChecker.checkAnnotationConstructors
+        if (!functionDescriptor.isAnnotationConstructor()) {
+            for (valueParameter in functionDescriptor.valueParameters) {
+                if (valueParameter.declaresDefaultValue()) {
+                    trace.report(
+                        ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS.on(
+                            DescriptorToSourceUtils.descriptorToDeclaration(valueParameter) ?: element
+                        )
+                    )
+                }
             }
         }
     }

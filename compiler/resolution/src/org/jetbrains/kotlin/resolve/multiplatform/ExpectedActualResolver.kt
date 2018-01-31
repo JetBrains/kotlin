@@ -70,7 +70,7 @@ object ExpectedActualResolver {
             is CallableMemberDescriptor -> {
                 val container = actual.containingDeclaration
                 val candidates = when (container) {
-                    is ClassDescriptor -> {
+                    is ClassifierDescriptorWithTypeParameters -> {
                         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
                         val expectedClass =
                             findExpectedForActual(container, commonModule)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
@@ -223,7 +223,7 @@ object ExpectedActualResolver {
         parentSubstitutor: Substitutor? = null
     ): Compatibility {
         assert(a.name == b.name) { "This function should be invoked only for declarations with the same name: $a, $b" }
-        assert(a.containingDeclaration is ClassDescriptor == b.containingDeclaration is ClassDescriptor) {
+        assert(a.containingDeclaration is ClassifierDescriptorWithTypeParameters == b.containingDeclaration is ClassifierDescriptorWithTypeParameters) {
             "This function should be invoked only for declarations in the same kind of container (both members or both top level): $a, $b"
         }
 

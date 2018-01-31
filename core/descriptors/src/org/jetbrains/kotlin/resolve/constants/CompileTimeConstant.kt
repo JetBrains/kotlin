@@ -48,6 +48,10 @@ interface CompileTimeConstant<out T> {
             val usesVariableAsConstant: Boolean,
             val usesNonConstValAsConstant: Boolean
     )
+
+    override fun equals(other: Any?): Boolean
+
+    override fun hashCode(): Int
 }
 
 class TypedCompileTimeConstant<out T>(

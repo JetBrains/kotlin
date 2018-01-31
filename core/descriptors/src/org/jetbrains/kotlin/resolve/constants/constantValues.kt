@@ -32,17 +32,19 @@ abstract class ConstantValue<out T>(open val value: T) {
 
     abstract fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R
 
-    override fun toString() = value.toString()
+    override fun equals(other: Any?): Boolean = this === other || value == (other as? ConstantValue<*>)?.value
+
+    override fun hashCode(): Int = value?.hashCode() ?: 0
+
+    override fun toString(): String = value.toString()
 }
 
 abstract class IntegerValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
 
 class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<AnnotationDescriptor>(value) {
-
     override fun getType(module: ModuleDescriptor): KotlinType = value.type
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitAnnotationValue(this, data)
-    override fun toString() = value.toString()
 }
 
 class ArrayValue(
@@ -54,10 +56,6 @@ class ArrayValue(
     }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitArrayValue(this, data)
-
-    override fun equals(other: Any?): Boolean = this === other || value == (other as? ArrayValue)?.value
-
-    override fun hashCode() = value.hashCode()
 }
 
 class BooleanValue(value: Boolean) : ConstantValue<Boolean>(value) {
@@ -117,14 +115,9 @@ class EnumValue(val enumClassId: ClassId, val enumEntryName: Name) : ConstantVal
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitEnumValue(this, data)
 
     override fun toString() = "${enumClassId.shortClassName}.$enumEntryName"
-
-    override fun equals(other: Any?): Boolean = this === other || value == (other as? EnumValue)?.value
-
-    override fun hashCode() = value.hashCode()
 }
 
 abstract class ErrorValue : ConstantValue<Unit>(Unit) {
-
     @Deprecated("Should not be called, for this is not a real value, but a indication of an error")
     override val value: Unit
         get() = throw UnsupportedOperationException()
@@ -132,7 +125,6 @@ abstract class ErrorValue : ConstantValue<Unit>(Unit) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitErrorValue(this, data)
 
     class ErrorValueWithMessage(val message: String) : ErrorValue() {
-
         override fun getType(module: ModuleDescriptor) = ErrorUtils.createErrorType(message)
 
         override fun toString() = message
@@ -157,10 +149,6 @@ class IntValue(value: Int) : IntegerValueConstant<Int>(value) {
     override fun getType(module: ModuleDescriptor) = module.builtIns.intType
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitIntValue(this, data)
-
-    override fun equals(other: Any?): Boolean = this === other || value == (other as? IntValue)?.value
-
-    override fun hashCode() = value
 }
 
 class KClassValue(private val type: KotlinType) : ConstantValue<KotlinType>(type) {
@@ -184,8 +172,6 @@ class NullValue : ConstantValue<Void?>(null) {
     override fun getType(module: ModuleDescriptor) = module.builtIns.nullableNothingType
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitNullValue(this, data)
-
-    override fun toString() = "null"
 }
 
 class ShortValue(value: Short) : IntegerValueConstant<Short>(value) {
@@ -202,8 +188,4 @@ class StringValue(value: String) : ConstantValue<String>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitStringValue(this, data)
 
     override fun toString() = "\"$value\""
-
-    override fun equals(other: Any?): Boolean = this === other || value == (other as? StringValue)?.value
-
-    override fun hashCode() = value.hashCode()
 }

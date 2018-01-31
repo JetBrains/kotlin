@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithFakeAnnotations;
@@ -55,6 +56,7 @@ import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROP
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.FIELD_FOR_PROPERTY;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY;
+import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PROPERTY_TYPE;
@@ -247,18 +249,22 @@ public class PropertyCodegen {
         }
     }
 
-    public void generateConstructorPropertyAsMethodForAnnotationClass(KtParameter p, PropertyDescriptor descriptor) {
+    public void generateConstructorPropertyAsMethodForAnnotationClass(
+            @NotNull KtParameter parameter,
+            @NotNull PropertyDescriptor descriptor,
+            @Nullable FunctionDescriptor expectedAnnotationConstructor
+    ) {
         JvmMethodGenericSignature signature = typeMapper.mapAnnotationParameterSignature(descriptor);
-        String name = p.getName();
+        String name = parameter.getName();
         if (name == null) return;
         MethodVisitor mv = v.newMethod(
-                JvmDeclarationOriginKt.OtherOrigin(p, descriptor), ACC_PUBLIC | ACC_ABSTRACT, name,
+                JvmDeclarationOriginKt.OtherOrigin(parameter, descriptor), ACC_PUBLIC | ACC_ABSTRACT, name,
                 signature.getAsmMethod().getDescriptor(),
                 signature.getGenericsSignature(),
                 null
         );
 
-        KtExpression defaultValue = p.getDefaultValue();
+        KtExpression defaultValue = loadAnnotationArgumentDefaultValue(parameter, descriptor, expectedAnnotationConstructor);
         if (defaultValue != null) {
             ConstantValue<?> constant = ExpressionCodegen.getCompileTimeConstant(
                     defaultValue, bindingContext, true, state.getShouldInlineConstVals());
@@ -271,6 +277,29 @@ public class PropertyCodegen {
         }
 
         mv.visitEnd();
+    }
+
+    private KtExpression loadAnnotationArgumentDefaultValue(
+            @NotNull KtParameter ktParameter,
+            @NotNull PropertyDescriptor descriptor,
+            @Nullable FunctionDescriptor expectedAnnotationConstructor
+    ) {
+        KtExpression value = ktParameter.getDefaultValue();
+        if (value != null) return value;
+
+        if (expectedAnnotationConstructor != null) {
+            ValueParameterDescriptor expectedParameter = CollectionsKt.single(
+                    expectedAnnotationConstructor.getValueParameters(), parameter -> parameter.getName().equals(descriptor.getName())
+            );
+            PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(expectedParameter);
+            if (!(element instanceof KtParameter)) {
+                state.getDiagnostics().report(EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND.on(ktParameter));
+                return null;
+            }
+            return ((KtParameter) element).getDefaultValue();
+        }
+
+        return null;
     }
 
     private boolean hasBackingField(@NotNull PropertyDescriptor descriptor) {

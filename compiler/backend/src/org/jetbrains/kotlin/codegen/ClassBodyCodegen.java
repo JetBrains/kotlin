@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -166,16 +168,26 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     }
 
     private void generatePrimaryConstructorProperties() {
+        ClassConstructorDescriptor constructor = CollectionsKt.firstOrNull(descriptor.getConstructors());
+        if (constructor == null) return;
+
         boolean isAnnotation = descriptor.getKind() == ClassKind.ANNOTATION_CLASS;
+        FunctionDescriptor expectedAnnotationConstructor =
+                isAnnotation && constructor.isActual()
+                ? CodegenUtil.findExpectedFunctionForActual(constructor)
+                : null;
+
         for (KtParameter p : getPrimaryConstructorParameters()) {
             if (p.hasValOrVar()) {
                 PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
-                    if (!isAnnotation) {
-                        propertyCodegen.generatePrimaryConstructorProperty(p, propertyDescriptor);
+                    if (isAnnotation) {
+                        propertyCodegen.generateConstructorPropertyAsMethodForAnnotationClass(
+                                p, propertyDescriptor, expectedAnnotationConstructor
+                        );
                     }
                     else {
-                        propertyCodegen.generateConstructorPropertyAsMethodForAnnotationClass(p, propertyDescriptor);
+                        propertyCodegen.generatePrimaryConstructorProperty(p, propertyDescriptor);
                     }
                 }
             }

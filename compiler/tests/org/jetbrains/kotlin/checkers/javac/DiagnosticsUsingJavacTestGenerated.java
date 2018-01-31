@@ -14236,6 +14236,24 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("annotationArgumentEquality.kt")
+                public void testAnnotationArgumentEquality() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotationArgumentEquality.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("annotations.kt")
+                public void testAnnotations() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotations.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("annotationsViaActualTypeAlias.kt")
+                public void testAnnotationsViaActualTypeAlias() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotationsViaActualTypeAlias.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("constructor.kt")
                 public void testConstructor() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/constructor.kt");

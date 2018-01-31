@@ -348,7 +348,10 @@ class FunctionDescriptorResolver(
             declarationToTrace.toSourceElement()
         )
         constructorDescriptor.isExpect = classDescriptor.isExpect
-        constructorDescriptor.isActual = modifierList?.hasActualModifier() == true
+        constructorDescriptor.isActual =
+                modifierList?.hasActualModifier() == true ||
+                // We don't require 'actual' for constructors of actual annotations
+                classDescriptor.kind == ClassKind.ANNOTATION_CLASS && classDescriptor.isActual
         if (declarationToTrace is PsiElement)
             trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         val parameterScope = LexicalWritableScope(
