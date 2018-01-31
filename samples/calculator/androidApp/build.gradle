@@ -27,6 +27,7 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        main.java.srcDirs += '../parser/src/main/kotlin'
     }
 }
 
@@ -37,7 +38,7 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.kotlin.konan.samples:arithmetic-parser"
+//    implementation "org.jetbrains.kotlin.konan.samples:arithmetic-parser"
 
     implementation "com.android.support:appcompat-v7:27.0.2"
 }
