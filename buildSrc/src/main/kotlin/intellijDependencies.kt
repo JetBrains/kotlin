@@ -120,7 +120,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Dapple.laf.useScreenMenuBar=true",
             "-Dapple.awt.graphics.UseQuartz=true",
             "-Dsun.io.useCanonCaches=false",
-            "-Dplugin.path=${ideaPluginDir.parentFile.absolutePath}",
+            "-Dplugin.path=${ideaPluginDir.absolutePath}",
             "-Dkotlin.internal.mode.enabled=true",
             "-Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar"
         )
