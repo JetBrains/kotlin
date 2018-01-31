@@ -1121,6 +1121,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 doTest(fileName);
             }
 
+            @TestMetadata("changeSignaturePackagePrivateNonRoot")
+            public void testChangeSignaturePackagePrivateNonRoot() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignaturePackagePrivateNonRoot/");
+                doTest(fileName);
+            }
+
             @TestMetadata("changeSignatureStatic")
             public void testChangeSignatureStatic() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignatureStatic/");
