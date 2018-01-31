@@ -397,9 +397,20 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
+    public Type mapTypeAsDeclaration(@NotNull KotlinType kotlinType) {
+        return mapType(kotlinType, null, TypeMappingMode.CLASS_DECLARATION);
+    }
+
+    @NotNull
     public Type mapType(@NotNull CallableDescriptor descriptor) {
         //noinspection ConstantConditions
         return mapType(descriptor.getReturnType());
+    }
+
+    @NotNull
+    public Type mapTypeAsDeclaration(@NotNull CallableDescriptor descriptor) {
+        //noinspection ConstantConditions
+        return mapTypeAsDeclaration(descriptor.getReturnType());
     }
 
     public Type mapErasedInlineClass(@NotNull ClassDescriptor descriptor) {

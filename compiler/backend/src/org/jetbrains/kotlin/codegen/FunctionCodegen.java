@@ -529,16 +529,18 @@ public class FunctionCodegen {
             @NotNull KotlinTypeMapper typeMapper
     ) {
         ReceiverParameterDescriptor dispatchReceiver = functionDescriptor.getDispatchReceiverParameter();
+        // all functions inside erased version of inline class are static, so they don't have `this` as is,
+        // but functions inside wrapper class should use type of wrapper class, not the underlying type
         if (functionDescriptor instanceof ConstructorDescriptor) {
-            return typeMapper.mapType(functionDescriptor);
+            return typeMapper.mapTypeAsDeclaration(functionDescriptor);
         }
         else if (dispatchReceiver != null) {
-            return typeMapper.mapType(dispatchReceiver.getType());
+            return typeMapper.mapTypeAsDeclaration(dispatchReceiver.getType());
         }
         else if (isFunctionLiteral(functionDescriptor) ||
                  isLocalFunction(functionDescriptor) ||
                  isFunctionExpression(functionDescriptor)) {
-            return typeMapper.mapType(context.getThisDescriptor());
+            return typeMapper.mapClass(context.getThisDescriptor());
         }
         else {
             return null;
