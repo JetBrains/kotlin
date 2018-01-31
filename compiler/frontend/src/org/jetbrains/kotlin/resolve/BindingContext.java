@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.*;
@@ -150,7 +151,7 @@ public interface BindingContext {
     WritableSlice<VariableDescriptorWithAccessors, ResolvedCall<FunctionDescriptor>> PROVIDE_DELEGATE_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<VariableDescriptorWithAccessors, Call> PROVIDE_DELEGATE_CALL = Slices.createSimpleSlice();
 
-    WritableSlice<KtPatternTypedTuple, KotlinType> PATTERN_COMPONENTS_RECEIVER_TYPE = Slices.createSimpleSlice();
+    WritableSlice<KtPatternTypedTuple, ReceiverValue> PATTERN_COMPONENTS_RECEIVER = Slices.createSimpleSlice();
     WritableSlice<KtPatternTypedTuple, ResolvedCall<FunctionDescriptor>> PATTERN_DECONSTRUCT_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<KtPatternEntry, ResolvedCall<FunctionDescriptor>> PATTERN_COMPONENT_RESOLVED_CALL = Slices.createSimpleSlice();
 

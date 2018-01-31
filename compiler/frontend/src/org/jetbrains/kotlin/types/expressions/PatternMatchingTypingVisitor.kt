@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -333,7 +334,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     }
 
     private fun checkWhenCondition(
-        num_conditions: Int,
+        numConditions: Int,
         subjectExpression: KtExpression?,
         subjectType: KotlinType,
         condition: KtWhenCondition,
@@ -368,11 +369,13 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 if (subjectExpression == null) {
                     context.trace.report(EXPECTED_CONDITION.on(condition))
                 }
-                val allowDefinition = num_conditions == 1 && !condition.isNegated
+                val allowDefinition = numConditions == 1 && !condition.isNegated
                 condition.pattern?.let {
                     val visitor = this@PatternMatchingTypingVisitor
                     val resolver = PatternResolver(visitor, components, facade)
-                    val (typeInfo, scope) = resolver.resolve(context, it, subjectType, allowDefinition, condition.isNegated, subjectDataFlowValue)
+                    val subjectReceiverValue = ExpressionReceiver.create(subjectExpression ?: it, subjectType, context.trace.bindingContext)
+                    val subject = Subject(subjectExpression ?: it, subjectReceiverValue, subjectDataFlowValue)
+                    val (typeInfo, scope) = resolver.resolve(context, it, subject, allowDefinition, condition.isNegated)
                     val condDataFlowInfo = typeInfo.dataFlowInfo
                     newDataFlowInfo = if (condition.isNegated)
                         ConditionalDataFlowInfo(condDataFlowInfo.elseInfo, condDataFlowInfo.thenInfo)
@@ -381,7 +384,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                     newScope = scope
                 }
 
-                // This works for simple pattern
                 condition.typeReference?.let { typeReference ->
                     val rhsType = context.trace[BindingContext.TYPE, typeReference]
                     if (subjectExpression != null) {

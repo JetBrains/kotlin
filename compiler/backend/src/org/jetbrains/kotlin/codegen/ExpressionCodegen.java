@@ -4296,9 +4296,8 @@ The "returned" value of try expression with no finally is either the last expres
             return StackValue.constant(true, Type.BOOLEAN_TYPE);
         }
 
-        Pair<ReceiverValue, StackValue> receiverAndValue = generatePatternDeconstructReceiver(expressionToMatch, typedTuple);
-        ReceiverValue receiver = receiverAndValue.getFirst();
-        StackValue receiverStackValue = receiverAndValue.getSecond();
+        StackValue receiverStackValue = generatePatternDeconstructReceiver(expressionToMatch, typedTuple);
+        ReceiverValue receiver = bindingContext.get(PATTERN_COMPONENTS_RECEIVER, typedTuple);
         Type receiverType = receiverStackValue.type;
         Call receiverCall = makeFakeCall(receiver);
 
@@ -4323,20 +4322,17 @@ The "returned" value of try expression with no finally is either the last expres
         return match;
     }
 
-    private Pair<ReceiverValue, StackValue> generatePatternDeconstructReceiver(StackValue expressionToMatch, KtPatternTypedTuple entry) {
-        ConditionalTypeInfo receiverTypeInfo = bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, entry);
-        forceAssert(receiverTypeInfo != null, "element type info is null for " + entry.getText());
-        StackValue receiverValue = expressionToMatch;
-        ResolvedCall<FunctionDescriptor> deconstructCall = bindingContext.get(PATTERN_DECONSTRUCT_RESOLVED_CALL, entry);
+    private StackValue generatePatternDeconstructReceiver(StackValue expressionToMatch, KtPatternTypedTuple typedTuple) {
+        ConditionalTypeInfo receiverTypeInfo = bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, typedTuple);
+        forceAssert(receiverTypeInfo != null, "element type info is null for " + typedTuple.getText());
+        StackValue receiverStackValue = expressionToMatch;
+        ResolvedCall<FunctionDescriptor> deconstructCall = bindingContext.get(PATTERN_DECONSTRUCT_RESOLVED_CALL, typedTuple);
         if (deconstructCall != null) {
             ReceiverValue receiver = new TransientReceiver(receiverTypeInfo.getType());
             Call call = makeFakeCall(receiver);
-            receiverValue = invokeFunction(call, deconstructCall, receiverValue);
+            receiverStackValue = invokeFunction(call, deconstructCall, receiverStackValue);
         }
-        KotlinType receiverType = bindingContext.get(PATTERN_COMPONENTS_RECEIVER_TYPE, entry);
-        forceAssert(receiverType != null, "receiver type is null for " + entry.getText());
-        ReceiverValue receiver = new TransientReceiver(receiverType);
-        return new Pair<>(receiver, receiverValue);
+        return receiverStackValue;
     }
 
     private StackValue generateMatchVariableDeclaration(StackValue expressionToMatch, KtPatternVariableDeclaration declaration) {

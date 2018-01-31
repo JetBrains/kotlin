@@ -1,5 +1,7 @@
 // WITH_RUNTIME
 
+import kotlin.test.assertEquals
+
 sealed class Parent
 
 class Child1(val field1: Int): Parent()
@@ -11,5 +13,14 @@ fun foo(parent: Parent) = when(parent) {
     is Child2 && parent.field2 == 2 -> parent.field2
     else -> 10
 }
+fun box(): String {
+    assertEquals(foo(Child1(1)), 1)
+    assertEquals(foo(Child1(2)), 10)
+    assertEquals(foo(Child1(3)), 10)
+    assertEquals(foo(Child2(2)), 2)
+    assertEquals(foo(Child2(1)), 10)
+    assertEquals(foo(Child2(3)), 10)
 
-fun box() = "OK"
+    return "OK"
+}
+

@@ -8,11 +8,11 @@ data class C<F, S>(val f: F, val s: S)
 
 fun foo(x: Any?, a: Int) = when (x) {
     is val <!NAME_SHADOWING, UNUSED_VARIABLE!>x<!> -> { val <!UNUSED_VARIABLE!>n<!> = 10; 10 }
-    is <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(val <!NAME_SHADOWING!>a<!>: Int, val <!UNUSED_VARIABLE!>b<!>: Int)<!> -> a
+    is (<!COMPONENT_FUNCTION_MISSING!>val <!NAME_SHADOWING!>a<!>: Int<!>, <!COMPONENT_FUNCTION_MISSING!>val <!UNUSED_VARIABLE!>b<!>: Int<!>) -> a
     is Pair(val <!UNUSED_VARIABLE!>c<!>, val <!UNUSED_VARIABLE!>d<!>) -> a + <!UNRESOLVED_REFERENCE!>b<!>
     is A(val <!NAME_SHADOWING!>a<!>) -> a
-    is <!COMPONENT_FUNCTION_MISSING!>B(val <!NAME_SHADOWING!>a<!>: Int)<!> -> a
-    is <!COMPONENT_FUNCTION_ON_NULLABLE, COMPONENT_FUNCTION_ON_NULLABLE!>Pair?(val <!NAME_SHADOWING!>a<!>: Int, val b: Int)<!> -> a + b
+    is B(<!COMPONENT_FUNCTION_MISSING!>val <!NAME_SHADOWING!>a<!>: Int<!>) -> a
+    is Pair?(<!COMPONENT_FUNCTION_ON_NULLABLE!>val <!NAME_SHADOWING!>a<!>: Int<!>, <!COMPONENT_FUNCTION_ON_NULLABLE!>val b: Int<!>) -> a + b
     is <!UNRESOLVED_REFERENCE!>pair<!>(val <!NAME_SHADOWING!>a<!>: Int, val b: Int) -> a + b
     is <!DUPLICATE_LABEL_IN_WHEN!>Pair<!>(val <!NAME_SHADOWING!>a<!>: Int, val b: Int) && a > b -> a + b
     is <!USELESS_IS_CHECK, DUPLICATE_LABEL_IN_WHEN!>Pair<!>(10, 20) -> a + <!UNRESOLVED_REFERENCE!>b<!>
