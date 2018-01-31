@@ -113,10 +113,20 @@ fun removePathPrefix(path: String): String {
 }
 
 val unzipIntellijSdk by tasks.creating {
-    configureExtractFromConfigurationTask(intellij, pathRemap = { removePathPrefix(it) }) { zipTree(it.singleFile) }
+    configureExtractFromConfigurationTask(intellij, pathRemap = { removePathPrefix(it) }) {
+        zipTree(it.singleFile).matching {
+            exclude("plugins/Kotlin/**")
+        }
+    }
 }
 
-val unzipIntellijUltimateSdk by tasks.creating { configureExtractFromConfigurationTask(intellijUltimate) { zipTree(it.singleFile) } }
+val unzipIntellijUltimateSdk by tasks.creating {
+    configureExtractFromConfigurationTask(intellijUltimate) {
+        zipTree(it.singleFile).matching {
+            exclude("plugins/Kotlin/**")
+        }
+    }
+}
 
 val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(`intellij-core`) { zipTree(it.singleFile) } }
 
@@ -148,23 +158,8 @@ fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, 
     }
 }
 
-val deleteBundledKotlinPlugin by tasks.creating(Delete::class) {
-    shouldRunAfter(unzipIntellijSdk, unzipIntellijUltimateSdk)
-
-    val intellijSdkDir = File(repoDir, intellij.name)
-    val intellijUltimateSdkDir = File(repoDir, intellijUltimate.name)
-
-    if (installIntellijCommunity) {
-        delete(File(intellijSdkDir, "plugins/Kotlin"))
-    }
-
-    if (installIntellijUltimate) {
-        delete(File(intellijUltimateSdkDir, "plugins/Kotlin"))
-    }
-}
-
 val prepareIvyXmls by tasks.creating {
-    dependsOn(unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest, deleteBundledKotlinPlugin)
+    dependsOn(unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest)
 
     val intellijSdkDir = File(repoDir, intellij.name)
     val intellijUltimateSdkDir = File(repoDir, intellijUltimate.name)
