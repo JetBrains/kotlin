@@ -14,12 +14,21 @@ class ServiceLookupException(message: String) : Exception(message)
 object ServiceLocator {
     fun <T : Any> lookup(clazz: Class<T>, category: String, implementationName: String): T {
         val descriptor = lookupDescriptor(category, implementationName)
+        return lookup(clazz, descriptor)
+    }
+
+    fun <T : Any> lookup(
+        clazz: Class<T>,
+        descriptor: ServiceDescriptor
+    ): T {
         val loadedClass = javaClass.classLoader.loadClass(descriptor.className)
         val constructor = loadedClass.constructors
-                .filter { it.parameterTypes.isEmpty() }
-                .firstOrNull() ?: throw ServiceLookupException("Class ${descriptor.className} has no corresponding constructor")
+            .filter { it.parameterTypes.isEmpty() }
+            .firstOrNull()
+                ?: throw ServiceLookupException("Class ${descriptor.className} has no corresponding constructor")
 
-        val implementationRawType: Any = if (constructor.parameterTypes.isEmpty()) constructor.newInstance() else constructor.newInstance(constructor)
+        val implementationRawType: Any =
+            if (constructor.parameterTypes.isEmpty()) constructor.newInstance() else constructor.newInstance(constructor)
 
         if (!clazz.isInstance(implementationRawType)) {
             throw ServiceLookupException("Class ${descriptor.className} is not a subtype of ${clazz.name}")
@@ -79,6 +88,7 @@ object ServiceLocator {
 }
 
 inline fun <reified T : Any> ServiceLocator.lookup(category: String, implementationName: String): T = lookup(T::class.java, category, implementationName)
+inline fun <reified T : Any> ServiceLocator.lookup(desc: ServiceDescriptor): T = lookup(T::class.java, desc)
 
 private val ZipEntry.fileName: String
     get() = name.substringAfterLast("/", name)
