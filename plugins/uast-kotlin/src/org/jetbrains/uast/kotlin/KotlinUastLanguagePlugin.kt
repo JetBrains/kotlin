@@ -323,8 +323,20 @@ internal object KotlinConverter {
                 }
             is KtImportDirective -> el<UImportStatement>(build(::KotlinUImportStatement))
             else -> {
-                if (element is LeafPsiElement && element.elementType == KtTokens.IDENTIFIER) {
+                if (element is LeafPsiElement) {
+                    if (element.elementType == KtTokens.IDENTIFIER)
                     el<UIdentifier>(build(::UIdentifier))
+                    else if (element.elementType == KtTokens.LBRACKET && element.parent is KtCollectionLiteralExpression)
+                        el<UIdentifier> {
+                            UIdentifier(
+                                element,
+                                KotlinUCollectionLiteralExpression(
+                                    element.parent as KtCollectionLiteralExpression,
+                                    null
+                                )
+                            )
+                        }
+                    else null
                 } else {
                     null
                 }
@@ -395,6 +407,7 @@ internal object KotlinConverter {
             is KtSafeQualifiedExpression -> expr<UQualifiedReferenceExpression>(build(::KotlinUSafeQualifiedExpression))
             is KtSimpleNameExpression -> expr<USimpleNameReferenceExpression>(build(::KotlinUSimpleReferenceExpression))
             is KtCallExpression -> expr<UCallExpression>(build(::KotlinUFunctionCallExpression))
+            is KtCollectionLiteralExpression -> expr<UCallExpression>(build(::KotlinUCollectionLiteralExpression))
             is KtBinaryExpression -> {
                 if (expression.operationToken == KtTokens.ELVIS) {
                     expr<UExpressionList>(build(::createElvisExpression))
