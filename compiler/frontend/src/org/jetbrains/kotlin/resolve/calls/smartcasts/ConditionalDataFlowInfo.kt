@@ -17,17 +17,21 @@
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 class ConditionalDataFlowInfo(val thenInfo: DataFlowInfo, val elseInfo: DataFlowInfo = thenInfo) {
-    infix fun and(other: ConditionalDataFlowInfo): ConditionalDataFlowInfo = when {
+    fun and(other: ConditionalDataFlowInfo): ConditionalDataFlowInfo = when {
         this == EMPTY -> other
         other == EMPTY -> this
         else -> ConditionalDataFlowInfo(this.thenInfo.and(other.thenInfo), this.elseInfo.and(other.elseInfo))
     }
 
-    infix fun or(other: ConditionalDataFlowInfo): ConditionalDataFlowInfo = when {
+    fun or(other: ConditionalDataFlowInfo): ConditionalDataFlowInfo = when {
         this == EMPTY -> other
         other == EMPTY -> this
         else -> ConditionalDataFlowInfo(this.thenInfo.or(other.thenInfo), this.elseInfo.or(other.elseInfo))
     }
+
+    fun replaceThenInfo(thenInfo: DataFlowInfo) = ConditionalDataFlowInfo(thenInfo, elseInfo)
+
+    fun replaceElseInfo(elseInfo: DataFlowInfo) = ConditionalDataFlowInfo(thenInfo, elseInfo)
 
     companion object {
         val EMPTY = ConditionalDataFlowInfo(DataFlowInfo.EMPTY)

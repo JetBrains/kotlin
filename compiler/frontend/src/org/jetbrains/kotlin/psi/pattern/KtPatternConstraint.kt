@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
-import org.jetbrains.kotlin.types.expressions.errorIfNull
+import org.jetbrains.kotlin.types.expressions.errorAndReplaceIfNull
 
 class KtPatternConstraint(node: ASTNode) : KtPatternElementImpl(node) {
 
@@ -42,14 +42,8 @@ class KtPatternConstraint(node: ASTNode) : KtPatternElementImpl(node) {
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPatternConstraint(this, data)
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        val element = element.errorIfNull(this, state, Errors.EXPECTED_CONSTRAINT_ELEMENT)
-        element?.getTypeInfo(resolver, state)
-    }
-
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
-        val element = element.errorIfNull(this, state, Errors.EXPECTED_CONSTRAINT_ELEMENT)
-        val elementTypeInfo = element?.resolve(resolver, state)
-        val thisTypeInfo = getTypeInfo(resolver, state)
-        return thisTypeInfo.and(elementTypeInfo)
+        val error = Errors.EXPECTED_PATTERN_CONSTRAINT_ELEMENT
+        val patch = ConditionalTypeInfo.empty(state.subject.type, state.dataFlowInfo)
+        element?.getTypeInfo(resolver, state).errorAndReplaceIfNull(this, state, error, patch)
     }
 }

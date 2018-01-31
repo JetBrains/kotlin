@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.psi.pattern
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
+import org.jetbrains.kotlin.types.expressions.errorAndReplaceIfNull
 
 class KtPatternEntry(node: ASTNode) : KtPatternElementImpl(node) {
 
@@ -68,12 +70,8 @@ class KtPatternEntry(node: ASTNode) : KtPatternElementImpl(node) {
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPatternEntry(this, data)
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        element?.getTypeInfo(resolver, state)
-    }
-
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
-        val entryInfo = element?.resolve(resolver, state)
-        val thisInfo = getTypeInfo(resolver, state)
-        return thisInfo.and(entryInfo)
+        val error = Errors.EXPECTED_PATTERN_ENTRY_ELEMENT
+        val patch = ConditionalTypeInfo.empty(state.subject.type, state.dataFlowInfo)
+        element?.getTypeInfo(resolver, state).errorAndReplaceIfNull(this, state, error, patch)
     }
 }

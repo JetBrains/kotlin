@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.pattern.KtPatternConstraint;
-import org.jetbrains.kotlin.psi.pattern.KtPatternExpression;
-import org.jetbrains.kotlin.psi.pattern.KtPatternTypeReference;
-import org.jetbrains.kotlin.psi.pattern.KtPatternTypedTuple;
+import org.jetbrains.kotlin.psi.pattern.*;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -899,10 +896,12 @@ public interface Errors {
 
     // When expressions
 
-    DiagnosticFactory1<KtPatternConstraint, KtPatternConstraint> EXPECTED_CONSTRAINT_ELEMENT = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<KtPatternTypedTuple, KtPatternTypedTuple> EXPECTED_PATTERN_TUPLE_INSTANCE = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<KtPatternExpression, KtPatternExpression> EXPECTED_PATTERN_EXPRESSION_ELEMENT = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<KtPatternTypeReference, KtPatternTypeReference> EXPECTED_PATTERN_TYPE_REFERENCE_ELEMENT = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<KtPattern> EXPECTED_PATTERN_ENTRY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtPatternConstraint> EXPECTED_PATTERN_CONSTRAINT_ELEMENT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtPatternEntry> EXPECTED_PATTERN_ENTRY_ELEMENT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtPatternTypedTuple> EXPECTED_PATTERN_TYPED_TUPLE_INSTANCE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtPatternExpression> EXPECTED_PATTERN_EXPRESSION_INSTANCE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtPatternTypeReference> EXPECTED_PATTERN_TYPE_REFERENCE_INSTANCE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtElement, KtElement> NON_DERIVABLE_TYPE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtElement, KtElement> NOT_ALLOW_PROPERTY_DEFINITION = DiagnosticFactory1.create(ERROR);
 

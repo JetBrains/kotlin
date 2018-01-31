@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.pattern.*
@@ -40,8 +40,15 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class ConditionalTypeInfo(val type: KotlinType, val dataFlowInfo: ConditionalDataFlowInfo) {
     fun and(other: ConditionalTypeInfo?) = other?.let {
-        ConditionalTypeInfo(type, dataFlowInfo and it.dataFlowInfo)
+        ConditionalTypeInfo(type, dataFlowInfo.and(it.dataFlowInfo))
     } ?: this
+
+    fun replaceThenInfo(thenInfo: DataFlowInfo) = ConditionalTypeInfo(type, dataFlowInfo.replaceThenInfo(thenInfo))
+
+    companion object {
+        fun empty(type: KotlinType, thenInfo: DataFlowInfo) =
+                ConditionalTypeInfo(type, ConditionalDataFlowInfo(thenInfo, DataFlowInfo.EMPTY))
+    }
 }
 
 class PatternResolver(
@@ -64,11 +71,11 @@ class PatternResolver(
         val scopeKind = outerScope.kind
         val scope = LexicalWritableScope(outerScope, scopeDescriptor, isOwnerDescriptorAccessibleByLabel, redeclarationChecker, scopeKind)
         val state = PatternResolveState(scope, context, allowDefinition, isNegated, false, subject)
-        val typeInfo = pattern.resolve(this, state)
+        val typeInfo = pattern.getTypeInfo(this, state)
         typeInfo to scope
     }
 
-    fun getDeconstructType(typedTuple: KtPatternTypedTuple,  state: PatternResolveState): KotlinType? {
+    fun getDeconstructType(typedTuple: KtPatternTypedTuple, state: PatternResolveState): KotlinType? {
         val results = components.fakeCallResolver.resolveFakeCall(
                 context = state.context,
                 receiver = state.subject.receiverValue,
@@ -123,9 +130,9 @@ class PatternResolver(
         return ConditionalTypeInfo(type, ConditionalDataFlowInfo(info.dataFlowInfo))
     }
 
-    fun restoreOrCreate(element: KtPatternElement, state: PatternResolveState, creator: () -> ConditionalTypeInfo?): ConditionalTypeInfo {
+    fun restoreOrCreate(element: KtPatternElement, state: PatternResolveState, creator: () -> ConditionalTypeInfo): ConditionalTypeInfo {
         state.context.trace.bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element)?.let { return it }
-        val info = creator() ?: ConditionalTypeInfo(state.subject.type, ConditionalDataFlowInfo.EMPTY)
+        val info = creator()
         state.context.trace.record(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element, info)
         return info
     }
@@ -137,37 +144,36 @@ class PatternResolver(
         return ConditionalDataFlowInfo(conditionalInfo, context.dataFlowInfo)
     }
 
-    fun defineVariable(declaration: KtPatternVariableDeclaration, state: PatternResolveState): ConditionalTypeInfo {
-        val type = declaration.getTypeInfo(this, state).type
-        if (declaration.isSingleUnderscore) return ConditionalTypeInfo(type, ConditionalDataFlowInfo.EMPTY)
-        val context = state.context
-        val trace = context.trace
+    fun defineVariable(declaration: KtPatternVariableDeclaration, state: PatternResolveState): DataFlowInfo {
+        if (declaration.isSingleUnderscore) return state.dataFlowInfo
+        val trace = state.context.trace
         if (!state.allowDefinition) {
             trace.report(Errors.NOT_ALLOW_PROPERTY_DEFINITION.on(declaration, declaration))
-            return ConditionalTypeInfo(type, ConditionalDataFlowInfo.EMPTY)
+            return state.dataFlowInfo
         }
         val scope = state.scope
+        val type = state.subject.type
         val descriptor = components.localVariableResolver.resolveLocalVariableDescriptorWithType(scope, declaration, type, trace)
         ExpressionTypingUtils.checkVariableShadowing(scope, trace, descriptor)
         scope.addVariableDescriptor(descriptor)
         val usageModuleDescriptor = DescriptorUtils.getContainingModuleOrNull(scope.ownerDescriptor)
         val variableDataFlowValue = DataFlowValueFactory.createDataFlowValue(
-                declaration, descriptor, context.trace.bindingContext, usageModuleDescriptor)
+                declaration, descriptor, state.context.trace.bindingContext, usageModuleDescriptor)
         val dataFlowValue = state.subject.dataFlowValue
-        val dataFlowInfo = context.dataFlowInfo.assign(variableDataFlowValue, dataFlowValue, components.languageVersionSettings)
-        return ConditionalTypeInfo(type, ConditionalDataFlowInfo(dataFlowInfo, context.dataFlowInfo))
+        return state.dataFlowInfo.assign(variableDataFlowValue, dataFlowValue, components.languageVersionSettings)
     }
 }
 
-fun <T> T?.errorAndReplaceIfNull(
-        element: KtElement,
-        state: PatternResolveState,
-        error: DiagnosticFactory1<KtElement, KtElement>,
-        patch: T
-): T = this.errorIfNull(element, state, error) ?: patch
+fun <T, E : PsiElement> T?.errorAndReplaceIfNull(element: E, state: PatternResolveState, error: DiagnosticFactory0<E>, patch: T): T {
+    if (this != null) return this
+    state.context.trace.report(error.on(element))
+    return patch
+}
 
-fun <T, E : PsiElement> T?.errorIfNull(element: E, state: PatternResolveState, error: DiagnosticFactory1<E, E>) = this.also {
-    it ?: state.context.trace.report(error.on(element, element))
+fun <T, E : PsiElement> T?.errorAndReplaceIfNull(element: E, state: PatternResolveState, error: DiagnosticFactory1<E, E>, patch: T): T {
+    if (this != null) return this
+    state.context.trace.report(error.on(element, element))
+    return patch
 }
 
 data class Subject(val expression: KtExpression, val receiverValue: ReceiverValue, val dataFlowValue: DataFlowValue) {
@@ -188,6 +194,9 @@ class PatternResolveState(
         val isTuple: Boolean,
         val subject: Subject
 ) {
+    val dataFlowInfo: DataFlowInfo
+        get() = context.dataFlowInfo
+
     fun setIsTuple(): PatternResolveState {
         return PatternResolveState(scope, context, allowDefinition, isNegated, true, subject)
     }

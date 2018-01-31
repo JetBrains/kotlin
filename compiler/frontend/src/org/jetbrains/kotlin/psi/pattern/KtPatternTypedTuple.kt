@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.expressions.*
 
@@ -37,28 +36,18 @@ class KtPatternTypedTuple(node: ASTNode) : KtPatternElementImpl(node) {
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPatternTypedTuple(this, data)
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        typeReference?.getTypeInfo(resolver, state)
-    }
-
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
-        val typeReferenceInfo = typeReference?.resolve(resolver, state.setIsTuple())
-        val info = getTypeInfo(resolver, state).and(typeReferenceInfo)
-        val entries = tuple?.entries.errorIfNull(this, state, Errors.EXPECTED_PATTERN_TUPLE_INSTANCE) ?: return info
-        val deconstructState = state.replaceSubjectType(info.type)
+        val typeReferenceInfo = typeReference?.getTypeInfo(resolver, state.setIsTuple()) ?: ConditionalTypeInfo.empty(state.subject.type, state.dataFlowInfo)
+        val deconstructState = state.replaceSubjectType(typeReferenceInfo.type)
         val componentsState = resolver.getDeconstructType(this, deconstructState)?.let {
             val receiverValue = TransientReceiver(it)
             val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, deconstructState.context)
             val subject = Subject(this, receiverValue, dataFlowValue)
             deconstructState.replaceSubject(subject)
         } ?: deconstructState
-        componentsState.context.trace.record(BindingContext.PATTERN_COMPONENTS_RECEIVER, this, state.subject.receiverValue)
-        val componentInfo = entries.mapIndexed { i, entry ->
-            val type = resolver.getComponentType(i, entry, componentsState)
-            val receiverValue = ExpressionReceiver.create(entry, type, componentsState.context.trace.bindingContext)
-            val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, componentsState.context)
-            val subject = Subject(entry, receiverValue, dataFlowValue)
-            entry.resolve(resolver, componentsState.replaceSubject(subject))
-        }
-        return (sequenceOf(info) + componentInfo).reduce({ acc, it -> acc.and(it) })
+        componentsState.context.trace.record(BindingContext.PATTERN_COMPONENTS_RECEIVER, this, deconstructState.subject.receiverValue)
+        val error = Errors.EXPECTED_PATTERN_TYPED_TUPLE_INSTANCE
+        val patch = ConditionalTypeInfo.empty(componentsState.subject.type, componentsState.dataFlowInfo)
+        val tupleInfo = tuple?.getTypeInfo(resolver, componentsState).errorAndReplaceIfNull(this, componentsState, error, patch)
+        typeReferenceInfo.and(tupleInfo)
     }
 }

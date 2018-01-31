@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
-import org.jetbrains.kotlin.types.expressions.errorIfNull
+import org.jetbrains.kotlin.types.expressions.errorAndReplaceIfNull
 
 class KtPatternTypeReference(node: ASTNode) : KtPatternElementImpl(node) {
 
@@ -34,11 +34,8 @@ class KtPatternTypeReference(node: ASTNode) : KtPatternElementImpl(node) {
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPatternTypeReference(this, data)
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        val typeReference = typeReference.errorIfNull(this, state, Errors.EXPECTED_PATTERN_TYPE_REFERENCE_ELEMENT)
-        typeReference?.let { resolver.getTypeInfo(it, state) }
-    }
-
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
-        return getTypeInfo(resolver, state)
+        val error = Errors.EXPECTED_PATTERN_TYPE_REFERENCE_INSTANCE
+        val patch = ConditionalTypeInfo.empty(state.subject.type, state.dataFlowInfo)
+        typeReference?.let { resolver.getTypeInfo(it, state) }.errorAndReplaceIfNull(this, state, error, patch)
     }
 }

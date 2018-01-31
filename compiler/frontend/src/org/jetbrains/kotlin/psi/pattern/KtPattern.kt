@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi.pattern
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtVisitor
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
+import org.jetbrains.kotlin.types.expressions.errorAndReplaceIfNull
 
 class KtPattern(node: ASTNode) : KtPatternElementImpl(node) {
 
@@ -51,14 +53,11 @@ class KtPattern(node: ASTNode) : KtPatternElementImpl(node) {
     }
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        entry?.getTypeInfo(resolver, state)
-    }
-
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
-        val entryInfo = entry?.resolve(resolver, state)
-        val thisInfo = getTypeInfo(resolver, state)
-        val info = thisInfo.and(entryInfo)
-        val guardInfo = guard?.resolve(resolver, state.replaceDataFlow(info.dataFlowInfo.thenInfo))
-        return info.and(guardInfo)
+        val error = Errors.EXPECTED_PATTERN_ENTRY
+        val patch = ConditionalTypeInfo.empty(state.subject.type, state.dataFlowInfo)
+        val entryInfo = entry?.getTypeInfo(resolver, state).errorAndReplaceIfNull(this, state, error, patch)
+        val guardState = state.replaceDataFlow(entryInfo.dataFlowInfo.thenInfo)
+        val guardInfo = guard?.getTypeInfo(resolver, guardState)
+        entryInfo.and(guardInfo)
     }
 }

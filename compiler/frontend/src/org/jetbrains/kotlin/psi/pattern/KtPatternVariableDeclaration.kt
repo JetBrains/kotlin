@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
 import org.jetbrains.kotlin.psi.addRemoveModifier.removeModifier
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
 import org.jetbrains.kotlin.psi.typeRefHelpers.setTypeReference
-import org.jetbrains.kotlin.resolve.calls.smartcasts.ConditionalDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternMatchingTypingVisitor
@@ -196,22 +195,12 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternElementImpl(node), 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
         val typeReferenceInfo = patternTypeReference?.getTypeInfo(resolver, state)
         val constraintInfo = constraint?.getTypeInfo(resolver, state)
-        val constraintType = constraintInfo?.type
-        val typeReferenceType = typeReferenceInfo?.type
         if (typeReferenceInfo != null && constraintInfo != null) {
             PatternMatchingTypingVisitor.checkTypeCompatibility(state.context, typeReferenceInfo.type, constraintInfo.type, this)
         }
-        (typeReferenceType ?: constraintType)?.let {
-            val info = ConditionalTypeInfo(it, ConditionalDataFlowInfo.EMPTY)
-            info.and(typeReferenceInfo).and(constraintInfo)
-        }
-    }
-
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): ConditionalTypeInfo {
-        val typeInfo = patternTypeReference?.resolve(resolver, state)
-        val constraintInfo = constraint?.resolve(resolver, state)
-        val info = getTypeInfo(resolver, state)
-        val defineInfo = resolver.defineVariable(this, state)
-        return info.and(typeInfo).and(constraintInfo).and(defineInfo)
+        val info = (typeReferenceInfo ?: ConditionalTypeInfo.empty(state.subject.type, state.dataFlowInfo)).and(constraintInfo)
+        val defineState = state.replaceSubjectType(info.type).replaceDataFlow(info.dataFlowInfo.thenInfo)
+        val defineInfo = resolver.defineVariable(this, defineState)
+        info.replaceThenInfo(info.dataFlowInfo.thenInfo.and(defineInfo))
     }
 }
