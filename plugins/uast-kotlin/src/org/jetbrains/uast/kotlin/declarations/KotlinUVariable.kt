@@ -39,8 +39,8 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 import org.jetbrains.uast.visitor.UastVisitor
 
-abstract class AbstractKotlinUVariable(givenParent: UElement?)
-    : KotlinAbstractUElement(givenParent), PsiVariable, UVariable, KotlinUElementWithComments {
+abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractUElement(givenParent), PsiVariable, UVariable, UAnchorOwner,
+    KotlinUElementWithComments {
 
     override val uastInitializer: UExpression?
         get() {
@@ -95,8 +95,8 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
 
     override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
 
-    override val uastAnchor: UElement?
-        get() = KotlinUIdentifier(nameIdentifier, sourcePsi, this)
+    override val uastAnchor: UIdentifier?
+        get() = KotlinUIdentifier(nameIdentifier, (sourcePsi as? KtNamedDeclaration)?.nameIdentifier ?: sourcePsi, this)
 
     override fun equals(other: Any?) = other is AbstractKotlinUVariable && psi == other.psi
 
