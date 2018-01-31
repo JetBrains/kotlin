@@ -187,6 +187,10 @@ val prepareIvyXmls by tasks.creating {
                         files("$intellijSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
                         File(intellijSdkDir, "lib"),
                         sourcesFile)
+
+            // Delete bundled Kotlin plugin
+            File(intellijSdkDir, "plugins/Kotlin").deleteRecursively()
+
             File(intellijSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
                 writeIvyXml(it.name, "intellij.plugin.${it.name}", files("$it/lib/"), File(it, "lib"), sourcesFile)
             }
@@ -197,6 +201,10 @@ val prepareIvyXmls by tasks.creating {
                         files("$intellijUltimateSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
                         File(intellijUltimateSdkDir, "lib"),
                         sourcesFile)
+
+            // Delete bundled Kotlin plugin
+            File(intellijUltimateSdkDir, "plugins/Kotlin").deleteRecursively()
+
             File(intellijUltimateSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
                 writeIvyXml(it.name, "intellijUltimate.plugin.${it.name}", files("$it/lib/"), File(it, "lib"), sourcesFile)
             }
