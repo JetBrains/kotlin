@@ -17,9 +17,9 @@ def commonSrcDir = "${buildDir}/common-sources"
 def commonTestSrcDir = "${buildDir}/common-test-sources"
 def builtinsDir = "${rootDir}/core/builtins"
 def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
-def jsLibrariesDir = "${rootDir}/js/js.libraries"
-def jsSrcDir = "${jsLibrariesDir}/src"
-def jsTestSrcDir = "${jsLibrariesDir}/test"
+def jsSrcGeneratedDir = "${rootDir}/js/js.libraries/src/core/generated" // to be removed soon
+def jsSrcDir = "src"
+def jsTestSrcDir = "test"
 def jsSrcJsDir = "${jsSrcDir}/js"
 def jsOutputFile = "${buildDir}/classes/kotlin.js"
 
@@ -34,7 +34,7 @@ sourceSets {
     builtins {
         kotlin {
             srcDir builtinsSrcDir2
-            srcDir "${jsSrcDir}/builtins"
+            srcDir 'runtime'
         }
     }
 
@@ -42,7 +42,7 @@ sourceSets {
         kotlin {
             srcDir builtinsSrcDir
             srcDir jsSrcDir
-            exclude "builtins"
+            srcDir jsSrcGeneratedDir
             srcDir commonSrcDir
         }
     }
@@ -143,7 +143,7 @@ compileKotlin2Js {
         outputFile = "${buildDir}/classes/main/kotlin.js"
         sourceMap = true
         sourceMapPrefix = "./"
-        freeCompilerArgs += [ "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir ].join(File.pathSeparator) ]
+        freeCompilerArgs += [ "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir].collect { file(it).absoluteFile }.join(File.pathSeparator) ]
     }
 }
 
@@ -212,17 +212,20 @@ task compileJs(type: JavaExec) {
 
         def sourceMapBasePaths = [
                 "./",
-                "/js.libraries/src/js/"
+                "libraries/stdlib/js/src/js/",
+                "libraries/stdlib/js/src/",
         ]
         sourceMap.sources = sourceMap.sources.collect { sourcePath ->
             def prefixToRemove = sourceMapBasePaths.find { basePath -> sourcePath.startsWith(basePath) }
             if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
         }
 
-        def sourceMapSourcesBaseDirs = [ jsSrcDir, builtinsSrcDir2, builtinsSrcDir, commonSrcDir, rootDir ]
+        def sourceMapSourcesBaseDirs = [jsSrcDir, jsSrcJsDir, jsSrcGeneratedDir, builtinsSrcDir, commonSrcDir, projectDir]
 
         sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
-            sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() && it.name != "kotlin.js" }?.text
+            def text = sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() }?.text
+            if (text == null) logger.warn("Sources missing for file $sourceName")
+            text
         }
 
         sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
@@ -263,7 +266,11 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from (sourceSets.main.allSource) {
         into 'kotlin'
         exclude '**/*.java'
+        exclude 'org.w3c/**'
         exclude 'js/**'
+    }
+    from (sourceSets.main.allSource) {
+        include 'org.w3c/**'
     }
     from (sourceSets.experimental.allSource) {
         into 'kotlin'
