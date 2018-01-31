@@ -29,14 +29,16 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declarationOf(descriptor) != null
 
 private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? =
-        with(ExpectedActualResolver) {
-            descriptor.findCompatibleExpectedForActual(this@declarationOf).firstOrNull()
-        }
+    with(ExpectedActualResolver) {
+        val expectedCompatibilityMap = findExpectedForActual(descriptor, this@declarationOf)
+        expectedCompatibilityMap?.get(Compatible)?.firstOrNull() ?: expectedCompatibilityMap?.values?.flatten()?.firstOrNull()
+    }
 
 fun getExpectedDeclarationTooltip(declaration: KtDeclaration?): String? {
     val descriptor = declaration?.toDescriptor() as? MemberDescriptor ?: return null
@@ -67,8 +69,7 @@ internal fun KtDeclaration.isExpectedOrExpectedClassMember(): Boolean {
 }
 
 internal fun KtClassOrObject.isExpected(): Boolean {
-    return this.hasExpectModifier() ||
-           this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
+    return this.hasExpectModifier() || this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
 }
 
 internal fun DeclarationDescriptor.liftToExpected(): DeclarationDescriptor? {
