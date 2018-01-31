@@ -11,8 +11,7 @@ import kotlin.test.*
 class TestNGContributor : AsserterContributor {
     override fun contribute(): Asserter? {
         for (stackFrame in currentStackTrace()) {
-            @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-            val className = stackFrame.className as java.lang.String
+            val className = stackFrame.className
 
             if (className.startsWith("org.testng.") || className.startsWith("testng.")) {
                 return TestNGAsserter

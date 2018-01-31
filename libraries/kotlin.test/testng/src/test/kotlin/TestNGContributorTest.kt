@@ -5,24 +5,21 @@ import org.testng.*
 import java.util.concurrent.*
 
 class TestNGContributorTest {
+
     @Test
     fun smokeTest() {
-        Assert.assertEquals("TestNGAsserter", asserter.`class`.simpleName)
+        Assert.assertEquals("TestNGAsserter", kotlin.test.asserter.javaClass.simpleName)
     }
 
     @Test
     fun `should fail to contribute if it was run outside of testng`() {
-        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-        val q = ArrayBlockingQueue<java.lang.Object>(1)
+        val q = ArrayBlockingQueue<Any>(1)
 
         Thread {
-            q.put(asserter)
+            q.put(kotlin.test.asserter)
         }.start()
 
-        Assert.assertEquals("DefaultAsserter", q.take().`class`.simpleName)
+        Assert.assertEquals("DefaultAsserter", q.take().javaClass.simpleName)
     }
 
-    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-    private val asserter: java.lang.Object
-        get() = Class.forName("kotlin.test.AssertionsKt").getMethod("getAsserter").invoke(null) as java.lang.Object
 }
