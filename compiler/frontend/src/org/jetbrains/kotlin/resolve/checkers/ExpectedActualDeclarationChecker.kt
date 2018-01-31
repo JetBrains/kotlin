@@ -222,7 +222,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             else -> true
         }
 
-    private fun findExpectedForActual(
+    fun findExpectedForActual(
         actual: MemberDescriptor,
         commonModule: ModuleDescriptor
     ): Map<Compatibility, List<MemberDescriptor>>? {

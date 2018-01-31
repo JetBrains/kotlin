@@ -35,7 +35,8 @@ fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declaratio
 
 private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? =
         with(ExpectedActualDeclarationChecker) {
-            descriptor.findCompatibleExpectedForActual(this@declarationOf).firstOrNull()
+            val expectedCompatibilityMap = findExpectedForActual(descriptor, this@declarationOf)
+            expectedCompatibilityMap?.get(ExpectedActualDeclarationChecker.Compatibility.Compatible)?.firstOrNull() ?: expectedCompatibilityMap?.values?.flatten()?.firstOrNull()
         }
 
 fun getExpectedDeclarationTooltip(declaration: KtDeclaration?): String? {
@@ -67,8 +68,7 @@ internal fun KtDeclaration.isExpectedOrExpectedClassMember(): Boolean {
 }
 
 internal fun KtClassOrObject.isExpected(): Boolean {
-    return this.hasExpectModifier() ||
-           this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
+    return this.hasExpectModifier() || this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
 }
 
 internal fun DeclarationDescriptor.liftToExpected(): DeclarationDescriptor? {

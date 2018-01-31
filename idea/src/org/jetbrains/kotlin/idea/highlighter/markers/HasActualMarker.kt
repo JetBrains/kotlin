@@ -35,7 +35,7 @@ import java.awt.event.MouseEvent
 fun ModuleDescriptor.hasActualsFor(descriptor: MemberDescriptor) =
         actualsFor(descriptor).isNotEmpty()
 
-fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: Boolean = true): List<DeclarationDescriptor> =
+fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: Boolean = false): List<DeclarationDescriptor> =
         with(ExpectedActualDeclarationChecker) {
             if (checkCompatible) {
                 descriptor.findCompatibleActualForExpected(this@actualsFor)
