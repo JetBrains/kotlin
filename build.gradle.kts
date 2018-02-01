@@ -369,7 +369,6 @@ task<Copy>("ideaPlugin") {
     dependsOn(compilerCopyTask)
     val childIdeaPluginTasks = getTasksByName("ideaPlugin", true) - this@task
     dependsOn(childIdeaPluginTasks)
-    shouldRunAfter(":prepare:idea-plugin:idea-plugin")
     into("$ideaPluginDir/lib")
 }
 
