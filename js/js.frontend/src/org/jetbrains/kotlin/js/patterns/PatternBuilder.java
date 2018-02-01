@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 public final class PatternBuilder {
 
@@ -186,22 +187,61 @@ public final class PatternBuilder {
     }
 
     @NotNull
-    public static DescriptorPredicateImpl pattern(@NotNull String... names) {
-        return new DescriptorPredicateImpl(names);
+    public static DescriptorPredicate pattern(@NotNull String... names) {
+        DescriptorPredicate pNew = withOverrides(pattern(String.join(".", names)));
+        DescriptorPredicate pOld = new DescriptorPredicateImpl(names);
+
+        return new DescriptorPredicate() {
+            @Override
+            public boolean test(FunctionDescriptor descriptor) {
+                if (pNew.test(descriptor) != pOld.test(descriptor)) {
+                    throw new IllegalStateException("Mismatch!!!!");
+                }
+                return pNew.test(descriptor);
+            }
+        };
+    }
+
+    @NotNull
+    public static DescriptorPredicate isExtensionOf(@NotNull final String receiverFqName) {
+        return new DescriptorPredicate() {
+            @Override
+            public boolean test(FunctionDescriptor descriptor) {
+                ReceiverParameterDescriptor actualReceiver = descriptor.getExtensionReceiverParameter();
+                if (actualReceiver == null) return false;
+
+                String actualReceiverFqName = DescriptorUtilsKt.getJetTypeFqName(actualReceiver.getType(), false);
+                return receiverFqName.equals(actualReceiverFqName);
+            }
+        };
+    }
+
+    @NotNull
+    public static DescriptorPredicate withOverrides(@NotNull Predicate<FunctionDescriptor> predicate) {
+        return new DescriptorPredicate() {
+            @Override
+            public boolean test(FunctionDescriptor descriptor) {
+                if (!(descriptor.getContainingDeclaration() instanceof ClassDescriptor)) {
+                    return predicate.test(descriptor);
+                }
+
+                for (CallableMemberDescriptor real : OverridingUtil.getOverriddenDeclarations(descriptor)) {
+                    if (real instanceof FunctionDescriptor && predicate.test((FunctionDescriptor) real)) {
+                        return true;
+                    }
+                }
+
+                return false;
+
+            }
+        };
     }
 
     public static class DescriptorPredicateImpl implements DescriptorPredicate {
         private final String[] names;
 
-        private String receiverFqName;
-
         public DescriptorPredicateImpl(String... names) {
             this.names = names;
-        }
-
-        public DescriptorPredicateImpl isExtensionOf(String receiverFqName) {
-            this.receiverFqName = receiverFqName;
-            return this;
         }
 
         private boolean matches(@NotNull CallableDescriptor callable) {
@@ -226,15 +266,6 @@ public final class PatternBuilder {
 
         @Override
         public boolean test(FunctionDescriptor functionDescriptor) {
-            ReceiverParameterDescriptor actualReceiver = functionDescriptor.getExtensionReceiverParameter();
-            if (actualReceiver != null) {
-                if (receiverFqName == null) return false;
-
-                String actualReceiverFqName = DescriptorUtilsKt.getJetTypeFqName(actualReceiver.getType(), false);
-
-                if (!actualReceiverFqName.equals(receiverFqName)) return false;
-            }
-
             if (!(functionDescriptor.getContainingDeclaration() instanceof ClassDescriptor)) {
                 return matches(functionDescriptor);
             }

@@ -50,7 +50,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
+import static org.jetbrains.kotlin.js.patterns.PatternBuilder.isExtensionOf;
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
+import static org.jetbrains.kotlin.js.patterns.PatternBuilder.withOverrides;
 
 public final class TopLevelFIF extends CompositeFIF {
     public static final DescriptorPredicate EQUALS_IN_ANY = pattern("kotlin", "Any", "equals");
@@ -220,14 +222,14 @@ public final class TopLevelFIF extends CompositeFIF {
     private TopLevelFIF() {
         add(EQUALS_IN_ANY, KOTLIN_ANY_EQUALS);
         add(pattern("Char.toString"), CHAR_TO_STRING);
-        add(pattern("kotlin", "toString").isExtensionOf(FQ_NAMES.any.asString()), TO_STRING);
-        add(pattern("kotlin", "equals").isExtensionOf(FQ_NAMES.any.asString()), KOTLIN_EQUALS);
+        add(pattern("kotlin", "toString").and(isExtensionOf(FQ_NAMES.any.asString())), TO_STRING);
+        add(pattern("kotlin", "equals").and(isExtensionOf(FQ_NAMES.any.asString())), KOTLIN_EQUALS);
         add(HASH_CODE_IN_ANY, KOTLIN_HASH_CODE);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), KOTLIN_EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), KOTLIN_EQUALS);
         add(pattern("String.subSequence"), STRING_SUBSTRING);
         add(pattern("CharSequence.subSequence"), KOTLIN_SUBSEQUENCE);
-        add(pattern("kotlin", "iterator").isExtensionOf(FQ_NAMES.iterator.asString()), RETURN_RECEIVER_INTRINSIC);
+        add(pattern("kotlin", "iterator").and(isExtensionOf(FQ_NAMES.iterator.asString())), RETURN_RECEIVER_INTRINSIC);
 
         add(pattern("kotlin.js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
         add(pattern("kotlin.js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
@@ -237,7 +239,7 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("kotlin", "enumValues"), ENUM_VALUES_INTRINSIC);
         add(pattern("kotlin", "enumValueOf"), ENUM_VALUE_OF_INTRINSIC);
 
-        add(pattern("kotlin", "<get-isInitialized>").isExtensionOf("kotlin.reflect.KProperty0"),
+        add(pattern("kotlin", "<get-isInitialized>").and(isExtensionOf("kotlin.reflect.KProperty0")),
             LATEINIT_KPROPERTY_ISINITIALIZED_INTRINSIC);
     }
 

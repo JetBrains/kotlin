@@ -169,7 +169,7 @@ object ArrayFIF : CompositeFIF() {
         add(pattern(NamePredicate(arrayName), "<init>(Int,Function1)"), createConstructorIntrinsic(null))
         add(pattern(NamePredicate(arrayName), "iterator"), KotlinFunctionIntrinsic("arrayIterator"))
 
-        add(pattern(Namer.KOTLIN_LOWER_NAME, "arrayOfNulls"), KotlinFunctionIntrinsic("newArray", JsNullLiteral()))
+        add(pattern("arrayOfNulls"), KotlinFunctionIntrinsic("newArray", JsNullLiteral()))
 
         val arrayFactoryMethodNames = arrayTypeNames.map { Name.identifier(decapitalize(it.asString() + "Of")) }
         val arrayFactoryMethods = pattern(Namer.KOTLIN_LOWER_NAME, NamePredicate(arrayFactoryMethodNames))
