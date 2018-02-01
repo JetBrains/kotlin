@@ -1,6 +1,7 @@
 
 import java.io.File
 import org.gradle.api.tasks.bundling.Jar
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 apply { plugin("kotlin") }
 
@@ -8,6 +9,18 @@ jvmTarget = "1.6"
 
 val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
+
+val effectSystemEnabled: Boolean by rootProject.extra
+if (effectSystemEnabled) {
+    allprojects {
+        tasks.withType<KotlinCompile<*>> {
+            kotlinOptions {
+                freeCompilerArgs += listOf("-Xeffect-system")
+            }
+        }
+    }
+}
+
 
 val depDistProjects = listOf(
         ":kotlin-script-runtime",
