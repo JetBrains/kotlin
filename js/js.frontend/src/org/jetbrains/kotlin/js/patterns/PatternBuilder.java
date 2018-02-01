@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.patterns;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
@@ -153,10 +154,11 @@ public final class PatternBuilder {
                         return false;
                     }
                     for (int i = 0; i < valueParameterDescriptors.size(); i++) {
-                        ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
-                        Name name = DescriptorUtilsKt.getNameIfStandardType(valueParameterDescriptor.getType());
-                        NamePredicate namePredicate = argumentCheckers.get(i);
-                        if (!namePredicate.test(name)) return false;
+                        DeclarationDescriptor original = valueParameterDescriptors.get(i).getType().getConstructor().getDeclarationDescriptor();
+
+                        if (original == null || !KotlinBuiltIns.isUnderKotlinPackage(original)) return false;
+
+                        if (!argumentCheckers.get(i).test(original.getName())) return false;
                     }
                 }
                 return true;
