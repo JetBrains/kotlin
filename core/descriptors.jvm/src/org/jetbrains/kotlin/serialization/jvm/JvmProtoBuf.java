@@ -15,6 +15,7 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeParameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classModuleName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classLocalVariable);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.anonymousObjectOriginName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.packageModuleName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.packageLocalVariable);
   }
@@ -3919,6 +3920,27 @@ public final class JvmProtoBuf {
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false,
         org.jetbrains.kotlin.serialization.ProtoBuf.Property.class);
+  public static final int ANONYMOUS_OBJECT_ORIGIN_NAME_FIELD_NUMBER = 103;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
+   *
+   * <pre>
+   * For anonymous objects from bodies of inline functions copied to the use site, the JVM internal name of the original
+   * anonymous object this class is copied from
+   * </pre>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Class,
+      java.lang.Integer> anonymousObjectOriginName = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Class.getDefaultInstance(),
+        0,
+        null,
+        null,
+        103,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
+        java.lang.Integer.class);
   public static final int PACKAGE_MODULE_NAME_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>

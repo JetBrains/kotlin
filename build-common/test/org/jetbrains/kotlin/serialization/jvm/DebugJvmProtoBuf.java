@@ -15,6 +15,7 @@ public final class DebugJvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.typeParameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.classModuleName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.classLocalVariable);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.anonymousObjectOriginName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.packageModuleName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.packageLocalVariable);
   }
@@ -4599,6 +4600,22 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.class,
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.getDefaultInstance());
+  public static final int ANONYMOUS_OBJECT_ORIGIN_NAME_FIELD_NUMBER = 103;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
+   *
+   * <pre>
+   * For anonymous objects from bodies of inline functions copied to the use site, the JVM internal name of the original
+   * anonymous object this class is copied from
+   * </pre>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Class,
+      java.lang.Integer> anonymousObjectOriginName = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Integer.class,
+        null);
   public static final int PACKAGE_MODULE_NAME_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
@@ -4704,13 +4721,15 @@ public final class DebugJvmProtoBuf {
       ".serialization.Class\030e \001(\005B\004\230\265\030\001:u\n\024clas" +
       "s_local_variable\022).org.jetbrains.kotlin." +
       "serialization.Class\030f \003(\0132,.org.jetbrain" +
-      "s.kotlin.serialization.Property:N\n\023packa",
-      "ge_module_name\022+.org.jetbrains.kotlin.se" +
-      "rialization.Package\030e \001(\005B\004\230\265\030\001:y\n\026packa" +
-      "ge_local_variable\022+.org.jetbrains.kotlin" +
-      ".serialization.Package\030f \003(\0132,.org.jetbr" +
-      "ains.kotlin.serialization.PropertyB\022B\020De" +
-      "bugJvmProtoBuf"
+      "s.kotlin.serialization.Property:U\n\034anony",
+      "mous_object_origin_name\022).org.jetbrains." +
+      "kotlin.serialization.Class\030g \001(\005B\004\230\265\030\001:N" +
+      "\n\023package_module_name\022+.org.jetbrains.ko" +
+      "tlin.serialization.Package\030e \001(\005B\004\230\265\030\001:y" +
+      "\n\026package_local_variable\022+.org.jetbrains" +
+      ".kotlin.serialization.Package\030f \003(\0132,.or" +
+      "g.jetbrains.kotlin.serialization.Propert" +
+      "yB\022B\020DebugJvmProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4764,10 +4783,12 @@ public final class DebugJvmProtoBuf {
     typeParameterAnnotation.internalInit(descriptor.getExtensions().get(5));
     classModuleName.internalInit(descriptor.getExtensions().get(6));
     classLocalVariable.internalInit(descriptor.getExtensions().get(7));
-    packageModuleName.internalInit(descriptor.getExtensions().get(8));
-    packageLocalVariable.internalInit(descriptor.getExtensions().get(9));
+    anonymousObjectOriginName.internalInit(descriptor.getExtensions().get(8));
+    packageModuleName.internalInit(descriptor.getExtensions().get(9));
+    packageLocalVariable.internalInit(descriptor.getExtensions().get(10));
     org.jetbrains.kotlin.protobuf.ExtensionRegistry registry =
         org.jetbrains.kotlin.protobuf.ExtensionRegistry.newInstance();
+    registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);

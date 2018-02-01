@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Recor
 import java.util.*
 
 class JvmNameResolver(
-        private val types: JvmProtoBuf.StringTableTypes,
-        private val strings: Array<String>
+    val types: JvmProtoBuf.StringTableTypes,
+    val strings: Array<String>
 ) : NameResolver {
     private val localNameIndices = types.localNameList.run { if (isEmpty()) emptySet() else toSet() }
 
     // Here we expand the 'range' field of the Record message for simplicity to a list of records
-    private val records: List<Record> = ArrayList<Record>().apply {
+    val records: List<Record> = ArrayList<Record>().apply {
         val records = types.recordList
         this.ensureCapacity(records.size)
         for (record in records) {

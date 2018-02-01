@@ -45,10 +45,7 @@ import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
@@ -875,19 +872,24 @@ public class AsmUtil {
             @NotNull DescriptorSerializer serializer,
             @NotNull MessageLite message
     ) {
-        byte[] bytes = serializer.serialize(message);
+        writeAnnotationData(av, message, (JvmStringTable) serializer.getStringTable());
+    }
 
-        AnnotationVisitor data = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME);
-        for (String string : BitEncoding.encodeBytes(bytes)) {
-            data.visit(null, string);
+    public static void writeAnnotationData(
+            @NotNull AnnotationVisitor av, @NotNull MessageLite message, @NotNull JvmStringTable stringTable
+    ) {
+        String[] data = BitEncoding.encodeBytes(DescriptorSerializer.serialize(message, stringTable));
+        AnnotationVisitor dataVisitor = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME);
+        for (String string : data) {
+            dataVisitor.visit(null, string);
         }
-        data.visitEnd();
+        dataVisitor.visitEnd();
 
-        AnnotationVisitor strings = av.visitArray(JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME);
-        for (String string : ((JvmStringTable) serializer.getStringTable()).getStrings()) {
-            strings.visit(null, string);
+        AnnotationVisitor stringsVisitor = av.visitArray(JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME);
+        for (String string : stringTable.getStrings()) {
+            stringsVisitor.visit(null, string);
         }
-        strings.visitEnd();
+        stringsVisitor.visitEnd();
     }
 
     @NotNull

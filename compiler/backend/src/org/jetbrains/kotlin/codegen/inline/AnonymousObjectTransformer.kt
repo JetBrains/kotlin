@@ -21,8 +21,18 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_IMPL_ASM_TYPE
+import org.jetbrains.kotlin.codegen.serialization.JvmStringTable
+import org.jetbrains.kotlin.codegen.writeKotlinMetadata
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
+import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
+import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -47,6 +57,7 @@ class AnonymousObjectTransformer(
         val innerClassNodes = ArrayList<InnerClassNode>()
         val classBuilder = createRemappingClassBuilderViaFactory(inliningContext)
         val methodsToTransform = ArrayList<MethodNode>()
+        val metadataReader = ReadKotlinClassHeaderAnnotationVisitor()
 
         createClassReader().accept(object : ClassVisitor(API, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
@@ -58,6 +69,15 @@ class AnonymousObjectTransformer(
 
             override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
                 innerClassNodes.add(InnerClassNode(name, outerName, innerName, access))
+            }
+
+            override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                if (desc == JvmAnnotationNames.METADATA_DESC) {
+                    // Empty inner class info because no inner classes are used in kotlin.Metadata and its arguments
+                    val innerClassesInfo = FileBasedKotlinClass.InnerClassesInfo()
+                    return FileBasedKotlinClass.convertAnnotationVisitor(metadataReader, desc, innerClassesInfo)
+                }
+                return super.visitAnnotation(desc, visible)
             }
 
             override fun visitMethod(
@@ -150,11 +170,36 @@ class AnonymousObjectTransformer(
             visitor.visitInnerClass(node.name, node.outerName, node.innerName, node.access)
         }
 
+        val header = metadataReader.createHeader()
+        if (header != null) {
+            transformMetadata(header, classBuilder)
+        }
+
         writeOuterInfo(visitor)
 
         classBuilder.done()
 
         return transformationResult
+    }
+
+    private fun transformMetadata(header: KotlinClassHeader, classBuilder: ClassBuilder) {
+        val newProto: MessageLite
+        val newStringTable: JvmStringTable
+
+        if (header.kind == KotlinClassHeader.Kind.CLASS) {
+            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(header.data!!, header.strings!!)
+            newStringTable = JvmStringTable(state.typeMapper, nameResolver as JvmNameResolver)
+            newProto = classProto.toBuilder().apply {
+                setExtension(JvmProtoBuf.anonymousObjectOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
+            }.build()
+        } else if (header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS) {
+            // TODO: transform metadata for synthetic classes
+            return
+        } else return
+
+        writeKotlinMetadata(classBuilder, state, header.kind, header.extraInt) { av ->
+            AsmUtil.writeAnnotationData(av, newProto, newStringTable)
+        }
     }
 
     private fun writeOuterInfo(visitor: ClassVisitor) {

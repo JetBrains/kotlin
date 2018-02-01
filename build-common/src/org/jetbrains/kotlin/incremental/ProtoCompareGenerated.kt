@@ -200,6 +200,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             }
         }
 
+        if (old.hasExtension(JvmProtoBuf.anonymousObjectOriginName) != new.hasExtension(JvmProtoBuf.anonymousObjectOriginName)) return false
+        if (old.hasExtension(JvmProtoBuf.anonymousObjectOriginName)) {
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.anonymousObjectOriginName), new.getExtension(JvmProtoBuf.anonymousObjectOriginName))) return false
+        }
+
         if (old.getExtensionCount(JsProtoBuf.classAnnotation) != new.getExtensionCount(JsProtoBuf.classAnnotation)) {
             return false
         }
@@ -249,6 +254,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         VERSION_REQUIREMENT_TABLE,
         JVM_EXT_CLASS_MODULE_NAME,
         JVM_EXT_CLASS_LOCAL_VARIABLE_LIST,
+        JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME,
         JS_EXT_CLASS_ANNOTATION_LIST,
         JS_EXT_CLASS_CONTAINING_FILE_ID,
         JAVA_EXT_IS_PACKAGE_PRIVATE_CLASS,
@@ -317,6 +323,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             for(i in 0..old.getExtensionCount(JvmProtoBuf.classLocalVariable) - 1) {
                 if (!checkEquals(old.getExtension(JvmProtoBuf.classLocalVariable, i), new.getExtension(JvmProtoBuf.classLocalVariable, i))) result.add(ProtoBufClassKind.JVM_EXT_CLASS_LOCAL_VARIABLE_LIST)
             }
+        }
+
+        if (old.hasExtension(JvmProtoBuf.anonymousObjectOriginName) != new.hasExtension(JvmProtoBuf.anonymousObjectOriginName)) result.add(ProtoBufClassKind.JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME)
+        if (old.hasExtension(JvmProtoBuf.anonymousObjectOriginName)) {
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.anonymousObjectOriginName), new.getExtension(JvmProtoBuf.anonymousObjectOriginName))) result.add(ProtoBufClassKind.JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME)
         }
 
         if (old.getExtensionCount(JsProtoBuf.classAnnotation) != new.getExtensionCount(JsProtoBuf.classAnnotation)) {
@@ -1549,6 +1560,10 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     for(i in 0..getExtensionCount(JvmProtoBuf.classLocalVariable) - 1) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.classLocalVariable, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JvmProtoBuf.anonymousObjectOriginName)) {
+        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.anonymousObjectOriginName))
     }
 
     for(i in 0..getExtensionCount(JsProtoBuf.classAnnotation) - 1) {

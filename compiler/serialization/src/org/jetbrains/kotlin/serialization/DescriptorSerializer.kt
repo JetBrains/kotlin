@@ -40,13 +40,6 @@ class DescriptorSerializer private constructor(
 ) {
     private val contractSerializer = ContractSerializer()
 
-    fun serialize(message: MessageLite): ByteArray {
-        return ByteArrayOutputStream().apply {
-            stringTable.serializeTo(this)
-            message.writeTo(this)
-        }.toByteArray()
-    }
-
     private fun createChildSerializer(descriptor: DeclarationDescriptor): DescriptorSerializer =
             DescriptorSerializer(descriptor, Interner(typeParameters), extension, typeTable, versionRequirementTable,
                                  serializeTypeTableToFunction = false)
@@ -713,6 +706,14 @@ class DescriptorSerializer private constructor(
                 serializer.typeParameters.intern(typeParameter)
             }
             return serializer
+        }
+
+        @JvmStatic
+        fun serialize(message: MessageLite, stringTable: StringTable): ByteArray {
+            return ByteArrayOutputStream().apply {
+                stringTable.serializeTo(this)
+                message.writeTo(this)
+            }.toByteArray()
         }
 
         private fun variance(variance: Variance): ProtoBuf.TypeParameter.Variance = when (variance) {
