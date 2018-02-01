@@ -119,9 +119,7 @@ object ArrayFIF : CompositeFIF() {
     }
 
     init {
-        val arrayName = KotlinBuiltIns.FQ_NAMES.array.shortName()
-
-        val arrayTypeNames = mutableListOf(arrayName)
+        val arrayTypeNames = mutableListOf(KotlinBuiltIns.FQ_NAMES.array.shortName())
         PrimitiveType.values().mapTo(arrayTypeNames) { it.arrayTypeName }
 
         val arrays = NamePredicate(arrayTypeNames)
@@ -130,7 +128,7 @@ object ArrayFIF : CompositeFIF() {
         add(pattern(arrays, "<get-size>"), LENGTH_PROPERTY_INTRINSIC)
 
         for (type in PrimitiveType.values()) {
-            add(pattern(NamePredicate(type.arrayTypeName), "<init>(Int)"), intrinsify { _, arguments, context ->
+            add(pattern("${type.arrayTypeName}.<init>(Int)"), intrinsify { _, arguments, context ->
                 assert(arguments.size == 1) { "Array <init>(Int) expression must have one argument." }
                 val (size) = arguments
 
@@ -153,9 +151,9 @@ object ArrayFIF : CompositeFIF() {
                 }
             })
 
-            add(pattern(NamePredicate(type.arrayTypeName), "<init>(Int,Function1)"), createConstructorIntrinsic(type))
+            add(pattern("${type.arrayTypeName}.<init>(Int,Function1)"), createConstructorIntrinsic(type))
 
-            add(pattern(NamePredicate(type.arrayTypeName), "iterator"), intrinsify { callInfo, _, context ->
+            add(pattern("${type.arrayTypeName}.iterator"), intrinsify { callInfo, _, context ->
                 val receiver = callInfo.dispatchReceiver
                 if (typedArraysEnabled(context.config)) {
                     JsAstUtils.invokeKotlinFunction("${type.lowerCaseName}ArrayIterator", receiver!!)
@@ -166,8 +164,8 @@ object ArrayFIF : CompositeFIF() {
             })
         }
 
-        add(pattern(NamePredicate(arrayName), "<init>(Int,Function1)"), createConstructorIntrinsic(null))
-        add(pattern(NamePredicate(arrayName), "iterator"), KotlinFunctionIntrinsic("arrayIterator"))
+        add(pattern("Array.<init>(Int,Function1)"), createConstructorIntrinsic(null))
+        add(pattern("Array.iterator"), KotlinFunctionIntrinsic("arrayIterator"))
 
         add(pattern("arrayOfNulls"), KotlinFunctionIntrinsic("newArray", JsNullLiteral()))
 
