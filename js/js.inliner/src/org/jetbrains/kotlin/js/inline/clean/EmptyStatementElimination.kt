@@ -75,7 +75,8 @@ internal class EmptyStatementElimination(private val root: JsStatement) {
                 for (case in x.cases) {
                     processStatements(case.statements)
                 }
-                if (x.cases.dropLast(1).none { it is JsDefault } && x.cases.dropLast(1).all { it.statements.isEmpty() }) {
+                if (x.cases.lastOrNull() is JsDefault &&
+                    x.cases.dropLast(1).all { it.statements.isEmpty() }) {
                     hasChanges = true
                     val conditionStatement = JsAstUtils.asSyntheticStatement(x.expression)
                     ctx.replaceMe(JsBlock(listOf(conditionStatement) + x.cases.last().statements))
