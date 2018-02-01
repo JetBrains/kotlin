@@ -21491,6 +21491,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("equalsHell.kt")
+            public void testEqualsHell() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/equalsHell.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("equalsWithConstants.kt")
             public void testEqualsWithConstants() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/equalsWithConstants.kt");

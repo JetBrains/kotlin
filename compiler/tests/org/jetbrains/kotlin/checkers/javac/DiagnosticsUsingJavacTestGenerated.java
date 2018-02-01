@@ -24910,6 +24910,18 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("equalsHell.kt")
+                public void testEqualsHell() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/patternMatching/equalsHell.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("smartCasts.kt")
+                public void testSmartCasts() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/patternMatching/smartCasts.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("typeRHS.kt")
                 public void testTypeRHS() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/patternMatching/typeRHS.kt");
