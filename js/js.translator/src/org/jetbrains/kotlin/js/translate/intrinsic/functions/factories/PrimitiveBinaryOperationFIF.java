@@ -110,7 +110,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             .build();
 
     private static final Predicate<FunctionDescriptor> PREDICATE =
-            pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, new NamePredicate(OperatorNameConventions.BINARY_OPERATION_NAMES))
+            pattern("Byte|Short|Char|Int|Float|Double", new NamePredicate(OperatorNameConventions.BINARY_OPERATION_NAMES))
                     .or(pattern("Boolean.or|and|xor"))
                     .or(pattern("String.plus"))
                     .or(pattern("Int.or|and|xor|shl|shr|ushr"))
