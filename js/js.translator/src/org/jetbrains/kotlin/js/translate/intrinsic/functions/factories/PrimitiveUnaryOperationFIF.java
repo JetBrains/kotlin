@@ -55,20 +55,6 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     @NotNull
     private static final Predicate<FunctionDescriptor> PATTERN = PRIMITIVE_UNARY_OPERATION_NAMES.and(NO_PARAMETERS);
 
-    private static final DescriptorPredicate INC_OPERATION_FOR_INT = pattern("Int.inc");
-    private static final DescriptorPredicate DEC_OPERATION_FOR_INT = pattern("Int.dec");
-    private static final DescriptorPredicate INC_OPERATION_FOR_BYTE = pattern("Byte.inc");
-    private static final DescriptorPredicate DEC_OPERATION_FOR_BYTE = pattern("Byte.dec");
-    private static final DescriptorPredicate INC_OPERATION_FOR_SHORT = pattern("Short.inc");
-    private static final DescriptorPredicate DEC_OPERATION_FOR_SHORT = pattern("Short.dec");
-    private static final DescriptorPredicate NEG_OPERATION_FOR_INT = pattern("Int.unaryMinus");
-
-    @NotNull
-    private static final DescriptorPredicate INC_OPERATION_FOR_PRIMITIVE_NUMBER = pattern("Float|Double.inc()");
-
-    @NotNull
-    private static final DescriptorPredicate DEC_OPERATION_FOR_PRIMITIVE_NUMBER = pattern("Float|Double.dec()");
-
     private static class IntOverflowIntrinsic extends FunctionIntrinsicWithReceiverComputed {
         private final FunctionIntrinsicWithReceiverComputed underlyingIntrinsic;
 
@@ -254,33 +240,33 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
             return CHAR_DEC;
         }
 
-        if (INC_OPERATION_FOR_INT.test(descriptor)) {
+        if (pattern("Int.inc").test(descriptor)) {
             return new IntOverflowIntrinsic(NUMBER_INC_INTRINSIC);
         }
-        if (DEC_OPERATION_FOR_INT.test(descriptor)) {
+        if (pattern("Int.dec").test(descriptor)) {
             return new IntOverflowIntrinsic(NUMBER_DEC_INTRINSIC);
         }
-        if (INC_OPERATION_FOR_SHORT.test(descriptor)) {
+        if (pattern("Short.inc").test(descriptor)) {
             return new ShortOverflowIntrinsic(NUMBER_INC_INTRINSIC);
         }
-        if (DEC_OPERATION_FOR_SHORT.test(descriptor)) {
+        if (pattern("Short.dec").test(descriptor)) {
             return new ShortOverflowIntrinsic(NUMBER_DEC_INTRINSIC);
         }
-        if (INC_OPERATION_FOR_BYTE.test(descriptor)) {
+        if (pattern("Byte.inc").test(descriptor)) {
             return new ByteOverflowIntrinsic(NUMBER_INC_INTRINSIC);
         }
-        if (DEC_OPERATION_FOR_BYTE.test(descriptor)) {
+        if (pattern("Byte.dec").test(descriptor)) {
             return new ByteOverflowIntrinsic(NUMBER_DEC_INTRINSIC);
         }
 
-        if (INC_OPERATION_FOR_PRIMITIVE_NUMBER.test(descriptor)) {
+        if (pattern("Float|Double.inc()").test(descriptor)) {
             return NUMBER_INC_INTRINSIC;
         }
-        if (DEC_OPERATION_FOR_PRIMITIVE_NUMBER.test(descriptor)) {
+        if (pattern("Float|Double.dec()").test(descriptor)) {
             return NUMBER_DEC_INTRINSIC;
         }
 
-        if (NEG_OPERATION_FOR_INT.test(descriptor)) {
+        if (pattern("Int.unaryMinus").test(descriptor)) {
             return new IntOverflowIntrinsic(NUMBER_NEG_INTRINSIC);
         }
 
