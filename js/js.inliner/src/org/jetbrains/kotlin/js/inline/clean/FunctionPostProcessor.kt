@@ -37,7 +37,10 @@ class FunctionPostProcessor(val root: JsFunction) {
 
     fun apply() {
         do {
-            val hasChanges = optimizations.fold(false) { existing, f -> existing or f() }
+            var hasChanges = false
+            for (opt in optimizations) {
+                hasChanges = hasChanges or opt()
+            }
         } while (hasChanges)
     }
 }

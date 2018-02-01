@@ -21354,6 +21354,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("switchOptimizationSingleStatementCase.kt")
+        public void testSwitchOptimizationSingleStatementCase() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/switchOptimizationSingleStatementCase.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("switchOptimizationSparse.kt")
         public void testSwitchOptimizationSparse() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/switchOptimizationSparse.kt");
