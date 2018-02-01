@@ -350,20 +350,25 @@ allprojects {
     }
 }
 
-task<Copy>("dist") {
+val distTask = task<Copy>("dist") {
+    val childDistTasks = getTasksByName("dist", true) - this@task
+    dependsOn(childDistTasks)
+
     into(distDir)
     from(files("compiler/cli/bin")) { into("kotlinc/bin") }
     from(files("license")) { into("kotlinc/license") }
 }
 
 val compilerCopyTask = task<Copy>("idea-plugin-copy-compiler") {
-    shouldRunAfter(":dist")
+    dependsOn(distTask)
     into(ideaPluginDir)
     from(distDir) { include("kotlinc/**") }
 }
 
 task<Copy>("ideaPlugin") {
     dependsOn(compilerCopyTask)
+    val childIdeaPluginTasks = getTasksByName("ideaPlugin", true) - this@task
+    dependsOn(childIdeaPluginTasks)
     shouldRunAfter(":prepare:idea-plugin:idea-plugin")
     into("$ideaPluginDir/lib")
 }
