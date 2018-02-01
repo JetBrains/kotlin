@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter.dsl
 
+import com.intellij.ide.highlighter.custom.CustomHighlighterColors.*
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -36,10 +37,17 @@ class DslHighlighterExtension : HighlighterExtension() {
     }
 
     companion object {
-        private const val numStyles = 5
+        private const val numStyles = 4
+
+        private val defaultKeys = listOf(
+            CUSTOM_KEYWORD1_ATTRIBUTES,
+            CUSTOM_KEYWORD2_ATTRIBUTES,
+            CUSTOM_KEYWORD3_ATTRIBUTES,
+            CUSTOM_KEYWORD4_ATTRIBUTES
+        )
 
         private val styles = (1..numStyles).map { index ->
-            TextAttributesKey.createTextAttributesKey("KOTLIN_DSL_STYLE$index", KotlinHighlightingColors.KEYWORD)
+            TextAttributesKey.createTextAttributesKey("KOTLIN_DSL_STYLE$index", defaultKeys[index - 1])
         }
 
         val descriptionsToStyles = (1..numStyles).associate { index ->
