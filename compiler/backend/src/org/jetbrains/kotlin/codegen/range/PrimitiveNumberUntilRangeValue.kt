@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.generateCallReceiver
 import org.jetbrains.kotlin.codegen.generateCallSingleArgument
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
@@ -29,7 +30,13 @@ class PrimitiveNumberUntilRangeValue(rangeCall: ResolvedCall<out CallableDescrip
     PrimitiveNumberRangeIntrinsicRangeValue(rangeCall), ReversableRangeValue {
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
-        SimpleBoundedValue(codegen, rangeCall, isLowInclusive = true, isHighInclusive = false)
+        SimpleBoundedValue(
+            codegen.asmType(rangeCall.resultingDescriptor.returnType!!),
+            codegen.generateCallReceiver(rangeCall),
+            true,
+            codegen.generateCallSingleArgument(rangeCall),
+            false
+        )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
         ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
