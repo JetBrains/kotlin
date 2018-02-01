@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -202,6 +204,9 @@ class KtLightAnnotationForSourceEntry(
                 wrapAnnotationValue(memberValue, this, {
                     originalExpression.let { ktOrigin ->
                         when {
+                            ktOrigin is KtCallExpression
+                                    && memberValue is PsiAnnotation
+                                    && isAnnotationConstructorCall(ktOrigin, memberValue) -> ktOrigin
                             ktOrigin is KtValueArgumentList -> ktOrigin.arguments.getOrNull(i)?.getArgumentExpression()
                             ktOrigin is KtCallElement -> ktOrigin.valueArguments.getOrNull(i)?.getArgumentExpression()
                             ktOrigin is KtCollectionLiteralExpression -> ktOrigin.getInnerExpressions().getOrNull(i)
@@ -254,6 +259,25 @@ class KtLightAnnotationForSourceEntry(
     override fun findAttributeValue(name: String?) = clsDelegate.findAttributeValue(name)?.let { wrapAnnotationValue(it) }
 
     override fun findDeclaredAttributeValue(name: String?) = clsDelegate.findDeclaredAttributeValue(name)?.let { wrapAnnotationValue(it) }
+
+    override fun getParameterList(): PsiAnnotationParameterList = KtLightAnnotationParameterList(super.getParameterList())
+
+    inner class KtLightAnnotationParameterList(private val list: PsiAnnotationParameterList) : KtLightElementBase(this),
+        PsiAnnotationParameterList {
+        override val kotlinOrigin get() = null
+        override fun getAttributes(): Array<PsiNameValuePair> = list.attributes.map { KtLightPsiNameValuePair(it) }.toTypedArray()
+
+        inner class KtLightPsiNameValuePair(private val psiNameValuePair: PsiNameValuePair) : KtLightElementBase(this),
+            PsiNameValuePair {
+            override fun setValue(newValue: PsiAnnotationMemberValue): PsiAnnotationMemberValue = psiNameValuePair.setValue(newValue)
+            override fun getNameIdentifier(): PsiIdentifier? = psiNameValuePair.nameIdentifier
+            override fun getLiteralValue(): String? = (value as? PsiLiteralValue)?.value?.toString()
+            override val kotlinOrigin: KtElement? = null
+
+            override fun getValue(): PsiAnnotationMemberValue? = psiNameValuePair.value?.let { wrapAnnotationValue(it) }
+        }
+    }
+
 
     override fun delete() = kotlinOrigin.delete()
 
@@ -336,6 +360,9 @@ private fun KtElement.getResolvedCall(): ResolvedCall<out CallableDescriptor>? {
     val context = LightClassGenerationSupport.getInstance(this.project).analyze(this)
     return this.getResolvedCall(context)
 }
+
+private fun isAnnotationConstructorCall(callExpression: KtCallExpression, psiAnnotation: PsiAnnotation) =
+    (callExpression.getResolvedCall()?.resultingDescriptor as? ClassConstructorDescriptor)?.constructedClass?.fqNameUnsafe?.toString() == psiAnnotation.qualifiedName
 
 private fun PsiElement.asKtCall(): KtCallElement? = (this as? KtElement)?.getResolvedCall()?.call?.callElement as? KtCallElement
 

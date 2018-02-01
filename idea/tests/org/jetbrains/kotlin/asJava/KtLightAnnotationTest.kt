@@ -21,6 +21,7 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.psi.*
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
@@ -187,6 +188,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         annotationAttributeVal as PsiAnnotation
         val innerAnnotationAttributeVal = annotationAttributeVal.findAttributeValue("anno3") as PsiElement
         assertTextAndRange("Anno3()", innerAnnotationAttributeVal)
+        assertIsKtLightAnnotation("Anno3()", innerAnnotationAttributeVal)
     }
 
     fun testKotlinAnnotationWithStringArray() {
@@ -235,16 +237,25 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         """.trimIndent())
         myFixture.testHighlighting("AnnotatedClass.kt")
 
-        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
-        val annotationAttributeVal = annotations.first().findAttributeValue("anno2") as PsiElement
-        assertTextAndRange("arrayOf(Anno2(1), Anno2(2))", annotationAttributeVal)
+        val annotation = myFixture.findClass("AnnotatedClass").expectAnnotations(1).single()
 
-        annotationAttributeVal as PsiArrayInitializerMemberValue
-        val innerAnnotationAttributeVal = annotationAttributeVal.initializers[0]
-        assertTextAndRange("Anno2(1)", innerAnnotationAttributeVal)
-        innerAnnotationAttributeVal as PsiAnnotation
-        val value = innerAnnotationAttributeVal.findAttributeValue("v")!!
-        assertTextAndRange("1", value)
+        val annotationAttributeVal = annotation.findAttributeValue("anno2") as PsiArrayInitializerMemberValue
+        assertTextAndRange("arrayOf(Anno2(1), Anno2(2))", annotationAttributeVal)
+        annotationAttributeVal.initializers[0].let { innerAnnotationAttributeVal ->
+            assertTextAndRange("Anno2(1)", innerAnnotationAttributeVal)
+            assertIsKtLightAnnotation("Anno2(1)", innerAnnotationAttributeVal)
+            innerAnnotationAttributeVal as PsiAnnotation
+            val value = innerAnnotationAttributeVal.findAttributeValue("v")!!
+            assertTextAndRange("1", value)
+        }
+
+
+        val attributeValueFromParameterList = annotation.parameterList.attributes.single().value as PsiArrayInitializerMemberValue
+        assertTextAndRange("arrayOf(Anno2(1), Anno2(2))", attributeValueFromParameterList)
+        attributeValueFromParameterList.initializers[0].let { innerAnnotationAttributeVal ->
+            assertTextAndRange("Anno2(1)", innerAnnotationAttributeVal)
+            assertIsKtLightAnnotation("Anno2(1)", innerAnnotationAttributeVal)
+        }
 
     }
 
@@ -270,6 +281,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
             annotationAttributeVal as PsiArrayInitializerMemberValue
             annotationAttributeVal.initializers[0].let { innerAnnotationAttributeVal ->
                 assertTextAndRange("Inner()", innerAnnotationAttributeVal)
+                assertIsKtLightAnnotation("Inner()", innerAnnotationAttributeVal)
             }
         }
 
@@ -489,6 +501,10 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         TestCase.assertEquals("mismatch for $psiElement of ${psiElement.javaClass}", expected, psiElement.text)
         TestCase.assertEquals(expected, psiElement.textRange.substring(psiElement.containingFile.text))
         TestCase.assertEquals(psiElement, PsiAnchor.create(psiElement).retrieve())
+    }
+
+    private fun assertIsKtLightAnnotation(expected: String, psiElement: PsiElement) {
+        TestCase.assertEquals(expected, (psiElement as KtLightAnnotationForSourceEntry).kotlinOrigin.text)
     }
 
     private fun assertTextRangeAndValue(expected: String, value: Any?, psiElement: PsiElement) {
