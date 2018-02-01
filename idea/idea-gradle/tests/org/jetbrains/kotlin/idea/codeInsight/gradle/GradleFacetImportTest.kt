@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
@@ -1109,7 +1110,7 @@ compileTestKotlin {
             include ':js-module'
         """)
         createProjectSubFile("local.properties", """
-            sdk.dir=/${KotlinTestUtils.findAndroidSdk()}
+            sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
         """)
         importProject()
 
@@ -1178,7 +1179,7 @@ compileTestKotlin {
             }
         """)
         createProjectSubFile("local.properties", """
-            sdk.dir=/${KotlinTestUtils.findAndroidSdk()}
+            sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
         """)
         createProjectSubFile("src/main/AndroidManifest.xml", """
             <manifest xmlns:android="http://schemas.android.com/apk/res/android"

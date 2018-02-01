@@ -471,7 +471,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
         """)
         createProjectSubFile("local.properties", """
-            sdk.dir=/${KotlinTestUtils.findAndroidSdk()}
+            sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
         """)
 
 
@@ -649,7 +649,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
         """)
         createProjectSubFile("local.properties", """
-            sdk.dir=/${KotlinTestUtils.findAndroidSdk()}
+            sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
         """)
 
         importProject()
