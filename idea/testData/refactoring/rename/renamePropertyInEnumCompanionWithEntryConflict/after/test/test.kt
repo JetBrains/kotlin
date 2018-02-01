@@ -4,7 +4,7 @@ enum class E {
     A;
 
     companion object {
-        public const val A: Int = 1
+        public const val A : Int = 1
     }
 }
 

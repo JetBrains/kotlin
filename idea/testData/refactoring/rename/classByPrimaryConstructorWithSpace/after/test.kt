@@ -1,2 +1,2 @@
-open class Bar(val foo: Boolean)
+open class Bar (val foo: Boolean)
 class E : Bar(false)
