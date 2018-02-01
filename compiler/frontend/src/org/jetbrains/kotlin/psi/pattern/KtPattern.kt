@@ -45,6 +45,12 @@ class KtPattern(node: ASTNode) : KtPatternElementImpl(node) {
     val isSimple: Boolean
         get() = entry?.isSimple?.and(guard == null) ?: true
 
+    val isRestrictionsFree: Boolean
+        get() = entry?.isRestrictionsFree?.and(guard == null) ?: true
+
+    val onlyTypeRestrictions: Boolean
+        get() = entry?.onlyTypeRestrictions?.and(guard == null) ?: true
+
     val typeReference: KtTypeReference?
         get() = entry?.typeReference
 

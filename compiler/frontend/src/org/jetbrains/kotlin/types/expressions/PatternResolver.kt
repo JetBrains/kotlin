@@ -76,15 +76,17 @@ class PatternResolver(
     }
 
     fun getDeconstructType(typedTuple: KtPatternTypedTuple, state: PatternResolveState): KotlinType? {
-        val results = components.fakeCallResolver.resolveFakeCall(
-                context = state.context,
-                receiver = state.subject.receiverValue,
-                name = getDeconstructName(),
-                callElement = state.subject.expression,
-                reportErrorsOn = typedTuple,
-                callKind = FakeCallKind.OTHER,
-                valueArguments = emptyList()
-        )
+        val results = repairAfterInvoke(state) {
+            components.fakeCallResolver.resolveFakeCall(
+                    context = state.context,
+                    receiver = state.subject.receiverValue,
+                    name = getDeconstructName(),
+                    callElement = state.subject.expression,
+                    reportErrorsOn = typedTuple,
+                    callKind = FakeCallKind.OTHER,
+                    valueArguments = emptyList()
+            )
+        }
         if (!results.isSuccess) return null
         state.context.trace.record(BindingContext.PATTERN_DECONSTRUCT_RESOLVED_CALL, typedTuple, results.resultingCall)
         return results.resultingDescriptor.returnType
@@ -92,20 +94,33 @@ class PatternResolver(
 
     fun getComponentType(index: Int, entry: KtPatternEntry, state: PatternResolveState): KotlinType {
         val componentName = getComponentName(index)
-        val results = components.fakeCallResolver.resolveFakeCall(
-                context = state.context,
-                receiver = state.subject.receiverValue,
-                name = componentName,
-                callElement = state.subject.expression,
-                reportErrorsOn = entry,
-                callKind = FakeCallKind.COMPONENT,
-                valueArguments = emptyList()
-        )
+        val results = repairAfterInvoke(state) {
+            components.fakeCallResolver.resolveFakeCall(
+                    context = state.context,
+                    receiver = state.subject.receiverValue,
+                    name = componentName,
+                    callElement = state.subject.expression,
+                    reportErrorsOn = entry,
+                    callKind = FakeCallKind.COMPONENT,
+                    valueArguments = emptyList()
+            )
+        }
         val errorType = lazy { ErrorUtils.createErrorType("$componentName() return type") }
         if (!results.isSuccess) return errorType.value
         val resultType = results.resultingDescriptor.returnType ?: return errorType.value
         state.context.trace.record(BindingContext.PATTERN_COMPONENT_RESOLVED_CALL, entry, results.resultingCall)
         return resultType
+    }
+
+    private fun <T> repairAfterInvoke(state: PatternResolveState, invokable: () -> T): T {
+        val beforeSubjectType = state.context.trace.bindingContext.getType(state.subject.expression)
+        val result = invokable()
+        val subjectTypeInfo = state.context.trace.get(BindingContext.EXPRESSION_TYPE_INFO, state.subject.expression)
+        if (subjectTypeInfo != null && beforeSubjectType != null) {
+            val repairedSubjectTypeInfo = subjectTypeInfo.replaceType(beforeSubjectType)
+            state.context.trace.record(BindingContext.EXPRESSION_TYPE_INFO, state.subject.expression, repairedSubjectTypeInfo)
+        }
+        return result
     }
 
     fun getTypeInfo(typeReference: KtTypeReference, state: PatternResolveState): ConditionalTypeInfo {

@@ -10,7 +10,7 @@ fun foo2(x: Pair<Int, Int>) = when (x) {
     is <!USELESS_IS_CHECK!>Pair<!> -> 0
     is <!USELESS_IS_CHECK, DUPLICATE_LABEL_IN_WHEN!>Pair<!>(val <!UNUSED_VARIABLE!>a<!>: <!USELESS_IS_CHECK!>Int<!>, val <!UNUSED_VARIABLE!>b<!>: <!USELESS_IS_CHECK!>Int<!>) -> 0
     is (val <!UNUSED_VARIABLE!>a<!>: <!USELESS_IS_CHECK!>Int<!>, val <!UNUSED_VARIABLE!>b<!>: <!USELESS_IS_CHECK!>Int<!>) -> 0
-    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 0
+    else -> 0
 }
 
 fun foo3(x: Pair<Int, Int>) = when (x) {

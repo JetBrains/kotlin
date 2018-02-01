@@ -1,0 +1,17 @@
+package
+
+public fun foo1(/*0*/ x: kotlin.Any?): kotlin.Int
+public fun foo2(/*0*/ x: Pair<kotlin.Int, kotlin.Int>): kotlin.Int
+public fun foo3(/*0*/ x: Pair<kotlin.Int, kotlin.Int>): kotlin.Int
+
+public final data class Pair</*0*/ F, /*1*/ S> {
+    public constructor Pair</*0*/ F, /*1*/ S>(/*0*/ first: F, /*1*/ second: S)
+    public final val first: F
+    public final val second: S
+    public final operator /*synthesized*/ fun component1(): F
+    public final operator /*synthesized*/ fun component2(): S
+    public final /*synthesized*/ fun copy(/*0*/ first: F = ..., /*1*/ second: S = ...): Pair<F, S>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

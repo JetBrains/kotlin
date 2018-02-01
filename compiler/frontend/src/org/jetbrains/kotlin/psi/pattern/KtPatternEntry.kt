@@ -59,10 +59,19 @@ class KtPatternEntry(node: ASTNode) : KtPatternElementImpl(node) {
         get() = (simpleType ?: declarationType ?: typedTupleType)?.typeReference
 
     val isSimple: Boolean
-        get() = tuple?.entries?.all { it.isSimple && it.typeReference == null && it.expression == null } ?: true
+        get() = expression == null && tuple?.entries?.all { it.isSimple && it.typeReference == null } ?: true
+
+    val isRestrictionsFree: Boolean
+        get() = expression == null && typeReference == null && tuple?.entries?.all { it.isRestrictionsFree } ?: true
+
+    val onlyTypeRestrictions: Boolean
+        get() = expression == null && tuple?.entries?.all { it.onlyTypeRestrictions } ?: true
 
     val isEmptyDeclaration: Boolean
         get() = declaration?.isEmpty ?: false
+
+    val isNotEmptyDeclaration: Boolean
+        get() = !isEmptyDeclaration
 
     val element: KtPatternElement?
         get() = findChildByClass(KtPatternElement::class.java)

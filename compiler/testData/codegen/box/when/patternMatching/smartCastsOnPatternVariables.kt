@@ -43,8 +43,8 @@ fun box(): String {
     assertEquals(foo2(Child2(3)), 3)
 
     assertEquals(foo3(Child1(1)), 1)
-    assertEquals(foo3(Child1(2)), 20)
-    assertEquals(foo3(Child1(3)), 20)
+    assertEquals(foo3(Child1(2)), 10)
+    assertEquals(foo3(Child1(3)), 10)
     assertEquals(foo3(Child2(2)), 2)
     assertEquals(foo3(Child2(1)), 20)
     assertEquals(foo3(Child2(3)), 20)

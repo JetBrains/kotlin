@@ -30,7 +30,13 @@ class KtWhenConditionIsPattern(node: ASTNode) : KtWhenCondition(node) {
         get() = findChildByType(KtNodeTypes.PATTERN)
 
     val isSimple: Boolean
-        get() = pattern!!.isSimple
+        get() = pattern?.isSimple ?: true
+
+    val isRestrictionsFree: Boolean
+        get() = pattern?.isRestrictionsFree ?: true
+
+    val onlyTypeRestrictions: Boolean
+        get() = pattern?.onlyTypeRestrictions ?: true
 
     val typeReference: KtTypeReference?
         get() = pattern?.typeReference

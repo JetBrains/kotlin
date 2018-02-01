@@ -258,18 +258,24 @@ internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChe
     }
 }
 
-internal object WhenOnPatternExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
+interface MissingCasesResolver {
 
-    override fun getMissingCases(
-            expression: KtWhenExpression,
-            context: BindingContext,
-            subjectDescriptor: ClassDescriptor?,
-            nullable: Boolean
-    ): List<WhenMissingCase> {
+    fun isApplicable(subjectType: KotlinType?, expression: KtWhenExpression): Boolean
+
+    fun resolve(unresolvedMissingCases: List<WhenMissingCase>, expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase>
+}
+
+object SimpleMissingCasesResolver : MissingCasesResolver {
+    @Suppress("UNCHECKED_CAST")
+    override fun isApplicable(subjectType: KotlinType?, expression: KtWhenExpression) = (expression.entries.asSequence()
+            .map { it.conditions.asSequence() }.flatten()
+            .filter { it is KtWhenConditionIsPattern } as Sequence<KtWhenConditionIsPattern>)
+            .filter { !it.isNegated }
+            .any { it.isRestrictionsFree }
+
+    override fun resolve(unresolvedMissingCases: List<WhenMissingCase>, expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
         return listOf()
     }
-
-    override fun isApplicable(subjectType: KotlinType) = true
 }
 
 object WhenChecker {
@@ -279,6 +285,8 @@ object WhenChecker {
         WhenOnEnumExhaustivenessChecker,
         WhenOnSealedExhaustivenessChecker
     )
+
+    private val missingCasesResolvers = listOf(SimpleMissingCasesResolver)
 
     @JvmStatic
     fun isWhenByEnum(expression: KtWhenExpression, context: BindingContext) =
@@ -316,12 +324,19 @@ object WhenChecker {
         sealedClassDescriptor: ClassDescriptor
     ) = WhenOnSealedExhaustivenessChecker.getMissingCases(expression, context, sealedClassDescriptor, false)
 
-    fun getMissingCases(expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
-        val type = whenSubjectType(expression, context) ?: return listOf(UnknownMissingCase)
+    private fun getUnresolvedMissingCases(type: KotlinType?, expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
+        if (type == null) return listOf(UnknownMissingCase)
         val nullable = type.isMarkedNullable
         val checkers = exhaustivenessCheckers.filter { it.isApplicable(type) }
         if (checkers.isEmpty()) return listOf(UnknownMissingCase)
         return checkers.map { it.getMissingCases(expression, context, TypeUtils.getClassDescriptor(type), nullable) }.flatten()
+    }
+
+    fun getMissingCases(expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
+        val type = whenSubjectType(expression, context)
+        val missingCases = getUnresolvedMissingCases(type, expression, context)
+        return missingCasesResolvers.filter { it.isApplicable(type, expression) }
+                .fold(missingCases) { acc, resolver -> resolver.resolve(acc, expression, context) }
     }
 
     @JvmStatic

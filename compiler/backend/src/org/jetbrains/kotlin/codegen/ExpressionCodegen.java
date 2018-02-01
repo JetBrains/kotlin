@@ -103,6 +103,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
@@ -4287,7 +4288,8 @@ The "returned" value of try expression with no finally is either the last expres
     private StackValue generateMatchTypedTuple(StackValue expressionToMatch, KtPatternTypedTuple typedTuple) {
         KtPatternTuple tuple = typedTuple.getTuple();
         forceAssert(tuple != null, "pattern tuple is null for " + typedTuple.getText());
-        List<KtPatternEntry> entries = tuple.getEntries();
+        // it possible if expression is KtPatternVariableDeclaration is empty, etc is '_' token
+        List<KtPatternEntry> entries = tuple.getEntries().stream().filter(KtPatternEntry::isNotEmptyDeclaration).collect(Collectors.toList());
         KtPatternTypeReference typeReference = typedTuple.getTypeReference();
 
         if (entries.size() == 0) {
@@ -4298,14 +4300,13 @@ The "returned" value of try expression with no finally is either the last expres
 
         StackValue receiverStackValue = generatePatternDeconstructReceiver(expressionToMatch, typedTuple);
         ReceiverValue receiver = bindingContext.get(PATTERN_COMPONENTS_RECEIVER, typedTuple);
+        forceAssert(receiver != null, "receiver is null for " + typedTuple.getText());
         Type receiverType = receiverStackValue.type;
         Call receiverCall = makeFakeCall(receiver);
 
         StackValue match = new ConstantLocalVariable(myFrameMap, receiverStackValue, receiverType, Type.BOOLEAN_TYPE, loadReceiver -> {
             StackValue result = null;
             for (KtPatternEntry entry : entries) {
-                // it possible if expression is KtPatternVariableDeclaration is empty, etc is '_' token
-                if (entry.isEmptyDeclaration()) continue;
                 ResolvedCall<FunctionDescriptor> componentCall = bindingContext.get(PATTERN_COMPONENT_RESOLVED_CALL, entry);
                 forceAssert(componentCall != null, "resolved call is null for " + entry.getText());
                 StackValue expressionValue = invokeFunction(receiverCall, componentCall, loadReceiver);
