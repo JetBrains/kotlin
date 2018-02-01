@@ -72,4 +72,7 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test
     fun testAnonymous() = doTest("Anonymous")
+
+    @Test
+    fun testAnnotationComplex() = doTest("AnnotationComplex")
 }
