@@ -57,8 +57,8 @@ object CallableReferenceTranslator {
         val receiver = (dispatchReceiver ?: extensionReceiver)?.let {
             when (it) {
                 is TransientReceiver -> null
-                is ImplicitClassReceiver -> context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForReceiver(it))
-                is ExtensionReceiver -> JsThisRef()
+                is ImplicitClassReceiver, is ExtensionReceiver ->
+                    context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForReceiver(it))
                 is ExpressionReceiver -> Translation.translateAsExpression(it.expression, context)
                 else -> throw UnsupportedOperationException("Unsupported receiver value: " + it)
             }
