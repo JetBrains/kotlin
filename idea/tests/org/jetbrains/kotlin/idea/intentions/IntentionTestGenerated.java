@@ -9351,6 +9351,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("caretOnHeadComment.kt")
+        public void testCaretOnHeadComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/caretOnHeadComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("caretOnTailComment.kt")
+        public void testCaretOnTailComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/caretOnTailComment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("comment.kt")
         public void testComment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/comment.kt");
