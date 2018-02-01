@@ -15,7 +15,10 @@ dependencies {
     testCompile project(':kotlin-test:kotlin-test-jvm')
 
     testCompile project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
-    testCompile (project(path: ':kotlin-gradle-plugin-test-utils-embeddable', configuration: 'runtimeJar'))
+    // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
+    // testRuntime on shaded artifact is needed for running tests with shaded compiler
+    testCompileOnly (project(path: ':kotlin-gradle-plugin-test-utils-embeddable', configuration: 'compile'))
+    testRuntime (project(path: ':kotlin-gradle-plugin-test-utils-embeddable', configuration: 'runtimeJar'))
 
     testCompile project(path: ':examples:annotation-processor-example')
     testCompile project(':kotlin-stdlib-jre8')

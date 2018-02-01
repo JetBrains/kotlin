@@ -19,6 +19,7 @@ val projectsToInclude = listOf(":compiler:tests-common",
 
 dependencies {
     for (projectName in projectsToInclude) {
+        compile(projectTests(projectName)) { isTransitive = false }
         packedJars(projectTests(projectName)) { isTransitive = false }
     }
 
