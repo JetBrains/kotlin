@@ -87,7 +87,7 @@ val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
 }
 
 ideaPlugin {
-    shouldRunAfter(":dist")
+    dependsOn(":dist")
     from(jar)
     from(sideJars)
 }

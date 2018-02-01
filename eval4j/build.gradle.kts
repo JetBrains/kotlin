@@ -17,6 +17,6 @@ sourceSets {
 }
 
 projectTest {
-    shouldRunAfter(":dist")
+    dependsOn(":dist")
     workingDir = rootDir
 }

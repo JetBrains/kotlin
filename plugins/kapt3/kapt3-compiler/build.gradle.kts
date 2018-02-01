@@ -37,7 +37,7 @@ testsJar {}
 
 projectTest {
     workingDir = rootDir
-    shouldRunAfter(":dist")
+    dependsOn(":dist")
 }
 
 runtimeJar()

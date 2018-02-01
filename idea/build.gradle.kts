@@ -118,7 +118,7 @@ sourceSets {
 }
 
 projectTest {
-    shouldRunAfter(":dist")
+    dependsOn(":dist")
     workingDir = rootDir
     doFirst {
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)

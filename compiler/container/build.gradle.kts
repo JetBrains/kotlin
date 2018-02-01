@@ -24,7 +24,6 @@ sourceSets {
 testsJar {}
 
 projectTest {
-    shouldRunAfter(":dist")
-    dependsOn(":prepare:mock-runtime-for-test:dist")
+    dependsOn(":dist")
     workingDir = rootDir
 }

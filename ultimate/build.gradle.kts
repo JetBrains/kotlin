@@ -175,8 +175,7 @@ val ideaPluginDir: File by rootProject.extra
 val ideaUltimatePluginDir: File by rootProject.extra
 
 task<Copy>("ideaUltimatePlugin") {
-    dependsOn("$communityPluginProject:ideaPlugin")
-    shouldRunAfter(":ideaPlugin")
+    dependsOn(":ideaPlugin")
     into(ideaUltimatePluginDir)
     from(ideaPluginDir) { exclude("lib/kotlin-plugin.jar") }
     from(jar, { into("lib") })
