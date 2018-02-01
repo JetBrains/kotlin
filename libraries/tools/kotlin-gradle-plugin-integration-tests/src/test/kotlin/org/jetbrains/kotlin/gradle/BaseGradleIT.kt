@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.After
@@ -21,7 +20,7 @@ abstract class BaseGradleIT {
 
     @Before
     fun setUp() {
-        workingDir = FileUtil.createTempDirectory("BaseGradleIT", null)
+        workingDir = createTempDir("BaseGradleIT")
         acceptAndroidSdkLicenses()
     }
 
@@ -105,7 +104,7 @@ abstract class BaseGradleIT {
         }
 
         private fun createNewWrapperDir(version: String): File =
-                FileUtil.createTempDirectory("GradleWrapper-", version, /* deleteOnExit */ true)
+            createTempDir("GradleWrapper-$version")
                         .apply {
                             File(BaseGradleIT.resourcesRootFile, "GradleWrapper").copyRecursively(this)
                             val wrapperProperties = File(this, "gradle/wrapper/gradle-wrapper.properties")
@@ -345,8 +344,8 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.assertContainFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String = ""): CompiledProject {
-        val expectedNormalized = expected.map(FileUtil::normalize).toSortedSet()
-        val actualNormalized = actual.map(FileUtil::normalize).toSortedSet()
+        val expectedNormalized = expected.map(::normalizePath).toSortedSet()
+        val actualNormalized = actual.map(::normalizePath).toSortedSet()
         assertTrue(actualNormalized.containsAll(expectedNormalized), messagePrefix + "expected files: ${expectedNormalized.joinToString()}\n  !in actual files: ${actualNormalized.joinToString()}")
         return this
     }
