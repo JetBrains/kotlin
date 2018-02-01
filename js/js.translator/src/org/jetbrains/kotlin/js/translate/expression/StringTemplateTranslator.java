@@ -21,15 +21,12 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
-import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -111,12 +108,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
         }
 
         private boolean mustCallToString(@NotNull KotlinType type) {
-            Name typeName = DescriptorUtilsKt.getNameIfStandardType(type);
-            //TODO: this is a hacky optimization, should use some generic approach
-            if (typeName != null && NamePredicate.STRING.test(typeName)) {
-                return false;
-            }
-            return resultingExpression == null;
+            return !KotlinBuiltIns.isString(type) && resultingExpression == null;
         }
 
         @Override

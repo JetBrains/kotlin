@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.backend.ast.*;
-import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtIsExpression;
@@ -219,29 +217,32 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @Nullable
     private JsExpression getIsTypeCheckCallableForPrimitiveBuiltin(@NotNull KotlinType type) {
-        Name typeName = getNameIfStandardType(type);
-
-        if (NamePredicate.STRING.test(typeName)) {
+        if (KotlinBuiltIns.isStringOrNullableString(type)) {
             return namer().isTypeOf(new JsStringLiteral("string"));
         }
 
-        if (NamePredicate.BOOLEAN.test(typeName)) {
+        if (KotlinBuiltIns.isBooleanOrNullableBoolean(type)) {
             return namer().isTypeOf(new JsStringLiteral("boolean"));
         }
 
-        if (NamePredicate.LONG.test(typeName)) {
+        if (KotlinBuiltIns.isLongOrNullableLong(type)) {
             return namer().isInstanceOf(Namer.kotlinLong());
         }
 
-        if (NamePredicate.NUMBER.test(typeName)) {
+        if (KotlinBuiltIns.isNumberOrNullableNumber(type)) {
             return namer().kotlin(Namer.IS_NUMBER);
         }
 
-        if (NamePredicate.CHAR.test(typeName)) {
+        if (KotlinBuiltIns.isCharOrNullableChar(type)) {
             return namer().kotlin(Namer.IS_CHAR);
         }
 
-        if (NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS.test(typeName)) {
+        if (KotlinBuiltIns.isByteOrNullableByte(type) ||
+            KotlinBuiltIns.isShortOrNullableShort(type) ||
+            KotlinBuiltIns.isIntOrNullableInt(type) ||
+            KotlinBuiltIns.isFloatOrNullableFloat(type) ||
+            KotlinBuiltIns.isDoubleOrNullableDouble(type)
+        ) {
             return namer().isTypeOf(new JsStringLiteral("number"));
         }
 

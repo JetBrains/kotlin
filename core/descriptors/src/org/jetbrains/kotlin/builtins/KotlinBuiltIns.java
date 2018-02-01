@@ -938,16 +938,32 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._int);
     }
 
+    public static boolean isIntOrNullableInt(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._int);
+    }
+
     public static boolean isByte(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._byte);
+    }
+
+    public static boolean isByteOrNullableByte(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._byte);
     }
 
     public static boolean isLong(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._long);
     }
 
+    public static boolean isLongOrNullableLong(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._long);
+    }
+
     public static boolean isShort(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._short);
+    }
+
+    public static boolean isShortOrNullableShort(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._short);
     }
 
     public static boolean isFloat(@NotNull KotlinType type) {
@@ -964,6 +980,14 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isDoubleOrNullableDouble(@NotNull KotlinType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES._double);
+    }
+
+    public static boolean isNumber(@NotNull KotlinType type) {
+        return isNumberOrNullableNumber(type) && !type.isMarkedNullable();
+    }
+
+    public static boolean isNumberOrNullableNumber(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.number);
     }
 
     private static boolean isConstructedFromGivenClassAndNotNullable(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
