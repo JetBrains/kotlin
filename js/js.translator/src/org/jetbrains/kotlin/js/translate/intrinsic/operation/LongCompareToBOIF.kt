@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.intrinsic.operation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
@@ -34,55 +35,37 @@ import org.jetbrains.kotlin.utils.identity as ID
 
 object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
 
-    val FLOATING_POINT_COMPARE_TO_LONG_PATTERN = pattern("Double|Float.compareTo(Long)")
-    val LONG_COMPARE_TO_FLOATING_POINT_PATTERN = pattern("Long.compareTo(Float|Double)")
-    val INTEGER_COMPARE_TO_LONG_PATTERN = pattern("Int|Short|Byte.compareTo(Long)")
-    val CHAR_COMPARE_TO_LONG_PATTERN = pattern("Char.compareTo(Long)")
-    val LONG_COMPARE_TO_INTEGER_PATTERN = pattern("Long.compareTo(Int|Short|Byte)")
-    val LONG_COMPARE_TO_CHAR_PATTERN = pattern("Long.compareTo(Char)")
-    val LONG_COMPARE_TO_LONG_PATTERN = pattern("Long.compareTo(Long)")
+    private val intrinsics = arrayOf(
+            pattern("Double|Float.compareTo(Long)") to PrimitiveCompare({ it }, { invokeMethod(it, Namer.LONG_TO_NUMBER) }),
+            pattern("Long.compareTo(Float|Double)") to PrimitiveCompare({ invokeMethod(it, Namer.LONG_TO_NUMBER) }, { it }),
+            pattern("Int|Short|Byte.compareTo(Long)") to Compare(::longFromInt, { it }),
+            pattern("Char.compareTo(Long)") to Compare({ longFromInt(charToInt(it)) }, { it }),
+            pattern("Long.compareTo(Int|Short|Byte)") to Compare({ it }, ::longFromInt),
+            pattern("Long.compareTo(Char)") to Compare({ it }, { longFromInt(charToInt(it)) }),
+            pattern("Long.compareTo(Long)") to Compare({ it }, { it })
+    )
 
-    private object FLOATING_POINT_COMPARE_TO_LONG : AbstractBinaryOperationIntrinsic() {
+    private class PrimitiveCompare(val toLeft: (JsExpression) -> JsExpression, val toRight: (JsExpression) -> JsExpression): AbstractBinaryOperationIntrinsic() {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
-            return JsBinaryOperation(operator, left, invokeMethod(right, Namer.LONG_TO_NUMBER))
+            return JsBinaryOperation(operator, toLeft(left), toRight(right))
         }
     }
 
-    private object LONG_COMPARE_TO_FLOATING_POINT : AbstractBinaryOperationIntrinsic() {
+
+    private class Compare(val toLeft: (JsExpression) -> JsExpression, val toRight: (JsExpression) -> JsExpression) : AbstractBinaryOperationIntrinsic() {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
-            return JsBinaryOperation(operator, invokeMethod(left, Namer.LONG_TO_NUMBER), right)
+            return JsBinaryOperation(operator, compareForObject(toLeft(left), toRight(right)), JsIntLiteral(0))
         }
     }
-
-    private class CompareToBinaryIntrinsic(val toLeft: (JsExpression) -> JsExpression, val toRight: (JsExpression) -> JsExpression) : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
-            val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
-            val compareInvocation = compareForObject(toLeft(left), toRight(right))
-            return JsBinaryOperation(operator, compareInvocation, JsIntLiteral(0))
-        }
-    }
-
-    private val INTEGER_COMPARE_TO_LONG = CompareToBinaryIntrinsic(::longFromInt, ID())
-    private val CHAR_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( { longFromInt(charToInt(it)) }, ID())
-    private val LONG_COMPARE_TO_INTEGER  = CompareToBinaryIntrinsic(ID(), ::longFromInt)
-    private val LONG_COMPARE_TO_CHAR  = CompareToBinaryIntrinsic( ID(), { longFromInt(charToInt(it)) })
-    private val LONG_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( ID(), ID() )
 
     override fun getSupportTokens() = OperatorConventions.COMPARISON_OPERATIONS
 
     override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? {
         if (KotlinBuiltIns.isBuiltIn(descriptor)) {
-            return when {
-                FLOATING_POINT_COMPARE_TO_LONG_PATTERN.test(descriptor) -> FLOATING_POINT_COMPARE_TO_LONG
-                LONG_COMPARE_TO_FLOATING_POINT_PATTERN.test(descriptor) -> LONG_COMPARE_TO_FLOATING_POINT
-                INTEGER_COMPARE_TO_LONG_PATTERN.test(descriptor) -> INTEGER_COMPARE_TO_LONG
-                CHAR_COMPARE_TO_LONG_PATTERN.test(descriptor) -> CHAR_COMPARE_TO_LONG
-                LONG_COMPARE_TO_INTEGER_PATTERN.test(descriptor) -> LONG_COMPARE_TO_INTEGER
-                LONG_COMPARE_TO_CHAR_PATTERN.test(descriptor) -> LONG_COMPARE_TO_CHAR
-                LONG_COMPARE_TO_LONG_PATTERN.test(descriptor) -> LONG_COMPARE_TO_LONG
-                else -> null
+            intrinsics.forEach { (predicate, intrinsic) ->
+                if (predicate.test(descriptor)) return intrinsic
             }
         }
         return null
