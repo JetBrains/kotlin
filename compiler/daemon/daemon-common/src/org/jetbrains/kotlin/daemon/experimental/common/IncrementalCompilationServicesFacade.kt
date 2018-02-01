@@ -20,8 +20,10 @@ import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
 
-interface IncrementalCompilationServicesFacade : Remote {
+interface IncrementalCompilationServicesFacade : Server, Remote {
     @Throws(RemoteException::class)
     fun areFileChangesKnown(): Boolean
 
@@ -70,6 +72,81 @@ interface IncrementalCompilationServicesFacade : Remote {
 
     @Throws(RemoteException::class)
     fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>?
+
+
+    // Query messages:
+
+    class AreFileChangesKnownMessage: Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.areFileChangesKnown())
+    }
+
+    class ModifiedFilesMessage: Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.modifiedFiles())
+    }
+
+    class DeletedFilesMessage: Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.deletedFiles())
+    }
+
+    class WorkingDirMessage: Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.workingDir())
+    }
+
+    class CustomCacheVersionFileNameMessage: Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.customCacheVersionFileName())
+    }
+
+    class CustomCacheVersionMessage: Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.customCacheVersion())
+    }
+
+    class ReportICMessage(val message: String): Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.reportIC(message)
+    }
+
+    class ReportCompileIterationMessage(
+        val files: Iterable<File>,
+        val exitCode: Int
+    ): Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.reportCompileIteration(files, exitCode))
+    }
+
+    class UpdateAnnotationsMessage(val outdatedClassesJvmNames: Iterable<String>): Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.updateAnnotations(outdatedClassesJvmNames)
+    }
+
+    class RevertMessage: Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.revert()
+    }
+
+    class RegisterChangesMessage(val timestamp: Long, val dirtyData: SimpleDirtyData): Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.registerChanges(timestamp, dirtyData)
+    }
+
+    class UnknownChangesMessage(val timestamp: Long): Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.unknownChanges(timestamp)
+    }
+
+    class GetChangesMessage(
+        val artifact: File,
+        val sinceTS: Long
+    ): Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.getChanges(artifact, sinceTS))
+    }
+
 }
 
 class SimpleDirtyData(

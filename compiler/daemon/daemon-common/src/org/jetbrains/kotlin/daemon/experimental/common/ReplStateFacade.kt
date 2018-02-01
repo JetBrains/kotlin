@@ -19,8 +19,11 @@ package org.jetbrains.kotlin.daemon.experimental.common
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import java.rmi.Remote
 import java.rmi.RemoteException
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
 
-interface ReplStateFacade : Remote {
+
+interface ReplStateFacade : Server, Remote {
 
     @Throws(RemoteException::class)
     fun getId(): Int
@@ -36,4 +39,31 @@ interface ReplStateFacade : Remote {
 
     @Throws(RemoteException::class)
     fun historyResetTo(id: ILineId): List<ILineId>
+
+    // Query messages:
+    class GetIdMessage : Message<ReplStateFacade> {
+        suspend override fun process(server: ReplStateFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.getId())
+    }
+
+    class GetHistorySizeMessage : Message<ReplStateFacade> {
+        suspend override fun process(server: ReplStateFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.getHistorySize())
+    }
+
+    class HistoryGetMessage(val index: Int) : Message<ReplStateFacade> {
+        suspend override fun process(server: ReplStateFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.historyGet(index))
+    }
+
+    class HistoryResetMessage : Message<ReplStateFacade> {
+        suspend override fun process(server: ReplStateFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.historyReset())
+    }
+
+    class HistoryResetToMessage(val id: ILineId) : Message<ReplStateFacade> {
+        suspend override fun process(server: ReplStateFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.historyResetTo(id))
+    }
+
 }

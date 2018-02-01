@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.daemon.experimental.common
 
 import java.io.File
 import java.rmi.RemoteException
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
 
 interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
     // AnnotationFileUpdater
@@ -39,4 +41,46 @@ interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
 
     @Throws(RemoteException::class)
     fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>?
+
+    // Query messages:
+
+    class HasAnnotationsFileUpdaterMessage : Message<IncrementalCompilerServicesFacade> {
+        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.hasAnnotationsFileUpdater())
+    }
+
+    class UpdateAnnotationsMessage(val outdatedClassesJvmNames: Iterable<String>) : Message<IncrementalCompilerServicesFacade> {
+        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.updateAnnotations(outdatedClassesJvmNames))
+    }
+
+    class UpdateAnnotationsMessage(val outdatedClassesJvmNames: Iterable<String>) : Message<IncrementalCompilerServicesFacade> {
+        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.updateAnnotations(outdatedClassesJvmNames))
+    }
+
+    class RevertMessage(val outdatedClassesJvmNames: Iterable<String>): Message<IncrementalCompilerServicesFacade> {
+        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
+            server.revert()
+    }
+
+    class RegisterChangesMessage(val timestamp: Long, val dirtyData: SimpleDirtyData): Message<IncrementalCompilerServicesFacade> {
+        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
+            server.registerChanges(timestamp, dirtyData)
+    }
+
+    class UnknownChangesMessage(val timestamp: Long): Message<IncrementalCompilerServicesFacade> {
+        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
+            server.unknownChanges(timestamp)
+    }
+
+    class GetChangesMessage(
+        val artifact: File,
+        val sinceTS: Long
+    ): Message<IncrementalCompilationServicesFacade> {
+        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+            server.send(clientSocket, server.getChanges(artifact, sinceTS))
+    }
+
+
 }

@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.daemon.experimental.common
 
 import java.rmi.Remote
 import java.rmi.RemoteException
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
 
-interface RemoteInputStream : Remote {
+interface RemoteInputStream : Server, Remote {
 
     @Throws(RemoteException::class)
     fun close()
@@ -29,4 +31,19 @@ interface RemoteInputStream : Remote {
 
     @Throws(RemoteException::class)
     fun read(): Int
+
+    // Query messages:
+    class CloseMessage : Message<RemoteInputStream> {
+        suspend override fun process(server: RemoteInputStream, clientSocket: Socket) =
+            server.close()
+    }
+
+    class ReadMessage(val length: Int = -1) : Message<RemoteInputStream> {
+        suspend override fun process(server: RemoteInputStream, clientSocket: Socket) =
+            server.send(
+                clientSocket,
+                if (length == -1) server.read() else server.read(length)
+            )
+    }
+
 }

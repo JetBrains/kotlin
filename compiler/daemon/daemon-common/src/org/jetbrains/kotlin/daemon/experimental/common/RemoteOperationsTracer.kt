@@ -18,12 +18,26 @@ package org.jetbrains.kotlin.daemon.experimental.common
 
 import java.rmi.Remote
 import java.rmi.RemoteException
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
 
-interface RemoteOperationsTracer : Remote {
+interface RemoteOperationsTracer : Server, Remote {
 
     @Throws(RemoteException::class)
     fun before(id: String)
 
     @Throws(RemoteException::class)
     fun after(id: String)
+
+    // Query messages:
+    class BeforeMessage(val id: String) : Message<RemoteOperationsTracer> {
+        suspend override fun process(server: RemoteOperationsTracer, clientSocket: Socket) =
+            server.before(id)
+    }
+
+    class AfterMessage(val id: String) : Message<RemoteOperationsTracer> {
+        suspend override fun process(server: RemoteOperationsTracer, clientSocket: Socket) =
+            server.after(id)
+    }
+
 }
