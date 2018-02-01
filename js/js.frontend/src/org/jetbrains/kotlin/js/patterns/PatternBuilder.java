@@ -188,22 +188,11 @@ public final class PatternBuilder {
 
     @NotNull
     public static DescriptorPredicate pattern(@NotNull String... names) {
-        DescriptorPredicate pNew = withOverrides(pattern(String.join(".", names)));
-        DescriptorPredicate pOld = new DescriptorPredicateImpl(names);
-
-        return new DescriptorPredicate() {
-            @Override
-            public boolean test(FunctionDescriptor descriptor) {
-                if (pNew.test(descriptor) != pOld.test(descriptor)) {
-                    throw new IllegalStateException("Mismatch!!!!");
-                }
-                return pNew.test(descriptor);
-            }
-        };
+        return pattern(String.join(".", names));
     }
 
     @NotNull
-    public static DescriptorPredicate isExtensionOf(@NotNull final String receiverFqName) {
+    public static DescriptorPredicate isExtensionOf(@NotNull String receiverFqName) {
         return new DescriptorPredicate() {
             @Override
             public boolean test(FunctionDescriptor descriptor) {
@@ -232,51 +221,7 @@ public final class PatternBuilder {
                 }
 
                 return false;
-
             }
         };
-    }
-
-    public static class DescriptorPredicateImpl implements DescriptorPredicate {
-        private final String[] names;
-
-        public DescriptorPredicateImpl(String... names) {
-            this.names = names;
-        }
-
-        private boolean matches(@NotNull CallableDescriptor callable) {
-            DeclarationDescriptor descriptor = callable;
-            int nameIndex = names.length - 1;
-            while (true) {
-                if (nameIndex == -1) {
-                    return false;
-                }
-
-                if (!descriptor.getName().asString().equals(names[nameIndex])) {
-                    return false;
-                }
-
-                nameIndex--;
-                descriptor = descriptor.getContainingDeclaration();
-                if (descriptor instanceof PackageFragmentDescriptor) {
-                    return nameIndex == 0 && names[0].equals(((PackageFragmentDescriptor) descriptor).getFqName().asString());
-                }
-            }
-        }
-
-        @Override
-        public boolean test(FunctionDescriptor functionDescriptor) {
-            if (!(functionDescriptor.getContainingDeclaration() instanceof ClassDescriptor)) {
-                return matches(functionDescriptor);
-            }
-
-            for (CallableMemberDescriptor real : OverridingUtil.getOverriddenDeclarations(functionDescriptor)) {
-                if (matches(real)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 }

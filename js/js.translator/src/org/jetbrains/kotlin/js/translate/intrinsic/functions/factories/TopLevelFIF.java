@@ -55,7 +55,7 @@ import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.withOverrides;
 
 public final class TopLevelFIF extends CompositeFIF {
-    public static final DescriptorPredicate EQUALS_IN_ANY = pattern("kotlin", "Any", "equals");
+    public static final DescriptorPredicate EQUALS_IN_ANY = withOverrides(pattern("kotlin", "Any", "equals"));
     @NotNull
     private static final KotlinAliasedFunctionIntrinsic KOTLIN_ANY_EQUALS = new KotlinAliasedFunctionIntrinsic("equals") {
         @NotNull
@@ -81,7 +81,7 @@ public final class TopLevelFIF extends CompositeFIF {
     private static final KotlinFunctionIntrinsic KOTLIN_SUBSEQUENCE = new KotlinFunctionIntrinsic("subSequence");
 
     @NotNull
-    private static final DescriptorPredicate HASH_CODE_IN_ANY = pattern("kotlin", "Any", "hashCode");
+    private static final DescriptorPredicate HASH_CODE_IN_ANY = withOverrides(pattern("kotlin", "Any", "hashCode"));
     @NotNull
     private static final KotlinAliasedFunctionIntrinsic KOTLIN_HASH_CODE = new KotlinAliasedFunctionIntrinsic("hashCode");
 
@@ -231,8 +231,8 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("CharSequence.subSequence"), KOTLIN_SUBSEQUENCE);
         add(pattern("kotlin", "iterator").and(isExtensionOf(FQ_NAMES.iterator.asString())), RETURN_RECEIVER_INTRINSIC);
 
-        add(pattern("kotlin.js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
-        add(pattern("kotlin.js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
+        add(withOverrides(pattern("kotlin.js", "Json", "get")), ArrayFIF.GET_INTRINSIC);
+        add(withOverrides(pattern("kotlin.js", "Json", "set")), ArrayFIF.SET_INTRINSIC);
 
         add(pattern("kotlin.js", "jsClass"), JS_CLASS_FUN_INTRINSIC);
 
