@@ -33,3 +33,7 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
+
+test {
+    useTestNG()
+}
