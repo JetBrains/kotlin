@@ -191,11 +191,8 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xsupport-compatqual-checker-framework-annotations",
         valueDescription = "enable|disable",
-        description =
-        """
-Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
-Default value is 'enable'
-"""
+        description = "Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).\n" +
+                "Default value is 'enable'"
     )
     var supportCompatqualCheckerFrameworkAnnotations: String? by FreezableVar(null)
 
