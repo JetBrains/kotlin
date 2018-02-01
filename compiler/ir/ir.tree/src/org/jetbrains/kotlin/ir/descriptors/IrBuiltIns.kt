@@ -32,7 +32,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     private val packageFragment = IrBuiltinsPackageFragmentDescriptorImpl(builtIns.builtInsModule, KOTLIN_INTERNAL_IR_FQN)
@@ -59,40 +61,54 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     private fun <T : SimpleFunctionDescriptor> T.addStub(): IrSimpleFunction =
         addStubToPackageFragment(this)
 
+    private fun defineComparisonOperator(name: String, operandType: KotlinType) =
+        defineOperator(name, bool, listOf(operandType, operandType))
+
+    private fun List<SimpleType>.defineComparisonOperatorForEachType(name: String) =
+        associate { it to defineComparisonOperator(name, it) }
+
     val bool = builtIns.booleanType
     val any = builtIns.anyType
     val anyN = builtIns.nullableAnyType
+    val char = builtIns.charType
+    val byte = builtIns.byteType
+    val short = builtIns.shortType
     val int = builtIns.intType
+    val long = builtIns.longType
+    val float = builtIns.floatType
+    val double = builtIns.doubleType
     val nothing = builtIns.nothingType
     val unit = builtIns.unitType
     val string = builtIns.stringType
 
+    val primitiveTypes = listOf(bool, char, byte, short, int, long, float, double)
+    val primitiveTypesWithComparisons = listOf(int, long, float, double)
+    val primitiveFloatingPointTypes = listOf(float, double)
+
+    val lessFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType("less")
+    val lessOrEqualFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType("lessOrEqual")
+    val greaterOrEqualFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType("greaterOrEqual")
+    val greaterFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType("greater")
+
+    val ieee754equalsFunByOperandType =
+        primitiveFloatingPointTypes.associate {
+            it to defineOperator("ieee754equals", bool, listOf(it.makeNullable(), it.makeNullable()))
+        }
+
     val eqeqeqFun = defineOperator("EQEQEQ", bool, listOf(anyN, anyN))
     val eqeqFun = defineOperator("EQEQ", bool, listOf(anyN, anyN))
-    val lt0Fun = defineOperator("LT0", bool, listOf(int))
-    val lteq0Fun = defineOperator("LTEQ0", bool, listOf(int))
-    val gt0Fun = defineOperator("GT0", bool, listOf(int))
-    val gteq0Fun = defineOperator("GTEQ0", bool, listOf(int))
     val throwNpeFun = defineOperator("THROW_NPE", nothing, listOf())
     val booleanNotFun = defineOperator("NOT", bool, listOf(bool))
     val noWhenBranchMatchedExceptionFun = defineOperator("noWhenBranchMatchedException", unit, listOf())
 
     val eqeqeq = eqeqeqFun.descriptor
     val eqeq = eqeqFun.descriptor
-    val lt0 = lt0Fun.descriptor
-    val lteq0 = lteq0Fun.descriptor
-    val gt0 = gt0Fun.descriptor
-    val gteq0 = gteq0Fun.descriptor
     val throwNpe = throwNpeFun.descriptor
     val booleanNot = booleanNotFun.descriptor
     val noWhenBranchMatchedException = noWhenBranchMatchedExceptionFun.descriptor
 
     val eqeqeqSymbol = eqeqeqFun.symbol
     val eqeqSymbol = eqeqFun.symbol
-    val lt0Symbol = lt0Fun.symbol
-    val lteq0Symbol = lteq0Fun.symbol
-    val gt0Symbol = gt0Fun.symbol
-    val gteq0Symbol = gteq0Fun.symbol
     val throwNpeSymbol = throwNpeFun.symbol
     val booleanNotSymbol = booleanNotFun.symbol
     val noWhenBranchMatchedExceptionSymbol = noWhenBranchMatchedExceptionFun.symbol

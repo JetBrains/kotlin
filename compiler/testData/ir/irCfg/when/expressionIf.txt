@@ -6,18 +6,17 @@ CONTENT
       2 WHEN type=kotlin.Int origin=null
       3 GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
       4 GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=null
-      5 CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
 OUTGOING -> BB 1, 2
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 BB 1
 INCOMING <- BB 0
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
 OUTGOING -> BB 3
     CONST Boolean type=kotlin.Boolean value=true
 BB 2
 INCOMING <- BB 0
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
       1 GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
 OUTGOING -> BB 4

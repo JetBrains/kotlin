@@ -17,20 +17,28 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrUnaryPrimitiveImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi2ir.findSingleFunction
+import org.jetbrains.kotlin.psi2ir.intermediate.CallReceiver
+import org.jetbrains.kotlin.psi2ir.intermediate.OnceExpressionValue
+import org.jetbrains.kotlin.psi2ir.intermediate.SimpleCallReceiver
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.AssertionError
@@ -150,8 +158,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
     private fun generateInOperator(expression: KtBinaryExpression, irOperator: IrStatementOrigin): IrExpression {
         val containsCall = getResolvedCall(expression)!!
 
-        val irContainsCall =
-            CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(containsCall), irOperator)
+        val irContainsCall = generateCall(containsCall, expression, irOperator)
 
         return when (irOperator) {
             IrStatementOrigin.IN ->
@@ -172,7 +179,6 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val irArgument0 = statementGenerator.generateExpression(expression.left!!)
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
-
         val irIdentityEquals = IrBinaryPrimitiveImpl(
             expression.startOffset, expression.endOffset, irOperator,
             context.irBuiltIns.eqeqeqSymbol,
@@ -191,18 +197,33 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             else ->
                 throw AssertionError("Unexpected identity operator $irOperator")
         }
-
     }
 
+    private fun KtExpression.generateAsPrimitiveNumericComparisonOperand(primitiveNumericComparisonType: KotlinType?) =
+        statementGenerator.generateExpression(this)
+            .promoteToPrimitiveNumericType(
+                getPrimitiveNumericComparisonOperandType(this),
+                primitiveNumericComparisonType
+            )
+
+    private fun getPrimitiveNumericComparisonType(ktExpression: KtBinaryExpression) =
+        context.bindingContext[BindingContext.PRIMITIVE_NUMERIC_COMPARISON_TYPE, ktExpression]
+
+    private fun getPrimitiveNumericComparisonOperandType(ktExpression: KtExpression) =
+        context.bindingContext[BindingContext.PRIMITIVE_NUMERIC_COMPARISON_OPERAND_TYPE, ktExpression]
+
     private fun generateEqualityOperator(expression: KtBinaryExpression, irOperator: IrStatementOrigin): IrExpression {
-        val irArgument0 = statementGenerator.generateExpression(expression.left!!)
-        val irArgument1 = statementGenerator.generateExpression(expression.right!!)
+        val primitiveNumericComparisonType = getPrimitiveNumericComparisonType(expression)
+
+        val eqeqSymbol = context.irBuiltIns.ieee754equalsFunByOperandType[primitiveNumericComparisonType]?.symbol
+                ?: context.irBuiltIns.eqeqSymbol
 
         val irEquals = IrBinaryPrimitiveImpl(
             expression.startOffset, expression.endOffset,
             irOperator,
-            context.irBuiltIns.eqeqSymbol,
-            irArgument0, irArgument1
+            eqeqSymbol,
+            expression.left!!.generateAsPrimitiveNumericComparisonOperand(primitiveNumericComparisonType),
+            expression.right!!.generateAsPrimitiveNumericComparisonOperand(primitiveNumericComparisonType)
         )
 
         return when (irOperator) {
@@ -210,32 +231,103 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 irEquals
             IrStatementOrigin.EXCLEQ ->
                 IrUnaryPrimitiveImpl(
-                    expression.startOffset, expression.endOffset, IrStatementOrigin.EXCLEQ,
+                    expression.startOffset, expression.endOffset,
+                    IrStatementOrigin.EXCLEQ,
                     context.irBuiltIns.booleanNotSymbol,
                     irEquals
                 )
             else ->
                 throw AssertionError("Unexpected equality operator $irOperator")
         }
+    }
 
+    private fun IrExpression.promoteToPrimitiveNumericType(operandType: KotlinType?, targetType: KotlinType?): IrExpression {
+        if (targetType == null) return this
+        if (operandType == null) throw AssertionError("operandType should be non-null")
+
+        val operandNNType = operandType.makeNotNullable()
+
+        val conversionFunction = operandNNType.findConversionFunctionTo(targetType)
+
+        return when {
+            !operandNNType.isPrimitiveNumberType() ->
+                throw AssertionError("Primitive number type or nullable primitive number type expected: $type")
+
+            operandType == targetType || operandNNType == targetType ->
+                this
+
+            else ->
+                SimpleCallReceiver(OnceExpressionValue(this), null)
+                    .invokeConversionFunction(
+                        startOffset, endOffset,
+                        conversionFunction ?: throw AssertionError("No conversion function for $type ~> $targetType")
+                    )
+        }
+    }
+
+    private fun CallReceiver.invokeConversionFunction(
+        startOffset: Int,
+        endOffset: Int,
+        functionDescriptor: FunctionDescriptor
+    ): IrExpression =
+        call { dispatchReceiverValue, _ ->
+            IrCallImpl(
+                startOffset,
+                endOffset,
+                functionDescriptor.returnType!!,
+                context.symbolTable.referenceFunction(functionDescriptor.original),
+                functionDescriptor,
+                typeArguments = null,
+                origin = null, // TODO origin for widening conversions?
+                superQualifierSymbol = null
+            ).apply {
+                dispatchReceiver = dispatchReceiverValue!!.load()
+            }
+        }
+
+    private fun KotlinType.findConversionFunctionTo(targetType: KotlinType): FunctionDescriptor? {
+        val targetTypeName = targetType.constructor.declarationDescriptor?.name?.asString() ?: return null
+        return memberScope.findSingleFunction(Name.identifier("to$targetTypeName"))
     }
 
     private fun generateComparisonOperator(expression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {
-        val compareToCall = getResolvedCall(expression)!!
+        val startOffset = expression.startOffset
+        val endOffset = expression.endOffset
 
-        val irCompareToCall =
-            CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(compareToCall), origin)
+        val primitiveNumberComparisonType = getPrimitiveNumericComparisonType(expression)
 
-        val compareToZeroSymbol = when (origin) {
-            IrStatementOrigin.LT -> context.irBuiltIns.lt0Symbol
-            IrStatementOrigin.LTEQ -> context.irBuiltIns.lteq0Symbol
-            IrStatementOrigin.GT -> context.irBuiltIns.gt0Symbol
-            IrStatementOrigin.GTEQ -> context.irBuiltIns.gteq0Symbol
-            else -> throw AssertionError("Unexpected comparison operator: $origin")
+        return if (primitiveNumberComparisonType != null) {
+            IrBinaryPrimitiveImpl(
+                startOffset, endOffset, origin,
+                getComparisonOperatorSymbol(origin, primitiveNumberComparisonType),
+                expression.left!!.generateAsPrimitiveNumericComparisonOperand(primitiveNumberComparisonType),
+                expression.right!!.generateAsPrimitiveNumericComparisonOperand(primitiveNumberComparisonType)
+            )
+        } else {
+            IrBinaryPrimitiveImpl(
+                startOffset, endOffset, origin,
+                getComparisonOperatorSymbol(origin, context.irBuiltIns.int),
+                generateCall(getResolvedCall(expression)!!, expression, origin),
+                IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, 0)
+            )
         }
-
-        return IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, origin, compareToZeroSymbol, irCompareToCall)
     }
+
+    private fun generateCall(
+        resolvedCall: ResolvedCall<*>,
+        ktExpression: KtExpression,
+        origin: IrStatementOrigin?
+    ) =
+        CallGenerator(statementGenerator).generateCall(ktExpression, statementGenerator.pregenerateCall(resolvedCall), origin)
+
+    private fun getComparisonOperatorSymbol(origin: IrStatementOrigin, primitiveNumericType: KotlinType): IrSimpleFunctionSymbol =
+        when (origin) {
+            IrStatementOrigin.LT -> context.irBuiltIns.lessFunByOperandType
+            IrStatementOrigin.LTEQ -> context.irBuiltIns.lessOrEqualFunByOperandType
+            IrStatementOrigin.GT -> context.irBuiltIns.greaterFunByOperandType
+            IrStatementOrigin.GTEQ -> context.irBuiltIns.greaterOrEqualFunByOperandType
+            else -> throw AssertionError("Unexpected comparison operator: $origin")
+        }[primitiveNumericType]!!.symbol
 
     private fun generateExclExclOperator(expression: KtPostfixExpression, origin: IrStatementOrigin): IrExpression {
         val ktArgument = expression.baseExpression!!
@@ -250,10 +342,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         }
     }
 
-    private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, origin: IrStatementOrigin?): IrExpression {
-        val operatorCall = getResolvedCall(expression)!!
-        return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(operatorCall), origin)
-    }
+    private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, origin: IrStatementOrigin?): IrExpression =
+        generateCall(getResolvedCall(expression)!!, expression, origin)
 
     private fun generatePrefixOperatorAsCall(expression: KtPrefixExpression, origin: IrStatementOrigin): IrExpression {
         val resolvedCall = getResolvedCall(expression)!!
@@ -267,6 +357,6 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             }
         }
 
-        return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(resolvedCall), origin)
+        return generateCall(resolvedCall, expression, origin)
     }
 }

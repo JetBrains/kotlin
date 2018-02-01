@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
           WHEN type=kotlin.Unit origin=null
             BRANCH
               if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
-                arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EXCLEQ
                   arg0: CALL 'get(Int): Double' type=kotlin.Double origin=GET_ARRAY_ELEMENT
                     $this: GET_VAR 'a: DoubleArray' type=kotlin.DoubleArray origin=null
                     index: GET_VAR 'i: Int' type=kotlin.Int origin=null
@@ -36,4 +36,3 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
               GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='box(): String'
         CONST String type=kotlin.String value=OK
-

@@ -5,18 +5,15 @@ FILE fqName:<root> fileName:/ifElseIf.kt
       RETURN type=kotlin.Nothing from='test(Int): Int'
         WHEN type=kotlin.Int origin=WHEN
           BRANCH
-            if: CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
-              arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
-                $this: GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
-                other: CONST Int type=kotlin.Int value=0
+            if: CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
+              arg0: GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
+              arg1: CONST Int type=kotlin.Int value=0
             then: CONST Int type=kotlin.Int value=1
           BRANCH
-            if: CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
-              arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=LT
-                $this: GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
-                other: CONST Int type=kotlin.Int value=0
+            if: CALL 'less(Int, Int): Boolean' type=kotlin.Boolean origin=LT
+              arg0: GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
+              arg1: CONST Int type=kotlin.Int value=0
             then: CONST Int type=kotlin.Int value=-1
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Int type=kotlin.Int value=0
-

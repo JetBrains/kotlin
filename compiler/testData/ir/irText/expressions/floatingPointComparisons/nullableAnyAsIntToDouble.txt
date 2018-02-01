@@ -1,0 +1,18 @@
+FILE fqName:<root> fileName:/nullableAnyAsIntToDouble.kt
+  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?, y:kotlin.Double) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Double flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test(Any?, Double): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
+              GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+            then: CALL 'less(Double, Double): Boolean' type=kotlin.Boolean origin=LT
+              arg0: CALL 'toDouble(): Double' type=kotlin.Double origin=null
+                $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                  GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+              arg1: GET_VAR 'value-parameter y: Double' type=kotlin.Double origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false

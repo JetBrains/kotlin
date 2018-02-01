@@ -1,0 +1,43 @@
+FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
+  FUN name:testDD visibility:public modality:FINAL <> (x:kotlin.Double?, y:kotlin.Double?) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double? flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Double? flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testDD(Double?, Double?): Boolean'
+        CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
+          arg0: GET_VAR 'value-parameter x: Double?' type=kotlin.Double? origin=null
+          arg1: GET_VAR 'value-parameter y: Double?' type=kotlin.Double? origin=null
+  FUN name:testDF visibility:public modality:FINAL <> (x:kotlin.Double?, y:kotlin.Any?) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double? flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any? flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testDF(Double?, Any?): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float?
+              GET_VAR 'value-parameter y: Any?' type=kotlin.Any? origin=null
+            then: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'value-parameter x: Double?' type=kotlin.Double? origin=null
+              arg1: CALL 'toDouble(): Double' type=kotlin.Double origin=null
+                $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter y: Any?' type=kotlin.Any? origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:testDI visibility:public modality:FINAL <> (x:kotlin.Double?, y:kotlin.Any?) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double? flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any? flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testDI(Double?, Any?): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int?
+              GET_VAR 'value-parameter y: Any?' type=kotlin.Any? origin=null
+            then: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'value-parameter x: Double?' type=kotlin.Double? origin=null
+              arg1: CALL 'toDouble(): Double' type=kotlin.Double origin=null
+                $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                  GET_VAR 'value-parameter y: Any?' type=kotlin.Any? origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false

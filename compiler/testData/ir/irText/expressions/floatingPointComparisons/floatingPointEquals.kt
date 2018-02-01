@@ -1,0 +1,23 @@
+fun test1d(x: Double, y: Double) = x.equals(y)
+fun test2d(x: Double, y: Double?) = x.equals(y)
+fun test3d(x: Double, y: Any) = x.equals(y)
+fun test4d(x: Double, y: Number) = x.equals(y)
+fun test5d(x: Double, y: Any) = y is Double && x.equals(y)
+fun test6d(x: Any, y: Any) = x is Double && y is Double && x.equals(y)
+
+fun test1f(x: Float, y: Float) = x.equals(y)
+fun test2f(x: Float, y: Float?) = x.equals(y)
+fun test3f(x: Float, y: Any) = x.equals(y)
+fun test4f(x: Float, y: Number) = x.equals(y)
+fun test5f(x: Float, y: Any) = y is Float && x.equals(y)
+fun test6f(x: Any, y: Any) = x is Float && y is Float && x.equals(y)
+
+fun testFD(x: Any, y: Any) = x is Float && y is Double && x.equals(y)
+fun testDF(x: Any, y: Any) = x is Double && y is Float && x.equals(y)
+
+fun Float.test1fr(x: Float) = equals(x)
+fun Float.test2fr(x: Float?) = equals(x)
+fun Float.test3fr(x: Any) = equals(x)
+fun Float.test4fr(x: Number) = equals(x)
+fun Float.test5fr(x: Any) = x is Float && equals(x)
+fun Float.test6fr(x: Any) = x is Double && equals(x)

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 
 class CallBuilder(
-    val original: ResolvedCall<*>,
+    val original: ResolvedCall<*>, // TODO get rid of "original", sometimes we want to generate a call without ResolvedCall
     val descriptor: CallableDescriptor,
     val isExtensionInvokeCall: Boolean = false
 ) {

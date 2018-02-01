@@ -34,37 +34,35 @@ CONTENT
       6 GET_VAR 'm: Int' type=kotlin.Int origin=null
       7 CALL 'rem(Int): Int' type=kotlin.Int origin=PERC
       8 CONST Int type=kotlin.Int value=0
-      9 CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
 OUTGOING -> BB 3, 4
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 BB 3
 INCOMING <- BB 2
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
       1 CONTINUE label=null loop.label=null
 OUTGOING -> BB 1
     While entry: WHILE label=null origin=FOR_LOOP_INNER_WHILE
 BB 4
 INCOMING <- BB 2
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
       1 SET_VAR 'sum: Int' type=kotlin.Unit origin=PLUSEQ
       2 WHEN type=kotlin.Unit origin=null
       3 GET_VAR 'sum: Int' type=kotlin.Int origin=null
       4 GET_VAR 'value-parameter n: Int' type=kotlin.Int origin=null
-      5 CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
 OUTGOING -> BB 5, 6
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 BB 5
 INCOMING <- BB 4
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
       1 BREAK label=null loop.label=null
 OUTGOING -> BB 8
     While exit: WHILE label=null origin=FOR_LOOP_INNER_WHILE
 BB 6
 INCOMING <- BB 4
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
 OUTGOING -> BB 1
     While entry: WHILE label=null origin=FOR_LOOP_INNER_WHILE

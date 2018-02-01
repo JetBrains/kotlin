@@ -1,0 +1,245 @@
+FILE fqName:<root> fileName:/floatingPointEquals.kt
+  FUN name:test1d visibility:public modality:FINAL <> (x:kotlin.Double, y:kotlin.Double) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Double flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test1d(Double, Double): Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
+          other: GET_VAR 'value-parameter y: Double' type=kotlin.Double origin=null
+  FUN name:test2d visibility:public modality:FINAL <> (x:kotlin.Double, y:kotlin.Double?) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Double? flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test2d(Double, Double?): Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
+          other: GET_VAR 'value-parameter y: Double?' type=kotlin.Double? origin=null
+  FUN name:test3d visibility:public modality:FINAL <> (x:kotlin.Double, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test3d(Double, Any): Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
+          other: GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+  FUN name:test4d visibility:public modality:FINAL <> (x:kotlin.Double, y:kotlin.Number) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Number flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test4d(Double, Number): Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
+          other: GET_VAR 'value-parameter y: Number' type=kotlin.Number origin=null
+  FUN name:test5d visibility:public modality:FINAL <> (x:kotlin.Double, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test5d(Double, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+              GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+            then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
+              other: GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:test6d visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test6d(Any, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+              other: GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:test1f visibility:public modality:FINAL <> (x:kotlin.Float, y:kotlin.Float) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Float flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Float flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test1f(Float, Float): Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'value-parameter x: Float' type=kotlin.Float origin=null
+          other: GET_VAR 'value-parameter y: Float' type=kotlin.Float origin=null
+  FUN name:test2f visibility:public modality:FINAL <> (x:kotlin.Float, y:kotlin.Float?) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Float flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Float? flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test2f(Float, Float?): Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'value-parameter x: Float' type=kotlin.Float origin=null
+          other: GET_VAR 'value-parameter y: Float?' type=kotlin.Float? origin=null
+  FUN name:test3f visibility:public modality:FINAL <> (x:kotlin.Float, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Float flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test3f(Float, Any): Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'value-parameter x: Float' type=kotlin.Float origin=null
+          other: GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+  FUN name:test4f visibility:public modality:FINAL <> (x:kotlin.Float, y:kotlin.Number) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Float flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Number flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test4f(Float, Number): Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'value-parameter x: Float' type=kotlin.Float origin=null
+          other: GET_VAR 'value-parameter y: Number' type=kotlin.Number origin=null
+  FUN name:test5f visibility:public modality:FINAL <> (x:kotlin.Float, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Float flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test5f(Float, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+              GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+            then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'value-parameter x: Float' type=kotlin.Float origin=null
+              other: GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:test6f visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test6f(Any, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+              other: GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:testFD visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testFD(Any, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+              other: GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:testDF visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testDF(Any, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+              other: GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:test1fr visibility:public modality:FINAL <> ($receiver:kotlin.Float, x:kotlin.Float) returnType:Boolean flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Float flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Float flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test1fr(Float) on Float: Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'this@test1fr: Float' type=kotlin.Float origin=null
+          other: GET_VAR 'value-parameter x: Float' type=kotlin.Float origin=null
+  FUN name:test2fr visibility:public modality:FINAL <> ($receiver:kotlin.Float, x:kotlin.Float?) returnType:Boolean flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Float flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Float? flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test2fr(Float?) on Float: Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'this@test2fr: Float' type=kotlin.Float origin=null
+          other: GET_VAR 'value-parameter x: Float?' type=kotlin.Float? origin=null
+  FUN name:test3fr visibility:public modality:FINAL <> ($receiver:kotlin.Float, x:kotlin.Any) returnType:Boolean flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Float flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test3fr(Any) on Float: Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'this@test3fr: Float' type=kotlin.Float origin=null
+          other: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+  FUN name:test4fr visibility:public modality:FINAL <> ($receiver:kotlin.Float, x:kotlin.Number) returnType:Boolean flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Float flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Number flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test4fr(Number) on Float: Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'this@test4fr: Float' type=kotlin.Float origin=null
+          other: GET_VAR 'value-parameter x: Number' type=kotlin.Number origin=null
+  FUN name:test5fr visibility:public modality:FINAL <> ($receiver:kotlin.Float, x:kotlin.Any) returnType:Boolean flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Float flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test5fr(Any) on Float: Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+              GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+            then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'this@test5fr: Float' type=kotlin.Float origin=null
+              other: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:test6fr visibility:public modality:FINAL <> ($receiver:kotlin.Float, x:kotlin.Any) returnType:Boolean flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Float flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test6fr(Any) on Float: Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+              GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+            then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'this@test6fr: Float' type=kotlin.Float origin=null
+              other: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false

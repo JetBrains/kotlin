@@ -119,10 +119,9 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                     GET_VAR 'j: Int' type=kotlin.Int origin=PREFIX_INCR
               condition: WHEN type=kotlin.Boolean origin=null
                 BRANCH
-                  if: CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
-                    arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=GTEQ
-                      $this: GET_VAR 'j: Int' type=kotlin.Int origin=null
-                      other: CONST Int type=kotlin.Int value=3
+                  if: CALL 'greaterOrEqual(Int, Int): Boolean' type=kotlin.Boolean origin=GTEQ
+                    arg0: GET_VAR 'j: Int' type=kotlin.Int origin=null
+                    arg1: CONST Int type=kotlin.Int value=3
                   then: CONST Boolean type=kotlin.Boolean value=false
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
@@ -133,4 +132,3 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 arg0: GET_VAR 'i: Int' type=kotlin.Int origin=null
                 arg1: CONST Int type=kotlin.Int value=3
               then: BREAK label=null loop.label=Outer
-
