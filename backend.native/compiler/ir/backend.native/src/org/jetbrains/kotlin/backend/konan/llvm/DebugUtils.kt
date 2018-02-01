@@ -47,11 +47,10 @@ internal object DWARF {
 }
 
 internal class DebugInfo internal constructor(override val context: Context):ContextUtils {
-    val files = mutableMapOf<IrFile, DIFileRef>()
-    val subprograms = mutableMapOf<FunctionDescriptor, DISubprogramRef>()
+    val files = mutableMapOf<String, DIFileRef>()
+    val subprograms = mutableMapOf<LLVMValueRef, DISubprogramRef>()
     var builder: DIBuilderRef? = null
     var module: DIModuleRef? = null
-    var compilationModule: DICompileUnitRef? = null
     var types = mutableMapOf<KotlinType, DITypeOpaqueRef>()
 
     val llvmTypes = mapOf<KotlinType, LLVMTypeRef>(
@@ -110,15 +109,6 @@ internal fun generateDebugInfoHeader(context: Context) {
                 configurationMacro = "",
                 includePath        = "",
                 iSysRoot           = "")
-        context.debugInfo.compilationModule = DICreateCompilationUnit(
-                builder     = context.debugInfo.builder,
-                lang        = DwarfLanguage.DW_LANG_Kotlin.value,
-                File        = path.file,
-                dir         = path.folder,
-                producer    = DWARF.producer,
-                isOptimized = 0,
-                flags       = "",
-                rv          = DWARF.runtimeVersion)
         /* TODO: figure out what here 2 means:
          *
          * 0:b-backend-dwarf:minamoto@minamoto-osx(0)# cat /dev/null | clang -xc -S -emit-llvm -g -o - -
@@ -158,7 +148,8 @@ internal fun KotlinType.dwarfType(context:Context, targetData:LLVMTargetDataRef)
                 classDescriptor != null -> {
                     val type = DICreateStructType(
                             refBuilder    = context.debugInfo.builder,
-                            scope         = context.debugInfo.compilationModule as DIScopeOpaqueRef,
+                            // TODO: here should be DIFile as scope.
+                            scope         = null,
                             name          = "ObjHeader",
                             file          = null,
                             lineNumber    = 0,
@@ -217,10 +208,15 @@ internal fun KotlinType.encoding(context:Context):DwarfTypeKind = when {
 internal fun alignTo(value:Long, align:Long):Long = (value + align - 1) / align * align
 
 internal fun  FunctionDescriptor.subroutineType(context: Context, llvmTargetData: LLVMTargetDataRef): DISubroutineTypeRef {
+    val types = this@subroutineType.types
+    return subroutineType(context, llvmTargetData, types)
+}
+
+internal fun subroutineType(context: Context, llvmTargetData: LLVMTargetDataRef, types: List<KotlinType>): DISubroutineTypeRef {
     return memScoped {
         DICreateSubroutineType(context.debugInfo.builder, allocArrayOf(
-                this@subroutineType.types.map { it.diType(context, llvmTargetData) }),
-                this@subroutineType.types.size)!!
+                types.map { it.diType(context, llvmTargetData) }),
+                types.size)!!
     }
 }
 

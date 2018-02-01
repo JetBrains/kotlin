@@ -22,8 +22,6 @@
 #include <llvm/IR/Instruction.h>
 #include <llvm/Support/Casting.h>
 #include "DebugInfoC.h"
-
-
 /**
  * c++ --std=c++11 llvmDebugInfoC/src/DebugInfoC.cpp -IllvmDebugInfoC/include/ -Idependencies/all/clang+llvm-3.9.0-darwin-macos/include -Ldependencies/all/clang+llvm-3.9.0-darwin-macos/lib  -lLLVMCore -lLLVMSupport -lncurses -shared -o libLLVMDebugInfoC.dylib
  */
@@ -101,6 +99,15 @@ DISubprogramRef DICreateFunction(DIBuilderRef builder, DIScopeOpaqueRef scope,
                                                           isDefinition,
                                                           scopeLine));
 }
+
+DIScopeOpaqueRef DICreateLexicalBlockFile(DIBuilderRef builderRef, DIScopeOpaqueRef scopeRef, DIFileRef fileRef) {
+  return llvm::wrap(llvm::unwrap(builderRef)->createLexicalBlockFile(llvm::unwrap(scopeRef), llvm::unwrap(fileRef)));
+}
+
+DIScopeOpaqueRef DICreateLexicalBlock(DIBuilderRef builderRef, DIScopeOpaqueRef scopeRef, DIFileRef fileRef, int line, int column) {
+  return llvm::wrap(llvm::unwrap(builderRef)->createLexicalBlock(llvm::unwrap(scopeRef), llvm::unwrap(fileRef), line, column));
+}
+
 
 DICompositeTypeRef DICreateStructType(DIBuilderRef refBuilder,
                                       DIScopeOpaqueRef scope, const char *name,
@@ -277,6 +284,5 @@ const char *DIGetSubprogramLinkName(DISubprogramRef sp) {
 int DISubprogramDescribesFunction(DISubprogramRef sp, LLVMValueRef fn) {
   return llvm::unwrap(sp)->describes(llvm::cast<llvm::Function>(llvm::unwrap(fn)));
 }
-
 } /* extern "C" */
 

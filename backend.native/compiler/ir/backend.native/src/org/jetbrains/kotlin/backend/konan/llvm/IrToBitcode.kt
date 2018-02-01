@@ -209,6 +209,23 @@ internal interface CodeContext {
     fun classScope(): CodeContext?
 
     fun addResumePoint(bbLabel: LLVMBasicBlockRef): Int
+
+    /**
+     * Returns owning returnable block scope [ReturnableBlockScope].
+     *
+     * @returns the requested value if in the returnableBlockScope scope or null.
+     */
+    fun returnableBlockScope(): CodeContext?
+
+    /**
+     * Returns location information for given source location [LocationInfo].
+     */
+    fun location(line:Int, column: Int): LocationInfo?
+
+    /**
+     * Returns [DIScopeOpaqueRef] instance for corresponding scope.
+     */
+    fun scope(): DIScopeOpaqueRef?
 }
 
 //-------------------------------------------------------------------------//
@@ -254,6 +271,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         override fun classScope(): CodeContext? = null
 
         override fun addResumePoint(bbLabel: LLVMBasicBlockRef) = unsupported(bbLabel)
+
+        override fun returnableBlockScope(): CodeContext? = null
+
+        override fun location(line: Int, column: Int): LocationInfo? = unsupported()
+
+        override fun scope(): DIScopeOpaqueRef? = unsupported()
     }
 
     /**
@@ -319,7 +342,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun createInitBody(initName: String): LLVMValueRef {
         val initFunction = LLVMAddFunction(context.llvmModule, initName, kInitFuncType)!!    // create LLVM function
         generateFunction(codegen, initFunction) {
-            using(FunctionScope(initFunction, it)) {
+            using(FunctionScope(initFunction, initName, it)) {
                 val bbInit = basicBlock("init", null)
                 val bbDeinit = basicBlock("deinit", null)
                 condBr(functionGenerationContext.icmpEq(LLVMGetParam(initFunction, 0)!!, kImmZero), bbDeinit, bbInit)
@@ -541,14 +564,16 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private inner class FunctionScope (val declaration: IrFunction?, val functionGenerationContext: FunctionGenerationContext) : InnerScopeImpl() {
 
 
-        constructor(llvmFunction:LLVMValueRef, functionGenerationContext: FunctionGenerationContext):this(null, functionGenerationContext) {
+        constructor(llvmFunction:LLVMValueRef, name:String, functionGenerationContext: FunctionGenerationContext):this(null, functionGenerationContext) {
             this.llvmFunction = llvmFunction
-
+            this.name = name
         }
 
         var llvmFunction:LLVMValueRef? = declaration?.let{
             codegen.llvmFunction(declaration.descriptor)
         }
+
+        private var name:String? = declaration?.descriptor?.name?.asString()
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
             if (declaration == null || target == declaration.descriptor) {
@@ -576,6 +601,17 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
 
         override fun functionScope(): CodeContext = this
+
+
+        private val scope by lazy {
+            if (!context.shouldContainDebugInfo())
+                return@lazy null
+            declaration?.scope() ?: llvmFunction!!.scope(0, subroutineType(context, codegen.llvmTargetData, listOf(context.builtIns.intType)))
+        }
+
+        override fun location(line: Int, column: Int) = scope?.let { LocationInfo(it, line, column) }
+
+        override fun scope() = scope
     }
 
     private val functionGenerationContext
@@ -601,17 +637,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (declaration.descriptor.isExternal)                    return
         if (body == null)                                         return
 
-        val scope = declaration.scope()
-        val startLine = declaration.startLine()
-        val startLocationInfo = LocationInfo(
-                scope  = scope,
-                line   = startLine,
-                column = declaration.startColumn())
-        val endLocationInfo = LocationInfo(
-                scope  = scope,
-                line   = declaration.endLine(),
-                column = declaration.endColumn())
-        generateFunction(codegen, declaration.descriptor, startLocationInfo, endLocationInfo) {
+        generateFunction(codegen, declaration.descriptor,
+                declaration.location(declaration.startLine(), declaration.startColumn()),
+                declaration.location(declaration.endLine(), declaration.endColumn())) {
             using(FunctionScope(declaration, it)) {
                 val parameterScope = ParameterScope(declaration, functionGenerationContext)
                 using(parameterScope) {
@@ -636,6 +664,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             verifyModule(context.llvmModule!!,
                 "${declaration.descriptor.containingDeclaration}::${ir2string(declaration)}")
     }
+
+    private fun IrFunction.location(line: Int, column:Int) =
+            if (context.shouldContainDebugInfo()) LocationInfo(
+                scope = scope()!!,
+                line = line,
+                column = column)
+            else null
 
     //-------------------------------------------------------------------------//
 
@@ -863,13 +898,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
         }
 
-        private inline fun endLocationInfoFromScope(): LocationInfo? {
+        private fun endLocationInfoFromScope(): LocationInfo? {
             val functionScope = currentCodeContext.functionScope()
             val irFunction = functionScope?.let {
                 (functionScope as FunctionScope).declaration
             }
-            val locationInfo = irFunction?.endLocation
-            return locationInfo
+            return irFunction?.endLocation
         }
 
         private fun jumpToHandler(exception: LLVMValueRef) {
@@ -1106,16 +1140,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
     private fun debugInfoIfNeeded(function: IrFunction?, element: IrElement): VariableDebugLocation? {
-        if (function == null || element.startLocation == null || !context.shouldContainDebugInfo()) return null
-        val functionScope = function.scope()
-        if (functionScope == null || !element.needDebugInfo(context)) return null
-        val locationInfo = element.startLocation!!
+        if (function == null || !element.needDebugInfo(context) || currentCodeContext.scope() == null) return null
+        val locationInfo = element.startLocation ?: return null
         val location = codegen.generateLocationInfo(locationInfo)
         val file = (currentCodeContext.fileScope() as FileScope).file.file()
         return when (element) {
             is IrVariable -> debugInfoLocalVariableLocation(
                     builder       = context.debugInfo.builder,
-                    functionScope = functionScope,
+                    functionScope = locationInfo.scope,
                     diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
                     name          = element.descriptor.name,
                     file          = file,
@@ -1123,7 +1155,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     location      = location)
             is IrValueParameter -> debugInfoParameterLocation(
                     builder       = context.debugInfo.builder,
-                    functionScope = functionScope,
+                    functionScope = locationInfo.scope,
                     diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
                     name          = element.descriptor.name,
                     argNo         = (element.descriptor as? ValueParameterDescriptor)?.index ?: 0,
@@ -1413,7 +1445,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 NaiveSourceBasedFileEntryImpl(sourceFileName)
             }
 
-    private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlockImpl) :
+    private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlock) :
             FileScope(IrFileImpl(getFileEntry(returnableBlock.sourceFileName))) {
 
         var bbExit : LLVMBasicBlockRef? = null
@@ -1446,12 +1478,39 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 functionGenerationContext.assignPhis(getResult() to value!!)                      // Assign return value to result PHI node.
             }
         }
+
+        override fun returnableBlockScope(): CodeContext? = this
+
+
+        /**
+         * Note: DILexicalBlocks aren't nested, they should be scoped with the parent function.
+         */
+        private val scope by lazy {
+            if (!context.shouldContainDebugInfo())
+                return@lazy null
+            val lexicalBlockFile = DICreateLexicalBlockFile(context.debugInfo.builder, functionScope()!!.scope(), super.file.file())
+            DICreateLexicalBlock(context.debugInfo.builder, lexicalBlockFile, super.file.file(), returnableBlock.startLine(), returnableBlock.startColumn())!!
+        }
+
+        override fun scope() = scope
+
     }
 
     //-------------------------------------------------------------------------//
 
     private open inner class FileScope(val file:IrFile) : InnerScopeImpl() {
         override fun fileScope(): CodeContext? = this
+
+        override fun location(line: Int, column: Int) = scope()?.let {LocationInfo(it, line, column) }
+
+        @Suppress("UNCHECKED_CAST")
+        private val scope by lazy {
+            if (!context.shouldContainDebugInfo())
+                return@lazy null
+            file.file() as DIScopeOpaqueRef?
+        }
+
+        override fun scope() = scope
     }
 
     //-------------------------------------------------------------------------//
@@ -1466,7 +1525,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             DICreateReplaceableCompositeType(
                     tag        = DwarfTag.DW_TAG_structure_type.value,
                     refBuilder = context.debugInfo.builder,
-                    refScope   = context.debugInfo.compilationModule as DIScopeOpaqueRef,
+                    refScope   = (currentCodeContext.fileScope() as FileScope)!!.file.file() as DIScopeOpaqueRef,
                     name       = clazz.descriptor.typeInfoSymbolName,
                     refFile    = file().file(),
                     line       = clazz.startLine()) as DITypeOpaqueRef
@@ -1476,7 +1535,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateReturnableBlock(value: IrReturnableBlockImpl): LLVMValueRef {
+    private fun evaluateReturnableBlock(value: IrReturnableBlock): LLVMValueRef {
         context.log{"evaluateReturnableBlock         : ${value.statements.forEach { ir2string(it) }}"}
 
         val returnableBlockScope = ReturnableBlockScope(value)
@@ -1635,28 +1694,17 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun file() = (currentCodeContext.fileScope() as FileScope).file
 
     //-------------------------------------------------------------------------//
-    private fun updateBuilderDebugLocation(element: IrElement?):DILocationRef? {
-        if (!context.shouldContainDebugInfo() || element == null) return null
+    private fun updateBuilderDebugLocation(element: IrElement):DILocationRef? {
+        if (!context.shouldContainDebugInfo() || currentCodeContext.functionScope() == null) return null
         @Suppress("UNCHECKED_CAST")
         return element.startLocation?.let{functionGenerationContext.debugLocation(it)}
     }
 
     private val IrElement.startLocation: LocationInfo?
-        get() = location(startLine(), startColumn())
+        get() = currentCodeContext.location(startLine(), startColumn())
 
     private val IrElement.endLocation: LocationInfo?
-        get() = location(endLine(), endColumn())
-
-    private inline fun location(line: Int, column: Int): LocationInfo? {
-        val functionScope = currentCodeContext.functionScope() as? FunctionScope ?: return null
-        val scope = functionScope.declaration ?: return null
-        val diScope = scope.scope() ?: return null
-        return LocationInfo(
-                line = line,
-                column = column,
-                scope = diScope)
-    }
-
+        get() = currentCodeContext.location(endLine(), endColumn())
 
     //-------------------------------------------------------------------------//
     private fun IrElement.startLine() = file().fileEntry.line(this.startOffset)
@@ -1697,37 +1745,60 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
     private fun IrFile.file(): DIFileRef {
-        return context.debugInfo.files.getOrPut(this) {
+        return context.debugInfo.files.getOrPut(this.fileEntry.name) {
             val path = this.fileEntry.name.toFileAndFolder()
+            DICreateCompilationUnit(
+                    builder     = context.debugInfo.builder,
+                    lang        = DwarfLanguage.DW_LANG_Kotlin.value,
+                    File        = path.file,
+                    dir         = path.folder,
+                    producer    = DWARF.producer,
+                    isOptimized = 0,
+                    flags       = "",
+                    rv          = DWARF.runtimeVersion)
             DICreateFile(context.debugInfo.builder, path.file, path.folder)!!
         }
     }
 
     //-------------------------------------------------------------------------//
+
+    private fun IrFunction.scope():DIScopeOpaqueRef? = descriptor.scope(startLine())
+
     @Suppress("UNCHECKED_CAST")
-    private fun IrFunction.scope():DIScopeOpaqueRef? {
-        if (!context.shouldContainDebugInfo()) return null
-        return context.debugInfo.subprograms.getOrPut(descriptor) {
+    private fun FunctionDescriptor.scope(startLine:Int): DIScopeOpaqueRef? {
+        if (codegen.isExternal(this) || !context.shouldContainDebugInfo())
+            return null
+        return context.debugInfo.subprograms.getOrPut(codegen.llvmFunction(this)) {
             memScoped {
-                val subroutineType = descriptor.subroutineType(context, codegen.llvmTargetData)
-                val functionLlvmValue = codegen.functionLlvmValue(descriptor)
-                val linkageName = LLVMGetValueName(functionLlvmValue)!!.toKString()
-                val diFunction = DICreateFunction(
-                        builder      = context.debugInfo.builder,
-                        scope        = context.debugInfo.compilationModule as DIScopeOpaqueRef,
-                        name         = descriptor.name.asString(),
-                        linkageName  = linkageName,
-                        file         = file().file(),
-                        lineNo       = startLine(),
-                        type         = subroutineType,
-                        //TODO: need more investigations.
-                        isLocal      = 0,
-                        isDefinition = 1,
-                        scopeLine    = 0)
-                DIFunctionAddSubprogram(functionLlvmValue , diFunction)
-                diFunction!!
+                val subroutineType = subroutineType(context, codegen.llvmTargetData)
+                val functionLlvmValue = codegen.llvmFunction(this@scope)
+                diFunctionScope(name.asString(), functionLlvmValue.name!!, startLine, subroutineType, functionLlvmValue)
             }
-        } as DIScopeOpaqueRef
+        }  as DIScopeOpaqueRef
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun LLVMValueRef.scope(startLine:Int, subroutineType: DISubroutineTypeRef): DIScopeOpaqueRef? {
+        return context.debugInfo.subprograms.getOrPut(this) {
+            diFunctionScope(name!!, name!!, startLine, subroutineType, this)
+        }  as DIScopeOpaqueRef
+    }
+    private fun diFunctionScope(name: String, linkageName: String, startLine: Int, subroutineType: DISubroutineTypeRef, functionLlvmValue: LLVMValueRef): DISubprogramRef {
+        @Suppress("UNCHECKED_CAST")
+        val diFunction = DICreateFunction(
+                builder = context.debugInfo.builder,
+                scope = (currentCodeContext.fileScope() as FileScope).file.file() as DIScopeOpaqueRef,
+                name = name,
+                linkageName = linkageName,
+                file = file().file(),
+                lineNo = startLine,
+                type = subroutineType,
+                //TODO: need more investigations.
+                isLocal = 0,
+                isDefinition = 1,
+                scopeLine = 0)
+        DIFunctionAddSubprogram(functionLlvmValue, diFunction)
+        return diFunction!!
     }
 
     //-------------------------------------------------------------------------//
@@ -2434,6 +2505,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 }
 
-internal data class LocationInfo(val scope:DIScopeOpaqueRef?,
+internal data class LocationInfo(val scope:DIScopeOpaqueRef,
                                  val line:Int,
                                  val column:Int)
