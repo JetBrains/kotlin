@@ -136,13 +136,7 @@ public final class PatternBuilder {
         return new DescriptorPredicate() {
             @Override
             public boolean test(FunctionDescriptor descriptor) {
-                //TODO: no need to wrap if we check beforehand
-                try {
-                    return doApply(descriptor);
-                }
-                catch (IllegalArgumentException e) {
-                    return false;
-                }
+                return doApply(descriptor);
             }
 
             private boolean doApply(@NotNull FunctionDescriptor descriptor) {
