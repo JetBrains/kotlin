@@ -275,6 +275,23 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
         }
     }
+
+    @Test
+    fun testNestedAnnotation() = doTest("AnnotationComplex") { _, file ->
+        file.findElementByTextFromPsi<UElement>("@AnnotationArray(value = Annotation())")
+            .findElementByTextFromPsi<UElement>("Annotation()")
+            .sourcePsiElement
+            .let { referenceExpression ->
+                val convertedUAnnotation = referenceExpression
+                    .cast<KtReferenceExpression>()
+                    .toUElementOfType<UAnnotation>()
+                        ?: throw AssertionError("haven't got annotation from $referenceExpression(${referenceExpression?.javaClass})")
+
+                assertEquals("Annotation", convertedUAnnotation.qualifiedName)
+            }
+    }
+
+
 }
 
 fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T = find { transform(it) == value } ?: throw AssertionError("'$value' not found, only ${this.joinToString { transform(it).toString() }}")
