@@ -11,8 +11,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.highlighter.HighlighterExtension
-import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -24,16 +22,12 @@ class DslHighlighterExtension : HighlighterExtension() {
     }
 
     override fun highlightCall(elementToHighlight: PsiElement, resolvedCall: ResolvedCall<*>): TextAttributesKey? {
-        val markerAnnotationFqName = markerAnnotationFqName(resolvedCall) ?: return null
-        return styleForDsl(markerAnnotationFqName)
-    }
-
-    private fun markerAnnotationFqName(resolvedCall: ResolvedCall<*>): FqName? {
         val markerAnnotation = resolvedCall.resultingDescriptor.annotations.find { annotation ->
             annotation.annotationClass?.isDslHighlightingMarker() ?: false
-        }
+        }?.annotationClass ?: return null
 
-        return markerAnnotation?.fqName
+        val styleId = styleIdByMarkerAnnotation(markerAnnotation) ?: return null
+        return styles[styleId - 1]
     }
 
     companion object {
@@ -51,11 +45,15 @@ class DslHighlighterExtension : HighlighterExtension() {
         }
 
         val descriptionsToStyles = (1..numStyles).associate { index ->
-            "Dsl//Style$index" to styles[index - 1]
+            "Dsl//${styleOptionDisplayName(index)}" to styles[index - 1]
         }
 
-        private fun styleForDsl(markerAnnotationFqName: FqName) =
-            styles[(markerAnnotationFqName.asString().hashCode() % numStyles).absoluteValue]
+        fun styleOptionDisplayName(index: Int) = "Style$index"
+
+        fun styleIdByMarkerAnnotation(markerAnnotation: ClassDescriptor): Int? {
+            val markerAnnotationFqName = markerAnnotation.fqNameSafe
+            return (markerAnnotationFqName.asString().hashCode() % numStyles).absoluteValue + 1
+        }
     }
 }
 

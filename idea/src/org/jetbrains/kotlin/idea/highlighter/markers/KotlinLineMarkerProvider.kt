@@ -96,6 +96,7 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
             when (element) {
                 is KtClass -> {
                     collectInheritedClassMarker(element, result)
+                    collectHighlightingColorsMarkers(element, result)
                 }
                 is KtNamedFunction -> {
                     functions.add(element)
