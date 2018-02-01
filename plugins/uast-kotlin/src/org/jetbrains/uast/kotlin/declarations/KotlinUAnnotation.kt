@@ -122,11 +122,12 @@ class KotlinUNestedAnnotation(
     givenParent: UElement?,
     private val classDescriptor: ClassDescriptor?
 ) : KotlinUAnnotationBase(original, givenParent) {
-    override val javaPsi: PsiAnnotation? = null
+    override val javaPsi: PsiAnnotation? by lazy { original.toLightAnnotation() }
     override val annotationClassDescriptor: ClassDescriptor?
         get() = classDescriptor
 
     override fun annotationUseSiteTarget(): AnnotationUseSiteTarget? = null
+
 }
 
 
