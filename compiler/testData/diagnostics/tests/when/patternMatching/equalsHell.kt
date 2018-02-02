@@ -1,13 +1,13 @@
 class Equlitive(val value: Int) {
     operator fun component1() = value
 
-    infix fun eq(other: Equalitive) = Equlitive(value + other.value)
+    infix fun eq(other: Equlitive) = Equlitive(value + other.value)
     
-    infix fun eq(other: Int) = value + other.value
+    infix fun eq(other: Int) = value + other + 21
 
     override fun equals(other: Any?) = when (other) {
         is Equlitive(val o) -> o == value
-        is val o: Int -> o == value + 1
+        is val o: Int -> o == value + 5
         else -> false
     }
 }

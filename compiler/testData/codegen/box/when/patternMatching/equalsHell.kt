@@ -2,15 +2,34 @@
 
 import kotlin.test.assertEquals
 
-class Equlitive(val value: Int) {
+class IntWrapper(val value: Int) {
     operator fun component1() = value
 
-    infix fun eq(other: Equalitive) = Equlitive(value + other.value)
-    
+    operator fun plus(other: IntWrapper) = value + other.value
+
+    operator fun plus(other: Int) = value + other
+
+    override fun equals(other: Any?) = when (other) {
+        is Equlitive -> other == value
+        is IntWrapper(val o) -> value == o
+        else -> value == other
+    }
+}
+
+class Equlitive(val value: IntWrapper) {
+    constructor(value: Int) : this(IntWrapper(value))
+
+    operator fun component1() = value
+
+    infix fun eq(other: Equlitive) = Equlitive(value + other.value)
+
+    infix fun eq(other: IntWrapper) = value + other + 21
+
     infix fun eq(other: Int) = value + other + 21
 
     override fun equals(other: Any?) = when (other) {
         is Equlitive(val o) -> o == value
+        is IntWrapper(val o) -> o == value + 5
         is val o: Int -> o == value + 5
         else -> false
     }
@@ -136,29 +155,35 @@ fun foo5(a: Equlitive, eq: Int, _eq: Equlitive) = when (a) {
 }
 
 fun box(): String {
-    assertEquals(foo(Equlitive(1), 1), 1)
-    assertEquals(foo(Equlitive(1), 6), 3)
-    assertEquals(foo(Equlitive(1), 3), 4)
+    assertEquals(1, foo(Equlitive(1), 1))
+    assertEquals(3, foo(Equlitive(1), 6))
+    assertEquals(4, foo(Equlitive(1), 3))
 
-    assertEquals(foo2(Equlitive(1), 1), 2)
-    assertEquals(foo2(Equlitive(1), 6), 3)
-    assertEquals(foo2(Equlitive(1), 3), 5)
+    assertEquals(2, foo2(Equlitive(1), 1))
+    assertEquals(3, foo2(Equlitive(1), 6))
+    assertEquals(5, foo2(Equlitive(1), 3))
 
-    assertEquals(foo3(Equlitive(1), 1, Equlitive(1)), 1)
-    assertEquals(foo3(Equlitive(6), 1, Equlitive(1)), 2)
-    assertEquals(foo3(Equlitive(23), 1, Equlitive(1)), 5)
-    assertEquals(foo3(Equlitive(2), 1, Equlitive(1)), 6)
-    assertEquals(foo3(Equlitive(28), 1, Equlitive(1)), -1)
+    assertEquals(1, foo3(Equlitive(1), 1, Equlitive(1)))
+    assertEquals(2, foo3(Equlitive(6), 1, Equlitive(1)))
+    assertEquals(5, foo3(Equlitive(23), 1, Equlitive(1)))
+    assertEquals(6, foo3(Equlitive(7), 1, Equlitive(1)))
+    assertEquals(18, foo3(Equlitive(2), 1, Equlitive(1)))
+    assertEquals(-1, foo3(Equlitive(28), 1, Equlitive(1)))
 
-    assertEquals(foo4(Equlitive(1), 1, Equlitive(1)), 3)
-    assertEquals(foo4(Equlitive(6), 1, Equlitive(1)), 4)
-    assertEquals(foo4(Equlitive(23), 1, Equlitive(1)), 7)
-    assertEquals(foo4(Equlitive(2), 1, Equlitive(1)), 8)
-    assertEquals(foo4(Equlitive(28), 1, Equlitive(1)), -3)
+    assertEquals(3, foo4(Equlitive(1), 1, Equlitive(1)))
+    assertEquals(4, foo4(Equlitive(6), 1, Equlitive(1)))
+    assertEquals(7, foo4(Equlitive(23), 1, Equlitive(1)))
+    assertEquals(8, foo4(Equlitive(7), 1, Equlitive(1)))
+    assertEquals(18, foo4(Equlitive(2), 1, Equlitive(1)))
+    assertEquals(-3, foo4(Equlitive(28), 1, Equlitive(1)))
 
-    assertEquals(foo5(Equlitive(6), 1, Equlitive(1)), 13)
-    assertEquals(foo5(Equlitive(1), 1, Equlitive(1)), 14)
-    assertEquals(foo5(Equlitive(28), 1, Equlitive(1)), 17)
-    assertEquals(foo5(Equlitive(2), 1, Equlitive(1)), 18)
-    assertEquals(foo5(Equlitive(23), 1, Equlitive(1)), -13)
+    assertEquals(13, foo5(Equlitive(1), 6, Equlitive(1)))
+    assertEquals(4, foo5(Equlitive(6), 1, Equlitive(1)))
+    assertEquals(14, foo5(Equlitive(1), 1, Equlitive(1)))
+    assertEquals(17, foo5(Equlitive(18), 1, Equlitive(1)))
+    assertEquals(18, foo5(Equlitive(2), 1, Equlitive(1)))
+    assertEquals(7, foo5(Equlitive(23), 1, Equlitive(1)))
+    assertEquals(-13, foo5(Equlitive(28), 1, Equlitive(1)))
+
+    return "OK"
 }

@@ -71,7 +71,6 @@ public class DefaultErrorMessages {
     }
 
     static {
-        MAP.put(NON_DERIVABLE_TYPE, "Non-derivable type for: {0}", ELEMENT_TEXT);
         MAP.put(EXPECTED_PATTERN_ENTRY, "Expected pattern entry");
         MAP.put(EXPECTED_PATTERN_CONSTRAINT_ELEMENT, "Expected pattern element");
         MAP.put(EXPECTED_PATTERN_ENTRY_ELEMENT, "Expected pattern entry element");

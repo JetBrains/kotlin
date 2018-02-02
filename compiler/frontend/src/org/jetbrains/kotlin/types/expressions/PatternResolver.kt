@@ -140,8 +140,7 @@ class PatternResolver(
             state.context.trace.record(BindingContext.PATTERN_SUBJECT_TYPE, expression, state.subject.type)
         }
         val info = facade.getTypeInfo(expression, state.context)
-        val patch = ErrorUtils.createErrorType("${expression.text} return type")
-        val type = info.type.errorAndReplaceIfNull(expression, state, Errors.NON_DERIVABLE_TYPE, patch)
+        val type = info.type ?: ErrorUtils.createErrorType("${expression.text} return type")
         return ConditionalTypeInfo(type, ConditionalDataFlowInfo(info.dataFlowInfo))
     }
 

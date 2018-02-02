@@ -902,7 +902,6 @@ public interface Errors {
     DiagnosticFactory0<KtPatternTypedTuple> EXPECTED_PATTERN_TYPED_TUPLE_INSTANCE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtPatternExpression> EXPECTED_PATTERN_EXPRESSION_INSTANCE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtPatternTypeReference> EXPECTED_PATTERN_TYPE_REFERENCE_INSTANCE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<KtElement, KtElement> NON_DERIVABLE_TYPE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtElement, KtElement> NOT_ALLOW_PROPERTY_DEFINITION = DiagnosticFactory1.create(ERROR);
 
 

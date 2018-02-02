@@ -2060,8 +2060,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     private void parsePatternExpression() {
         PsiBuilder.Marker patternMarker = mark();
-        if (at(EQ_KEYWORD)) {
-            advance(); // EQ_KEYWORD
+        if (atTruePatternExpression()) {
+            if (at(EQ_KEYWORD)) {
+                advance(); // EQ_KEYWORD
+            }
         }
         myExpressionParsing.parseExpression();
         patternMarker.done(PATTERN_EXPRESSION);
