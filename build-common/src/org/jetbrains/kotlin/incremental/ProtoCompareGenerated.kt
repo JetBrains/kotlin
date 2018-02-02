@@ -418,6 +418,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.getExtension(JvmProtoBuf.methodSignature), new.getExtension(JvmProtoBuf.methodSignature))) return false
         }
 
+        if (old.hasExtension(JvmProtoBuf.lambdaClassOriginName) != new.hasExtension(JvmProtoBuf.lambdaClassOriginName)) return false
+        if (old.hasExtension(JvmProtoBuf.lambdaClassOriginName)) {
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.lambdaClassOriginName), new.getExtension(JvmProtoBuf.lambdaClassOriginName))) return false
+        }
+
         if (old.getExtensionCount(JsProtoBuf.functionAnnotation) != new.getExtensionCount(JsProtoBuf.functionAnnotation)) {
             return false
         }
@@ -1636,6 +1641,10 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     if (hasExtension(JvmProtoBuf.methodSignature)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.methodSignature).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JvmProtoBuf.lambdaClassOriginName)) {
+        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.lambdaClassOriginName))
     }
 
     for(i in 0..getExtensionCount(JsProtoBuf.functionAnnotation) - 1) {

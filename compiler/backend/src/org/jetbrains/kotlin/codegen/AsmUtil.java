@@ -45,7 +45,10 @@ import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
@@ -878,7 +881,12 @@ public class AsmUtil {
     public static void writeAnnotationData(
             @NotNull AnnotationVisitor av, @NotNull MessageLite message, @NotNull JvmStringTable stringTable
     ) {
-        String[] data = BitEncoding.encodeBytes(DescriptorSerializer.serialize(message, stringTable));
+        writeAnnotationData(av, BitEncoding.encodeBytes(DescriptorSerializer.serialize(message, stringTable)), stringTable.getStrings());
+    }
+
+    public static void writeAnnotationData(
+            @NotNull AnnotationVisitor av, @NotNull String[] data, @NotNull List<String> strings
+    ) {
         AnnotationVisitor dataVisitor = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME);
         for (String string : data) {
             dataVisitor.visit(null, string);
@@ -886,7 +894,7 @@ public class AsmUtil {
         dataVisitor.visitEnd();
 
         AnnotationVisitor stringsVisitor = av.visitArray(JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME);
-        for (String string : stringTable.getStrings()) {
+        for (String string : strings) {
             stringsVisitor.visit(null, string);
         }
         stringsVisitor.visitEnd();

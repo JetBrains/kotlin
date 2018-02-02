@@ -94,6 +94,10 @@ extend Constructor {
 
 extend Function {
   optional JvmMethodSignature method_signature = 100;
+
+  // For lambdas from bodies of inline functions copied to the use site, the JVM internal name of the original
+  // lambda class this class is copied from
+  optional int32 lambda_class_origin_name = 101 [(string_id_in_table) = true];
 }
 
 extend Property {

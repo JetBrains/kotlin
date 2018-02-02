@@ -9,6 +9,7 @@ public final class JvmProtoBuf {
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.constructorSignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodSignature);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.lambdaClassOriginName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.isRaw);
@@ -3820,6 +3821,27 @@ public final class JvmProtoBuf {
         100,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.class);
+  public static final int LAMBDA_CLASS_ORIGIN_NAME_FIELD_NUMBER = 101;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Function { ... }</code>
+   *
+   * <pre>
+   * For lambdas from bodies of inline functions copied to the use site, the JVM internal name of the original
+   * lambda class this class is copied from
+   * </pre>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Function,
+      java.lang.Integer> lambdaClassOriginName = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Function.getDefaultInstance(),
+        0,
+        null,
+        null,
+        101,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
+        java.lang.Integer.class);
   public static final int PROPERTY_SIGNATURE_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>

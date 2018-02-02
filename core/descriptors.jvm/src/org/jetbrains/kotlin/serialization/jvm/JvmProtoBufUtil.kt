@@ -23,33 +23,39 @@ import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import java.io.ByteArrayInputStream
+import java.io.InputStream
 
 object JvmProtoBufUtil {
-    val EXTENSION_REGISTRY: ExtensionRegistryLite = run {
-        val registry = ExtensionRegistryLite.newInstance()
-        JvmProtoBuf.registerAllExtensions(registry)
-        registry
-    }
+    val EXTENSION_REGISTRY: ExtensionRegistryLite = ExtensionRegistryLite.newInstance().apply(JvmProtoBuf::registerAllExtensions)
 
-    @JvmStatic fun readClassDataFrom(data: Array<String>, strings: Array<String>): ClassData =
-            readClassDataFrom(BitEncoding.decodeBytes(data), strings)
+    @JvmStatic
+    fun readClassDataFrom(data: Array<String>, strings: Array<String>): ClassData =
+        readClassDataFrom(BitEncoding.decodeBytes(data), strings)
 
-    @JvmStatic fun readClassDataFrom(bytes: ByteArray, strings: Array<String>): ClassData {
+    @JvmStatic
+    fun readClassDataFrom(bytes: ByteArray, strings: Array<String>): ClassData {
         val input = ByteArrayInputStream(bytes)
-        val nameResolver = JvmNameResolver(JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, EXTENSION_REGISTRY), strings)
-        val classProto = ProtoBuf.Class.parseFrom(input, EXTENSION_REGISTRY)
-        return ClassData(nameResolver, classProto)
+        return ClassData(input.readNameResolver(strings), ProtoBuf.Class.parseFrom(input, EXTENSION_REGISTRY))
     }
 
-    @JvmStatic fun readPackageDataFrom(data: Array<String>, strings: Array<String>): PackageData =
-            readPackageDataFrom(BitEncoding.decodeBytes(data), strings)
+    @JvmStatic
+    fun readPackageDataFrom(data: Array<String>, strings: Array<String>): PackageData =
+        readPackageDataFrom(BitEncoding.decodeBytes(data), strings)
 
-    @JvmStatic fun readPackageDataFrom(bytes: ByteArray, strings: Array<String>): PackageData {
+    @JvmStatic
+    fun readPackageDataFrom(bytes: ByteArray, strings: Array<String>): PackageData {
         val input = ByteArrayInputStream(bytes)
-        val nameResolver = JvmNameResolver(JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, EXTENSION_REGISTRY), strings)
-        val packageProto = ProtoBuf.Package.parseFrom(input, EXTENSION_REGISTRY)
-        return PackageData(nameResolver, packageProto)
+        return PackageData(input.readNameResolver(strings), ProtoBuf.Package.parseFrom(input, EXTENSION_REGISTRY))
     }
+
+    @JvmStatic
+    fun readFunctionDataFrom(data: Array<String>, strings: Array<String>): Pair<JvmNameResolver, ProtoBuf.Function> {
+        val input = ByteArrayInputStream(BitEncoding.decodeBytes(data))
+        return Pair(input.readNameResolver(strings), ProtoBuf.Function.parseFrom(input, EXTENSION_REGISTRY))
+    }
+
+    private fun InputStream.readNameResolver(strings: Array<String>): JvmNameResolver =
+        JvmNameResolver(JvmProtoBuf.StringTableTypes.parseDelimitedFrom(this, EXTENSION_REGISTRY), strings)
 
     // returns JVM signature in the format: "equals(Ljava/lang/Object;)Z"
     fun getJvmMethodSignature(

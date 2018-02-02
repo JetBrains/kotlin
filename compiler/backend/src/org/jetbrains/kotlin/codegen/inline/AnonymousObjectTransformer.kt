@@ -172,7 +172,7 @@ class AnonymousObjectTransformer(
 
         val header = metadataReader.createHeader()
         if (header != null) {
-            transformMetadata(header, classBuilder)
+            writeTransformedMetadata(header, classBuilder)
         }
 
         writeOuterInfo(visitor)
@@ -182,23 +182,42 @@ class AnonymousObjectTransformer(
         return transformationResult
     }
 
-    private fun transformMetadata(header: KotlinClassHeader, classBuilder: ClassBuilder) {
-        val newProto: MessageLite
-        val newStringTable: JvmStringTable
-
-        if (header.kind == KotlinClassHeader.Kind.CLASS) {
-            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(header.data!!, header.strings!!)
-            newStringTable = JvmStringTable(state.typeMapper, nameResolver as JvmNameResolver)
-            newProto = classProto.toBuilder().apply {
-                setExtension(JvmProtoBuf.anonymousObjectOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
-            }.build()
-        } else if (header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS) {
-            // TODO: transform metadata for synthetic classes
-            return
-        } else return
-
-        writeKotlinMetadata(classBuilder, state, header.kind, header.extraInt) { av ->
+    private fun writeTransformedMetadata(header: KotlinClassHeader, classBuilder: ClassBuilder) {
+        writeKotlinMetadata(classBuilder, state, header.kind, header.extraInt) action@ { av ->
+            val (newProto, newStringTable) = transformMetadata(header) ?: run {
+                val data = header.data
+                val strings = header.strings
+                if (data != null && strings != null) {
+                    AsmUtil.writeAnnotationData(av, data, strings.asList())
+                }
+                return@action
+            }
             AsmUtil.writeAnnotationData(av, newProto, newStringTable)
+        }
+    }
+
+    private fun transformMetadata(header: KotlinClassHeader): Pair<MessageLite, JvmStringTable>? {
+        val data = header.data ?: return null
+        val strings = header.strings ?: return null
+
+        when (header.kind) {
+            KotlinClassHeader.Kind.CLASS -> {
+                val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
+                val newStringTable = JvmStringTable(state.typeMapper, nameResolver as JvmNameResolver)
+                val newProto = classProto.toBuilder().apply {
+                    setExtension(JvmProtoBuf.anonymousObjectOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
+                }.build()
+                return newProto to newStringTable
+            }
+            KotlinClassHeader.Kind.SYNTHETIC_CLASS -> {
+                val (nameResolver, functionProto) = JvmProtoBufUtil.readFunctionDataFrom(data, strings)
+                val newStringTable = JvmStringTable(state.typeMapper, nameResolver)
+                val newProto = functionProto.toBuilder().apply {
+                    setExtension(JvmProtoBuf.lambdaClassOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
+                }.build()
+                return newProto to newStringTable
+            }
+            else -> return null
         }
     }
 

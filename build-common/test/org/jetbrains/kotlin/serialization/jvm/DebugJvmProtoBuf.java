@@ -9,6 +9,7 @@ public final class DebugJvmProtoBuf {
       org.jetbrains.kotlin.protobuf.ExtensionRegistry registry) {
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.constructorSignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.methodSignature);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.lambdaClassOriginName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.propertySignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.isRaw);
@@ -4530,6 +4531,22 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.class,
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.getDefaultInstance());
+  public static final int LAMBDA_CLASS_ORIGIN_NAME_FIELD_NUMBER = 101;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Function { ... }</code>
+   *
+   * <pre>
+   * For lambdas from bodies of inline functions copied to the use site, the JVM internal name of the original
+   * lambda class this class is copied from
+   * </pre>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Function,
+      java.lang.Integer> lambdaClassOriginName = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Integer.class,
+        null);
   public static final int PROPERTY_SIGNATURE_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
@@ -4705,31 +4722,33 @@ public final class DebugJvmProtoBuf {
       "JvmMethodSignature:\202\001\n\020method_signature\022" +
       ",.org.jetbrains.kotlin.serialization.Fun" +
       "ction\030d \001(\0132:.org.jetbrains.kotlin.seria" +
-      "lization.jvm.JvmMethodSignature:\206\001\n\022prop" +
-      "erty_signature\022,.org.jetbrains.kotlin.se" +
-      "rialization.Property\030d \001(\0132<.org.jetbrai" +
-      "ns.kotlin.serialization.jvm.JvmPropertyS" +
-      "ignature:q\n\017type_annotation\022(.org.jetbra" +
-      "ins.kotlin.serialization.Type\030d \003(\0132..or" +
-      "g.jetbrains.kotlin.serialization.Annotat",
-      "ion:8\n\006is_raw\022(.org.jetbrains.kotlin.ser" +
-      "ialization.Type\030e \001(\010:\204\001\n\031type_parameter" +
-      "_annotation\0221.org.jetbrains.kotlin.seria" +
-      "lization.TypeParameter\030d \003(\0132..org.jetbr" +
-      "ains.kotlin.serialization.Annotation:J\n\021" +
-      "class_module_name\022).org.jetbrains.kotlin" +
-      ".serialization.Class\030e \001(\005B\004\230\265\030\001:u\n\024clas" +
-      "s_local_variable\022).org.jetbrains.kotlin." +
-      "serialization.Class\030f \003(\0132,.org.jetbrain" +
-      "s.kotlin.serialization.Property:U\n\034anony",
-      "mous_object_origin_name\022).org.jetbrains." +
-      "kotlin.serialization.Class\030g \001(\005B\004\230\265\030\001:N" +
-      "\n\023package_module_name\022+.org.jetbrains.ko" +
-      "tlin.serialization.Package\030e \001(\005B\004\230\265\030\001:y" +
-      "\n\026package_local_variable\022+.org.jetbrains" +
-      ".kotlin.serialization.Package\030f \003(\0132,.or" +
-      "g.jetbrains.kotlin.serialization.Propert" +
-      "yB\022B\020DebugJvmProtoBuf"
+      "lization.jvm.JvmMethodSignature:T\n\030lambd" +
+      "a_class_origin_name\022,.org.jetbrains.kotl" +
+      "in.serialization.Function\030e \001(\005B\004\230\265\030\001:\206\001" +
+      "\n\022property_signature\022,.org.jetbrains.kot" +
+      "lin.serialization.Property\030d \001(\0132<.org.j" +
+      "etbrains.kotlin.serialization.jvm.JvmPro" +
+      "pertySignature:q\n\017type_annotation\022(.org.",
+      "jetbrains.kotlin.serialization.Type\030d \003(" +
+      "\0132..org.jetbrains.kotlin.serialization.A" +
+      "nnotation:8\n\006is_raw\022(.org.jetbrains.kotl" +
+      "in.serialization.Type\030e \001(\010:\204\001\n\031type_par" +
+      "ameter_annotation\0221.org.jetbrains.kotlin" +
+      ".serialization.TypeParameter\030d \003(\0132..org" +
+      ".jetbrains.kotlin.serialization.Annotati" +
+      "on:J\n\021class_module_name\022).org.jetbrains." +
+      "kotlin.serialization.Class\030e \001(\005B\004\230\265\030\001:u" +
+      "\n\024class_local_variable\022).org.jetbrains.k",
+      "otlin.serialization.Class\030f \003(\0132,.org.je" +
+      "tbrains.kotlin.serialization.Property:U\n" +
+      "\034anonymous_object_origin_name\022).org.jetb" +
+      "rains.kotlin.serialization.Class\030g \001(\005B\004" +
+      "\230\265\030\001:N\n\023package_module_name\022+.org.jetbra" +
+      "ins.kotlin.serialization.Package\030e \001(\005B\004" +
+      "\230\265\030\001:y\n\026package_local_variable\022+.org.jet" +
+      "brains.kotlin.serialization.Package\030f \003(" +
+      "\0132,.org.jetbrains.kotlin.serialization.P" +
+      "ropertyB\022B\020DebugJvmProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4777,17 +4796,19 @@ public final class DebugJvmProtoBuf {
         new java.lang.String[] { "Field", "SyntheticMethod", "Getter", "Setter", });
     constructorSignature.internalInit(descriptor.getExtensions().get(0));
     methodSignature.internalInit(descriptor.getExtensions().get(1));
-    propertySignature.internalInit(descriptor.getExtensions().get(2));
-    typeAnnotation.internalInit(descriptor.getExtensions().get(3));
-    isRaw.internalInit(descriptor.getExtensions().get(4));
-    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(5));
-    classModuleName.internalInit(descriptor.getExtensions().get(6));
-    classLocalVariable.internalInit(descriptor.getExtensions().get(7));
-    anonymousObjectOriginName.internalInit(descriptor.getExtensions().get(8));
-    packageModuleName.internalInit(descriptor.getExtensions().get(9));
-    packageLocalVariable.internalInit(descriptor.getExtensions().get(10));
+    lambdaClassOriginName.internalInit(descriptor.getExtensions().get(2));
+    propertySignature.internalInit(descriptor.getExtensions().get(3));
+    typeAnnotation.internalInit(descriptor.getExtensions().get(4));
+    isRaw.internalInit(descriptor.getExtensions().get(5));
+    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(6));
+    classModuleName.internalInit(descriptor.getExtensions().get(7));
+    classLocalVariable.internalInit(descriptor.getExtensions().get(8));
+    anonymousObjectOriginName.internalInit(descriptor.getExtensions().get(9));
+    packageModuleName.internalInit(descriptor.getExtensions().get(10));
+    packageLocalVariable.internalInit(descriptor.getExtensions().get(11));
     org.jetbrains.kotlin.protobuf.ExtensionRegistry registry =
         org.jetbrains.kotlin.protobuf.ExtensionRegistry.newInstance();
+    registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
