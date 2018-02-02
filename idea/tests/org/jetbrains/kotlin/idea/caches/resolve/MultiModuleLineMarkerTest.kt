@@ -58,6 +58,10 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
 
+    fun testFromClassToJavaAliasInTest() {
+        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+    }
+
     fun testFromCommonToJvmHeader() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
