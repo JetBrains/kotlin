@@ -58,7 +58,7 @@ class NewKotlinFileAction
 
         if (createdElement is KtFile) {
             if (module != null) {
-                for (hook in NewKotlinFileHook.EP_NAME.getExtensions(createdElement.project)) {
+                for (hook in NewKotlinFileHook.EP_NAME.extensions) {
                     hook.postProcess(createdElement, module)
                 }
             }
