@@ -26,6 +26,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType;
 
 import java.util.Arrays;
@@ -116,5 +117,11 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     @Override
     public KtElement getPsiOrParent() {
         return this;
+    }
+
+    @Override
+    public PsiElement getParent() {
+        PsiElement substitute = KtPsiUtilKt.getParentSubstitute(this);
+        return substitute != null ? substitute : super.getParent();
     }
 }

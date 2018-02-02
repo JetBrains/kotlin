@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi.psiUtil
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiParameter
@@ -571,3 +572,5 @@ fun KtExpression.getLabeledParent(labelName: String): KtLabeledExpression? {
 }
 
 fun PsiElement.astReplace(newElement: PsiElement) = parent.node.replaceChild(node, newElement.node)
+
+var KtElement.parentSubstitute: PsiElement? by UserDataProperty(Key.create<PsiElement>("PARENT_SUBSTITUTE"))
