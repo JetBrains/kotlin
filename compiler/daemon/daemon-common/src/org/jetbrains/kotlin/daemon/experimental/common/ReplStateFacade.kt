@@ -42,28 +42,28 @@ interface ReplStateFacade : Server, Remote {
 
     // Query messages:
     class GetIdMessage : Message<ReplStateFacade> {
-        suspend override fun process(server: ReplStateFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.getId())
+        suspend override fun process(server: ReplStateFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.getId())
     }
 
     class GetHistorySizeMessage : Message<ReplStateFacade> {
-        suspend override fun process(server: ReplStateFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.getHistorySize())
+        suspend override fun process(server: ReplStateFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.getHistorySize())
     }
 
     class HistoryGetMessage(val index: Int) : Message<ReplStateFacade> {
-        suspend override fun process(server: ReplStateFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.historyGet(index))
+        suspend override fun process(server: ReplStateFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.historyGet(index))
     }
 
     class HistoryResetMessage : Message<ReplStateFacade> {
-        suspend override fun process(server: ReplStateFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.historyReset())
+        suspend override fun process(server: ReplStateFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.historyReset())
     }
 
     class HistoryResetToMessage(val id: ILineId) : Message<ReplStateFacade> {
-        suspend override fun process(server: ReplStateFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.historyResetTo(id))
+        suspend override fun process(server: ReplStateFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.historyResetTo(id))
     }
 
 }

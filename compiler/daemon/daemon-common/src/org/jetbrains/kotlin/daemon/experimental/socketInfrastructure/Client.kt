@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.daemon.experimental.socketInfrastructure
 
-import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
+import io.ktor.network.sockets.Socket
 
-interface Client<ServerType: Server> {
-    fun ask(server: ServerType, query: Message<ServerType>): Any
-    fun tell(server: ServerType, query: Message<ServerType>)
+
+interface Client {
+    fun attachToServer(socket: Socket)
+//    fun ask(server: ServerType, query: Message<ServerType>): Any
+//    fun tell(server: ServerType, query: Message<ServerType>)
 }

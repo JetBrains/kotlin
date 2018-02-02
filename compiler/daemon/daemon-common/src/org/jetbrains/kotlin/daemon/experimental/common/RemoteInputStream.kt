@@ -35,12 +35,12 @@ interface RemoteInputStream : Server, Remote {
 
     // Query messages:
     class CloseMessage : Message<RemoteInputStream> {
-        suspend override fun process(server: RemoteInputStream, clientSocket: Socket) =
+        suspend override fun process(server: RemoteInputStream, output: ByteWriteChannelWrapper) =
             server.close()
     }
 
     class ReadMessage(val length: Int = -1) : Message<RemoteInputStream> {
-        suspend override fun process(server: RemoteInputStream, clientSocket: Socket) =
+        suspend override fun process(server: RemoteInputStream, output: ByteWriteChannelWrapper) =
             server.send(
                 clientSocket,
                 if (length == -1) server.read() else server.read(length)

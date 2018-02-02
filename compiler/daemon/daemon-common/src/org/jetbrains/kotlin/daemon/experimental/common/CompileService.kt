@@ -17,19 +17,21 @@
 package org.jetbrains.kotlin.daemon.experimental.common
 
 import io.ktor.network.sockets.Socket
+import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.openAndWrapReadChannel
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.openAndWrapWriteChannel
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
 
-
-interface CompileService : Remote, Server {
+interface CompileService: Remote {
 
     enum class OutputFormat : Serializable {
         PLAIN,
@@ -118,36 +120,36 @@ interface CompileService : Remote, Server {
     @Deprecated("The usages should be replaced with `compile` method", ReplaceWith("compile"))
     @Throws(RemoteException::class)
     fun remoteCompile(
-            sessionId: Int,
-            targetPlatform: TargetPlatform,
-            args: Array<out String>,
-            servicesFacade: CompilerCallbackServicesFacade,
-            compilerOutputStream: RemoteOutputStream,
-            outputFormat: OutputFormat,
-            serviceOutputStream: RemoteOutputStream,
-            operationsTracer: RemoteOperationsTracer?
+        sessionId: Int,
+        targetPlatform: TargetPlatform,
+        args: Array<out String>,
+        servicesFacade: CompilerCallbackServicesFacade,
+        compilerOutputStream: RemoteOutputStream,
+        outputFormat: OutputFormat,
+        serviceOutputStream: RemoteOutputStream,
+        operationsTracer: RemoteOperationsTracer?
     ): CallResult<Int>
 
     @Deprecated("The usages should be replaced with `compile` method", ReplaceWith("compile"))
     @Throws(RemoteException::class)
     fun remoteIncrementalCompile(
-            sessionId: Int,
-            targetPlatform: TargetPlatform,
-            args: Array<out String>,
-            servicesFacade: CompilerCallbackServicesFacade,
-            compilerOutputStream: RemoteOutputStream,
-            compilerOutputFormat: OutputFormat,
-            serviceOutputStream: RemoteOutputStream,
-            operationsTracer: RemoteOperationsTracer?
+        sessionId: Int,
+        targetPlatform: TargetPlatform,
+        args: Array<out String>,
+        servicesFacade: CompilerCallbackServicesFacade,
+        compilerOutputStream: RemoteOutputStream,
+        compilerOutputFormat: OutputFormat,
+        serviceOutputStream: RemoteOutputStream,
+        operationsTracer: RemoteOperationsTracer?
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
     fun compile(
-            sessionId: Int,
-            compilerArguments: Array<out String>,
-            compilationOptions: CompilationOptions,
-            servicesFacade: CompilerServicesFacadeBase,
-            compilationResults: CompilationResults?
+        sessionId: Int,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBase,
+        compilationResults: CompilationResults?
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
@@ -156,18 +158,18 @@ interface CompileService : Remote, Server {
     @Deprecated("The usages should be replaced with other `leaseReplSession` method", ReplaceWith("leaseReplSession"))
     @Throws(RemoteException::class)
     fun leaseReplSession(
-            aliveFlagPath: String?,
-            targetPlatform: CompileService.TargetPlatform,
-            servicesFacade: CompilerCallbackServicesFacade,
-            templateClasspath: List<File>,
-            templateClassName: String,
-            scriptArgs: Array<out Any?>?,
-            scriptArgsTypes: Array<out Class<out Any>>?,
-            compilerMessagesOutputStream: RemoteOutputStream,
-            evalOutputStream: RemoteOutputStream?,
-            evalErrorStream: RemoteOutputStream?,
-            evalInputStream: RemoteInputStream?,
-            operationsTracer: RemoteOperationsTracer?
+        aliveFlagPath: String?,
+        targetPlatform: CompileService.TargetPlatform,
+        servicesFacade: CompilerCallbackServicesFacade,
+        templateClasspath: List<File>,
+        templateClassName: String,
+        scriptArgs: Array<out Any?>?,
+        scriptArgsTypes: Array<out Class<out Any>>?,
+        compilerMessagesOutputStream: RemoteOutputStream,
+        evalOutputStream: RemoteOutputStream?,
+        evalErrorStream: RemoteOutputStream?,
+        evalInputStream: RemoteInputStream?,
+        operationsTracer: RemoteOperationsTracer?
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
@@ -176,34 +178,34 @@ interface CompileService : Remote, Server {
     @Deprecated("The usages should be replaced with `replCheck` method", ReplaceWith("replCheck"))
     @Throws(RemoteException::class)
     fun remoteReplLineCheck(
-            sessionId: Int,
-            codeLine: ReplCodeLine
+        sessionId: Int,
+        codeLine: ReplCodeLine
     ): CallResult<ReplCheckResult>
 
     @Deprecated("The usages should be replaced with `replCompile` method", ReplaceWith("replCompile"))
     @Throws(RemoteException::class)
     fun remoteReplLineCompile(
-            sessionId: Int,
-            codeLine: ReplCodeLine,
-            history: List<ReplCodeLine>?
+        sessionId: Int,
+        codeLine: ReplCodeLine,
+        history: List<ReplCodeLine>?
     ): CallResult<ReplCompileResult>
 
     @Deprecated("Evaluation on daemon is not supported")
     @Throws(RemoteException::class)
     fun remoteReplLineEval(
-            sessionId: Int,
-            codeLine: ReplCodeLine,
-            history: List<ReplCodeLine>?
+        sessionId: Int,
+        codeLine: ReplCodeLine,
+        history: List<ReplCodeLine>?
     ): CallResult<ReplEvalResult>
 
     @Throws(RemoteException::class)
     fun leaseReplSession(
-            aliveFlagPath: String?,
-            compilerArguments: Array<out String>,
-            compilationOptions: CompilationOptions,
-            servicesFacade: CompilerServicesFacadeBase,
-            templateClasspath: List<File>,
-            templateClassName: String
+        aliveFlagPath: String?,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBase,
+        templateClasspath: List<File>,
+        templateClassName: String
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
@@ -211,262 +213,16 @@ interface CompileService : Remote, Server {
 
     @Throws(RemoteException::class)
     fun replCheck(
-            sessionId: Int,
-            replStateId: Int,
-            codeLine: ReplCodeLine
+        sessionId: Int,
+        replStateId: Int,
+        codeLine: ReplCodeLine
     ): CallResult<ReplCheckResult>
 
     @Throws(RemoteException::class)
     fun replCompile(
-            sessionId: Int,
-            replStateId: Int,
-            codeLine: ReplCodeLine
+        sessionId: Int,
+        replStateId: Int,
+        codeLine: ReplCodeLine
     ): CallResult<ReplCompileResult>
-
-
-    // Query messages:
-
-    class CheckCompilerIdMessage(val expectedCompilerId: CompilerId) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.checkCompilerId(expectedCompilerId))
-    }
-
-    class GetUsedMemoryMessage : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.getUsedMemory())
-    }
-
-    class GetDaemonOptionsMessage : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.getDaemonOptions())
-    }
-
-    class GetDaemonJVMOptionsMessage : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.getDaemonJVMOptions())
-    }
-
-    class GetDaemonInfoMessage : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.getDaemonInfo())
-    }
-
-    class RegisterClientMessage(val aliveFlagPath: String?) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.registerClient(aliveFlagPath))
-    }
-
-
-    class GetClientMessage : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.getClients())
-    }
-
-    class LeaseCompileSessionMessage(val aliveFlagPath: String?) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.leaseCompileSession(aliveFlagPath))
-    }
-
-    class ReleaseCompileSessionMessage(val sessionId: Int) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.releaseCompileSession(sessionId))
-    }
-
-    class ShutdownMessage : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.shutdown())
-    }
-
-    class ScheduleShutdownMessage(val graceful: Boolean) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.scheduleShutdown(graceful))
-    }
-
-
-    class RemoteCompileMessage(
-            val sessionId: Int,
-            val targetPlatform: TargetPlatform,
-            val args: Array<out String>,
-            val servicesFacade: CompilerCallbackServicesFacade,
-            val compilerOutputStream: RemoteOutputStream,
-            val outputFormat: OutputFormat,
-            val serviceOutputStream: RemoteOutputStream,
-            val operationsTracer: RemoteOperationsTracer?
-    ) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(
-                        clientSocket,
-                        server.remoteCompile(
-                                sessionId,
-                                targetPlatform,
-                                args,
-                                servicesFacade,
-                                compilerOutputStream,
-                                outputFormat,
-                                serviceOutputStream,
-                                operationsTracer
-                        )
-                )
-    }
-
-
-    class RemoteIncrementalCompileMessage(
-            val sessionId: Int,
-            val targetPlatform: TargetPlatform,
-            val args: Array<out String>,
-            val servicesFacade: CompilerCallbackServicesFacade,
-            val compilerOutputStream: RemoteOutputStream,
-            val compilerOutputFormat: OutputFormat,
-            val serviceOutputStream: RemoteOutputStream,
-            val operationsTracer: RemoteOperationsTracer?
-    ) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(
-                        clientSocket,
-                        server.remoteIncrementalCompile(
-                                sessionId,
-                                targetPlatform,
-                                args,
-                                servicesFacade,
-                                compilerOutputStream,
-                                compilerOutputFormat,
-                                serviceOutputStream,
-                                operationsTracer
-                        )
-                )
-    }
-
-    class CompileMessage(
-            val sessionId: Int,
-            val compilerArguments: Array<out String>,
-            val compilationOptions: CompilationOptions,
-            val servicesFacade: CompilerServicesFacadeBase,
-            val compilationResults: CompilationResults?
-    ) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(
-                        clientSocket,
-                        server.compile(
-                                sessionId,
-                                compilerArguments,
-                                compilationOptions,
-                                servicesFacade,
-                                compilationResults
-                        )
-                )
-    }
-
-    class ClearJarCacheMessage : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.clearJarCache()
-    }
-
-    class LeaseReplSessionMessage(
-            val aliveFlagPath: String?,
-            val targetPlatform: CompileService.TargetPlatform,
-            val servicesFacade: CompilerCallbackServicesFacade,
-            val templateClasspath: List<File>,
-            val templateClassName: String,
-            val scriptArgs: Array<out Any?>?,
-            val scriptArgsTypes: Array<out Class<out Any>>?,
-            val compilerMessagesOutputStream: RemoteOutputStream,
-            val evalOutputStream: RemoteOutputStream?,
-            val evalErrorStream: RemoteOutputStream?,
-            val evalInputStream: RemoteInputStream?,
-            val operationsTracer: RemoteOperationsTracer?
-    ) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(
-                        clientSocket,
-                        server.leaseReplSession(
-                                aliveFlagPath,
-                                targetPlatform,
-                                servicesFacade,
-                                templateClasspath,
-                                templateClassName,
-                                scriptArgs,
-                                scriptArgsTypes,
-                                compilerMessagesOutputStream,
-                                evalOutputStream,
-                                evalErrorStream,
-                                evalInputStream,
-                                operationsTracer
-                        )
-                )
-    }
-
-    class ReleaseReplSessionMessage(val sessionId: Int) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.releaseReplSession(sessionId))
-    }
-
-    class RemoteReplLineCheckMessage(
-            val sessionId: Int,
-            val codeLine: ReplCodeLine
-    ) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.remoteReplLineCheck(sessionId, codeLine))
-    }
-
-    class RemoteReplLineCompileMessage(
-            val sessionId: Int,
-            val codeLine: ReplCodeLine,
-            val history: List<ReplCodeLine>?
-    ) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.remoteReplLineCompile(sessionId, codeLine, history))
-    }
-
-    class RemoteReplLineEvalMessage(
-            val sessionId: Int,
-            val codeLine: ReplCodeLine,
-            val history: List<ReplCodeLine>?
-    ) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.remoteReplLineEval(sessionId, codeLine, history))
-    }
-
-    class LeaseReplSession_Short_Message(
-            val aliveFlagPath: String?,
-            val compilerArguments: Array<out String>,
-            val compilationOptions: CompilationOptions,
-            val servicesFacade: CompilerServicesFacadeBase,
-            val templateClasspath: List<File>,
-            val templateClassName: String
-    ) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.leaseReplSession(
-                        aliveFlagPath,
-                        compilerArguments,
-                        compilationOptions,
-                        servicesFacade,
-                        templateClasspath,
-                        templateClassName
-                ))
-    }
-
-    class ReplCreateStateMessage(val sessionId: Int) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.replCreateState(sessionId))
-    }
-
-    class ReplCheckMessage(
-            val sessionId: Int,
-            val replStateId: Int,
-            val codeLine: ReplCodeLine
-    ) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.replCheck(sessionId, replStateId, codeLine))
-    }
-
-    class ReplCompileMessage(
-            val sessionId: Int,
-            val replStateId: Int,
-            val codeLine: ReplCodeLine
-    ) : Message<CompileService> {
-        suspend override fun process(server: CompileService, clientSocket: Socket) =
-                server.send(clientSocket, server.replCompile(sessionId, replStateId, codeLine))
-    }
-
 
 }

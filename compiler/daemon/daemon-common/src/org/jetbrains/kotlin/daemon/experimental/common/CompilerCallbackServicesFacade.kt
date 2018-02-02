@@ -89,44 +89,44 @@ interface CompilerCallbackServicesFacade : Remote, Server {
     // Query-messages:
 
     class HasIncrementalCachesMessage : Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
-                server.send(clientSocket, server.hasCompilationCanceledStatus())
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
+                output.writeObject(server.hasCompilationCanceledStatus())
     }
 
     class HasLookupTrackerMessage : Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
-                server.send(clientSocket, server.hasLookupTracker())
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
+                output.writeObject(server.hasLookupTracker())
     }
 
     class HasCompilationCanceledStatusMessage : Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
-                server.send(clientSocket, server.hasCompilationCanceledStatus())
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
+                output.writeObject(server.hasCompilationCanceledStatus())
     }
 
     class IncrementalCache_getObsoletePackagePartsMessage(val target: TargetId)
         : Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
-                server.send(clientSocket, server.incrementalCache_getObsoletePackageParts(target))
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
+                output.writeObject(server.incrementalCache_getObsoletePackageParts(target))
     }
 
     class IncrementalCache_getObsoleteMultifileClassFacadesMessage(val target: TargetId)
         : Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
-                server.send(clientSocket, server.incrementalCache_getObsoleteMultifileClassFacades(target))
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
+                output.writeObject(server.incrementalCache_getObsoleteMultifileClassFacades(target))
     }
 
     class IncrementalCache_getPackagePartDataMessage(
             val target: TargetId,
             val partInternalName: String
     ) : Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
-                server.send(clientSocket, server.incrementalCache_getPackagePartData(target, partInternalName))
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
+                output.writeObject(server.incrementalCache_getPackagePartData(target, partInternalName))
     }
 
     class IncrementalCache_getModuleMappingDataMessage(val target: TargetId)
         : Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
-                server.send(clientSocket, server.incrementalCache_getModuleMappingData(target))
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
+                output.writeObject(server.incrementalCache_getModuleMappingData(target))
     }
 
     class IncrementalCache_registerInlineMessage(
@@ -135,7 +135,7 @@ interface CompilerCallbackServicesFacade : Remote, Server {
             val jvmSignature: String,
             val toPath: String
     ) : Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
                 server.incrementalCache_registerInline(
                         target,
                         fromPath,
@@ -148,14 +148,14 @@ interface CompilerCallbackServicesFacade : Remote, Server {
             val target: TargetId,
             val internalClassName: String
     ) : Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) = server.send(
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) = server.send(
                 clientSocket,
                 server.incrementalCache_getClassFilePath(target, internalClassName)
         )
     }
 
     class IncrementalCache_closeMessage(val target: TargetId) : Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
                 server.incrementalCache_close(target)
     }
 
@@ -163,27 +163,27 @@ interface CompilerCallbackServicesFacade : Remote, Server {
             val target: TargetId,
             val internalName: String
     ) : Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
-                server.send(clientSocket, server.incrementalCache_getMultifileFacadeParts(target, internalName))
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
+                output.writeObject(server.incrementalCache_getMultifileFacadeParts(target, internalName))
     }
 
     class LookupTracker_requiresPositionMessage: Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
-                server.send(clientSocket, server.lookupTracker_requiresPosition())
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
+                output.writeObject(server.lookupTracker_requiresPosition())
     }
 
     class LookupTracker_recordMessage(val lookups: Collection<LookupInfo>): Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
-                server.send(clientSocket, server.lookupTracker_record(lookups))
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
+                output.writeObject(server.lookupTracker_record(lookups))
     }
 
     class LookupTracker_isDoNothingMessage: Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) =
-                server.send(clientSocket, server.lookupTracker_isDoNothing())
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) =
+                output.writeObject(server.lookupTracker_isDoNothing())
     }
 
     class CompilationCanceledStatus_checkCanceledMessage: Message<CompilerCallbackServicesFacade> {
-        override suspend fun process(server: CompilerCallbackServicesFacade, clientSocket: Socket) {
+        override suspend fun process(server: CompilerCallbackServicesFacade, output: ByteWriteChannelWrapper) {
             server.compilationCanceledStatus_checkCanceled()
         }
     }

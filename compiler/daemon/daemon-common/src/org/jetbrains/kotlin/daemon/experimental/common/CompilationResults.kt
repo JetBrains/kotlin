@@ -30,7 +30,7 @@ interface CompilationResults : Remote, Server {
     fun add(compilationResultCategory: Int, value: Serializable)
 
     data class AddMessage(val compilationResultCategory: Int, val value: Serializable) : Message<CompilationResults> {
-        override suspend fun process(server: CompilationResults, clientSocket: Socket) =
+        override suspend fun process(server: CompilationResults, output: ByteWriteChannelWrapper) =
                 server.add(compilationResultCategory, value)
     }
 

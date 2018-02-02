@@ -3,15 +3,18 @@ package org.jetbrains.kotlin.daemon.experimental.socketInfrastructure
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.io.ByteBuffer
 import kotlinx.coroutines.experimental.io.ByteReadChannel
 import kotlinx.coroutines.experimental.io.ByteWriteChannel
+import kotlinx.coroutines.experimental.launch
 import kotlinx.io.core.readBytes
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 
+class Null
 
 class ByteReadChannelWrapper(private val readChannel: ByteReadChannel) {
 
@@ -50,7 +53,7 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel) {
         writeChannel.flush()
     }
 
-    private suspend fun printObjectImpl(obj: Any) =
+    private suspend fun printObjectImpl(obj: Any?) =
             ByteArrayOutputStream().use { bos ->
                 ObjectOutputStream(bos).use { objOut ->
                     objOut.writeObject(obj)
@@ -74,9 +77,12 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel) {
                     .array()
     )
 
-    suspend fun writeObject(obj: Any) =
+    suspend fun writeObject(obj: Any?) {
+        launch {
             if (obj is String) printString(obj)
             else printObjectImpl(obj)
+        }
+    }
 }
 
 fun ByteReadChannel.toWrapper() = ByteReadChannelWrapper(this)
@@ -84,3 +90,5 @@ fun ByteWriteChannel.toWrapper() = ByteWriteChannelWrapper(this)
 
 fun Socket.openAndWrapReadChannel() = this.openReadChannel().toWrapper()
 fun Socket.openAndWrapWriteChannel() = this.openWriteChannel().toWrapper()
+
+fun Socket.openIO() = Pair(this.openAndWrapReadChannel(), this.openAndWrapWriteChannel())

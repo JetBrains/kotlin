@@ -36,17 +36,17 @@ interface RemoteOutputStream : Server, Remote {
 
     // Query messages:
     class CloseMessage : Message<RemoteOutputStream> {
-        suspend override fun process(server: RemoteOutputStream, clientSocket: Socket) =
+        suspend override fun process(server: RemoteOutputStream, output: ByteWriteChannelWrapper) =
             server.close()
     }
 
     class WriteMessage(val data: ByteArray, val offset: Int = -1, val length: Int = -1) : Message<RemoteOutputStream> {
-        suspend override fun process(server: RemoteOutputStream, clientSocket: Socket) =
+        suspend override fun process(server: RemoteOutputStream, output: ByteWriteChannelWrapper) =
             server.write(data, offset, length)
     }
 
     class WriteIntMessage(val dataByte: Int) : Message<RemoteOutputStream> {
-        suspend override fun process(server: RemoteOutputStream, clientSocket: Socket) =
+        suspend override fun process(server: RemoteOutputStream, output: ByteWriteChannelWrapper) =
             server.write(dataByte)
     }
 

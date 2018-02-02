@@ -33,12 +33,12 @@ interface RemoteOperationsTracer : Server, Remote {
 
     // Query messages:
     class BeforeMessage(val id: String) : Message<RemoteOperationsTracer> {
-        suspend override fun process(server: RemoteOperationsTracer, clientSocket: Socket) =
+        suspend override fun process(server: RemoteOperationsTracer, output: ByteWriteChannelWrapper) =
             server.before(id)
     }
 
     class AfterMessage(val id: String) : Message<RemoteOperationsTracer> {
-        suspend override fun process(server: RemoteOperationsTracer, clientSocket: Socket) =
+        suspend override fun process(server: RemoteOperationsTracer, output: ByteWriteChannelWrapper) =
             server.after(id)
     }
 

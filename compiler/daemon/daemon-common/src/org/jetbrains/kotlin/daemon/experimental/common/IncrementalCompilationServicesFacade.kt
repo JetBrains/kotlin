@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.daemon.experimental.common
 
 import io.ktor.network.sockets.Socket
+import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.ByteWriteChannelWrapper
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
@@ -78,37 +79,37 @@ interface IncrementalCompilationServicesFacade : Server, Remote {
     // Query messages:
 
     class AreFileChangesKnownMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.areFileChangesKnown())
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.areFileChangesKnown())
     }
 
     class ModifiedFilesMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.modifiedFiles())
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.modifiedFiles())
     }
 
     class DeletedFilesMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.deletedFiles())
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.deletedFiles())
     }
 
     class WorkingDirMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.workingDir())
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.workingDir())
     }
 
     class CustomCacheVersionFileNameMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.customCacheVersionFileName())
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.customCacheVersionFileName())
     }
 
     class CustomCacheVersionMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.customCacheVersion())
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.customCacheVersion())
     }
 
     class ReportICMessage(val message: String): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             server.reportIC(message)
     }
 
@@ -116,27 +117,27 @@ interface IncrementalCompilationServicesFacade : Server, Remote {
         val files: Iterable<File>,
         val exitCode: Int
     ): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.reportCompileIteration(files, exitCode))
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.reportCompileIteration(files, exitCode))
     }
 
     class UpdateAnnotationsMessage(val outdatedClassesJvmNames: Iterable<String>): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             server.updateAnnotations(outdatedClassesJvmNames)
     }
 
     class RevertMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             server.revert()
     }
 
     class RegisterChangesMessage(val timestamp: Long, val dirtyData: SimpleDirtyData): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             server.registerChanges(timestamp, dirtyData)
     }
 
     class UnknownChangesMessage(val timestamp: Long): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             server.unknownChanges(timestamp)
     }
 
@@ -144,8 +145,8 @@ interface IncrementalCompilationServicesFacade : Server, Remote {
         val artifact: File,
         val sinceTS: Long
     ): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.getChanges(artifact, sinceTS))
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.getChanges(artifact, sinceTS))
     }
 
 }

@@ -47,27 +47,27 @@ interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
     // Query messages:
 
     class HasAnnotationsFileUpdaterMessage : Message<IncrementalCompilerServicesFacade> {
-        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.hasAnnotationsFileUpdater())
+        suspend override fun process(server: IncrementalCompilerServicesFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.hasAnnotationsFileUpdater())
     }
 
     class UpdateAnnotationsMessage(val outdatedClassesJvmNames: Iterable<String>) : Message<IncrementalCompilerServicesFacade> {
-        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.updateAnnotations(outdatedClassesJvmNames))
+        suspend override fun process(server: IncrementalCompilerServicesFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.updateAnnotations(outdatedClassesJvmNames))
     }
 
     class RevertMessage(val outdatedClassesJvmNames: Iterable<String>): Message<IncrementalCompilerServicesFacade> {
-        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
+        suspend override fun process(server: IncrementalCompilerServicesFacade, output: ByteWriteChannelWrapper) =
             server.revert()
     }
 
     class RegisterChangesMessage(val timestamp: Long, val dirtyData: SimpleDirtyData): Message<IncrementalCompilerServicesFacade> {
-        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
+        suspend override fun process(server: IncrementalCompilerServicesFacade, output: ByteWriteChannelWrapper) =
             server.registerChanges(timestamp, dirtyData)
     }
 
     class UnknownChangesMessage(val timestamp: Long): Message<IncrementalCompilerServicesFacade> {
-        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
+        suspend override fun process(server: IncrementalCompilerServicesFacade, output: ByteWriteChannelWrapper) =
             server.unknownChanges(timestamp)
     }
 
@@ -75,8 +75,8 @@ interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
         val artifact: File,
         val sinceTS: Long
     ): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.getChanges(artifact, sinceTS))
+        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+            output.writeObject(server.getChanges(artifact, sinceTS))
     }
 
 

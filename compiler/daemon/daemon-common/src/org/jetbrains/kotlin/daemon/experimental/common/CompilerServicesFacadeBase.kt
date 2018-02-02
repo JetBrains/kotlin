@@ -37,7 +37,7 @@ interface CompilerServicesFacadeBase : Remote, Server {
             val message: String?,
             val attachment: Serializable?
     ) : Message<CompilerServicesFacadeBase> {
-        suspend override fun process(server: CompilerServicesFacadeBase, clientSocket: Socket) =
+        suspend override fun process(server: CompilerServicesFacadeBase, output: ByteWriteChannelWrapper) =
                 server.report(category, severity, message, attachment)
     }
 
