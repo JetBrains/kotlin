@@ -123,7 +123,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
             return fontInfo.fontMetrics().stringWidth(text)
         }
 
-        override fun paint(editor: Editor, g: Graphics, r: Rectangle, textAttributes: TextAttributes) {
+        override fun paint(editor: Editor, g: Graphics, r: Rectangle) {
             val attributes = getAttributes()
             val fgColor = attributes.foregroundColor ?: return
             g.color = fgColor
