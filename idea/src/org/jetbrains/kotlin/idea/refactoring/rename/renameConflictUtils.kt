@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
@@ -288,7 +289,8 @@ private fun checkUsagesRetargeting(
             newCallee.getReferencedNameElement().replace(psiFactory.createNameIdentifier(name))
         }
 
-        val newContext = qualifiedExpression.analyzeInContext(scope, refElement)
+        qualifiedExpression.parentSubstitute = fullCallExpression.parent
+        val newContext = qualifiedExpression.analyzeInContext(scope, refElement, DelegatingBindingTrace(context, ""))
 
         val newResolvedCall = newCallee.getResolvedCall(newContext)
         val candidateText = newResolvedCall?.candidateDescriptor?.getImportableDescriptor()?.canonicalRender()
