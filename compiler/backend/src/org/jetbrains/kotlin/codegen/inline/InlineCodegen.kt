@@ -265,9 +265,6 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
             addInlineMarker(codegen.v, true)
         }
 
-        if (functionDescriptor.isBuiltInCoroutineContext())
-            invocationParamBuilder.addNextValueParameter(CONTINUATION_ASM_TYPE, false, continuationValue(), 0)
-
         val parameters = invocationParamBuilder.buildParameters()
 
         val info = RootInliningContext(
