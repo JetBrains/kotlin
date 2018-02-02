@@ -5147,6 +5147,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArray"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("forInArraySpecializedToUntil.kt")
+            public void testForInArraySpecializedToUntil() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInArraySpecializedToUntil.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forInArrayWithArrayPropertyUpdatedInLoopBody.kt")
             public void testForInArrayWithArrayPropertyUpdatedInLoopBody() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInArrayWithArrayPropertyUpdatedInLoopBody.kt");

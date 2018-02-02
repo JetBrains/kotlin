@@ -22,18 +22,33 @@ import org.jetbrains.kotlin.codegen.generateCallSingleArgument
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.constants.IntegerValueConstant
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.org.objectweb.asm.Type
 
 class PrimitiveNumberRangeLiteralRangeValue(
     rangeCall: ResolvedCall<out CallableDescriptor>
 ) : PrimitiveNumberRangeIntrinsicRangeValue(rangeCall),
     ReversableRangeValue {
 
-    override fun getBoundedValue(codegen: ExpressionCodegen) =
-        SimpleBoundedValue(codegen, rangeCall)
+    override fun getBoundedValue(codegen: ExpressionCodegen): SimpleBoundedValue {
+        if (codegen.canBeSpecializedByExcludingHighBound(rangeCall)) {
+            val highBound = (rangeCall.getFirstArgumentExpression() as KtBinaryExpression).left
+            return SimpleBoundedValue(
+                    codegen,
+                    rangeCall,
+                    codegen.generateCallReceiver(rangeCall),
+                    true,
+                    codegen.gen(highBound),
+                    false
+            )
+        }
+        return SimpleBoundedValue(codegen, rangeCall)
+    }
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator =
         createConstBoundedForInRangeLiteralGenerator(codegen, forExpression)
@@ -70,5 +85,38 @@ class PrimitiveNumberRangeLiteralRangeValue(
             endExpression,
             -1
         )
+    }
+}
+
+private fun ExpressionCodegen.canBeSpecializedByExcludingHighBound(rangeCall: ResolvedCall<out CallableDescriptor>): Boolean {
+    // Currently only "cst..<array>.size-1" can be specialized to "cst until <array>.size"
+    return isArraySizeMinusOne(rangeCall.getFirstArgumentExpression()!!)
+}
+
+private fun ExpressionCodegen.isArraySizeMinusOne(expression: KtExpression): Boolean {
+    return when {
+        expression is KtBinaryExpression -> {
+            isArraySizeAccess(expression.left!!) &&
+                    expression.getOperationToken() === org.jetbrains.kotlin.lexer.KtTokens.MINUS &&
+                    isConstantOne(expression.right!!)
+        }
+        else -> false
+    }
+}
+
+private fun ExpressionCodegen.isConstantOne(expression: KtExpression): Boolean {
+    val constantValue = getCompileTimeConstant(expression).safeAs<IntegerValueConstant<*>>() ?: return false
+    return constantValue.value == 1
+}
+
+private fun ExpressionCodegen.isArraySizeAccess(expression: KtExpression): Boolean {
+    return when {
+        expression is KtDotQualifiedExpression -> {
+            val selector = expression.selectorExpression
+            asmType(bindingContext.getType(expression.receiverExpression)!!).sort == Type.ARRAY &&
+                    selector is KtNameReferenceExpression &&
+                    selector.text == "size"
+        }
+        else -> false
     }
 }
