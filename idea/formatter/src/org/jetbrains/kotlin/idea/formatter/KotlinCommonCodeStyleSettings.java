@@ -15,13 +15,13 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import com.intellij.psi.codeStyle.arrangement.ArrangementSettings;
 import com.intellij.psi.codeStyle.arrangement.ArrangementUtil;
-import com.intellij.util.ReflectionUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import kotlin.collections.ArraysKt;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.idea.util.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -31,22 +31,62 @@ import java.util.Set;
 
 @SuppressWarnings("UnnecessaryFinalOnLocalVariableOrParameter")
 public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
+    @ReflectionUtil.SkipInEquals
+    public String CODE_STYLE_DEFAULTS = null;
+
+    private final boolean isTempForDeserialize;
+
     public KotlinCommonCodeStyleSettings() {
-        super(KotlinLanguage.INSTANCE);
+        this(false);
     }
 
-    //<editor-fold desc="Copied and adapted from CommonCodeStyleSettings ">
+    private KotlinCommonCodeStyleSettings(boolean isTempForDeserialize) {
+        super(KotlinLanguage.INSTANCE);
+        this.isTempForDeserialize = isTempForDeserialize;
+    }
+
+    private static KotlinCommonCodeStyleSettings createForTempDeserialize() {
+        return new KotlinCommonCodeStyleSettings(true);
+    }
+
     @Override
     public void readExternal(Element element) throws InvalidDataException {
-        super.readExternal(element);
+        if (isTempForDeserialize) {
+            super.readExternal(element);
+            return;
+        }
+
+        KotlinCommonCodeStyleSettings tempDeserialize = createForTempDeserialize();
+        tempDeserialize.readExternal(element);
+
+        if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(tempDeserialize.CODE_STYLE_DEFAULTS)) {
+            KotlinStyleGuideCodeStyle.Companion.applyToCommonSettings(this, true);
+        }
+
+        readExternalBase(element);
     }
 
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         CommonCodeStyleSettings defaultSettings = getDefaultSettings();
+
+        if (defaultSettings != null && KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
+            KotlinStyleGuideCodeStyle.Companion.applyToCommonSettings(defaultSettings, false);
+        }
+
+        writeExternalBase(element, defaultSettings);
+    }
+
+    //<editor-fold desc="Copied and adapted from CommonCodeStyleSettings ">
+    private void readExternalBase(Element element) throws InvalidDataException {
+        super.readExternal(element);
+    }
+
+    private void writeExternalBase(Element element, CommonCodeStyleSettings defaultSettings) throws WriteExternalException {
         Set<String> supportedFields = getSupportedFields();
         if (supportedFields != null) {
             supportedFields.add("FORCE_REARRANGE_MODE");
+            supportedFields.add("CODE_STYLE_DEFAULTS");
         }
         //noinspection deprecation
         DefaultJDOMExternalizer.writeExternal(this, element, new SupportedFieldsDiffFilter(this, supportedFields, defaultSettings));
@@ -124,7 +164,7 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
             return false;
         }
 
-        if (!ReflectionUtil.comparePublicNonFinalFields(this, obj)) {
+        if (!ReflectionUtil.comparePublicNonFinalFieldsWithSkip(this, obj)) {
             return false;
         }
 

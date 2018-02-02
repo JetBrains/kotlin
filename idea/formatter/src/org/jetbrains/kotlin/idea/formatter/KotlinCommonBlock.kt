@@ -44,8 +44,8 @@ private val CODE_BLOCKS = TokenSet.create(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_B
 private val ALIGN_FOR_BINARY_OPERATIONS = TokenSet.create(MUL, DIV, PERC, PLUS, MINUS, ELVIS, LT, GT, LTEQ, GTEQ, ANDAND, OROR)
 private val ANNOTATIONS = TokenSet.create(KtNodeTypes.ANNOTATION_ENTRY, KtNodeTypes.ANNOTATION)
 
-val CodeStyleSettings.kotlinCommonSettings: CommonCodeStyleSettings
-    get() = getCommonSettings(KotlinLanguage.INSTANCE)
+val CodeStyleSettings.kotlinCommonSettings: KotlinCommonCodeStyleSettings
+    get() = getCommonSettings(KotlinLanguage.INSTANCE) as KotlinCommonCodeStyleSettings
 
 val CodeStyleSettings.kotlinCustomSettings: KotlinCodeStyleSettings
     get() = getCustomSettings(KotlinCodeStyleSettings::class.java)!!

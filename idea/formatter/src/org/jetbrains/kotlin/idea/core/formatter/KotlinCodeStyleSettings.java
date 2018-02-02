@@ -18,9 +18,15 @@ package org.jetbrains.kotlin.idea.core.formatter;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.psi.codeStyle.*;
-import com.intellij.util.ReflectionUtil;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle;
+import org.jetbrains.kotlin.idea.util.ReflectionUtil;
+
+import static com.intellij.util.ReflectionUtil.copyFields;
 
 public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public static final KotlinCodeStyleSettings DEFAULT = new KotlinCodeStyleSettings(new CodeStyleSettings());
@@ -52,8 +58,19 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public int WRAP_ELVIS_EXPRESSIONS = 1;
     public boolean IF_RPAREN_ON_NEW_LINE = false;
 
+    @ReflectionUtil.SkipInEquals
+    public String CODE_STYLE_DEFAULTS = null;
+
+    private final boolean isTempForDeserialize;
+
     public KotlinCodeStyleSettings(CodeStyleSettings container) {
+        this(container, false);
+    }
+
+    private KotlinCodeStyleSettings(CodeStyleSettings container, boolean isTempForDeserialize) {
         super("JetCodeStyleSettings", container);
+
+        this.isTempForDeserialize = isTempForDeserialize;
 
         // defaults in IDE but not in tests
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
@@ -74,8 +91,49 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     }
 
     private void copyFrom(@NotNull KotlinCodeStyleSettings from) {
-        ReflectionUtil.copyFields(getClass().getFields(), from, this);
-
+        copyFields(getClass().getFields(), from, this);
         PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(from.PACKAGES_TO_USE_STAR_IMPORTS);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof KotlinCodeStyleSettings)) return false;
+        if (!ReflectionUtil.comparePublicNonFinalFieldsWithSkip(this, obj)) return false;
+        return true;
+    }
+
+    @Override
+    public void writeExternal(Element parentElement, @NotNull CustomCodeStyleSettings parentSettings) throws WriteExternalException {
+        if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
+            KotlinCodeStyleSettings defaultKotlinCodeStyle = (KotlinCodeStyleSettings) parentSettings.clone();
+            KotlinStyleGuideCodeStyle.Companion.applyToKotlinCustomSettings(defaultKotlinCodeStyle, false);
+            parentSettings = defaultKotlinCodeStyle;
+        }
+
+        super.writeExternal(parentElement, parentSettings);
+    }
+
+    @Override
+    public void readExternal(Element parentElement) throws InvalidDataException {
+        if (isTempForDeserialize) {
+            super.readExternal(parentElement);
+            return;
+        }
+
+        KotlinCodeStyleSettings tempSettings = readExternalToTemp(parentElement);
+        if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(tempSettings.CODE_STYLE_DEFAULTS)) {
+            KotlinStyleGuideCodeStyle.Companion.applyToKotlinCustomSettings(this, true);
+        }
+
+        // Actual read
+        super.readExternal(parentElement);
+    }
+
+    private static KotlinCodeStyleSettings readExternalToTemp(Element parentElement) {
+        // Read to temp
+        KotlinCodeStyleSettings tempSettings = new KotlinCodeStyleSettings(null, true);
+        tempSettings.readExternal(parentElement);
+
+        return tempSettings;
     }
 }
