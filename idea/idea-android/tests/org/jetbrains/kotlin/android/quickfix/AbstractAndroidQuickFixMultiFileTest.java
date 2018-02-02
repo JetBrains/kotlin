@@ -38,10 +38,13 @@ public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuick
 
     @Override
     protected void tearDown() {
-        Extensions.getRootArea().getExtensionPoint(ImportFilter.EP_NAME).unregisterExtension(KotlinTestImportFilter.INSTANCE);
-        AndroidFacet facet = FacetManager.getInstance(myModule).getFacetByType(AndroidFacet.getFacetType().getId());
-        FacetUtil.deleteFacet(facet);
-        super.tearDown();
+        try {
+            Extensions.getRootArea().getExtensionPoint(ImportFilter.EP_NAME).unregisterExtension(KotlinTestImportFilter.INSTANCE);
+            AndroidFacet facet = FacetManager.getInstance(myModule).getFacetByType(AndroidFacet.getFacetType().getId());
+            FacetUtil.deleteFacet(facet);
+        } finally {
+            super.tearDown();
+        }
     }
 
     @Override
