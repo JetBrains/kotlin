@@ -25,13 +25,9 @@ import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.SOURCE_CHARS
 import org.jetbrains.kotlin.console.XML_REPLACEMENTS
 import org.jetbrains.kotlin.console.actions.logError
-import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
-import org.jetbrains.kotlin.idea.scratch.ScratchExecutor
-import org.jetbrains.kotlin.idea.scratch.ScratchExpression
-import org.jetbrains.kotlin.idea.scratch.ScratchFile
+import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputType
-import org.jetbrains.kotlin.idea.scratch.printDebugMessage
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
 import java.io.ByteArrayInputStream
