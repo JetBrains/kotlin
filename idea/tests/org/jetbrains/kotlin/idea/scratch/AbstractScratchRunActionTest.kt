@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
 import org.jetbrains.kotlin.idea.scratch.output.InlayScratchOutputHandler
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.junit.Assert
@@ -66,7 +67,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         javaFiles.forEach { myFixture.copyFileToProject(it.path, FileUtil.getRelativePath(baseDir, it)!!) }
         kotlinFiles.forEach { myFixture.copyFileToProject(it.path, FileUtil.getRelativePath(baseDir, it)!!) }
 
-        val outputDir = myFixture.tempDirFixture.findOrCreateDir("out1")
+        val outputDir = myFixture.tempDirFixture.findOrCreateDir("out")
 
         MockLibraryUtil.compileKotlin(baseDir.path, File(outputDir.path))
 
@@ -95,7 +96,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             sourceFile.name,
             KotlinLanguage.INSTANCE,
             fileText,
-            ScratchFileService.Option.create_new_always
+            ScratchFileService.Option.create_if_missing
         ) ?: error("Couldn't create scratch file ${sourceFile.path}")
 
         myFixture.openFileInEditor(scratchFile)
@@ -158,4 +159,12 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
+
+    override fun tearDown() {
+        super.tearDown()
+
+        ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
+            runWriteAction { file.delete(this) }
+        }
+    }
 }
