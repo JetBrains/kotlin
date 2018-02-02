@@ -20,6 +20,8 @@ import java.rmi.Remote
 import java.rmi.RemoteException
 import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
+import io.ktor.network.sockets.Socket
+
 
 interface RemoteOperationsTracer : Server, Remote {
 

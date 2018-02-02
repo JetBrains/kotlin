@@ -20,6 +20,8 @@ import java.io.File
 import java.rmi.RemoteException
 import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
+import io.ktor.network.sockets.Socket
+
 
 interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
     // AnnotationFileUpdater
@@ -47,11 +49,6 @@ interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
     class HasAnnotationsFileUpdaterMessage : Message<IncrementalCompilerServicesFacade> {
         suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
             server.send(clientSocket, server.hasAnnotationsFileUpdater())
-    }
-
-    class UpdateAnnotationsMessage(val outdatedClassesJvmNames: Iterable<String>) : Message<IncrementalCompilerServicesFacade> {
-        suspend override fun process(server: IncrementalCompilerServicesFacade, clientSocket: Socket) =
-            server.send(clientSocket, server.updateAnnotations(outdatedClassesJvmNames))
     }
 
     class UpdateAnnotationsMessage(val outdatedClassesJvmNames: Iterable<String>) : Message<IncrementalCompilerServicesFacade> {

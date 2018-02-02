@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.daemon.experimental.common
 
-import java.rmi.Remote
-import java.rmi.RemoteException
+import io.ktor.network.sockets.Socket
 import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
+import java.rmi.Remote
+import java.rmi.RemoteException
 
 
 interface RemoteOutputStream : Server, Remote {
@@ -41,9 +42,12 @@ interface RemoteOutputStream : Server, Remote {
 
     class WriteMessage(val data: ByteArray, val offset: Int = -1, val length: Int = -1) : Message<RemoteOutputStream> {
         suspend override fun process(server: RemoteOutputStream, clientSocket: Socket) =
-            if (offset == -1)
-                server.write(data[0])
-            else
-                server.write(data, offset, length)
+            server.write(data, offset, length)
     }
+
+    class WriteIntMessage(val dataByte: Int) : Message<RemoteOutputStream> {
+        suspend override fun process(server: RemoteOutputStream, clientSocket: Socket) =
+            server.write(dataByte)
+    }
+
 }

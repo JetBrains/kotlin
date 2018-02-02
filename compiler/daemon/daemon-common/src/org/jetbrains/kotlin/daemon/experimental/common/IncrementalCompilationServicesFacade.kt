@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.experimental.common
 
+import io.ktor.network.sockets.Socket
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
