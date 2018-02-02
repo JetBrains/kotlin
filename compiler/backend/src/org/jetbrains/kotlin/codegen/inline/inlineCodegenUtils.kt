@@ -81,7 +81,8 @@ private const val INLINE_MARKER_FINALLY_START = "finallyStart"
 private const val INLINE_MARKER_FINALLY_END = "finallyEnd"
 private const val INLINE_MARKER_BEFORE_SUSPEND_ID = 0
 private const val INLINE_MARKER_AFTER_SUSPEND_ID = 1
-private const val INLINE_MARKET_RETURNS_UNIT = 2
+private const val INLINE_MARKER_RETURNS_UNIT = 2
+private const val INLINE_MARKER_FAKE_CONTINUATION = 3
 private val INTRINSIC_ARRAY_CONSTRUCTOR_TYPE = AsmUtil.asmTypeByClassId(classId)
 
 internal fun getMethodNode(
@@ -411,7 +412,7 @@ internal fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
 }
 
 private fun addReturnsUnitMarker(v: InstructionAdapter) {
-    v.iconst(INLINE_MARKET_RETURNS_UNIT)
+    v.iconst(INLINE_MARKER_RETURNS_UNIT)
     v.visitMethodInsn(
             Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
             "mark",
@@ -419,9 +420,26 @@ private fun addReturnsUnitMarker(v: InstructionAdapter) {
     )
 }
 
+/* There are contexts when the continuation does not yet exist, for example, in inline lambdas, which are going to
+ * be inlined into suspendable functions.
+ * In such cases we just generate the marker which is going to be replaced with real continuation on generating state machine.
+ * See [CoroutineTransformerMethodVisitor] for more info.
+ */
+internal fun addFakeContinuationMarker(v: InstructionAdapter) {
+    v.iconst(INLINE_MARKER_FAKE_CONTINUATION)
+    v.invokestatic(
+        INLINE_MARKER_CLASS_NAME,
+        "mark",
+        "(I)V", false
+    )
+    v.aconst(null)
+}
+
 internal fun isBeforeSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_SUSPEND_ID)
 internal fun isAfterSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_AFTER_SUSPEND_ID)
-internal fun isReturnsUnitMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKET_RETURNS_UNIT)
+internal fun isReturnsUnitMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_RETURNS_UNIT)
+internal fun isFakeContinuationMarker(insn: AbstractInsnNode) =
+    insn.previous != null && isSuspendMarker(insn.previous, INLINE_MARKER_FAKE_CONTINUATION) && insn.opcode == Opcodes.ACONST_NULL
 
 private fun isSuspendMarker(insn: AbstractInsnNode, id: Int) =
         isInlineMarker(insn, "mark") && insn.previous.intConstant == id
