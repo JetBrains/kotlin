@@ -76,6 +76,7 @@ configurations {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-gradle-plugin:$buildKotlinVersion"
     compile gradleApi()
 
     bundleDependencies "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
@@ -119,15 +120,23 @@ processResources {
     from(file("$rootBuildDirectory/utilities/env_blacklist"))
 }
 
+// TODO: Get rid of manual pom generation
 publishing {
     publications {
         gradlePlugin(MavenPublication) {
             artifact shadowJar
             pom.withXml { XmlProvider xml ->
-                def stdlibDep = xml.asNode().appendNode("dependencies").appendNode("dependency")
+                def deps = xml.asNode().appendNode("dependencies")
+
+                def stdlibDep = deps.appendNode("dependency")
                 stdlibDep.appendNode("groupId", "org.jetbrains.kotlin")
                 stdlibDep.appendNode("artifactId", "kotlin-stdlib")
                 stdlibDep.appendNode("version", "$buildKotlinVersion")
+
+                def kotlinPluginDep = deps.appendNode("dependency")
+                kotlinPluginDep.appendNode("groupId", "org.jetbrains.kotlin")
+                kotlinPluginDep.appendNode("artifactId", "kotlin-gradle-plugin")
+                kotlinPluginDep.appendNode("version", "$buildKotlinVersion")
             }
         }
     }

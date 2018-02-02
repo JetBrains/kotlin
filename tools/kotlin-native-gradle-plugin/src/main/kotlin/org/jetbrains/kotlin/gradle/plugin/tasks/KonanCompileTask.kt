@@ -16,7 +16,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.tasks
 
+import org.gradle.api.GradleException
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.internal.HasConvention
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -36,7 +41,6 @@ enum class Produce(val cliOption: String, val kind: CompilerOutputKind) {
  */
 abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
-    // TODO: Support custom runner options (java options)
     @Internal override val toolRunner = KonanCompilerRunner(project)
 
     abstract val produce: Produce
@@ -49,6 +53,16 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     override val artifactPrefix: String
         @Internal get() = produce.kind.prefix(konanTarget)
+
+    // Mutliplatform support --------------------------------------------------
+
+    internal var commonProject: Project? = null
+        internal set
+        @Internal get
+
+    @InputFiles val commonSrcFiles = mutableSetOf<FileCollection>()
+
+    @Internal protected val defaultSourceSetName = "main"
 
     // Other compilation parameters -------------------------------------------
 
@@ -78,6 +92,11 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     val apiVersion      : String?
         @Optional @Input get() = project.konanExtension.apiVersion
 
+    protected fun directoryToKt(dir: Any) = project.fileTree(dir).apply {
+        include("**/*.kt")
+        exclude { it.file.startsWith(project.buildDir) }
+    }
+
     // Command line  ------------------------------------------------------------
 
     override fun buildArgs() = mutableListOf<String>().apply {
@@ -106,10 +125,13 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         addKey("-ea", enableAssertions)
         addKey("--time", measureTime)
         addKey("-nodefaultlibs", noDefaultLibs)
+        addKey("-Xmulti-platform", commonProject != null)
 
         addAll(extraOpts)
 
-        srcFiles.flatMap { it.files }.filter { it.name.endsWith(".kt") }.mapTo(this) { it.canonicalPath }
+        listOf(srcFiles, commonSrcFiles).forEach {
+            it.flatMap { it.files }.filter { it.name.endsWith(".kt") }.mapTo(this) { it.canonicalPath }
+        }
     }
 
     // region DSL.
@@ -117,10 +139,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     // DSL. Input/output files.
 
     override fun srcDir(dir: Any) {
-        srcFiles_.add(project.fileTree(dir).apply {
-            include("**/*.kt")
-            exclude { it.file.startsWith(project.buildDir) }
-        })
+        srcFiles_.add(directoryToKt(dir))
     }
     override fun srcFiles(vararg files: Any) {
         srcFiles_.add(project.files(files))
@@ -135,6 +154,53 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     }
     override fun nativeLibraries(libs: FileCollection) {
         nativeLibraries.add(libs)
+    }
+
+    // DSL. Multiplatform projects.
+
+    override fun expectedBy(parameters: Map<String, Any>) {
+        val project = parameters[PROJECT_KEY] ?:
+                throw GradleException("A project should be passed to expectedBy method")
+        val sourceSetName = parameters[SOURCE_SET_KEY] ?: defaultSourceSetName
+
+        if (sourceSetName !is String) {
+            throw GradleException("sourceSet parameter of expectedBy should be String")
+        }
+
+        when (project) {
+            is Project -> expectedBy(project, sourceSetName)
+            is String -> expectedBy(project, sourceSetName)
+            else -> throw GradleException("project parameter of expectedBy should be String")
+        }
+    }
+
+    override fun expectedBy(commonProject: String, sourceSetName: String) = expectedBy(project.project(commonProject), sourceSetName)
+    override fun expectedBy(commonProject: String) = expectedBy(commonProject, defaultSourceSetName)
+    override fun expectedBy(commonProject: Project) = expectedBy(commonProject, defaultSourceSetName)
+    override fun expectedBy(commonProject: Project, sourceSetName: String) {
+        if (this.commonProject != null) {
+            throw GradleException("Artifact ${artifactName} has more then one expectedBy dependency")
+        }
+
+        this.commonProject = commonProject
+
+        commonProject.whenEvaluated {
+            if (!commonProject.pluginManager.hasPlugin("kotlin-platform-common")) {
+                throw GradleException("Artifact ${artifactName} of project ${this@KonanCompileTask.project.path} " +
+                        "has an expectedBy dependency to a non-common project ${this.path}")
+            }
+
+            val commonSourceSet = commonProject.sourceSets.let {
+                it.findByName(sourceSetName) ?: run {
+                    logger.warn("Cannot find a source set ${sourceSetName} in project ${this.path}. " +
+                            "Use the default one: ${defaultSourceSetName}")
+                    it.getByName(defaultSourceSetName)
+                }
+            }
+            commonSourceSet.kotlin!!.srcDirs.forEach {
+                commonSrcFiles.add(directoryToKt(it))
+            }
+        }
     }
 
     // DSL. Other parameters.
@@ -172,6 +238,37 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         measureTime = flag
     }
     // endregion
+
+    // Some functions from Kotlin Gradle plugin.
+    protected fun Project.whenEvaluated(fn: Project.() -> Unit) {
+        if (state.executed) {
+            fn()
+        } else {
+            afterEvaluate { it.fn() }
+        }
+    }
+
+    protected val Project.sourceSets: SourceSetContainer
+        get() = convention.getPlugin(JavaPluginConvention::class.java).sourceSets
+
+    protected val SourceSet.kotlin: SourceDirectorySet?
+        get() {
+            // Access through reflection, because another project's KotlinSourceSet might be loaded
+            // by a different class loader:
+            val convention = (getConvention("kotlin") ?: getConvention("kotlin2js")) ?: return null
+            val kotlinSourceSetIface = convention.javaClass.interfaces.find { it.name == KotlinSourceSet::class.qualifiedName }
+            val getKotlin = kotlinSourceSetIface?.methods?.find { it.name == "getKotlin" } ?: return null
+            return getKotlin(convention) as? SourceDirectorySet
+        }
+
+    protected fun Any.getConvention(name: String): Any? =
+            (this as HasConvention).convention.plugins[name]
+
+    companion object {
+        const val PROJECT_KEY = "project"
+        const val SOURCE_SET_KEY = "sourceSet"
+    }
+
 }
 
 open class KonanCompileProgramTask: KonanCompileTask() {

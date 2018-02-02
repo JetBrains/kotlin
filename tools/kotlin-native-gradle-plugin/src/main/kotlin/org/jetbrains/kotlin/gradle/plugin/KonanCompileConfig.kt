@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.ProjectInternal
@@ -50,6 +51,14 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     override fun nativeLibrary(lib: Any) = forEach { it.nativeLibrary(lib) }
     override fun nativeLibraries(vararg libs: Any) = forEach { it.nativeLibraries(*libs) }
     override fun nativeLibraries(libs: FileCollection) = forEach { it.nativeLibraries(libs) }
+
+    override fun expectedBy(parameters: Map<String, Any>) = forEach { it.expectedBy(parameters) }
+    override fun expectedBy(commonProject: String) = forEach { it.expectedBy(commonProject) }
+    override fun expectedBy(commonProject: Project) = forEach { it.expectedBy(commonProject) }
+    override fun expectedBy(commonProject: String, sourceSetName: String) =
+            forEach { it.expectedBy(commonProject, sourceSetName) }
+    override fun expectedBy(commonProject: Project, sourceSetName: String) =
+            forEach { it.expectedBy(commonProject, sourceSetName) }
 
     override fun linkerOpts(values: List<String>) = forEach { it.linkerOpts(values) }
     override fun linkerOpts(vararg values: String) = forEach { it.linkerOpts(*values) }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import groovy.lang.Closure
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 
 interface KonanArtifactSpec {
@@ -50,6 +51,13 @@ interface KonanCompileSpec: KonanBuildingSpec {
     fun nativeLibrary(lib: Any)
     fun nativeLibraries(vararg libs: Any)
     fun nativeLibraries(libs: FileCollection)
+
+    // DSL. Mutliplatform projects
+    fun expectedBy(parameters: Map<String, Any>)
+    fun expectedBy(commonProject: String, sourceSetName: String)
+    fun expectedBy(commonProject: String)
+    fun expectedBy(commonProject: Project)
+    fun expectedBy(commonProject: Project, sourceSetName: String)
 
     // DSL. Other parameters.
 
