@@ -84,13 +84,14 @@ internal class LinkStage(val context: Context) {
         runTool(command)
     }
 
+    // TODO: pass different options llvm toolchain
     private fun bitcodeToWasm(bitcodeFiles: List<BitcodeFile>): String {
         val combinedBc = temporary("combined", ".bc")
-        hostLlvmTool("llvm-link", bitcodeFiles + listOf("-o", combinedBc, "-internalize"))
-        val optimizedBc = temporary("optimized", ".bc")
-        hostLlvmTool("opt", listOf(combinedBc, "-o", optimizedBc, "-O2"))
+        hostLlvmTool("llvm-link", bitcodeFiles + listOf("-o", combinedBc))
+        val internalizedBc = temporary("internalized", ".bc")
+        hostLlvmTool("opt", listOf(combinedBc, "-o", internalizedBc, "-internalize", "-O2"))
         val combinedS = temporary("combined", ".s")
-        targetTool("llc", optimizedBc, "-o", combinedS)
+        targetTool("llc", internalizedBc, "-o", combinedS)
 
         val s2wasmFlags = (platform.configurables as WasmConfigurables).s2wasmFlags.toTypedArray()
         val combinedWast = temporary( "combined", ".wast")

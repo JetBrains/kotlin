@@ -657,9 +657,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         val descriptor = declaration.descriptor
 
-        // Preserve symbol from deletion if needed
-        if (descriptor.usedAnnotation
-                || (context.shouldPreserveRuntimeSymbols() && descriptor.isExportedForCppRuntime())) {
+        if (descriptor.usedAnnotation) {
             context.llvm.usedFunctions += codegen.llvmFunction(descriptor)
         }
 

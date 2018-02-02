@@ -385,15 +385,5 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val isDynamicLibrary: Boolean by lazy {
         config.configuration.get(KonanConfigKeys.PRODUCE) == CompilerOutputKind.DYNAMIC
     }
-
-    // For wasm32 target we use `llvm-link -internalize` which is kinda broken.
-    // llvm-link links modules one by one and can't see usages
-    // of symbol in subsequent modules. So it will mangle such symbol if
-    // -internalize flag (which is needed for DCE) is provided
-    // That's the case for the stdlib and runtime modules
-    // The solution is to add such symbols to llvm.used array to preserve them from
-    // mangling.
-    fun shouldPreserveRuntimeSymbols(): Boolean =
-            config.targetManager.target == KonanTarget.WASM32
 }
 
