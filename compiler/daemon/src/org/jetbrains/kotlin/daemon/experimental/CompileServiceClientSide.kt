@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.daemon.experimental
 
 import io.ktor.network.sockets.Socket
+import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
@@ -16,16 +17,12 @@ import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.daemon.experimental.common.*
 import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.*
 import java.io.File
-import java.util.*
+import java.net.InetAddress
 
 class CompileServiceClientSide(
-    compiler: CompilerSelector,
-    compilerId: CompilerId,
-    daemonOptions: DaemonOptions,
-    daemonJVMOptions: DaemonJVMOptions,
+    host: String,
     port: Int,
-    timer: Timer,
-    onShutdown: () -> Unit
+    socketFactory: LoopbackNetworkInterface.ClientLoopbackSocketFactoryKtor
 ) : CompileService, Client {
 
     lateinit var socketToServer: Socket
@@ -507,6 +504,10 @@ class CompileServiceClientSide(
     ) : Server.Message<CompileServiceServerSide> {
         suspend override fun process(server: CompileServiceServerSide, output: ByteWriteChannelWrapper) =
             output.writeObject(server.replCompile(sessionId, replStateId, codeLine))
+    }
+
+    init {
+        attachToServer(socketFactory.createSocket(host, port))
     }
 
 }
