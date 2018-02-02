@@ -267,9 +267,9 @@ interface MissingCasesResolver {
 
 object SimpleMissingCasesResolver : MissingCasesResolver {
     @Suppress("UNCHECKED_CAST")
-    override fun isApplicable(subjectType: KotlinType?, expression: KtWhenExpression) = (expression.entries.asSequence()
+    override fun isApplicable(subjectType: KotlinType?, expression: KtWhenExpression) = expression.entries.asSequence()
             .map { it.conditions.asSequence() }.flatten()
-            .filter { it is KtWhenConditionIsPattern } as Sequence<KtWhenConditionIsPattern>)
+            .filterIsInstance<KtWhenConditionIsPattern>()
             .filter { !it.isNegated }
             .any { it.isRestrictionsFree }
 
