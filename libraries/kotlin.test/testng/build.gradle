@@ -3,7 +3,9 @@ description = 'Kotlin Test TestNG'
 apply plugin: 'kotlin-platform-jvm'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
+ext.javaHome = JDK_17
 
 
 dependencies {
