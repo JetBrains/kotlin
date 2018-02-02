@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.daemon.experimental.common
 
+import io.ktor.network.sockets.aSocket
+import kotlinx.coroutines.experimental.runBlocking
 import java.io.IOException
 import java.io.Serializable
 import java.net.*
@@ -27,7 +29,7 @@ import java.rmi.server.RMIServerSocketFactory
 import java.util.*
 
 
-const val SOCKET_ANY_FREE_PORT  = 0
+const val SOCKET_ANY_FREE_PORT = 0
 const val JAVA_RMI_SERVER_HOSTNAME = "java.rmi.server.hostname"
 const val DAEMON_RMI_SOCKET_BACKLOG_SIZE_PROPERTY = "kotlin.daemon.socket.backlog.size"
 const val DAEMON_RMI_SOCKET_CONNECT_ATTEMPTS_PROPERTY = "kotlin.daemon.socket.connect.attempts"
@@ -43,19 +45,25 @@ object LoopbackNetworkInterface {
 
     // size of the requests queue for daemon services, so far seems that we don't need any big numbers here
     // but if we'll start getting "connection refused" errors, that could be the first place to try to fix it
-    val SERVER_SOCKET_BACKLOG_SIZE by lazy { System.getProperty(DAEMON_RMI_SOCKET_BACKLOG_SIZE_PROPERTY)?.toIntOrNull() ?: DEFAULT_SERVER_SOCKET_BACKLOG_SIZE }
-    val SOCKET_CONNECT_ATTEMPTS by lazy { System.getProperty(DAEMON_RMI_SOCKET_CONNECT_ATTEMPTS_PROPERTY)?.toIntOrNull() ?: DEFAULT_SOCKET_CONNECT_ATTEMPTS }
-    val SOCKET_CONNECT_INTERVAL_MS by lazy { System.getProperty(DAEMON_RMI_SOCKET_CONNECT_INTERVAL_PROPERTY)?.toLongOrNull() ?: DEFAULT_SOCKET_CONNECT_INTERVAL_MS }
+    val SERVER_SOCKET_BACKLOG_SIZE by lazy {
+        System.getProperty(DAEMON_RMI_SOCKET_BACKLOG_SIZE_PROPERTY)?.toIntOrNull() ?: DEFAULT_SERVER_SOCKET_BACKLOG_SIZE
+    }
+    val SOCKET_CONNECT_ATTEMPTS by lazy {
+        System.getProperty(DAEMON_RMI_SOCKET_CONNECT_ATTEMPTS_PROPERTY)?.toIntOrNull() ?: DEFAULT_SOCKET_CONNECT_ATTEMPTS
+    }
+    val SOCKET_CONNECT_INTERVAL_MS by lazy {
+        System.getProperty(DAEMON_RMI_SOCKET_CONNECT_INTERVAL_PROPERTY)?.toLongOrNull() ?: DEFAULT_SOCKET_CONNECT_INTERVAL_MS
+    }
 
-    val serverLoopbackSocketFactory by lazy { ServerLoopbackSocketFactory() }
-    val clientLoopbackSocketFactory by lazy { ClientLoopbackSocketFactory() }
+    val serverLoopbackSocketFactoryRMI by lazy { ServerLoopbackSocketFactoryRMI() }
+    val clientLoopbackSocketFactoryRMI by lazy { ClientLoopbackSocketFactoryRMI() }
+    val clientLoopbackSocketFactoryKtor by lazy { ClientLoopbackSocketFactoryKtor() }
 
     // TODO switch to InetAddress.getLoopbackAddress on java 7+
     val loopbackInetAddressName by lazy {
         try {
             if (InetAddress.getByName(null) is Inet6Address) IPV6_LOOPBACK_INET_ADDRESS else IPV4_LOOPBACK_INET_ADDRESS
-        }
-        catch (e: IOException) {
+        } catch (e: IOException) {
             // getLocalHost may fail for unknown reasons in some situations, the fallback is to assume IPv4 for now
             // TODO consider some other ways to detect default to IPv6 addresses in this case
             IPV4_LOOPBACK_INET_ADDRESS
@@ -65,48 +73,64 @@ object LoopbackNetworkInterface {
     // base socket factories by default don't implement equals properly (see e.g. http://stackoverflow.com/questions/21555710/rmi-and-jmx-socket-factories)
     // so implementing it in derived classes using the fact that they are singletons
 
-    class ServerLoopbackSocketFactory : RMIServerSocketFactory, Serializable {
+    class ServerLoopbackSocketFactoryRMI : RMIServerSocketFactory, Serializable {
         override fun equals(other: Any?): Boolean = other === this || super.equals(other)
         override fun hashCode(): Int = super.hashCode()
 
         @Throws(IOException::class)
-        override fun createServerSocket(port: Int): ServerSocket = ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(null))
+        override fun createServerSocket(port: Int): ServerSocket =
+            ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(null))
     }
 
-
-    class ClientLoopbackSocketFactory : RMIClientSocketFactory, Serializable {
+    abstract class AbstractClientLoopbackSocketFactory<SocketType> : Serializable {
         override fun equals(other: Any?): Boolean = other === this || super.equals(other)
         override fun hashCode(): Int = super.hashCode()
 
+        abstract protected fun socketCreate(host: String, port: Int): SocketType
+
         @Throws(IOException::class)
-        override fun createSocket(host: String, port: Int): Socket {
+        fun createSocket(host: String, port: Int): SocketType {
             var attemptsLeft = SOCKET_CONNECT_ATTEMPTS
             while (true) {
                 try {
-                    return Socket(InetAddress.getByName(null), port)
-                }
-                catch (e: ConnectException) {
+                    return socketCreate(host, port)
+                } catch (e: ConnectException) {
                     if (--attemptsLeft <= 0) throw e
                 }
                 Thread.sleep(SOCKET_CONNECT_INTERVAL_MS)
             }
         }
     }
+
+    class ClientLoopbackSocketFactoryRMI : AbstractClientLoopbackSocketFactory<java.net.Socket>(), RMIClientSocketFactory {
+        override fun socketCreate(host: String, port: Int): Socket = Socket(InetAddress.getByName(null), port)
+    }
+
+    class ClientLoopbackSocketFactoryKtor : AbstractClientLoopbackSocketFactory<io.ktor.network.sockets.Socket>() {
+        override fun socketCreate(host: String, port: Int): io.ktor.network.sockets.Socket =
+            runBlocking { aSocket().tcp().connect(InetSocketAddress(host, port)) }
+    }
+
 }
 
 
 private val portSelectionRng = Random()
 
-fun findPortAndCreateRegistry(attempts: Int, portRangeStart: Int, portRangeEnd: Int) : Pair<Registry, Int> {
+fun findPortAndCreateRegistry(attempts: Int, portRangeStart: Int, portRangeEnd: Int): Pair<Registry, Int> {
     var i = 0
     var lastException: RemoteException? = null
 
     while (i++ < attempts) {
         val port = portSelectionRng.nextInt(portRangeEnd - portRangeStart) + portRangeStart
         try {
-            return Pair(LocateRegistry.createRegistry(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory), port)
-        }
-        catch (e: RemoteException) {
+            return Pair(
+                LocateRegistry.createRegistry(
+                    port,
+                    LoopbackNetworkInterface.clientLoopbackSocketFactoryRMI,
+                    LoopbackNetworkInterface.serverLoopbackSocketFactoryRMI
+                ), port
+            )
+        } catch (e: RemoteException) {
             // assuming that the port is already taken
             lastException = e
         }

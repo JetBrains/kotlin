@@ -17,11 +17,9 @@
 package org.jetbrains.kotlin.daemon.experimental.common
 
 
-import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.runBlocking
 import java.io.File
 import java.rmi.registry.LocateRegistry
-import org.jetbrains.kotlin.daemon.experimental.CompileServiceSocketImpl
 
 
 internal val MAX_PORT_NUMBER = 0xffff
@@ -105,7 +103,7 @@ private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCateg
         val daemon = LocateRegistry.getRegistry(
             LoopbackNetworkInterface.loopbackInetAddressName,
             port,
-            LoopbackNetworkInterface.clientLoopbackSocketFactory
+            LoopbackNetworkInterface.clientLoopbackSocketFactoryRMI
         )?.lookup(COMPILER_SERVICE_RMI_NAME)
         when (daemon) {
             null -> report(DaemonReportCategory.INFO, "daemon not found")
@@ -121,11 +119,11 @@ private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCateg
 private fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileService? =
     runBlocking {
         try {
-            val socket = LoopbackNetworkInterface.clientLoopbackSocketFactory.createSocket(
+            return@runBlocking CompileServiceClientSide(
                 LoopbackNetworkInterface.loopbackInetAddressName,
-                port
+                port,
+                LoopbackNetworkInterface.clientLoopbackSocketFactoryKtor
             )
-            return CompileServiceSocketImpl(socket)
         } catch (e: Throwable) {
             report(DaemonReportCategory.INFO, "cannot find or connect to socket")
         }
