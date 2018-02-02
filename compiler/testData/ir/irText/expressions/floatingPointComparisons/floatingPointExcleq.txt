@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
             then: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EXCLEQ
                 arg0: GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
-                arg1: TYPE_OP type=kotlin.Double? origin=IMPLICIT_CAST typeOperand=kotlin.Double?
+                arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -70,9 +70,9 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-                arg0: TYPE_OP type=kotlin.Double? origin=IMPLICIT_CAST typeOperand=kotlin.Double?
+                arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-                arg1: TYPE_OP type=kotlin.Double? origin=IMPLICIT_CAST typeOperand=kotlin.Double?
+                arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -125,7 +125,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
             then: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'ieee754equals(Float?, Float?): Boolean' type=kotlin.Boolean origin=EXCLEQ
                 arg0: GET_VAR 'value-parameter x: Float' type=kotlin.Float origin=null
-                arg1: TYPE_OP type=kotlin.Float? origin=IMPLICIT_CAST typeOperand=kotlin.Float?
+                arg1: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -148,9 +148,9 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'ieee754equals(Float?, Float?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-                arg0: TYPE_OP type=kotlin.Float? origin=IMPLICIT_CAST typeOperand=kotlin.Float?
+                arg0: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-                arg1: TYPE_OP type=kotlin.Float? origin=IMPLICIT_CAST typeOperand=kotlin.Float?
+                arg1: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -176,7 +176,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
                 arg0: CALL 'toDouble(): Double' type=kotlin.Double origin=null
                   $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
                     GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-                arg1: TYPE_OP type=kotlin.Double? origin=IMPLICIT_CAST typeOperand=kotlin.Double?
+                arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -199,7 +199,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-                arg0: TYPE_OP type=kotlin.Double? origin=IMPLICIT_CAST typeOperand=kotlin.Double?
+                arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 arg1: CALL 'toDouble(): Double' type=kotlin.Double origin=null
                   $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float

@@ -172,6 +172,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns) : IrElementTransformerVo
         return when {
             KotlinBuiltIns.isUnit(expectedType) ->
                 coerceToUnit()
+
             valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull() -> {
                 val nonNullValueType = valueType.upperIfFlexible().makeNotNullable()
                 IrTypeOperatorCallImpl(
@@ -179,18 +180,23 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns) : IrElementTransformerVo
                     IrTypeOperator.IMPLICIT_NOTNULL, nonNullValueType, this
                 ).cast(expectedType)
             }
+
             KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.makeNotNullable(), expectedType) ->
                 this
+
             KotlinBuiltIns.isInt(valueType) && notNullableExpectedType.isBuiltInIntegerType() ->
                 IrTypeOperatorCallImpl(
                     startOffset, endOffset, notNullableExpectedType,
                     IrTypeOperator.IMPLICIT_INTEGER_COERCION, notNullableExpectedType, this
                 )
-            else ->
+
+            else -> {
+                val targetType = if (!valueType.containsNull()) notNullableExpectedType else expectedType
                 IrTypeOperatorCallImpl(
-                    startOffset, endOffset, expectedType,
-                    IrTypeOperator.IMPLICIT_CAST, expectedType, this
+                    startOffset, endOffset, targetType,
+                    IrTypeOperator.IMPLICIT_CAST, targetType, this
                 )
+            }
         }
     }
 
