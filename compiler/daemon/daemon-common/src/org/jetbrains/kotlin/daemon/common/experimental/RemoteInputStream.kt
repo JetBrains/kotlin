@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Serv
 import io.ktor.network.sockets.Socket
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
 
-interface RemoteInputStream : Server, Remote {
+interface RemoteInputStream : Remote {
 
     @Throws(RemoteException::class)
     fun close()
@@ -24,6 +24,7 @@ interface RemoteInputStream : Server, Remote {
     fun read(): Int
 
     // Query messages:
+    /*
     class CloseMessage : Message<RemoteInputStream> {
         suspend override fun process(server: RemoteInputStream, output: ByteWriteChannelWrapper) =
             server.close()
@@ -33,5 +34,6 @@ interface RemoteInputStream : Server, Remote {
         suspend override fun process(server: RemoteInputStream, output: ByteWriteChannelWrapper) =
             output.writeObject(if (length == -1) server.read() else server.read(length))
     }
+    */
 
 }

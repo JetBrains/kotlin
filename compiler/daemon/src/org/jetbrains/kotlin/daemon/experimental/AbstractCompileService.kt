@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
@@ -26,8 +29,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.experimental.*
-import org.jetbrains.kotlin.daemon.incremental.experimental.*
-import org.jetbrains.kotlin.daemon.report.experimental.*
+import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteAnnotationsFileUpdater
+import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteArtifactChangesProvider
+import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteChangesRegistry
+import org.jetbrains.kotlin.daemon.report.experimental.CompileServicesFacadeMessageCollector
+import org.jetbrains.kotlin.daemon.report.experimental.DaemonMessageReporter
+import org.jetbrains.kotlin.daemon.report.experimental.DaemonMessageReporterPrintStreamAdapter
+import org.jetbrains.kotlin.daemon.report.experimental.RemoteICReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -48,6 +56,31 @@ import java.util.logging.Logger
 import kotlin.concurrent.read
 import kotlin.concurrent.schedule
 import kotlin.concurrent.write
+
+const val REMOTE_STREAM_BUFFER_SIZE = 4096
+
+fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
+
+interface CompilerSelector {
+    operator fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*>
+}
+
+interface EventManager {
+    fun onCompilationFinished(f: () -> Unit)
+}
+
+private class EventManagerImpl : EventManager {
+    private val onCompilationFinished = arrayListOf<() -> Unit>()
+
+    @Throws(RemoteException::class)
+    override fun onCompilationFinished(f: () -> Unit) {
+        onCompilationFinished.add(f)
+    }
+
+    fun fireCompilationFinished() {
+        onCompilationFinished.forEach { it() }
+    }
+}
 
 abstract class AbstractCompileService(
     val compiler: CompilerSelector,

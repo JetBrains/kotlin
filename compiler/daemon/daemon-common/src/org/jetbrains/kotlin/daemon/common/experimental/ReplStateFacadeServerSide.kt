@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 import org.jetbrains.kotlin.cli.common.repl.ILineId
+import org.jetbrains.kotlin.daemon.common.ReplStateFacade
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.Message
 import java.rmi.Remote
 import java.rmi.RemoteException
 
-interface ReplStateFacade : Server, Remote {
+interface ReplStateFacade : Remote {
 
     @Throws(RemoteException::class)
     fun getId(): Int
@@ -29,30 +31,35 @@ interface ReplStateFacade : Server, Remote {
     @Throws(RemoteException::class)
     fun historyResetTo(id: ILineId): List<ILineId>
 
+}
+
+interface ReplStateFacadeServerSide: ReplStateFacade, Server {
     // Query messages:
-    class GetIdMessage : Message<ReplStateFacade> {
-        suspend override fun process(server: ReplStateFacade, output: ByteWriteChannelWrapper) =
+    class GetIdMessage : Message<ReplStateFacadeServerSide> {
+        suspend override fun process(server: ReplStateFacadeServerSide, output: ByteWriteChannelWrapper) =
             output.writeObject(server.getId())
     }
 
-    class GetHistorySizeMessage : Message<ReplStateFacade> {
-        suspend override fun process(server: ReplStateFacade, output: ByteWriteChannelWrapper) =
+    class GetHistorySizeMessage : Message<ReplStateFacadeServerSide> {
+        suspend override fun process(server: ReplStateFacadeServerSide, output: ByteWriteChannelWrapper) =
             output.writeObject(server.getHistorySize())
     }
 
-    class HistoryGetMessage(val index: Int) : Message<ReplStateFacade> {
-        suspend override fun process(server: ReplStateFacade, output: ByteWriteChannelWrapper) =
+    class HistoryGetMessage(val index: Int) : Message<ReplStateFacadeServerSide> {
+        suspend override fun process(server: ReplStateFacadeServerSide, output: ByteWriteChannelWrapper) =
             output.writeObject(server.historyGet(index))
     }
 
-    class HistoryResetMessage : Message<ReplStateFacade> {
-        suspend override fun process(server: ReplStateFacade, output: ByteWriteChannelWrapper) =
+    class HistoryResetMessage : Message<ReplStateFacadeServerSide> {
+        suspend override fun process(server: ReplStateFacadeServerSide, output: ByteWriteChannelWrapper) =
             output.writeObject(server.historyReset())
     }
 
-    class HistoryResetToMessage(val id: ILineId) : Message<ReplStateFacade> {
-        suspend override fun process(server: ReplStateFacade, output: ByteWriteChannelWrapper) =
+    class HistoryResetToMessage(val id: ILineId) : Message<ReplStateFacadeServerSide> {
+        suspend override fun process(server: ReplStateFacadeServerSide, output: ByteWriteChannelWrapper) =
             output.writeObject(server.historyResetTo(id))
     }
-
 }
+
+interface ReplStateFacadeClientSide: ReplStateFacade, Client
+

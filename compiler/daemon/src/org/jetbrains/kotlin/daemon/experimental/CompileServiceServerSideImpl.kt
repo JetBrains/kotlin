@@ -61,12 +61,11 @@ class CompileServiceServerSideImpl(
     lateinit var serverSocket: ServerSocket
 
     // Server methods :
-    suspend override fun processMessage(msg: Message<*>, output: ByteWriteChannelWrapper): State {
-        msg as Message<CompileServiceServerSide>
-        return if (msg is Server.EndConnectionMessage)
-            State.CLOSED
-        else
-            State.WORKING.also { msg.process(this, output) }
+    suspend override fun processMessage(msg: Server.AnyMessage, output: ByteWriteChannelWrapper) = when (msg) {
+        is Server.EndConnectionMessage -> State.CLOSED
+        is Message<*> -> State.WORKING
+            .also { (msg as Message<CompileServiceServerSide>).process(this, output) }
+        else -> State.ERROR
     }
 
     override suspend fun attachClient(client: Socket) {
@@ -74,10 +73,6 @@ class CompileServiceServerSideImpl(
             val (input, output) = client.openIO()
             while (processMessage(input.nextObject() as Message<*>, output) != State.CLOSED);
         }
-    }
-
-    override val END_CONNECTION_MESSAGE: Server.EndConnectionMessage<CompileServiceServerSide> by lazy {
-        Server.EndConnectionMessage<CompileServiceServerSide>()
     }
 
     init {

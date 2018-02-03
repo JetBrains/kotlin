@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 import io.ktor.network.sockets.Socket
+import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
 import java.io.File
 import java.io.Serializable
@@ -14,7 +15,7 @@ import java.rmi.RemoteException
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.Message
 
-interface IncrementalCompilationServicesFacade : Server, Remote {
+interface IncrementalCompilationServicesFacade : Remote {
     @Throws(RemoteException::class)
     fun areFileChangesKnown(): Boolean
 
@@ -66,7 +67,7 @@ interface IncrementalCompilationServicesFacade : Server, Remote {
 
 
     // Query messages:
-
+/*
     class AreFileChangesKnownMessage: Message<IncrementalCompilationServicesFacade> {
         suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.areFileChangesKnown())
@@ -136,7 +137,7 @@ interface IncrementalCompilationServicesFacade : Server, Remote {
     ): Message<IncrementalCompilationServicesFacade> {
         suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.getChanges(artifact, sinceTS))
-    }
+    }*/
 
 }
 

@@ -12,7 +12,7 @@ import java.rmi.Remote
 import java.rmi.RemoteException
 
 
-interface RemoteOutputStream : Server, Remote {
+interface RemoteOutputStream : Remote {
 
     @Throws(RemoteException::class)
     fun close()
@@ -24,6 +24,7 @@ interface RemoteOutputStream : Server, Remote {
     fun write(dataByte: Int)
 
     // Query messages:
+    /*
     class CloseMessage : Message<RemoteOutputStream> {
         suspend override fun process(server: RemoteOutputStream, output: ByteWriteChannelWrapper) =
             server.close()
@@ -38,5 +39,5 @@ interface RemoteOutputStream : Server, Remote {
         suspend override fun process(server: RemoteOutputStream, output: ByteWriteChannelWrapper) =
             server.write(dataByte)
     }
-
+*/
 }

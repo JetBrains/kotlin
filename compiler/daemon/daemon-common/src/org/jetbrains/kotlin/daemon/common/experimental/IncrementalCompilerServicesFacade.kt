@@ -35,7 +35,7 @@ interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
     fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>?
 
     // Query messages:
-
+    /*
     class HasAnnotationsFileUpdaterMessage : Message<IncrementalCompilerServicesFacade> {
         suspend override fun process(server: IncrementalCompilerServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.hasAnnotationsFileUpdater())
@@ -68,6 +68,6 @@ interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
         suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.getChanges(artifact, sinceTS))
     }
-
+    */
 
 }

@@ -6,20 +6,19 @@ import java.io.Serializable
 interface Server {
 
     enum class State {
-        WORKING, CLOSED
+        WORKING, CLOSED, ERROR
     }
 
-    suspend fun processMessage(msg: Message<*>, output: ByteWriteChannelWrapper): State
+    suspend fun processMessage(msg: AnyMessage, output: ByteWriteChannelWrapper): State
 
     suspend fun attachClient(client: Socket)
 
-    interface Message<ServerType : Server> : Serializable {
+    interface AnyMessage: Serializable
+
+    interface Message<ServerType : Server> : AnyMessage {
         suspend fun process(server: ServerType, output: ByteWriteChannelWrapper)
     }
 
-    class EndConnectionMessage<ServerType : Server>: Message<ServerType> {
-        override suspend fun process(server: ServerType, output: ByteWriteChannelWrapper) {}
-    }
+    class EndConnectionMessage: AnyMessage
 
-    val END_CONNECTION_MESSAGE: EndConnectionMessage<*>
 }

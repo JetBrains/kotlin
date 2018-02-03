@@ -12,7 +12,7 @@ import java.rmi.Remote
 import java.rmi.RemoteException
 
 
-interface RemoteOperationsTracer : Server, Remote {
+interface RemoteOperationsTracer : Remote {
 
     @Throws(RemoteException::class)
     fun before(id: String)
@@ -21,6 +21,8 @@ interface RemoteOperationsTracer : Server, Remote {
     fun after(id: String)
 
     // Query messages:
+
+    /*
     class BeforeMessage(val id: String) : Message<RemoteOperationsTracer> {
         suspend override fun process(server: RemoteOperationsTracer, output: ByteWriteChannelWrapper) =
             server.before(id)
@@ -29,6 +31,6 @@ interface RemoteOperationsTracer : Server, Remote {
     class AfterMessage(val id: String) : Message<RemoteOperationsTracer> {
         suspend override fun process(server: RemoteOperationsTracer, output: ByteWriteChannelWrapper) =
             server.after(id)
-    }
+    }*/
 
 }

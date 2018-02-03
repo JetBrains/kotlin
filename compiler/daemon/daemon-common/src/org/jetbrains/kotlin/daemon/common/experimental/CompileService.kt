@@ -5,17 +5,10 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import io.ktor.network.sockets.Socket
-import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.Message
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openAndWrapReadChannel
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openAndWrapWriteChannel
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote

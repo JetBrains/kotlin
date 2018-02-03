@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.daemon.RemoteReplStateFacadeServer
 import org.jetbrains.kotlin.daemon.common.experimental.CompileService
 import org.jetbrains.kotlin.daemon.common.experimental.RemoteOperationsTracer
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
@@ -75,10 +76,10 @@ open class KotlinJvmReplService(
 
     protected val statesLock = ReentrantReadWriteLock()
     // TODO: consider using values here for session cleanup
-    protected val states = WeakHashMap<RemoteReplStateFacadeServer, Boolean>() // used as (missing) WeakHashSet
+    protected val states = WeakHashMap<RemoteReplStateFacadeImpl, Boolean>() // used as (missing) WeakHashSet
     protected val stateIdCounter = AtomicInteger()
     @Deprecated("remove after removal state-less check/compile/eval methods")
-    protected val defaultStateFacade: RemoteReplStateFacadeServer by lazy { createRemoteState() }
+    protected val defaultStateFacade: RemoteReplStateFacadeImpl by lazy { createRemoteState() }
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> =
             replCompiler?.createState(lock) ?: throw IllegalStateException("repl compiler is not initialized properly")
@@ -109,9 +110,9 @@ open class KotlinJvmReplService(
     @Deprecated("Use compile(state, line) instead")
     fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplCompileResult = compile(defaultStateFacade.state, codeLine)
 
-    fun createRemoteState(port: Int = portForServers): RemoteReplStateFacadeServer = statesLock.write {
+    fun createRemoteState(port: Int = portForServers): RemoteReplStateFacadeImpl = statesLock.write {
         val id = getValidId(stateIdCounter) { id -> states.none { it.key.getId() == id} }
-        val stateFacade = RemoteReplStateFacadeServer(id, createState().asState(GenericReplCompilerState::class.java), port)
+        val stateFacade = RemoteReplStateFacadeImpl(id, createState().asState(GenericReplCompilerState::class.java), port)
         states.put(stateFacade, true)
         stateFacade
     }

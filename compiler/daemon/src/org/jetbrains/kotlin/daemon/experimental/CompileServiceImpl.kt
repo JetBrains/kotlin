@@ -5,44 +5,14 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
-import io.ktor.network.sockets.Socket
-import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
-import org.jetbrains.kotlin.daemon.common.experimental.CompileService
+import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerId
 import org.jetbrains.kotlin.daemon.common.experimental.DaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.experimental.DaemonOptions
 import java.rmi.NoSuchObjectException
-import java.rmi.RemoteException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
 import java.util.*
-import java.util.concurrent.TimeUnit
-
-const val REMOTE_STREAM_BUFFER_SIZE = 4096
-
-fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
-
-interface CompilerSelector {
-    operator fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*>
-}
-
-interface EventManager {
-    fun onCompilationFinished(f: () -> Unit)
-}
-
-private class EventManagerImpl : EventManager {
-    private val onCompilationFinished = arrayListOf<() -> Unit>()
-
-    @Throws(RemoteException::class)
-    override fun onCompilationFinished(f: () -> Unit) {
-        onCompilationFinished.add(f)
-    }
-
-    fun fireCompilationFinished() {
-        onCompilationFinished.forEach { it() }
-    }
-}
 
 class CompileServiceImpl(
     val registry: Registry,
@@ -75,8 +45,8 @@ class CompileServiceImpl(
         val stub = UnicastRemoteObject.exportObject(
             this,
             port,
-            LoopbackNetworkInterface.clientLoopbackSocketFactory,
-            LoopbackNetworkInterface.serverLoopbackSocketFactory
+            LoopbackNetworkInterface.clientLoopbackSocketFactoryRMI,
+            LoopbackNetworkInterface.serverLoopbackSocketFactoryRMI
         ) as org.jetbrains.kotlin.daemon.common.CompileService
         registry.rebind(org.jetbrains.kotlin.daemon.common.COMPILER_SERVICE_RMI_NAME, stub)
     }

@@ -91,4 +91,6 @@ fun ByteWriteChannel.toWrapper() = ByteWriteChannelWrapper(this)
 fun Socket.openAndWrapReadChannel() = this.openReadChannel().toWrapper()
 fun Socket.openAndWrapWriteChannel() = this.openWriteChannel().toWrapper()
 
-fun Socket.openIO() = Pair(this.openAndWrapReadChannel(), this.openAndWrapWriteChannel())
+data class IOPair(val input: ByteReadChannelWrapper, val output: ByteWriteChannelWrapper)
+
+fun Socket.openIO() = IOPair(this.openAndWrapReadChannel(), this.openAndWrapWriteChannel())
