@@ -4,7 +4,6 @@
 Relevant pages: [Packages](packages.html)
 */
 
-
 [start]
 kotlinFile
   : preamble topLevelObject*

@@ -109,6 +109,7 @@ parameter
 
 object
   : "object" SimpleName primaryConstructor? (":" delegationSpecifier{","})? classBody?
+  ;
 
 secondaryConstructor
   : modifiers "constructor" valueParameters (":" constructorDelegationCall)? block
