@@ -9,15 +9,12 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import org.apache.log4j.or.jms.MessageRenderer
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
@@ -28,14 +25,9 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.daemon.experimental.common.*
-import org.jetbrains.kotlin.daemon.incremental.RemoteAnnotationsFileUpdater
-import org.jetbrains.kotlin.daemon.incremental.RemoteArtifactChangesProvider
-import org.jetbrains.kotlin.daemon.incremental.RemoteChangesRegistry
-import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
-import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
-import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapter
-import org.jetbrains.kotlin.daemon.report.RemoteICReporter
+import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.incremental.experimental.*
+import org.jetbrains.kotlin.daemon.report.experimental.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -491,7 +483,7 @@ abstract class AbstractCompileService(
         val reporter = RemoteICReporter(servicesFacade, compilationResults, incrementalCompilationOptions)
         val annotationFileUpdater = if (servicesFacade.hasAnnotationsFileUpdater()) RemoteAnnotationsFileUpdater(servicesFacade) else null
 
-        val moduleFile = k2jvmArgs.buildFile?.let(java.io::File)
+        val moduleFile = k2jvmArgs.buildFile?.let(::File)
         assert(moduleFile?.exists() ?: false) { "Module does not exist ${k2jvmArgs.buildFile}" }
 
         // todo: pass javaSourceRoots and allKotlinFiles using IncrementalCompilationOptions
@@ -510,7 +502,7 @@ abstract class AbstractCompileService(
             it.getJavaSourceRoots().map { JvmSourceRoot(File(it.path), it.packagePrefix) }
         }
 
-        val allKotlinFiles = parsedModule.modules.flatMap { it.getSourceFiles().map(java.io::File) }
+        val allKotlinFiles = parsedModule.modules.flatMap { it.getSourceFiles().map(::File) }
         k2jvmArgs.friendPaths = parsedModule.modules.flatMap(Module::getFriendPaths).toTypedArray()
 
         val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
@@ -586,7 +578,7 @@ abstract class AbstractCompileService(
     override fun remoteReplLineCheck(sessionId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> =
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
-                org.jetbrains.kotlin.daemon.experimental.common.CompileService.CallResult.Good(check(codeLine))
+                CompileService.CallResult.Good(check(codeLine))
             }
         }
 
@@ -598,7 +590,7 @@ abstract class AbstractCompileService(
     ): CompileService.CallResult<ReplCompileResult> =
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
-                org.jetbrains.kotlin.daemon.experimental.common.CompileService.CallResult.Good(compile(codeLine, history))
+                CompileService.CallResult.Good(compile(codeLine, history))
             }
         }
 
@@ -640,7 +632,7 @@ abstract class AbstractCompileService(
     override fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacade> =
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
-                org.jetbrains.kotlin.daemon.experimental.common.CompileService.CallResult.Good(createRemoteState(port))
+                CompileService.CallResult.Good(createRemoteState(port))
             }
         }
 

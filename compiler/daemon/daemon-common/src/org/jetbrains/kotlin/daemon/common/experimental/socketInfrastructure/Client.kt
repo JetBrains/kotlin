@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.daemon.experimental.socketInfrastructure
+package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
 import io.ktor.network.sockets.Socket
 

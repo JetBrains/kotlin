@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.daemon.experimental.common
+package org.jetbrains.kotlin.daemon.common.experimental
 
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import java.io.File

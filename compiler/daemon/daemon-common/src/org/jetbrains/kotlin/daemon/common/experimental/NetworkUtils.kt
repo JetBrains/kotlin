@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.daemon.experimental.common
+package org.jetbrains.kotlin.daemon.common.experimental
 
 import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.runBlocking

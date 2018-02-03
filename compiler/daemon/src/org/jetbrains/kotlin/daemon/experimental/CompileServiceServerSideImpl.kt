@@ -10,19 +10,20 @@ import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
-import org.jetbrains.kotlin.daemon.experimental.common.CompilerId
-import org.jetbrains.kotlin.daemon.experimental.common.DaemonJVMOptions
-import org.jetbrains.kotlin.daemon.experimental.common.DaemonOptions
-import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.ByteWriteChannelWrapper
-import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server
-import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.Message
-import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.Server.State
-import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.openIO
+import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceServerSide
+import org.jetbrains.kotlin.daemon.common.experimental.CompilerId
+import org.jetbrains.kotlin.daemon.common.experimental.DaemonJVMOptions
+import org.jetbrains.kotlin.daemon.common.experimental.DaemonOptions
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.Message
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.State
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openIO
 import java.net.InetSocketAddress
 import java.util.*
 
-@Suppress("UNCHECKED_CAST", "OVERRIDE_BY_INLINE")
-class CompileServiceServerSide(
+@Suppress("UNCHECKED_CAST")
+class CompileServiceServerSideImpl(
     val socketHost: String,
     val socketPort: Int,
     compiler: CompilerSelector,
@@ -32,16 +33,14 @@ class CompileServiceServerSide(
     port: Int,
     timer: Timer,
     onShutdown: () -> Unit
-) : AbstractCompileService(
+) : CompileServiceServerSide, AbstractCompileService(
     compiler,
     compilerId, daemonOptions,
     daemonJVMOptions,
     port,
     timer,
     onShutdown
-), Server {
-
-    lateinit var serverSocket: ServerSocket
+) {
 
     override fun unexportSelf(force: Boolean): Boolean {
         // TODO: мб и не надо
@@ -59,13 +58,15 @@ class CompileServiceServerSide(
         }
     }
 
+    lateinit var serverSocket: ServerSocket
+
     // Server methods :
     suspend override fun processMessage(msg: Message<*>, output: ByteWriteChannelWrapper): State {
         msg as Message<CompileServiceServerSide>
         return if (msg is Server.EndConnectionMessage)
             State.CLOSED
         else
-            State.WORKING
+            State.WORKING.also { msg.process(this, output) }
     }
 
     override suspend fun attachClient(client: Socket) {
@@ -76,9 +77,7 @@ class CompileServiceServerSide(
     }
 
     override val END_CONNECTION_MESSAGE: Server.EndConnectionMessage<CompileServiceServerSide> by lazy {
-        object : Server.EndConnectionMessage<CompileServiceServerSide> {
-            suspend override fun process(server: CompileServiceServerSide, output: ByteWriteChannelWrapper) {}
-        }
+        Server.EndConnectionMessage<CompileServiceServerSide>()
     }
 
     init {

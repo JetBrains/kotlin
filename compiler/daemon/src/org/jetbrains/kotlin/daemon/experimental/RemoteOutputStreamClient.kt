@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
-import org.jetbrains.kotlin.daemon.common.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.Profiler
-import org.jetbrains.kotlin.daemon.common.RemoteOutputStream
+import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.experimental.Profiler
+import org.jetbrains.kotlin.daemon.common.experimental.RemoteOutputStream
 import java.io.OutputStream
 
 class RemoteOutputStreamClient(val remote: RemoteOutputStream, val profiler: Profiler = DummyProfiler()): OutputStream() {

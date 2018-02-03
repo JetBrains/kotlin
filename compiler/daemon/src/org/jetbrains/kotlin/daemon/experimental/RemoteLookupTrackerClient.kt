@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.daemon.experimental
 
 import com.intellij.util.containers.StringInterner
-import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
-import org.jetbrains.kotlin.daemon.common.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.experimental.CompilerCallbackServicesFacade
+import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.experimental.Profiler
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position

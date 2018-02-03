@@ -5,25 +5,22 @@
 
 @file:Suppress("UNCHECKED_CAST", "EXPERIMENTAL_FEATURE_WARNING")
 
-package org.jetbrains.kotlin.daemon.experimental
+package org.jetbrains.kotlin.daemon.common.experimental
 
 import io.ktor.network.sockets.Socket
-import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
-import org.jetbrains.kotlin.daemon.experimental.common.*
-import org.jetbrains.kotlin.daemon.experimental.socketInfrastructure.*
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 import java.io.File
-import java.net.InetAddress
 
-class CompileServiceClientSide(
+class CompileServiceClientSideImpl(
     host: String,
     port: Int,
     socketFactory: LoopbackNetworkInterface.ClientLoopbackSocketFactoryKtor
-) : CompileService, Client {
+) : CompileServiceClientSide {
 
     lateinit var socketToServer: Socket
     val input: ByteReadChannelWrapper by lazy { socketToServer.openAndWrapReadChannel() }
@@ -32,7 +29,11 @@ class CompileServiceClientSide(
     // CompileService methods:
 
     override fun checkCompilerId(expectedCompilerId: CompilerId): Boolean = runBlocking {
-        output.writeObject(CheckCompilerIdMessage(expectedCompilerId))
+        output.writeObject(
+            CheckCompilerIdMessage(
+                expectedCompilerId
+            )
+        )
         input.nextObject() as Boolean
     }
 
@@ -68,12 +69,20 @@ class CompileServiceClientSide(
     }
 
     override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = runBlocking {
-        output.writeObject(LeaseCompileSessionMessage(aliveFlagPath))
+        output.writeObject(
+            LeaseCompileSessionMessage(
+                aliveFlagPath
+            )
+        )
         input.nextObject() as CompileService.CallResult<Int>
     }
 
     override fun releaseCompileSession(sessionId: Int): CompileService.CallResult<Nothing> = runBlocking {
-        output.writeObject(ReleaseCompileSessionMessage(sessionId))
+        output.writeObject(
+            ReleaseCompileSessionMessage(
+                sessionId
+            )
+        )
         input.nextObject() as CompileService.CallResult<Nothing>
     }
 
@@ -197,7 +206,12 @@ class CompileServiceClientSide(
     }
 
     override fun remoteReplLineCheck(sessionId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> = runBlocking {
-        output.writeObject(RemoteReplLineCheckMessage(sessionId, codeLine))
+        output.writeObject(
+            RemoteReplLineCheckMessage(
+                sessionId,
+                codeLine
+            )
+        )
         input.nextObject() as CompileService.CallResult<ReplCheckResult>
     }
 
@@ -206,7 +220,13 @@ class CompileServiceClientSide(
         codeLine: ReplCodeLine,
         history: List<ReplCodeLine>?
     ): CompileService.CallResult<ReplCompileResult> = runBlocking {
-        output.writeObject(RemoteReplLineCompileMessage(sessionId, codeLine, history))
+        output.writeObject(
+            RemoteReplLineCompileMessage(
+                sessionId,
+                codeLine,
+                history
+            )
+        )
         input.nextObject() as CompileService.CallResult<ReplCompileResult>
     }
 
@@ -215,7 +235,13 @@ class CompileServiceClientSide(
         codeLine: ReplCodeLine,
         history: List<ReplCodeLine>?
     ): CompileService.CallResult<ReplEvalResult> = runBlocking {
-        output.writeObject(RemoteReplLineEvalMessage(sessionId, codeLine, history))
+        output.writeObject(
+            RemoteReplLineEvalMessage(
+                sessionId,
+                codeLine,
+                history
+            )
+        )
         input.nextObject() as CompileService.CallResult<ReplEvalResult>
     }
 
@@ -247,13 +273,25 @@ class CompileServiceClientSide(
 
     override fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> =
         runBlocking {
-            output.writeObject(ReplCheckMessage(sessionId, replStateId, codeLine))
+            output.writeObject(
+                ReplCheckMessage(
+                    sessionId,
+                    replStateId,
+                    codeLine
+                )
+            )
             input.nextObject() as CompileService.CallResult<ReplCheckResult>
         }
 
     override fun replCompile(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCompileResult> =
         runBlocking {
-            output.writeObject(ReplCompileMessage(sessionId, replStateId, codeLine))
+            output.writeObject(
+                ReplCompileMessage(
+                    sessionId,
+                    replStateId,
+                    codeLine
+                )
+            )
             input.nextObject() as CompileService.CallResult<ReplCompileResult>
         }
 

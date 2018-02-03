@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.daemon.experimental.common
+package org.jetbrains.kotlin.daemon.common.experimental
 
 interface JpsCompilerServicesFacade : CompilerServicesFacadeBase, CompilerCallbackServicesFacade

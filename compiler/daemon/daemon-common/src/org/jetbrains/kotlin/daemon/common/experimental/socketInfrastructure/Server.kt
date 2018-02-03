@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.daemon.experimental.socketInfrastructure
+package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
 import io.ktor.network.sockets.Socket
 import java.io.Serializable
@@ -17,7 +17,9 @@ interface Server {
         suspend fun process(server: ServerType, output: ByteWriteChannelWrapper)
     }
 
-    interface EndConnectionMessage<ServerType : Server>: Message<ServerType>
+    class EndConnectionMessage<ServerType : Server>: Message<ServerType> {
+        override suspend fun process(server: ServerType, output: ByteWriteChannelWrapper) {}
+    }
 
     val END_CONNECTION_MESSAGE: EndConnectionMessage<*>
 }
