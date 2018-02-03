@@ -188,156 +188,192 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
         when (settingsType) {
             LanguageCodeStyleSettingsProvider.SettingsType.SPACING_SETTINGS -> {
                 consumer.showStandardOptions(
-                        "SPACE_AROUND_ASSIGNMENT_OPERATORS",
-                        "SPACE_AROUND_LOGICAL_OPERATORS",
-                        "SPACE_AROUND_EQUALITY_OPERATORS",
-                        "SPACE_AROUND_RELATIONAL_OPERATORS",
-                        "SPACE_AROUND_ADDITIVE_OPERATORS",
-                        "SPACE_AROUND_MULTIPLICATIVE_OPERATORS",
-                        "SPACE_AROUND_UNARY_OPERATOR",
-                        "SPACE_AFTER_COMMA",
-                        "SPACE_BEFORE_COMMA",
-                        "SPACE_BEFORE_IF_PARENTHESES",
-                        "SPACE_BEFORE_WHILE_PARENTHESES",
-                        "SPACE_BEFORE_FOR_PARENTHESES",
-                        "SPACE_BEFORE_CATCH_PARENTHESES"
+                    "SPACE_AROUND_ASSIGNMENT_OPERATORS",
+                    "SPACE_AROUND_LOGICAL_OPERATORS",
+                    "SPACE_AROUND_EQUALITY_OPERATORS",
+                    "SPACE_AROUND_RELATIONAL_OPERATORS",
+                    "SPACE_AROUND_ADDITIVE_OPERATORS",
+                    "SPACE_AROUND_MULTIPLICATIVE_OPERATORS",
+                    "SPACE_AROUND_UNARY_OPERATOR",
+                    "SPACE_AFTER_COMMA",
+                    "SPACE_BEFORE_COMMA",
+                    "SPACE_BEFORE_IF_PARENTHESES",
+                    "SPACE_BEFORE_WHILE_PARENTHESES",
+                    "SPACE_BEFORE_FOR_PARENTHESES",
+                    "SPACE_BEFORE_CATCH_PARENTHESES"
                 );
 
-                showCustomOption(KotlinCodeStyleSettings::SPACE_AROUND_RANGE,
-                                 "Range operator (..)",
-                                 CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS)
+                showCustomOption(
+                    KotlinCodeStyleSettings::SPACE_AROUND_RANGE,
+                    "Range operator (..)",
+                    CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS
+                )
 
-                showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_TYPE_COLON,
-                                 "Before colon, after declaration name",
-                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(
+                    KotlinCodeStyleSettings::SPACE_BEFORE_TYPE_COLON,
+                    "Before colon, after declaration name",
+                    CodeStyleSettingsCustomizable.SPACES_OTHER
+                )
 
-                showCustomOption(KotlinCodeStyleSettings::SPACE_AFTER_TYPE_COLON,
-                                 "After colon, before declaration type",
-                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(
+                    KotlinCodeStyleSettings::SPACE_AFTER_TYPE_COLON,
+                    "After colon, before declaration type",
+                    CodeStyleSettingsCustomizable.SPACES_OTHER
+                )
 
-                showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_EXTEND_COLON,
-                                 "Before colon in new type definition",
-                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(
+                    KotlinCodeStyleSettings::SPACE_BEFORE_EXTEND_COLON,
+                    "Before colon in new type definition",
+                    CodeStyleSettingsCustomizable.SPACES_OTHER
+                )
 
-                showCustomOption(KotlinCodeStyleSettings::SPACE_AFTER_EXTEND_COLON,
-                                "After colon in new type definition",
-                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(
+                    KotlinCodeStyleSettings::SPACE_AFTER_EXTEND_COLON,
+                    "After colon in new type definition",
+                    CodeStyleSettingsCustomizable.SPACES_OTHER
+                )
 
-                showCustomOption(KotlinCodeStyleSettings::INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD,
-                                 "In simple one line methods",
-                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(
+                    KotlinCodeStyleSettings::INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD,
+                    "In simple one line methods",
+                    CodeStyleSettingsCustomizable.SPACES_OTHER
+                )
 
-                showCustomOption(KotlinCodeStyleSettings::SPACE_AROUND_FUNCTION_TYPE_ARROW,
-                                 "Around arrow in function types",
-                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(
+                    KotlinCodeStyleSettings::SPACE_AROUND_FUNCTION_TYPE_ARROW,
+                    "Around arrow in function types",
+                    CodeStyleSettingsCustomizable.SPACES_OTHER
+                )
 
-                showCustomOption(KotlinCodeStyleSettings::SPACE_AROUND_WHEN_ARROW,
-                                "Around arrow in \"when\" clause",
-                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(
+                    KotlinCodeStyleSettings::SPACE_AROUND_WHEN_ARROW,
+                    "Around arrow in \"when\" clause",
+                    CodeStyleSettingsCustomizable.SPACES_OTHER
+                )
 
-                showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_LAMBDA_ARROW,
-                                "Before lambda arrow",
-                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(
+                    KotlinCodeStyleSettings::SPACE_BEFORE_LAMBDA_ARROW,
+                    "Before lambda arrow",
+                    CodeStyleSettingsCustomizable.SPACES_OTHER
+                )
 
-                showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_WHEN_PARENTHESES,
-                                 "'when' parentheses",
-                                 CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES)
+                showCustomOption(
+                    KotlinCodeStyleSettings::SPACE_BEFORE_WHEN_PARENTHESES,
+                    "'when' parentheses",
+                    CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES
+                )
             }
-                LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
-                    consumer.showStandardOptions(
-                        // "ALIGN_MULTILINE_CHAINED_METHODS",
-                        "KEEP_FIRST_COLUMN_COMMENT",
-                        "KEEP_LINE_BREAKS",
-                        "ALIGN_MULTILINE_EXTENDS_LIST",
-                        "ALIGN_MULTILINE_PARAMETERS",
-                        "ALIGN_MULTILINE_PARAMETERS_IN_CALLS",
-                        "ALIGN_MULTILINE_METHOD_BRACKETS",
-                        "ALIGN_MULTILINE_BINARY_OPERATION",
-                        "ELSE_ON_NEW_LINE",
-                        "WHILE_ON_NEW_LINE",
-                        "CATCH_ON_NEW_LINE",
-                        "FINALLY_ON_NEW_LINE",
-                        "CALL_PARAMETERS_WRAP",
-                        "METHOD_PARAMETERS_WRAP",
-                        "EXTENDS_LIST_WRAP",
-                        "METHOD_ANNOTATION_WRAP",
-                        "CLASS_ANNOTATION_WRAP",
-                        "PARAMETER_ANNOTATION_WRAP",
-                        "VARIABLE_ANNOTATION_WRAP",
-                        "FIELD_ANNOTATION_WRAP",
-                        "METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE",
-                        "METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE",
-                        "CALL_PARAMETERS_LPAREN_ON_NEXT_LINE",
-                        "CALL_PARAMETERS_RPAREN_ON_NEXT_LINE",
-                        "ENUM_CONSTANTS_WRAP",
-                        "METHOD_CALL_CHAIN_WRAP",
-                        "WRAP_FIRST_METHOD_IN_CALL_CHAIN",
-                        "ASSIGNMENT_WRAP"
+            LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
+                consumer.showStandardOptions(
+                    // "ALIGN_MULTILINE_CHAINED_METHODS",
+                    "KEEP_FIRST_COLUMN_COMMENT",
+                    "KEEP_LINE_BREAKS",
+                    "ALIGN_MULTILINE_EXTENDS_LIST",
+                    "ALIGN_MULTILINE_PARAMETERS",
+                    "ALIGN_MULTILINE_PARAMETERS_IN_CALLS",
+                    "ALIGN_MULTILINE_METHOD_BRACKETS",
+                    "ALIGN_MULTILINE_BINARY_OPERATION",
+                    "ELSE_ON_NEW_LINE",
+                    "WHILE_ON_NEW_LINE",
+                    "CATCH_ON_NEW_LINE",
+                    "FINALLY_ON_NEW_LINE",
+                    "CALL_PARAMETERS_WRAP",
+                    "METHOD_PARAMETERS_WRAP",
+                    "EXTENDS_LIST_WRAP",
+                    "METHOD_ANNOTATION_WRAP",
+                    "CLASS_ANNOTATION_WRAP",
+                    "PARAMETER_ANNOTATION_WRAP",
+                    "VARIABLE_ANNOTATION_WRAP",
+                    "FIELD_ANNOTATION_WRAP",
+                    "METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE",
+                    "METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE",
+                    "CALL_PARAMETERS_LPAREN_ON_NEXT_LINE",
+                    "CALL_PARAMETERS_RPAREN_ON_NEXT_LINE",
+                    "ENUM_CONSTANTS_WRAP",
+                    "METHOD_CALL_CHAIN_WRAP",
+                    "WRAP_FIRST_METHOD_IN_CALL_CHAIN",
+                    "ASSIGNMENT_WRAP"
                 )
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
                 consumer.renameStandardOption("FIELD_ANNOTATION_WRAP", "Property annotations")
-                showCustomOption(KotlinCodeStyleSettings::ALIGN_IN_COLUMNS_CASE_BRANCH,
-                                 "Align 'when' branches in columns",
-                                 CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT)
-
-                showCustomOption(KotlinCodeStyleSettings::LBRACE_ON_NEXT_LINE,
-                                "Put left brace on new line",
-                                 CodeStyleSettingsCustomizable.WRAPPING_BRACES)
+                showCustomOption(
+                    KotlinCodeStyleSettings::ALIGN_IN_COLUMNS_CASE_BRANCH,
+                    "Align 'when' branches in columns",
+                    CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT
+                )
 
                 showCustomOption(
-                        KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_PARAMETER_LISTS,
-                        "Use continuation indent",
-                        CodeStyleSettingsCustomizable.WRAPPING_METHOD_PARAMETERS)
-                showCustomOption(
-                        KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_ARGUMENT_LISTS,
-                        "Use continuation indent",
-                        CodeStyleSettingsCustomizable.WRAPPING_METHOD_ARGUMENTS_WRAPPING)
-                showCustomOption(
-                        KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_CHAINED_CALLS,
-                        "Use continuation indent",
-                        CodeStyleSettingsCustomizable.WRAPPING_CALL_CHAIN)
-                showCustomOption(
-                        KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_SUPERTYPE_LISTS,
-                        "Use continuation indent",
-                        CodeStyleSettingsCustomizable.WRAPPING_EXTENDS_LIST)
+                    KotlinCodeStyleSettings::LBRACE_ON_NEXT_LINE,
+                    "Put left brace on new line",
+                    CodeStyleSettingsCustomizable.WRAPPING_BRACES
+                )
 
                 showCustomOption(
-                        KotlinCodeStyleSettings::WRAP_EXPRESSION_BODY_FUNCTIONS,
-                        "Expression body functions",
-                        options = *arrayOf(CodeStyleSettingsCustomizable.WRAP_OPTIONS_FOR_SINGLETON, CodeStyleSettingsCustomizable.WRAP_VALUES_FOR_SINGLETON)
+                    KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_PARAMETER_LISTS,
+                    "Use continuation indent",
+                    CodeStyleSettingsCustomizable.WRAPPING_METHOD_PARAMETERS
                 )
                 showCustomOption(
-                        KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES,
-                        "Use continuation indent",
-                        "Expression body functions"
+                    KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_ARGUMENT_LISTS,
+                    "Use continuation indent",
+                    CodeStyleSettingsCustomizable.WRAPPING_METHOD_ARGUMENTS_WRAPPING
                 )
                 showCustomOption(
-                        KotlinCodeStyleSettings::WRAP_ELVIS_EXPRESSIONS,
-                        "Elvis expressions",
-                        options = *arrayOf(CodeStyleSettingsCustomizable.WRAP_OPTIONS_FOR_SINGLETON, CodeStyleSettingsCustomizable.WRAP_VALUES_FOR_SINGLETON)
+                    KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_CHAINED_CALLS,
+                    "Use continuation indent",
+                    CodeStyleSettingsCustomizable.WRAPPING_CALL_CHAIN
+                )
+                showCustomOption(
+                    KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_SUPERTYPE_LISTS,
+                    "Use continuation indent",
+                    CodeStyleSettingsCustomizable.WRAPPING_EXTENDS_LIST
+                )
+
+                showCustomOption(
+                    KotlinCodeStyleSettings::WRAP_EXPRESSION_BODY_FUNCTIONS,
+                    "Expression body functions",
+                    options = *arrayOf(
+                        CodeStyleSettingsCustomizable.WRAP_OPTIONS_FOR_SINGLETON,
+                        CodeStyleSettingsCustomizable.WRAP_VALUES_FOR_SINGLETON
+                    )
+                )
+                showCustomOption(
+                    KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES,
+                    "Use continuation indent",
+                    "Expression body functions"
+                )
+                showCustomOption(
+                    KotlinCodeStyleSettings::WRAP_ELVIS_EXPRESSIONS,
+                    "Elvis expressions",
+                    options = *arrayOf(
+                        CodeStyleSettingsCustomizable.WRAP_OPTIONS_FOR_SINGLETON,
+                        CodeStyleSettingsCustomizable.WRAP_VALUES_FOR_SINGLETON
+                    )
                 )
                 @Suppress("InvalidBundleOrProperty")
                 showCustomOption(
-                        KotlinCodeStyleSettings::IF_RPAREN_ON_NEW_LINE,
-                        ApplicationBundle.message("wrapping.rpar.on.new.line"),
-                        CodeStyleSettingsCustomizable.WRAPPING_IF_STATEMENT
+                    KotlinCodeStyleSettings::IF_RPAREN_ON_NEW_LINE,
+                    ApplicationBundle.message("wrapping.rpar.on.new.line"),
+                    CodeStyleSettingsCustomizable.WRAPPING_IF_STATEMENT
                 )
                 showCustomOption(
-                        KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_IF_CONDITIONS,
-                        "Use continuation indent in conditions",
-                        CodeStyleSettingsCustomizable.WRAPPING_IF_STATEMENT
+                    KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_IF_CONDITIONS,
+                    "Use continuation indent in conditions",
+                    CodeStyleSettingsCustomizable.WRAPPING_IF_STATEMENT
                 )
             }
             LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS -> {
                 consumer.showStandardOptions(
-                        "KEEP_BLANK_LINES_IN_CODE",
-                        "KEEP_BLANK_LINES_IN_DECLARATIONS",
-                        "KEEP_BLANK_LINES_BEFORE_RBRACE",
-                        "BLANK_LINES_AFTER_CLASS_HEADER"
+                    "KEEP_BLANK_LINES_IN_CODE",
+                    "KEEP_BLANK_LINES_IN_DECLARATIONS",
+                    "KEEP_BLANK_LINES_BEFORE_RBRACE",
+                    "BLANK_LINES_AFTER_CLASS_HEADER"
                 )
-                showCustomOption(KotlinCodeStyleSettings::BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES,
-                                 "Around 'when' branches with {}",
-                                 CodeStyleSettingsCustomizable.BLANK_LINES)
+                showCustomOption(
+                    KotlinCodeStyleSettings::BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES,
+                    "Around 'when' branches with {}",
+                    CodeStyleSettingsCustomizable.BLANK_LINES
+                )
             }
             else -> consumer.showStandardOptions()
         }
@@ -345,8 +381,9 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
 
     override fun getIndentOptionsEditor(): IndentOptionsEditor = SmartIndentOptionsEditor()
 
-    override fun getDefaultCommonSettings(): CommonCodeStyleSettings =
-        CommonCodeStyleSettings(language).apply {
+    override fun getDefaultCommonSettings(): CommonCodeStyleSettings {
+        return KotlinCommonCodeStyleSettings().apply {
             initIndentOptions()
         }
+    }
 }
