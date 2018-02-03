@@ -36,16 +36,16 @@ NoEscapeString
 RegularStringPart
   : <any character other than backslash, quote, $ or newline>
 
-ShortTemplateEntryStart:
+ShortTemplateEntryStart
   : "$"
 
-EscapeSequence:
+EscapeSequence
   : UnicodeEscapeSequence | RegularEscapeSequence
 
-UnicodeEscapeSequence:
+UnicodeEscapeSequence
   : "\u" HexDigit{4}
 
-RegularEscapeSequence:
+RegularEscapeSequence
   : "\" <any character other than newline>
 
 /**
