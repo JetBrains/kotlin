@@ -230,6 +230,7 @@ callSuffix
 
 annotatedLambda
   : ("@" unescapedAnnotation)* labelDefinition? functionLiteral
+  ;
 
 memberAccessOperation
   : "." : "?." : "?"
