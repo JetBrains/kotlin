@@ -59,7 +59,7 @@ RegularEscapeSequence
   ;
 
 /**
-See [String templates](basic-types.html#templates)
+See [String templates](basic-types.html#string-templates)
 */
 
 SEMI
