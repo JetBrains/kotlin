@@ -259,6 +259,21 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClasses extends AbstractBytecodeListingTest {
+        public void testAllFilesPresentInInlineClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("shapeOfInlineClassWithPrimitive.kt")
+        public void testShapeOfInlineClassWithPrimitive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses/shapeOfInlineClassWithPrimitive.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/specialBridges")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

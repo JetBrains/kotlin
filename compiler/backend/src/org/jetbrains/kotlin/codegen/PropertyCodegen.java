@@ -318,6 +318,10 @@ public class PropertyCodegen {
             return false;
         }
 
+        if (kind == OwnerKind.ERASED_INLINE_CLASS) {
+            return false;
+        }
+
         if (p instanceof KtProperty && ((KtProperty) p).hasDelegate()) {
             generatePropertyDelegateAccess((KtProperty) p, descriptor, delegateAnnotations);
         }
