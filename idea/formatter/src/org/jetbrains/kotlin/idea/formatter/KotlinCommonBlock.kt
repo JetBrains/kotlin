@@ -790,7 +790,12 @@ private val INDENT_RULES = arrayOf(
             KtTokens.TYPE_ALIAS_KEYWORD, KtTokens.EOL_COMMENT, KtNodeTypes.MODIFIER_LIST, KtTokens.BLOCK_COMMENT,
             KtTokens.DOC_COMMENT
         )
-        .set(Indent.getContinuationIndent())
+        .set(Indent.getContinuationIndent()),
+
+    strategy("Default parameter values")
+        .within(KtNodeTypes.VALUE_PARAMETER)
+        .forElement { node -> node.psi != null && node.psi == (node.psi.parent as? KtParameter)?.defaultValue }
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES, indentFirst = true)
 )
 
 

@@ -1184,6 +1184,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("DefaultParameterValues.after.kt")
+            public void testDefaultParameterValues() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/DefaultParameterValues.after.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("KT19727.after.kt")
             public void testKT19727() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/KT19727.after.kt");
@@ -1541,6 +1547,21 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             @TestMetadata("FunctionLiteralsInChainCalls.after.inv.kt")
             public void testFunctionLiteralsInChainCalls() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/FunctionLiteralsInChainCalls.after.inv.kt");
+                doTestInverted(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/parameterList")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ParameterList extends AbstractFormatterTest {
+            public void testAllFilesPresentInParameterList() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/parameterList"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("DefaultParameterValues.after.inv.kt")
+            public void testDefaultParameterValues() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/DefaultParameterValues.after.inv.kt");
                 doTestInverted(fileName);
             }
         }
