@@ -723,6 +723,7 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Indices")
         .within(KtNodeTypes.INDICES)
+        .notForType(KtTokens.RBRACKET)
         .set(Indent.getContinuationIndent(false)),
 
     strategy("Binary expressions")
