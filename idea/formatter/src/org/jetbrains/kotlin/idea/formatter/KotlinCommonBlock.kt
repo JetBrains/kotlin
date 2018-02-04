@@ -127,7 +127,11 @@ abstract class KotlinCommonBlock(
             // relative to it when it starts from new line (see Indent javadoc).
 
             val isNonFirstChainedCall = operationBlockIndex > 0 && isCallBlock(nodeSubBlocks[operationBlockIndex - 1])
-            val enforceIndentToChildren = isNonFirstChainedCall && hasLineBreakBefore(nodeSubBlocks[operationBlockIndex])
+
+            // enforce indent to children when there's a line break before the dot in any call in the chain (meaning that
+            // the call chain following that call is indented)
+            val enforceIndentToChildren = anyCallInCallChainIsWrapped(nodeSubBlocks[operationBlockIndex - 1])
+
             val indentType = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS) {
                 if (enforceIndentToChildren) Indent.Type.CONTINUATION else Indent.Type.CONTINUATION_WITHOUT_FIRST
             } else {
@@ -157,6 +161,18 @@ abstract class KotlinCommonBlock(
         ) { createSyntheticSpacingNodeBlock(it) }
 
         return subList(0, index) + operationSyntheticBlock
+    }
+
+    private fun anyCallInCallChainIsWrapped(astBlock: ASTBlock): Boolean {
+        var result: ASTBlock? = astBlock
+        while (true) {
+            if (result == null || !isCallBlock(result)) return false
+            val dot = result.node?.findChildByType(QUALIFIED_OPERATION)
+            if (dot != null && hasLineBreakBefore(dot)) {
+                return true
+            }
+            result = result.subBlocks.firstOrNull() as? ASTBlock?
+        }
     }
 
     private fun isCallBlock(astBlock: ASTBlock): Boolean {
@@ -602,9 +618,9 @@ fun needWrapArgumentList(psi: PsiElement): Boolean {
     return args?.singleOrNull()?.getArgumentExpression() !is KtObjectLiteralExpression
 }
 
-private fun hasLineBreakBefore(block: ASTBlock): Boolean {
-    val prevSibling = block.node.leaves(false)
-        .dropWhile { it.psi is PsiComment || it.elementType == KtTokens.RBRACE }
+private fun hasLineBreakBefore(node: ASTNode): Boolean {
+    val prevSibling = node.leaves(false)
+        .dropWhile { it.psi is PsiComment }
         .firstOrNull()
     return prevSibling?.elementType == TokenType.WHITE_SPACE && prevSibling?.textContains('\n') == true
 }
