@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
@@ -127,7 +128,7 @@ public class CallReceiver extends StackValue {
     }
 
     @Override
-    public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
+    public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
         StackValue currentExtensionReceiver = extensionReceiver;
         boolean hasExtensionReceiver = extensionReceiver != none();
         if (extensionReceiver instanceof SafeCall) {
@@ -141,7 +142,12 @@ public class CallReceiver extends StackValue {
         dispatchReceiver.put(dispatchReceiverType, v);
 
         currentExtensionReceiver
-                .moveToTopOfStack(hasExtensionReceiver ? type : currentExtensionReceiver.type, v, dispatchReceiverType.getSize());
+                .moveToTopOfStack(
+                        hasExtensionReceiver ? type : currentExtensionReceiver.type,
+                        hasExtensionReceiver ? kotlinType : currentExtensionReceiver.kotlinType,
+                        v,
+                        dispatchReceiverType.getSize()
+                );
     }
 
     @Override

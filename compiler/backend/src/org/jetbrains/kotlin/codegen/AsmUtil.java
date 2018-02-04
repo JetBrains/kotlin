@@ -702,7 +702,7 @@ public class AsmUtil {
         return new StackValue(stackValue.type) {
 
             @Override
-            public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
+            public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
                 Type innerType = stackValue.type;
                 stackValue.put(innerType, v);
                 if (innerType.getSort() == Type.OBJECT || innerType.getSort() == Type.ARRAY) {
