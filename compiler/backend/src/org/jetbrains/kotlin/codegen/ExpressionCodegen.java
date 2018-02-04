@@ -2072,6 +2072,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         FunctionDescriptor descriptor = accessibleFunctionDescriptor(resolvedCall);
 
         if (descriptor instanceof ConstructorDescriptor) {
+            if (InlineClassesUtilsKt.isInlineClass(descriptor.getContainingDeclaration())) {
+                KtValueArgument valueArgument = CollectionsKt.firstOrNull(expression.getValueArguments());
+                if (valueArgument == null) return null;
+
+                return gen(valueArgument.getArgumentExpression());
+            }
+
             return generateNewCall(expression, resolvedCall);
         }
 
