@@ -123,12 +123,6 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
-        @TestMetadata("CallChainWrapping.after.kt")
-        public void testCallChainWrapping() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallChainWrapping.after.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("CallLParenthOnNextLine.after.kt")
         public void testCallLParenthOnNextLine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallLParenthOnNextLine.after.kt");
@@ -192,24 +186,6 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("CommentInFunctionLiteral.after.kt")
         public void testCommentInFunctionLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CommentInFunctionLiteral.after.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ConsecutiveCalls.after.kt")
-        public void testConsecutiveCalls() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ConsecutiveCalls.after.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ConsecutiveSafeCallsIndent.after.kt")
-        public void testConsecutiveSafeCallsIndent() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ConsecutiveSafeCallsIndent.after.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ContinuationIndentForChainedCalls.after.kt")
-        public void testContinuationIndentForChainedCalls() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentForChainedCalls.after.kt");
             doTest(fileName);
         }
 
@@ -417,12 +393,6 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
-        @TestMetadata("FunctionLiteralsInChainCalls.after.kt")
-        public void testFunctionLiteralsInChainCalls() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionLiteralsInChainCalls.after.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("FunctionReferenceOperator.after.kt")
         public void testFunctionReferenceOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionReferenceOperator.after.kt");
@@ -516,36 +486,6 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("KDoc.after.kt")
         public void testKDoc() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KDoc.after.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("KT15099.after.kt")
-        public void testKT15099() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT15099.after.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("KT20362.after.kt")
-        public void testKT20362() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT20362.after.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("KT22071.after.kt")
-        public void testKT22071() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT22071.after.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("KT22115.after.kt")
-        public void testKT22115() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT22115.after.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("KT22148.after.kt")
-        public void testKT22148() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT22148.after.kt");
             doTest(fileName);
         }
 
@@ -981,6 +921,75 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("idea/testData/formatter/callChain")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CallChain extends AbstractFormatterTest {
+            public void testAllFilesPresentInCallChain() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/callChain"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("CallChainWrapping.after.kt")
+            public void testCallChainWrapping() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/CallChainWrapping.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ConsecutiveCalls.after.kt")
+            public void testConsecutiveCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/ConsecutiveCalls.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ConsecutiveSafeCallsIndent.after.kt")
+            public void testConsecutiveSafeCallsIndent() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/ConsecutiveSafeCallsIndent.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ContinuationIndentForChainedCalls.after.kt")
+            public void testContinuationIndentForChainedCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/ContinuationIndentForChainedCalls.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FunctionLiteralsInChainCalls.after.kt")
+            public void testFunctionLiteralsInChainCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/FunctionLiteralsInChainCalls.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KT15099.after.kt")
+            public void testKT15099() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT15099.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KT20362.after.kt")
+            public void testKT20362() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT20362.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KT22071.after.kt")
+            public void testKT22071() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT22071.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KT22115.after.kt")
+            public void testKT22115() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT22115.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KT22148.after.kt")
+            public void testKT22148() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT22148.after.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/formatter/fileAnnotations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1233,12 +1242,6 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTestInverted(fileName);
         }
 
-        @TestMetadata("CallChainWrapping.after.inv.kt")
-        public void testCallChainWrapping() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallChainWrapping.after.inv.kt");
-            doTestInverted(fileName);
-        }
-
         @TestMetadata("CallLParenthOnNextLine.after.inv.kt")
         public void testCallLParenthOnNextLine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallLParenthOnNextLine.after.inv.kt");
@@ -1266,18 +1269,6 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("ColonSpaces.after.inv.kt")
         public void testColonSpaces() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ColonSpaces.after.inv.kt");
-            doTestInverted(fileName);
-        }
-
-        @TestMetadata("ConsecutiveSafeCallsIndent.after.inv.kt")
-        public void testConsecutiveSafeCallsIndent() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ConsecutiveSafeCallsIndent.after.inv.kt");
-            doTestInverted(fileName);
-        }
-
-        @TestMetadata("ContinuationIndentForChainedCalls.after.inv.kt")
-        public void testContinuationIndentForChainedCalls() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentForChainedCalls.after.inv.kt");
             doTestInverted(fileName);
         }
 
@@ -1344,12 +1335,6 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("FunctionLineBreak.after.inv.kt")
         public void testFunctionLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionLineBreak.after.inv.kt");
-            doTestInverted(fileName);
-        }
-
-        @TestMetadata("FunctionLiteralsInChainCalls.after.inv.kt")
-        public void testFunctionLiteralsInChainCalls() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionLiteralsInChainCalls.after.inv.kt");
             doTestInverted(fileName);
         }
 
@@ -1519,6 +1504,39 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         public void testWhileOnNewLine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhileOnNewLine.after.inv.kt");
             doTestInverted(fileName);
+        }
+
+        @TestMetadata("idea/testData/formatter/callChain")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CallChain extends AbstractFormatterTest {
+            public void testAllFilesPresentInCallChain() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/callChain"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("CallChainWrapping.after.inv.kt")
+            public void testCallChainWrapping() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/CallChainWrapping.after.inv.kt");
+                doTestInverted(fileName);
+            }
+
+            @TestMetadata("ConsecutiveSafeCallsIndent.after.inv.kt")
+            public void testConsecutiveSafeCallsIndent() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/ConsecutiveSafeCallsIndent.after.inv.kt");
+                doTestInverted(fileName);
+            }
+
+            @TestMetadata("ContinuationIndentForChainedCalls.after.inv.kt")
+            public void testContinuationIndentForChainedCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/ContinuationIndentForChainedCalls.after.inv.kt");
+                doTestInverted(fileName);
+            }
+
+            @TestMetadata("FunctionLiteralsInChainCalls.after.inv.kt")
+            public void testFunctionLiteralsInChainCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/FunctionLiteralsInChainCalls.after.inv.kt");
+                doTestInverted(fileName);
+            }
         }
     }
 }
