@@ -113,6 +113,31 @@ public class KotlinTypeMapper {
         }
     };
 
+    private static final TypeMappingConfiguration<Type> staticTypeMappingConfiguration = new TypeMappingConfiguration<Type>() {
+        @NotNull
+        @Override
+        public KotlinType commonSupertype(@NotNull Collection<KotlinType> types) {
+            return CommonSupertypes.commonSupertype(types);
+        }
+
+        @Nullable
+        @Override
+        public Type getPredefinedTypeForClass(@NotNull ClassDescriptor classDescriptor) {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public String getPredefinedInternalNameForClass(@NotNull ClassDescriptor classDescriptor) {
+            return null;
+        }
+
+        @Override
+        public void processErrorType(@NotNull KotlinType kotlinType, @NotNull ClassDescriptor descriptor) {
+            throw new IllegalStateException(generateErrorMessageForErrorType(kotlinType, descriptor));
+        }
+    };
+
     public KotlinTypeMapper(
             @NotNull BindingContext bindingContext,
             @NotNull ClassBuilderMode classBuilderMode,
@@ -443,6 +468,20 @@ public class KotlinTypeMapper {
                     writeGenericType(ktType, asmType, signatureVisitor, typeMappingMode);
                     return Unit.INSTANCE;
                 }
+        );
+    }
+
+    public static Type mapInlineClassTypeAsDeclaration(@NotNull KotlinType kotlinType) {
+        return mapInlineClassType(kotlinType, TypeMappingMode.CLASS_DECLARATION);
+    }
+
+    public static Type mapInlineClassType(
+            @NotNull KotlinType kotlinType,
+            @NotNull TypeMappingMode mode
+    ) {
+        return TypeSignatureMappingKt.mapType(
+                kotlinType, AsmTypeFactory.INSTANCE, mode, staticTypeMappingConfiguration, null,
+                (ktType, asmType, typeMappingMode) -> Unit.INSTANCE
         );
     }
 
