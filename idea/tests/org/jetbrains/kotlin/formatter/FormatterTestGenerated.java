@@ -988,6 +988,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT22148.after.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("KT22346.after.kt")
+            public void testKT22346() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT22346.after.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/formatter/fileAnnotations")
