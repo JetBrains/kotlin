@@ -21,7 +21,7 @@ import java.nio.charset.Charset
 import kotlin.test.*
 
 class ConsoleTest {
-    private val defaultLineSeparator: String = "\\n"
+    private val defaultLineSeparator: String = "\n"
 
     @Test
     fun shouldReadEmptyLine() {
@@ -45,14 +45,8 @@ class ConsoleTest {
 
     @Test
     fun shouldReadWindowsLineSeparator() {
-        val lineSeparator = "\\r\\n"
-        testReadLine("first${lineSeparator}second", "first", "second", lineSeparator = lineSeparator)
-    }
-
-    @Test
-    fun shouldReadOldMacLineSeparator() {
-        val lineSeparator = "\\r"
-        testReadLine("first${lineSeparator}second", "first", "second", lineSeparator = lineSeparator)
+        val lineSeparator = "\r\n"
+        testReadLine("first${lineSeparator}second", "first", "second")
     }
 
     @Test
@@ -60,20 +54,15 @@ class ConsoleTest {
         testReadLine("first${defaultLineSeparator}second", "first", "second", charset = Charsets.UTF_32)
     }
 
-    private fun testReadLine(
-            text: String,
-            vararg expected: String,
-            lineSeparator: String = defaultLineSeparator,
-            charset: Charset = Charsets.UTF_8
-    ) {
-        val actual = readLines(text, lineSeparator, charset)
+    private fun testReadLine(text: String, vararg expected: String, charset: Charset = Charsets.UTF_8) {
+        val actual = readLines(text, charset)
         assertEquals(expected.asList(), actual)
     }
 
-    private fun readLines(text: String, lineSeparator: String, charset: Charset): List<String> {
+    private fun readLines(text: String, charset: Charset): List<String> {
         text.byteInputStream(charset).use { stream ->
             val decoder = charset.newDecoder()
-            return generateSequence { readLine(stream, lineSeparator, decoder) }.toList().also {
+            return generateSequence { readLine(stream, decoder) }.toList().also {
                 assertTrue("All bytes should be read") { stream.read() == -1 }
             }
         }

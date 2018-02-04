@@ -137,10 +137,7 @@ public inline fun println() {
 }
 
 private const val BUFFER_SIZE: Int = 32
-
-// Since System.in can change its value on the course of program running, we should always delegate to current value.
-private val stdin: InputStream
-    get() = System.`in`
+private const val LINE_SEPARATOR_MAX_LENGTH: Int = 2
 
 private var cachedDecoder: CharsetDecoder? = null
 
@@ -157,14 +154,13 @@ private fun decoderFor(charset: Charset): CharsetDecoder {
  *
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
-fun readLine(lineSeparator: String = System.lineSeparator(), charset: Charset = Charset.defaultCharset()): String? =
-        readLine(stdin, lineSeparator, decoderFor(charset))
+fun readLine(charset: Charset = Charset.defaultCharset()): String? = readLine(System.`in`, decoderFor(charset))
 
-internal fun readLine(inputStream: InputStream, lineSeparator: String, decoder: CharsetDecoder): String? {
+internal fun readLine(inputStream: InputStream, decoder: CharsetDecoder): String? {
     require(decoder.maxCharsPerByte() <= 1) { "Encodings with multiple chars per byte are not supported" }
 
     val byteBuffer = ByteBuffer.allocate(BUFFER_SIZE)
-    val charBuffer = CharBuffer.allocate(lineSeparator.length)
+    val charBuffer = CharBuffer.allocate(LINE_SEPARATOR_MAX_LENGTH)
     val stringBuilder = StringBuilder()
 
     var read = inputStream.read()
@@ -172,7 +168,7 @@ internal fun readLine(inputStream: InputStream, lineSeparator: String, decoder: 
     while (read != -1) {
         byteBuffer.put(read.toByte())
         if (decoder.tryDecode(byteBuffer, charBuffer, false)) {
-            if (charBuffer.contentEquals(lineSeparator)) {
+            if (charBuffer.containsLineSeparator()) {
                 break
             }
             if (!charBuffer.hasRemaining()) {
@@ -188,9 +184,16 @@ internal fun readLine(inputStream: InputStream, lineSeparator: String, decoder: 
     }
 
     with(charBuffer) {
-        if (!contentEquals(lineSeparator)) {
-            flip()
-            while (hasRemaining()) stringBuilder.append(get())
+        val length = position()
+        val first = get(0)
+        val second = get(1)
+        flip()
+        when (length) {
+            2 -> {
+                if (!(first == '\r' && second == '\n')) stringBuilder.append(first)
+                if (second != '\n') stringBuilder.append(second)
+            }
+            1 -> if (first != '\n') stringBuilder.append(first)
         }
     }
 
@@ -208,9 +211,8 @@ private fun CharsetDecoder.tryDecode(byteBuffer: ByteBuffer, charBuffer: CharBuf
     }
 }
 
-private fun CharBuffer.contentEquals(string: String): Boolean {
-    flip()
-    return string.contentEquals(this).also { flipBack() }
+private fun CharBuffer.containsLineSeparator(): Boolean {
+    return get(1) == '\n' || get(0) == '\n'
 }
 
 private fun Buffer.flipBack(): Buffer = apply {
