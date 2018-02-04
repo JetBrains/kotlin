@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.daemon.common.experimental
@@ -34,9 +23,8 @@ interface Profiler {
     fun getCounters(): Map<Any?, PerfCounters>
     fun getTotalCounters(): PerfCounters
 
-    fun<R> withMeasure(obj: Any?, body: () -> R): R
+    fun <R> withMeasure(obj: Any?, body: () -> R): R
 }
-
 
 open class SimplePerfCounters : PerfCounters {
     private val _count: AtomicLong = AtomicLong(0L)
@@ -59,7 +47,6 @@ open class SimplePerfCounters : PerfCounters {
         _memory.addAndGet(memory)
     }
 }
-
 
 class SimplePerfCountersWithTotal(val totalRef: PerfCounters) : SimplePerfCounters() {
     override fun addMeasurement(time: Long, thread: Long, threadUser: Long, memory: Long) {
@@ -85,15 +72,14 @@ inline fun usedMemory(withGC: Boolean): Long {
 }
 
 
-inline fun<R> withMeasureWallTime(perfCounters: PerfCounters, body: () -> R): R {
+inline fun <R> withMeasureWallTime(perfCounters: PerfCounters, body: () -> R): R {
     val startTime = System.nanoTime()
     val res = body()
     perfCounters.addMeasurement(time = System.nanoTime() - startTime) // TODO: add support for time wrapping
     return res
 }
 
-
-inline fun<R> withMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMXBean: ThreadMXBean, body: () -> R): R {
+inline fun <R> withMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMXBean: ThreadMXBean, body: () -> R): R {
     val startTime = System.nanoTime()
     val startThreadTime = threadMXBean.threadCpuTime()
     val startThreadUserTime = threadMXBean.threadUserTime()
@@ -101,16 +87,24 @@ inline fun<R> withMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMX
     val res = body()
 
     // TODO: add support for time wrapping
-    perfCounters.addMeasurement(time = System.nanoTime() - startTime,
-                                thread = threadMXBean.threadCpuTime() - startThreadTime,
-                                threadUser = threadMXBean.threadUserTime() - startThreadUserTime)
+    perfCounters.addMeasurement(
+        time = System.nanoTime() - startTime,
+        thread = threadMXBean.threadCpuTime() - startThreadTime,
+        threadUser = threadMXBean.threadUserTime() - startThreadUserTime
+    )
     return res
 }
 
-inline fun<R> withMeasureWallAndThreadTimes(perfCounters: PerfCounters, body: () -> R): R = withMeasureWallAndThreadTimes(perfCounters, ManagementFactory.getThreadMXBean(), body)
+inline fun <R> withMeasureWallAndThreadTimes(perfCounters: PerfCounters, body: () -> R): R =
+    withMeasureWallAndThreadTimes(perfCounters, ManagementFactory.getThreadMXBean(), body)
 
 
-inline fun<R> withMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean = false, threadMXBean: ThreadMXBean, body: () -> R): R {
+inline fun <R> withMeasureWallAndThreadTimesAndMemory(
+    perfCounters: PerfCounters,
+    withGC: Boolean = false,
+    threadMXBean: ThreadMXBean,
+    body: () -> R
+): R {
     val startMem = usedMemory(withGC)
     val startTime = System.nanoTime()
     val startThreadTime = threadMXBean.threadCpuTime()
@@ -119,16 +113,17 @@ inline fun<R> withMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters,
     val res = body()
 
     // TODO: add support for time wrapping
-    perfCounters.addMeasurement(time = System.nanoTime() - startTime,
-                                thread = threadMXBean.threadCpuTime() - startThreadTime,
-                                threadUser = threadMXBean.threadUserTime() - startThreadUserTime,
-                                memory = usedMemory(withGC) - startMem)
+    perfCounters.addMeasurement(
+        time = System.nanoTime() - startTime,
+        thread = threadMXBean.threadCpuTime() - startThreadTime,
+        threadUser = threadMXBean.threadUserTime() - startThreadUserTime,
+        memory = usedMemory(withGC) - startMem
+    )
     return res
 }
 
-inline fun<R> withMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean, body: () -> R): R =
-        withMeasureWallAndThreadTimesAndMemory(perfCounters, withGC, ManagementFactory.getThreadMXBean(), body)
-
+inline fun <R> withMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean, body: () -> R): R =
+    withMeasureWallAndThreadTimesAndMemory(perfCounters, withGC, ManagementFactory.getThreadMXBean(), body)
 
 class DummyProfiler : Profiler {
     override fun getCounters(): Map<Any?, PerfCounters> = mapOf(null to SimplePerfCounters())
@@ -159,7 +154,8 @@ class WallAndThreadTotalProfiler : TotalProfiler() {
 
 
 class WallAndThreadAndMemoryTotalProfiler(val withGC: Boolean) : TotalProfiler() {
-    override final inline fun <R> withMeasure(obj: Any?, body: () -> R): R = withMeasureWallAndThreadTimesAndMemory(total, withGC, threadMXBean, body)
+    override final inline fun <R> withMeasure(obj: Any?, body: () -> R): R =
+        withMeasureWallAndThreadTimesAndMemory(total, withGC, threadMXBean, body)
 }
 
 
@@ -170,5 +166,5 @@ class WallAndThreadByClassProfiler() : TotalProfiler() {
     override fun getCounters(): Map<Any?, PerfCounters> = counters
 
     override final inline fun <R> withMeasure(obj: Any?, body: () -> R): R =
-            withMeasureWallAndThreadTimes(counters.getOrPut(obj?.javaClass?.name, { SimplePerfCountersWithTotal(total) }), threadMXBean, body)
+        withMeasureWallAndThreadTimes(counters.getOrPut(obj?.javaClass?.name, { SimplePerfCountersWithTotal(total) }), threadMXBean, body)
 }

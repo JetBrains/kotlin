@@ -33,6 +33,8 @@ interface ReplStateFacade : Remote {
 
 }
 
+interface ReplStateFacadeClientSide: ReplStateFacade, Client
+
 interface ReplStateFacadeServerSide: ReplStateFacade, Server {
     // Query messages:
     class GetIdMessage : Message<ReplStateFacadeServerSide> {
@@ -60,6 +62,3 @@ interface ReplStateFacadeServerSide: ReplStateFacade, Server {
             output.writeObject(server.historyResetTo(id))
     }
 }
-
-interface ReplStateFacadeClientSide: ReplStateFacade, Client
-

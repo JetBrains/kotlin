@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.Message
 import java.rmi.Remote
@@ -22,22 +23,25 @@ interface RemoteOutputStream : Remote {
 
     @Throws(RemoteException::class)
     fun write(dataByte: Int)
+}
 
+interface RemoteOutputStreamClientSide : RemoteOutputStream, Client
+
+interface RemoteOutputStreamServerSide : RemoteOutputStream, Server {
     // Query messages:
-    /*
-    class CloseMessage : Message<RemoteOutputStream> {
-        suspend override fun process(server: RemoteOutputStream, output: ByteWriteChannelWrapper) =
+    class CloseMessage : Message<RemoteOutputStreamServerSide> {
+        suspend override fun process(server: RemoteOutputStreamServerSide, output: ByteWriteChannelWrapper) =
             server.close()
     }
 
-    class WriteMessage(val data: ByteArray, val offset: Int = -1, val length: Int = -1) : Message<RemoteOutputStream> {
-        suspend override fun process(server: RemoteOutputStream, output: ByteWriteChannelWrapper) =
+    class WriteMessage(val data: ByteArray, val offset: Int = -1, val length: Int = -1) : Message<RemoteOutputStreamServerSide> {
+        suspend override fun process(server: RemoteOutputStreamServerSide, output: ByteWriteChannelWrapper) =
             server.write(data, offset, length)
     }
 
-    class WriteIntMessage(val dataByte: Int) : Message<RemoteOutputStream> {
-        suspend override fun process(server: RemoteOutputStream, output: ByteWriteChannelWrapper) =
+    class WriteIntMessage(val dataByte: Int) : Message<RemoteOutputStreamServerSide> {
+        suspend override fun process(server: RemoteOutputStreamServerSide, output: ByteWriteChannelWrapper) =
             server.write(dataByte)
     }
-*/
 }
+

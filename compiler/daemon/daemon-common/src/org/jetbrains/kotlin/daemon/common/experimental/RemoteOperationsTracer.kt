@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.Message
 import java.rmi.Remote
@@ -20,17 +21,20 @@ interface RemoteOperationsTracer : Remote {
     @Throws(RemoteException::class)
     fun after(id: String)
 
+}
+
+interface RemoteOperationsTracerClientSide : RemoteOperationsTracer, Client
+
+interface RemoteOperationsTracerServerSide : RemoteOperationsTracer, Server {
     // Query messages:
 
-    /*
-    class BeforeMessage(val id: String) : Message<RemoteOperationsTracer> {
-        suspend override fun process(server: RemoteOperationsTracer, output: ByteWriteChannelWrapper) =
+    class BeforeMessage(val id: String) : Message<RemoteOperationsTracerServerSide> {
+        suspend override fun process(server: RemoteOperationsTracerServerSide, output: ByteWriteChannelWrapper) =
             server.before(id)
     }
 
-    class AfterMessage(val id: String) : Message<RemoteOperationsTracer> {
-        suspend override fun process(server: RemoteOperationsTracer, output: ByteWriteChannelWrapper) =
+    class AfterMessage(val id: String) : Message<RemoteOperationsTracerServerSide> {
+        suspend override fun process(server: RemoteOperationsTracerServerSide, output: ByteWriteChannelWrapper) =
             server.after(id)
-    }*/
-
+    }
 }

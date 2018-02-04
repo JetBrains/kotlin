@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import io.ktor.network.sockets.Socket
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.Message
 import java.io.Serializable
@@ -14,24 +14,28 @@ import java.rmi.Remote
 import java.rmi.RemoteException
 
 
-interface CompilerServicesFacadeBase : Remote, Server {
+interface CompilerServicesFacadeBase : Remote {
     /**
      * Reports different kind of diagnostic messages from compile daemon to compile daemon clients (jps, gradle, ...)
      */
     @Throws(RemoteException::class)
     fun report(category: Int, severity: Int, message: String?, attachment: Serializable?)
 
-    class ReportMessage(
-            val category: Int,
-            val severity: Int,
-            val message: String?,
-            val attachment: Serializable?
-    ) : Message<CompilerServicesFacadeBase> {
-        suspend override fun process(server: CompilerServicesFacadeBase, output: ByteWriteChannelWrapper) =
-                server.report(category, severity, message, attachment)
-    }
-
 }
+
+interface CompilerServicesFacadeBaseServerSide : CompilerServicesFacadeBase, Server {
+    class ReportMessage(
+        val category: Int,
+        val severity: Int,
+        val message: String?,
+        val attachment: Serializable?
+    ) : Message<CompilerServicesFacadeBaseServerSide> {
+        suspend override fun process(server: CompilerServicesFacadeBaseServerSide, output: ByteWriteChannelWrapper) =
+            server.report(category, severity, message, attachment)
+    }
+}
+
+interface CompilerServicesFacadeBaseClientSide : CompilerServicesFacadeBase, Client
 
 enum class ReportCategory(val code: Int) {
     COMPILER_MESSAGE(0),
@@ -42,7 +46,7 @@ enum class ReportCategory(val code: Int) {
 
     companion object {
         fun fromCode(code: Int): ReportCategory? =
-                ReportCategory.values().firstOrNull { it.code == code }
+            ReportCategory.values().firstOrNull { it.code == code }
     }
 }
 
@@ -54,10 +58,15 @@ enum class ReportSeverity(val code: Int) {
 
     companion object {
         fun fromCode(code: Int): ReportSeverity? =
-                ReportSeverity.values().firstOrNull { it.code == code }
+            ReportSeverity.values().firstOrNull { it.code == code }
     }
 }
 
-fun CompilerServicesFacadeBase.report(category: ReportCategory, severity: ReportSeverity, message: String? = null, attachment: Serializable? = null) {
+fun CompilerServicesFacadeBase.report(
+    category: ReportCategory,
+    severity: ReportSeverity,
+    message: String? = null,
+    attachment: Serializable? = null
+) {
     report(category.code, severity.code, message, attachment)
 }

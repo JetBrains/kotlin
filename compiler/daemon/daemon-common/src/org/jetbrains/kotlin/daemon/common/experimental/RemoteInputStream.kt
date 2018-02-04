@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import java.rmi.Remote
-import java.rmi.RemoteException
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.Message
-import io.ktor.network.sockets.Socket
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import java.rmi.Remote
+import java.rmi.RemoteException
 
 interface RemoteInputStream : Remote {
 
@@ -23,17 +23,19 @@ interface RemoteInputStream : Remote {
     @Throws(RemoteException::class)
     fun read(): Int
 
+}
+
+interface RemoteInputStreamClientSide : RemoteInputStream, Client
+
+interface RemoteInputStreamServerSide : RemoteInputStream, Server {
     // Query messages:
-    /*
-    class CloseMessage : Message<RemoteInputStream> {
-        suspend override fun process(server: RemoteInputStream, output: ByteWriteChannelWrapper) =
+    class CloseMessage : Message<RemoteInputStreamServerSide> {
+        suspend override fun process(server: RemoteInputStreamServerSide, output: ByteWriteChannelWrapper) =
             server.close()
     }
 
-    class ReadMessage(val length: Int = -1) : Message<RemoteInputStream> {
-        suspend override fun process(server: RemoteInputStream, output: ByteWriteChannelWrapper) =
+    class ReadMessage(val length: Int = -1) : Message<RemoteInputStreamServerSide> {
+        suspend override fun process(server: RemoteInputStreamServerSide, output: ByteWriteChannelWrapper) =
             output.writeObject(if (length == -1) server.read() else server.read(length))
     }
-    */
-
 }
