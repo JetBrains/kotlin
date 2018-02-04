@@ -95,7 +95,7 @@ abstract class AbstractCompileService(
 
     protected abstract fun unexportSelf(force: Boolean): Boolean
 
-    protected abstract fun bindToNewSocket()
+    protected abstract fun bindToSocket()
 
     private val log by lazy { Logger.getLogger("compiler") }
 
@@ -707,7 +707,7 @@ abstract class AbstractCompileService(
 
     fun initialize() {
         // assuming logically synchronized
-        bindToNewSocket()
+        bindToSocket()
 
         timer.schedule(10) {
             exceptionLoggingTimerThread { initiateElections() }

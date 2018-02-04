@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.daemon.common.experimental
@@ -57,6 +46,8 @@ object LoopbackNetworkInterface {
 
     val serverLoopbackSocketFactoryRMI by lazy { ServerLoopbackSocketFactoryRMI() }
     val clientLoopbackSocketFactoryRMI by lazy { ClientLoopbackSocketFactoryRMI() }
+
+    val serverLoopbackSocketFactoryKtor by lazy { ServerLoopbackSocketFactoryKtor() }
     val clientLoopbackSocketFactoryKtor by lazy { ClientLoopbackSocketFactoryKtor() }
 
     // TODO switch to InetAddress.getLoopbackAddress on java 7+
@@ -80,6 +71,14 @@ object LoopbackNetworkInterface {
         @Throws(IOException::class)
         override fun createServerSocket(port: Int): ServerSocket =
             ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(null))
+    }
+
+    class ServerLoopbackSocketFactoryKtor : Serializable {
+        override fun equals(other: Any?): Boolean = other === this || super.equals(other)
+        override fun hashCode(): Int = super.hashCode()
+
+        @Throws(IOException::class)
+        fun createServerSocket(port: Int) = aSocket().tcp().bind(InetSocketAddress(port))
     }
 
     abstract class AbstractClientLoopbackSocketFactory<SocketType> : Serializable {
@@ -129,6 +128,25 @@ fun findPortAndCreateRegistry(attempts: Int, portRangeStart: Int, portRangeEnd: 
                     LoopbackNetworkInterface.clientLoopbackSocketFactoryRMI,
                     LoopbackNetworkInterface.serverLoopbackSocketFactoryRMI
                 ), port
+            )
+        } catch (e: RemoteException) {
+            // assuming that the port is already taken
+            lastException = e
+        }
+    }
+    throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
+}
+
+fun findPortAndCreateSocket(attempts: Int, portRangeStart: Int, portRangeEnd: Int): Pair<io.ktor.network.sockets.ServerSocket, Int> {
+    var i = 0
+    var lastException: RemoteException? = null
+
+    while (i++ < attempts) {
+        val port = portSelectionRng.nextInt(portRangeEnd - portRangeStart) + portRangeStart
+        try {
+            return Pair(
+                LoopbackNetworkInterface.serverLoopbackSocketFactoryKtor.createServerSocket(port),
+                port
             )
         } catch (e: RemoteException) {
             // assuming that the port is already taken

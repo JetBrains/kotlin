@@ -24,8 +24,7 @@ import java.util.*
 
 @Suppress("UNCHECKED_CAST")
 class CompileServiceServerSideImpl(
-    val socketHost: String,
-    val socketPort: Int,
+    val socket: ServerSocket,
     compiler: CompilerSelector,
     compilerId: CompilerId,
     daemonOptions: DaemonOptions,
@@ -47,15 +46,15 @@ class CompileServiceServerSideImpl(
         return true
     }
 
-    override fun bindToNewSocket() {
-        runBlocking {
-            aSocket().tcp().bind(InetSocketAddress(socketHost, socketPort)).use { socket ->
-                serverSocket = socket
-                while (true) {
-                    serverSocket.accept().use { attachClient(it) }
-                }
-            }
-        }
+    override fun bindToSocket() {
+//        runBlocking {
+//            aSocket().tcp().bind(InetSocketAddress(port)).use { socket ->
+//                serverSocket = socket
+//                while (true) {
+//                    serverSocket.accept().use { attachClient(it) }
+//                }
+//            }
+//        }
     }
 
     lateinit var serverSocket: ServerSocket

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerId
 import org.jetbrains.kotlin.daemon.common.experimental.DaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.experimental.DaemonOptions
+import org.jetbrains.kotlin.daemon.common.experimental.CompileService
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
@@ -34,7 +35,7 @@ class CompileServiceImpl(
 
     override fun unexportSelf(force: Boolean) = UnicastRemoteObject.unexportObject(this, force)
 
-    override fun bindToNewSocket() {
+    override fun bindToSocket() {
         try {
             // cleanup for the case of incorrect restart and many other situations
             unexportSelf(false)
@@ -47,7 +48,7 @@ class CompileServiceImpl(
             port,
             LoopbackNetworkInterface.clientLoopbackSocketFactoryRMI,
             LoopbackNetworkInterface.serverLoopbackSocketFactoryRMI
-        ) as org.jetbrains.kotlin.daemon.common.CompileService
+        ) as CompileService
         registry.rebind(org.jetbrains.kotlin.daemon.common.COMPILER_SERVICE_RMI_NAME, stub)
     }
 
