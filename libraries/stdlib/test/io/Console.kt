@@ -21,42 +21,47 @@ import java.nio.charset.Charset
 import kotlin.test.*
 
 class ConsoleTest {
-    private val defaultLineSeparator: String = "\n"
+    private val linuxLineSeparator: String = "\n"
+    private val windowsLineSeparator: String = "\r\n"
 
     @Test
     fun shouldReadEmptyLine() {
-        testReadLine("")
+        testReadLine("", emptyList())
     }
 
     @Test
     fun shouldReadOneLetter() {
-        testReadLine("a", "a")
+        testReadLine("a", listOf("a"))
     }
 
     @Test
     fun shouldReadOneLine() {
-        testReadLine("first", "first")
+        testReadLine("first", listOf("first"))
     }
 
     @Test
     fun shouldReadTwoLines() {
-        testReadLine("first${defaultLineSeparator}second", "first", "second")
+        testReadLine("first${linuxLineSeparator}second", listOf("first", "second"))
+    }
+
+    @Test
+    fun shouldReadConsecutiveEmptyLines() {
+        testReadLine("$linuxLineSeparator$linuxLineSeparator", listOf("", ""))
     }
 
     @Test
     fun shouldReadWindowsLineSeparator() {
-        val lineSeparator = "\r\n"
-        testReadLine("first${lineSeparator}second", "first", "second")
+        testReadLine("first${windowsLineSeparator}second", listOf("first", "second"))
     }
 
     @Test
     fun shouldReadMultibyteEncodings() {
-        testReadLine("first${defaultLineSeparator}second", "first", "second", charset = Charsets.UTF_32)
+        testReadLine("first${linuxLineSeparator}second", listOf("first", "second"), charset = Charsets.UTF_32)
     }
 
-    private fun testReadLine(text: String, vararg expected: String, charset: Charset = Charsets.UTF_8) {
+    private fun testReadLine(text: String, expected: List<String>, charset: Charset = Charsets.UTF_8) {
         val actual = readLines(text, charset)
-        assertEquals(expected.asList(), actual)
+        assertEquals(expected, actual)
     }
 
     private fun readLines(text: String, charset: Charset): List<String> {
