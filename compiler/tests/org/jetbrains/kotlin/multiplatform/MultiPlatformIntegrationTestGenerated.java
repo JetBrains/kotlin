@@ -153,6 +153,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
             doTest(fileName);
         }
 
+        @TestMetadata("functionAndPropertyWithSameName")
+        public void testFunctionAndPropertyWithSameName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName/");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionIncorrectSignature")
         public void testFunctionIncorrectSignature() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/classScopes/functionIncorrectSignature/");

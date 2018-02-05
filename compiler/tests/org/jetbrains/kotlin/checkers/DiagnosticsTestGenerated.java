@@ -14470,6 +14470,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("functionAndPropertyWithSameName.kt")
+                public void testFunctionAndPropertyWithSameName() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/functionAndPropertyWithSameName.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("genericClassImplTypeAlias.kt")
                 public void testGenericClassImplTypeAlias() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/genericClassImplTypeAlias.kt");
