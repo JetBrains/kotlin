@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap.PlatformMutabilityMapping;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DelegationResolver;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -249,6 +246,35 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ClassContext erasedInlineClassContext = parentContext.intoWrapperForErasedInlineClass(descriptor, state);
         new ErasedInlineClassBodyCodegen((KtClass) myClass, erasedInlineClassContext, builder, state, this).generate();
+    }
+
+    @Override
+    protected void generateUnboxMethodForInlineClass() {
+        if (!(myClass instanceof KtClass)) return;
+        if (!descriptor.isInline()) return;
+
+        Type ownerType = typeMapper.mapClass(descriptor);
+        ValueParameterDescriptor inlinedValue = InlineClassesUtilsKt.underlyingRepresentation(this.descriptor);
+        if (inlinedValue == null) return;
+
+        Type valueType = typeMapper.mapType(inlinedValue.getType());
+        SimpleFunctionDescriptor functionDescriptor = InlineClassDescriptorResolver.INSTANCE.createUnboxFunctionDescriptor(this.descriptor);
+        assert functionDescriptor != null : "FunctionDescriptor for unbox method should be not null during codegen";
+
+        functionCodegen.generateMethod(
+                JvmDeclarationOriginKt.UnboxMethodOfInlineClass(functionDescriptor), functionDescriptor,
+                new FunctionGenerationStrategy.CodegenBased(state) {
+                    @Override
+                    public void doGenerateBody(
+                            @NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature
+                    ) {
+                        InstructionAdapter iv = codegen.v;
+                        iv.load(0, OBJECT_TYPE);
+                        iv.getfield(ownerType.getInternalName(), inlinedValue.getName().asString(), valueType.getDescriptor());
+                        iv.areturn(valueType);
+                    }
+                }
+        );
     }
 
     @Override

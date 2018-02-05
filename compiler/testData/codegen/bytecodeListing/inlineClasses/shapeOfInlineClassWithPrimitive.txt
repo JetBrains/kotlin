@@ -14,4 +14,5 @@ public final class Foo {
     public final method extension(@org.jetbrains.annotations.NotNull p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public final method getL(): long
     public final method param(p0: double): void
+    public final method unbox(): long
 }

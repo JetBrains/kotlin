@@ -241,7 +241,8 @@ public class FunctionCodegen {
                 isClass(containingDeclaration) &&
                 ((ClassDescriptor) containingDeclaration).isInline() &&
                 contextKind != OwnerKind.ERASED_INLINE_CLASS &&
-                functionDescriptor instanceof SimpleFunctionDescriptor;
+                functionDescriptor instanceof SimpleFunctionDescriptor &&
+                origin.getOriginKind() != JvmDeclarationOriginKind.UNBOX_METHOD_OF_INLINE_CLASS;
 
         if (isOpenSuspendInClass) {
             generateOpenMethodInSuspendClass(

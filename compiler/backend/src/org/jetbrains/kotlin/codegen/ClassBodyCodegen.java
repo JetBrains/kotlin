@@ -83,6 +83,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
             generateConstructors();
             generateDefaultImplsIfNeeded();
             generateErasedInlineClassIfNeeded();
+            generateUnboxMethodForInlineClass();
         }
 
         // Generate _declared_ companions
@@ -147,6 +148,8 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     protected void generateDefaultImplsIfNeeded() {}
 
     protected void generateErasedInlineClassIfNeeded() {}
+
+    protected void generateUnboxMethodForInlineClass() {}
 
     private static boolean shouldProcessFirst(KtDeclaration declaration) {
         return !(declaration instanceof KtProperty || declaration instanceof KtNamedFunction);
