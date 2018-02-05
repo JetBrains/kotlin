@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompileService
 import org.jetbrains.kotlin.daemon.common.experimental.RemoteOperationsTracer
-import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacade
+import org.jetbrains.kotlin.daemon.getValidId
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil
@@ -29,27 +29,31 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-// TODO
+interface KotlinJvmReplService : ReplCompileAction, ReplCheckAction, CreateReplStageStateAction {
 
-// TODO
+    fun createRemoteState(port: Int = portForServers): RemoteReplStateFacadeImpl
 
-// TODO
+    val portForServers: Int
 
-// TODO
+    fun check(codeLine: ReplCodeLine): ReplCheckResult
 
-// TODO
+    fun <R> withValidReplState(stateId: Int, body: (IReplStageState<*>) -> R): CompileService.CallResult<R>
 
-abstract class KotlinJvmReplService<RemoteReplStateFacadeImplType: ReplStateFacade>(
+    fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplCompileResult
+
+}
+
+abstract class AbstractKotlinJvmReplService<RemoteReplStateFacadeImplType : RemoteReplStateFacadeImpl>(
     disposable: Disposable,
-    val portForServers: Int,
+    override val portForServers: Int,
     templateClasspath: List<File>,
     templateClassName: String,
     protected val messageCollector: MessageCollector,
     @Deprecated("drop it")
     protected val operationsTracer: RemoteOperationsTracer?
-) : ReplCompileAction, ReplCheckAction, CreateReplStageStateAction {
-    // TODO
+) : KotlinJvmReplService {
 
+    // TODO
     protected val configuration = CompilerConfiguration().apply {
         addJvmClasspathRoots(PathUtil.kotlinPathsForCompiler.let { listOf(it.stdlibPath, it.reflectPath, it.scriptRuntimePath) })
         addJvmClasspathRoots(templateClasspath)
@@ -86,11 +90,9 @@ abstract class KotlinJvmReplService<RemoteReplStateFacadeImplType: ReplStateFaca
     }
 
     protected val statesLock = ReentrantReadWriteLock()
-    // TODO: consider using values here for session cleanup
-    protected val states = WeakHashMap<RemoteReplStateFacadeImplType, Boolean>() // used as (missing) WeakHashSet
+
     protected val stateIdCounter = AtomicInteger()
-    @Deprecated("remove after removal state-less check/compile/eval methods")
-    protected val defaultStateFacade: RemoteReplStateFacadeImplType by lazy { createRemoteState() }
+
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> =
         replCompiler?.createState(lock) ?: throw IllegalStateException("repl compiler is not initialized properly")
@@ -113,26 +115,28 @@ abstract class KotlinJvmReplService<RemoteReplStateFacadeImplType: ReplStateFaca
         }
     }
 
+    // TODO: consider using values here for session cleanup
+    protected val states = WeakHashMap<RemoteReplStateFacadeImplType, Boolean>() // used as (missing) WeakHashSet
+    @Deprecated("remove after removal state-less check/compile/eval methods")
+    protected val defaultStateFacade: RemoteReplStateFacadeImplType by lazy { createRemoteState() }
+
+    abstract override fun createRemoteState(port: Int): RemoteReplStateFacadeImplType
+
     @Deprecated("Use check(state, line) instead")
-    fun check(codeLine: ReplCodeLine): ReplCheckResult = check(defaultStateFacade.state, codeLine)
+    override fun check(codeLine: ReplCodeLine): ReplCheckResult = check(defaultStateFacade.state, codeLine)
 
     @Deprecated("Use compile(state, line) instead")
-    fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplCompileResult = compile(defaultStateFacade.state, codeLine)
+    override fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplCompileResult =
+        compile(defaultStateFacade.state, codeLine)
 
-    abstract fun createRemoteState(port: Int = portForServers): RemoteReplStateFacadeImplType
-//            = statesLock.write {
-//        val id = getValidId(stateIdCounter) { id -> states.none { it.key.getId() == id } }
-//        val stateFacade = RemoteReplStateFacadeImpl(id, createState().asState(GenericReplCompilerState::class.java), port)
-//        states.put(stateFacade, true)
-//        stateFacade
-//    }
-
-    fun <R> withValidReplState(stateId: Int, body: (IReplStageState<*>) -> R): CompileService.CallResult<R> = statesLock.read {
+    override fun <R> withValidReplState(stateId: Int, body: (IReplStageState<*>) -> R): CompileService.CallResult<R> = statesLock.read {
         states.keys.firstOrNull { it.getId() == stateId }?.let {
             CompileService.CallResult.Good(body(it.state))
         }
                 ?: CompileService.CallResult.Error("No REPL state with id $stateId found")
     }
+
+
 }
 
 internal class KeepFirstErrorMessageCollector(compilerMessagesStream: PrintStream) : MessageCollector {
@@ -158,7 +162,7 @@ internal class KeepFirstErrorMessageCollector(compilerMessagesStream: PrintStrea
 
 internal val internalRng = Random()
 
-inline internal fun getValidId(counter: AtomicInteger, check: (Int) -> Boolean): Int {
+internal inline fun getValidId(counter: AtomicInteger, check: (Int) -> Boolean): Int {
     // fighting hypothetical integer wrapping
     var newId = counter.incrementAndGet()
     var attemptsLeft = 100
@@ -170,4 +174,51 @@ inline internal fun getValidId(counter: AtomicInteger, check: (Int) -> Boolean):
         newId = counter.addAndGet(internalRng.nextInt())
     }
     return newId
+}
+
+
+class KotlinJvmReplServiceRMI(
+    disposable: Disposable,
+    portForServers: Int,
+    templateClasspath: List<File>,
+    templateClassName: String,
+    messageCollector: MessageCollector,
+    operationsTracer: RemoteOperationsTracer?
+) : AbstractKotlinJvmReplService<RemoteReplStateFacadeImpl>(
+    disposable,
+    portForServers,
+    templateClasspath,
+    templateClassName,
+    messageCollector,
+    operationsTracer
+) {
+    override fun createRemoteState(port: Int): RemoteReplStateFacadeImpl = statesLock.write {
+        val id = getValidId(stateIdCounter) { id -> states.none { it.key.getId() == id } }
+        val stateFacade = RemoteReplStateFacadeImpl(id, createState().asState(GenericReplCompilerState::class.java), port)
+        states.put(stateFacade, true)
+        stateFacade
+    }
+}
+
+class KotlinJvmReplServiceSockets(
+    disposable: Disposable,
+    portForServers: Int,
+    templateClasspath: List<File>,
+    templateClassName: String,
+    messageCollector: MessageCollector,
+    operationsTracer: RemoteOperationsTracer?
+) : AbstractKotlinJvmReplService<RemoteReplStateFacadeImpl>(
+    disposable,
+    portForServers,
+    templateClasspath,
+    templateClassName,
+    messageCollector,
+    operationsTracer
+) {
+    override fun createRemoteState(port: Int): RemoteReplStateFacadeImpl = statesLock.write {
+        val id = getValidId(stateIdCounter) { id -> states.none { it.key.getId() == id } }
+        val stateFacade = RemoteReplStateFacadeImpl(id, createState().asState(GenericReplCompilerState::class.java), port)
+        states.put(stateFacade, true)
+        stateFacade
+    }
 }

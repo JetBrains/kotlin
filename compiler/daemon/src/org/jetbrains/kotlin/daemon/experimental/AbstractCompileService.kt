@@ -89,7 +89,15 @@ abstract class AbstractCompileService(
     val daemonJVMOptions: DaemonJVMOptions,
     val port: Int,
     val timer: Timer,
-    val onShutdown: () -> Unit
+    val onShutdown: () -> Unit,
+    val kotlinJvmReplServiceCreate: (
+        disposable: Disposable,
+        portForServers: Int,
+        templateClasspath: List<File>,
+        templateClassName: String,
+        messageCollector: MessageCollector,
+        operationsTracer: RemoteOperationsTracer?
+    ) -> KotlinJvmReplService
 ) : CompileService {
 
 
@@ -593,7 +601,7 @@ abstract class AbstractCompileService(
                 )
             )
             val messageCollector = KeepFirstErrorMessageCollector(compilerMessagesStream)
-            val repl = KotlinJvmReplService(
+            val repl = kotlinJvmReplServiceCreate(
                 disposable, port, templateClasspath, templateClassName,
                 messageCollector, operationsTracer
             )
@@ -651,7 +659,7 @@ abstract class AbstractCompileService(
         else {
             val disposable = Disposer.newDisposable()
             val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
-            val repl = KotlinJvmReplService(
+            val repl = kotlinJvmReplServiceCreate(
                 disposable, port, templateClasspath, templateClassName,
                 messageCollector, null
             )
