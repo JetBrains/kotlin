@@ -655,15 +655,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
         }
 
-        val descriptor = declaration.descriptor
 
-        if (descriptor.usedAnnotation) {
-            context.llvm.usedFunctions += codegen.llvmFunction(descriptor)
+        if (declaration.descriptor.usedAnnotation) {
+            context.llvm.usedFunctions.add(codegen.llvmFunction(declaration.descriptor))
         }
 
         if (context.shouldVerifyBitCode())
             verifyModule(context.llvmModule!!,
-                "${descriptor.containingDeclaration}::${ir2string(declaration)}")
+                "${declaration.descriptor.containingDeclaration}::${ir2string(declaration)}")
     }
 
     private fun IrFunction.location(line: Int, column:Int) =
