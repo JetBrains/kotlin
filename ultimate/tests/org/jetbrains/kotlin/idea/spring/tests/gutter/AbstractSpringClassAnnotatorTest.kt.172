@@ -55,7 +55,7 @@ abstract class AbstractSpringClassAnnotatorTest : KotlinLightCodeInsightFixtureT
 
         val config = JsonParser().parse(FileUtil.loadFile(configFile, true)) as JsonObject
 
-        PluginTestCaseBase.addJdk(myFixture.projectDisposable, PluginTestCaseBase::mockJdk)
+        PluginTestCaseBase.addJdk(myFixture.project, PluginTestCaseBase::mockJdk)
 
         val withRuntime = config["withRuntime"]?.asBoolean ?: false
         if (withRuntime) {
