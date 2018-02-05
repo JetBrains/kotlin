@@ -38,7 +38,8 @@ class CompileServiceServerSideImpl(
     daemonJVMOptions,
     port,
     timer,
-    onShutdown
+    onShutdown,
+    ::KotlinJvmReplServiceSockets
 ) {
 
     override fun unexportSelf(force: Boolean): Boolean {

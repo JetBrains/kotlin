@@ -30,7 +30,8 @@ class CompileServiceImpl(
     daemonJVMOptions,
     port,
     timer,
-    onShutdown
+    onShutdown,
+    ::KotlinJvmReplServiceRMI
 ) {
 
     override fun unexportSelf(force: Boolean) = UnicastRemoteObject.unexportObject(this, force)
