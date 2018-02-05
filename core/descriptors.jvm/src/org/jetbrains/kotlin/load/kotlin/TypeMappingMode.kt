@@ -28,6 +28,13 @@ class TypeMappingMode private constructor(
         val GENERIC_ARGUMENT = TypeMappingMode()
 
         /**
+         * see KotlinTypeMapper.forceBoxedReturnType()
+         * This configuration should be called only for method return type
+         */
+        @JvmField
+        val RETURN_TYPE_BOXED = TypeMappingMode(needInlineClassWrapping = true)
+
+        /**
          * kotlin.Int is mapped to I
          */
         @JvmField

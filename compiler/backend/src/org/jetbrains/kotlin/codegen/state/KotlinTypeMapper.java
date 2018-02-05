@@ -373,9 +373,8 @@ public class KotlinTypeMapper {
             return Type.VOID_TYPE;
         }
         else if (descriptor instanceof FunctionDescriptor && forceBoxedReturnType((FunctionDescriptor) descriptor)) {
-            // GENERIC_TYPE is a hack to automatically box the return type
             //noinspection ConstantConditions
-            return mapType(descriptor.getReturnType(), sw, TypeMappingMode.GENERIC_ARGUMENT);
+            return mapType(descriptor.getReturnType(), sw, TypeMappingMode.RETURN_TYPE_BOXED);
         }
 
         return mapReturnType(descriptor, sw, returnType);
@@ -1031,8 +1030,14 @@ public class KotlinTypeMapper {
         return mapSignatureSkipGeneric(f, OwnerKind.IMPLEMENTATION);
     }
 
+    @NotNull
     public JvmMethodSignature mapSignatureForInlineErasedClassSkipGeneric(@NotNull FunctionDescriptor f) {
         return mapSignatureSkipGeneric(f, OwnerKind.ERASED_INLINE_CLASS);
+    }
+
+    @NotNull
+    public JvmMethodGenericSignature mapSignatureForBoxMethodOfInlineClass(@NotNull FunctionDescriptor f) {
+        return mapSignature(f, OwnerKind.IMPLEMENTATION, true);
     }
 
     @NotNull
@@ -1231,11 +1236,15 @@ public class KotlinTypeMapper {
 
     /**
      * @return true iff a given function descriptor should be compiled to a method with boxed return type regardless of whether return type
-     * of that descriptor is nullable or not. This happens when a function returning a value of a primitive type overrides another function
-     * with a non-primitive return type. In that case the generated method's return type should be boxed: otherwise it's not possible to use
+     * of that descriptor is nullable or not. This happens in two cases:
+     * - when a target function is a synthetic box method of erased inline class;
+     * - when a function returning a value of a primitive type overrides another function with a non-primitive return type.
+     * In that case the generated method's return type should be boxed: otherwise it's not possible to use
      * this class from Java since javac issues errors when loading the class (incompatible return types)
      */
     private static boolean forceBoxedReturnType(@NotNull FunctionDescriptor descriptor) {
+        if (isBoxMethodForInlineClass(descriptor)) return true;
+
         //noinspection ConstantConditions
         if (!KotlinBuiltIns.isPrimitiveType(descriptor.getReturnType())) return false;
 
@@ -1245,6 +1254,14 @@ public class KotlinTypeMapper {
         }
 
         return false;
+    }
+
+    private static boolean isBoxMethodForInlineClass(@NotNull FunctionDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (!InlineClassesUtilsKt.isInlineClass(containingDeclaration)) return false;
+
+        return CallableMemberDescriptor.Kind.SYNTHESIZED == descriptor.getKind() &&
+               InlineClassDescriptorResolver.BOX_METHOD_NAME.equals(descriptor.getName());
     }
 
     private static void writeVoidReturn(@NotNull JvmSignatureWriter sw) {
