@@ -74,7 +74,7 @@ abstract class SafeCallFusedWithPrimitiveEqualityBase(
         v.iconst(0)
 
         v.mark(endLabel)
-        coerceTo(type, v)
+        coerceTo(type, kotlinType, v)
     }
 }
 

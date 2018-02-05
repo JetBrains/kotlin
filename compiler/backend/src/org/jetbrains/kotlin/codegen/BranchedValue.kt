@@ -31,7 +31,7 @@ open class BranchedValue(
         v.visitLabel(branchJumpLabel)
         v.iconst(0)
         v.visitLabel(endLabel)
-        coerceTo(type, v)
+        coerceTo(type, kotlinType, v)
     }
 
     open fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
@@ -67,7 +67,7 @@ open class BranchedValue(
 
             override fun putSelector(type: Type, kotlinType: KotlinType?, v: InstructionAdapter) {
                 v.iconst(1)
-                coerceTo(type, v)
+                coerceTo(type, kotlinType, v)
             }
         }
 
@@ -89,7 +89,7 @@ open class BranchedValue(
 
             override fun putSelector(type: Type, kotlinType: KotlinType?, v: InstructionAdapter) {
                 v.iconst(0)
-                coerceTo(type, v)
+                coerceTo(type, kotlinType, v)
             }
         }
 

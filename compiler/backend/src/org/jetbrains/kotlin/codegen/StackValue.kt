@@ -64,7 +64,7 @@ open class OperationStackValue(resultType: Type, val lambda: (v: InstructionAdap
 
     override fun putSelector(type: Type, kotlinType: KotlinType?, v: InstructionAdapter) {
         lambda(v)
-        coerceTo(type, v)
+        coerceTo(type, kotlinType, v)
     }
 }
 
