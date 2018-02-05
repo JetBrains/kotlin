@@ -21,10 +21,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.parents
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.kotlin.unwrapFakeFileForLightClass
@@ -43,19 +42,32 @@ class KotlinUIdentifier private constructor(
 ) : UIdentifier(psi, givenParent) {
 
     init {
-        if (ApplicationManager.getApplication().isUnitTestMode)
-            assert(sourcePsi == null || sourcePsi is LeafPsiElement || (sourcePsi is KtElement && sourcePsi.firstChild == null),
-                   { "sourcePsi should be physical leaf element but got $sourcePsi of (${sourcePsi?.javaClass})" })
+        if (ApplicationManager.getApplication().isUnitTestMode && !acceptableSourcePsi(sourcePsi))
+            throw AssertionError("sourcePsi should be physical leaf element but got $sourcePsi of (${sourcePsi?.javaClass})")
+    }
+
+    private fun acceptableSourcePsi(sourcePsi: PsiElement?): Boolean {
+        if (sourcePsi == null) return true
+        if (sourcePsi is LeafPsiElement) return true
+        if (sourcePsi is KtElement && sourcePsi.firstChild == null) return true
+        return false
     }
 
     override val uastParent: UElement? by lazy {
         if (givenParent != null) return@lazy givenParent
         val parent = sourcePsi?.parent ?: return@lazy null
+        getIdentifierParentForCall(parent) ?: parent.toUElement()
+    }
+
+    private fun getIdentifierParentForCall(parent: PsiElement): UElement? {
         val parentParent = parent.parent
         if (parentParent is KtCallElement && parentParent.calleeExpression == parent) { // method identifiers in calls
-            return@lazy parentParent.toUElement()
+            return parentParent.toUElement()
         }
-        return@lazy parent.toUElement()
+        (parent.parents().take(3).find { it is KtTypeReference && it.parent is KtConstructorCalleeExpression })?.let {
+            return it.parent.parent.toUElement()
+        }
+        return null
     }
 
     constructor(javaPsi: PsiElement?, sourcePsi: PsiElement?, uastParent: UElement?) : this(javaPsi, sourcePsi, javaPsi, uastParent)
