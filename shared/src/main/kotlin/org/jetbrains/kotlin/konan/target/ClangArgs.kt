@@ -76,7 +76,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                             "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x/aarch64-linux-android")
 
                 KonanTarget.WASM32 ->
-                    listOf("-target", targetArg!!, "-O1", "-fno-rtti", "-fno-exceptions",
+                    listOf("-target", targetArg!!, "-fno-rtti", "-fno-exceptions",
                             "-D_LIBCPP_ABI_VERSION=2", "-D_LIBCPP_NO_EXCEPTIONS=1",
                             "-nostdinc", "-Xclang", "-nobuiltininc", "-Xclang", "-nostdsysteminc",
                             "-Xclang", "-isystem$absoluteTargetSysRoot/include/libcxx", "-Xclang", "-isystem$absoluteTargetSysRoot/lib/libcxxabi/include",
