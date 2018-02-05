@@ -17,6 +17,8 @@
 #ifndef RUNTIME_RUNTIME_H
 #define RUNTIME_RUNTIME_H
 
+#include "Porting.h"
+
 struct RuntimeState;
 struct InitNode;
 
@@ -24,8 +26,8 @@ struct InitNode;
 extern "C" {
 #endif
 
-void Kotlin_initRuntimeIfNeeded();
-void Kotlin_deinitRuntimeIfNeeded();
+void RUNTIME_USED Kotlin_initRuntimeIfNeeded();
+void RUNTIME_USED Kotlin_deinitRuntimeIfNeeded();
 
 // Appends given node to an initializer list.
 void AppendToInitializersTail(struct InitNode*);
