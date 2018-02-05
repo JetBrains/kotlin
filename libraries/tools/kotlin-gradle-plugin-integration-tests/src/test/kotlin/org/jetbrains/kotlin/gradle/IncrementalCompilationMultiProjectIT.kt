@@ -198,19 +198,12 @@ open class A {
 class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = null) {
     @Test
     override fun testModifySignatureTrackedJavaInLib() {
-        doTest(trackedJavaClass, changeSignature,
-               expectedAffectedSources = listOf(
-                       "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
-                       "useTrackedJavaClassSameModule.kt"))
+        doTest(trackedJavaClass, changeSignature, expectedAffectedSources = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt"))
     }
 
     @Test
     override fun testModifyBodyTrackedJavaInLib() {
-        doTest(trackedJavaClass, changeBody,
-               expectedAffectedSources = listOf(
-                       "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
-                       "useTrackedJavaClassSameModule.kt"
-               ))
+        doTest(trackedJavaClass, changeBody, expectedAffectedSources = listOf())
     }
 }
 
@@ -223,6 +216,30 @@ class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(use
     @Test
     override fun testModifyBodyTrackedJavaInLib() {
         doTest(trackedJavaClass, changeBody, expectedAffectedSources = listOf())
+    }
+}
+
+class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = false) {
+    @Test
+    override fun testModifySignatureTrackedJavaInLib() {
+        doTest(
+            trackedJavaClass, changeSignature,
+            expectedAffectedSources = listOf(
+                "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
+                "useTrackedJavaClassSameModule.kt"
+            )
+        )
+    }
+
+    @Test
+    override fun testModifyBodyTrackedJavaInLib() {
+        doTest(
+            trackedJavaClass, changeBody,
+            expectedAffectedSources = listOf(
+                "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
+                "useTrackedJavaClassSameModule.kt"
+            )
+        )
     }
 }
 
