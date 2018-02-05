@@ -283,7 +283,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     internal var artifactFile: File? = null
 
     @get:Input
-    var usePreciseJavaTracking: Boolean = false
+    var usePreciseJavaTracking: Boolean = true
         set(value) {
             field = value
             logger.kotlinDebug { "Set $this.usePreciseJavaTracking=$value" }
