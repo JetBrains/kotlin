@@ -1,7 +1,7 @@
 SimpleAnnotated -> UClass (name = SimpleAnnotated)
 Suppress -> USimpleNameReferenceExpression (identifier = Suppress)
 method -> UAnnotationMethod (name = method)
-    println -> USimpleNameReferenceExpression (identifier = println)
+    println -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
 kotlin -> USimpleNameReferenceExpression (identifier = kotlin)
 SinceKotlin -> USimpleNameReferenceExpression (identifier = SinceKotlin)
 property -> UField (name = property)
