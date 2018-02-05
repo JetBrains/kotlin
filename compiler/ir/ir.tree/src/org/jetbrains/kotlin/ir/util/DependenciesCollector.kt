@@ -63,7 +63,7 @@ class DependenciesCollector {
         return when (containingDeclaration) {
             is PackageFragmentDescriptor -> descriptor
             is ClassDescriptor -> getTopLevelDeclaration(containingDeclaration)
-            else -> throw AssertionError("Package or class expected: $containingDeclaration")
+            else -> throw AssertionError("Package or class expected: $containingDeclaration; for $descriptor")
         }
     }
 
