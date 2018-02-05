@@ -78,22 +78,35 @@ internal class LinkStage(val context: Context) {
         runTool(absoluteToolName, *arg)
     }
 
-    private fun hostLlvmTool(tool: String, args: List<String>) {
+    private fun hostLlvmTool(tool: String, vararg arg: String) {
         val absoluteToolName = "${platform.absoluteLlvmHome}/bin/$tool"
-        val command = listOf(absoluteToolName) + args
-        runTool(command)
+        runTool(absoluteToolName, *arg)
     }
 
     // TODO: pass different options llvm toolchain
     private fun bitcodeToWasm(bitcodeFiles: List<BitcodeFile>): String {
-        val combinedBc = temporary("combined", ".bc")
-        hostLlvmTool("llvm-link", bitcodeFiles + listOf("-o", combinedBc))
-        val internalizedBc = temporary("internalized", ".bc")
-        hostLlvmTool("opt", listOf(combinedBc, "-o", internalizedBc, "-internalize", "-O2"))
-        val combinedS = temporary("combined", ".s")
-        targetTool("llc", internalizedBc, "-o", combinedS)
+        val configurables = platform.configurables as WasmConfigurables
 
-        val s2wasmFlags = (platform.configurables as WasmConfigurables).s2wasmFlags.toTypedArray()
+        val combinedBc = temporary("combined", ".bc")
+        hostLlvmTool("llvm-link", *bitcodeFiles.toTypedArray(), "-o", combinedBc)
+
+        val optFlags = (configurables.optFlags + when {
+            optimize    -> configurables.optOptFlags
+            debug       -> configurables.optDebugFlags
+            else        -> configurables.optNooptFlags
+        }).toTypedArray()
+        val optimizedBc = temporary("optimized", ".bc")
+        hostLlvmTool("opt", combinedBc, "-o", optimizedBc, *optFlags)
+
+        val llcFlags = (configurables.llcFlags + when {
+            optimize    -> configurables.llcOptFlags
+            debug       -> configurables.llcDebugFlags
+            else        -> configurables.llcNooptFlags
+        }).toTypedArray()
+        val combinedS = temporary("combined", ".s")
+        targetTool("llc", optimizedBc, "-o", combinedS, *llcFlags)
+
+        val s2wasmFlags = configurables.s2wasmFlags.toTypedArray()
         val combinedWast = temporary( "combined", ".wast")
         targetTool("s2wasm", combinedS, "-o", combinedWast, *s2wasmFlags)
 
