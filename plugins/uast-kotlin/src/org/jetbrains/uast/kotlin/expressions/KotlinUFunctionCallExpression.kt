@@ -77,7 +77,13 @@ class KotlinUFunctionCallExpression(
         when (calleeExpression) {
             null -> null
             is KtNameReferenceExpression ->
-                KotlinUIdentifier(calleeExpression.getReferencedNameElement(), this /* ReferenceExpression will be the parent */)
+                KotlinUIdentifier(calleeExpression.getReferencedNameElement(), this)
+            is KtConstructorDelegationReferenceExpression ->
+                KotlinUIdentifier(calleeExpression.firstChild ?: calleeExpression, this)
+            is KtConstructorCalleeExpression ->
+                KotlinUIdentifier(
+                    calleeExpression.constructorReferenceExpression?.getReferencedNameElement() ?: calleeExpression, this
+                )
             else -> KotlinUIdentifier(calleeExpression, this)
         }
     }
