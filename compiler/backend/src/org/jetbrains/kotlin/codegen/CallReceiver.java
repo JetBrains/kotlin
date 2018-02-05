@@ -110,7 +110,7 @@ public class CallReceiver extends StackValue {
                 return new AsmTypeAndKotlinType(typeMapper.mapType(classDescriptor), classDescriptor.getDefaultType());
             }
             //noinspection ConstantConditions
-            return new AsmTypeAndKotlinType(callableMethod.getDispatchReceiverType(), null);
+            return new AsmTypeAndKotlinType(callableMethod.getDispatchReceiverType(), callableMethod.getDispatchReceiverKotlinType());
         }
 
         // Extract the receiver from the resolved call, workarounding the fact that ResolvedCall#dispatchReceiver doesn't have
@@ -147,7 +147,7 @@ public class CallReceiver extends StackValue {
         }
 
         return callableMethod != null ?
-               new AsmTypeAndKotlinType(callableMethod.getExtensionReceiverType(), null) :
+               new AsmTypeAndKotlinType(callableMethod.getExtensionReceiverType(), callableMethod.getExtensionReceiverKotlinType()) :
                new AsmTypeAndKotlinType(typeMapper.mapType(extensionReceiver.getType()), extensionReceiver.getType());
     }
 

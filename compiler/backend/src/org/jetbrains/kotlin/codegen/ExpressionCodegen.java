@@ -3879,7 +3879,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     public StackValue generateConstructorCall(@NotNull ResolvedCall<?> resolvedCall, @NotNull Type objectType) {
-        return StackValue.functionCall(objectType, v -> {
+        return StackValue.functionCall(objectType, null, v -> {
             v.anew(objectType);
             v.dup();
 

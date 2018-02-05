@@ -60,7 +60,11 @@ class StackValueWithLeaveTask(
     }
 }
 
-open class OperationStackValue(resultType: Type, val lambda: (v: InstructionAdapter) -> Unit) : StackValue(resultType) {
+open class OperationStackValue(
+    resultType: Type,
+    resultKotlinType: KotlinType?,
+    val lambda: (v: InstructionAdapter) -> Unit
+) : StackValue(resultType, resultKotlinType) {
 
     override fun putSelector(type: Type, kotlinType: KotlinType?, v: InstructionAdapter) {
         lambda(v)
@@ -68,7 +72,11 @@ open class OperationStackValue(resultType: Type, val lambda: (v: InstructionAdap
     }
 }
 
-class FunctionCallStackValue(resultType: Type, lambda: (v: InstructionAdapter) -> Unit) : OperationStackValue(resultType, lambda)
+class FunctionCallStackValue(
+    resultType: Type,
+    resultKotlinType: KotlinType?,
+    lambda: (v: InstructionAdapter) -> Unit
+) : OperationStackValue(resultType, resultKotlinType, lambda)
 
 fun ValueParameterDescriptor.findJavaDefaultArgumentValue(targetType: Type, typeMapper: KotlinTypeMapper): StackValue {
     val descriptorWithDefaultValue = DFS.dfs(

@@ -745,10 +745,11 @@ public class KotlinTypeMapper {
         if (descriptor instanceof ConstructorDescriptor) {
             JvmMethodSignature method = mapSignatureSkipGeneric(descriptor.getOriginal());
             Type owner = mapOwner(descriptor);
-            String defaultImplDesc = mapDefaultMethod(descriptor.getOriginal(), OwnerKind.IMPLEMENTATION).getDescriptor();
+            FunctionDescriptor originalDescriptor = descriptor.getOriginal();
+            String defaultImplDesc = mapDefaultMethod(originalDescriptor, OwnerKind.IMPLEMENTATION).getDescriptor();
             return new CallableMethod(
                     owner, owner, defaultImplDesc, method, INVOKESPECIAL,
-                    null, null, null, false
+                    null, null, null, null, null, originalDescriptor.getReturnType(), false
             );
         }
 
@@ -764,11 +765,13 @@ public class KotlinTypeMapper {
         FunctionDescriptor functionDescriptor = findSuperDeclaration(descriptor.getOriginal(), superCall);
 
         JvmMethodSignature signature;
+        KotlinType returnKotlinType;
         Type owner;
         Type ownerForDefaultImpl;
         FunctionDescriptor baseMethodDescriptor;
         int invokeOpcode;
         Type thisClass;
+        KotlinType dispatchReceiverKotlinType;
         boolean isInterfaceMember = false;
 
         if (functionParent instanceof ClassDescriptor) {
@@ -790,15 +793,19 @@ public class KotlinTypeMapper {
 
             if (isInterface && (superCall || descriptor.getVisibility() == Visibilities.PRIVATE || isAccessor(descriptor))) {
                 thisClass = mapClass(currentOwner);
+                dispatchReceiverKotlinType = currentOwner.getDefaultType();
                 if (declarationOwner instanceof JavaClassDescriptor || isJvm8InterfaceWithDefaults(declarationOwner)) {
                     invokeOpcode = INVOKESPECIAL;
                     signature = mapSignatureSkipGeneric(functionDescriptor);
+                    returnKotlinType = functionDescriptor.getReturnType();
                     owner = thisClass;
                     isInterfaceMember = true;
                 }
                 else {
                     invokeOpcode = INVOKESTATIC;
-                    signature = mapSignatureSkipGeneric(descriptor.getOriginal(), OwnerKind.DEFAULT_IMPLS);
+                    FunctionDescriptor originalDescriptor = descriptor.getOriginal();
+                    signature = mapSignatureSkipGeneric(originalDescriptor, OwnerKind.DEFAULT_IMPLS);
+                    returnKotlinType = originalDescriptor.getReturnType();
                     owner = mapDefaultImpls(currentOwner);
                 }
             }
@@ -834,41 +841,53 @@ public class KotlinTypeMapper {
                 signature = isInsideInlineClass
                             ? mapSignatureForInlineErasedClassSkipGeneric(functionToCall)
                             : mapSignatureSkipGeneric(functionToCall);
+                returnKotlinType = functionToCall.getReturnType();
 
                 ClassDescriptor receiver = (currentIsInterface && !originalIsInterface) || currentOwner instanceof FunctionClassDescriptor
                                            ? declarationOwner
                                            : currentOwner;
                 owner = isInsideInlineClass ? mapErasedInlineClass(receiver) : mapClass(receiver);
                 thisClass = owner;
+                dispatchReceiverKotlinType = receiver.getDefaultType();
             }
         }
         else {
-            signature = mapSignatureSkipGeneric(functionDescriptor.getOriginal());
+            FunctionDescriptor originalDescriptor = functionDescriptor.getOriginal();
+            signature = mapSignatureSkipGeneric(originalDescriptor);
+            returnKotlinType = originalDescriptor.getReturnType();
             owner = mapOwner(functionDescriptor);
             ownerForDefaultImpl = owner;
             baseMethodDescriptor = functionDescriptor;
             if (functionParent instanceof PackageFragmentDescriptor) {
                 invokeOpcode = INVOKESTATIC;
                 thisClass = null;
+                dispatchReceiverKotlinType = null;
             }
             else if (functionDescriptor instanceof ConstructorDescriptor) {
                 invokeOpcode = INVOKESPECIAL;
                 thisClass = null;
+                dispatchReceiverKotlinType = null;
             }
             else {
                 invokeOpcode = INVOKEVIRTUAL;
                 thisClass = owner;
+                DeclarationDescriptor ownerDescriptor = functionDescriptor.getContainingDeclaration();
+                dispatchReceiverKotlinType = ownerDescriptor instanceof ClassDescriptor ?
+                                             ((ClassDescriptor) ownerDescriptor).getDefaultType() : null;
             }
         }
 
         Type calleeType = isLocalFunction(functionDescriptor) ? owner : null;
 
         Type receiverParameterType;
+        KotlinType extensionReceiverKotlinType;
         ReceiverParameterDescriptor receiverParameter = functionDescriptor.getOriginal().getExtensionReceiverParameter();
         if (receiverParameter != null) {
-            receiverParameterType = mapType(receiverParameter.getType());
+            extensionReceiverKotlinType = receiverParameter.getType();
+            receiverParameterType = mapType(extensionReceiverKotlinType);
         }
         else {
+            extensionReceiverKotlinType = null;
             receiverParameterType = null;
         }
 
@@ -876,8 +895,9 @@ public class KotlinTypeMapper {
 
         return new CallableMethod(
                 owner, ownerForDefaultImpl, defaultImplDesc, signature, invokeOpcode,
-                thisClass, receiverParameterType, calleeType,
-                isJvm8Target ? isInterfaceMember : invokeOpcode == INVOKEINTERFACE );
+                thisClass, dispatchReceiverKotlinType, receiverParameterType, extensionReceiverKotlinType, calleeType, returnKotlinType,
+                isJvm8Target ? isInterfaceMember : invokeOpcode == INVOKEINTERFACE
+        );
     }
 
     private boolean isJvm8InterfaceWithDefaults(@NotNull ClassDescriptor ownerForDefault) {

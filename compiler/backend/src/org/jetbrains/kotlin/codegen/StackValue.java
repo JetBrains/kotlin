@@ -717,11 +717,15 @@ public abstract class StackValue {
     }
 
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {
-        return new OperationStackValue(type, lambda);
+        return operation(type, null, lambda);
     }
 
-    public static StackValue functionCall(Type type, Function1<InstructionAdapter, Unit> lambda) {
-        return new FunctionCallStackValue(type, lambda);
+    public static StackValue operation(Type type, KotlinType kotlinType, Function1<InstructionAdapter, Unit> lambda) {
+        return new OperationStackValue(type, kotlinType, lambda);
+    }
+
+    public static StackValue functionCall(Type type, KotlinType kotlinType, Function1<InstructionAdapter, Unit> lambda) {
+        return new FunctionCallStackValue(type, kotlinType, lambda);
     }
 
     public static boolean couldSkipReceiverOnStaticCall(StackValue value) {
