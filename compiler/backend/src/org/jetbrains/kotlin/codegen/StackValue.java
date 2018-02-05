@@ -1925,8 +1925,8 @@ public abstract class StackValue {
         private final StackValue receiver;
         @Nullable private final Label ifNull;
 
-        public SafeCall(@NotNull Type type, @NotNull StackValue value, @Nullable Label ifNull) {
-            super(type);
+        public SafeCall(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull StackValue value, @Nullable Label ifNull) {
+            super(type, kotlinType);
             this.type = type;
             this.receiver = value;
             this.ifNull = ifNull;

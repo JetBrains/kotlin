@@ -423,6 +423,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return CodegenUtilKt.asmType(expression, typeMapper, bindingContext);
     }
 
+    @Nullable
+    public KotlinType kotlinType(@Nullable KtExpression expression) {
+        return CodegenUtilKt.kotlinType(expression, bindingContext);
+    }
+
     @Override
     public StackValue visitParenthesizedExpression(@NotNull KtParenthesizedExpression expression, StackValue receiver) {
         return genQualified(receiver, expression.getExpression());
@@ -2929,10 +2934,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         KtExpression selector = expression.getSelectorExpression();
 
         Type receiverType = expressionType(receiver);
+        KotlinType receiverKotlinType = kotlinType(receiver);
         StackValue receiverValue = generateExpressionWithNullFallback(receiver, ifNull);
 
         //Do not optimize for primitives cause in case of safe call extension receiver should be generated before dispatch one
-        StackValue newReceiver = new StackValue.SafeCall(receiverType, receiverValue, isPrimitive(receiverType) ? null : ifNull);
+        StackValue newReceiver = new StackValue.SafeCall(
+                receiverType, receiverKotlinType, receiverValue, isPrimitive(receiverType) ? null : ifNull
+        );
         return genQualified(newReceiver, selector);
     }
 
