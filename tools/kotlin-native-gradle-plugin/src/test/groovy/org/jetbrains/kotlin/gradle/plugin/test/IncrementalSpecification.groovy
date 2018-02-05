@@ -4,17 +4,21 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Unroll
 
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 class IncrementalSpecification extends BaseKonanSpecification {
 
-    Tuple buildTwice(KonanProject project, Closure change) {
-        def runner = project.createRunner().withArguments('build')
+    Tuple buildTwice(KonanProject project, String task = 'build', Closure change) {
+        def runner = project.createRunner().withArguments(task)
         def firstResult = runner.build()
         change(project)
         def secondResult = runner.build()
         return new Tuple(project, firstResult, secondResult)
     }
 
-    Tuple buildTwice(ArtifactType mainArtifactType = ArtifactType.LIBRARY, Closure change) {
+    Tuple buildTwice(ArtifactType mainArtifactType = ArtifactType.LIBRARY, String task = 'build', Closure change) {
         return buildTwice(KonanProject.createWithInterop(projectDirectory, mainArtifactType), change)
     }
 
@@ -266,6 +270,40 @@ class IncrementalSpecification extends BaseKonanSpecification {
 
         then:
         recompilationAndInteropProcessingHappened(*results)
+    }
+
+    def 'Common source change should cause recompilation'() {
+        when:
+        File commonSource
+        def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
+            def commonDirectory = MultiplatformSpecification.createCommonProject(it)
+            commonSource = MultiplatformSpecification.createCommonSource(commonDirectory,
+                    ["src", "main", "kotlin"],
+                    "common.kt",
+                    "expect fun foo(): Int")
+            println(it.settingsFile.text)
+
+            it.generateSrcFile("actual.kt", "actual fun foo() = 42")
+            it.buildFile.append("""
+                konanArtifacts {
+                    library('foo') {
+                        enableMultiplatform true
+                    }
+                }
+                
+                dependencies {
+                    expectedBy project(':common')
+                }
+                """.stripIndent())
+            it.buildingTasks.addAll([":compileKonanFoo", ":compileKonanFoo${KonanProject.HOST}}"])
+        }
+
+        def results = buildTwice(project, ':build') { KonanProject ->
+            commonSource.append("\nfun bar() = 43")
+        }
+
+        then:
+        onlyRecompilationHappened(*results)
     }
 
     // TODO: Add incremental tests for the 'libraries' block.

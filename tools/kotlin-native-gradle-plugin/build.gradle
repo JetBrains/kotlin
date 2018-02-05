@@ -95,6 +95,7 @@ shadowJar {
 }
 
 test {
+    systemProperty("kotlin.version", buildKotlinVersion)
     if (project.hasProperty("konan.home")) {
         systemProperty("konan.home", project.property("konan.home"))
     } else {
