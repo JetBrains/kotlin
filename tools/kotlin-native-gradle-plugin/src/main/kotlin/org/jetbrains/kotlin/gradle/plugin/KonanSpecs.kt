@@ -52,12 +52,9 @@ interface KonanCompileSpec: KonanBuildingSpec {
     fun nativeLibraries(vararg libs: Any)
     fun nativeLibraries(libs: FileCollection)
 
-    // DSL. Mutliplatform projects
-    fun expectedBy(parameters: Map<String, Any>)
-    fun expectedBy(commonProject: String, sourceSetName: String)
-    fun expectedBy(commonProject: String)
-    fun expectedBy(commonProject: Project)
-    fun expectedBy(commonProject: Project, sourceSetName: String)
+    // DSL. Multiplatform projects
+    fun enableMultiplatform(flag: Boolean)
+    fun commonSourceSet(sourceSetName: String)
 
     // DSL. Other parameters.
 

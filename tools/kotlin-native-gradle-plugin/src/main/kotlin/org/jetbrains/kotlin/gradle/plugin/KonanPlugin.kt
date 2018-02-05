@@ -309,5 +309,8 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                 }
             }
         }
+
+        // Enable multiplatform support
+        project.pluginManager.apply(KotlinNativePlatformPlugin::class.java)
     }
 }
