@@ -470,11 +470,33 @@ public class KotlinTypeMapper {
         );
     }
 
+    @NotNull
     public static Type mapInlineClassTypeAsDeclaration(@NotNull KotlinType kotlinType) {
         return mapInlineClassType(kotlinType, TypeMappingMode.CLASS_DECLARATION);
     }
 
-    public static Type mapInlineClassType(
+    @NotNull
+    public static Type mapUnderlyingTypeOfInlineClassType(@NotNull KotlinType kotlinType) {
+        KotlinType underlyingType = InlineClassesUtilsKt.underlyingTypeOfInlineClassType(kotlinType);
+        if (underlyingType == null) {
+            throw new IllegalStateException("There should be underlying type for inline class type: " + kotlinType);
+        }
+        return mapInlineClassType(underlyingType, TypeMappingMode.DEFAULT);
+    }
+
+    @NotNull
+    public static Type mapToErasedInlineClassType(@NotNull KotlinType kotlinType) {
+        return Type.getObjectType(
+                mapInlineClassTypeAsDeclaration(kotlinType).getInternalName() + JvmAbi.ERASED_INLINE_CLASS_SUFFIX
+        );
+    }
+
+    @NotNull
+    public static Type mapInlineClassType(@NotNull KotlinType kotlinType) {
+        return mapInlineClassType(kotlinType, TypeMappingMode.DEFAULT);
+    }
+
+    private static Type mapInlineClassType(
             @NotNull KotlinType kotlinType,
             @NotNull TypeMappingMode mode
     ) {

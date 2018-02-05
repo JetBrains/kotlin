@@ -23,9 +23,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
@@ -153,7 +151,7 @@ public abstract class StackValue {
 
     @NotNull
     public static Local local(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor) {
-        return new Local(index, type, descriptor.isLateInit(), descriptor.getName());
+        return new Local(index, type, descriptor.getType(), descriptor.isLateInit(), descriptor.getName());
     }
 
     @NotNull
@@ -174,7 +172,7 @@ public abstract class StackValue {
 
     @NotNull
     public static StackValue shared(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor) {
-        return new Shared(index, type, descriptor.isLateInit(), descriptor.getName());
+        return new Shared(index, type, descriptor.getType(), descriptor.isLateInit(), descriptor.getName());
     }
 
     @NotNull
@@ -363,12 +361,81 @@ public abstract class StackValue {
         v.invokevirtual(methodOwner.getInternalName(), type.getClassName() + "Value", "()" + type.getDescriptor(), false);
     }
 
+    private static void boxInlineClass(@NotNull KotlinType kotlinType, @NotNull InstructionAdapter v) {
+        Type boxedType = KotlinTypeMapper.mapInlineClassTypeAsDeclaration(kotlinType);
+        Type owner = KotlinTypeMapper.mapToErasedInlineClassType(kotlinType);
+        Type underlyingType = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType);
+        v.invokestatic(
+                owner.getInternalName(),
+                InlineClassDescriptorResolver.BOX_METHOD_NAME.asString(),
+                Type.getMethodDescriptor(boxedType, underlyingType),
+                false
+        );
+    }
+
+    private static void unboxInlineClass(@NotNull KotlinType kotlinType, @NotNull InstructionAdapter v) {
+        Type owner = KotlinTypeMapper.mapInlineClassTypeAsDeclaration(kotlinType);
+        Type resultType = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType);
+        v.invokevirtual(
+                owner.getInternalName(),
+                InlineClassDescriptorResolver.UNBOX_METHOD_NAME.asString(),
+                "()" + resultType.getDescriptor(),
+                false
+        );
+    }
+
     protected void coerceTo(@NotNull Type toType, @Nullable KotlinType toKotlinType, @NotNull InstructionAdapter v) {
-        coerce(this.type, toType, v);
+        coerce(this.type, this.kotlinType, toType, toKotlinType, v);
     }
 
     protected void coerceFrom(@NotNull Type topOfStackType, @Nullable KotlinType topOfStackKotlinType, @NotNull InstructionAdapter v) {
-        coerce(topOfStackType, this.type, v);
+        coerce(topOfStackType, topOfStackKotlinType, this.type, this.kotlinType, v);
+    }
+
+    public static void coerce(
+            @NotNull Type fromType,
+            @Nullable KotlinType fromKotlinType,
+            @NotNull Type toType,
+            @Nullable KotlinType toKotlinType,
+            @NotNull InstructionAdapter v
+    ) {
+        if (coerceInlineClasses(fromType, fromKotlinType, toType, toKotlinType, v)) return;
+        coerce(fromType, toType, v);
+    }
+
+    private static boolean coerceInlineClasses(
+            @NotNull Type fromType,
+            @Nullable KotlinType fromKotlinType,
+            @NotNull Type toType,
+            @Nullable KotlinType toKotlinType,
+            @NotNull InstructionAdapter v
+    ) {
+        if (fromKotlinType == null || toKotlinType == null) return false;
+        if (!InlineClassesUtilsKt.isInlineClassType(fromKotlinType)) return false;
+
+        if (fromKotlinType.equals(toKotlinType) && fromType.equals(toType)) return true;
+
+        boolean isFromTypeUnboxed = isUnboxedInlineClass(fromKotlinType, fromType);
+        if (InlineClassesUtilsKt.isInlineClassType(toKotlinType)) {
+            boolean isToTypeUnboxed = isUnboxedInlineClass(toKotlinType, toType);
+            if (isFromTypeUnboxed && !isToTypeUnboxed) {
+                boxInlineClass(fromKotlinType, v);
+            }
+            else if (!isFromTypeUnboxed) {
+                unboxInlineClass(fromKotlinType, v);
+            }
+        }
+        else {
+            if (isFromTypeUnboxed) {
+                boxInlineClass(fromKotlinType, v);
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean isUnboxedInlineClass(@NotNull KotlinType kotlinType, @NotNull Type actualType) {
+        return KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType).equals(actualType);
     }
 
     public static void coerce(@NotNull Type fromType, @NotNull Type toType, @NotNull InstructionAdapter v) {
@@ -674,8 +741,8 @@ public abstract class StackValue {
         private final boolean isLateinit;
         private final Name name;
 
-        private Local(int index, Type type, boolean isLateinit, Name name) {
-            super(type, false);
+        private Local(int index, Type type, KotlinType kotlinType, boolean isLateinit, Name name) {
+            super(type, kotlinType, false);
 
             if (index < 0) {
                 throw new IllegalStateException("local variable index must be non-negative");
@@ -691,7 +758,7 @@ public abstract class StackValue {
         }
 
         private Local(int index, Type type) {
-            this(index, type, false, null);
+            this(index, type, null, false, null);
         }
 
         @Override
@@ -876,7 +943,7 @@ public abstract class StackValue {
         private final Type type;
 
         public ArrayElement(Type type, StackValue array, StackValue index) {
-            super(type, false, false, new Receiver(Type.LONG_TYPE, array, index), true);
+            super(type, null, false, false, new Receiver(Type.LONG_TYPE, array, index), true);
             this.type = type;
         }
 
@@ -1069,7 +1136,7 @@ public abstract class StackValue {
                 @Nullable ResolvedCall<FunctionDescriptor> resolvedSetCall,
                 @NotNull ExpressionCodegen codegen
         ) {
-            super(type, false, false, collectionElementReceiver, true);
+            super(type, null, false, false, collectionElementReceiver, true);
             this.resolvedGetCall = resolvedGetCall;
             this.resolvedSetCall = resolvedSetCall;
             this.setter = resolvedSetCall == null ? null :
@@ -1193,7 +1260,7 @@ public abstract class StackValue {
                 @NotNull StackValue receiver,
                 @Nullable DeclarationDescriptor descriptor
         ) {
-            super(type, isStatic, isStatic, receiver, receiver.canHaveSideEffects());
+            super(type, null, isStatic, isStatic, receiver, receiver.canHaveSideEffects());
             this.owner = owner;
             this.name = name;
             this.descriptor = descriptor;
@@ -1233,7 +1300,7 @@ public abstract class StackValue {
                 @NotNull StackValue receiver, @NotNull ExpressionCodegen codegen, @Nullable ResolvedCall resolvedCall,
                 boolean skipLateinitAssertion
         ) {
-            super(type, isStatic(isStaticBackingField, getter), isStatic(isStaticBackingField, setter), receiver, true);
+            super(type, descriptor.getType(), isStatic(isStaticBackingField, getter), isStatic(isStaticBackingField, setter), receiver, true);
             this.backingFieldOwner = backingFieldOwner;
             this.getter = getter;
             this.setter = setter;
@@ -1419,8 +1486,8 @@ public abstract class StackValue {
         private final boolean isLateinit;
         private final Name name;
 
-        public Shared(int index, Type type, boolean isLateinit, Name name) {
-            super(type, false, false, local(index, OBJECT_TYPE), false);
+        public Shared(int index, Type type, KotlinType kotlinType, boolean isLateinit, Name name) {
+            super(type, kotlinType, false, false, local(index, OBJECT_TYPE), false);
             this.index = index;
 
             if (isLateinit && name == null) {
@@ -1432,7 +1499,7 @@ public abstract class StackValue {
         }
 
         public Shared(int index, Type type) {
-            this(index, type, false, null);
+            this(index, type, null, false, null);
         }
 
         public int getIndex() {
@@ -1491,7 +1558,7 @@ public abstract class StackValue {
                 Type type, Type owner, String name, StackValue.Field receiver,
                 boolean isLateinit, Name variableName
         ) {
-            super(type, false, false, receiver, receiver.canHaveSideEffects());
+            super(type, null, false, false, receiver, receiver.canHaveSideEffects());
 
             if (isLateinit && variableName == null) {
                 throw new IllegalArgumentException("variableName should be non-null for captured lateinit variable " + name);
@@ -1631,12 +1698,13 @@ public abstract class StackValue {
 
         public StackValueWithSimpleReceiver(
                 @NotNull Type type,
+                @Nullable KotlinType kotlinType,
                 boolean isStaticPut,
                 boolean isStaticStore,
                 @NotNull StackValue receiver,
                 boolean canHaveSideEffects
         ) {
-            super(type, canHaveSideEffects);
+            super(type, kotlinType, canHaveSideEffects);
             this.receiver = receiver;
             this.isStaticPut = isStaticPut;
             this.isStaticStore = isStaticStore;
@@ -1783,7 +1851,7 @@ public abstract class StackValue {
                 @NotNull StackValueWithSimpleReceiver originalValue,
                 @NotNull ComplexReceiver receiver
         ) {
-            super(type, bothReceiverStatic(originalValue), bothReceiverStatic(originalValue), receiver, originalValue.canHaveSideEffects());
+            super(type, null, bothReceiverStatic(originalValue), bothReceiverStatic(originalValue), receiver, originalValue.canHaveSideEffects());
             this.originalValue = originalValue;
         }
 
@@ -1868,7 +1936,7 @@ public abstract class StackValue {
         @Nullable private final Label ifNull;
 
         public SafeFallback(@NotNull Type type, @Nullable Label ifNull, StackValue receiver) {
-            super(type, false, false, receiver, true);
+            super(type, null, false, false, receiver, true);
             this.ifNull = ifNull;
         }
 
