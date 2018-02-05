@@ -96,7 +96,20 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractU
     override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
 
     override val uastAnchor: UIdentifier?
-        get() = KotlinUIdentifier(nameIdentifier, (sourcePsi as? KtNamedDeclaration)?.nameIdentifier ?: sourcePsi, this)
+        get() {
+            val sourcePsi = sourcePsi
+            val identifierSourcePsi = when (sourcePsi) {
+                is KtNamedDeclaration -> sourcePsi.nameIdentifier
+                is KtTypeReference -> sourcePsi.typeElement?.let {
+                    // receiver param in extension function
+                    (it as? KtUserType)?.referenceExpression?.getIdentifier() ?: it
+                } ?: sourcePsi
+                is KtBinaryExpression, is KtCallExpression -> null // e.g. `foo("Lorem ipsum") ?: foo("dolor sit amet")`
+                is KtDestructuringDeclaration -> sourcePsi.valOrVarKeyword
+                else -> sourcePsi
+            } ?: return null
+            return KotlinUIdentifier(nameIdentifier, identifierSourcePsi, this)
+        }
 
     override fun equals(other: Any?) = other is AbstractKotlinUVariable && psi == other.psi
 
