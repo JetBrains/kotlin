@@ -31,9 +31,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
-import org.jetbrains.kotlin.psi2ir.intermediate.CallReceiver
-import org.jetbrains.kotlin.psi2ir.intermediate.OnceExpressionValue
-import org.jetbrains.kotlin.psi2ir.intermediate.SimpleCallReceiver
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -257,32 +254,31 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 this
 
             else ->
-                SimpleCallReceiver(OnceExpressionValue(this), null)
-                    .invokeConversionFunction(
-                        startOffset, endOffset,
-                        conversionFunction ?: throw AssertionError("No conversion function for $type ~> $targetType")
-                    )
+                invokeConversionFunction(
+                    startOffset, endOffset,
+                    conversionFunction ?: throw AssertionError("No conversion function for $type ~> $targetType"),
+                    this
+                )
         }
     }
 
-    private fun CallReceiver.invokeConversionFunction(
+    private fun invokeConversionFunction(
         startOffset: Int,
         endOffset: Int,
-        functionDescriptor: FunctionDescriptor
+        functionDescriptor: FunctionDescriptor,
+        receiver: IrExpression
     ): IrExpression =
-        call { dispatchReceiverValue, _ ->
-            IrCallImpl(
-                startOffset,
-                endOffset,
-                functionDescriptor.returnType!!,
-                context.symbolTable.referenceFunction(functionDescriptor.original),
-                functionDescriptor,
-                typeArguments = null,
-                origin = null, // TODO origin for widening conversions?
-                superQualifierSymbol = null
-            ).apply {
-                dispatchReceiver = dispatchReceiverValue!!.load()
-            }
+        IrCallImpl(
+            startOffset,
+            endOffset,
+            functionDescriptor.returnType!!,
+            context.symbolTable.referenceFunction(functionDescriptor.original),
+            functionDescriptor,
+            typeArguments = null,
+            origin = null, // TODO origin for widening conversions?
+            superQualifierSymbol = null
+        ).apply {
+            dispatchReceiver = receiver
         }
 
     private fun KotlinType.findConversionFunctionTo(targetType: KotlinType): FunctionDescriptor? {
