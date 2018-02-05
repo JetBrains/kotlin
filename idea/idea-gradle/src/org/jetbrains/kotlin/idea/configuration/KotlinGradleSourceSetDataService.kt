@@ -222,7 +222,8 @@ fun configureFacetByGradleModule(
 
     with(kotlinFacet.configuration.settings) {
         implementedModuleName = getImplementedModuleName(moduleNode, sourceSetName, ideModule.project)
-        testOutputPath = getExplicitTestOutputPath(moduleNode, platformKind)
+        productionOutputPath = getExplicitOutputPath(moduleNode, platformKind, "main")
+        testOutputPath = getExplicitOutputPath(moduleNode, platformKind, "test")
     }
 
     kotlinFacet.noVersionAutoAdvance()
