@@ -121,7 +121,7 @@ processResources {
     from(file("$rootBuildDirectory/utilities/env_blacklist"))
 }
 
-// TODO: Get rid of manual pom generation
+// TODO: Get rid of manual pom generation.
 publishing {
     publications {
         gradlePlugin(MavenPublication) {
