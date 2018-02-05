@@ -1,7 +1,7 @@
 3 val <bold>x = 1</bold>
-3 	int x = TopLevelPropertyUsagesKt.<bold>getX</bold>();
 5 	val y = <bold>x</bold>
 5 		val <bold>y = x</bold>
+3 	int x = TopLevelPropertyUsagesKt.<bold>getX</bold>();
 8 	val y = <bold>x</bold>
 8 		val <bold>y = x</bold>
 13 	z = <bold>x</bold>

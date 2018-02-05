@@ -1,13 +1,13 @@
 4 @JvmOverloads constructor(n: Int, <bold>s: String = "???"</bold>)
+3 	super(n, <bold>s</bold>);
+2 		D(int n, String <bold>s</bold>) {
 4 	@JvmOverloads constructor(n: Int, s: String = <bold>"???"</bold>)
 8 	class B2: A(1, <bold>"2"</bold>)
 9 	class B3: A(1, s = <bold>"2"</bold>)
+12 	new A(1, <bold>"2"</bold>);
 10 	class B4: A(n = 1, s = <bold>"2"</bold>)
 11 	class B5: A(s = <bold>"2"</bold>, n = 1)
 15 	A(1, <bold>"2"</bold>)
 16 	A(1, s = <bold>"2"</bold>)
 17 	A(n = 1, s = <bold>"2"</bold>)
 18 	A(s = <bold>"2"</bold>, n = 1)
-3 	super(n, <bold>s</bold>);
-2 		D(int n, String <bold>s</bold>) {
-12 	new A(1, <bold>"2"</bold>);
