@@ -46,7 +46,11 @@ int snprintf(char* buffer, size_t size, const char* format, ...);
 size_t strnlen(const char* buffer, size_t maxSize);
 
 
-
+// These functions should be marked with RUNTIME_USED attribute for wasm target
+// because clang replaces these operations with intrinsics that will be
+// replaced back to library calls only on codegen step. And there is no stdlib
+// for wasm target for now :(
+// Otherwise `opt` will see no usages of these definitions and will remove them.
 extern "C" {
 #ifdef KONAN_WASM
 
@@ -64,9 +68,6 @@ int memcmp(const void *s1, const void *s2, size_t n);
 
 RUNTIME_USED
 void *memset(void *b, int c, size_t len);
-
-RUNTIME_USED
-size_t strlen(const char *s);
 
 #endif
 }
