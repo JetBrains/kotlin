@@ -177,7 +177,12 @@ public abstract class StackValue {
 
     @NotNull
     public static StackValue onStack(@NotNull Type type) {
-        return type == Type.VOID_TYPE ? none() : new OnStack(type);
+        return onStack(type, null);
+    }
+
+    @NotNull
+    public static StackValue onStack(@NotNull Type type, @Nullable KotlinType kotlinType) {
+        return type == Type.VOID_TYPE ? none() : new OnStack(type, kotlinType);
     }
 
     @NotNull
@@ -852,7 +857,11 @@ public abstract class StackValue {
 
     public static class OnStack extends StackValue {
         public OnStack(Type type) {
-            super(type);
+            this(type, null);
+        }
+
+        public OnStack(Type type, KotlinType kotlinType) {
+            super(type, kotlinType);
         }
 
         @Override
