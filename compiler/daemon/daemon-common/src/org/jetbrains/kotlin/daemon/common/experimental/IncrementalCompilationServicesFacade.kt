@@ -5,15 +5,10 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import io.ktor.network.sockets.Socket
-import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.Message
 
 interface IncrementalCompilationServicesFacade : Remote {
     @Throws(RemoteException::class)

@@ -11,14 +11,12 @@ import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
-import org.jetbrains.kotlin.daemon.KotlinCompileDaemon
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
-import java.net.Socket
 import java.net.URLClassLoader
 import java.rmi.registry.Registry
 import java.text.SimpleDateFormat
@@ -75,7 +73,7 @@ abstract class AbstractKotlinCompileDaemon<Connector> {
     val log by lazy { Logger.getLogger("daemon") }
 
     private fun loadVersionFromResource(): String? {
-        (KotlinCompileDaemon::class.java.classLoader as? URLClassLoader)
+        (AbstractKotlinCompileDaemon::class.java.classLoader as? URLClassLoader)
             ?.findResource("META-INF/MANIFEST.MF")
             ?.let {
                 try {

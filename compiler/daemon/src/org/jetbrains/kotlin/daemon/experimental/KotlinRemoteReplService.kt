@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompileService
 import org.jetbrains.kotlin.daemon.common.experimental.RemoteOperationsTracer
-import org.jetbrains.kotlin.daemon.getValidId
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil
