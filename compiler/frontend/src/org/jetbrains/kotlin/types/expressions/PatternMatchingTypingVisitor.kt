@@ -475,7 +475,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             possiblyBareTarget,
             subjectType,
             context.trace,
-            components.builtIns
+            components.builtIns,
+            checkArgumentsOnRHS
         )
 
         if (targetType.isDynamic()) {
