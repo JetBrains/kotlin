@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
+import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
+import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
+import java.io.File
 
-interface CompileServiceServerSide: CompileService, Server
+interface CompileServiceServerSide : CompileServiceAsync, Server

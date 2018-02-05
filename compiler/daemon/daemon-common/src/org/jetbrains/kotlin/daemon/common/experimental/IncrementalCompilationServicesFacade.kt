@@ -64,37 +64,37 @@ interface IncrementalCompilationServicesFacade : Remote {
     // Query messages:
 /*
     class AreFileChangesKnownMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.areFileChangesKnown())
     }
 
     class ModifiedFilesMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.modifiedFiles())
     }
 
     class DeletedFilesMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.deletedFiles())
     }
 
     class WorkingDirMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.workingDir())
     }
 
     class CustomCacheVersionFileNameMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.customCacheVersionFileName())
     }
 
     class CustomCacheVersionMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.customCacheVersion())
     }
 
     class ReportICMessage(val message: String): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             server.reportIC(message)
     }
 
@@ -102,27 +102,27 @@ interface IncrementalCompilationServicesFacade : Remote {
         val files: Iterable<File>,
         val exitCode: Int
     ): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.reportCompileIteration(files, exitCode))
     }
 
     class UpdateAnnotationsMessage(val outdatedClassesJvmNames: Iterable<String>): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             server.updateAnnotations(outdatedClassesJvmNames)
     }
 
     class RevertMessage: Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             server.revert()
     }
 
     class RegisterChangesMessage(val timestamp: Long, val dirtyData: SimpleDirtyData): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             server.registerChanges(timestamp, dirtyData)
     }
 
     class UnknownChangesMessage(val timestamp: Long): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             server.unknownChanges(timestamp)
     }
 
@@ -130,7 +130,7 @@ interface IncrementalCompilationServicesFacade : Remote {
         val artifact: File,
         val sinceTS: Long
     ): Message<IncrementalCompilationServicesFacade> {
-        suspend override fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
+        override suspend fun process(server: IncrementalCompilationServicesFacade, output: ByteWriteChannelWrapper) =
             output.writeObject(server.getChanges(artifact, sinceTS))
     }*/
 

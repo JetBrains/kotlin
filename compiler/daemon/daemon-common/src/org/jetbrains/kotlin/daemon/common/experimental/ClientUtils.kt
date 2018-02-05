@@ -6,9 +6,15 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 
-import kotlinx.coroutines.experimental.runBlocking
+import org.jetbrains.kotlin.daemon.common.CompileService
 import java.io.File
 import java.rmi.registry.LocateRegistry
+
+/*
+experimental stuff:
+
+
+*/
 
 internal val MAX_PORT_NUMBER = 0xffff
 
@@ -86,7 +92,7 @@ fun walkDaemons(
         }
 }
 
-private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileService? {
+private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceAsync? {
     try {
         val daemon = LocateRegistry.getRegistry(
             LoopbackNetworkInterface.loopbackInetAddressName,
@@ -104,20 +110,18 @@ private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCateg
     return null
 }
 
-private fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileService? =
-    runBlocking {
-        try {
-            return@runBlocking CompileServiceClientSideImpl(
-                LoopbackNetworkInterface.loopbackInetAddressName,
-                port,
-                LoopbackNetworkInterface.clientLoopbackSocketFactoryKtor
-            )
-        } catch (e: Throwable) {
-            report(DaemonReportCategory.INFO, "cannot find or connect to socket")
-        }
-        return@runBlocking null
+private suspend fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceAsync? {
+    try {
+        return CompileServiceClientSideImpl(
+            LoopbackNetworkInterface.loopbackInetAddressName,
+            port,
+            LoopbackNetworkInterface.clientLoopbackSocketFactoryKtor
+        )
+    } catch (e: Throwable) {
+        report(DaemonReportCategory.INFO, "cannot find or connect to socket")
     }
-
+    return null
+}
 
 private fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileService? =
     tryConnectToDaemonBySockets(port, report)

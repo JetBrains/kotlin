@@ -48,14 +48,14 @@ class RemoteReplStateFacadeServerSideImpl(
     state,
     port
 ) {
-    suspend override fun processMessage(msg: Server.AnyMessage, output: ByteWriteChannelWrapper) = when (msg) {
+    override suspend fun processMessage(msg: Server.AnyMessage, output: ByteWriteChannelWrapper) = when (msg) {
         is Server.EndConnectionMessage -> Server.State.CLOSED
         is Server.Message<*> -> Server.State.WORKING
             .also { (msg as Server.Message<ReplStateFacadeServerSide>).process(this, output) }
         else -> Server.State.ERROR
     }
 
-    suspend override fun attachClient(client: Socket) {
+    override suspend fun attachClient(client: Socket) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

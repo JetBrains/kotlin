@@ -17,6 +17,11 @@ import java.rmi.server.RMIClientSocketFactory
 import java.rmi.server.RMIServerSocketFactory
 import java.util.*
 
+// copyed from original(org.jetbrains.kotlin.daemon.common.NetworkUtils) TODO
+// unique part :
+// - ServerLoopbackSocketFactoryRMI / ServerLoopbackSocketFactoryKtor - Ktor-Sockets instead of java sockets
+// - findPortAndCreateSocket
+// TODO: get rid of copy-paste here
 
 const val SOCKET_ANY_FREE_PORT = 0
 const val JAVA_RMI_SERVER_HOSTNAME = "java.rmi.server.hostname"

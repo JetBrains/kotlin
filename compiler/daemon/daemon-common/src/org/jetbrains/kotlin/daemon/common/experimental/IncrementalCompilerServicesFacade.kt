@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
+import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.Message
 import java.io.File
 import java.rmi.RemoteException
 
 
-interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
+interface IncrementalCompilerServicesFacadeAsync : CompilerServicesFacadeBase {
     // AnnotationFileUpdater
     @Throws(RemoteException::class)
     fun hasAnnotationsFileUpdater(): Boolean
@@ -34,9 +36,9 @@ interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
 
 }
 
-interface IncrementalCompilerServicesFacadeClientSide: IncrementalCompilerServicesFacade, CompilerServicesFacadeBaseClientSide
+interface IncrementalCompilerServicesFacadeClientSide: IncrementalCompilerServicesFacadeAsync, CompilerServicesFacadeBaseAsyncClientSide
 
-interface IncrementalCompilerServicesFacadeServerSide : IncrementalCompilerServicesFacade, CompilerServicesFacadeBaseServerSide {
+interface IncrementalCompilerServicesFacadeServerSide : IncrementalCompilerServicesFacadeAsync, CompilerServicesFacadeBaseAsyncServerSide {
 
     // Query messages:
 

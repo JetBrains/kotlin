@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.io.ByteBuffer
 import kotlinx.coroutines.experimental.io.ByteReadChannel
 import kotlinx.coroutines.experimental.io.ByteWriteChannel
@@ -14,25 +13,25 @@ import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 
-class Null
-
 class ByteReadChannelWrapper(private val readChannel: ByteReadChannel) {
 
     private suspend fun readBytes(length: Int) =
-            readChannel.readPacket(length).readBytes()
+        readChannel.readPacket(length).readBytes()
 
     private suspend fun getObject(length: Int) =
-            if (length >= 0) {
-                ObjectInputStream(
-                        ByteArrayInputStream(readBytes(length))
-                ).use {
-                    it.readObject()
-                }
-            } else { // optimize for long strings!
-                String(ByteArrayInputStream(
-                        readBytes(-length)
-                ).readBytes())
+        if (length >= 0) {
+            ObjectInputStream(
+                ByteArrayInputStream(readBytes(length))
+            ).use {
+                it.readObject()
             }
+        } else { // optimize for long strings!
+            String(
+                ByteArrayInputStream(
+                    readBytes(-length)
+                ).readBytes()
+            )
+        }
 
     private suspend fun getLength(): Int {
         val packet = readBytes(4)
@@ -54,15 +53,15 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel) {
     }
 
     private suspend fun printObjectImpl(obj: Any?) =
-            ByteArrayOutputStream().use { bos ->
-                ObjectOutputStream(bos).use { objOut ->
-                    objOut.writeObject(obj)
-                    objOut.flush()
-                    val bytes = bos.toByteArray()
-                    printLength(bytes.size)
-                    printBytes(bytes)
-                }
+        ByteArrayOutputStream().use { bos ->
+            ObjectOutputStream(bos).use { objOut ->
+                objOut.writeObject(obj)
+                objOut.flush()
+                val bytes = bos.toByteArray()
+                printLength(bytes.size)
+                printBytes(bytes)
             }
+        }
 
     private suspend fun printString(s: String) {
         printLength(-s.length)
@@ -71,10 +70,10 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel) {
 
 
     private suspend fun printLength(length: Int) = printBytes(
-            ByteBuffer
-                    .allocate(4)
-                    .putInt(length)
-                    .array()
+        ByteBuffer
+            .allocate(4)
+            .putInt(length)
+            .array()
     )
 
     suspend fun writeObject(obj: Any?) {

@@ -43,7 +43,7 @@ class CompileServiceServerSideImpl(
 ) {
 
     override fun unexportSelf(force: Boolean): Boolean {
-        // TODO: мб и не надо
+        // TODO: it possibly has no sense
         return true
     }
 
@@ -61,7 +61,7 @@ class CompileServiceServerSideImpl(
     lateinit var serverSocket: ServerSocket
 
     // Server methods :
-    suspend override fun processMessage(msg: Server.AnyMessage, output: ByteWriteChannelWrapper) = when (msg) {
+    override suspend fun processMessage(msg: Server.AnyMessage, output: ByteWriteChannelWrapper) = when (msg) {
         is Server.EndConnectionMessage -> State.CLOSED
         is Message<*> -> State.WORKING
             .also { (msg as Message<CompileServiceServerSide>).process(this, output) }
