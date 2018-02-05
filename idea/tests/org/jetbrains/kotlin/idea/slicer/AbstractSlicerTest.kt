@@ -27,6 +27,7 @@ import com.intellij.slicer.SliceRootNode
 import com.intellij.usages.TextChunk
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.awt.Font
@@ -46,6 +47,9 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     companion object {
+        private val SliceNode.sortedChildren : List<SliceNode>
+            get() = children.sortedBy { it.value.element?.startOffset ?: -1 }
+
         @JvmStatic
         protected fun buildTreeRepresentation(rootNode: SliceNode): String {
             fun TextChunk.render(): String {
@@ -67,7 +71,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
                 return buildString {
                     when {
                         node is SliceRootNode && usage.element is KtFile -> {
-                            node.children.forEach { append(process(it, indent)) }
+                            node.sortedChildren.forEach { append(process(it, indent)) }
                             return@buildString
                         }
                         // SliceLeafValueClassNode is package-private
@@ -92,7 +96,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
                     }
 
                     if (!isDuplicated) {
-                        node.children.forEach { append(process(it, indent + 1)) }
+                        node.sortedChildren.forEach { append(process(it, indent + 1)) }
                     }
                 }.replace(Regex("</bold><bold>"), "")
             }
