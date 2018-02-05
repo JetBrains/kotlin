@@ -29,7 +29,6 @@ Welcome to [Kotlin](https://kotlinlang.org/)! Some handy links:
 
 In order to build Kotlin distribution you need to have:
 
-- Apache Ant 1.9.4 and higher
 - JDK 1.6, 1.7 and 1.8
 - Setup environment variables as following:
 
@@ -46,20 +45,25 @@ You also can use [Gradle properties](https://docs.gradle.org/current/userguide/b
 
 ## Building
 
+The project is built with Gradle. Run Gradle to build the project and to run the tests 
+using the following command on Unix/macOS:
+
+    ./gradlew <tasks-and-options>
+    
+or the following command on Windows:
+
+    gradlew <tasks-and-options>
+
 On the first project configuration gradle will download and setup the dependencies on
 
 * `intellij-core` is a part of command line compiler and contains only necessary APIs.
 * `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
 
-Then, you may run Gradle to build the project and run tests, using:
-
-    ./gradlew <tasks-and-options>
+These dependencies are quite large, so depending on the qualify of your internet connection 
+you might face timeouts getting them. In this case you can increase timeout by specifying the following 
+command line parameters on the first run: 
     
-command on Unix/macOS, or
-
-    gradlew <tasks-and-options>
-    
-on Windows.
+    ./gradlew -Dhttp.socketTimeout=60000 -Dhttp.connectionTimeout=60000
 
 ## Important gradle tasks
 
@@ -73,13 +77,10 @@ on Windows.
 - `compilerTest` - build and run all compiler tests
 - `ideaPluginTest` - build and run all IDEA plugin tests
 
-**OPTIONAL:** Some artifacts, mainly Maven plugin ones, are built separately by Maven: go into `libraries` directory after building the compiler and run:
-
-    mvn install
-
+**OPTIONAL:** Some artifacts, mainly Maven plugin ones, are built separately with Maven.
 Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
-## Working with the project in IntelliJ IDEA
+## <a name="working-in-idea"></a> Working with the project in IntelliJ IDEA
 
 Working with the Kotlin project requires IntelliJ IDEA 2017.3. You can download IntelliJ IDEA 2017.3 [here](https://www.jetbrains.com/idea/download).
 
@@ -90,7 +91,7 @@ In the import dialog, select `use default gradle wrapper`.
 
 To be able to run tests from IntelliJ easily, check `Delegate IDE build/run actions to Gradle` in the Gradle runner settings.
 
-At this time, you can use the latest released 1.1.x version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use Tools | Kotlin | Configure Kotlin Plugin Updates and press "Check for updates now".
+At this time, you can use the latest released 1.2.x version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use Tools | Kotlin | Configure Kotlin Plugin Updates and press "Check for updates now".
 
 ### Compiling and running
 
