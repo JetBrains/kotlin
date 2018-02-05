@@ -297,6 +297,8 @@ internal object KotlinConverter {
         else -> element
     }
 
+    private val identifiersTokens = setOf(KtTokens.IDENTIFIER, KtTokens.CONSTRUCTOR_KEYWORD, KtTokens.THIS_KEYWORD, KtTokens.SUPER_KEYWORD)
+
     internal fun convertPsiElement(element: PsiElement?,
                                    givenParent: UElement?,
                                    requiredType: Class<out UElement>?): UElement? {
@@ -354,7 +356,7 @@ internal object KotlinConverter {
             is KtImportDirective -> el<UImportStatement>(build(::KotlinUImportStatement))
             else -> {
                 if (element is LeafPsiElement) {
-                    if (element.elementType == KtTokens.IDENTIFIER || element.elementType == KtTokens.CONSTRUCTOR_KEYWORD)
+                    if (element.elementType in identifiersTokens)
                     el<UIdentifier>(build(::KotlinUIdentifier))
                     else if (element.elementType == KtTokens.LBRACKET && element.parent is KtCollectionLiteralExpression)
                         el<UIdentifier> {
