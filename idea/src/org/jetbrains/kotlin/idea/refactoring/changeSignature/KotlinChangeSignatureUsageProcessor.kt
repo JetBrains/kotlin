@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*
 import org.jetbrains.kotlin.idea.refactoring.rename.noReceivers
+import org.jetbrains.kotlin.idea.references.KtArrayAccessReference
+import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
@@ -227,24 +229,30 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val functionPsi = functionUsageInfo.element ?: return
 
         for (reference in findReferences(functionPsi)) {
-            val element = reference.element
+            val element = reference.element ?: continue
 
-            if (element is KtReferenceExpression) {
-                var parent = element.parent
+            when {
+                reference is KtInvokeFunctionReference || reference is KtArrayAccessReference -> {
+                    result.add(KotlinByConventionCallUsage(element as KtExpression, functionUsageInfo))
+                }
 
-                when {
-                    parent is KtCallExpression ->
-                        result.add(KotlinFunctionCallUsage(parent, functionUsageInfo))
+                element is KtReferenceExpression -> {
+                    var parent = element.parent
 
-                    parent is KtUserType && parent.parent is KtTypeReference -> {
-                        parent = parent.parent.parent
+                    when {
+                        parent is KtCallExpression ->
+                            result.add(KotlinFunctionCallUsage(parent, functionUsageInfo))
 
-                        if (parent is KtConstructorCalleeExpression && parent.parent is KtSuperTypeCallEntry)
-                            result.add(KotlinFunctionCallUsage(parent.parent as KtSuperTypeCallEntry, functionUsageInfo))
+                        parent is KtUserType && parent.parent is KtTypeReference -> {
+                            parent = parent.parent.parent
+
+                            if (parent is KtConstructorCalleeExpression && parent.parent is KtSuperTypeCallEntry)
+                                result.add(KotlinFunctionCallUsage(parent.parent as KtSuperTypeCallEntry, functionUsageInfo))
+                        }
+
+                        element is KtSimpleNameExpression && (functionPsi is KtProperty || functionPsi is KtParameter) ->
+                            result.add(KotlinPropertyCallUsage(element))
                     }
-
-                    element is KtSimpleNameExpression && (functionPsi is KtProperty || functionPsi is KtParameter) ->
-                        result.add(KotlinPropertyCallUsage(element))
                 }
             }
         }
@@ -660,16 +668,20 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     ) {
         if (originalReceiverInfo != null) return
 
-        for (usageInfo in usages) {
-            if (!(usageInfo is KotlinFunctionCallUsage || usageInfo is KotlinPropertyCallUsage)) continue
+        loop@ for (usageInfo in usages) {
+            if (!(usageInfo is KotlinFunctionCallUsage || usageInfo is KotlinPropertyCallUsage || usageInfo is KotlinByConventionCallUsage)) continue
 
             val callElement = usageInfo.element as? KtElement ?: continue
-
             val parent = callElement.parent
-            if (parent is KtQualifiedExpression && parent.selectorExpression === callElement) {
-                val message = "Explicit receiver is already present in call element: " + CommonRefactoringUtil.htmlEmphasize(parent.text)
-                result.putValue(callElement, message)
+
+            val elementToReport = when {
+                usageInfo is KotlinByConventionCallUsage -> callElement
+                parent is KtQualifiedExpression && parent.selectorExpression === callElement -> parent
+                else -> continue@loop
             }
+
+            val message = "Explicit receiver is already present in call element: " + CommonRefactoringUtil.htmlEmphasize(elementToReport.text)
+            result.putValue(callElement, message)
         }
     }
 
@@ -851,6 +863,10 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         }
 
         if (beforeMethodChange) {
+            if (usageInfo is KotlinUsageInfo<*>) {
+                usageInfo.preprocessUsage()
+            }
+
             if (method !is PsiMethod || initializedOriginalDescriptor) return false
 
             val descriptorWrapper = usages.firstIsInstanceOrNull<OriginalJavaMethodDescriptorWrapper>()
