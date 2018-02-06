@@ -1,4 +1,4 @@
-package kotlinx.testing.tests
+package kotlin.test.junit.tests
 
 import org.junit.*
 import java.util.concurrent.*
