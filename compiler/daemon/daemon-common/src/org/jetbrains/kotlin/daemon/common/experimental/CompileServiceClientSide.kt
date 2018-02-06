@@ -15,13 +15,35 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 import java.io.File
 
-interface CompileServiceClientSide : CompileServiceAsync, Client
 
-class CompileServiceClientSideImpl(
+class CompileServiceClientSide(
     host: String,
     port: Int,
     socketFactory: LoopbackNetworkInterface.ClientLoopbackSocketFactoryKtor
-) : CompileServiceClientSide {
+) : CompileServiceAsync, Client {
+
+    suspend override fun compile(
+        sessionId: Int,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBaseAsync,
+        compilationResults: CompilationResults?
+    ): CompileService.CallResult<Int> {
+        output.writeObject(CompileMessage(sessionId, compilerArguments, compilationOptions, servicesFacade, compilationResults))
+        return input.nextObject() as CompileService.CallResult<Int>
+    }
+
+    suspend override fun leaseReplSession(
+        aliveFlagPath: String?,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBaseAsync,
+        templateClasspath: List<File>,
+        templateClassName: String
+    ): CompileService.CallResult<Int> {
+        output.writeObject(LeaseReplSessionMessage(aliveFlagPath, compilerArguments, compilationOptions, servicesFacade, templateClasspath, templateClassName))
+        return input.nextObject() as CompileService.CallResult<Int>
+    }
 
     lateinit var socketToServer: Socket
     val input: ByteReadChannelWrapper by lazy { socketToServer.openAndWrapReadChannel() }
@@ -97,25 +119,6 @@ class CompileServiceClientSideImpl(
         return input.nextObject() as CompileService.CallResult<Boolean>
     }
 
-    override suspend fun compile(
-        sessionId: Int,
-        compilerArguments: Array<out String>,
-        compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBase,
-        compilationResults: CompilationResults?
-    ): CompileService.CallResult<Int> {
-        output.writeObject(
-            CompileMessage(
-                sessionId,
-                compilerArguments,
-                compilationOptions,
-                servicesFacade,
-                compilationResults
-            )
-        )
-        return input.nextObject() as CompileService.CallResult<Int>
-    }
-
     override suspend fun clearJarCache() {
         output.writeObject(ClearJarCacheMessage())
     }
@@ -125,30 +128,9 @@ class CompileServiceClientSideImpl(
         return input.nextObject() as CompileService.CallResult<Nothing>
     }
 
-    override suspend fun leaseReplSession(
-        aliveFlagPath: String?,
-        compilerArguments: Array<out String>,
-        compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBase,
-        templateClasspath: List<File>,
-        templateClassName: String
-    ): CompileService.CallResult<Int> {
-        output.writeObject(
-            LeaseReplSession_Short_Message(
-                aliveFlagPath,
-                compilerArguments,
-                compilationOptions,
-                servicesFacade,
-                templateClasspath,
-                templateClassName
-            )
-        )
-        return input.nextObject() as CompileService.CallResult<Int>
-    }
-
-    override suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacade> {
+    override suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeAsync> {
         output.writeObject(ReplCreateStateMessage(sessionId))
-        return input.nextObject() as CompileService.CallResult<ReplStateFacade>
+        return input.nextObject() as CompileService.CallResult<ReplStateFacadeAsync>
     }
 
     override suspend fun replCheck(
@@ -250,7 +232,7 @@ class CompileServiceClientSideImpl(
         val sessionId: Int,
         val compilerArguments: Array<out String>,
         val compilationOptions: CompilationOptions,
-        val servicesFacade: CompilerServicesFacadeBase,
+        val servicesFacade: CompilerServicesFacadeBaseAsync,
         val compilationResults: CompilationResults?
     ) : Server.Message<CompileServiceServerSide> {
         override suspend fun process(server: CompileServiceServerSide, output: ByteWriteChannelWrapper) =
@@ -268,6 +250,27 @@ class CompileServiceClientSideImpl(
     class ClearJarCacheMessage : Server.Message<CompileServiceServerSide> {
         override suspend fun process(server: CompileServiceServerSide, output: ByteWriteChannelWrapper) =
             server.clearJarCache()
+    }
+
+    class LeaseReplSessionMessage(
+        val aliveFlagPath: String?,
+        val compilerArguments: Array<out String>,
+        val compilationOptions: CompilationOptions,
+        val servicesFacade: CompilerServicesFacadeBaseAsync,
+        val templateClasspath: List<File>,
+        val templateClassName: String
+    ) : Server.Message<CompileServiceServerSide> {
+        override suspend fun process(server: CompileServiceServerSide, output: ByteWriteChannelWrapper) =
+            output.writeObject(
+                server.leaseReplSession(
+                    aliveFlagPath,
+                    compilerArguments,
+                    compilationOptions,
+                    servicesFacade,
+                    templateClasspath,
+                    templateClassName
+                )
+            )
     }
 
     class ReleaseReplSessionMessage(val sessionId: Int) : Server.Message<CompileServiceServerSide> {
@@ -289,7 +292,7 @@ class CompileServiceClientSideImpl(
                     aliveFlagPath,
                     compilerArguments,
                     compilationOptions,
-                    servicesFacade,
+                    servicesFacade.toWrapper(),
                     templateClasspath,
                     templateClassName
                 )

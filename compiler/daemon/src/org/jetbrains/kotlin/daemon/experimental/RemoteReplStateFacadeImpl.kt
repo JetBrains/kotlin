@@ -5,16 +5,21 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
+import io.ktor.network.sockets.ServerSocket
 import io.ktor.network.sockets.Socket
+import io.ktor.network.sockets.aSocket
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
 import org.jetbrains.kotlin.daemon.common.ReplStateFacade
-import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeServerSide
+import org.jetbrains.kotlin.daemon.common.experimental.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.IOPair
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openIO
+import java.net.InetAddress
 import java.rmi.server.UnicastRemoteObject
 
 open class RemoteReplStateFacadeImpl(
@@ -64,6 +69,19 @@ class RemoteReplStateFacadeServerSideImpl(
     }
 
     override suspend fun attachClient(client: Socket) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        async {
+            val (input, output) = client.openIO()
+            while (processMessage(input.nextObject() as Server.Message<*>, output) != Server.State.CLOSED);
+        }
+    }
+
+    init {
+        runBlocking {
+            aSocket().tcp().bind(InetAddress()).use {
+                while (true) {
+                    attachClient(it.accept())
+                }
+            }
+        }
     }
 }

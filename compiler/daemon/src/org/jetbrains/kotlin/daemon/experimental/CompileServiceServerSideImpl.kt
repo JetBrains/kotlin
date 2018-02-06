@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.daemon.KotlinJvmReplService
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceServerSide
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseAsync
@@ -568,7 +569,7 @@ class CompileServiceServerSideImpl(
             val disposable = Disposer.newDisposable()
             val messageCollector =
                 CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
-            val repl = KotlinJvmReplServiceAsync(
+            val repl = KotlinJvmReplService(
                 disposable, port, templateClasspath, templateClassName,
                 messageCollector, null
             )
