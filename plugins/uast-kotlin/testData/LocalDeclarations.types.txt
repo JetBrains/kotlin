@@ -24,6 +24,11 @@ UFile (package = ) [public final class LocalDeclarationsKt {...]
                             UParameter (name = text) [@org.jetbrains.annotations.NotNull var text: java.lang.String]
                                 UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
                             ULiteralExpression (value = 42) [42] : PsiType:int
+                UDeclarationsExpression [public static final class LocalObject {...}]
+                    UClass (name = LocalObject) [public static final class LocalObject {...}]
+                        UField (name = INSTANCE) [@null public static final var INSTANCE: LocalDeclarationsKt.foo.LocalObject]
+                            UAnnotation (fqName = null) [@null]
+                        UAnnotationMethod (name = LocalDeclarationsKt$foo$LocalObject) [private fun LocalDeclarationsKt$foo$LocalObject() = UastEmptyExpression]
                 UReturnExpression [return bar() == <init>()] : PsiType:Void
                     UBinaryExpression (operator = ==) [bar() == <init>()] : PsiType:boolean
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [bar()] : PsiType:<ErrorType>
