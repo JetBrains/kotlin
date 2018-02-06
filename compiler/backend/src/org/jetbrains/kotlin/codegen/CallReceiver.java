@@ -117,7 +117,7 @@ public class CallReceiver extends StackValue {
         // all the needed information, for example there's no way to find out whether or not a smart cast was applied to the receiver.
         if (container instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) container;
-            return new AsmTypeAndKotlinType(typeMapper.mapClass(classDescriptor), classDescriptor.getDefaultType());
+            return new AsmTypeAndKotlinType(typeMapper.mapType(classDescriptor), classDescriptor.getDefaultType());
         }
 
         KotlinType dispatchReceiverType = dispatchReceiver.getReturnType();
