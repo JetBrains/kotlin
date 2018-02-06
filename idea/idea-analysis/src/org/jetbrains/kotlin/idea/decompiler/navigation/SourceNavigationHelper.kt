@@ -54,10 +54,10 @@ object SourceNavigationHelper {
 
         return when (navigationKind) {
             NavigationKind.CLASS_FILES_TO_SOURCES -> getBinaryLibrariesModuleInfos(declaration.project, vFile)
-                    .mapNotNull { it.sourcesModuleInfo?.sourceScope() }.union()
+                .mapNotNull { it.sourcesModuleInfo?.sourceScope() }.union()
 
             NavigationKind.SOURCES_TO_CLASS_FILES -> getLibrarySourcesModuleInfos(declaration.project, vFile)
-                    .map { it.binariesModuleInfo.binariesScope() }.union()
+                .map { it.binariesModuleInfo.binariesScope() }.union()
         }
     }
 
@@ -86,8 +86,8 @@ object SourceNavigationHelper {
     }
 
     private fun convertPropertyOrFunction(
-            declaration: KtNamedDeclaration,
-            navigationKind: NavigationKind
+        declaration: KtNamedDeclaration,
+        navigationKind: NavigationKind
     ): KtNamedDeclaration? {
         if (declaration is KtPrimaryConstructor) {
             val sourceClassOrObject = findClassOrObject(declaration.getContainingClassOrObject(), navigationKind)
@@ -120,10 +120,12 @@ object SourceNavigationHelper {
                     }
                 }
             }
-            else -> throw IllegalStateException("Unexpected container of " +
-                                                (if (navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES) "decompiled" else "source") +
-                                                " declaration: " +
-                                                decompiledContainer::class.java.simpleName)
+            else -> throw IllegalStateException(
+                "Unexpected container of " +
+                        (if (navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES) "decompiled" else "source") +
+                        " declaration: " +
+                        decompiledContainer::class.java.simpleName
+            )
         }
 
         if (candidates.isEmpty()) {
@@ -151,7 +153,8 @@ object SourceNavigationHelper {
             val candidateDescriptor = candidate.resolveToDescriptorIfAny() as? CallableDescriptor ?: continue
             if (receiversMatch(declaration, candidateDescriptor)
                 && valueParametersTypesMatch(declaration, candidateDescriptor)
-                && typeParametersMatch(declaration as KtTypeParameterListOwner, candidateDescriptor.typeParameters)) {
+                && typeParametersMatch(declaration as KtTypeParameterListOwner, candidateDescriptor.typeParameters)
+            ) {
                 return candidate
             }
         }
@@ -160,9 +163,9 @@ object SourceNavigationHelper {
     }
 
     private fun <T : KtNamedDeclaration> findFirstMatchingInIndex(
-            entity: T,
-            navigationKind: NavigationKind,
-            index: StringStubIndexExtension<T>
+        entity: T,
+        navigationKind: NavigationKind,
+        index: StringStubIndexExtension<T>
     ): T? {
         val classFqName = entity.fqName ?: return null
         val scope = targetScope(entity, navigationKind) ?: return null
@@ -174,8 +177,8 @@ object SourceNavigationHelper {
     }
 
     private fun getInitialTopLevelCandidates(
-            declaration: KtNamedDeclaration,
-            navigationKind: NavigationKind
+        declaration: KtNamedDeclaration,
+        navigationKind: NavigationKind
     ): Collection<KtNamedDeclaration> {
         val scope = targetScope(declaration, navigationKind) ?: return emptyList()
         val index = getIndexForTopLevelPropertyOrFunction(declaration)
@@ -183,7 +186,7 @@ object SourceNavigationHelper {
     }
 
     private fun getIndexForTopLevelPropertyOrFunction(
-            decompiledDeclaration: KtNamedDeclaration
+        decompiledDeclaration: KtNamedDeclaration
     ): StringStubIndexExtension<out KtNamedDeclaration> = when (decompiledDeclaration) {
         is KtNamedFunction -> KotlinTopLevelFunctionFqnNameIndex.getInstance()
         is KtProperty -> KotlinTopLevelPropertyFqnNameIndex.getInstance()
@@ -191,11 +194,10 @@ object SourceNavigationHelper {
     }
 
     private fun getInitialMemberCandidates(
-            sourceClassOrObject: KtClassOrObject,
-            name: Name,
-            declarationClass: Class<out KtNamedDeclaration>
-    ) = sourceClassOrObject.declarations.filterIsInstance(declarationClass).filter {
-        declaration ->
+        sourceClassOrObject: KtClassOrObject,
+        name: Name,
+        declarationClass: Class<out KtNamedDeclaration>
+    ) = sourceClassOrObject.declarations.filterIsInstance(declarationClass).filter { declaration ->
         name == declaration.nameAsSafeName
     }
 
@@ -220,10 +222,7 @@ object SourceNavigationHelper {
 
             override fun contains(file: VirtualFile): Boolean {
                 val entries = idx.getOrderEntriesForFile(file)
-                for (entry in entries) {
-                    if (orderEntries.contains(entry)) return true
-                }
-                return false
+                return entries.any { orderEntries.contains(it) }
             }
 
             override fun isSearchInModuleContent(aModule: Module): Boolean {
@@ -241,8 +240,8 @@ object SourceNavigationHelper {
     fun getOriginalElement(declaration: KtDeclaration) = navigateToDeclaration(declaration, NavigationKind.SOURCES_TO_CLASS_FILES)
 
     private fun navigateToDeclaration(
-            from: KtDeclaration,
-            navigationKind: NavigationKind
+        from: KtDeclaration,
+        navigationKind: NavigationKind
     ): KtDeclaration {
         if (DumbService.isDumb(from.project)) return from
 
@@ -269,8 +268,8 @@ object SourceNavigationHelper {
 
         override fun visitClass(klass: KtClass, data: Unit) = findClassOrObject(klass, navigationKind)
 
-        override fun visitTypeAlias(typeAlias: KtTypeAlias, data: Unit)
-                = findFirstMatchingInIndex(typeAlias, navigationKind, KotlinTopLevelTypeAliasFqNameIndex.getInstance())
+        override fun visitTypeAlias(typeAlias: KtTypeAlias, data: Unit) =
+            findFirstMatchingInIndex(typeAlias, navigationKind, KotlinTopLevelTypeAliasFqNameIndex.getInstance())
 
         override fun visitParameter(parameter: KtParameter, data: Unit): KtDeclaration? {
             val callableDeclaration = parameter.parent.parent as KtCallableDeclaration
@@ -280,14 +279,14 @@ object SourceNavigationHelper {
             val sourceCallable = callableDeclaration.accept(this, Unit) as? KtCallableDeclaration ?: return null
             val sourceParameters = sourceCallable.valueParameters
             if (sourceParameters.size != parameters.size) return null
-            return sourceParameters.get(index)
+            return sourceParameters[index]
         }
 
-        override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit)
-                = convertPropertyOrFunction(constructor, navigationKind)
+        override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit) =
+            convertPropertyOrFunction(constructor, navigationKind)
 
-        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit)
-                = convertPropertyOrFunction(constructor, navigationKind)
+        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit) =
+            convertPropertyOrFunction(constructor, navigationKind)
     }
 }
 
