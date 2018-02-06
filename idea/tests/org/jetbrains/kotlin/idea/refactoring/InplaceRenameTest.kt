@@ -94,6 +94,14 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestMemberInplaceRename("get")
     }
 
+    fun testInvokeToGetWithQualifiedExpr() {
+        doTestMemberInplaceRename("get")
+    }
+
+    fun testInvokeToGetWithSafeQualifiedExpr() {
+        doTestMemberInplaceRename("get")
+    }
+
     fun testInvokeToPlus() {
         doTestMemberInplaceRename("plus")
     }
@@ -103,6 +111,14 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     }
 
     fun testGetToInvoke() {
+        doTestMemberInplaceRename("invoke")
+    }
+
+    fun testGetToInvokeWithQualifiedExpr() {
+        doTestMemberInplaceRename("invoke")
+    }
+
+    fun testGetToInvokeWithSafeQualifiedExpr() {
         doTestMemberInplaceRename("invoke")
     }
 

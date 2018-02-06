@@ -156,6 +156,9 @@ fun KtExpression.getQualifiedExpressionForReceiverOrThis(): KtExpression {
 fun KtExpression.isDotReceiver(): Boolean =
     (parent as? KtDotQualifiedExpression)?.receiverExpression == this
 
+fun KtExpression.getPossiblyQualifiedCallExpression(): KtCallExpression? =
+    ((this as? KtQualifiedExpression)?.selectorExpression ?: this) as? KtCallExpression
+
 // ---------- Block expression -------------------------------------------------------------------------------------------------------------
 
 fun KtElement.blockExpressionsOrSingle(): Sequence<KtElement> =
