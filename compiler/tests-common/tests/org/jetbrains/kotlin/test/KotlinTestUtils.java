@@ -37,7 +37,6 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
-import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import kotlin.collections.CollectionsKt;
@@ -393,7 +392,7 @@ public class KotlinTestUtils {
     }
 
     public static String getAndroidSdkSystemIndependentPath() {
-        return PathUtil.toSystemIndependentName(findAndroidSdk().getAbsolutePath());
+        return com.intellij.util.PathUtil.toSystemIndependentName(findAndroidSdk().getAbsolutePath());
     }
 
     public static File getAnnotationsJar() {
