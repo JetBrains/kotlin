@@ -37,18 +37,24 @@ interface Java9TestLauncher {
         assert(javaExe.exists()) { "Can't find 'java' executable in $jdk9Home" }
 
         val currentJavaHome = System.getProperty("java.home")
-        val classpath = collectClasspath(AbstractClassFileToSourceStubConverterTest::class.java.classLoader)
-                .filter { !it.path.startsWith(currentJavaHome) }
 
-        val process = ProcessBuilder(
-                javaExe.absolutePath,
-                "--illegal-access=warn",
-                "-ea",
-                "-classpath",
-                classpath.joinToString(File.pathSeparator),
-                mainClass.name,
-                arg
-        ).inheritIO().start()
+        val classpath = collectClasspath(AbstractClassFileToSourceStubConverterTest::class.java.classLoader)
+            .filter { it.protocol.toLowerCase() == "file" && it.path != null && !it.path.startsWith(currentJavaHome) }
+            .map { it.path }
+
+        val command = arrayOf(
+            javaExe.absolutePath,
+            "--illegal-access=warn",
+            "-ea",
+            "-classpath",
+            classpath.joinToString(File.pathSeparator),
+            mainClass.name,
+            arg
+        )
+
+        println("Process arguments: [${command.joinToString()}]")
+
+        val process = ProcessBuilder(*command).inheritIO().start()
 
         process.waitFor(3, TimeUnit.MINUTES)
         if (process.exitValue() != 0) {
