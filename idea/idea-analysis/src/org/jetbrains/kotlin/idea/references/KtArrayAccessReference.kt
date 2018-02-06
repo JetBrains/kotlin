@@ -14,113 +14,60 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.references;
+package org.jetbrains.kotlin.idea.references
 
-import com.google.common.collect.Lists;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.MultiRangeReference;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.util.OperatorNameConventions;
+import com.google.common.collect.Lists
+import com.intellij.psi.MultiRangeReference
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.buildExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_GET
+import org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_SET
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+class KtArrayAccessReference(
+    expression: KtArrayAccessExpression
+) : KtSimpleReference<KtArrayAccessExpression>(expression), MultiRangeReference {
+    override val resolvesByNames: Collection<Name>
+        get() = NAMES
 
-import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_GET;
-import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_SET;
+    override fun getRangeInElement() = element.textRange.shiftRight(-element.textOffset)
 
-public class KtArrayAccessReference extends KtSimpleReference<KtArrayAccessExpression> implements MultiRangeReference {
-
-    public KtArrayAccessReference(@NotNull KtArrayAccessExpression expression) {
-        super(expression);
+    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
+        val getFunctionDescriptor = context[INDEXED_LVALUE_GET, expression]?.candidateDescriptor
+        val setFunctionDescriptor = context[INDEXED_LVALUE_SET, expression]?.candidateDescriptor
+        return listOfNotNull(getFunctionDescriptor, setFunctionDescriptor)
     }
 
-    @Override
-    public TextRange getRangeInElement() {
-        return getElement().getTextRange().shiftRight(-getElement().getTextOffset());
-    }
+    private fun getBracketRange(bracketToken: KtToken) =
+        expression.indicesNode.node.findChildByType(bracketToken)?.textRange?.shiftRight(-expression.textOffset)
 
-    @Override
-    @NotNull
-    protected Collection<DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
-        List<DeclarationDescriptor> result = Lists.newArrayList();
+    override fun getRanges() = listOfNotNull(getBracketRange(KtTokens.LBRACKET), getBracketRange(KtTokens.RBRACKET))
 
-        ResolvedCall<FunctionDescriptor> getFunction = context.get(INDEXED_LVALUE_GET, getExpression());
-        if (getFunction != null) {
-            result.add(getFunction.getCandidateDescriptor());
+    override fun canRename() = true
+
+    override fun handleElementRename(newElementName: String?): PsiElement? {
+        val arrayAccessExpression = expression
+        if (OperatorNameConventions.INVOKE.asString() == newElementName) {
+            val callExpression = KtPsiFactory(arrayAccessExpression.project).buildExpression {
+                appendExpression(arrayAccessExpression.arrayExpression)
+                appendFixedText("(")
+                appendExpressions(arrayAccessExpression.indexExpressions, ",")
+                appendFixedText(")")
+            }
+            return arrayAccessExpression.replace(callExpression)
         }
 
-        ResolvedCall<FunctionDescriptor> setFunction = context.get(INDEXED_LVALUE_SET, getExpression());
-        if (setFunction != null) {
-            result.add(setFunction.getCandidateDescriptor());
-        }
-
-        return result;
+        return this.renameImplicitConventionalCall(newElementName)
     }
 
-    @Override
-    public List<TextRange> getRanges() {
-        List<TextRange> list = new ArrayList<TextRange>();
-
-        KtContainerNode indices = getExpression().getIndicesNode();
-        TextRange textRange = indices.getNode().findChildByType(KtTokens.LBRACKET).getTextRange();
-        TextRange lBracketRange = textRange.shiftRight(-getExpression().getTextOffset());
-
-        list.add(lBracketRange);
-
-        ASTNode rBracket = indices.getNode().findChildByType(KtTokens.RBRACKET);
-        if (rBracket != null) {
-            textRange = rBracket.getTextRange();
-            TextRange rBracketRange = textRange.shiftRight(-getExpression().getTextOffset());
-            list.add(rBracketRange);
-        }
-
-        return list;
-    }
-
-    @Override
-    public boolean canRename() {
-        return true;
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @Nullable
-    @Override
-    public PsiElement handleElementRename(@Nullable String newElementName) {
-        KtArrayAccessExpression arrayAccessExpression = getExpression();
-        if (OperatorNameConventions.INVOKE.asString().equals(newElementName)) {
-            KtExpression callExpression = CreateByPatternKt.buildExpression(
-                    new KtPsiFactory(arrayAccessExpression.getProject()),
-                    true,
-                    pattern -> {
-                        pattern.appendExpression(arrayAccessExpression.getArrayExpression());
-                        pattern.appendFixedText("(");
-                        pattern.appendExpressions(arrayAccessExpression.getIndexExpressions(), ",");
-                        pattern.appendFixedText(")");
-                        return null;
-                    }
-            );
-            return arrayAccessExpression.replace(callExpression);
-        }
-
-        return ReferenceUtilKt.renameImplicitConventionalCall(this, newElementName);
-    }
-
-    private static final List<Name> NAMES = Lists.newArrayList(OperatorNameConventions.GET, OperatorNameConventions.SET);
-
-    @NotNull
-    @Override
-    public Collection<Name> getResolvesByNames() {
-        return NAMES;
+    companion object {
+        private val NAMES = Lists.newArrayList(OperatorNameConventions.GET, OperatorNameConventions.SET)
     }
 }
