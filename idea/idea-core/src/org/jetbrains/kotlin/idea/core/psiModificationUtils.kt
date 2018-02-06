@@ -21,6 +21,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -100,6 +101,32 @@ private fun shouldLambdaParameterBeNamed(args: List<ValueArgument>, callExpr: Kt
     return if (calee.valueParameters.any { it.isVarArg }) true else calee.valueParameters.size - 1 > args.size
 }
 
+fun KtCallExpression.getLastLambdaExpression(): KtLambdaExpression? {
+    if (lambdaArguments.isNotEmpty()) return null
+    return valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral()
+}
+
+fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
+    if (getLastLambdaExpression() == null) return false
+
+    val callee = calleeExpression
+    if (callee is KtNameReferenceExpression) {
+        val bindingContext = analyze(BodyResolveMode.PARTIAL)
+        val targets = bindingContext[BindingContext.REFERENCE_TARGET, callee]?.let { listOf(it) }
+                ?: bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, callee]
+                ?: listOf()
+        val candidates = targets.filterIsInstance<FunctionDescriptor>()
+        // if there are functions among candidates but none of them have last function parameter then not show the intention
+        if (candidates.isNotEmpty() && candidates.none {
+            val lastParameter = it.valueParameters.lastOrNull()
+            lastParameter != null && lastParameter.type.isFunctionType
+        }) {
+            return false
+        }
+    }
+
+    return true
+}
 
 fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
     assert(lambdaArguments.isEmpty())
