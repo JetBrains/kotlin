@@ -10,12 +10,19 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.*
+
+class PrimitiveNumericComparisonInfo(
+    val comparisonType: KotlinType,
+    val leftType: KotlinType,
+    val rightType: KotlinType
+)
 
 object PrimitiveNumericComparisonCallChecker : CallChecker {
 
@@ -29,15 +36,27 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
         val leftExpr = binaryExpression.left ?: return
         val rightExpr = binaryExpression.right ?: return
 
-        val leftType = context.getInferredPrimitiveNumericType(leftExpr) ?: return
-        val rightType = context.getInferredPrimitiveNumericType(rightExpr) ?: return
+        val leftTypes = context.getStableTypesForExpression(leftExpr)
+        val rightTypes = context.getStableTypesForExpression(rightExpr)
 
-        context.trace.record(BindingContext.PRIMITIVE_NUMERIC_COMPARISON_OPERAND_TYPE, leftExpr, leftType)
-        context.trace.record(BindingContext.PRIMITIVE_NUMERIC_COMPARISON_OPERAND_TYPE, rightExpr, rightType)
+        inferPrimitiveNumericComparisonType(context.trace, leftTypes, rightTypes, binaryExpression)
+    }
 
-        val leastCommonType = leastCommonPrimitiveNumericType(leftType, rightType)
+    fun inferPrimitiveNumericComparisonType(
+        trace: BindingTrace,
+        leftTypes: List<KotlinType>,
+        rightTypes: List<KotlinType>,
+        comparison: KtExpression
+    ) {
+        val leftPrimitiveType = leftTypes.findPrimitiveType() ?: return
+        val rightPrimitiveType = rightTypes.findPrimitiveType() ?: return
+        val leastCommonType = leastCommonPrimitiveNumericType(leftPrimitiveType, rightPrimitiveType)
 
-        context.trace.record(BindingContext.PRIMITIVE_NUMERIC_COMPARISON_TYPE, binaryExpression, leastCommonType)
+        trace.record(
+            BindingContext.PRIMITIVE_NUMERIC_COMPARISON_INFO,
+            comparison,
+            PrimitiveNumericComparisonInfo(leastCommonType, leftPrimitiveType, rightPrimitiveType)
+        )
     }
 
     private fun leastCommonPrimitiveNumericType(t1: KotlinType, t2: KotlinType): KotlinType {
@@ -60,14 +79,14 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
             else -> this
         }
 
-    private fun CallCheckerContext.getInferredPrimitiveNumericType(expression: KtExpression): KotlinType? {
-        val type = trace.bindingContext.getType(expression) ?: return null
+    private fun CallCheckerContext.getStableTypesForExpression(expression: KtExpression): List<KotlinType> {
+        val type = trace.bindingContext.getType(expression) ?: return emptyList()
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(
             expression, type, trace.bindingContext, resolutionContext.scope.ownerDescriptor
         )
-        val dataFlowInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)?.dataFlowInfo ?: return null
+        val dataFlowInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)?.dataFlowInfo ?: return emptyList()
         val stableTypes = dataFlowInfo.getStableTypes(dataFlowValue, languageVersionSettings)
-        return (listOf(type) + stableTypes).findPrimitiveType()
+        return listOf(type) + stableTypes
     }
 
     private fun List<KotlinType>.findPrimitiveType() =

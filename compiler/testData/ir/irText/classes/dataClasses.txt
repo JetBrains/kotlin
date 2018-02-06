@@ -270,4 +270,243 @@ FILE fqName:<root> fileName:/dataClasses.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
           CONST Boolean type=kotlin.Boolean value=true
-
+  CLASS CLASS name:Test3 modality:FINAL visibility:public flags:data
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test3 flags:
+    CONSTRUCTOR visibility:public <> (d:kotlin.Double, dn:kotlin.Double?, f:kotlin.Float, df:kotlin.Float?) returnType:Test3 flags:
+      VALUE_PARAMETER name:d index:0 type:kotlin.Double flags:
+      VALUE_PARAMETER name:dn index:1 type:kotlin.Double? flags:
+      VALUE_PARAMETER name:f index:2 type:kotlin.Float flags:
+      VALUE_PARAMETER name:df index:3 type:kotlin.Float? flags:
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test3'
+    PROPERTY name:d type:kotlin.Double visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Double visibility:public
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter d: Double' type=kotlin.Double origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:FINAL <> ($this:Test3) returnType:Double flags:
+        $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-d>(): Double'
+            GET_FIELD 'd: Double' type=kotlin.Double origin=null
+              receiver: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+    PROPERTY name:dn type:kotlin.Double? visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:dn type:kotlin.Double? visibility:public
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter dn: Double?' type=kotlin.Double? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-dn> visibility:public modality:FINAL <> ($this:Test3) returnType:Double? flags:
+        $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-dn>(): Double?'
+            GET_FIELD 'dn: Double?' type=kotlin.Double? origin=null
+              receiver: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+    PROPERTY name:f type:kotlin.Float visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Float visibility:public
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter f: Float' type=kotlin.Float origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-f> visibility:public modality:FINAL <> ($this:Test3) returnType:Float flags:
+        $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-f>(): Float'
+            GET_FIELD 'f: Float' type=kotlin.Float origin=null
+              receiver: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+    PROPERTY name:df type:kotlin.Float? visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:public
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter df: Float?' type=kotlin.Float? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-df> visibility:public modality:FINAL <> ($this:Test3) returnType:Float? flags:
+        $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-df>(): Float?'
+            GET_FIELD 'df: Float?' type=kotlin.Float? origin=null
+              receiver: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:Test3) returnType:Double flags:
+      $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component1(): Double'
+          CALL '<get-d>(): Double' type=kotlin.Double origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:Test3) returnType:Double? flags:
+      $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component2(): Double?'
+          CALL '<get-dn>(): Double?' type=kotlin.Double? origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:component3 visibility:public modality:FINAL <> ($this:Test3) returnType:Float flags:
+      $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component3(): Float'
+          CALL '<get-f>(): Float' type=kotlin.Float origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:component4 visibility:public modality:FINAL <> ($this:Test3) returnType:Float? flags:
+      $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component4(): Float?'
+          CALL '<get-df>(): Float?' type=kotlin.Float? origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:Test3, d:kotlin.Double, dn:kotlin.Double?, f:kotlin.Float, df:kotlin.Float?) returnType:Test3 flags:
+      $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+      VALUE_PARAMETER name:d index:0 type:kotlin.Double flags:
+        EXPRESSION_BODY
+          CALL '<get-d>(): Double' type=kotlin.Double origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+      VALUE_PARAMETER name:dn index:1 type:kotlin.Double? flags:
+        EXPRESSION_BODY
+          CALL '<get-dn>(): Double?' type=kotlin.Double? origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+      VALUE_PARAMETER name:f index:2 type:kotlin.Float flags:
+        EXPRESSION_BODY
+          CALL '<get-f>(): Float' type=kotlin.Float origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+      VALUE_PARAMETER name:df index:3 type:kotlin.Float? flags:
+        EXPRESSION_BODY
+          CALL '<get-df>(): Float?' type=kotlin.Float? origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='copy(Double = ..., Double? = ..., Float = ..., Float? = ...): Test3'
+          CALL 'constructor Test3(Double, Double?, Float, Float?)' type=Test3 origin=null
+            d: GET_VAR 'value-parameter d: Double = ...' type=kotlin.Double origin=null
+            dn: GET_VAR 'value-parameter dn: Double? = ...' type=kotlin.Double? origin=null
+            f: GET_VAR 'value-parameter f: Float = ...' type=kotlin.Float origin=null
+            df: GET_VAR 'value-parameter df: Float? = ...' type=kotlin.Float? origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:Test3) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='toString(): String'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value=Test3(
+            CONST String type=kotlin.String value=d=
+            CALL '<get-d>(): Double' type=kotlin.Double origin=GET_PROPERTY
+              $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+            CONST String type=kotlin.String value=,
+            CONST String type=kotlin.String value=dn=
+            CALL '<get-dn>(): Double?' type=kotlin.Double? origin=GET_PROPERTY
+              $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+            CONST String type=kotlin.String value=,
+            CONST String type=kotlin.String value=f=
+            CALL '<get-f>(): Float' type=kotlin.Float origin=GET_PROPERTY
+              $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+            CONST String type=kotlin.String value=,
+            CONST String type=kotlin.String value=df=
+            CALL '<get-df>(): Float?' type=kotlin.Float? origin=GET_PROPERTY
+              $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+            CONST String type=kotlin.String value=)
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test3) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
+          CONST Int type=kotlin.Int value=0
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'hashCode(): Int' type=kotlin.Int origin=null
+            $this: CALL '<get-d>(): Double' type=kotlin.Double origin=GET_PROPERTY
+              $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'plus(Int): Int' type=kotlin.Int origin=null
+            $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: BLOCK type=kotlin.Int origin=null
+              VAR IR_TEMPORARY_VARIABLE name:tmp1 type:kotlin.Double? flags:val
+                CALL '<get-dn>(): Double?' type=kotlin.Double? origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+              WHEN type=kotlin.Int origin=null
+                BRANCH
+                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'tmp1: Double?' type=kotlin.Double? origin=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Int type=kotlin.Int value=0
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CALL 'hashCode(): Int' type=kotlin.Int origin=null
+                    $this: GET_VAR 'tmp1: Double?' type=kotlin.Double? origin=null
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'plus(Int): Int' type=kotlin.Int origin=null
+            $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: CALL 'hashCode(): Int' type=kotlin.Int origin=null
+              $this: CALL '<get-f>(): Float' type=kotlin.Float origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'plus(Int): Int' type=kotlin.Int origin=null
+            $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: BLOCK type=kotlin.Int origin=null
+              VAR IR_TEMPORARY_VARIABLE name:tmp2 type:kotlin.Float? flags:val
+                CALL '<get-df>(): Float?' type=kotlin.Float? origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+              WHEN type=kotlin.Int origin=null
+                BRANCH
+                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'tmp2: Float?' type=kotlin.Float? origin=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Int type=kotlin.Int value=0
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CALL 'hashCode(): Int' type=kotlin.Int origin=null
+                    $this: GET_VAR 'tmp2: Float?' type=kotlin.Float? origin=null
+        RETURN type=kotlin.Nothing from='hashCode(): Int'
+          GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:Test3, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:Test3 flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
+              arg0: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+              arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=true
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test3
+              GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test3 flags:val
+          TYPE_OP type=Test3 origin=CAST typeOperand=Test3
+            GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-d>(): Double' type=kotlin.Double origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+                arg1: CALL '<get-d>(): Double' type=kotlin.Double origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test3' type=Test3 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-dn>(): Double?' type=kotlin.Double? origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+                arg1: CALL '<get-dn>(): Double?' type=kotlin.Double? origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test3' type=Test3 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-f>(): Float' type=kotlin.Float origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+                arg1: CALL '<get-f>(): Float' type=kotlin.Float origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test3' type=Test3 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-df>(): Float?' type=kotlin.Float? origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+                arg1: CALL '<get-df>(): Float?' type=kotlin.Float? origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test3' type=Test3 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+          CONST Boolean type=kotlin.Boolean value=true

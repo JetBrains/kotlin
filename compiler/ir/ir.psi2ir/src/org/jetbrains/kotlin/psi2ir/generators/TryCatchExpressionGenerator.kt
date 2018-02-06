@@ -30,7 +30,7 @@ class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val resultType = getInferredTypeWithImplicitCastsOrFail(ktTry)
         val irTryCatch = IrTryImpl(ktTry.startOffset, ktTry.endOffset, resultType)
 
-        irTryCatch.tryResult = statementGenerator.generateExpression(ktTry.tryBlock)
+        irTryCatch.tryResult = ktTry.tryBlock.genExpr()
 
         for (ktCatchClause in ktTry.catchClauses) {
             val ktCatchParameter = ktCatchClause.catchParameter!!
@@ -45,13 +45,13 @@ class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                     catchParameterDescriptor
                 )
             ).apply {
-                result = statementGenerator.generateExpression(ktCatchBody)
+                result = ktCatchBody.genExpr()
             }
 
             irTryCatch.catches.add(irCatch)
         }
 
-        irTryCatch.finallyExpression = ktTry.finallyBlock?.let { statementGenerator.generateExpression(it.finalExpression) }
+        irTryCatch.finallyExpression = ktTry.finallyBlock?.run { finalExpression.genExpr() }
 
         return irTryCatch
     }

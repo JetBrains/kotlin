@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonCallChecker
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -259,7 +260,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 if (checkSmartCastToExpectedTypeInSubject(
                         contextBeforeSubject, subjectExpression, subjectType,
                         possibleCastType
-                    )) {
+                    )
+                ) {
                     return
                 }
             }
@@ -271,7 +273,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             if (checkSmartCastToExpectedTypeInSubject(
                     contextBeforeSubject, subjectExpression, subjectType,
                     notNullableType
-                )) {
+                )
+            ) {
                 return
             }
         }
@@ -384,7 +387,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 val expression = condition.expression
                 if (expression != null) {
                     val basicDataFlowInfo = checkTypeForExpressionCondition(
-                        context, expression, subjectType, subjectExpression == null, subjectDataFlowValue
+                        context, expression, subjectType, subjectExpression, subjectDataFlowValue
                     )
                     val moduleDescriptor = DescriptorUtils.getContainingModule(context.scope.ownerDescriptor)
                     val dataFlowInfoFromES =
@@ -404,14 +407,16 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         context: ExpressionTypingContext,
         expression: KtExpression,
         subjectType: KotlinType,
-        conditionExpected: Boolean,
+        subjectExpression: KtExpression?,
         subjectDataFlowValue: DataFlowValue
     ): ConditionalDataFlowInfo {
+
         var newContext = context
         val typeInfo = facade.getTypeInfo(expression, newContext)
         val type = typeInfo.type ?: return noChange(newContext)
         newContext = newContext.replaceDataFlowInfo(typeInfo.dataFlowInfo)
-        if (conditionExpected) {
+
+        if (subjectExpression == null) { // condition expected
             val booleanType = components.builtIns.booleanType
             val checkedTypeInfo = components.dataFlowAnalyzer.checkType(typeInfo, expression, newContext.replaceExpectedType(booleanType))
             if (KotlinTypeChecker.DEFAULT.equalTypes(booleanType, checkedTypeInfo.type ?: type)) {
@@ -421,8 +426,21 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             }
             return noChange(newContext)
         }
+
         checkTypeCompatibility(newContext, type, subjectType, expression)
         val expressionDataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, newContext)
+
+        val subjectStableTypes =
+            listOf(subjectType) + context.dataFlowInfo.getStableTypes(subjectDataFlowValue, components.languageVersionSettings)
+        val expressionStableTypes =
+            listOf(type) + newContext.dataFlowInfo.getStableTypes(expressionDataFlowValue, components.languageVersionSettings)
+        PrimitiveNumericComparisonCallChecker.inferPrimitiveNumericComparisonType(
+            context.trace,
+            subjectStableTypes,
+            expressionStableTypes,
+            expression
+        )
+
         val result = noChange(newContext)
         return ConditionalDataFlowInfo(
             result.thenInfo.equate(

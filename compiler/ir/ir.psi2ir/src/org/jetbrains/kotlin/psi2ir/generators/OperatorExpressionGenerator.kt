@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
@@ -89,7 +90,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         return IrTypeOperatorCallImpl(
             expression.startOffset, expression.endOffset, resultType, irOperator, rhsType,
-            statementGenerator.generateExpression(expression.left)
+            expression.left.genExpr()
         )
     }
 
@@ -100,7 +101,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         return IrTypeOperatorCallImpl(
             expression.startOffset, expression.endOffset, context.builtIns.booleanType, irOperator,
-            againstType, statementGenerator.generateExpression(expression.leftHandSide)
+            againstType, expression.leftHandSide.genExpr()
         )
     }
 
@@ -130,8 +131,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
     private fun generateElvis(expression: KtBinaryExpression): IrExpression {
         val specialCallForElvis = getResolvedCall(expression)!!
         val resultType = specialCallForElvis.resultingDescriptor.returnType!!
-        val irArgument0 = statementGenerator.generateExpression(expression.left!!)
-        val irArgument1 = statementGenerator.generateExpression(expression.right!!)
+        val irArgument0 = expression.left!!.genExpr()
+        val irArgument1 = expression.right!!.genExpr()
 
         return irBlock(expression, IrStatementOrigin.ELVIS, resultType) {
             val temporary = irTemporary(irArgument0, "elvis_lhs")
@@ -140,8 +141,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
     }
 
     private fun generateBinaryBooleanOperator(expression: KtBinaryExpression, irOperator: IrStatementOrigin): IrExpression {
-        val irArgument0 = statementGenerator.generateExpression(expression.left!!)
-        val irArgument1 = statementGenerator.generateExpression(expression.right!!)
+        val irArgument0 = expression.left!!.genExpr()
+        val irArgument1 = expression.right!!.genExpr()
         return when (irOperator) {
             IrStatementOrigin.OROR ->
                 context.oror(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
@@ -173,8 +174,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
     }
 
     private fun generateIdentityOperator(expression: KtBinaryExpression, irOperator: IrStatementOrigin): IrExpression {
-        val irArgument0 = statementGenerator.generateExpression(expression.left!!)
-        val irArgument1 = statementGenerator.generateExpression(expression.right!!)
+        val irArgument0 = expression.left!!.genExpr()
+        val irArgument1 = expression.right!!.genExpr()
 
         val irIdentityEquals = IrBinaryPrimitiveImpl(
             expression.startOffset, expression.endOffset, irOperator,
@@ -196,31 +197,27 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         }
     }
 
-    private fun KtExpression.generateAsPrimitiveNumericComparisonOperand(primitiveNumericComparisonType: KotlinType?) =
-        statementGenerator.generateExpression(this)
-            .promoteToPrimitiveNumericType(
-                getPrimitiveNumericComparisonOperandType(this),
-                primitiveNumericComparisonType
-            )
+    private fun KtExpression.generateAsPrimitiveNumericComparisonOperand(
+        expressionType: KotlinType?,
+        comparisonType: KotlinType?
+    ) = genExpr().promoteToPrimitiveNumericType(expressionType, comparisonType)
 
-    private fun getPrimitiveNumericComparisonType(ktExpression: KtBinaryExpression) =
-        context.bindingContext[BindingContext.PRIMITIVE_NUMERIC_COMPARISON_TYPE, ktExpression]
-
-    private fun getPrimitiveNumericComparisonOperandType(ktExpression: KtExpression) =
-        context.bindingContext[BindingContext.PRIMITIVE_NUMERIC_COMPARISON_OPERAND_TYPE, ktExpression]
+    private fun getPrimitiveNumericComparisonInfo(ktExpression: KtBinaryExpression) =
+        context.bindingContext[BindingContext.PRIMITIVE_NUMERIC_COMPARISON_INFO, ktExpression]
 
     private fun generateEqualityOperator(expression: KtBinaryExpression, irOperator: IrStatementOrigin): IrExpression {
-        val primitiveNumericComparisonType = getPrimitiveNumericComparisonType(expression)
+        val comparisonInfo = getPrimitiveNumericComparisonInfo(expression)
+        val comparisonType = comparisonInfo?.comparisonType
 
-        val eqeqSymbol = context.irBuiltIns.ieee754equalsFunByOperandType[primitiveNumericComparisonType]?.symbol
+        val eqeqSymbol = context.irBuiltIns.ieee754equalsFunByOperandType[comparisonType]?.symbol
                 ?: context.irBuiltIns.eqeqSymbol
 
         val irEquals = IrBinaryPrimitiveImpl(
             expression.startOffset, expression.endOffset,
             irOperator,
             eqeqSymbol,
-            expression.left!!.generateAsPrimitiveNumericComparisonOperand(primitiveNumericComparisonType),
-            expression.right!!.generateAsPrimitiveNumericComparisonOperand(primitiveNumericComparisonType)
+            expression.left!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo?.leftType, comparisonType),
+            expression.right!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo?.rightType, comparisonType)
         )
 
         return when (irOperator) {
@@ -237,6 +234,33 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 throw AssertionError("Unexpected equality operator $irOperator")
         }
     }
+
+    fun generateEquality(
+        startOffset: Int,
+        endOffset: Int,
+        irOperator: IrStatementOrigin,
+        arg1: IrExpression,
+        arg2: IrExpression,
+        comparisonInfo: PrimitiveNumericComparisonInfo?
+    ): IrExpression =
+        if (comparisonInfo != null) {
+            val comparisonType = comparisonInfo.comparisonType
+            val eqeqSymbol =
+                context.irBuiltIns.ieee754equalsFunByOperandType[comparisonType]?.symbol
+                        ?: context.irBuiltIns.eqeqSymbol
+            IrBinaryPrimitiveImpl(
+                startOffset, endOffset, irOperator,
+                eqeqSymbol,
+                arg1.promoteToPrimitiveNumericType(comparisonInfo.leftType, comparisonType),
+                arg2.promoteToPrimitiveNumericType(comparisonInfo.rightType, comparisonType)
+            )
+        } else {
+            IrBinaryPrimitiveImpl(
+                startOffset, endOffset, irOperator,
+                context.irBuiltIns.eqeqSymbol,
+                arg1, arg2
+            )
+        }
 
     private fun IrExpression.promoteToPrimitiveNumericType(operandType: KotlinType?, targetType: KotlinType?): IrExpression {
         if (targetType == null) return this
@@ -290,14 +314,14 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset
 
-        val primitiveNumberComparisonType = getPrimitiveNumericComparisonType(expression)
+        val comparisonInfo = getPrimitiveNumericComparisonInfo(expression)
 
-        return if (primitiveNumberComparisonType != null) {
+        return if (comparisonInfo != null) {
             IrBinaryPrimitiveImpl(
                 startOffset, endOffset, origin,
-                getComparisonOperatorSymbol(origin, primitiveNumberComparisonType),
-                expression.left!!.generateAsPrimitiveNumericComparisonOperand(primitiveNumberComparisonType),
-                expression.right!!.generateAsPrimitiveNumericComparisonOperand(primitiveNumberComparisonType)
+                getComparisonOperatorSymbol(origin, comparisonInfo.comparisonType),
+                expression.left!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo.leftType, comparisonInfo.comparisonType),
+                expression.right!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo.rightType, comparisonInfo.comparisonType)
             )
         } else {
             IrBinaryPrimitiveImpl(
@@ -327,7 +351,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
     private fun generateExclExclOperator(expression: KtPostfixExpression, origin: IrStatementOrigin): IrExpression {
         val ktArgument = expression.baseExpression!!
-        val irArgument = statementGenerator.generateExpression(ktArgument)
+        val irArgument = ktArgument.genExpr()
         val ktOperator = expression.operationReference
 
         val resultType = irArgument.type.makeNotNullable()

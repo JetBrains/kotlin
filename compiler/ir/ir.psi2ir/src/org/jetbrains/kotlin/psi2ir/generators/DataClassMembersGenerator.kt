@@ -137,12 +137,9 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                 +irIfThenReturnFalse(irNotIs(irOther(), classDescriptor.defaultType))
                 val otherWithCast = irTemporary(irAs(irOther(), classDescriptor.defaultType), "other_with_cast")
                 for (property in properties) {
-                    +irIfThenReturnFalse(
-                        irNotEquals(
-                            irGet(irThis(), getPropertyGetterSymbol(property)),
-                            irGet(irGet(otherWithCast.symbol), getPropertyGetterSymbol(property))
-                        )
-                    )
+                    val arg1 = irGet(irThis(), getPropertyGetterSymbol(property))
+                    val arg2 = irGet(irGet(otherWithCast.symbol), getPropertyGetterSymbol(property))
+                    +irIfThenReturnFalse(irNotEquals(arg1, arg2))
                 }
                 +irReturnTrue()
             }
@@ -229,7 +226,8 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                     val typeConstructorDescriptor = property.type.constructor.declarationDescriptor
                     val irPropertyStringValue =
                         if (typeConstructorDescriptor is ClassDescriptor &&
-                            KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor))
+                            KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor)
+                        )
                             irCall(context.irBuiltIns.dataClassArrayMemberToStringSymbol).apply {
                                 putValueArgument(0, irPropertyValue)
                             }

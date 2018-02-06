@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.KotlinType
 class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateAssignment(expression: KtBinaryExpression): IrExpression {
         val ktLeft = expression.left!!
-        val irRhs = statementGenerator.generateExpression(expression.right!!)
+        val irRhs = expression.right!!.genExpr()
         val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, IrStatementOrigin.EQ)
         return irAssignmentReceiver.assign(irRhs)
     }
@@ -52,7 +52,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         return irAssignmentReceiver.assign { irLValue ->
             val opCall = statementGenerator.pregenerateCallReceivers(opResolvedCall)
             opCall.setExplicitReceiverValue(irLValue)
-            opCall.irValueArgumentsByIndex[0] = statementGenerator.generateExpression(ktRight)
+            opCall.irValueArgumentsByIndex[0] = ktRight.genExpr()
             val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, origin)
 
             if (isSimpleAssignment) {
@@ -137,7 +137,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                     origin
                 )
             else ->
-                OnceExpressionValue(statementGenerator.generateExpression(ktLeft))
+                OnceExpressionValue(ktLeft.genExpr())
         }
     }
 
@@ -237,8 +237,8 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         ktLeft: KtArrayAccessExpression,
         origin: IrStatementOrigin
     ): ArrayAccessAssignmentReceiver {
-        val irArray = statementGenerator.generateExpression(ktLeft.arrayExpression!!)
-        val irIndexExpressions = ktLeft.indexExpressions.map { statementGenerator.generateExpression(it) }
+        val irArray = ktLeft.arrayExpression!!.genExpr()
+        val irIndexExpressions = ktLeft.indexExpressions.map { it.genExpr() }
 
         val indexedGetResolvedCall = get(BindingContext.INDEXED_LVALUE_GET, ktLeft)
         val indexedGetCall = indexedGetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) }

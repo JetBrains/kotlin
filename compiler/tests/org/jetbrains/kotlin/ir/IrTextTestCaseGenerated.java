@@ -1010,6 +1010,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 doTest(fileName);
             }
 
+            @TestMetadata("eqeqRhsConditionPossiblyAffectingLhs.kt")
+            public void testEqeqRhsConditionPossiblyAffectingLhs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/eqeqRhsConditionPossiblyAffectingLhs.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("floatingPointCompareTo.kt")
             public void testFloatingPointCompareTo() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/floatingPointCompareTo.kt");
@@ -1049,6 +1055,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             @TestMetadata("nullableFloatingPointEqeq.kt")
             public void testNullableFloatingPointEqeq() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/nullableFloatingPointEqeq.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenByFloatingPoint.kt")
+            public void testWhenByFloatingPoint() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/whenByFloatingPoint.kt");
                 doTest(fileName);
             }
         }
