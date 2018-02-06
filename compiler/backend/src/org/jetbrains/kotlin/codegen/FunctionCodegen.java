@@ -218,7 +218,9 @@ public class FunctionCodegen {
         generateParameterAnnotations(functionDescriptor, mv, jvmSignature);
         GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, jvmSignature, state, (flags & ACC_SYNTHETIC) != 0);
 
-        generateBridges(functionDescriptor);
+        if (contextKind != OwnerKind.ERASED_INLINE_CLASS) {
+            generateBridges(functionDescriptor);
+        }
 
         if (isJvm8InterfaceWithDefaultsMember(functionDescriptor, state) && contextKind != OwnerKind.DEFAULT_IMPLS && state.getGenerateDefaultImplsForJvm8()) {
             generateDelegateForDefaultImpl(functionDescriptor, origin.getElement());
