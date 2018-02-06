@@ -49,6 +49,9 @@ public class SpecialFiles {
         excludedFiles.add("primitivesAndArrays.kt");
         excludedFiles.add("getDelegateWithoutReflection.kt");
         excludedFiles.add("parameterAnnotationInDefaultImpls.kt");
+        excludedFiles.add("kt17091.kt");
+        excludedFiles.add("kt17091_2.kt");
+        excludedFiles.add("kt17091_3.kt");
 
         // Reflection is used to check full class name
         excludedFiles.add("native");
