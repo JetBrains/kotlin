@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 public object SomeClass {
     private val work = object : Runnable {
         override fun run() {

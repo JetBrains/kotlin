@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 interface A<T, U : Number, V : Any> {
     fun foo(t: T, u: U): V? {
         return null

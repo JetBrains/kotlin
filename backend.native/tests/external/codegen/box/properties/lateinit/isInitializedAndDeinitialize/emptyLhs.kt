@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 
 package test

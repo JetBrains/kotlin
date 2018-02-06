@@ -195,11 +195,7 @@ def createTestTasks(File testRoot, Class<Task> taskType, Closure taskConfigurati
 
 task run_external () {
     // Create tasks for external tests.
-    for (testDir in ["codegen", "compileKotlinAgainstKotlin"]) {
-        createTestTasks(new File(externalTestsDir, testDir), RunExternalTestGroup) {
-            it.goldValue = "OK"
-        }
-    }
+    createTestTasks(externalTestsDir, RunExternalTestGroup) { }
 
     // Set up dependencies.
     dependsOn(clean)

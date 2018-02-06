@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 // FILE: A.kt
 // WITH_RUNTIME
 package a

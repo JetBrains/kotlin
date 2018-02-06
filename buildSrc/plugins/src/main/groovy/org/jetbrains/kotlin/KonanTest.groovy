@@ -752,7 +752,8 @@ import kotlin.test.Test
 fun runTest() {
     @Suppress("UNUSED_VARIABLE")
     val result = box()
-    ${ (goldValue != null) ? "print(result)" : "" }
+    if (result != "OK") throw AssertionError("Test failed with: " + result)
+    print(result)
 }
 """     )
         createFile(file, text.toString())

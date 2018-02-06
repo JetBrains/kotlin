@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 class C{
     private var v : Int = 0
 
