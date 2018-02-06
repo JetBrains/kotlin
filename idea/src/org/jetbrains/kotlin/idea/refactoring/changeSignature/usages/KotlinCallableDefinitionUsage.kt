@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
+import org.jetbrains.kotlin.idea.refactoring.dropOperatorKeywordIfNecessary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -140,6 +141,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         if (canDropOverride) {
             dropOverrideKeywordIfNecessary(element)
         }
+        dropOperatorKeywordIfNecessary(element)
 
         return true
     }
