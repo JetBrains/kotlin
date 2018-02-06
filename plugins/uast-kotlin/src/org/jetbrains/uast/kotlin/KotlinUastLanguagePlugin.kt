@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
@@ -282,7 +283,8 @@ internal object KotlinConverter {
         else -> element
     }
 
-    private val identifiersTokens = setOf(KtTokens.IDENTIFIER, KtTokens.CONSTRUCTOR_KEYWORD, KtTokens.THIS_KEYWORD, KtTokens.SUPER_KEYWORD)
+    private val identifiersTokens =
+        setOf(KtTokens.IDENTIFIER, KtTokens.CONSTRUCTOR_KEYWORD, KtTokens.THIS_KEYWORD, KtTokens.SUPER_KEYWORD, KtTokens.OBJECT_KEYWORD)
 
     internal fun convertPsiElement(element: PsiElement?,
                                    givenParent: UElement?,
@@ -342,7 +344,9 @@ internal object KotlinConverter {
             else -> {
                 if (element is LeafPsiElement) {
                     if (element.elementType in identifiersTokens)
-                    el<UIdentifier>(build(::KotlinUIdentifier))
+                        if (element.elementType != KtTokens.OBJECT_KEYWORD || element.parentOfType<KtObjectDeclaration>()?.nameIdentifier == null)
+                            el<UIdentifier>(build(::KotlinUIdentifier))
+                        else null
                     else if (element.elementType == KtTokens.LBRACKET && element.parent is KtCollectionLiteralExpression)
                         el<UIdentifier> {
                             UIdentifier(
@@ -354,9 +358,7 @@ internal object KotlinConverter {
                             )
                         }
                     else null
-                } else {
-                    null
-                }
+                } else null
             }
         }}
     }

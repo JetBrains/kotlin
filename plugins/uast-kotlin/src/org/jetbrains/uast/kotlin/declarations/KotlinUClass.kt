@@ -79,7 +79,13 @@ open class KotlinUClass private constructor(
 
     override fun getContainingFile(): PsiFile? = unwrapFakeFileForLightClass(psi.containingFile)
 
-    override val uastAnchor by lazy { KotlinUIdentifier(nameIdentifier, ktClass?.nameIdentifier, this) }
+    override val uastAnchor by lazy { getIdentifierSourcePsi()?.let { KotlinUIdentifier(nameIdentifier, it, this) } }
+
+    private fun getIdentifierSourcePsi(): PsiElement? {
+        ktClass?.nameIdentifier?.let { return it }
+        (ktClass as? KtObjectDeclaration)?.getObjectKeyword()?.let { return it }
+        return null
+    }
 
     override fun getInnerClasses(): Array<UClass> {
         // filter DefaultImpls to avoid processing same methods from original interface multiple times
