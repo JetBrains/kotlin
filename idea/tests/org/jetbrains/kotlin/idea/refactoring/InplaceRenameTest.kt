@@ -110,6 +110,10 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestMemberInplaceRename("plus")
     }
 
+    fun testAddQuotes() {
+        doTestMemberInplaceRename("is")
+    }
+
     private fun doTestImplicitLambdaParameter(newName: String) {
         configureByFile(getTestName(false) + ".kt")
 
