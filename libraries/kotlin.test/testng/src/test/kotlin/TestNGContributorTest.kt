@@ -1,4 +1,4 @@
-package kotlinx.testing.tests
+package kotlin.test.testng.tests
 
 import org.testng.annotations.*
 import org.testng.*
