@@ -395,7 +395,15 @@ public abstract class StackValue {
             }
         }
         else if (toType.getSort() == Type.ARRAY) {
-            v.checkcast(toType);
+            if (fromType.getSort() != Type.ARRAY) {
+                v.checkcast(toType);
+            }
+            else if (toType.getDimensions() != fromType.getDimensions()) {
+                v.checkcast(toType);
+            }
+            else if (!toType.getElementType().equals(OBJECT_TYPE)) {
+                v.checkcast(toType);
+            }
         }
         else if (toType.getSort() == Type.OBJECT) {
             if (fromType.getSort() == Type.OBJECT || fromType.getSort() == Type.ARRAY) {
