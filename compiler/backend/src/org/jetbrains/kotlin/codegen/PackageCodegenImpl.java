@@ -99,7 +99,7 @@ public class PackageCodegenImpl implements PackageCodegen {
         List<KtClassOrObject> classOrObjects = new ArrayList<>();
 
         for (KtDeclaration declaration : CodegenUtil.getActualDeclarations(file)) {
-            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
+            if (isFilePartDeclaration(declaration)) {
                 generatePackagePart = true;
             }
             else if (declaration instanceof KtClassOrObject) {
@@ -125,6 +125,10 @@ public class PackageCodegenImpl implements PackageCodegen {
         ClassBuilder builder = state.getFactory().newVisitor(JvmDeclarationOriginKt.PackagePart(file, packageFragment), fileClassType, file);
 
         new PackagePartCodegen(builder, file, fileClassType, packagePartContext, state).generate();
+    }
+
+    public static boolean isFilePartDeclaration(KtDeclaration declaration) {
+        return declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias;
     }
 
     @Nullable

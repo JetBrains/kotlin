@@ -215,14 +215,25 @@ internal fun isWhenMappingAccess(internalName: String, fieldName: String): Boole
 internal fun isAnonymousSingletonLoad(internalName: String, fieldName: String): Boolean =
         JvmAbi.INSTANCE_FIELD == fieldName && isAnonymousClass(internalName)
 
-internal fun isSamWrapper(internalName: String) =
+/*
+ * Note that sam wrapper prior to 1.2.30 was generated with next template name (that was included suffix hash):
+ * int hash = PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 + DescriptorUtils.getFqNameSafe(descriptor).hashCode();
+ *  String shortName = String.format(
+ *       "%s$sam$%s%s$%08x",
+ *       outermostOwner.shortName().asString(),
+ *       descriptor.getName().asString(),
+ *       (isInsideInline ? "$i" : ""),
+ *       hash
+ *  );
+ */
+internal fun isOldSamWrapper(internalName: String) =
         internalName.contains("\$sam$") && internalName.substringAfter("\$i$", "").run { length == 8 && toLongOrNull(16) != null }
 
 internal fun isSamWrapperConstructorCall(internalName: String, methodName: String) =
-        isConstructor(methodName) && isSamWrapper(internalName)
+        isConstructor(methodName) && isOldSamWrapper(internalName)
 
 internal fun isAnonymousClass(internalName: String) =
-        !isSamWrapper(internalName) &&
+        !isOldSamWrapper(internalName) &&
         internalName.substringAfterLast('/').substringAfterLast("$", "").isInteger()
 
 fun wrapWithMaxLocalCalc(methodNode: MethodNode) =

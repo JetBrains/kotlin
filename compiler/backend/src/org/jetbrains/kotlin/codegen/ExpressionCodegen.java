@@ -2118,7 +2118,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return genClosure((KtNamedFunction) expression, samType);
         }
 
-        Type asmType = state.getSamWrapperClasses().getSamWrapperClass(samType, expression.getContainingKtFile(), this);
+        Type asmType = state.getSamWrapperClasses().getSamWrapperClass(samType, expression.getContainingKtFile(), this, context.getContextDescriptor());
 
         return StackValue.operation(asmType, v -> {
             Label afterAll = new Label();
