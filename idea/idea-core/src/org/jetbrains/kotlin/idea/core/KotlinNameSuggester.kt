@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
@@ -313,20 +314,10 @@ object KotlinNameSuggester {
     private fun MutableCollection<String>.addName(name: String?, validator: (String) -> Boolean) {
         if (name == null) return
         val correctedName = when {
-            isIdentifier(name) -> name
+            name.isIdentifier() -> name
             name == "class" -> "clazz"
             else -> return
         }
         add(suggestNameByName(correctedName, validator))
-    }
-
-    fun isIdentifier(name: String?): Boolean {
-        if (name == null || name.isEmpty()) return false
-
-        val lexer = KotlinLexer()
-        lexer.start(name, 0, name.length)
-        if (lexer.tokenType !== KtTokens.IDENTIFIER) return false
-        lexer.advance()
-        return lexer.tokenType == null
     }
 }

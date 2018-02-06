@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
@@ -138,7 +137,7 @@ fun IntroduceTypeAliasDescriptor.validate(): IntroduceTypeAliasDescriptorWithCon
     when {
         name.isEmpty() ->
             conflicts.putValue(originalType, "No name provided for type alias")
-        !KotlinNameSuggester.isIdentifier(name) ->
+        !name.isIdentifier() ->
             conflicts.putValue(originalType, "Type alias name must be a valid identifier: $name")
         originalData.getTargetScope().findClassifier(Name.identifier(name), NoLookupLocation.FROM_IDE) != null ->
             conflicts.putValue(originalType, "Type $name already exists in the target scope")

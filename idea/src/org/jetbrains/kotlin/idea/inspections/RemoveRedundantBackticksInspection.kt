@@ -21,9 +21,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.SharedImplUtil
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 
 class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -46,7 +46,7 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
     private fun isRedundantBackticks(node: ASTNode): Boolean {
         return (node.text.startsWith("`") &&
                 node.text.endsWith("`") &&
-                KotlinNameSuggester.isIdentifier(node.text) &&
+                node.text.isIdentifier() &&
                 !isKeyword(node.text.removePrefix("`").removeSuffix("`")))
     }
 
