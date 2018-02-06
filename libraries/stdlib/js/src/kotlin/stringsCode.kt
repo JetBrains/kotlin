@@ -46,7 +46,7 @@ public fun String.matches(regex: String): Boolean {
 
 public actual fun CharSequence.isBlank(): Boolean = length == 0 || (if (this is String) this else this.toString()).matches("^[\\s\\xA0]+$")
 
-public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean =
+public actual fun String?.equals(other: String?, ignoreCase: Boolean /*= false*/): Boolean =
         if (this == null)
             other == null
         else if (!ignoreCase)
@@ -55,7 +55,7 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): B
             other != null && this.toLowerCase() == other.toLowerCase()
 
 
-public actual fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean
+public actual fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean /*= false*/): Boolean
         = regionMatchesImpl(thisOffset, other, otherOffset, length, ignoreCase)
 
 
@@ -107,14 +107,14 @@ public actual fun CharSequence.repeat(n: Int): String {
     }
 }
 
-public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
+public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean /*= false*/): String =
         nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "gi" else "g"), Regex.escapeReplacement(newValue))
 
-public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String =
+public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean /*= false*/): String =
         nativeReplace(RegExp(Regex.escape(oldChar.toString()), if (ignoreCase) "gi" else "g"), newChar.toString())
 
-public actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
+public actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean /*= false*/): String =
         nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "i" else ""), Regex.escapeReplacement(newValue))
 
-public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String =
+public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean /*= false*/): String =
         nativeReplace(RegExp(Regex.escape(oldChar.toString()), if (ignoreCase) "i" else ""), newChar.toString())

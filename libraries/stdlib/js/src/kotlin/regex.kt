@@ -76,11 +76,11 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
      */
-    public actual fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.findNext(input.toString(), startIndex)
+    public actual fun find(input: CharSequence, startIndex: Int /*= 0*/): MatchResult? = nativePattern.findNext(input.toString(), startIndex)
 
     /** Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
-    public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, { match -> match.next() })
+    public actual fun findAll(input: CharSequence, startIndex: Int /*= 0*/): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, { match -> match.next() })
 
     /**
      * Attempts to match the entire [input] CharSequence against the pattern.
@@ -144,7 +144,7 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
      *
      * @param limit The maximum number of times the split can occur.
      */
-    public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
+    public actual fun split(input: CharSequence, limit: Int /*= 0*/): List<String> {
         require(limit >= 0) { "Limit must be non-negative, but was $limit" }
         val matches = findAll(input).let { if (limit == 0) it else it.take(limit - 1) }
         val result = mutableListOf<String>()

@@ -128,12 +128,12 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
      */
-    public actual fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex, input)
+    public actual fun find(input: CharSequence, startIndex: Int /*= 0*/): MatchResult? = nativePattern.matcher(input).findNext(startIndex, input)
 
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
-    public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, MatchResult::next)
+    public actual fun findAll(input: CharSequence, startIndex: Int /*= 0*/): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, MatchResult::next)
 
     /**
      * Attempts to match the entire [input] CharSequence against the pattern.
@@ -189,7 +189,7 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
      */
-    public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
+    public actual fun split(input: CharSequence, limit: Int /*= 0*/): List<String> {
         require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
         return nativePattern.split(input, if (limit == 0) -1 else limit).asList()
     }
