@@ -1663,7 +1663,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
             // `this` is represented as first parameter of function in erased inline class
-            if (contextKind() == OwnerKind.ERASED_INLINE_CLASS) {
+            if (contextKind() == OwnerKind.ERASED_INLINE_CLASS &&
+                InlineClassesUtilsKt.isInlineClass(propertyDescriptor.getContainingDeclaration())) {
                 Type underlyingRepresentationType = typeMapper.mapType(propertyDescriptor.getType());
                 return StackValue.local(0, underlyingRepresentationType);
             }

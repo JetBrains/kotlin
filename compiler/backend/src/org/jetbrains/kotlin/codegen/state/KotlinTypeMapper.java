@@ -810,13 +810,13 @@ public class KotlinTypeMapper {
                 }
             }
             else {
-                boolean isInsideInlineClass = currentOwner.isInline();
+                boolean toInlinedErasedClass = currentOwner.isInline() && !isAccessor(functionDescriptor);
 
                 boolean isStaticInvocation = (isStaticDeclaration(functionDescriptor) &&
                                               !(functionDescriptor instanceof ImportedFromObjectCallableDescriptor)) ||
                                              isStaticAccessor(functionDescriptor) ||
                                              CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor) ||
-                                             isInsideInlineClass;
+                                             toInlinedErasedClass;
                 if (isStaticInvocation) {
                     invokeOpcode = INVOKESTATIC;
                     isInterfaceMember = currentIsInterface && currentOwner instanceof JavaClassDescriptor;
@@ -838,7 +838,7 @@ public class KotlinTypeMapper {
                                                     ? overriddenSpecialBuiltinFunction.getOriginal()
                                                     : functionDescriptor.getOriginal();
 
-                signature = isInsideInlineClass
+                signature = toInlinedErasedClass
                             ? mapSignatureForInlineErasedClassSkipGeneric(functionToCall)
                             : mapSignatureSkipGeneric(functionToCall);
                 returnKotlinType = functionToCall.getReturnType();
@@ -846,7 +846,7 @@ public class KotlinTypeMapper {
                 ClassDescriptor receiver = (currentIsInterface && !originalIsInterface) || currentOwner instanceof FunctionClassDescriptor
                                            ? declarationOwner
                                            : currentOwner;
-                owner = isInsideInlineClass ? mapErasedInlineClass(receiver) : mapClass(receiver);
+                owner = toInlinedErasedClass ? mapErasedInlineClass(receiver) : mapClass(receiver);
                 thisClass = owner;
                 dispatchReceiverKotlinType = receiver.getDefaultType();
             }
