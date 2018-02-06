@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil
 import org.jetbrains.kotlin.utils.SmartList
@@ -158,7 +159,7 @@ private fun createSettable(
     val beanName = candidateBean.name
     try {
         val candidateClass = candidateBeanClasses.first()
-        val propertyName = if (beanName != null && KotlinNameSuggester.isIdentifier(beanName)) beanName else candidateClass.name!!
+        val propertyName = if (beanName != null && beanName.isIdentifier()) beanName else candidateClass.name!!
 
         val prototype: KtNamedDeclaration = when (injectionKind) {
             SpringDependencyInjectionKind.SETTER -> {
@@ -194,7 +195,7 @@ internal fun getSuggestedNames(
     SpringBeanUtils.getInstance()
             .findBeanNames(beanPointer.springBean)
             .asSequence()
-            .filter { KotlinNameSuggester.isIdentifier(it) }
+            .filter { it.isIdentifier() }
             .mapTo(names) { KotlinNameSuggester.suggestNameByName(it, ::validate) }
 
     (declaration.resolveToDescriptor() as CallableDescriptor).getType()?.let {
