@@ -16,7 +16,7 @@ import org.jetbrains.uast.kotlin.KotlinConverter
 import org.jetbrains.uast.kotlin.KotlinUElementWithType
 
 class KotlinUCollectionLiteralExpression(
-    override val sourcePsi: KtCollectionLiteralExpression,
+    val sourcePsi: KtCollectionLiteralExpression,
     givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UCallExpression, KotlinUElementWithType {
 
