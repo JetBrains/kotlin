@@ -9,8 +9,8 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.editor.event.DocumentAdapter
 import com.intellij.openapi.editor.event.DocumentEvent
-import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.ui.EditorTextField
 import org.intellij.lang.regexp.RegExpFileType
@@ -81,7 +81,7 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
             val regexField = EditorTextField(owner.namePattern, null, RegExpFileType.INSTANCE).apply {
                 setOneLineMode(true)
             }
-            regexField.document.addDocumentListener(object : DocumentListener {
+            regexField.document.addDocumentListener(object : DocumentAdapter() {
                 override fun documentChanged(e: DocumentEvent?) {
                     owner.namePattern = regexField.text
                 }
