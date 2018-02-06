@@ -9,5 +9,6 @@ Boolean -> USimpleNameReferenceExpression (identifier = Boolean)
     someLocalFun -> ULambdaExpression
     text -> [!] UnknownKotlinExpression (VALUE_PARAMETER)
     String -> USimpleNameReferenceExpression (identifier = String)
+    LocalObject -> UClass (name = LocalObject)
     bar -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
     Local -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
