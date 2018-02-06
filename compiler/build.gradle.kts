@@ -31,7 +31,7 @@ val depDistProjects = listOf(
 // TODO: it seems incomplete, find and add missing dependencies
 val testDistProjects = listOf(
         "", // for root project
-        ":prepare:mock-runtime-for-test",
+        ":kotlin-stdlib:jvm-minimal-for-test",
         ":kotlin-compiler",
         ":kotlin-script-runtime",
         ":kotlin-stdlib",
