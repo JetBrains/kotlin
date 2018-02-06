@@ -1950,6 +1950,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineClassesUnboxingAfterAssertionOperator.kt")
+        public void testInlineClassesUnboxingAfterAssertionOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassesUnboxingAfterAssertionOperator.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unboxInlineClassAfterSafeCall.kt")
         public void testUnboxInlineClassAfterSafeCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/unboxInlineClassAfterSafeCall.kt");

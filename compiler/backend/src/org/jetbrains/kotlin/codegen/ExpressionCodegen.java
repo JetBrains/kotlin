@@ -3557,7 +3557,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             StackValue base = genQualified(receiver, expression.getBaseExpression());
             if (isPrimitive(base.type)) return base;
 
-            return StackValue.operation(base.type, v -> {
+            return StackValue.operation(base.type, base.kotlinType, v -> {
                 base.put(base.type, base.kotlinType, v);
                 v.dup();
                 Label ok = new Label();
