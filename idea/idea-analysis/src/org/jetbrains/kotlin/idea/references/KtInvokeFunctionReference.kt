@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -95,14 +96,19 @@ class KtInvokeFunctionReference(expression: KtCallExpression) : KtSimpleReferenc
 
     override fun handleElementRename(newElementName: String?): PsiElement? {
         val callExpression = expression
+        val fullCallExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
         if (newElementName == OperatorNameConventions.GET.asString() && callExpression.typeArguments.isEmpty()) {
             val arrayAccessExpression = KtPsiFactory(callExpression).buildExpression {
+                if (fullCallExpression is KtQualifiedExpression) {
+                    appendExpression(fullCallExpression.receiverExpression)
+                    appendFixedText(fullCallExpression.operationSign.value)
+                }
                 appendExpression(callExpression.calleeExpression)
                 appendFixedText("[")
                 appendExpressions(callExpression.valueArguments.map { it.getArgumentExpression() })
                 appendFixedText("]")
             }
-            return callExpression.replace(arrayAccessExpression)
+            return fullCallExpression.replace(arrayAccessExpression)
         }
 
         return renameImplicitConventionalCall(newElementName)
