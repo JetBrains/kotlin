@@ -1,27 +1,26 @@
 package kotlin.test.junit.tests
 
-import org.junit.*
+import org.junit.Assert
+import kotlin.test.*
 import java.util.concurrent.*
+import kotlin.test.junit.JUnitAsserter
 
 class JUnitContributorTest {
     @Test
     fun smokeTest() {
-        Assert.assertEquals("JUnitAsserter", asserter.`class`.simpleName)
+        assertSame(JUnitAsserter, kotlin.test.asserter)
+        Assert.assertEquals(JUnitAsserter::class.java.simpleName, kotlin.test.asserter.javaClass.simpleName)
     }
 
     @Test
-    fun `should fail to contribute if it was run outside of junit`() {
-        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-        val q = ArrayBlockingQueue<java.lang.Object>(1)
+    fun parallelThreadGetsTheSameAsserter() {
+        val q = ArrayBlockingQueue<Any>(1)
 
         Thread {
             q.put(asserter)
         }.start()
 
-        Assert.assertEquals("DefaultAsserter", q.take().`class`.simpleName)
+        assertSame(kotlin.test.asserter, q.take())
     }
 
-    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-    private val asserter: java.lang.Object
-        get() = Class.forName("kotlin.test.AssertionsKt").getMethod("getAsserter").invoke(null) as java.lang.Object
 }

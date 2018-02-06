@@ -1,25 +1,27 @@
 package kotlin.test.testng.tests
 
-import org.testng.annotations.*
-import org.testng.*
+import org.testng.Assert
+import kotlin.test.*
 import java.util.concurrent.*
+import kotlin.test.testng.TestNGAsserter
 
 class TestNGContributorTest {
 
     @Test
     fun smokeTest() {
-        Assert.assertEquals("TestNGAsserter", kotlin.test.asserter.javaClass.simpleName)
+        assertSame(TestNGAsserter, asserter)
+        Assert.assertEquals(TestNGAsserter::class.java.simpleName, kotlin.test.asserter.javaClass.simpleName)
     }
 
     @Test
-    fun `should fail to contribute if it was run outside of testng`() {
+    fun parallelThreadGetsTheSameAsserter() {
         val q = ArrayBlockingQueue<Any>(1)
 
         Thread {
-            q.put(kotlin.test.asserter)
+            q.put(asserter)
         }.start()
 
-        Assert.assertEquals("DefaultAsserter", q.take().javaClass.simpleName)
+        assertSame(asserter, q.take())
     }
 
 }
