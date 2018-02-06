@@ -54,55 +54,55 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal fun emitLLVM(context: Context) {
-        val irModule = context.irModule!!
+    val irModule = context.irModule!!
 
-        // Note that we don't set module target explicitly.
-        // It is determined by the target of runtime.bc
-        // (see Llvm class in ContextUtils)
-        // Which in turn is determined by the clang flags
-        // used to compile runtime.bc.
-        val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
-        context.llvmModule = llvmModule
-        context.debugInfo.builder = DICreateBuilder(llvmModule)
-        context.llvmDeclarations = createLlvmDeclarations(context)
+    // Note that we don't set module target explicitly.
+    // It is determined by the target of runtime.bc
+    // (see Llvm class in ContextUtils)
+    // Which in turn is determined by the clang flags
+    // used to compile runtime.bc.
+    val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
+    context.llvmModule = llvmModule
+    context.debugInfo.builder = DICreateBuilder(llvmModule)
+    context.llvmDeclarations = createLlvmDeclarations(context)
 
-        val phaser = PhaseManager(context)
+    val phaser = PhaseManager(context)
 
-        phaser.phase(KonanPhase.RTTI) {
-            irModule.acceptVoid(RTTIGeneratorVisitor(context))
-        }
+    phaser.phase(KonanPhase.RTTI) {
+        irModule.acceptVoid(RTTIGeneratorVisitor(context))
+    }
 
-        generateDebugInfoHeader(context)
+    generateDebugInfoHeader(context)
 
-        var moduleDFG: ModuleDFG? = null
-        phaser.phase(KonanPhase.BUILD_DFG) {
-            moduleDFG = ModuleDFGBuilder(context, irModule).build()
-        }
+    var moduleDFG: ModuleDFG? = null
+    phaser.phase(KonanPhase.BUILD_DFG) {
+        moduleDFG = ModuleDFGBuilder(context, irModule).build()
+    }
 
-        phaser.phase(KonanPhase.SERIALIZE_DFG) {
-            DFGSerializer.serialize(context, moduleDFG!!)
-        }
+    phaser.phase(KonanPhase.SERIALIZE_DFG) {
+        DFGSerializer.serialize(context, moduleDFG!!)
+    }
 
-        @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
-        var externalModulesDFG: ExternalModulesDFG? = null
-        phaser.phase(KonanPhase.DESERIALIZE_DFG) {
-            externalModulesDFG = DFGSerializer.deserialize(context, moduleDFG!!.symbolTable.privateTypeIndex, moduleDFG!!.symbolTable.privateFunIndex)
-        }
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    var externalModulesDFG: ExternalModulesDFG? = null
+    phaser.phase(KonanPhase.DESERIALIZE_DFG) {
+        externalModulesDFG = DFGSerializer.deserialize(context, moduleDFG!!.symbolTable.privateTypeIndex, moduleDFG!!.symbolTable.privateFunIndex)
+    }
 
-        val lifetimes = mutableMapOf<IrElement, Lifetime>()
-        val codegenVisitor = CodeGeneratorVisitor(context, lifetimes)
-        phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {
-            val callGraph = CallGraphBuilder(context, moduleDFG!!, externalModulesDFG!!).build()
-            EscapeAnalysis.computeLifetimes(moduleDFG!!, externalModulesDFG!!, callGraph, lifetimes)
-        }
+    val lifetimes = mutableMapOf<IrElement, Lifetime>()
+    val codegenVisitor = CodeGeneratorVisitor(context, lifetimes)
+    phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {
+        val callGraph = CallGraphBuilder(context, moduleDFG!!, externalModulesDFG!!).build()
+        EscapeAnalysis.computeLifetimes(moduleDFG!!, externalModulesDFG!!, callGraph, lifetimes)
+    }
 
-        phaser.phase(KonanPhase.CODEGEN) {
-            irModule.acceptVoid(codegenVisitor)
-        }
+    phaser.phase(KonanPhase.CODEGEN) {
+        irModule.acceptVoid(codegenVisitor)
+    }
 
-        if (context.shouldContainDebugInfo()) {
-            DIFinalize(context.debugInfo.builder)
-        }
+    if (context.shouldContainDebugInfo()) {
+        DIFinalize(context.debugInfo.builder)
+    }
 }
 
 internal fun verifyModule(llvmModule: LLVMModuleRef, current: String = "") {
@@ -1525,7 +1525,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             DICreateReplaceableCompositeType(
                     tag        = DwarfTag.DW_TAG_structure_type.value,
                     refBuilder = context.debugInfo.builder,
-                    refScope   = (currentCodeContext.fileScope() as FileScope)!!.file.file() as DIScopeOpaqueRef,
+                    refScope   = (currentCodeContext.fileScope() as FileScope).file.file() as DIScopeOpaqueRef,
                     name       = clazz.descriptor.typeInfoSymbolName,
                     refFile    = file().file(),
                     line       = clazz.startLine()) as DITypeOpaqueRef
@@ -2422,8 +2422,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val llvmUsedGlobal =
                 context.llvm.staticData.placeGlobalArray(name, int8TypePtr, argsCasted)
 
-            LLVMSetLinkage(llvmUsedGlobal.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage);
-            LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata");
+            LLVMSetLinkage(llvmUsedGlobal.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
+            LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata")
         }
     }
 
