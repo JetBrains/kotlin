@@ -5,22 +5,24 @@
 
 package org.jetbrains.kotlin.daemon.report.experimental
 
+import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.incremental.ICReporter
 import java.io.File
 import java.io.Serializable
 
-internal class RemoteICReporter(
-        private val servicesFacade: CompilerServicesFacadeBase,
-        private val compilationResults: CompilationResults,
-        compilationOptions: CompilationOptions
+internal class RemoteICReporterAsync(
+    private val servicesFacade: CompilerServicesFacadeBaseAsync,
+    private val compilationResults: CompilationResults,
+    compilationOptions: CompilationOptions
 ) : ICReporter {
     private val shouldReportMessages = ReportCategory.IC_MESSAGE.code in compilationOptions.reportCategories
     private val isVerbose = compilationOptions.reportSeverity == ReportSeverity.DEBUG.code
     private val shouldReportCompileIteration = CompilationResultCategory.IC_COMPILE_ITERATION.code in compilationOptions.requestedCompilationResults
 
-    override fun report(message: () -> String) {
+    override fun report(message: () -> String) = runBlocking {
         if (shouldReportMessages && isVerbose) {
             servicesFacade.report(ReportCategory.IC_MESSAGE, ReportSeverity.DEBUG, message())
         }

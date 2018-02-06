@@ -17,11 +17,21 @@ import java.rmi.server.RMIClientSocketFactory
 import java.rmi.server.RMIServerSocketFactory
 import java.util.*
 
+
+
+
+
+
 // copyed from original(org.jetbrains.kotlin.daemon.common.NetworkUtils) TODO
 // unique part :
-// - ServerLoopbackSocketFactoryRMI / ServerLoopbackSocketFactoryKtor - Ktor-Sockets instead of java sockets
+// - AbstractClientLoopbackSocketFactory / ServerLoopbackSocketFactoryRMI / ServerLoopbackSocketFactoryKtor - Ktor-Sockets instead of java sockets
 // - findPortAndCreateSocket
 // TODO: get rid of copy-paste here
+
+
+
+
+
 
 const val SOCKET_ANY_FREE_PORT = 0
 const val JAVA_RMI_SERVER_HOSTNAME = "java.rmi.server.hostname"
@@ -120,28 +130,6 @@ object LoopbackNetworkInterface {
 
 private val portSelectionRng = Random()
 
-fun findPortAndCreateRegistry(attempts: Int, portRangeStart: Int, portRangeEnd: Int): Pair<Registry, Int> {
-    var i = 0
-    var lastException: RemoteException? = null
-
-    while (i++ < attempts) {
-        val port = portSelectionRng.nextInt(portRangeEnd - portRangeStart) + portRangeStart
-        try {
-            return Pair(
-                LocateRegistry.createRegistry(
-                    port,
-                    LoopbackNetworkInterface.clientLoopbackSocketFactoryRMI,
-                    LoopbackNetworkInterface.serverLoopbackSocketFactoryRMI
-                ), port
-            )
-        } catch (e: RemoteException) {
-            // assuming that the port is already taken
-            lastException = e
-        }
-    }
-    throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
-}
-
 fun findPortAndCreateSocket(attempts: Int, portRangeStart: Int, portRangeEnd: Int): Pair<io.ktor.network.sockets.ServerSocket, Int> {
     var i = 0
     var lastException: RemoteException? = null
@@ -159,14 +147,4 @@ fun findPortAndCreateSocket(attempts: Int, portRangeStart: Int, portRangeEnd: In
         }
     }
     throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
-}
-
-/**
- * Needs to be set up on both client and server to prevent localhost resolution,
- * which may be slow and can cause a timeout when there is a network problem/misconfiguration.
- */
-fun ensureServerHostnameIsSetUp() {
-    if (System.getProperty(JAVA_RMI_SERVER_HOSTNAME) == null) {
-        System.setProperty(JAVA_RMI_SERVER_HOSTNAME, LoopbackNetworkInterface.loopbackInetAddressName)
-    }
 }

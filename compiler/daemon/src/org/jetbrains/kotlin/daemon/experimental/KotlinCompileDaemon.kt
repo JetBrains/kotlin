@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
+import com.sun.jdi.connect.Connector
 import io.ktor.network.sockets.ServerSocket
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import java.io.File
 import java.io.IOException
@@ -47,7 +49,7 @@ class LogStream(name: String) : OutputStream() {
     }
 }
 
-abstract class AbstractKotlinCompileDaemon<Connector> {
+object KotlinCompileDaemonSockets {
 
     init {
         val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
@@ -73,7 +75,7 @@ abstract class AbstractKotlinCompileDaemon<Connector> {
     val log by lazy { Logger.getLogger("daemon") }
 
     private fun loadVersionFromResource(): String? {
-        (AbstractKotlinCompileDaemon::class.java.classLoader as? URLClassLoader)
+        (KotlinCompileDaemonSockets::class.java.classLoader as? URLClassLoader)
             ?.findResource("META-INF/MANIFEST.MF")
             ?.let {
                 try {
@@ -84,20 +86,8 @@ abstract class AbstractKotlinCompileDaemon<Connector> {
         return null
     }
 
-    abstract fun findPortAndCreateConnector(attempts: Int, portRangeStart: Int, portRangeEnd: Int): Pair<Connector, Int>
-
-    abstract fun createCompileService(
-        firstArg: Connector,
-        compiler: CompilerSelector,
-        compilerId: CompilerId,
-        daemonOptions: DaemonOptions,
-        daemonJVMOptions: DaemonJVMOptions,
-        port: Int,
-        timer: Timer,
-        onShutdown: () -> Unit
-    ): CompileService
-
-    fun abstractMain(args: Array<String>) {
+    @JvmStatic
+    fun main(args: Array<String>) {
         ensureServerHostnameIsSetUp()
 
         val jvmArguments = ManagementFactory.getRuntimeMXBean().inputArguments
@@ -142,7 +132,7 @@ abstract class AbstractKotlinCompileDaemon<Connector> {
             //
             //            setDaemonPermissions(daemonOptions.port)
 
-            val (connector, port) = findPortAndCreateConnector(
+            val (socket, port) = findPortAndCreateSocket(
                 COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
                 COMPILE_DAEMON_PORTS_RANGE_START,
                 COMPILE_DAEMON_PORTS_RANGE_END
@@ -160,8 +150,8 @@ abstract class AbstractKotlinCompileDaemon<Connector> {
             }
             // timer with a daemon thread, meaning it should not prevent JVM to exit normally
             val timer = Timer(true)
-            val compilerService = createCompileService(
-                connector,
+            val compilerService = CompileServiceServerSideImpl(
+                socket,
                 compilerSelector,
                 compilerId,
                 daemonOptions,
@@ -200,47 +190,5 @@ abstract class AbstractKotlinCompileDaemon<Connector> {
             throw e
         }
     }
-
-}
-
-object KotlinCompileDaemonRMI : AbstractKotlinCompileDaemon<Registry>() {
-
-    override fun findPortAndCreateConnector(attempts: Int, portRangeStart: Int, portRangeEnd: Int) =
-        findPortAndCreateRegistry(attempts, portRangeStart, portRangeEnd)
-
-    override fun createCompileService(
-        firstArg: Registry,
-        compiler: CompilerSelector,
-        compilerId: CompilerId,
-        daemonOptions: DaemonOptions,
-        daemonJVMOptions: DaemonJVMOptions,
-        port: Int,
-        timer: Timer,
-        onShutdown: () -> Unit
-    ) = CompileServiceImpl(firstArg, compiler, compilerId, daemonOptions, daemonJVMOptions, port, timer, onShutdown)
-
-    @JvmStatic
-    fun main(args: Array<String>) = abstractMain(args)
-
-}
-
-object KotlinCompileDaemonSockets : AbstractKotlinCompileDaemon<ServerSocket>() {
-
-    override fun findPortAndCreateConnector(attempts: Int, portRangeStart: Int, portRangeEnd: Int) =
-        findPortAndCreateSocket(attempts, portRangeStart, portRangeEnd)
-
-    override fun createCompileService(
-        firstArg: ServerSocket,
-        compiler: CompilerSelector,
-        compilerId: CompilerId,
-        daemonOptions: DaemonOptions,
-        daemonJVMOptions: DaemonJVMOptions,
-        port: Int,
-        timer: Timer,
-        onShutdown: () -> Unit
-    ) = CompileServiceServerSideImpl(firstArg, compiler, compilerId, daemonOptions, daemonJVMOptions, port, timer, onShutdown)
-
-    @JvmStatic
-    fun main(args: Array<String>) = abstractMain(args)
 
 }

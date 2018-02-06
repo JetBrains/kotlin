@@ -40,7 +40,7 @@ interface CompileServiceAsync {
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBase,
+        servicesFacade: CompilerServicesFacadeBaseAsync,
         compilationResults: CompilationResults?
     ): CompileService.CallResult<Int>
 
@@ -52,12 +52,12 @@ interface CompileServiceAsync {
         aliveFlagPath: String?,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBase,
+        servicesFacade: CompilerServicesFacadeBaseAsync,
         templateClasspath: List<File>,
         templateClassName: String
     ): CompileService.CallResult<Int>
 
-    suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacade>
+    suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeAsync>
 
     suspend fun replCheck(
         sessionId: Int,

@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.daemon.report.experimental
 
+import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.daemon.KotlinCompileDaemon.log
+import org.jetbrains.kotlin.daemon.common.CompilationOptions
+import org.jetbrains.kotlin.daemon.common.ReportCategory
+import org.jetbrains.kotlin.daemon.common.ReportSeverity
 import org.jetbrains.kotlin.daemon.common.experimental.*
 
 internal class CompileServicesFacadeMessageCollector(
-        private val servicesFacade: CompilerServicesFacadeBase,
+        private val servicesFacade: CompilerServicesFacadeBaseAsync,
         compilationOptions: CompilationOptions
 ) : MessageCollector {
     private val mySeverity = compilationOptions.reportSeverity
@@ -23,7 +27,7 @@ internal class CompileServicesFacadeMessageCollector(
         hasErrors = false
     }
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) = runBlocking {
         log.info("Message: " + MessageRenderer.WITHOUT_PATHS.render(severity, message, location))
         when (severity) {
             CompilerMessageSeverity.OUTPUT -> {

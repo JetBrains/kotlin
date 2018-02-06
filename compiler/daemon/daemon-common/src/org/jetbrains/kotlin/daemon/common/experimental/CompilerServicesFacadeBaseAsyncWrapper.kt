@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import java.io.Serializable
 
 
-abstract class CompilerServicesFacadeBaseAsyncWrapper(
-    private val rmiImpl: CompilerServicesFacadeBase
+class CompilerServicesFacadeBaseAsyncWrapper(
+    val rmiImpl: CompilerServicesFacadeBase
 ) : CompilerServicesFacadeBaseAsync {
 
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) = runBlocking {
@@ -19,3 +19,5 @@ abstract class CompilerServicesFacadeBaseAsyncWrapper(
     }
 
 }
+
+fun CompilerServicesFacadeBase.toWrapper() = CompilerServicesFacadeBaseAsyncWrapper(this)

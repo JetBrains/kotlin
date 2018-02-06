@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
@@ -135,8 +136,3 @@ interface IncrementalCompilationServicesFacade : Remote {
     }*/
 
 }
-
-class SimpleDirtyData(
-        val dirtyLookupSymbols: List<String>,
-        val dirtyClassesFqNames: List<String>
-) : Serializable

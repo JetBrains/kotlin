@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.daemon.common.experimental
 
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
-import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.CompilationOptions
+import org.jetbrains.kotlin.daemon.common.CompilationResults
+import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompilerId
 import java.io.File
 
-class CompileServiceRMIAsyncWrapper(private val rmiCompileService: CompileService) : CompileServiceAsync {
+class CompileServiceRMIAsyncWrapper(val rmiCompileService: CompileService) : CompileServiceAsync {
 
     suspend override fun getUsedMemory() = runBlocking {
         rmiCompileService.getUsedMemory()
@@ -56,14 +59,14 @@ class CompileServiceRMIAsyncWrapper(private val rmiCompileService: CompileServic
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBase,
+        servicesFacade: CompilerServicesFacadeBaseAsync,
         compilationResults: CompilationResults?
     ) = runBlocking {
         rmiCompileService.compile(
             sessionId,
             compilerArguments,
             compilationOptions,
-            servicesFacade,
+            (servicesFacade as CompilerServicesFacadeBaseAsyncWrapper).rmiImpl,
             compilationResults
         )
     }
@@ -80,7 +83,7 @@ class CompileServiceRMIAsyncWrapper(private val rmiCompileService: CompileServic
         aliveFlagPath: String?,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBase,
+        servicesFacade: CompilerServicesFacadeBaseAsync,
         templateClasspath: List<File>,
         templateClassName: String
     ) = runBlocking {
@@ -88,14 +91,14 @@ class CompileServiceRMIAsyncWrapper(private val rmiCompileService: CompileServic
             aliveFlagPath,
             compilerArguments,
             compilationOptions,
-            servicesFacade,
+            (servicesFacade as CompilerServicesFacadeBaseAsyncWrapper).rmiImpl,
             templateClasspath,
             templateClassName
         )
     }
 
     suspend override fun replCreateState(sessionId: Int) = runBlocking {
-        rmiCompileService.replCreateState(sessionId)
+        rmiCompileService.replCreateState(sessionId).toWrapper()
     }
 
     suspend override fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) = runBlocking {
@@ -115,3 +118,5 @@ class CompileServiceRMIAsyncWrapper(private val rmiCompileService: CompileServic
     }
 
 }
+
+fun CompileService.toWrapper() = CompileServiceRMIAsyncWrapper(this)

@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 import kotlinx.coroutines.experimental.runBlocking
+import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.common.RemoteInputStream
 import org.jetbrains.kotlin.daemon.common.RemoteOutputStream
 
-class RemoteOutputStreamAsyncWrapper(private val rmiOutput: RemoteOutputStream) : RemoteOutputStreamAsync {
+class RemoteOutputStreamAsyncWrapper(val rmiOutput: RemoteOutputStream) : RemoteOutputStreamAsync {
 
     suspend override fun close() = runBlocking {
         rmiOutput.close()
@@ -40,3 +41,6 @@ class RemoteInputStreamAsyncWrapper(private val rmiInput: RemoteInputStream) : R
     }
 
 }
+
+fun RemoteOutputStream.toWrapper() = RemoteOutputStreamAsyncWrapper(this)
+fun RemoteInputStream.toWrapper() = RemoteInputStreamAsyncWrapper(this)

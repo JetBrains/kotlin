@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.daemon.common.experimental
 
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ILineId
+import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.ReplStateFacade
 
-class ReplStateFacadeAsyncWrapper(private val rmiReplStateFacade: ReplStateFacade): ReplStateFacadeAsync {
+class ReplStateFacadeAsyncWrapper(val rmiReplStateFacade: ReplStateFacade): ReplStateFacadeAsync {
 
     suspend override fun getId() = runBlocking {
         rmiReplStateFacade.getId()
@@ -31,4 +32,12 @@ class ReplStateFacadeAsyncWrapper(private val rmiReplStateFacade: ReplStateFacad
         rmiReplStateFacade.historyResetTo(id)
     }
 
+}
+
+fun ReplStateFacade.toWrapper() = ReplStateFacadeAsyncWrapper(this)
+fun CompileService.CallResult<ReplStateFacade>.toWrapper()= when (this) {
+    is CompileService.CallResult.Good -> CompileService.CallResult.Good(this.result.toWrapper())
+    is CompileService.CallResult.Dying -> this
+    is CompileService.CallResult.Error -> this
+    is CompileService.CallResult.Ok -> this
 }
