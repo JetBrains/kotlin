@@ -61,10 +61,12 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.core.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
 import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
 import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
@@ -709,9 +711,9 @@ fun invokeOnceOnCommandFinish(action: () -> Unit) {
     commandProcessor.addCommandListener(listener)
 }
 
-fun FqNameUnsafe.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString().quoteIfNeeded()) }
+fun FqNameUnsafe.hasIdentifiersOnly(): Boolean = pathSegments().all { it.asString().quoteIfNeeded().isIdentifier() }
 
-fun FqName.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString().quoteIfNeeded()) }
+fun FqName.hasIdentifiersOnly(): Boolean = pathSegments().all { it.asString().quoteIfNeeded().isIdentifier() }
 
 fun PsiNamedElement.isInterfaceClass(): Boolean = when (this) {
     is KtClass -> isInterface()

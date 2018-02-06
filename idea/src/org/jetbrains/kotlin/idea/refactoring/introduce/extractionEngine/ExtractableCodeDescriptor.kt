@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
@@ -38,10 +37,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
@@ -87,7 +83,7 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
         var expressionToReplace = (e.parent as? KtThisExpression ?: e).let { it.getQualifiedExpressionForSelector() ?: it }
         val parameterName = KtPsiUtil.unquoteIdentifier(parameter.nameForRef)
         val replacingName =
-                if (e.text.startsWith('`') || !KotlinNameSuggester.isIdentifier(parameterName)) "`$parameterName`" else parameterName
+                if (e.text.startsWith('`') || !parameterName.isIdentifier()) "`$parameterName`" else parameterName
         val psiFactory = KtPsiFactory(e)
         val replacement = when {
             parameter == descriptor.receiverParameter -> psiFactory.createExpression("this")

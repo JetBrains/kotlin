@@ -28,6 +28,7 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -574,3 +575,15 @@ fun KtExpression.getLabeledParent(labelName: String): KtLabeledExpression? {
 fun PsiElement.astReplace(newElement: PsiElement) = parent.node.replaceChild(node, newElement.node)
 
 var KtElement.parentSubstitute: PsiElement? by UserDataProperty(Key.create<PsiElement>("PARENT_SUBSTITUTE"))
+
+fun String?.isIdentifier(): Boolean {
+    if (this == null || isEmpty()) return false
+
+    val lexer = KotlinLexer()
+    lexer.start(this, 0, length)
+    if (lexer.tokenType !== KtTokens.IDENTIFIER) return false
+    lexer.advance()
+    return lexer.tokenType == null
+}
+
+fun String.quoteIfNeeded(): String = if (this.isIdentifier()) this else "`$this`"
