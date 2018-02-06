@@ -8,20 +8,25 @@ package kotlin.test.testng
 import org.testng.*
 import kotlin.test.*
 
+/**
+ * Provides [TestNGAsserter] if `org.testng.Assert` is found in the classpath.
+ */
 class TestNGContributor : AsserterContributor {
     override fun contribute(): Asserter? {
-        for (stackFrame in currentStackTrace()) {
-            val className = stackFrame.className
+        return if (hasTestNGInClassPath) TestNGAsserter else null
+    }
 
-            if (className.startsWith("org.testng.") || className.startsWith("testng.")) {
-                return TestNGAsserter
-            }
-        }
-
-        return null
+    private val hasTestNGInClassPath = try {
+        Class.forName("org.testng.Assert")
+        true
+    } catch (_: ClassNotFoundException) {
+        false
     }
 }
 
+/**
+ * Implements `kotlin.test` assertions by delegating them to `org.testng.Assert` class.
+ */
 object TestNGAsserter : Asserter {
     override fun assertEquals(message: String?, expected: Any?, actual: Any?) {
         Assert.assertEquals(expected, actual, message)
