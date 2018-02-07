@@ -193,9 +193,13 @@ val prepareIvyXmls by tasks.creating {
         val sourcesFile = if (sources.isEmpty) null else File(repoDir, "${sources.name}/${sources.singleFile.name}")
 
         if (installIntellijCommunity) {
-            writeIvyXml(intellij.name, intellij.name,
-                        files("$intellijSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
-                        File(intellijSdkDir, "lib"),
+            val libDir = File(intellijSdkDir, "lib")
+            writeIvyXml(intellij.name,
+                        intellij.name,
+                        fileTree(libDir).filter {
+                            it.parentFile == libDir && !it.name.startsWith("kotlin-")
+                        },
+                        libDir,
                         sourcesFile)
 
             File(intellijSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
@@ -204,9 +208,13 @@ val prepareIvyXmls by tasks.creating {
         }
 
         if (installIntellijUltimate) {
-            writeIvyXml(intellij.name /* important! the module name should be "intellij" */ , intellijUltimate.name,
-                        files("$intellijUltimateSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
-                        File(intellijUltimateSdkDir, "lib"),
+            val libDir = File(intellijUltimateSdkDir, "lib")
+            writeIvyXml(intellij.name, // important! the module name should be "intellij"
+                        intellijUltimate.name,
+                        fileTree(libDir).filter {
+                            it.parentFile == libDir && !it.name.startsWith("kotlin-")
+                        },
+                        libDir,
                         sourcesFile)
 
             File(intellijUltimateSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
