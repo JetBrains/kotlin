@@ -12667,10 +12667,8 @@ public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
 @Suppress("UNCHECKED_CAST")
 public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
 
-private val kEmptyArray = arrayOf<Any>()
-
-@Suppress("UNCHECKED_CAST")
-public fun <T> emptyArray() = kEmptyArray as Array<T>
+@SymbolName("Kotlin_emptyArray")
+external public fun <T> emptyArray(): Array<T>
 
 /**
  * Returns an array containing the specified [Double] numbers.
