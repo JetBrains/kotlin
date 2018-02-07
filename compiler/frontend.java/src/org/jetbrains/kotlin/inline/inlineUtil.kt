@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature
@@ -62,8 +63,8 @@ private fun inlineAccessorsJvmNames(properties: List<ProtoBuf.Property>, nameRes
     }
     val inlineAccessors = arrayListOf<JvmMethodSignature>()
     propertiesWithInlineAccessors.forEach { proto ->
-        if (proto.hasExtension(JvmProtoBuf.propertySignature)) {
-            val signature = proto.getExtension(JvmProtoBuf.propertySignature)
+        val signature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature)
+        if (signature != null) {
             if (proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(proto.getterFlags)) {
                 inlineAccessors.add(signature.getter)
             }

@@ -90,8 +90,7 @@ class AnnotationAndConstantLoaderImpl(
             proto: ProtoBuf.Property,
             expectedType: KotlinType
     ): ConstantValue<*>? {
-        if (!proto.hasExtension(protocol.compileTimeValue)) return null
-        val value = proto.getExtension(protocol.compileTimeValue)
+        val value = proto.getExtensionOrNull(protocol.compileTimeValue) ?: return null
         return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }
 }

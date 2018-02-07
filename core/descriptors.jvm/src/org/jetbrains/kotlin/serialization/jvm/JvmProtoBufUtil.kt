@@ -57,8 +57,7 @@ object JvmProtoBufUtil {
             nameResolver: NameResolver,
             typeTable: TypeTable
     ): String? {
-        val signature =
-                if (proto.hasExtension(JvmProtoBuf.methodSignature)) proto.getExtension(JvmProtoBuf.methodSignature) else null
+        val signature = proto.getExtensionOrNull(JvmProtoBuf.methodSignature)
         val name = if (signature != null && signature.hasName()) signature.name else proto.name
         val desc = if (signature != null && signature.hasDesc()) {
             nameResolver.getString(signature.desc)
@@ -79,8 +78,7 @@ object JvmProtoBufUtil {
             nameResolver: NameResolver,
             typeTable: TypeTable
     ): String? {
-        val signature =
-                if (proto.hasExtension(JvmProtoBuf.constructorSignature)) proto.getExtension(JvmProtoBuf.constructorSignature) else null
+        val signature = proto.getExtensionOrNull(JvmProtoBuf.constructorSignature)
         val desc = if (signature != null && signature.hasDesc()) {
             nameResolver.getString(signature.desc)
         }
@@ -97,8 +95,7 @@ object JvmProtoBufUtil {
             nameResolver: NameResolver,
             typeTable: TypeTable
     ): PropertySignature? {
-        val signature =
-                if (proto.hasExtension(JvmProtoBuf.propertySignature)) proto.getExtension(JvmProtoBuf.propertySignature) else return null
+        val signature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return null
         val field =
                 if (signature.hasField()) signature.field else null
 
