@@ -29,5 +29,8 @@ sourceSets {
 }
 
 projectTest {
+    doFirst {
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+    }
     workingDir = rootDir
 }
