@@ -25,11 +25,11 @@ class BuildCacheIT : BaseGradleIT() {
             super.defaultBuildOptions().copy(withBuildCache = true)
 
     companion object {
-        private val GRADLE_VERSION = "4.3.1"
+        private val GRADLE_VERSION = GradleVersionRequired.AtLeast("4.3")
     }
 
     @Test
-    fun testNoCacheWithGradlePre43() = with(Project("simpleProject", "4.2")) {
+    fun testNoCacheWithGradlePre43() = with(Project("simpleProject", GradleVersionRequired.Exact("4.2"))) {
         // Check that even with the build cache enabled, the Kotlin tasks are not cacheable with Gradle < 4.3:
         val optionsWithCache = defaultBuildOptions().copy(withBuildCache = true)
 

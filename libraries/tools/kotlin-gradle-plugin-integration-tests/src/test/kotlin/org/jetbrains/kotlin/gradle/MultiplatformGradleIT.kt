@@ -19,20 +19,16 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_DEPRECATION_WARNING
-import org.jetbrains.kotlin.gradle.util.allKotlinFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 
 class MultiplatformGradleIT : BaseGradleIT() {
-    companion object {
-        private val GRADLE_VERSION = NoSpecificGradleVersion
-    }
 
     @Test
     fun testMultiplatformCompile() {
-        val project = Project("multiplatformProject", GradleVersionAtLeast("4.0"))
+        val project = Project("multiplatformProject", GradleVersionRequired.AtLeast("4.0"))
 
         project.build("build") {
             assertSuccessful()
@@ -53,7 +49,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
     fun testDeprecatedImplementWarning() {
-        val project = Project("multiplatformProject", GRADLE_VERSION)
+        val project = Project("multiplatformProject")
 
         project.build("build") {
             assertSuccessful()
@@ -72,7 +68,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
     fun testCommonKotlinOptions() {
-        with(Project("multiplatformProject", GRADLE_VERSION)) {
+        with(Project("multiplatformProject")) {
             setupWorkingDir()
 
             File(projectDir, "lib/build.gradle").appendText(
@@ -89,7 +85,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
     fun testSubprojectWithAnotherClassLoader() {
-        with(Project("multiplatformProject", GradleVersionAtLeast("4.0"))) {
+        with(Project("multiplatformProject", GradleVersionRequired.AtLeast("4.0"))) {
             setupWorkingDir()
 
             // Make sure there is a plugin applied with the plugins DSL, so that Gradle loads the
@@ -126,7 +122,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     // todo: also make incremental compilation test
     @Test
-    fun testIncrementalBuild(): Unit = Project("multiplatformProject", GRADLE_VERSION).run {
+    fun testIncrementalBuild(): Unit = Project("multiplatformProject").run {
         val compileCommonTask = ":lib:compileKotlinCommon"
         val compileJsTask = ":libJs:compileKotlin2Js"
         val compileJvmTask = ":libJvm:compileKotlin"

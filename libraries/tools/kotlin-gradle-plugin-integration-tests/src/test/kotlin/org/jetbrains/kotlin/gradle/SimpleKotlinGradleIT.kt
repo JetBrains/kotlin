@@ -8,13 +8,9 @@ import kotlin.test.assertTrue
 
 class SimpleKotlinGradleIT : BaseGradleIT() {
 
-    companion object {
-        private val GRADLE_VERSION = NoSpecificGradleVersion
-    }
-
     @Test
     fun testSimpleCompile() {
-        val project = Project("simpleProject", GRADLE_VERSION)
+        val project = Project("simpleProject")
 
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
@@ -34,7 +30,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testSuppressWarnings() {
-        val project = Project("suppressWarnings", GRADLE_VERSION)
+        val project = Project("suppressWarnings")
 
         project.build("build") {
             assertSuccessful()
@@ -45,28 +41,28 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testKotlinCustomDirectory() {
-        Project("customSrcDir", GRADLE_VERSION).build("build") {
+        Project("customSrcDir").build("build") {
             assertSuccessful()
         }
     }
 
     @Test
     fun testKotlinExtraJavaSrc() {
-        Project("additionalJavaSrc", GRADLE_VERSION).build("build") {
+        Project("additionalJavaSrc").build("build") {
             assertSuccessful()
         }
     }
 
     @Test
     fun testLanguageVersion() {
-        Project("languageVersion", GRADLE_VERSION).build("build") {
+        Project("languageVersion").build("build") {
             assertFailed()
             assertContains("This type is sealed")
         }
     }
     @Test
     fun testJvmTarget() {
-        Project("jvmTarget", GRADLE_VERSION).build("build") {
+        Project("jvmTarget").build("build") {
             assertFailed()
             assertContains("Unknown JVM target version: 1.7")
         }
@@ -74,7 +70,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testCustomJdk() {
-        Project("customJdk", GRADLE_VERSION).build("build") {
+        Project("customJdk").build("build") {
             assertFailed()
             assertContains("Unresolved reference: stream")
             assertNotContains("AutoCloseable")
@@ -83,7 +79,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testGradleSubplugin() {
-        val project = Project("kotlinGradleSubplugin", GRADLE_VERSION)
+        val project = Project("kotlinGradleSubplugin")
 
         project.build("compileKotlin", "build") {
             assertSuccessful()
@@ -102,7 +98,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testDestinationDirReferencedDuringEvaluation() {
-        Project("destinationDirReferencedDuringEvaluation", GRADLE_VERSION).build("build") {
+        Project("destinationDirReferencedDuringEvaluation").build("build") {
             assertSuccessful()
             assertContains("GreeterTest PASSED")
         }
@@ -110,7 +106,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testAllOpenPlugin() {
-        Project("allOpenSimple", GRADLE_VERSION).build("build") {
+        Project("allOpenSimple").build("build") {
             assertSuccessful()
 
             val classesDir = File(project.projectDir, kotlinClassesDir())
@@ -131,7 +127,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testKotlinSpringPlugin() {
-        Project("allOpenSpring", GRADLE_VERSION).build("build") {
+        Project("allOpenSpring").build("build") {
             assertSuccessful()
 
             val classesDir = File(project.projectDir, kotlinClassesDir())
@@ -152,7 +148,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testKotlinJpaPlugin() {
-        Project("noArgJpa", GRADLE_VERSION).build("build") {
+        Project("noArgJpa").build("build") {
             assertSuccessful()
 
             val classesDir = File(project.projectDir, kotlinClassesDir())
@@ -170,21 +166,21 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testNoArgKt18668() {
-        Project("noArgKt18668", GRADLE_VERSION).build("build") {
+        Project("noArgKt18668").build("build") {
             assertSuccessful()
         }
     }
 
     @Test
     fun testSamWithReceiverSimple() {
-        Project("samWithReceiverSimple", GRADLE_VERSION).build("build") {
+        Project("samWithReceiverSimple").build("build") {
             assertSuccessful()
         }
     }
 
     @Test
     fun testBuildDirLazyEvaluation() {
-        val project = Project("kotlinProject", GRADLE_VERSION)
+        val project = Project("kotlinProject")
         project.setupWorkingDir()
 
         // Change the build directory in the end of the build script:

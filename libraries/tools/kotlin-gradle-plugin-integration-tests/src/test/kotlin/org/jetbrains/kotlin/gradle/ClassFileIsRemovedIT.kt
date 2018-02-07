@@ -42,7 +42,7 @@ class ClassFileIsRemovedIT : BaseGradleIT() {
     }
 
     fun doTest(buildOptions: BuildOptions, transformDummy: (File)->Unit) {
-        val project = Project("kotlinInJavaRoot", NoSpecificGradleVersion)
+        val project = Project("kotlinInJavaRoot")
         project.build("build", options = buildOptions) {
             assertSuccessful()
         }

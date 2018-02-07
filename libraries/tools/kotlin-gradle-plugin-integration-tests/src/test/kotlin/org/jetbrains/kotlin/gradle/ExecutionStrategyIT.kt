@@ -20,7 +20,7 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
 
 open class ExecutionStrategyIT : BaseGradleIT() {
     companion object {
-        private val GRADLE_VERSION = GradleVersionAtLeast("4.0")
+        private val GRADLE_VERSION = GradleVersionRequired.AtLeast("4.0")
     }
 
     @Test

@@ -35,13 +35,9 @@ abstract class Kapt3BaseIT : BaseGradleIT() {
 }
 
 open class Kapt3IT : Kapt3BaseIT() {
-    companion object {
-        private val GRADLE_VERSION = NoSpecificGradleVersion
-    }
-
     @Test
     fun testAnnotationProcessorAsFqName() {
-        val project = Project("annotationProcessorAsFqName", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("annotationProcessorAsFqName", directoryPrefix = "kapt2")
 
         project.build("build") {
             assertSuccessful()
@@ -57,7 +53,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testSimple() {
-        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("simple", directoryPrefix = "kapt2")
 
         project.build("build") {
             assertSuccessful()
@@ -86,7 +82,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @Test
     fun testSimpleWithIC() {
         val options = defaultBuildOptions().copy(incremental = true)
-        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("simple", directoryPrefix = "kapt2")
         val javaClassesDir = File(project.projectDir, project.classesDir(language = "java"))
 
         project.build("clean", "build", options = options) {
@@ -120,7 +116,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testDisableIcForGenerateStubs() {
-        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("simple", directoryPrefix = "kapt2")
         project.build("build", options = defaultBuildOptions().copy(incremental = false)) {
             assertSuccessful()
             assertContains(":kaptGenerateStubsKotlin")
@@ -130,7 +126,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testArguments() {
-        Project("arguments", GRADLE_VERSION, directoryPrefix = "kapt2").build("build") {
+        Project("arguments", directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
             assertKaptSuccessful()
             assertContains("Options: {suffix=Customized, justColon=:, justEquals==, containsColon=a:b, " +
@@ -145,7 +141,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testInheritedAnnotations() {
-        Project("inheritedAnnotations", GRADLE_VERSION, directoryPrefix = "kapt2").build("build") {
+        Project("inheritedAnnotations", directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
@@ -157,7 +153,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testGeneratedDirectoryIsUpToDate() {
-        val project = Project("generatedDirUpToDate", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("generatedDirUpToDate", directoryPrefix = "kapt2")
 
         project.build("build") {
             assertSuccessful()
@@ -200,7 +196,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testRemoveAnnotationIC() {
-        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("simple", directoryPrefix = "kapt2")
         val options = defaultBuildOptions().copy(incremental = true)
         project.setupWorkingDir()
         val internalDummyKt = project.projectDir.getFileByName("InternalDummy.kt")
@@ -227,7 +223,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testKt18799() {
-        val project = Project("kt18799", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("kt18799", directoryPrefix = "kapt2")
 
         project.build("kaptKotlin") {
             assertSuccessful()
@@ -246,7 +242,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testKaptClassesDirSync() {
-        val project = Project("autoService", SpecificGradleVersion("3.5"), directoryPrefix = "kapt2")
+        val project = Project("autoService", GradleVersionRequired.Exact("3.5"), directoryPrefix = "kapt2")
 
         project.build("build") {
             assertSuccessful()
@@ -271,7 +267,7 @@ open class Kapt3IT : Kapt3BaseIT() {
      */
     @Test
     fun testCopyCompileArguments() {
-        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("simple", directoryPrefix = "kapt2")
         project.setupWorkingDir()
 
         val arg = "-Xskip-runtime-version-check"
@@ -293,7 +289,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testOutputKotlinCode() {
-        Project("kaptOutputKotlinCode", GRADLE_VERSION, directoryPrefix = "kapt2").build("build") {
+        Project("kaptOutputKotlinCode", directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
@@ -305,7 +301,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testLocationMapping() {
-        val project = Project("locationMapping", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("locationMapping", directoryPrefix = "kapt2")
 
         project.build("build") {
             assertFailed()
@@ -331,7 +327,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testChangesInLocalAnnotationProcessor() {
-        val project = Project("localAnnotationProcessor", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("localAnnotationProcessor", directoryPrefix = "kapt2")
 
         project.build("build") {
             assertSuccessful()
@@ -354,7 +350,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @Test
-    fun testKaptConfigurationLazyResolution() = with(Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")) {
+    fun testKaptConfigurationLazyResolution() = with(Project("simple", directoryPrefix = "kapt2")) {
         setupWorkingDir()
         File(projectDir, "build.gradle").appendText(
             "\ndependencies { kapt project.files { throw new GradleException(\"Resolved!\") } }"

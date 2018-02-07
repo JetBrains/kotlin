@@ -10,10 +10,10 @@ import org.junit.Test
 import java.io.File
 
 
-class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionAtLeast("3.4"), androidGradlePluginVersion = "2.3.0")
+class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionRequired.AtLeast("3.4"), androidGradlePluginVersion = "2.3.0")
 class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(androidGradlePluginVersion = "2.3.+")
 
-class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionAtLeast("4.1"), androidGradlePluginVersion = "3.0.0-beta1") {
+class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionRequired.AtLeast("4.1"), androidGradlePluginVersion = "3.0.0-beta1") {
 
     @Test
     fun testApplyWithFeaturePlugin() {
@@ -43,8 +43,8 @@ class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion =
 }
 
 abstract class AbstractKotlinAndroidGradleTests(
-        protected val gradleVersion: GradleVersionRequirement,
-        private val androidGradlePluginVersion: String
+    protected val gradleVersion: GradleVersionRequired,
+    private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
@@ -276,7 +276,7 @@ fun getSomething() = 10
                 ":libAndroid:compileReleaseUnitTestKotlin"
             )
 
-            val kotlinFolder = if (VersionNumber.parse(gradleVersion).major > 3) "kotlin" else ""
+            val kotlinFolder = if (VersionNumber.parse(project.chooseWrapperVersionOrFinishTest()).major > 3) "kotlin" else ""
 
             assertFileExists("lib/build/classes/$kotlinFolder/main/foo/PlatformClass.kotlin_metadata")
             assertFileExists("lib/build/classes/$kotlinFolder/test/foo/PlatformTest.kotlin_metadata")
@@ -304,7 +304,7 @@ abstract class AbstractKotlinAndroidWithJackGradleTests(
 
     @Test
     fun testSimpleCompile() {
-        val project = Project("AndroidJackProject", SpecificGradleVersion("3.4"))
+        val project = Project("AndroidJackProject", GradleVersionRequired.Exact("3.4"))
 
         project.build("assemble") {
             assertFailed()

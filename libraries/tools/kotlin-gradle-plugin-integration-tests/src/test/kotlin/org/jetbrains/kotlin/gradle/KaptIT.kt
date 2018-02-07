@@ -8,13 +8,9 @@ import java.io.File
 
 class KaptIT: BaseGradleIT() {
 
-    companion object {
-        private val GRADLE_VERSION = NoSpecificGradleVersion
-    }
-
     @Test
     fun testSimple() {
-        val project = Project("kaptSimple", GRADLE_VERSION)
+        val project = Project("kaptSimple")
         project.allowOriginalKapt()
 
         project.build("build") {
@@ -44,7 +40,7 @@ class KaptIT: BaseGradleIT() {
 
     @Test
     fun testEnumConstructor() {
-        val project = Project("kaptEnumConstructor", GRADLE_VERSION)
+        val project = Project("kaptEnumConstructor")
         project.allowOriginalKapt()
 
         project.build("build") {
@@ -61,7 +57,7 @@ class KaptIT: BaseGradleIT() {
 
     @Test
     fun testStubs() {
-        val project = Project("kaptStubs", GRADLE_VERSION)
+        val project = Project("kaptStubs")
         project.allowOriginalKapt()
 
         project.build("build") {
@@ -87,7 +83,7 @@ class KaptIT: BaseGradleIT() {
 
     @Test
     fun testStubsWithoutJava() {
-        val project = Project("kaptStubs", GRADLE_VERSION)
+        val project = Project("kaptStubs")
         project.allowOriginalKapt()
         project.projectDir.allJavaFiles().forEach { it.delete() }
 
@@ -113,7 +109,7 @@ class KaptIT: BaseGradleIT() {
 
     private fun doTestIncrementalBuild(projectName: String, compileTasks: Array<String>) {
         val compileTasksUpToDate = compileTasks.map { it + " UP-TO-DATE" }.toTypedArray()
-        val project = Project(projectName, NoSpecificGradleVersion)
+        val project = Project(projectName)
         project.allowOriginalKapt()
 
         project.build("build") {
@@ -150,7 +146,7 @@ class KaptIT: BaseGradleIT() {
 
     @Test
     fun testArguments() {
-        val project = Project("kaptArguments", GRADLE_VERSION)
+        val project = Project("kaptArguments")
         project.allowOriginalKapt()
 
         project.build("build") {
@@ -167,7 +163,7 @@ class KaptIT: BaseGradleIT() {
 
     @Test
     fun testInheritedAnnotations() {
-        val project = Project("kaptInheritedAnnotations", GRADLE_VERSION)
+        val project = Project("kaptInheritedAnnotations")
         project.allowOriginalKapt()
 
         project.build("build") {
@@ -181,7 +177,7 @@ class KaptIT: BaseGradleIT() {
 
     @Test
     fun testOutputKotlinCode() {
-        val project = Project("kaptOutputKotlinCode", GRADLE_VERSION)
+        val project = Project("kaptOutputKotlinCode")
         project.allowOriginalKapt()
 
         project.build("build") {
@@ -201,7 +197,7 @@ class KaptIT: BaseGradleIT() {
     fun testInternalUserIsModifiedStubsIC() {
         val options = defaultBuildOptions().copy(incremental = true)
 
-        val project = Project("kaptStubs", GRADLE_VERSION)
+        val project = Project("kaptStubs")
         project.allowOriginalKapt()
 
         project.build("build", options = options) {
@@ -223,7 +219,7 @@ class KaptIT: BaseGradleIT() {
     fun testKotlinCompilerNotCalledStubsIC() {
         val options = defaultBuildOptions().copy(incremental = true)
 
-        val project = Project("kaptStubs", GRADLE_VERSION)
+        val project = Project("kaptStubs")
         project.allowOriginalKapt()
 
         project.build("build", options = options) {

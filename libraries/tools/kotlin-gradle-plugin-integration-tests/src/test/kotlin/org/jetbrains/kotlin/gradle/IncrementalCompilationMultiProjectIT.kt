@@ -10,7 +10,6 @@ import java.io.File
 
 class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
     companion object {
-        private val GRADLE_VERSION = NoSpecificGradleVersion
         private val ANDROID_GRADLE_PLUGIN_VERSION = "1.5.+"
     }
 
@@ -26,7 +25,7 @@ class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
 
     @Test
     fun testMoveFunctionFromLib() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
         project.build("build") {
             assertSuccessful()
         }
@@ -46,7 +45,7 @@ class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
 
     @Test
     fun testAddNewMethodToLib() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
         project.build("build") {
             assertSuccessful()
         }
@@ -71,7 +70,7 @@ open class A {
 
     @Test
     fun testLibClassBecameFinal() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
         project.build("build") {
             assertSuccessful()
         }
@@ -91,7 +90,7 @@ open class A {
 
     @Test
     fun testCleanBuildLib() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
         project.build("build") {
             assertSuccessful()
         }
@@ -113,7 +112,7 @@ open class A {
 
     @Test
     fun testCompileErrorInLib() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
         project.build("build") {
             assertSuccessful()
         }
@@ -140,7 +139,7 @@ open class A {
     // that is not JavaCompile or KotlinCompile
     @Test
     fun testCompileLibWithGroovy() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
         project.setupWorkingDir()
         val lib = File(project.projectDir, "lib")
         val libBuildGradle = File(lib, "build.gradle")
@@ -178,7 +177,7 @@ open class A {
 
     @Test
     fun testAndroid() {
-        val project = Project("AndroidProject", SpecificGradleVersion("2.10"))
+        val project = Project("AndroidProject", GradleVersionRequired.Exact("2.10"))
         val options = androidBuildOptions()
 
         project.build("assembleDebug", options = options) {
@@ -186,7 +185,7 @@ open class A {
         }
 
         val libUtilKt = project.projectDir.getFileByName("libUtil.kt")
-        libUtilKt.modify { it.replace("fun libUtil(): String", "fun libUtil(): Any") }
+        libUtilKt.modify { it.replace("fun libUtil(): String", "fun libUtil(): None") }
 
         project.build("assembleDebug", options = options) {
             assertSuccessful()
@@ -279,7 +278,7 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
             transformFile: (String)->String,
             expectedAffectedSources: Collection<String>
     ) {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
 
         val options = defaultBuildOptions().copy(usePreciseJavaTracking = usePreciseJavaTracking)
         project.build("build", options = options) {

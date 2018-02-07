@@ -36,16 +36,17 @@ class BuildCacheRelocationIT : BaseGradleIT() {
     @Parameterized.Parameter
     lateinit var testCase: TestCase
 
+    val workingDirs = (0..1).map { createTempDir("BuildCacheRelocationIT$it") }
+
     @Test
     fun testRelocation() = with(testCase) {
         val localBuildCacheDirectory = createTempDir("buildCache$projectName")
 
         val originalWorkingDir = workingDir
-        val workingDirs = (0..1).map { createTempDir("BuildCacheRelocationIT$it") }
 
         val (firstProject, secondProject) = (0..1).map { id ->
             workingDir = workingDirs[id]
-            Project(projectName, "4.4", projectDirectoryPrefix).apply {
+            Project(projectName, GradleVersionRequired.AtLeast("4.3"), projectDirectoryPrefix).apply {
                 setupWorkingDir()
                 initProject()
                 prepareLocalBuildCache(localBuildCacheDirectory)

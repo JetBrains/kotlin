@@ -19,7 +19,6 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
     }
 
     companion object {
-        private val GRADLE_VERSION = NoSpecificGradleVersion
         private val EXAMPLE_ANNOTATION_REGEX = "@(field:)?example.ExampleAnnotation".toRegex()
         private const val GENERATE_STUBS_PLACEHOLDER = "GENERATE_STUBS_PLACEHOLDER"
 
@@ -30,7 +29,7 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
     protected open val projectName = "kaptIncrementalCompilationProject"
 
     private fun getProject() =
-            Project(projectName, GRADLE_VERSION).apply {
+            Project(projectName).apply {
                 setupWorkingDir()
                 val buildGradle = projectDir.parentFile.getFileByName("build.gradle")
                 buildGradle.modify { it.replace(GENERATE_STUBS_PLACEHOLDER, shouldUseStubs.toString()) }

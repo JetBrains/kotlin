@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle
 
-import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.*
@@ -177,10 +176,10 @@ abstract class BaseGradleIT {
     )
 
     open inner class Project(
-            val projectName: String,
-            val gradleVersionRequirement: GradleVersionRequirement,
-            directoryPrefix: String? = null,
-            val minLogLevel: LogLevel = LogLevel.DEBUG
+        val projectName: String,
+        val gradleVersionRequirement: GradleVersionRequired = GradleVersionRequired.None,
+        directoryPrefix: String? = null,
+        val minLogLevel: LogLevel = LogLevel.DEBUG
     ) {
         val resourceDirName = if (directoryPrefix != null) "$directoryPrefix/$projectName" else projectName
         open val resourcesRoot = File(resourcesRootFile, "testProject/$resourceDirName")
@@ -442,24 +441,24 @@ abstract class BaseGradleIT {
             else
                 assertSameFiles(sources, compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
 
-    fun Project.resourcesDir(subproject: String? = null, sourceSet: String = "main") =
+    fun Project.resourcesDir(subproject: String? = null, sourceSet: String = "main"): String =
             (subproject?.plus("/") ?: "") + "build/" +
             (if (GradleVersion.version(chooseWrapperVersionOrFinishTest()) < GradleVersion.version("4.0"))
                 "classes/"
             else "resources/") +
             sourceSet + "/"
 
-    fun Project.classesDir(subproject: String? = null, sourceSet: String = "main", language: String = "kotlin") =
+    fun Project.classesDir(subproject: String? = null, sourceSet: String = "main", language: String = "kotlin"): String =
             (subproject?.plus("/") ?: "") + "build/classes/" +
             (if (GradleVersion.version(chooseWrapperVersionOrFinishTest()) >= GradleVersion.version("4.0"))
                 "$language/"
             else "") +
             sourceSet + "/"
 
-    fun CompiledProject.kotlinClassesDir(subproject: String? = null, sourceSet: String = "main") =
+    fun CompiledProject.kotlinClassesDir(subproject: String? = null, sourceSet: String = "main"): String =
             project.classesDir(subproject, sourceSet, language = "kotlin")
 
-    fun CompiledProject.javaClassesDir(subproject: String? = null, sourceSet: String = "main") =
+    fun CompiledProject.javaClassesDir(subproject: String? = null, sourceSet: String = "main"): String =
             project.classesDir(subproject, sourceSet, language = "java")
 
     private fun Project.createBuildCommand(wrapperDir: File, params: Array<out String>, options: BuildOptions): List<String> =
@@ -495,9 +494,7 @@ abstract class BaseGradleIT {
                 System.getProperty("maven.repo.local")?.let {
                     add("-Dmaven.repo.local=$it") // TODO: proper escaping
                 }
-                if (options.withBuildCache) {
-                    add("--build-cache")
-                }
+                add(if (options.withBuildCache) "--build-cache" else "--no-build-cache")
 
                 // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
                 add("--console=plain")
