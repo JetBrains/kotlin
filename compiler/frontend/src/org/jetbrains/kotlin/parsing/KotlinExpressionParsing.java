@@ -73,6 +73,13 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             COLON
     );
 
+    static final TokenSet LITERAL_CONSTANT_FIRST = TokenSet.create(
+            TRUE_KEYWORD, FALSE_KEYWORD,
+            OPEN_QUOTE,
+            INTEGER_LITERAL, CHARACTER_LITERAL, FLOAT_LITERAL,
+            NULL_KEYWORD
+    );
+
     /*package*/ static final TokenSet EXPRESSION_FIRST = TokenSet.create(
             // Prefix
             MINUS, PLUS, MINUSMINUS, PLUSPLUS,
@@ -171,6 +178,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         RANGE(KtTokens.RANGE),
         SIMPLE_NAME(IDENTIFIER),
         ELVIS(KtTokens.ELVIS),
+        // PATTERN_EQ_OR_NOT_EQ(EQ_KEYWORD, NOT_EQ),
         IN_OR_IS(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS) {
             @Override
             public KtNodeType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
@@ -695,7 +703,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : OPEN_QUOTE stringTemplateElement* CLOSING_QUOTE
      *   ;
      */
-    private void parseStringTemplate() {
+    void parseStringTemplate() {
         assert _at(OPEN_QUOTE);
 
         PsiBuilder.Marker template = mark();
@@ -809,7 +817,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : "null"
      *   ;
      */
-    private boolean parseLiteralConstant() {
+    boolean parseLiteralConstant() {
         if (at(TRUE_KEYWORD) || at(FALSE_KEYWORD)) {
             parseOneTokenExpression(BOOLEAN_CONSTANT);
         }
@@ -957,7 +965,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             advance(); // IN_KEYWORD or NOT_IN
             mark.done(OPERATION_REFERENCE);
 
-
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting an element");
             }
@@ -973,7 +980,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 error("Expecting a type");
             }
             else {
-                myKotlinParsing.parseTypeRef();
+                myKotlinParsing.parsePattern();
             }
             condition.done(WHEN_CONDITION_IS_PATTERN);
         }
@@ -1618,7 +1625,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     /*
      * "(" element ")"
      */
-    private void parseCondition() {
+    void parseCondition() {
         myBuilder.disableNewlines();
 
         if (expect(LPAR, "Expecting a condition in parentheses '(...)'", EXPRESSION_FIRST)) {

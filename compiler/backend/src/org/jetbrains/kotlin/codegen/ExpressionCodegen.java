@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor;
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.load.kotlin.MethodSignatureMappingKt;
 import org.jetbrains.kotlin.load.kotlin.TypeSignatureMappingKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.pattern.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
@@ -78,6 +80,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.expressions.ConditionalTypeInfo;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -89,6 +92,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
@@ -4230,6 +4234,273 @@ The "returned" value of try expression with no finally is either the last expres
         }
     }
 
+    private static void forceAssert(boolean cond, String errorMessage) {
+        if (!cond)
+            throw new AssertionError(errorMessage);
+    }
+
+    private StackValue generateMatchPattern(StackValue expressionToMatch, KtPattern pattern, boolean negated) {
+        KtPatternEntry entry = pattern.getEntry();
+        KtPatternGuard guard = pattern.getGuard();
+        forceAssert(entry != null, "expression in pattern must be defined " + pattern.getText());
+        pattern.getInnerVariableDeclarations().stream()
+                .filter(UnderscoreUtilKt::isNotSingleUnderscore)
+                .forEach(this::putLocalVariableIntoFrameMap);
+        StackValue value = generateMatchEntry(expressionToMatch, entry);
+        if (guard != null)
+            value = StackValue.and(value, generateMatchGuard(guard));
+        return negated ? StackValue.not(value) : value;
+    }
+
+    private StackValue generateMatchConstraint(StackValue expressionToMatch, KtPatternConstraint constraint) {
+        KtPatternElement element = constraint.getElement();
+        forceAssert(element != null, "element in constraint must be defined" + constraint.getText());
+        if (element instanceof KtPatternExpression) {
+            return generateMatchPatternExpression(expressionToMatch, (KtPatternExpression) element);
+        } else if (element instanceof KtPatternTypedTuple) {
+            return generateMatchTypedTuple(expressionToMatch, (KtPatternTypedTuple) element);
+        } else if (element instanceof KtPatternTypeReference) {
+            return generateMatchTypeReference(expressionToMatch, (KtPatternTypeReference) element);
+        }
+        throw new IllegalArgumentException("unexpected constraint element " + element.getClass().getName());
+    }
+
+    private StackValue generateMatchEntry(StackValue expressionToMatch, KtPatternEntry constraint) {
+        KtPatternElement element = constraint.getElement();
+        forceAssert(element != null, "constraint element must be defined");
+        if (element instanceof KtPatternConstraint) {
+            return generateMatchConstraint(expressionToMatch, (KtPatternConstraint) element);
+        }
+        else if (element instanceof KtPatternVariableDeclaration) {
+            return generateMatchVariableDeclaration(expressionToMatch, (KtPatternVariableDeclaration) element);
+        }
+        else if (element instanceof KtPatternTypeReference) {
+            return generateMatchTypeReference(expressionToMatch, (KtPatternTypeReference) element);
+        }
+        throw new IllegalArgumentException("unexpected entry element " + element.getClass().getName());
+    }
+
+    private StackValue generateMatchGuard(KtPatternGuard guard) {
+        KtExpression expression = guard.getExpression();
+        forceAssert(expression != null, "guard condition must exist " + guard.getText());
+        return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+            StackValue value = generateExpressionMatch(null, null, expression);
+            value.put(Type.BOOLEAN_TYPE, v);
+            return null;
+        });
+    }
+
+    private StackValue generateMatchTypeReference(StackValue expressionToMatch, KtPatternTypeReference entry) {
+        KtTypeReference typeReference = entry.getTypeReference();
+        forceAssert(typeReference != null, "type reference must exist " + entry.getText());
+        return generateMatchTypeReference(expressionToMatch, typeReference);
+    }
+
+    private StackValue generateMatchTypeReference(StackValue expressionToMatch, KtTypeReference typeReference) {
+        return generateIsCheck(expressionToMatch, typeReference, false);
+    }
+
+    private StackValue generateMatchTypedTuple(StackValue expressionToMatch, KtPatternTypedTuple typedTuple) {
+        KtPatternTuple tuple = typedTuple.getTuple();
+        forceAssert(tuple != null, "pattern tuple is null for " + typedTuple.getText());
+        // it possible if expression is KtPatternVariableDeclaration is empty, etc is '_' token
+        List<KtPatternEntry> entries = tuple.getEntries().stream().filter(KtPatternEntry::isNotEmptyDeclaration).collect(Collectors.toList());
+        KtPatternTypeReference typeReference = typedTuple.getTypeReference();
+
+        if (entries.size() == 0) {
+            if (typeReference != null)
+                return generateMatchTypeReference(expressionToMatch, typeReference);
+            return StackValue.constant(true, Type.BOOLEAN_TYPE);
+        }
+
+        StackValue receiverStackValue = generatePatternDeconstructReceiver(expressionToMatch, typedTuple);
+        ReceiverValue receiver = bindingContext.get(PATTERN_COMPONENTS_RECEIVER, typedTuple);
+        forceAssert(receiver != null, "receiver is null for " + typedTuple.getText());
+        Type receiverType = receiverStackValue.type;
+        Call receiverCall = makeFakeCall(receiver);
+
+        StackValue match = new ConstantLocalVariable(myFrameMap, receiverStackValue, receiverType, Type.BOOLEAN_TYPE, loadReceiver -> {
+            StackValue result = null;
+            for (KtPatternEntry entry : entries) {
+                ResolvedCall<FunctionDescriptor> componentCall = bindingContext.get(PATTERN_COMPONENT_RESOLVED_CALL, entry);
+                forceAssert(componentCall != null, "resolved call is null for " + entry.getText());
+                StackValue expressionValue = invokeFunction(receiverCall, componentCall, loadReceiver);
+                StackValue matchExpression = generateMatchEntry(expressionValue, entry);
+                result = result == null ? matchExpression : StackValue.and(result, matchExpression);
+            }
+            return result;
+        });
+
+        if (typeReference != null) {
+            StackValue checkTupleType = generateMatchTypeReference(expressionToMatch, typeReference);
+            return StackValue.and(checkTupleType, match);
+        }
+        return match;
+    }
+
+    private StackValue generatePatternDeconstructReceiver(StackValue expressionToMatch, KtPatternTypedTuple typedTuple) {
+        ConditionalTypeInfo receiverTypeInfo = bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, typedTuple);
+        forceAssert(receiverTypeInfo != null, "element type info is null for " + typedTuple.getText());
+        StackValue receiverStackValue = expressionToMatch;
+        ResolvedCall<FunctionDescriptor> deconstructCall = bindingContext.get(PATTERN_DECONSTRUCT_RESOLVED_CALL, typedTuple);
+        if (deconstructCall != null) {
+            ReceiverValue receiver = new TransientReceiver(receiverTypeInfo.getType());
+            Call call = makeFakeCall(receiver);
+            receiverStackValue = invokeFunction(call, deconstructCall, receiverStackValue);
+        }
+        return receiverStackValue;
+    }
+
+    private StackValue generateMatchVariableDeclaration(StackValue expressionToMatch, KtPatternVariableDeclaration declaration) {
+        KtPatternConstraint constraint = declaration.getConstraint();
+        KtPatternTypeReference typeReference = declaration.getPatternTypeReference();
+        StackValue matchTypeReference = StackValue.constant(true, Type.BOOLEAN_TYPE);
+        StackValue matchConstraint = StackValue.constant(true, Type.BOOLEAN_TYPE);
+        if (typeReference != null)
+            matchTypeReference = generateMatchTypeReference(expressionToMatch, typeReference);
+        if (constraint != null)
+            matchConstraint = generateMatchConstraint(expressionToMatch, constraint);
+        StackValue value = StackValue.and(matchTypeReference, matchConstraint);
+        return Trigger.Companion.make(value, Type.BOOLEAN_TYPE, v -> {
+            if (UnderscoreUtilKt.isNotSingleUnderscore(declaration))
+                initializeLocalVariable(declaration, expressionToMatch);
+            return null;
+        });
+    }
+
+    private StackValue generateMatchPatternExpression(StackValue expressionToMatch, KtPatternExpression entry) {
+        KtExpression expression = entry.getExpression();
+        forceAssert(expression != null, "expression must exist " + entry.getText());
+        KtToken token = entry.isNegated() ? KtTokens.EXCLEQ : KtTokens.EQEQ;
+        return generateEqualsForStackValueWithNoExpression(expressionToMatch, expression, token);
+    }
+
+    private StackValue generateEqualsForStackValueWithNoExpression(
+            @NotNull StackValue pregeneratedLeft,
+            @NotNull KtExpression right,
+            @NotNull IElementType opToken
+    ) {
+        KotlinType pregeneratedType = bindingContext.get(PATTERN_SUBJECT_TYPE, right);
+        forceAssert(pregeneratedType != null, "pattern simple-expression must be analysed " + right.getText());
+        return generateEqualsForStackValueWithNoExpression(pregeneratedLeft, pregeneratedType, right, opToken);
+    }
+
+    private StackValue generateEqualsForStackValueWithNoExpression(
+            @NotNull StackValue pregeneratedLeft,
+            @NotNull KotlinType pregeneratedType,
+            @NotNull KtExpression right,
+            @NotNull IElementType opToken
+    ) {
+        Type leftType = pregeneratedLeft.type;
+        Type rightType = expressionType(right);
+
+        final KtExpression fakeLeft = null; // is used as we don't actually need left
+
+        if (KtPsiUtil.isNullConstant(right)) {
+            return genCmpWithNull(fakeLeft, opToken, pregeneratedLeft);
+        }
+
+        if (isIntZero(right, rightType) && isIntPrimitive(leftType)) {
+            return genCmpWithZero(fakeLeft, opToken, pregeneratedLeft);
+        }
+
+        if (isPrimitive(leftType) && right instanceof KtSafeQualifiedExpression &&
+            isSelectorPureNonNullType(((KtSafeQualifiedExpression) right))) {
+            return genCmpPrimitiveToSafeCall(fakeLeft, leftType, (KtSafeQualifiedExpression) right, opToken, pregeneratedLeft);
+        }
+
+        if (BoxedToPrimitiveEquality.isApplicable(opToken, leftType, rightType)) {
+            return BoxedToPrimitiveEquality.create(
+                    opToken,
+                    genLazyUnlessProvided(pregeneratedLeft, fakeLeft, leftType), leftType,
+                    genLazy(right, rightType), rightType,
+                    myFrameMap
+            );
+        }
+
+        if (PrimitiveToBoxedEquality.isApplicable(opToken, leftType, rightType)) {
+            return PrimitiveToBoxedEquality.create(
+                    opToken,
+                    genLazyUnlessProvided(pregeneratedLeft, fakeLeft, leftType), leftType,
+                    genLazy(right, rightType), rightType
+            );
+        }
+
+        if (PrimitiveToObjectEquality.isApplicable(opToken, leftType, rightType)) {
+            return PrimitiveToObjectEquality.create(
+                    opToken,
+                    genLazyUnlessProvided(pregeneratedLeft, fakeLeft, leftType), leftType,
+                    genLazy(right, rightType), rightType
+            );
+        }
+
+
+        if (isPrimitive(leftType) != isPrimitive(rightType)) {
+            leftType = boxType(leftType);
+            rightType = boxType(rightType);
+        }
+
+        if (opToken == KtTokens.EQEQEQ || opToken == KtTokens.EXCLEQEQEQ) {
+            // TODO: always casting to the type of the left operand in case of primitives looks wrong
+            Type operandType = isPrimitive(leftType) ? leftType : OBJECT_TYPE;
+            return StackValue.cmp(
+                    opToken,
+                    operandType,
+                    genLazyUnlessProvided(pregeneratedLeft, fakeLeft, leftType),
+                    genLazy(right, rightType)
+            );
+        }
+
+        return genEqualsForStackValueWithNoExpressionPreferIEEE754Arithmetic(
+                right, opToken, leftType, rightType, pregeneratedLeft, pregeneratedType);
+    }
+
+    private StackValue genEqualsForStackValueWithNoExpressionPreferIEEE754Arithmetic(
+            @Nullable KtExpression right,
+            @NotNull IElementType opToken,
+            @NotNull Type leftType,
+            @NotNull Type rightType,
+            @NotNull StackValue pregeneratedLeft,
+            @NotNull KotlinType pregeneratedType
+    ) {
+        assert (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) : "Optoken should be '==' or '!=', but: " + opToken;
+
+        final KtExpression fakeLeft = null; // is used as we don't actually need left
+
+        TypeAndNullability left754Type = new TypeAndNullability(leftType, pregeneratedType.isMarkedNullable());
+        TypeAndNullability right754Type = calcTypeForIEEE754ArithmeticIfNeeded(right);
+
+        if (right754Type != null && left754Type.type.equals(right754Type.type)) {
+            // check nullability cause there is some optimizations in codegen for non-nullable case
+            if (left754Type.isNullable || right754Type.isNullable) {
+                if (state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_1) >= 0) {
+                    return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+                        generate754EqualsForNullableTypesViaIntrinsic(
+                                v, opToken, pregeneratedLeft, fakeLeft, left754Type, right, right754Type);
+                        return Unit.INSTANCE;
+                    });
+                }
+                else {
+                    return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+                        generate754EqualsForNullableTypes(
+                                v, opToken, pregeneratedLeft, fakeLeft, left754Type, right, right754Type);
+                        return Unit.INSTANCE;
+                    });
+                }
+            }
+            else {
+                leftType = left754Type.type;
+                rightType = right754Type.type;
+            }
+        }
+
+        return genEqualsForExpressionsOnStack(
+                opToken,
+                genLazyUnlessProvided(pregeneratedLeft, fakeLeft, leftType),
+                genLazy(right, rightType)
+        );
+    }
+
     private StackValue generateIsCheck(StackValue expressionToMatch, KtTypeReference typeReference, boolean negated) {
         KotlinType jetType = bindingContext.get(TYPE, typeReference);
         markStartLineNumber(typeReference);
@@ -4395,7 +4666,9 @@ The "returned" value of try expression with no finally is either the last expres
         StackValue.Local match = subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType);
         if (condition instanceof KtWhenConditionIsPattern) {
             KtWhenConditionIsPattern patternCondition = (KtWhenConditionIsPattern) condition;
-            return generateIsCheck(match, patternCondition.getTypeReference(), patternCondition.isNegated());
+            KtPattern pattern = patternCondition.getPattern();
+            forceAssert(pattern != null, "Pattern in match condition must be defined " + condition.getText());
+            return generateMatchPattern(match, pattern, patternCondition.isNegated());
         }
         else if (condition instanceof KtWhenConditionWithExpression) {
             KtExpression patternExpression = ((KtWhenConditionWithExpression) condition).getExpression();

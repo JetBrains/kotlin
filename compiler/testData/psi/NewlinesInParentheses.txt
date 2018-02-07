@@ -242,19 +242,23 @@ KtFile: NewlinesInParentheses.kt
           WHEN_CONDITION_IS_PATTERN
             PsiElement(is)('is')
             PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-                PsiWhiteSpace('\n    ')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
+            PATTERN
+              PATTERN_ENTRY
+                PATTERN_CONSTRAINT
+                  PATTERN_TYPE_REFERENCE
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('X')
-                  PsiElement(GT)('>')
+                          PsiElement(IDENTIFIER)('T')
+                        PsiWhiteSpace('\n    ')
+                        TYPE_ARGUMENT_LIST
+                          PsiElement(LT)('<')
+                          TYPE_PROJECTION
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('X')
+                          PsiElement(GT)('>')
           PsiWhiteSpace('\n    ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
@@ -283,19 +287,23 @@ KtFile: NewlinesInParentheses.kt
           WHEN_CONDITION_IS_PATTERN
             PsiElement(NOT_IS)('!is')
             PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-                PsiWhiteSpace('\n    ')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
+            PATTERN
+              PATTERN_ENTRY
+                PATTERN_CONSTRAINT
+                  PATTERN_TYPE_REFERENCE
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('X')
-                  PsiElement(GT)('>')
+                          PsiElement(IDENTIFIER)('T')
+                        PsiWhiteSpace('\n    ')
+                        TYPE_ARGUMENT_LIST
+                          PsiElement(LT)('<')
+                          TYPE_PROJECTION
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('X')
+                          PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')

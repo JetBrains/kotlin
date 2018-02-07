@@ -153,6 +153,9 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
     private val KtWhenCondition.negated
         get() = (this as? KtWhenConditionIsPattern)?.isNegated ?: false
 
+    private val KtWhenCondition.simple
+        get() = (this as? KtWhenConditionIsPattern)?.isSimple ?: true
+
     private fun KtWhenCondition.isRelevant(checkedDescriptor: ClassDescriptor) =
         this !is KtWhenConditionWithExpression ||
                 DescriptorUtils.isObject(checkedDescriptor) ||
@@ -186,6 +189,7 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
         for (whenEntry in whenExpression.entries) {
             for (condition in whenEntry.conditions) {
                 val negated = condition.negated
+                if (!condition.simple) continue
                 val checkedDescriptor = condition.getCheckedDescriptor(context) ?: continue
                 val checkedDescriptorSubclasses =
                     if (checkedDescriptor.modality == Modality.SEALED) checkedDescriptor.deepSealedSubclasses
@@ -254,6 +258,25 @@ internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChe
     }
 }
 
+interface MissingCasesResolver {
+
+    fun isApplicable(subjectType: KotlinType?, expression: KtWhenExpression): Boolean
+
+    fun resolve(unresolvedMissingCases: List<WhenMissingCase>, expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase>
+}
+
+object SimpleMissingCasesResolver : MissingCasesResolver {
+    @Suppress("UNCHECKED_CAST")
+    override fun isApplicable(subjectType: KotlinType?, expression: KtWhenExpression) = expression.entries.asSequence()
+            .map { it.conditions.asSequence() }.flatten()
+            .filterIsInstance<KtWhenConditionIsPattern>()
+            .filter { !it.isNegated }
+            .any { it.isRestrictionsFree }
+
+    override fun resolve(unresolvedMissingCases: List<WhenMissingCase>, expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
+        return listOf()
+    }
+}
 
 object WhenChecker {
 
@@ -262,6 +285,8 @@ object WhenChecker {
         WhenOnEnumExhaustivenessChecker,
         WhenOnSealedExhaustivenessChecker
     )
+
+    private val missingCasesResolvers = listOf(SimpleMissingCasesResolver)
 
     @JvmStatic
     fun isWhenByEnum(expression: KtWhenExpression, context: BindingContext) =
@@ -299,12 +324,19 @@ object WhenChecker {
         sealedClassDescriptor: ClassDescriptor
     ) = WhenOnSealedExhaustivenessChecker.getMissingCases(expression, context, sealedClassDescriptor, false)
 
-    fun getMissingCases(expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
-        val type = whenSubjectType(expression, context) ?: return listOf(UnknownMissingCase)
+    private fun getUnresolvedMissingCases(type: KotlinType?, expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
+        if (type == null) return listOf(UnknownMissingCase)
         val nullable = type.isMarkedNullable
         val checkers = exhaustivenessCheckers.filter { it.isApplicable(type) }
         if (checkers.isEmpty()) return listOf(UnknownMissingCase)
         return checkers.map { it.getMissingCases(expression, context, TypeUtils.getClassDescriptor(type), nullable) }.flatten()
+    }
+
+    fun getMissingCases(expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
+        val type = whenSubjectType(expression, context)
+        val missingCases = getUnresolvedMissingCases(type, expression, context)
+        return missingCasesResolvers.filter { it.isApplicable(type, expression) }
+                .fold(missingCases) { acc, resolver -> resolver.resolve(acc, expression, context) }
     }
 
     @JvmStatic
@@ -347,7 +379,7 @@ object WhenChecker {
                         val typeWithIsNegation = type to condition.isNegated
                         if (checkedTypes.contains(typeWithIsNegation)) {
                             trace.report(Errors.DUPLICATE_LABEL_IN_WHEN.on(typeReference))
-                        } else {
+                        } else if (condition.isSimple) {
                             checkedTypes.add(typeWithIsNegation)
                         }
                     }

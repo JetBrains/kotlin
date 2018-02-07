@@ -60,6 +60,14 @@ public class DefaultErrorMessages {
     }
 
     static {
+        MAP.put(EXPECTED_PATTERN_ENTRY, "Expected pattern entry");
+        MAP.put(EXPECTED_PATTERN_CONSTRAINT_ELEMENT, "Expected pattern element");
+        MAP.put(EXPECTED_PATTERN_ENTRY_ELEMENT, "Expected pattern entry element");
+        MAP.put(EXPECTED_PATTERN_TYPED_TUPLE_INSTANCE, "Expected pattern tuple in pattern typed tuple");
+        MAP.put(EXPECTED_PATTERN_TYPE_REFERENCE_INSTANCE, "Expected type reference in pattern type reference");
+        MAP.put(EXPECTED_PATTERN_EXPRESSION_INSTANCE, "Expected expression element");
+        MAP.put(NOT_ALLOW_PROPERTY_DEFINITION, "Not allow property definition: {0}", ELEMENT_TEXT);
+
         MAP.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", ELEMENT_TEXT);
 
         MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is {1} in {2}", NAME, VISIBILITY, NAME_OF_CONTAINING_DECLARATION_OR_FILE);

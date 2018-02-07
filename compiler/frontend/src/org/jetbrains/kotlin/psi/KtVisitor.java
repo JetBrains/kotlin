@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.pattern.*;
 
 public class KtVisitor<R, D> extends PsiElementVisitor {
     public R visitKtElement(@NotNull KtElement element, D data) {
@@ -124,6 +125,46 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
 
     public R visitTypeParameter(@NotNull KtTypeParameter parameter, D data) {
         return visitNamedDeclaration(parameter, data);
+    }
+
+    public R visitPatternElement(@NotNull KtPatternElement node, D data) {
+        return visitExpression(node, data);
+    }
+
+    public R visitPattern(@NotNull KtPattern node, D data) {
+        return visitPatternElement(node, data);
+    }
+
+    public R visitPatternConstraint(@NotNull KtPatternConstraint node, D data) {
+        return visitPatternElement(node, data);
+    }
+
+    public R visitPatternEntry(@NotNull KtPatternEntry node, D data) {
+        return visitPatternElement(node, data);
+    }
+
+    public R visitPatternExpression(@NotNull KtPatternExpression node, D data) {
+        return visitPatternElement(node, data);
+    }
+
+    public R visitPatternGuard(@NotNull KtPatternGuard node, D data) {
+        return visitPatternElement(node, data);
+    }
+
+    public R visitPatternTuple(@NotNull KtPatternTuple node, D data) {
+        return visitPatternElement(node, data);
+    }
+
+    public R visitPatternTypeReference(@NotNull KtPatternTypeReference node, D data) {
+        return visitPatternElement(node, data);
+    }
+
+    public R visitPatternVariableDeclaration(@NotNull KtPatternVariableDeclaration node, D data) {
+        return visitPatternElement(node, data);
+    }
+
+    public R visitPatternTypedTuple(@NotNull KtPatternTypedTuple node, D data) {
+        return visitPatternElement(node, data);
     }
 
     public R visitEnumEntry(@NotNull KtEnumEntry enumEntry, D data) {

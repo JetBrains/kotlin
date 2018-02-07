@@ -21546,6 +21546,117 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/when/patternMatching")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PatternMatching extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInPatternMatching() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/when/patternMatching"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("complexMatch.kt")
+            public void testComplexMatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/complexMatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("elseMatch.kt")
+            public void testElseMatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/elseMatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("equalsHell.kt")
+            public void testEqualsHell() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/equalsHell.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("equalsWithConstants.kt")
+            public void testEqualsWithConstants() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/equalsWithConstants.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expressions.kt")
+            public void testExpressions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/expressions.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("fullIsPatternVariants.kt")
+            public void testFullIsPatternVariants() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/fullIsPatternVariants.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullableMatch.kt")
+            public void testNullableMatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/nullableMatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("orPatterns.kt")
+            public void testOrPatterns() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/orPatterns.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("otherSmartCasts.kt")
+            public void testOtherSmartCasts() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/otherSmartCasts.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("patternVariablesInGuards.kt")
+            public void testPatternVariablesInGuards() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/patternVariablesInGuards.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("scalaExample.kt")
+            public void testScalaExample() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/scalaExample.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("smallScalaExample.kt")
+            public void testSmallScalaExample() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smallScalaExample.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("smartCastsByPatterns.kt")
+            public void testSmartCastsByPatterns() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smartCastsByPatterns.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("smartCastsInDestructuring.kt")
+            public void testSmartCastsInDestructuring() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smartCastsInDestructuring.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("smartCastsInGuards.kt")
+            public void testSmartCastsInGuards() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smartCastsInGuards.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("smartCastsOnPatternVariables.kt")
+            public void testSmartCastsOnPatternVariables() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smartCastsOnPatternVariables.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("smartDestructuring.kt")
+            public void testSmartDestructuring() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/smartDestructuring.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

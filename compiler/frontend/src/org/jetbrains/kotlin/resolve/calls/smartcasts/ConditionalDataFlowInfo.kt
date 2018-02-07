@@ -29,6 +29,10 @@ class ConditionalDataFlowInfo(val thenInfo: DataFlowInfo, val elseInfo: DataFlow
         else -> ConditionalDataFlowInfo(this.thenInfo.or(other.thenInfo), this.elseInfo.or(other.elseInfo))
     }
 
+    fun replaceThenInfo(thenInfo: DataFlowInfo) = ConditionalDataFlowInfo(thenInfo, elseInfo)
+
+    fun replaceElseInfo(elseInfo: DataFlowInfo) = ConditionalDataFlowInfo(thenInfo, elseInfo)
+
     companion object {
         val EMPTY = ConditionalDataFlowInfo(DataFlowInfo.EMPTY)
     }

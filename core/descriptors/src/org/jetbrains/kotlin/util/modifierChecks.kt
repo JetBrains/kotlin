@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPONENT_REGEX
 import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
 import org.jetbrains.kotlin.util.OperatorNameConventions.DEC
+import org.jetbrains.kotlin.util.OperatorNameConventions.DECONSTRUCT
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.GET
 import org.jetbrains.kotlin.util.OperatorNameConventions.GET_VALUE
@@ -200,7 +201,8 @@ object OperatorChecks : AbstractModifierChecks() {
                 }
             },
             Checks(ASSIGNMENT_OPERATIONS, MemberOrExtension, ReturnsUnit, SingleValueParameter, NoDefaultAndVarargsCheck),
-            Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters)
+            Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters),
+            Checks(DECONSTRUCT, MemberOrExtension, NoValueParameters)
     ) }
 
 object InfixChecks : AbstractModifierChecks() {

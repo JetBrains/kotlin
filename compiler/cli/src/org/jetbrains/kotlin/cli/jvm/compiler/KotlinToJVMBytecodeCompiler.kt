@@ -243,6 +243,20 @@ object KotlinToJVMBytecodeCompiler {
             moduleVisibilityManager.addFriendPath(path)
         }
 
+//        println("---BEGIN PSI STRUCTURE---")
+//        for (file in environment.getSourceFiles()) {
+//            val stack = ArrayList<PsiElement>()
+//            stack.push(file)
+//            while (stack.isNotEmpty()) {
+//                val element = stack.pop()
+//                println("|".repeat(stack.size) + element.toString())
+//                for (child in element.children)
+//                    stack.push(child);
+//            }
+//            println()
+//        }
+//        println("---END PSI STRUCTURE---")
+
         if (!checkKotlinPackageUsage(environment, environment.getSourceFiles())) return false
 
         val generationState = analyzeAndGenerate(environment) ?: return false

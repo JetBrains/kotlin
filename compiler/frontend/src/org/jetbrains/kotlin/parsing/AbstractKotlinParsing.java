@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.utils.strings.StringsKt;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
@@ -124,6 +125,24 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         err.error(message);
     }
 
+    private void errorIf(boolean condition, String message) {
+        if (condition) {
+            error(message);
+        }
+    }
+
+    private void errorIfNot(boolean condition, String message) {
+        errorIf(!condition, message);
+    }
+
+    protected void unexpect(KtToken expectation, String message) {
+        errorIf(at(expectation), message);
+    }
+
+    protected void expectWithoutAdvance(KtToken expectation, String message) {
+        errorIfNot(at(expectation), message);
+    }
+
     protected boolean eof() {
         return myBuilder.eof();
     }
@@ -184,6 +203,16 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
             }
         }
         return false;
+    }
+
+    protected boolean at(int k, IElementType expectation) {
+        IElementType token = lookahead(k);
+        return tokenMatches(token, expectation);
+    }
+
+    protected boolean atSingleUnderscore() {
+        if (!at(IDENTIFIER)) return false;
+        return "_".equals(myBuilder.getTokenText());
     }
 
     /**
@@ -251,6 +280,28 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         while (!eof() && !tokenSet.contains(tt()) && !(stopAtEolOrSemi && at(EOL_OR_SEMICOLON))) {
             advance();
         }
+    }
+
+    private void skipWhile(Predicate<IElementType> predicate) {
+        while (!eof() && predicate.test(tt())) {
+            advance();
+        }
+    }
+
+    private void errorWhile(String message, Predicate<IElementType> predicate) {
+        if (predicate.test(tt())) {
+            PsiBuilder.Marker error = mark();
+            skipWhile(predicate);
+            error.error(message);
+        }
+    }
+
+    private void errorWhile(String message, TokenSet tokenSet) {
+        errorWhile(message, tokenSet::contains);
+    }
+
+    protected void errorWhile(String message, IElementType token) {
+        errorWhile(message, TokenSet.create(token));
     }
 
     protected void errorUntil(String message, TokenSet tokenSet) {

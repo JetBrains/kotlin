@@ -86,12 +86,12 @@ interface DataFlowInfo {
     /**
      * Call this function to add data flow information from other to this and return sum as the result
      */
-    fun and(other: DataFlowInfo): DataFlowInfo
+    infix fun and(other: DataFlowInfo): DataFlowInfo
 
     /**
      * Call this function to choose data flow information common for this and other and return it as the result
      */
-    fun or(other: DataFlowInfo): DataFlowInfo
+    infix fun or(other: DataFlowInfo): DataFlowInfo
 
     companion object {
         val EMPTY = DataFlowInfoFactory.EMPTY

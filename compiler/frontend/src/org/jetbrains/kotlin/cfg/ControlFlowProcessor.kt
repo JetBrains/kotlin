@@ -142,6 +142,21 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             override fun visitWhenConditionIsPattern(condition: KtWhenConditionIsPattern) {
                 mark(condition)
                 createNonSyntheticValue(condition, MagicKind.IS, getSubjectExpression(condition))
+                val pattern = condition.pattern!!
+                for (declaration in pattern.innerVariableDeclarations) {
+                    builder.declareVariable(declaration)
+                    val initializer = declaration.parentEntry
+                    val resolvedCall = trace.get(BindingContext.PATTERN_COMPONENT_RESOLVED_CALL, initializer)
+                    val writtenValue = if (resolvedCall != null)
+                        builder.call(declaration, resolvedCall, getReceiverValues(resolvedCall), emptyMap()).outputValue
+                    else
+                        initializer?.let { createSyntheticValue(declaration, MagicKind.UNRESOLVED_CALL, it) }
+                    generateInitializer(declaration, writtenValue ?: createSyntheticValue(declaration, MagicKind.FAKE_INITIALIZER))
+                }
+                for (expression in pattern.innerNotPatternExpressions) {
+                    generateInstructions(expression)
+                    createNonSyntheticValue(condition, MagicKind.IS, expression)
+                }
             }
 
             override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {
@@ -223,7 +238,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
         private fun getResolvedCallAccessTarget(element: KtElement?): AccessTarget =
             element.getResolvedCall(trace.bindingContext)?.let { AccessTarget.Call(it) }
-                    ?: AccessTarget.BlackBox
+                ?: AccessTarget.BlackBox
 
         private fun getDeclarationAccessTarget(element: KtElement): AccessTarget {
             val descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)

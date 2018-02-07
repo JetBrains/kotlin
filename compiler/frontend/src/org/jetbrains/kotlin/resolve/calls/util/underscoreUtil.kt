@@ -31,3 +31,6 @@ val KtNamedDeclaration.isSingleUnderscore: Boolean
         if (this is StubBasedPsiElement<*> && this.stub != null) return false
         return nameIdentifier?.text == "_"
     }
+
+val KtNamedDeclaration.isNotSingleUnderscore
+    get() = !isSingleUnderscore

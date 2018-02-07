@@ -1,0 +1,27 @@
+package
+
+public fun foo(/*0*/ parent: Parent): kotlin.Int
+public fun foo2(/*0*/ parent: Parent): kotlin.Int
+
+public final class Child1 : Parent {
+    public constructor Child1(/*0*/ field1: kotlin.Int)
+    public final val field1: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Child2 : Parent {
+    public constructor Child2(/*0*/ field2: kotlin.Int)
+    public final val field2: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public sealed class Parent {
+    private constructor Parent()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

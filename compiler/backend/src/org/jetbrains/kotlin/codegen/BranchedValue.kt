@@ -30,7 +30,7 @@ open class BranchedValue(
         val arg2: StackValue? = null,
         val operandType: Type,
         val opcode: Int
-) : StackValue(Type.BOOLEAN_TYPE) {
+) : AbstractBranchedValue(Type.BOOLEAN_TYPE) {
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
         val branchJumpLabel = Label()
@@ -44,14 +44,15 @@ open class BranchedValue(
         coerceTo(type, v)
     }
 
-    open fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        if (arg1 is CondJump) arg1.condJump(jumpLabel, v, jumpIfFalse) else arg1.put(operandType, v)
+    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+        when (arg1) {
+            is CondJump -> arg1.condJump(jumpLabel, v, jumpIfFalse)
+            is Trigger -> arg1.condJump(jumpLabel, v, jumpIfFalse)
+            is ConstantLocalVariable -> arg1.condJump(jumpLabel, v, jumpIfFalse)
+            else -> arg1.put(operandType, v)
+        }
         arg2?.put(operandType, v)
         v.visitJumpInsn(patchOpcode(if (jumpIfFalse) opcode else negatedOperations[opcode]!!, v), jumpLabel)
-    }
-
-    open fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        condJump(jumpLabel, v, jumpIfFalse)
     }
 
     protected open fun patchOpcode(opcode: Int, v: InstructionAdapter): Int = opcode
@@ -130,11 +131,10 @@ open class BranchedValue(
             condJump(condition).loopJump(label, iv, jumpIfFalse)
         }
 
-        fun condJump(condition: StackValue): CondJump =
-                CondJump(
-                        condition as? BranchedValue ?: BranchedValue(condition, null, Type.BOOLEAN_TYPE, IFEQ),
-                        IFEQ
-                )
+        fun condJump(condition: StackValue): CondJump {
+            val branchedValue = condition as? AbstractBranchedValue ?: BranchedValue(condition, null, Type.BOOLEAN_TYPE, IFEQ)
+            return CondJump(branchedValue, IFEQ)
+        }
 
         fun cmp(opToken: IElementType, operandType: Type, left: StackValue, right: StackValue): StackValue =
                 if (operandType.sort == Type.OBJECT)
@@ -142,6 +142,93 @@ open class BranchedValue(
                 else
                     NumberCompare(opToken, operandType, left, right)
 
+    }
+}
+
+// ToDo(sergei): java doc
+abstract class AbstractBranchedValue(type: Type) : StackValue(type) {
+    abstract fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean)
+
+    open fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+        condJump(jumpLabel, v, jumpIfFalse)
+    }
+}
+
+// ToDo(sergei): java doc
+class Trigger(
+        private val blockType: Type,
+        private val block: StackValue,
+        private val triggerType: Type,
+        private val trigger: StackValue
+) : AbstractBranchedValue(triggerType) {
+
+    override fun putSelector(type: Type, v: InstructionAdapter) {
+        block.put(blockType, v)
+        trigger.put(triggerType, v)
+        coerceTo(type, v)
+    }
+
+    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+        BranchedValue.condJump(block).condJump(jumpLabel, v, jumpIfFalse)
+        trigger.put(triggerType, v)
+    }
+
+    companion object {
+        fun make(block: StackValue, triggerType: Type, trigger: (InstructionAdapter) -> Unit): Trigger {
+            val triggerValue = StackValue.operation(triggerType, trigger)
+            return Trigger(block.type, block, triggerType, triggerValue)
+        }
+    }
+}
+
+// ToDo(sergei): java doc
+class ConstantLocalVariable(
+        private val frameMap: FrameMap,
+        private val variableValue: StackValue,
+        private val variableType: Type,
+        private val blockType: Type,
+        private val block: (StackValue) -> StackValue
+) : AbstractBranchedValue(blockType) {
+
+    private lateinit var debug: StackValue
+
+    private fun store(v: InstructionAdapter): Int {
+        variableValue.put(variableType, v)
+        val storage = frameMap.enterTemp(variableType)
+        v.store(storage, variableType)
+        return storage
+    }
+
+    private fun load(storage: Int): StackValue {
+        return StackValue.operation(variableType) { v ->
+            v.load(storage, variableType)
+        }
+    }
+
+    private fun execute(v: InstructionAdapter): StackValue {
+        val storage = store(v)
+        val load = load(storage)
+        val blockValue = block(load)
+        debug = blockValue
+        if (blockValue.type != blockType)
+            throw IllegalArgumentException("The claimed type doesn't correspond to the actual type")
+        return blockValue
+    }
+
+    private fun free() {
+        frameMap.leaveTemp(variableType)
+    }
+
+    override fun putSelector(type: Type, v: InstructionAdapter) {
+        execute(v)
+        free()
+        coerceTo(type, v)
+    }
+
+    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+        val blockValue = execute(v)
+        BranchedValue.condJump(blockValue).condJump(jumpLabel, v, jumpIfFalse)
+        free()
     }
 }
 
@@ -178,7 +265,7 @@ class Invert(val condition: BranchedValue) : BranchedValue(condition, null, Type
     }
 }
 
-class CondJump(val condition: BranchedValue, op: Int) : BranchedValue(condition, null, Type.BOOLEAN_TYPE, op) {
+class CondJump(val condition: AbstractBranchedValue, op: Int) : BranchedValue(condition, null, Type.BOOLEAN_TYPE, op) {
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
         throw UnsupportedOperationException("Use condJump instead")

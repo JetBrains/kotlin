@@ -24985,6 +24985,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/when/patternMatching")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class PatternMatching extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInPatternMatching() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/when/patternMatching"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("declarations.kt")
+                public void testDeclarations() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/patternMatching/declarations.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("equalsHell.kt")
+                public void testEqualsHell() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/patternMatching/equalsHell.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("smartCasts.kt")
+                public void testSmartCasts() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/patternMatching/smartCasts.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeRHS.kt")
+                public void testTypeRHS() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/patternMatching/typeRHS.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("validityCheck.kt")
+                public void testValidityCheck() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/patternMatching/validityCheck.kt");
+                    doTest(fileName);
+                }
+            }
         }
     }
 
