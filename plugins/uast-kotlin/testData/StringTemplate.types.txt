@@ -1,15 +1,15 @@
 UFile (package = ) [public final class StringTemplateKt {...]
     UClass (name = StringTemplateKt) [public final class StringTemplateKt {...}]
-        UField (name = foo) [@org.jetbrains.annotations.NotNull private static final var foo: java.lang.String = "lorem"]
+        UField (name = foo) [private static final var foo: java.lang.String = "lorem"]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
             ULiteralExpression (value = "lorem") ["lorem"] : PsiType:String
-        UField (name = bar) [@org.jetbrains.annotations.NotNull private static final var bar: java.lang.String = "ipsum"]
+        UField (name = bar) [private static final var bar: java.lang.String = "ipsum"]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
             ULiteralExpression (value = "ipsum") ["ipsum"] : PsiType:String
-        UField (name = baz) [@org.jetbrains.annotations.NotNull private static final var baz: java.lang.String = "dolor"]
+        UField (name = baz) [private static final var baz: java.lang.String = "dolor"]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
             ULiteralExpression (value = "dolor") ["dolor"] : PsiType:String
-        UField (name = foobarbaz) [@org.jetbrains.annotations.NotNull private static final var foobarbaz: java.lang.String = foo + " " + bar + " " + baz]
+        UField (name = foobarbaz) [private static final var foobarbaz: java.lang.String = foo + " " + bar + " " + baz]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
             UPolyadicExpression (operator = +) [foo + " " + bar + " " + baz] : PsiType:String
                 USimpleNameReferenceExpression (identifier = foo) [foo] : PsiType:String
