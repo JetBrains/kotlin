@@ -76,6 +76,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
@@ -2591,9 +2592,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     return result;
                 }
                 Type currentScriptType = typeMapper.mapType(scriptContext.getScriptDescriptor());
-                Type classType = typeMapper.mapType(receiver);
+                SimpleType receiverKotlinType = receiver.getDefaultType();
+                Type classType = typeMapper.mapType(receiverKotlinType);
                 String fieldName = scriptContext.getScriptFieldName(receiver);
-                return StackValue.field(classType, currentScriptType, fieldName, false, result, receiver);
+                return StackValue.field(classType, receiverKotlinType, currentScriptType, fieldName, false, result, receiver);
             }
 
             result = cur.getOuterExpression(result, false);

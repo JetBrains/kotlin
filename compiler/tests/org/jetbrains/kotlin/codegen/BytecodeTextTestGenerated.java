@@ -1944,6 +1944,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineClassBoxingUnboxingInsideInlinedLambda.kt")
+        public void testInlineClassBoxingUnboxingInsideInlinedLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassBoxingUnboxingInsideInlinedLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineClassCallsDefaultValue.kt")
         public void testInlineClassCallsDefaultValue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassCallsDefaultValue.kt");

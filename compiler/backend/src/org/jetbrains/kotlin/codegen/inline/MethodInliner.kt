@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
@@ -28,6 +17,8 @@ import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.org.objectweb.asm.Label
@@ -205,8 +196,13 @@ class MethodInliner(
                         return
                     }
 
+                    val valueParameters =
+                        listOfNotNull(info.invokeMethodDescriptor.extensionReceiverParameter) + info.invokeMethodDescriptor.valueParameters
+
                     val valueParamShift = Math.max(nextLocalIndex, markerShift)//NB: don't inline cause it changes
-                    putStackValuesIntoLocals(listOf(*info.invokeMethod.argumentTypes), valueParamShift, this, desc)
+                    putStackValuesIntoLocalsForLambdaOnInvoke(
+                        listOf(*info.invokeMethod.argumentTypes), valueParameters, valueParamShift, this, desc
+                    )
 
                     if (invokeCall.lambdaInfo.invokeMethodDescriptor.valueParameters.isEmpty()) {
                         // There won't be no parameters processing and line call can be left without actual instructions.
@@ -248,8 +244,11 @@ class MethodInliner(
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
 
                     //return value boxing/unboxing
-                    val bridge = typeMapper.mapAsmMethod(ClosureCodegen.getErasedInvokeFunction(info.invokeMethodDescriptor))
-                    StackValue.onStack(info.invokeMethod.returnType).put(bridge.returnType, this)
+                    val erasedInvokeFunction = ClosureCodegen.getErasedInvokeFunction(info.invokeMethodDescriptor)
+                    val bridge = typeMapper.mapAsmMethod(erasedInvokeFunction)
+                    StackValue
+                        .onStack(info.invokeMethod.returnType, info.invokeMethodDescriptor.returnType)
+                        .put(bridge.returnType, erasedInvokeFunction.returnType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
                     childSourceMapper.endMapping()
@@ -889,8 +888,12 @@ class MethodInliner(
             }
         }
 
-        private fun putStackValuesIntoLocals(
-                directOrder: List<Type>, shift: Int, iv: InstructionAdapter, descriptor: String
+        private fun putStackValuesIntoLocalsForLambdaOnInvoke(
+            directOrder: List<Type>,
+            directOrderOfArguments: List<ParameterDescriptor>,
+            shift: Int,
+            iv: InstructionAdapter,
+            descriptor: String
         ) {
             val actualParams = Type.getArgumentTypes(descriptor)
             assert(actualParams.size == directOrder.size) {
@@ -899,11 +902,18 @@ class MethodInliner(
 
             var currentShift = shift + directOrder.sumBy { it.size }
 
+            val safeToUseArgumentKotlinType = directOrder.size == directOrderOfArguments.size
             directOrder.asReversed().forEachIndexed { index, type ->
                 currentShift -= type.size
                 val typeOnStack = actualParams[index]
                 if (typeOnStack != type) {
-                    StackValue.onStack(typeOnStack).put(type, iv)
+                    val argumentType = if (safeToUseArgumentKotlinType)
+                        directOrderOfArguments[index].type.takeIf { it.isInlineClassType() }
+                    else
+                        null
+                    // if argument type had inline class type then after substitution it will also have the same type,
+                    // but probably boxed, which is OK because in terms of Kotlin types this is the same type
+                    StackValue.onStack(typeOnStack, argumentType).put(type, argumentType, iv)
                 }
                 iv.store(currentShift, type)
             }

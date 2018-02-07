@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -285,24 +286,25 @@ public abstract class StackValue {
 
     @NotNull
     public static Field field(@NotNull Type type, @NotNull Type owner, @NotNull String name, boolean isStatic, @NotNull StackValue receiver) {
-        return field(type, owner, name, isStatic, receiver, null);
+        return field(type, null, owner, name, isStatic, receiver, null);
     }
 
     @NotNull
     public static Field field(
             @NotNull Type type,
+            @Nullable KotlinType kotlinType,
             @NotNull Type owner,
             @NotNull String name,
             boolean isStatic,
             @NotNull StackValue receiver,
             @Nullable DeclarationDescriptor descriptor
     ) {
-        return new Field(type, owner, name, isStatic, receiver, descriptor);
+        return new Field(type, kotlinType, owner, name, isStatic, receiver, descriptor);
     }
 
     @NotNull
     public static Field field(@NotNull StackValue.Field field, @NotNull StackValue newReceiver) {
-        return field(field.type, field.owner, field.name, field.isStaticPut, newReceiver, field.descriptor);
+        return field(field.type, field.kotlinType, field.owner, field.name, field.isStaticPut, newReceiver, field.descriptor);
     }
 
     @NotNull
@@ -540,7 +542,7 @@ public abstract class StackValue {
             @NotNull StackValue receiver,
             @Nullable DeclarationDescriptor descriptor
     ) {
-        return field(sharedTypeForType(localType), classType, fieldName, false, receiver, descriptor);
+        return field(sharedTypeForType(localType), null, classType, fieldName, false, receiver, descriptor);
     }
 
     public static FieldForSharedVar fieldForSharedVar(
@@ -703,8 +705,9 @@ public abstract class StackValue {
     public static Field enumEntry(@NotNull ClassDescriptor descriptor, @NotNull KotlinTypeMapper typeMapper) {
         DeclarationDescriptor enumClass = descriptor.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + descriptor;
-        Type type = typeMapper.mapType((ClassDescriptor) enumClass);
-        return field(type, type, descriptor.getName().asString(), true, none(), descriptor);
+        SimpleType enumType = ((ClassDescriptor) enumClass).getDefaultType();
+        Type type = typeMapper.mapType(enumType);
+        return field(type, enumType, type, descriptor.getName().asString(), true, none(), descriptor);
     }
 
     @NotNull
@@ -1267,13 +1270,14 @@ public abstract class StackValue {
 
         public Field(
                 @NotNull Type type,
+                @Nullable KotlinType kotlinType,
                 @NotNull Type owner,
                 @NotNull String name,
                 boolean isStatic,
                 @NotNull StackValue receiver,
                 @Nullable DeclarationDescriptor descriptor
         ) {
-            super(type, null, isStatic, isStatic, receiver, receiver.canHaveSideEffects());
+            super(type, kotlinType, isStatic, isStatic, receiver, receiver.canHaveSideEffects());
             this.owner = owner;
             this.name = name;
             this.descriptor = descriptor;
