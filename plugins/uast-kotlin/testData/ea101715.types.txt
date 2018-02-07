@@ -9,6 +9,6 @@ UFile (package = ) [public final class Ea101715Kt {...]
                             USimpleNameReferenceExpression (identifier = Obj) [Obj]
                             ULiteralExpression (value = 555) [555] : PsiType:int
     UClass (name = Obj) [public final class Obj {...}]
-        UField (name = INSTANCE) [@null public static final var INSTANCE: Obj]
+        UField (name = INSTANCE) [public static final var INSTANCE: Obj]
             UAnnotation (fqName = null) [@null]
         UAnnotationMethod (name = Obj) [private fun Obj() = UastEmptyExpression]
