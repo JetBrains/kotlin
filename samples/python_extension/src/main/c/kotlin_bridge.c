@@ -33,7 +33,7 @@ static TLSVAR server_kref_demo_Server server = { 0 };
 
 static T_(Server) getServer(void) {
   if (!server.pinned) {
-    server = __ kotlin.demo.Server.Server("the server");
+    server = __ kotlin.root.demo.Server.Server("the server");
   }
   return server;
 }
@@ -52,7 +52,7 @@ static PyObject* open_session(PyObject* self, PyObject* args) {
     char* string_arg = NULL;
     int int_arg = 0;
     if (PyArg_ParseTuple(args, "is", &int_arg, &string_arg)) {
-        T_(Session) session = __ kotlin.demo.Session.Session(string_arg, int_arg);
+        T_(Session) session = __ kotlin.root.demo.Session.Session(string_arg, int_arg);
         result = Py_BuildValue("L", session.pinned);
     }
     return result;
@@ -69,7 +69,7 @@ static PyObject* close_session(PyObject* self, PyObject* args) {
 static PyObject* greet_server(PyObject* self, PyObject* args) {
     T_(Server) server = getServer();
     T_(Session) session = getSession(args);
-    const char* string = __ kotlin.demo.Server.greet(server, session);
+    const char* string = __ kotlin.root.demo.Server.greet(server, session);
     PyObject* result = Py_BuildValue("s", string);
     __ DisposeString(string);
     return result;
@@ -84,7 +84,7 @@ static PyObject* concat_server(PyObject* self, PyObject* args) {
     if (PyArg_ParseTuple(args, "Lss", &session_arg, &string_arg1, &string_arg2)) {
        T_(Server) server = getServer();
        T_(Session) session = { (void*)(uintptr_t)session_arg };
-       const char* string = __ kotlin.demo.Server.concat(server, session, string_arg1, string_arg2);
+       const char* string = __ kotlin.root.demo.Server.concat(server, session, string_arg1, string_arg2);
        result = Py_BuildValue("s", string);
        __ DisposeString(string);
     } else {
@@ -102,7 +102,7 @@ static PyObject* add_server(PyObject* self, PyObject* args) {
     if (PyArg_ParseTuple(args, "Lii", &session_arg, &int_arg1, &int_arg2)) {
        T_(Server) server = getServer();
        T_(Session) session = { (void*)(uintptr_t)session_arg };
-       int sum = __ kotlin.demo.Server.add(server, session, int_arg1, int_arg2);
+       int sum = __ kotlin.root.demo.Server.add(server, session, int_arg1, int_arg2);
        result = Py_BuildValue("i", sum);
     } else {
         result = Py_BuildValue("i", 0);
