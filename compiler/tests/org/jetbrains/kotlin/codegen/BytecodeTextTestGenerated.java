@@ -1944,6 +1944,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("generationOfAccessorToUnderlyingValue.kt")
+        public void testGenerationOfAccessorToUnderlyingValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/generationOfAccessorToUnderlyingValue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineClassBoxingOnAssignment.kt")
         public void testInlineClassBoxingOnAssignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassBoxingOnAssignment.kt");
