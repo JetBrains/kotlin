@@ -23,7 +23,6 @@ dependencies {
 }
 
 kapt {
-    generateStubs = true
     arguments {
         arg("suffix", "Customized")
         arg("generate.kotlin.code", "true")
