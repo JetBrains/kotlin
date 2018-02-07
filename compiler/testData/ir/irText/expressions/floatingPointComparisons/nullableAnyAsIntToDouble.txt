@@ -9,9 +9,20 @@ FILE fqName:<root> fileName:/nullableAnyAsIntToDouble.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
               GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
             then: CALL 'less(Double, Double): Boolean' type=kotlin.Boolean origin=LT
-              arg0: CALL 'toDouble(): Double' type=kotlin.Double origin=null
-                $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+              arg0: BLOCK type=kotlin.Double? origin=SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:val
                   GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+                WHEN type=kotlin.Double? origin=SAFE_CALL
+                  BRANCH
+                    if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                      arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
+                      arg1: CONST Null type=kotlin.Nothing? value=null
+                    then: CONST Null type=kotlin.Nothing? value=null
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: CALL 'toDouble(): Double' type=kotlin.Double origin=null
+                      $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                        GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
               arg1: GET_VAR 'value-parameter y: Double' type=kotlin.Double origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true

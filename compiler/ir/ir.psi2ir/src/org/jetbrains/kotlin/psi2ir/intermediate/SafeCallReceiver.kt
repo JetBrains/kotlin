@@ -68,3 +68,19 @@ class SafeCallReceiver(
         return irBlock
     }
 }
+
+
+fun IrExpression.safeCallOnDispatchReceiver(
+    generator: GeneratorWithScope,
+    startOffset: Int,
+    endOffset: Int,
+    ifNotNull: (IrExpression) -> IrExpression
+) =
+    SafeCallReceiver(
+        generator, startOffset, endOffset,
+        extensionReceiver = null,
+        dispatchReceiver = OnceExpressionValue(this),
+        isAssignmentReceiver = false
+    ).call { dispatchReceiverValue, _ ->
+        ifNotNull(dispatchReceiverValue!!.load())
+    }

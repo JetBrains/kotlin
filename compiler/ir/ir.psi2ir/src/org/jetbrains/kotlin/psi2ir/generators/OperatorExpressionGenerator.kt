@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
+import org.jetbrains.kotlin.psi2ir.intermediate.safeCallOnDispatchReceiver
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo
@@ -276,6 +278,15 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
             operandType == targetType || operandNNType == targetType ->
                 this
+
+            type.containsNull() ->
+                safeCallOnDispatchReceiver(this@OperatorExpressionGenerator, startOffset, endOffset) { dispatchReceiver ->
+                    invokeConversionFunction(
+                        startOffset, endOffset,
+                        conversionFunction ?: throw AssertionError("No conversion function for $type ~> $targetType"),
+                        dispatchReceiver
+                    )
+                }
 
             else ->
                 invokeConversionFunction(
