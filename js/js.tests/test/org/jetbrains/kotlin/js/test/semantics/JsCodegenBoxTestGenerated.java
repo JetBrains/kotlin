@@ -11385,6 +11385,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("callComputablePropertyInsideInlineClass.kt")
+        public void testCallComputablePropertyInsideInlineClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/callComputablePropertyInsideInlineClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("checkBoxingAfterAssertionOperator.kt")
         public void testCheckBoxingAfterAssertionOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperator.kt");
