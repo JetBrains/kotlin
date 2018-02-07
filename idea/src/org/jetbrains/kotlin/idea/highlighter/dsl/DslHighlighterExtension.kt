@@ -41,8 +41,10 @@ class DslHighlighterExtension : HighlighterExtension() {
         )
 
         private val styles = (1..numStyles).map { index ->
-            TextAttributesKey.createTextAttributesKey("KOTLIN_DSL_STYLE$index", defaultKeys[index - 1])
+            TextAttributesKey.createTextAttributesKey(externalKeyName(index), defaultKeys[index - 1])
         }
+
+        fun externalKeyName(index: Int) = "KOTLIN_DSL_STYLE$index"
 
         val descriptionsToStyles = (1..numStyles).associate { index ->
             "Dsl//${styleOptionDisplayName(index)}" to styles[index - 1]

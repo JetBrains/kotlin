@@ -271,6 +271,10 @@ fun main(args: Array<String>) {
             model("highlighter")
         }
 
+        testClass<AbstractDslHighlighterTest> {
+            model("dslHighlighter")
+        }
+
         testClass<AbstractUsageHighlightingTest> {
             model("usageHighlighter")
         }
