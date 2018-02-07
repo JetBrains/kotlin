@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.facet.implementingModules
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.targetPlatform
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfiguration>(KotlinRunConfigurationType.getInstance()) {
 
@@ -82,8 +83,7 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
             val psiFile = locationElement.containingFile
             if (!(psiFile is KtFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null
 
-            val resolutionFacade = psiFile.getResolutionFacade()
-            val mainFunctionDetector = MainFunctionDetector { resolutionFacade.resolveToDescriptor(it) as FunctionDescriptor }
+            val mainFunctionDetector = MainFunctionDetector { it.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? FunctionDescriptor }
 
             var currentElement = locationElement.declarationContainer(false)
             while (currentElement != null) {
