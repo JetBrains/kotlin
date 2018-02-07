@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -66,7 +64,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     override fun convertElement(element: PsiElement, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
         return convertDeclarationOrElement(element, parent, requiredType)
     }
-    
+
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
         if (element is PsiFile) return convertDeclaration(element, null, requiredType)
         if (element is KtLightClassForFacade) return convertDeclaration(element, null, requiredType)
@@ -206,17 +204,6 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                 is KtFile -> el<UFile> { KotlinUFile(original, this@KotlinUastLanguagePlugin) }
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement, this@KotlinUastLanguagePlugin) }
                 is KtAnnotationEntry -> el<UAnnotation>(build(::KotlinUAnnotation))
-                is KtCallExpression ->
-                    if (requiredType != null && UAnnotation::class.java.isAssignableFrom(requiredType)) {
-                        el<UAnnotation> {
-                            val classDescriptor =
-                                (original.getResolvedCall(original.analyze())?.resultingDescriptor as? ClassConstructorDescriptor)?.constructedClass
-                            if (classDescriptor?.kind == ClassKind.ANNOTATION_CLASS)
-                                KotlinUNestedAnnotation(original, givenParent, classDescriptor)
-                            else
-                                null
-                        }
-                    } else null
                 is KtLightAnnotationForSourceEntry -> convertElement(original.kotlinOrigin, givenParent, requiredType)
                 else -> null
             }
