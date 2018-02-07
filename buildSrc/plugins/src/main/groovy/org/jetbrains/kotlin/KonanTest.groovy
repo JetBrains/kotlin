@@ -544,6 +544,8 @@ class LinkKonanTest extends KonanTest {
 class DynamicKonanTest extends KonanTest {
     protected String cSource
 
+    public def inDevelopersRun = true
+
     void compileTest(List<String> filesToCompile, String exe) {
         def libname = "testlib"
         def dylib = "$outputDirectory/$libname"
