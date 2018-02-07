@@ -26,7 +26,6 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.isQualifiedModuleNamesEnabled
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
@@ -121,7 +120,7 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
             val ideLibrary = modelsProvider.findIdeLibrary(libraryDataNode.data) ?: continue
 
             val modifiableModel = modelsProvider.getModifiableLibraryModel(ideLibrary) as LibraryEx.ModifiableModelEx
-            if (anyNonJvmModules) {
+            if (anyNonJvmModules || ideLibrary.name?.looksAsNonJvmLibraryName() == true) {
                 detectLibraryKind(modifiableModel.getFiles(OrderRootType.CLASSES))?.let { modifiableModel.kind = it }
             }
             else if (ideLibrary is LibraryImpl && (ideLibrary.kind is JSLibraryKind || ideLibrary.kind is CommonLibraryKind)) {
@@ -129,6 +128,8 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
             }
         }
     }
+
+    private fun String.looksAsNonJvmLibraryName() = nonJvmSuffixes.any { it in this }
 
     private fun resetLibraryKind(modifiableModel: LibraryEx.ModifiableModelEx) {
         try {
@@ -150,6 +151,8 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
 
     companion object {
         val LOG = Logger.getInstance(KotlinGradleLibraryDataService::class.java)
+
+        val nonJvmSuffixes = listOf("-common", "-js", "-native", "-kjsm")
     }
 }
 
