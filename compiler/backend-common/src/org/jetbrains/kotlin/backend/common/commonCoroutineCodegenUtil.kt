@@ -58,11 +58,6 @@ fun FunctionDescriptor.getBuiltInSuspendCoroutineOrReturn() =
         .getContributedFunctions(SUSPEND_COROUTINE_OR_RETURN_NAME, NoLookupLocation.FROM_BACKEND)
         .singleOrNull()
 
-fun FunctionDescriptor.isBuiltInCoroutineContext(): Boolean {
-    val fqNameSafe = (this as? PropertyGetterDescriptor)?.correspondingProperty?.fqNameSafe
-    return fqNameSafe == COROUTINE_CONTEXT_1_2_20_FQ_NAME || fqNameSafe == COROUTINE_CONTEXT_FQ_NAME
-}
-
 fun FunctionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean {
     if (name != SUSPEND_COROUTINE_UNINTERCEPTED_OR_RETURN_NAME) return false
     val original = module.getPackage(COROUTINES_INTRINSICS_PACKAGE_FQ_NAME).memberScope
