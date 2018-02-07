@@ -165,6 +165,30 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ExpectClass.kt")
+        public void testExpectClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ExpectClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpectObject.kt")
+        public void testExpectObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ExpectObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpectedNestedClass.kt")
+        public void testExpectedNestedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ExpectedNestedClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpectedNestedClassInObject.kt")
+        public void testExpectedNestedClassInObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ExpectedNestedClassInObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PrivateInTrait.kt")
         public void testPrivateInTrait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/PrivateInTrait.kt");
