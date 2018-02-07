@@ -1839,6 +1839,12 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             doTest(fileName);
         }
 
+        @TestMetadata("deeplyNestedClass.kt")
+        public void testDeeplyNestedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/deeplyNestedClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("errors.kt")
         public void testErrors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/errors.kt");
