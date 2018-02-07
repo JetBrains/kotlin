@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -73,6 +74,10 @@ internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, init
 
 internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: Boolean): PsiType {
     if (this.isError) return UastErrorType
+
+    (constructor.declarationDescriptor as? TypeAliasDescriptor)?.let { typeAlias ->
+        return typeAlias.expandedType.toPsiType(source, element, boxed)
+    }
 
     if (arguments.isEmpty()) {
         val typeFqName = this.constructor.declarationDescriptor?.fqNameSafe?.asString()
