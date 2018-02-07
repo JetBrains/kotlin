@@ -16,10 +16,10 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 open class BranchedValue(
-        val arg1: StackValue,
-        val arg2: StackValue? = null,
-        val operandType: Type,
-        val opcode: Int
+    val arg1: StackValue,
+    val arg2: StackValue? = null,
+    val operandType: Type,
+    val opcode: Int
 ) : StackValue(Type.BOOLEAN_TYPE) {
 
     override fun putSelector(type: Type, kotlinType: KotlinType?, v: InstructionAdapter) {
@@ -59,8 +59,7 @@ open class BranchedValue(
             override fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
                 if (!jumpIfFalse) {
                     v.fakeAlwaysTrueIfeq(jumpLabel)
-                }
-                else {
+                } else {
                     v.fakeAlwaysFalseIfeq(jumpLabel)
                 }
             }
@@ -81,8 +80,7 @@ open class BranchedValue(
             override fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
                 if (jumpIfFalse) {
                     v.fakeAlwaysTrueIfeq(jumpLabel)
-                }
-                else {
+                } else {
                     v.fakeAlwaysFalseIfeq(jumpLabel)
                 }
             }
@@ -121,23 +119,23 @@ open class BranchedValue(
         }
 
         fun condJump(condition: StackValue): CondJump =
-                CondJump(
-                        condition as? BranchedValue ?: BranchedValue(condition, null, Type.BOOLEAN_TYPE, IFEQ),
-                        IFEQ
-                )
+            CondJump(
+                condition as? BranchedValue ?: BranchedValue(condition, null, Type.BOOLEAN_TYPE, IFEQ),
+                IFEQ
+            )
 
         fun cmp(opToken: IElementType, operandType: Type, left: StackValue, right: StackValue): StackValue =
-                if (operandType.sort == Type.OBJECT)
-                    ObjectCompare(opToken, operandType, left, right)
-                else
-                    NumberCompare(opToken, operandType, left, right)
+            if (operandType.sort == Type.OBJECT)
+                ObjectCompare(opToken, operandType, left, right)
+            else
+                NumberCompare(opToken, operandType, left, right)
 
     }
 }
 
 class And(
-        arg1: StackValue,
-        arg2: StackValue
+    arg1: StackValue,
+    arg2: StackValue
 ) : BranchedValue(BranchedValue.condJump(arg1), BranchedValue.condJump(arg2), Type.BOOLEAN_TYPE, IFEQ) {
 
     override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
@@ -149,8 +147,8 @@ class And(
 }
 
 class Or(
-        arg1: StackValue,
-        arg2: StackValue
+    arg1: StackValue,
+    arg2: StackValue
 ) : BranchedValue(BranchedValue.condJump(arg1), BranchedValue.condJump(arg2), Type.BOOLEAN_TYPE, IFEQ) {
 
     override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
@@ -184,14 +182,14 @@ class CondJump(val condition: BranchedValue, op: Int) : BranchedValue(condition,
 }
 
 class NumberCompare(
-        private val opToken: IElementType,
-        operandType: Type,
-        left: StackValue,
-        right: StackValue
+    private val opToken: IElementType,
+    operandType: Type,
+    left: StackValue,
+    right: StackValue
 ) : BranchedValue(left, right, operandType, NumberCompare.getNumberCompareOpcode(opToken)) {
 
     override fun patchOpcode(opcode: Int, v: InstructionAdapter): Int =
-            patchOpcode(opcode, v, opToken, operandType)
+        patchOpcode(opcode, v, opToken, operandType)
 
     companion object {
         fun getNumberCompareOpcode(opToken: IElementType): Int = when (opToken) {
@@ -230,10 +228,10 @@ class NumberCompare(
 }
 
 class ObjectCompare(
-        opToken: IElementType,
-        operandType: Type,
-        left: StackValue,
-        right: StackValue
+    opToken: IElementType,
+    operandType: Type,
+    left: StackValue,
+    right: StackValue
 ) : BranchedValue(left, right, operandType, ObjectCompare.getObjectCompareOpcode(opToken)) {
 
     companion object {

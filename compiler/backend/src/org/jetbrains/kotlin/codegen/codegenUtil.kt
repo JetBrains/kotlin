@@ -57,9 +57,9 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import java.util.*
 
 fun generateIsCheck(
-        v: InstructionAdapter,
-        kotlinType: KotlinType,
-        asmType: Type
+    v: InstructionAdapter,
+    kotlinType: KotlinType,
+    asmType: Type
 ) {
     if (TypeUtils.isNullableType(kotlinType)) {
         val nope = Label()
@@ -80,24 +80,22 @@ fun generateIsCheck(
 
             mark(end)
         }
-    }
-    else {
+    } else {
         TypeIntrinsics.instanceOf(v, kotlinType, asmType)
     }
 }
 
 fun generateAsCast(
-        v: InstructionAdapter,
-        kotlinType: KotlinType,
-        asmType: Type,
-        isSafe: Boolean
+    v: InstructionAdapter,
+    kotlinType: KotlinType,
+    asmType: Type,
+    isSafe: Boolean
 ) {
     if (!isSafe) {
         if (!TypeUtils.isNullableType(kotlinType)) {
             generateNullCheckForNonSafeAs(v, kotlinType)
         }
-    }
-    else {
+    } else {
         with(v) {
             dup()
             TypeIntrinsics.instanceOf(v, kotlinType, asmType)
@@ -113,22 +111,30 @@ fun generateAsCast(
 }
 
 private fun generateNullCheckForNonSafeAs(
-        v: InstructionAdapter,
-        type: KotlinType
+    v: InstructionAdapter,
+    type: KotlinType
 ) {
     with(v) {
         dup()
         val nonnull = Label()
         ifnonnull(nonnull)
-        AsmUtil.genThrow(v, "kotlin/TypeCastException", "null cannot be cast to non-null type " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type))
+        AsmUtil.genThrow(
+            v,
+            "kotlin/TypeCastException",
+            "null cannot be cast to non-null type " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
+        )
         mark(nonnull)
     }
 }
 
-fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String?
-        = valueParametersSignature?.let { sourceSignature?.replace("^\\(.*\\)".toRegex(), "($it)") }
+fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String? =
+    valueParametersSignature?.let { sourceSignature?.replace("^\\(.*\\)".toRegex(), "($it)") }
 
-fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(companion: KtObjectDeclaration, outerContext: FieldOwnerContext<*>, state: GenerationState) {
+fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(
+    companion: KtObjectDeclaration,
+    outerContext: FieldOwnerContext<*>,
+    state: GenerationState
+) {
     val descriptor = state.bindingContext.get(BindingContext.CLASS, companion)
 
     if (descriptor == null || ErrorUtils.isError(descriptor)) {
@@ -150,16 +156,20 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(companion: KtObject
 }
 
 // TODO: inline and remove then ScriptCodegen is converted to Kotlin
-fun mapSupertypesNames(typeMapper: KotlinTypeMapper, supertypes: List<ClassDescriptor>, signatureVisitor: JvmSignatureWriter?): Array<String> =
-        supertypes.map { typeMapper.mapSupertype(it.defaultType, signatureVisitor).internalName }.toTypedArray()
+fun mapSupertypesNames(
+    typeMapper: KotlinTypeMapper,
+    supertypes: List<ClassDescriptor>,
+    signatureVisitor: JvmSignatureWriter?
+): Array<String> =
+    supertypes.map { typeMapper.mapSupertype(it.defaultType, signatureVisitor).internalName }.toTypedArray()
 
 
 // Top level subclasses of a sealed class should be generated before that sealed class,
 // so that we'd generate the necessary accessor for its constructor afterwards
 fun sortTopLevelClassesAndPrepareContextForSealedClasses(
-        classOrObjects: List<KtClassOrObject>,
-        packagePartContext: PackageContext,
-        state: GenerationState
+    classOrObjects: List<KtClassOrObject>,
+    packagePartContext: PackageContext,
+    state: GenerationState
 ): List<KtClassOrObject> {
     fun prepareContextIfNeeded(descriptor: ClassDescriptor?) {
         if (DescriptorUtils.isSealedClass(descriptor)) {
@@ -183,8 +193,7 @@ fun sortTopLevelClassesAndPrepareContextForSealedClasses(
         val descriptor = state.bindingContext.get(BindingContext.CLASS, classOrObject)
         if (descriptor == null) {
             result.add(classOrObject)
-        }
-        else {
+        } else {
             prepareContextIfNeeded(descriptor)
             descriptorToPsi[descriptor] = classOrObject
         }
@@ -199,17 +208,17 @@ fun sortTopLevelClassesAndPrepareContextForSealedClasses(
 }
 
 fun CallableMemberDescriptor.isDefinitelyNotDefaultImplsMethod() =
-        this is JavaCallableMemberDescriptor || this.annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
+    this is JavaCallableMemberDescriptor || this.annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
 
 
 fun ClassBuilder.generateMethod(
-        debugString: String,
-        access: Int,
-        method: Method,
-        element: PsiElement?,
-        origin: JvmDeclarationOrigin,
-        state: GenerationState,
-        generate: InstructionAdapter.() -> Unit
+    debugString: String,
+    access: Int,
+    method: Method,
+    element: PsiElement?,
+    origin: JvmDeclarationOrigin,
+    state: GenerationState,
+    generate: InstructionAdapter.() -> Unit
 ) {
     val mv = this.newMethod(origin, access, method.name, method.descriptor, null, null)
 
@@ -224,44 +233,44 @@ fun ClassBuilder.generateMethod(
 
 
 fun reportTarget6InheritanceErrorIfNeeded(
-        classDescriptor: ClassDescriptor, classElement: PsiElement, restrictedInheritance: List<FunctionDescriptor>, state:GenerationState
+    classDescriptor: ClassDescriptor, classElement: PsiElement, restrictedInheritance: List<FunctionDescriptor>, state: GenerationState
 ) {
     if (!restrictedInheritance.isEmpty()) {
         val groupBy = restrictedInheritance.groupBy { descriptor -> descriptor.containingDeclaration as ClassDescriptor }
 
         for ((key, value) in groupBy) {
             state.diagnostics.report(
-                    ErrorsJvm.TARGET6_INTERFACE_INHERITANCE.on(
-                            classElement, classDescriptor, key,
-                            value.joinToString(separator = "\n", prefix = "\n") {
-                                Renderers.COMPACT.render(JvmCodegenUtil.getDirectMember(it), RenderingContext.Empty)
-                            }
-                    )
+                ErrorsJvm.TARGET6_INTERFACE_INHERITANCE.on(
+                    classElement, classDescriptor, key,
+                    value.joinToString(separator = "\n", prefix = "\n") {
+                        Renderers.COMPACT.render(JvmCodegenUtil.getDirectMember(it), RenderingContext.Empty)
+                    }
+                )
             )
         }
     }
 }
 
 fun CallableDescriptor.isJvmStaticInObjectOrClassOrInterface(): Boolean =
-        isJvmStaticIn {
-            DescriptorUtils.isNonCompanionObject(it) ||
-            // This is necessary because for generation of @JvmStatic methods from companion of class A
-            // we create a synthesized descriptor containing in class A
-            DescriptorUtils.isClassOrEnumClass(it) || DescriptorUtils.isInterface(it)
-        }
+    isJvmStaticIn {
+        DescriptorUtils.isNonCompanionObject(it) ||
+                // This is necessary because for generation of @JvmStatic methods from companion of class A
+                // we create a synthesized descriptor containing in class A
+                DescriptorUtils.isClassOrEnumClass(it) || DescriptorUtils.isInterface(it)
+    }
 
 fun CallableDescriptor.isJvmStaticInCompanionObject(): Boolean =
-        isJvmStaticIn { DescriptorUtils.isCompanionObject(it) }
+    isJvmStaticIn { DescriptorUtils.isCompanionObject(it) }
 
 private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) -> Boolean): Boolean =
-        when (this) {
-            is PropertyAccessorDescriptor -> {
-                val propertyDescriptor = correspondingProperty
-                predicate(propertyDescriptor.containingDeclaration) &&
-                (hasJvmStaticAnnotation() || propertyDescriptor.hasJvmStaticAnnotation())
-            }
-            else -> predicate(containingDeclaration) && hasJvmStaticAnnotation()
+    when (this) {
+        is PropertyAccessorDescriptor -> {
+            val propertyDescriptor = correspondingProperty
+            predicate(propertyDescriptor.containingDeclaration) &&
+                    (hasJvmStaticAnnotation() || propertyDescriptor.hasJvmStaticAnnotation())
         }
+        else -> predicate(containingDeclaration) && hasJvmStaticAnnotation()
+    }
 
 fun Collection<VariableDescriptor>.filterOutDescriptorsWithSpecialNames() = filterNot { it.name.isSpecial }
 
@@ -271,10 +280,10 @@ class TypeAndNullability(@JvmField val type: Type, @JvmField val isNullable: Boo
 class JvmKotlinType(val type: Type, val kotlinType: KotlinType?)
 
 fun calcTypeForIEEE754ArithmeticIfNeeded(
-        expression: KtExpression?,
-        bindingContext: BindingContext,
-        descriptor: DeclarationDescriptor,
-        languageVersionSettings: LanguageVersionSettings
+    expression: KtExpression?,
+    bindingContext: BindingContext,
+    descriptor: DeclarationDescriptor,
+    languageVersionSettings: LanguageVersionSettings
 ): TypeAndNullability? {
     val ktType = expression.kotlinType(bindingContext) ?: return null
 
@@ -300,7 +309,7 @@ fun calcTypeForIEEE754ArithmeticIfNeeded(
 fun KotlinType.asmType(typeMapper: KotlinTypeMapper) = typeMapper.mapType(this)
 
 fun KtExpression?.asmType(typeMapper: KotlinTypeMapper, bindingContext: BindingContext): Type =
-        this.kotlinType(bindingContext)?.asmType(typeMapper) ?: Type.VOID_TYPE
+    this.kotlinType(bindingContext)?.asmType(typeMapper) ?: Type.VOID_TYPE
 
 fun KtExpression?.kotlinType(bindingContext: BindingContext) = this?.let(bindingContext::getType)
 
@@ -322,7 +331,7 @@ fun FunctionDescriptor.isGenericToArray(): Boolean {
 
     val elementType = typeParameters[0].defaultType
     return KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(returnType)) &&
-           KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(paramType))
+            KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(paramType))
 }
 
 fun FunctionDescriptor.isNonGenericToArray(): Boolean {
@@ -361,13 +370,13 @@ fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodege
         }
 
         val destructuringDeclaration =
-                (DescriptorToSourceUtils.descriptorToDeclaration(parameterDescriptor) as? KtParameter)?.destructuringDeclaration
-                ?: error("Destructuring declaration for descriptor $parameterDescriptor not found")
+            (DescriptorToSourceUtils.descriptorToDeclaration(parameterDescriptor) as? KtParameter)?.destructuringDeclaration
+                    ?: error("Destructuring declaration for descriptor $parameterDescriptor not found")
 
         codegen.initializeDestructuringDeclarationVariables(
-                destructuringDeclaration,
-                TransientReceiver(parameterDescriptor.type),
-                codegen.findLocalOrCapturedValue(parameterDescriptor) ?: error("Local var not found for parameter $parameterDescriptor")
+            destructuringDeclaration,
+            TransientReceiver(parameterDescriptor.type),
+            codegen.findLocalOrCapturedValue(parameterDescriptor) ?: error("Local var not found for parameter $parameterDescriptor")
         )
     }
 
@@ -383,9 +392,9 @@ inline fun FrameMap.useTmpVar(type: Type, block: (index: Int) -> Unit) {
 }
 
 fun InstructionAdapter.generateNewInstanceDupAndPlaceBeforeStackTop(
-        frameMap: FrameMap,
-        topStackType: Type,
-        newInstanceInternalName: String
+    frameMap: FrameMap,
+    topStackType: Type,
+    newInstanceInternalName: String
 ) {
     frameMap.useTmpVar(topStackType) { index ->
         store(index, topStackType)
@@ -410,17 +419,17 @@ fun extractReificationArgument(type: KotlinType): Pair<TypeParameterDescriptor, 
 }
 
 fun unwrapInitialSignatureDescriptor(function: FunctionDescriptor): FunctionDescriptor =
-        function.initialSignatureDescriptor ?: function
+    function.initialSignatureDescriptor ?: function
 
 fun ExpressionCodegen.generateCallReceiver(call: ResolvedCall<out CallableDescriptor>): StackValue =
-        generateReceiverValue(call.extensionReceiver ?: call.dispatchReceiver!!, false)
+    generateReceiverValue(call.extensionReceiver ?: call.dispatchReceiver!!, false)
 
 fun ExpressionCodegen.generateCallSingleArgument(call: ResolvedCall<out CallableDescriptor>): StackValue =
-        gen(call.getFirstArgumentExpression()!!)
+    gen(call.getFirstArgumentExpression()!!)
 
 fun ClassDescriptor.isPossiblyUninitializedSingleton() =
-        DescriptorUtils.isEnumEntry(this) ||
-        DescriptorUtils.isCompanionObject(this) && JvmCodegenUtil.isJvmInterface(this.containingDeclaration)
+    DescriptorUtils.isEnumEntry(this) ||
+            DescriptorUtils.isCompanionObject(this) && JvmCodegenUtil.isJvmInterface(this.containingDeclaration)
 
 val CodegenContext<*>.parentContextsWithSelf
     get() = generateSequence(this) { it.parentContext }

@@ -13,20 +13,20 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 abstract class NumberLikeCompare(
-        left: StackValue,
-        right: StackValue,
-        operandType: Type,
-        private val opToken: IElementType
+    left: StackValue,
+    right: StackValue,
+    operandType: Type,
+    private val opToken: IElementType
 ) : BranchedValue(left, right, operandType, NumberCompare.getNumberCompareOpcode(opToken)) {
     override fun patchOpcode(opcode: Int, v: InstructionAdapter): Int =
-            NumberCompare.patchOpcode(opcode, v, opToken, operandType)
+        NumberCompare.patchOpcode(opcode, v, opToken, operandType)
 }
 
 abstract class SafeCallFusedWithPrimitiveEqualityBase(
-        opToken: IElementType,
-        operandType: Type,
-        left: StackValue,
-        right: StackValue
+    opToken: IElementType,
+    operandType: Type,
+    left: StackValue,
+    right: StackValue
 ) : NumberLikeCompare(left, right, operandType, opToken) {
     private val trueIfEqual = opToken == KtTokens.EQEQ || opToken == KtTokens.EQEQEQ
 
@@ -80,12 +80,12 @@ abstract class SafeCallFusedWithPrimitiveEqualityBase(
 
 
 class SafeCallToPrimitiveEquality(
-        opToken: IElementType,
-        operandType: Type,
-        left: StackValue,
-        right: StackValue,
-        private val safeReceiverType: Type,
-        private val safeReceiverIsNull: Label
+    opToken: IElementType,
+    operandType: Type,
+    left: StackValue,
+    right: StackValue,
+    private val safeReceiverType: Type,
+    private val safeReceiverIsNull: Label
 ) : SafeCallFusedWithPrimitiveEqualityBase(opToken, operandType, left, right) {
     override fun cleanupOnNullReceiver(v: InstructionAdapter) {
         v.mark(safeReceiverIsNull)
@@ -95,12 +95,12 @@ class SafeCallToPrimitiveEquality(
 
 
 class PrimitiveToSafeCallEquality(
-        opToken: IElementType,
-        operandType: Type,
-        left: StackValue,
-        right: StackValue,
-        private val safeReceiverType: Type,
-        private val safeReceiverIsNull: Label
+    opToken: IElementType,
+    operandType: Type,
+    left: StackValue,
+    right: StackValue,
+    private val safeReceiverType: Type,
+    private val safeReceiverIsNull: Label
 ) : SafeCallFusedWithPrimitiveEqualityBase(opToken, operandType, left, right) {
     override fun cleanupOnNullReceiver(v: InstructionAdapter) {
         v.mark(safeReceiverIsNull)
@@ -111,10 +111,10 @@ class PrimitiveToSafeCallEquality(
 
 
 class BoxedToPrimitiveEquality private constructor(
-        leftBoxed: StackValue,
-        rightPrimitive: StackValue,
-        primitiveType: Type,
-        private val frameMap: FrameMap
+    leftBoxed: StackValue,
+    rightPrimitive: StackValue,
+    primitiveType: Type,
+    private val frameMap: FrameMap
 ) : NumberLikeCompare(leftBoxed, rightPrimitive, primitiveType, KtTokens.EQEQ) {
     private val boxedType = arg1.type
 
@@ -122,31 +122,30 @@ class BoxedToPrimitiveEquality private constructor(
         if (arg2!!.canHaveSideEffects()) {
             val tmp = frameMap.enterTemp(operandType)
             doJump(
-                    v, jumpLabel, jumpIfFalse,
-                    {
-                        arg1.put(boxedType, v)
-                        arg2.put(operandType, v)
-                        v.store(tmp, operandType)
-                    },
-                    { v.load(tmp, operandType) }
+                v, jumpLabel, jumpIfFalse,
+                {
+                    arg1.put(boxedType, v)
+                    arg2.put(operandType, v)
+                    v.store(tmp, operandType)
+                },
+                { v.load(tmp, operandType) }
             )
             frameMap.leaveTemp(operandType)
-        }
-        else {
+        } else {
             doJump(
-                    v, jumpLabel, jumpIfFalse,
-                    { arg1.put(boxedType, v) },
-                    { arg2.put(operandType, v) }
+                v, jumpLabel, jumpIfFalse,
+                { arg1.put(boxedType, v) },
+                { arg2.put(operandType, v) }
             )
         }
     }
 
     private inline fun doJump(
-            v: InstructionAdapter,
-            jumpLabel: Label,
-            jumpIfFalse: Boolean,
-            putArg1: () -> Unit,
-            putArg2: () -> Unit
+        v: InstructionAdapter,
+        jumpLabel: Label,
+        jumpIfFalse: Boolean,
+        putArg1: () -> Unit,
+        putArg2: () -> Unit
     ) {
         val notNullLabel = Label()
         val endLabel = Label()
@@ -169,34 +168,34 @@ class BoxedToPrimitiveEquality private constructor(
     companion object {
         @JvmStatic
         fun create(
-                opToken: IElementType,
-                left: StackValue,
-                leftType: Type,
-                right: StackValue,
-                rightType: Type,
-                frameMap: FrameMap
+            opToken: IElementType,
+            left: StackValue,
+            leftType: Type,
+            right: StackValue,
+            rightType: Type,
+            frameMap: FrameMap
         ): BranchedValue =
-                if (!isApplicable(opToken, leftType, rightType))
-                    throw IllegalArgumentException("Not applicable for $opToken, $leftType, $rightType")
-                else when (opToken) {
-                    KtTokens.EQEQ -> BoxedToPrimitiveEquality(left, right, rightType, frameMap)
-                    KtTokens.EXCLEQ -> Invert(BoxedToPrimitiveEquality(left, right, rightType, frameMap))
-                    else -> throw AssertionError("Unexpected opToken: $opToken")
-                }
+            if (!isApplicable(opToken, leftType, rightType))
+                throw IllegalArgumentException("Not applicable for $opToken, $leftType, $rightType")
+            else when (opToken) {
+                KtTokens.EQEQ -> BoxedToPrimitiveEquality(left, right, rightType, frameMap)
+                KtTokens.EXCLEQ -> Invert(BoxedToPrimitiveEquality(left, right, rightType, frameMap))
+                else -> throw AssertionError("Unexpected opToken: $opToken")
+            }
 
         @JvmStatic
         fun isApplicable(opToken: IElementType, leftType: Type, rightType: Type) =
-                (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) &&
-                AsmUtil.isIntOrLongPrimitive(rightType) &&
-                AsmUtil.isBoxedTypeOf(leftType, rightType)
+            (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) &&
+                    AsmUtil.isIntOrLongPrimitive(rightType) &&
+                    AsmUtil.isBoxedTypeOf(leftType, rightType)
     }
 }
 
 abstract class PrimitiveToSomethingEquality
 protected constructor(
-        leftPrimitive: StackValue,
-        right: StackValue,
-        primitiveType: Type
+    leftPrimitive: StackValue,
+    right: StackValue,
+    primitiveType: Type
 ) : NumberLikeCompare(leftPrimitive, right, primitiveType, KtTokens.EQEQ) {
     protected val primitiveType = leftPrimitive.type
     protected val rightType = right.type
@@ -227,9 +226,9 @@ protected constructor(
 
 
 class PrimitiveToBoxedEquality private constructor(
-        leftPrimitive: StackValue,
-        rightBoxed: StackValue,
-        primitiveType: Type
+    leftPrimitive: StackValue,
+    rightBoxed: StackValue,
+    primitiveType: Type
 ) : PrimitiveToSomethingEquality(leftPrimitive, rightBoxed, primitiveType) {
     private val boxedType = rightBoxed.type
 
@@ -244,27 +243,27 @@ class PrimitiveToBoxedEquality private constructor(
     companion object {
         @JvmStatic
         fun create(opToken: IElementType, left: StackValue, leftType: Type, right: StackValue, rightType: Type): BranchedValue =
-                if (!isApplicable(opToken, leftType, rightType))
-                    throw IllegalArgumentException("Not applicable for $opToken, $leftType, $rightType")
-                else when (opToken) {
-                    KtTokens.EQEQ -> PrimitiveToBoxedEquality(left, right, leftType)
-                    KtTokens.EXCLEQ -> Invert(PrimitiveToBoxedEquality(left, right, leftType))
-                    else -> throw AssertionError("Unexpected opToken: $opToken")
-                }
+            if (!isApplicable(opToken, leftType, rightType))
+                throw IllegalArgumentException("Not applicable for $opToken, $leftType, $rightType")
+            else when (opToken) {
+                KtTokens.EQEQ -> PrimitiveToBoxedEquality(left, right, leftType)
+                KtTokens.EXCLEQ -> Invert(PrimitiveToBoxedEquality(left, right, leftType))
+                else -> throw AssertionError("Unexpected opToken: $opToken")
+            }
 
         @JvmStatic
         fun isApplicable(opToken: IElementType, leftType: Type, rightType: Type) =
-                (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) &&
-                AsmUtil.isIntOrLongPrimitive(leftType) &&
-                AsmUtil.isBoxedTypeOf(rightType, leftType)
+            (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) &&
+                    AsmUtil.isIntOrLongPrimitive(leftType) &&
+                    AsmUtil.isBoxedTypeOf(rightType, leftType)
     }
 }
 
 
 class PrimitiveToObjectEquality private constructor(
-        leftPrimitive: StackValue,
-        rightObject: StackValue,
-        primitiveType: Type
+    leftPrimitive: StackValue,
+    rightObject: StackValue,
+    primitiveType: Type
 ) : PrimitiveToSomethingEquality(leftPrimitive, rightObject, primitiveType) {
     private val boxedType = AsmUtil.boxType(primitiveType)
 
@@ -281,18 +280,18 @@ class PrimitiveToObjectEquality private constructor(
     companion object {
         @JvmStatic
         fun create(opToken: IElementType, left: StackValue, leftType: Type, right: StackValue, rightType: Type): BranchedValue =
-                if (!isApplicable(opToken, leftType, rightType))
-                    throw IllegalArgumentException("Not applicable for $opToken, $leftType, $rightType")
-                else when (opToken) {
-                    KtTokens.EQEQ -> PrimitiveToObjectEquality(left, right, leftType)
-                    KtTokens.EXCLEQ -> Invert(PrimitiveToObjectEquality(left, right, leftType))
-                    else -> throw AssertionError("Unexpected opToken: $opToken")
-                }
+            if (!isApplicable(opToken, leftType, rightType))
+                throw IllegalArgumentException("Not applicable for $opToken, $leftType, $rightType")
+            else when (opToken) {
+                KtTokens.EQEQ -> PrimitiveToObjectEquality(left, right, leftType)
+                KtTokens.EXCLEQ -> Invert(PrimitiveToObjectEquality(left, right, leftType))
+                else -> throw AssertionError("Unexpected opToken: $opToken")
+            }
 
         @JvmStatic
         fun isApplicable(opToken: IElementType, leftType: Type, rightType: Type) =
-                (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) &&
-                AsmUtil.isIntOrLongPrimitive(leftType) &&
-                rightType.sort == Type.OBJECT
+            (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) &&
+                    AsmUtil.isIntOrLongPrimitive(leftType) &&
+                    rightType.sort == Type.OBJECT
     }
 }
