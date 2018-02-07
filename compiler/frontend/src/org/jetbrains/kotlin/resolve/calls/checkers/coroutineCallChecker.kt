@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
@@ -46,6 +48,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val COROUTINE_CONTEXT_1_2_20_FQ_NAME = DescriptorUtils.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.child(Name.identifier("coroutineContext"))
 val COROUTINE_CONTEXT_FQ_NAME = DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("coroutineContext"))
+
+fun FqName.isBuiltInCorouineContext() =
+    this == COROUTINE_CONTEXT_1_2_20_FQ_NAME || this == COROUTINE_CONTEXT_FQ_NAME
+
+fun FunctionDescriptor.isBuiltInCoroutineContext() =
+    (this as? PropertyGetterDescriptor)?.correspondingProperty?.fqNameSafe?.isBuiltInCorouineContext() == true
+
+fun PropertyDescriptor.isBuiltInCoroutineContext() = this.fqNameSafe.isBuiltInCorouineContext()
 
 object CoroutineSuspendCallChecker : CallChecker {
     private val ALLOWED_SCOPE_KINDS = setOf(LexicalScopeKind.FUNCTION_INNER_SCOPE, LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING)
