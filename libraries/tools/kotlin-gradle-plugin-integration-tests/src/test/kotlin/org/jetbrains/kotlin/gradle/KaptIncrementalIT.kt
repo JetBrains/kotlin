@@ -37,6 +37,7 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
 
                 if (useKapt3) {
                     buildGradle.modify { it.replace(APPLY_KAPT3_PLUGIN_PLACEHOLDER, APPLY_KAPT3_PLUGIN) }
+                    allowOriginalKapt()
                 }
             }
 

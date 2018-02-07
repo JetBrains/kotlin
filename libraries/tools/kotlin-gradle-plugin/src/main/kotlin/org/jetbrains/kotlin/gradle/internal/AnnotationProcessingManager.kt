@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import com.android.build.gradle.BaseExtension
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.file.FileCollection
@@ -172,13 +173,24 @@ class AnnotationProcessingManager(
 
     val kaptProcessorPath get() = setOf(wrappersDirectory) + aptFiles + javaTask.classpath
 
+    private fun allowToUseOriginalKapt(): Boolean {
+        return project.hasProperty("allow.original.kapt")
+                && project.property("allow.original.kapt").toString().toBoolean()
+    }
+
     fun setupKapt() {
         originalJavaCompilerArgs = javaTask.options.compilerArgs
 
         if (aptFiles.isEmpty()) return
 
-        project.logger.warn("${project.name}: " +
-                "Original kapt is deprecated. Please add \"apply plugin: 'kotlin-kapt'\" to your build.gradle.")
+        val deprecationMessage = "${project.name}: " +
+                "Original kapt is deprecated. Please add \"apply plugin: 'kotlin-kapt'\" to your build.gradle."
+
+        if (allowToUseOriginalKapt()) {
+            project.logger.warn(deprecationMessage)
+        } else {
+            throw GradleException(deprecationMessage)
+        }
 
         if (project.plugins.findPlugin(ANDROID_APT_PLUGIN_ID) != null) {
             project.logger.warn("Please do not use `$ANDROID_APT_PLUGIN_ID` with kapt.")
