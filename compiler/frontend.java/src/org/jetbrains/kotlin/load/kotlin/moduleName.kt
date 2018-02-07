@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 
 fun getJvmModuleNameForDeserializedDescriptor(descriptor: DeclarationDescriptor): String? {
@@ -20,8 +21,7 @@ fun getJvmModuleNameForDeserializedDescriptor(descriptor: DeclarationDescriptor)
         parent is DeserializedClassDescriptor -> {
             val classProto = parent.classProto
             val nameResolver = parent.c.nameResolver
-            return classProto.getExtension(JvmProtoBuf.classModuleName)
-                ?.takeIf { classProto.hasExtension(JvmProtoBuf.classModuleName) }
+            return classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)
                 ?.let(nameResolver::getString)
                     ?: JvmAbi.DEFAULT_MODULE_NAME
         }
@@ -30,8 +30,7 @@ fun getJvmModuleNameForDeserializedDescriptor(descriptor: DeclarationDescriptor)
             if (source is JvmPackagePartSource) {
                 val packageProto = source.packageProto
                 val nameResolver = source.nameResolver
-                return packageProto.getExtension(JvmProtoBuf.packageModuleName)
-                    ?.takeIf { packageProto.hasExtension(JvmProtoBuf.packageModuleName) }
+                return packageProto.getExtensionOrNull(JvmProtoBuf.packageModuleName)
                     ?.let(nameResolver::getString)
                         ?: JvmAbi.DEFAULT_MODULE_NAME
             }
