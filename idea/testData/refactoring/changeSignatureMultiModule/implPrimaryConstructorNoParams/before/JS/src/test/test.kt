@@ -1,6 +1,8 @@
 package test
 
-actual class C()
+actual class C {
+    actual constructor()
+}
 
 fun test() {
     C()
