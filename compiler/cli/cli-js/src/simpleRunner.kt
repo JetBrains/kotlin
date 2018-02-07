@@ -84,7 +84,16 @@ fun main(args: Array<String>) {
 //    printDiagnosticsToStderr(other)
 
     val tr = K2JSTranslator(config)
-    val result = tr.translate(env.getSourceFiles(), MainCallParameters.noCall(), analysisResult)
+    val reporter = object : JsConfig.Reporter() {
+        override fun error(message: String) {
+            //messageCollector.report(ERROR, message, null)
+        }
+
+        override fun warning(message: String) {
+            //messageCollector.report(STRONG_WARNING, message, null)
+        }
+    }
+    val result = tr.translate(reporter, env.getSourceFiles(), MainCallParameters.noCall(), analysisResult)
 
     val generatedCode = (result as TranslationResult.Success).program.globalBlock.toString()
 
