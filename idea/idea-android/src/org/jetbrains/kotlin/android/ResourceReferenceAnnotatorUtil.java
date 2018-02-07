@@ -16,15 +16,16 @@
 
 package org.jetbrains.kotlin.android;
 
-
+import com.android.ide.common.rendering.api.ResourceNamespace;
 import com.android.ide.common.rendering.api.ResourceValue;
-import com.android.ide.common.resources.ResourceItem;
-import com.android.ide.common.resources.ResourceRepository;
 import com.android.ide.common.resources.ResourceResolver;
+import com.android.ide.common.res2.AbstractResourceRepository;
+import com.android.ide.common.res2.ResourceItem;
 import com.android.resources.ResourceType;
 import com.android.tools.idea.configurations.Configuration;
 import com.android.tools.idea.configurations.ConfigurationManager;
 import com.android.tools.idea.res.AppResourceRepository;
+import com.android.tools.idea.res.LocalResourceRepository;
 import com.android.tools.idea.res.ResourceHelper;
 import com.android.tools.idea.ui.resourcechooser.ColorPicker;
 import com.android.utils.XmlUtils;
@@ -59,6 +60,7 @@ import org.w3c.dom.NodeList;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.List;
 
 import static com.android.SdkConstants.*;
 
@@ -135,17 +137,17 @@ public class ResourceReferenceAnnotatorUtil {
             Module module,
             Configuration configuration) {
         if (isFramework) {
-            ResourceRepository frameworkResources = configuration.getFrameworkResources();
+            AbstractResourceRepository frameworkResources = configuration.getFrameworkResources();
             if (frameworkResources == null) {
                 return null;
             }
-            if (!frameworkResources.hasResourceItem(type, name)) {
+            List<ResourceItem> items = frameworkResources.getResourceItems(ResourceNamespace.ANDROID, type, name);
+            if (items.isEmpty()) {
                 return null;
             }
-            ResourceItem item = frameworkResources.getResourceItem(type, name);
-            return item.getResourceValue(type, configuration.getFullConfig(), false);
+            return items.get(0).getResourceValue(true);
         } else {
-            AppResourceRepository appResources = AppResourceRepository.getOrCreateInstance(module);
+            LocalResourceRepository appResources = AppResourceRepository.getOrCreateInstance(module);
             if (appResources == null) {
                 return null;
             }
