@@ -1887,6 +1887,12 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             doTest(fileName);
         }
 
+        @TestMetadata("scripts.kt")
+        public void testScripts() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/scripts.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("topLevel.kt")
         public void testTopLevel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/experimental/topLevel.kt");
