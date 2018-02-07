@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.annotations.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -123,11 +124,15 @@ private fun isExportedClass(descriptor: ClassDescriptor): Boolean {
     return true
 }
 
+private fun AnnotationDescriptor.properValue(key: String) =
+        this.argumentValue(key)?.toString()?.removeSurrounding("\"")
+
 private fun functionImplName(descriptor: DeclarationDescriptor, default: String, shortName: Boolean): String {
     assert(descriptor is FunctionDescriptor)
     val annotation = descriptor.annotations.findAnnotation(cnameAnnotation) ?: return default
     val key = if (shortName) "shortName" else "fullName"
-    val value = annotation.argumentValue(key) as String?
+    val value = annotation.properValue(key)
+    println("val='$value'")
     return value.takeIf { value != null && value.isNotEmpty() } ?: default
 }
 
@@ -240,8 +245,8 @@ private class ExportedElement(val kind: ElementKind,
             if (declaration !is FunctionDescriptor || !declaration.annotations.hasAnnotation(cnameAnnotation))
                 return false
             val annotation = declaration.annotations.findAnnotation(cnameAnnotation)!!
-            val fullName = annotation.argumentValue("fullName") as String
-            return fullName.isNotEmpty()
+            val fullName = annotation.properValue("fullName")
+            return fullName != null && fullName.isNotEmpty()
         }
     val isClass = declaration is ClassDescriptor && declaration.kind != ClassKind.ENUM_ENTRY
     val isEnumEntry = declaration is ClassDescriptor && declaration.kind == ClassKind.ENUM_ENTRY
