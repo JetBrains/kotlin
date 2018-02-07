@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
-import com.intellij.internal.statistic.AbstractProjectsUsagesCollector
 import com.intellij.internal.statistic.beans.GroupDescriptor
 import com.intellij.internal.statistic.beans.UsageDescriptor
-import com.intellij.internal.statistic.utils.getEnumUsage
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.util.compat.statistic.AbstractProjectsUsagesCollector
+import org.jetbrains.kotlin.idea.util.compat.statistic.getEnumUsage
 
 class KotlinFormatterUsageCollector : AbstractProjectsUsagesCollector() {
     override fun getGroupId(): GroupDescriptor = GroupDescriptor.create(GROUP_ID)
