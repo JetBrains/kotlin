@@ -55,7 +55,7 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     }
 
     fun testLocalFunction() {
-        doTestInplaceRename("bar")
+        doTestMemberInplaceRename("bar")
     }
 
     fun testFunctionParameterNotInplace() {
@@ -71,7 +71,7 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     }
 
     fun testLabelFromFunction() {
-        doTestInplaceRename("foo")
+        doTestMemberInplaceRename("foo")
     }
 
     fun testMultiDeclaration() {
@@ -128,6 +128,10 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
 
     fun testAddQuotes() {
         doTestMemberInplaceRename("is")
+    }
+
+    fun testAddThis() {
+        doTestMemberInplaceRename("foo")
     }
 
     private fun doTestImplicitLambdaParameter(newName: String) {
