@@ -1968,6 +1968,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("uIntArraySwapBoxing.kt")
+        public void testUIntArraySwapBoxing() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/uIntArraySwapBoxing.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unboxInlineClassAfterElvis.kt")
         public void testUnboxInlineClassAfterElvis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/unboxInlineClassAfterElvis.kt");

@@ -10389,6 +10389,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSet.kt")
+        public void testBoxUnboxInlineClassesWithOperatorsGetSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSet.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("boxUnboxOfInlineClassForCapturedVars.kt")
         public void testBoxUnboxOfInlineClassForCapturedVars() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVars.kt");

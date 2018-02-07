@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.psi.tree.IElementType;
 import kotlin.Unit;
 import kotlin.collections.ArraysKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -282,11 +283,12 @@ public abstract class StackValue {
     public static StackValue collectionElement(
             CollectionElementReceiver collectionElementReceiver,
             Type type,
+            KotlinType kotlinType,
             ResolvedCall<FunctionDescriptor> getter,
             ResolvedCall<FunctionDescriptor> setter,
             ExpressionCodegen codegen
     ) {
-        return new CollectionElement(collectionElementReceiver, type, getter, setter, codegen);
+        return new CollectionElement(collectionElementReceiver, type, kotlinType, getter, setter, codegen);
     }
 
     @NotNull
@@ -1167,11 +1169,12 @@ public abstract class StackValue {
         public CollectionElement(
                 @NotNull CollectionElementReceiver collectionElementReceiver,
                 @NotNull Type type,
+                @Nullable KotlinType kotlinType,
                 @Nullable ResolvedCall<FunctionDescriptor> resolvedGetCall,
                 @Nullable ResolvedCall<FunctionDescriptor> resolvedSetCall,
                 @NotNull ExpressionCodegen codegen
         ) {
-            super(type, null, false, false, collectionElementReceiver, true);
+            super(type, kotlinType, false, false, collectionElementReceiver, true);
             this.resolvedGetCall = resolvedGetCall;
             this.resolvedSetCall = resolvedSetCall;
             this.setter = resolvedSetCall == null ? null :
@@ -1246,13 +1249,16 @@ public abstract class StackValue {
         }
 
         @Override
-        public void storeSelector(@NotNull Type topOfStackType, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+        public void storeSelector(@NotNull Type topOfStackType, @Nullable KotlinType topOfStackKotlinType, @NotNull InstructionAdapter v) {
             if (setter == null) {
                 throw new UnsupportedOperationException("no setter specified");
             }
 
             Type lastParameterType = ArraysKt.last(setter.getParameterTypes());
-            coerce(topOfStackType, lastParameterType, v);
+            KotlinType lastParameterKotlinType =
+                    CollectionsKt.last(resolvedSetCall.getResultingDescriptor().getValueParameters()).getType();
+
+            coerce(topOfStackType, topOfStackKotlinType, lastParameterType, lastParameterKotlinType, v);
 
             getCallGenerator().putValueIfNeeded(lastParameterType, StackValue.onStack(lastParameterType));
 
