@@ -132,7 +132,6 @@ private fun functionImplName(descriptor: DeclarationDescriptor, default: String,
     val annotation = descriptor.annotations.findAnnotation(cnameAnnotation) ?: return default
     val key = if (shortName) "shortName" else "fullName"
     val value = annotation.properValue(key)
-    println("val='$value'")
     return value.takeIf { value != null && value.isNotEmpty() } ?: default
 }
 
