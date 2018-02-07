@@ -782,6 +782,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/checkcast/kt15411.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("kt22714.kt")
+        public void testKt22714() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/checkcast/kt22714.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization")
