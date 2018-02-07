@@ -10341,6 +10341,36 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("checkBoxingAfterAssertionOperator.kt")
+        public void testCheckBoxingAfterAssertionOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("checkBoxingFromReturnTypeForInlineClasses.kt")
+        public void testCheckBoxingFromReturnTypeForInlineClasses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("checkBoxingOnFunctionCalls.kt")
+        public void testCheckBoxingOnFunctionCalls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCalls.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("checkBoxingOnLocalVariableAssignments.kt")
+        public void testCheckBoxingOnLocalVariableAssignments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("checkCallingMembersInsideInlineClass.kt")
+        public void testCheckCallingMembersInsideInlineClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("computablePropertyInsideInlineClass.kt")
         public void testComputablePropertyInsideInlineClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/computablePropertyInsideInlineClass.kt");
@@ -10350,6 +10380,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("emptyConstructorForInlineClass.kt")
         public void testEmptyConstructorForInlineClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
+        public void testInlineClassAsLastExpressionInInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt");
             doTest(fileName);
         }
 

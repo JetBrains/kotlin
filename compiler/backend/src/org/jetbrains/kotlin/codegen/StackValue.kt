@@ -48,7 +48,7 @@ class CoercionValue(
 class StackValueWithLeaveTask(
         val stackValue: StackValue,
         val leaveTasks: (StackValue) -> Unit
-) : StackValue(stackValue.type) {
+) : StackValue(stackValue.type, stackValue.kotlinType) {
 
     override fun putReceiver(v: InstructionAdapter, isRead: Boolean) {
         stackValue.putReceiver(v, isRead)

@@ -380,8 +380,11 @@ public abstract class StackValue {
         );
     }
 
-    private static void unboxInlineClass(@NotNull KotlinType kotlinType, @NotNull InstructionAdapter v) {
+    private static void unboxInlineClass(@NotNull Type type, @NotNull KotlinType kotlinType, @NotNull InstructionAdapter v) {
         Type owner = KotlinTypeMapper.mapInlineClassTypeAsDeclaration(kotlinType);
+
+        coerce(type, owner, v);
+
         Type resultType = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType);
         v.invokevirtual(
                 owner.getInternalName(),
@@ -429,7 +432,7 @@ public abstract class StackValue {
                 boxInlineClass(fromKotlinType, v);
             }
             else if (!isFromTypeUnboxed) {
-                unboxInlineClass(fromKotlinType, v);
+                unboxInlineClass(fromType, fromKotlinType, v);
             }
         }
         else {

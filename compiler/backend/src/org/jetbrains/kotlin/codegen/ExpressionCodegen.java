@@ -326,11 +326,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     public void gen(KtElement expr, Type type) {
-        StackValue value = Type.VOID_TYPE.equals(type) ? genStatement(expr) : gen(expr);
-        putStackValue(expr, type, value);
+        gen(expr, type, null);
     }
 
-    private void putStackValue(@Nullable KtElement expr, @NotNull Type type, @NotNull StackValue value) {
+    public void gen(KtElement expr, Type type, KotlinType kotlinType) {
+        StackValue value = Type.VOID_TYPE.equals(type) ? genStatement(expr) : gen(expr);
+        putStackValue(expr, type, kotlinType, value);
+    }
+
+    private void putStackValue(@Nullable KtElement expr, @NotNull Type type, @Nullable KotlinType kotlinType, @NotNull StackValue value) {
         // for repl store the result of the last line into special field
         if (value.type != Type.VOID_TYPE && state.getReplSpecific().getShouldGenerateScriptResultValue()) {
             ScriptContext context = getScriptContext();
@@ -342,12 +346,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
 
-        KotlinType ktType = null;
-        if (expr instanceof KtExpression) {
-            ktType = kotlinType((KtExpression) expr);
-        }
-
-        value.put(type, ktType, v);
+        value.put(type, kotlinType, v);
     }
 
     @NotNull
@@ -1511,9 +1510,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
 
             Type returnType = isNonLocalReturn ? nonLocalReturn.returnType : this.returnType;
+            KotlinType returnKotlinType = isNonLocalReturn ? null : this.context.getFunctionDescriptor().getReturnType();
             StackValue valueToReturn = returnedExpression != null ? gen(returnedExpression) : StackValue.none();
 
-            putStackValue(returnedExpression, returnType, valueToReturn);
+            putStackValue(returnedExpression, returnType, returnKotlinType, valueToReturn);
 
             Label afterReturnLabel = new Label();
             generateFinallyBlocksIfNeeded(returnType, afterReturnLabel);
@@ -1588,7 +1588,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 ? Type.VOID_TYPE
                 : returnType;
 
-        gen(expr, typeForExpression);
+        KotlinType kotlinTypeForExpression =
+                isBlockedNamedFunction || isVoidCoroutineLambda ? null : context.getFunctionDescriptor().getReturnType();
+
+        gen(expr, typeForExpression, kotlinTypeForExpression);
 
         // If it does not end with return we should return something
         // because if we don't there can be VerifyError (specific cases with Nothing-typed expressions)
@@ -3389,7 +3392,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             v.mark(ifNull);
             v.pop();
-            gen(expression.getRight(), exprType);
+            gen(expression.getRight(), exprType, exprKotlinType);
             v.mark(end);
             return null;
         });
