@@ -31,7 +31,7 @@ data class SharedData(val string: String, val int: Int, val member: SharedDataMe
 
 fun dumpShared(prefix: String): Unit {
     println("""
-            $prefix: ${pthread_self().rawValue} x=${sharedData.x} f=${sharedData.f} s=${sharedData.string!!.toKString()}
+            $prefix: ${pthread_self()} x=${sharedData.x} f=${sharedData.f} s=${sharedData.string!!.toKString()}
             """.trimIndent())
 }
 
