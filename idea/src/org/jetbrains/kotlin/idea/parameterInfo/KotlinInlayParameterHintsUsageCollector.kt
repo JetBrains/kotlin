@@ -9,8 +9,8 @@ import com.intellij.codeInsight.hints.InlayParameterHintsExtension
 import com.intellij.internal.statistic.UsagesCollector
 import com.intellij.internal.statistic.beans.GroupDescriptor
 import com.intellij.internal.statistic.beans.UsageDescriptor
-import com.intellij.internal.statistic.utils.getBooleanUsage
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.util.compat.statistic.getBooleanUsage
 
 class KotlinInlayParameterHintsUsageCollector : UsagesCollector() {
     override fun getGroupId(): GroupDescriptor = GroupDescriptor.create(GROUP_ID)
