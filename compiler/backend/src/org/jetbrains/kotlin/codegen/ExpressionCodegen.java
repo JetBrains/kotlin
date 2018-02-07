@@ -342,7 +342,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
 
-        value.put(type, null, v);
+        KotlinType ktType = null;
+        if (expr instanceof KtExpression) {
+            ktType = kotlinType((KtExpression) expr);
+        }
+
+        value.put(type, ktType, v);
     }
 
     @NotNull
@@ -3358,7 +3363,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         KtExpression left = expression.getLeft();
 
         Type exprType = expressionType(expression);
+        KotlinType exprKotlinType = kotlinType(expression);
+
         Type leftType = expressionType(left);
+        KotlinType leftKotlinType = kotlinType(left);
 
         Label ifNull = new Label();
 
@@ -3369,12 +3377,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return value;
         }
 
-        return StackValue.operation(exprType, v -> {
+        return StackValue.operation(exprType, exprKotlinType, v -> {
             value.put(value.type, value.kotlinType, v);
             v.dup();
 
             v.ifnull(ifNull);
-            StackValue.onStack(leftType).put(exprType, null, v);
+            StackValue.onStack(leftType, leftKotlinType).put(exprType, exprKotlinType, v);
 
             Label end = new Label();
             v.goTo(end);
