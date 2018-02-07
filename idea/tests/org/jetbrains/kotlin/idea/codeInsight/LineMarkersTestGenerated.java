@@ -31,6 +31,21 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         doTest(fileName);
     }
 
+    @TestMetadata("idea/testData/codeInsight/lineMarker/dslMarker")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DslMarker extends AbstractLineMarkersTest {
+        public void testAllFilesPresentInDslMarker() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/lineMarker/dslMarker"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("markerAnnotationDeclaration.kt")
+        public void testMarkerAnnotationDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/dslMarker/markerAnnotationDeclaration.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/codeInsight/lineMarker/overrideImplement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
