@@ -9,8 +9,6 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
-// modules
 include ":kotlin-build-common",
         ":compiler",
         ":compiler:util",
@@ -28,6 +26,7 @@ include ":kotlin-build-common",
         ":compiler:frontend.script",
         ":kotlin-compiler-runner",
         ":compiler:cli-common",
+        ":compiler:cli-js",
         ":compiler:ir.tree",
         ":compiler:ir.psi2ir",
         ":compiler:ir.ir2cfg",
@@ -156,6 +155,8 @@ include ":kotlin-build-common",
         ':kotlin-noarg:plugin-marker',
         ":test-instrumenter"
 
+// modules
+
 
 rootProject.name = "kotlin"
 
@@ -186,6 +187,7 @@ project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/com
 project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
+project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':compiler:daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
 project(':kotlin-daemon-client').projectDir = "$rootDir/compiler/daemon/daemon-client" as File
