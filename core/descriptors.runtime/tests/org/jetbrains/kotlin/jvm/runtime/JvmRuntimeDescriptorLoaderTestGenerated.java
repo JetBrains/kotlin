@@ -3079,6 +3079,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Generic.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("TypeAliasToExtension.kt")
+            public void testTypeAliasToExtension() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/TypeAliasToExtension.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/visibility")

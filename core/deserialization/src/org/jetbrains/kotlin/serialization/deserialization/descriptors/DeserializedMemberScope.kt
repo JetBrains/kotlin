@@ -152,7 +152,10 @@ abstract class DeserializedMemberScope protected constructor(
 
     private fun createTypeAlias(name: Name): TypeAliasDescriptor? {
         val byteArray = typeAliasBytes[name] ?: return null
-        val proto = ProtoBuf.TypeAlias.parseDelimitedFrom(ByteArrayInputStream(byteArray)) ?: return null
+        val proto =
+            ProtoBuf.TypeAlias.parseDelimitedFrom(
+                ByteArrayInputStream(byteArray), c.components.extensionRegistryLite
+            ) ?: return null
         return c.memberDeserializer.loadTypeAlias(proto)
     }
 
