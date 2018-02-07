@@ -939,6 +939,46 @@
             "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
+    ":kotlin-compiler-js-only": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "compilerJar",
+            "default",
+            "distJar",
+            "fatJar",
+            "fatJarContents",
+            "fatJarContentsStripMetadata",
+            "fatJarContentsStripServices",
+            "fatSourcesJarContents",
+            "implementation",
+            "proguardLibraryJars",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeJar",
+            "runtimeOnly",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
     ":kotlin-compiler-runner": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
