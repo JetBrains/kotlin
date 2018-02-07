@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.and
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.getAllAccessibleFunctions
 import org.jetbrains.kotlin.idea.util.getAllAccessibleVariables
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -166,6 +167,7 @@ private fun LexicalScope.getRelevantDescriptors(
     val nameAsName = Name.identifier(name)
     return when (declaration) {
         is KtProperty, is KtParameter, is PsiField -> getAllAccessibleVariables(nameAsName)
+        is KtNamedFunction -> getAllAccessibleFunctions(nameAsName)
         is KtClassOrObject, is PsiClass -> listOfNotNull(findClassifier(nameAsName, NoLookupLocation.FROM_IDE))
         else -> emptyList()
     }

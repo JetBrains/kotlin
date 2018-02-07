@@ -58,9 +58,6 @@ class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
                 if (element.isLocal) return true
             }
             is KtDestructuringDeclarationEntry -> return true
-            is KtFunction -> {
-                if (element.isLocal && element.nameIdentifier != null) return true
-            }
             is KtParameter -> {
                 val parent = element.parent
                 if (parent is KtForExpression) {
