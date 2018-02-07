@@ -31,8 +31,6 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test fun testPropertyDelegate() = doTest("PropertyDelegate") { testName, file -> check(testName, file, false) }
 
-    @Test fun testLocalVariableWithAnnotation() = doTest("LocalVariableWithAnnotation")
-
     @Test fun testPropertyWithAnnotation() = doTest("PropertyWithAnnotation")
 
     @Test fun testIfStatement() = doTest("IfStatement")
@@ -49,11 +47,9 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test fun testParametersWithDefaultValues() = doTest("ParametersWithDefaultValues")
 
-    @Test
-    fun testUnexpectedContainer() = doTest("UnexpectedContainerException")
+    @Test fun testUnexpectedContainer() = doTest("UnexpectedContainerException") { testName, file -> check(testName, file, false) }
 
-    @Test
-    fun testWhenStringLiteral() = doTest("WhenStringLiteral")
+    @Test fun testWhenStringLiteral() = doTest("WhenStringLiteral") { testName, file -> check(testName, file, false) }
 
     @Test
     fun testWhenAndDestructing() = doTest("WhenAndDestructing") { testName, file -> check(testName, file, false) }
@@ -63,16 +59,4 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test
     fun testConstructors() = doTest("Constructors")
-
-    @Test
-    fun testClassAnnotation() = doTest("ClassAnnotation")
-
-    @Test
-    fun testReceiverFun() = doTest("ReceiverFun")
-
-    @Test
-    fun testAnonymous() = doTest("Anonymous")
-
-    @Test
-    fun testAnnotationComplex() = doTest("AnnotationComplex")
 }
