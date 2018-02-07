@@ -60,3 +60,16 @@ public enum Enum2 {
     int col2) {
     }
 }
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum Nested1 {
+    /*public static final*/ WHITE /* = new Nested1() */;
+
+    Nested1() {
+    }
+}

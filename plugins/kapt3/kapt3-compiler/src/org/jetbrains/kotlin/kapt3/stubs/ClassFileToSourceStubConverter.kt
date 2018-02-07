@@ -22,6 +22,7 @@ import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
+import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
@@ -182,7 +183,40 @@ class ClassFileToSourceStubConverter(
             _bindings[clazz.name] = this
         }
 
+        postProcess(topLevel)
+
         return KaptStub(topLevel, lineMappings.serialize())
+    }
+
+    private fun postProcess(topLevel: JCCompilationUnit) {
+        topLevel.accept(object : TreeScanner() {
+            override fun visitClassDef(clazz: JCClassDecl) {
+                // Delete enums inside enum values
+                if (clazz.isEnum()) {
+                    for (child in clazz.defs) {
+                        if (child is JCVariableDecl) {
+                            deleteAllEnumsInside(child)
+                        }
+                    }
+                }
+
+                super.visitClassDef(clazz)
+            }
+
+            private fun JCClassDecl.isEnum() = mods.flags and Opcodes.ACC_ENUM.toLong() != 0L
+
+            private fun deleteAllEnumsInside(def: JCTree) {
+                def.accept(object : TreeScanner() {
+                    override fun visitClassDef(clazz: JCClassDecl) {
+                        clazz.defs = mapJList(clazz.defs) { child ->
+                            if (child is JCClassDecl && child.isEnum()) null else child
+                        }
+
+                        super.visitClassDef(clazz)
+                    }
+                })
+            }
+        })
     }
 
     private fun convertImports(file: KtFile, classDeclaration: JCClassDecl): JavacList<JCTree> {
