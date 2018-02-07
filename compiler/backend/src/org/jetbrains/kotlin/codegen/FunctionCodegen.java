@@ -74,7 +74,6 @@ import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DEC
 import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
-import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
@@ -1110,16 +1109,9 @@ public class FunctionCodegen {
         GenerationState state = parentCodegen.state;
         JvmMethodSignature signature = state.getTypeMapper().mapSignatureWithGeneric(functionDescriptor, methodContext.getContextKind());
 
-        List<ValueParameterDescriptor> originalParameters = functionDescriptor.getValueParameters();
-        List<ValueParameterDescriptor> valueParameters;
-        if (functionDescriptor.isActual() && CollectionsKt.none(originalParameters, ValueParameterDescriptor::declaresDefaultValue)) {
-            FunctionDescriptor expected = CodegenUtil.findExpectedFunctionForActual(functionDescriptor);
-            assert expected != null : "Expected function should have been found earlier for " + functionDescriptor;
-            valueParameters = expected.getValueParameters();
-        }
-        else {
-            valueParameters = originalParameters;
-        }
+        // 'null' because the "could not find expected declaration" error has been already reported in isDefaultNeeded earlier
+        List<ValueParameterDescriptor> valueParameters =
+                CodegenUtil.getFunctionParametersForDefaultValueGeneration(functionDescriptor, null);
 
         boolean isStatic = isStaticMethod(methodContext.getContextKind(), functionDescriptor);
         FrameMap frameMap = createFrameMap(state, signature, functionDescriptor.getExtensionReceiverParameter(), valueParameters, isStatic);
@@ -1260,22 +1252,9 @@ public class FunctionCodegen {
     }
 
     private boolean isDefaultNeeded(@NotNull FunctionDescriptor descriptor, @Nullable KtNamedFunction function) {
-        if (descriptor.isActual()) {
-            FunctionDescriptor expected = CodegenUtil.findExpectedFunctionForActual(descriptor);
-            if (expected != null && CollectionsKt.any(expected.getValueParameters(), ValueParameterDescriptor::declaresDefaultValue)) {
-                PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(expected);
-                if (element == null) {
-                    if (function != null) {
-                        state.getDiagnostics().report(EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND.on(function));
-                    }
-                    return false;
-                }
-
-                return true;
-            }
-        }
-
-        return CollectionsKt.any(descriptor.getValueParameters(), ValueParameterDescriptor::declaresDefaultValue);
+        List<ValueParameterDescriptor> parameters =
+                CodegenUtil.getFunctionParametersForDefaultValueGeneration(descriptor, state.getDiagnostics());
+        return CollectionsKt.any(parameters, ValueParameterDescriptor::declaresDefaultValue);
     }
 
     private void generateBridge(
