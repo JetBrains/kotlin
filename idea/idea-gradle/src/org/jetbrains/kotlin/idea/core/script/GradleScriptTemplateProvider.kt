@@ -85,6 +85,11 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
 
         // KotlinBuildScript should be last because it has wide scriptFilePattern
         val kotlinDslTemplates = loadGradleTemplates(
+            templateClass = "org.gradle.kotlin.dsl.KotlinInitScript",
+            dependencySelector = kotlinDslDependencySelector,
+            additionalResolverClasspath = kotlinDslAdditionalResolverCp
+
+        ) + loadGradleTemplates(
             templateClass = "org.gradle.kotlin.dsl.KotlinSettingsScript",
             dependencySelector = kotlinDslDependencySelector,
             additionalResolverClasspath = kotlinDslAdditionalResolverCp
