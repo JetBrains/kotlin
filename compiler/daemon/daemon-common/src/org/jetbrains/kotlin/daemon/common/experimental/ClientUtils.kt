@@ -103,7 +103,7 @@ private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCateg
 
 private inline fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceAsync? {
     try {
-        return CompileServiceClientSideImpl(
+        return CompileServiceClientSide(
             LoopbackNetworkInterface.loopbackInetAddressName,
             port,
             LoopbackNetworkInterface.clientLoopbackSocketFactoryKtor
