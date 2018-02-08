@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -162,89 +161,10 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     }
 
     private void setupLanguageVersionSettings(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
-        LanguageVersion languageVersion = parseVersion(configuration, arguments.getLanguageVersion(), "language");
-        LanguageVersion apiVersion = parseVersion(configuration, arguments.getApiVersion(), "API");
-
-        if (languageVersion != null || apiVersion != null) {
-            configuration.put(CLIConfigurationKeys.IS_API_VERSION_EXPLICIT, true);
-        }
-
-        if (languageVersion == null) {
-            // If no "-language-version" is specified, language version is assumed to be the latest stable
-            languageVersion = LanguageVersion.LATEST_STABLE;
-        }
-
-        if (apiVersion == null) {
-            // If no "-api-version" is specified, API version is assumed to be equal to the language version
-            // (API version cannot be greater than the language version)
-            apiVersion = languageVersion;
-        }
 
         MessageCollector collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
-        if (apiVersion.compareTo(languageVersion) > 0) {
-            collector.report(
-                    ERROR,
-                    "-api-version (" + apiVersion.getVersionString() + ") cannot be greater than " +
-                    "-language-version (" + languageVersion.getVersionString() + ")",
-                    null
-            );
-        }
 
-        if (!languageVersion.isStable()) {
-            collector.report(
-                    STRONG_WARNING,
-                    "Language version " + languageVersion.getVersionString() + " is experimental, there are " +
-                    "no backwards compatibility guarantees for new language and library features",
-                    null
-            );
-        }
-
-        Map<LanguageFeature, LanguageFeature.State> extraLanguageFeatures = new HashMap<>(0);
-        if (arguments.getMultiPlatform()) {
-            extraLanguageFeatures.put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED);
-        }
-
-        LanguageFeature.State coroutinesState = chooseCoroutinesApplicabilityLevel(configuration, arguments);
-        if (coroutinesState != null) {
-            extraLanguageFeatures.put(LanguageFeature.Coroutines, coroutinesState);
-        }
-
-        if (arguments.getNewInference()) {
-            extraLanguageFeatures.put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED);
-        }
-
-        if (arguments.getLegacySmartCastAfterTry()) {
-            extraLanguageFeatures.put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED);
-        }
-
-        if (arguments.getEffectSystem()) {
-            extraLanguageFeatures.put(LanguageFeature.UseCallsInPlaceEffect, LanguageFeature.State.ENABLED);
-            extraLanguageFeatures.put(LanguageFeature.UseReturnsEffect, LanguageFeature.State.ENABLED);
-        }
-
-        if (arguments.getReadDeserializedContracts()) {
-            extraLanguageFeatures.put(LanguageFeature.ReadDeserializedContracts, LanguageFeature.State.ENABLED);
-        }
-
-        if (arguments.getProperIeee754Comparisons()) {
-            extraLanguageFeatures.put(LanguageFeature.ProperIeee754Comparisons, LanguageFeature.State.ENABLED);
-        }
-
-        setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, arguments);
-
-        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
-                languageVersion,
-                ApiVersion.createByLanguageVersion(apiVersion),
-                arguments.configureAnalysisFlags(collector),
-                extraLanguageFeatures
-        ));
-    }
-
-    protected void setupPlatformSpecificLanguageFeatureSettings(
-            @NotNull Map<LanguageFeature, LanguageFeature.State> extraLanguageFeatures,
-            @NotNull A commandLineArguments
-    ) {
-        // do nothing
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, arguments.configureLanguageVersionSettings(collector));
     }
 
     private static final String kotlinHomeEnvVar = System.getenv(KOTLIN_HOME_ENV_VAR);
@@ -296,43 +216,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         messageCollector.report(STRONG_WARNING, "Unable to find " + libraryName + " in the Kotlin home directory. " +
                                                 "Pass either " + noLibraryArgument + " to prevent adding it to the classpath, " +
                                                 "or the correct '-kotlin-home'", null);
-        return null;
-    }
-
-    @Nullable
-    private static LanguageFeature.State chooseCoroutinesApplicabilityLevel(
-            @NotNull CompilerConfiguration configuration,
-            @NotNull CommonCompilerArguments arguments
-    ) {
-        switch (arguments.getCoroutinesState()) {
-            case CommonCompilerArguments.ERROR:
-                return LanguageFeature.State.ENABLED_WITH_ERROR;
-            case CommonCompilerArguments.ENABLE:
-                return LanguageFeature.State.ENABLED;
-            case CommonCompilerArguments.WARN:
-                return null;
-            default:
-                String message = "Invalid value of -Xcoroutines (should be: enable, warn or error): " + arguments.getCoroutinesState();
-                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(ERROR, message, null);
-                return null;
-        }
-    }
-
-    @Nullable
-    private static LanguageVersion parseVersion(
-            @NotNull CompilerConfiguration configuration, @Nullable String value, @NotNull String versionOf
-    ) {
-        if (value == null) return null;
-
-        LanguageVersion version = LanguageVersion.fromVersionString(value);
-        if (version != null) {
-            return version;
-        }
-
-        List<String> versionStrings = ArraysKt.map(LanguageVersion.values(), LanguageVersion::getDescription);
-        String message = "Unknown " + versionOf + " version: " + value + "\n" +
-                         "Supported " + versionOf + " versions: " + StringsKt.join(versionStrings, ", ");
-        configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(ERROR, message, null);
         return null;
     }
 

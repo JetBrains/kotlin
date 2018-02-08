@@ -227,17 +227,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
     }
 
-    override fun setupPlatformSpecificLanguageFeatureSettings(
-        extraLanguageFeatures: MutableMap<LanguageFeature, LanguageFeature.State>,
-        commandLineArguments: K2JVMCompilerArguments
-    ) {
-        if (commandLineArguments.strictJavaNullabilityAssertions) {
-            extraLanguageFeatures[LanguageFeature.StrictJavaNullabilityAssertions] = LanguageFeature.State.ENABLED
-        }
-
-        super.setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, commandLineArguments)
-    }
-
     private fun registerJavacIfNeeded(
         environment: KotlinCoreEnvironment,
         arguments: K2JVMCompilerArguments
