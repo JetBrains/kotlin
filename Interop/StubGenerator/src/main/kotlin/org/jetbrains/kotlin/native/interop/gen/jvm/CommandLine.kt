@@ -62,10 +62,10 @@ class CInteropArguments : CommonInteropArguments() {
     @Argument(value = HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX, shortName = "-hfasp",  valueDescription = "<file>", description = "header file to produce kotlin bindings for") 
     var headerFilterPrefix: Array<String> = arrayOf()
 
-    @Argument(value = "-compilerOpts", shortName = "-copt", valueDescription = "<arg>", description = "additional compiler options") 
+    @Argument(value = "-compilerOpts", shortName = "-copt", valueDescription = "<arg>", description = "additional compiler options", delimiter = " ")
     var compilerOpts: Array<String> = arrayOf()
 
-    @Argument(value = "-linkerOpts", shortName = "-lopt", valueDescription = "<arg>", description = "additional linker options") 
+    @Argument(value = "-linkerOpts", shortName = "-lopt", valueDescription = "<arg>", description = "additional linker options", delimiter = " ")
     var linkerOpts: Array<String> = arrayOf()
 
     @Argument(value = "-shims", description = "wrap bindings by a tracing layer") 
