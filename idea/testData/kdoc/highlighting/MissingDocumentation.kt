@@ -1,6 +1,6 @@
 
-public fun <warning descr="Function ''publicUndocumentedFun'' is missing documentation">publicUndocumentedFun</warning>() {}
-fun <warning descr="Function ''defaultUndocumentedFun'' is missing documentation">defaultUndocumentedFun</warning>() {}
+public fun <warning descr="Function \"publicUndocumentedFun\" is missing documentation">publicUndocumentedFun</warning>() {}
+fun <warning descr="Function \"defaultUndocumentedFun\" is missing documentation">defaultUndocumentedFun</warning>() {}
 
 /** Some documentation */
 public fun publicDocumentedFun() {}
@@ -13,8 +13,8 @@ internal fun internalUndocumentedFun() {}
 
 
 
-public class <warning descr="Class ''publicUndocumentedClass'' is missing documentation">publicUndocumentedClass</warning>() {}
-class <warning descr="Class ''defaultUndocumentedClass'' is missing documentation">defaultUndocumentedClass</warning>() {}
+public class <warning descr="Class \"publicUndocumentedClass\" is missing documentation">publicUndocumentedClass</warning>() {}
+class <warning descr="Class \"defaultUndocumentedClass\" is missing documentation">defaultUndocumentedClass</warning>() {}
 
 /** Some documentation */
 public class publicDocumentedClass() {}
@@ -66,12 +66,12 @@ private class GrandChildClass : ChildClass() {
     override public val internalUndocumentedProperty: Int = 6
 }
 
-open class <warning descr="Class ''SomeClass'' is missing documentation">SomeClass</warning> {
-    protected fun <warning descr="Function ''testProtected'' is missing documentation">testProtected</warning>() = 1
+open class <warning descr="Class \"SomeClass\" is missing documentation">SomeClass</warning> {
+    protected fun <warning descr="Function \"testProtected\" is missing documentation">testProtected</warning>() = 1
 }
 
-class <warning descr="Class ''FinalClassWithProtected'' is missing documentation">FinalClassWithProtected</warning> {
-    protected fun <warning descr="Function ''testProtected'' is missing documentation">testProtected</warning>() = 1
+class <warning descr="Class \"FinalClassWithProtected\" is missing documentation">FinalClassWithProtected</warning> {
+    protected fun <warning descr="Function \"testProtected\" is missing documentation">testProtected</warning>() = 1
 }
 
 private class PrimaryCon(val p: String)
