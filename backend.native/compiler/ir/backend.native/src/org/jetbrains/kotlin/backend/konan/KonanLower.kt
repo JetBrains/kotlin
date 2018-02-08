@@ -40,7 +40,7 @@ internal class KonanLower(val context: Context) {
         }
     }
 
-    fun lowerModule(irModule: IrModuleFragment) {
+    private fun lowerModule(irModule: IrModuleFragment) {
         val phaser = PhaseManager(context)
 
         phaser.phase(KonanPhase.REMOVE_EXPECT_DECLARATIONS) {
@@ -72,11 +72,12 @@ internal class KonanLower(val context: Context) {
             irModule.files.forEach(InteropLoweringPart1(context)::lower)
         }
 
+        @Suppress("DEPRECATION")
         irModule.replaceUnboundSymbols(context)
         validateIrModule(context, irModule)
     }
 
-    fun lowerFile(irFile: IrFile) {
+    private fun lowerFile(irFile: IrFile) {
         val phaser = PhaseManager(context)
 
         phaser.phase(KonanPhase.LOWER_STRING_CONCAT) {

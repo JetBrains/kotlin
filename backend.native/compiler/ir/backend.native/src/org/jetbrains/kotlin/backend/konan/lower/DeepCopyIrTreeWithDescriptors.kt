@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.createClassSymbolOrNull
+import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -41,7 +43,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
                                     val parentDescriptor: DeclarationDescriptor,
-                                    context: CommonBackendContext) {
+                                    val context: CommonBackendContext) {
 
     private val descriptorSubstituteMap: MutableMap<DeclarationDescriptor, DeclarationDescriptor> = mutableMapOf()
     private var typeSubstitutor: TypeSubstitutor? = null
@@ -274,6 +276,7 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
 
             val oldContainingDeclaration = oldDescriptor.containingDeclaration
             val newContainingDeclaration = descriptorSubstituteMap.getOrDefault(oldContainingDeclaration, oldContainingDeclaration) as ClassDescriptor
+            @Suppress("DEPRECATION")
             return PropertyDescriptorImpl.create(
                 /* containingDeclaration = */ newContainingDeclaration,
                 /* annotations           = */ oldDescriptor.annotations,
@@ -286,7 +289,7 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
                 /* lateInit              = */ oldDescriptor.isLateInit,
                 /* isConst               = */ oldDescriptor.isConst,
                 /* isExpect              = */ oldDescriptor.isExpect,
-                /* isActual                = */ oldDescriptor.isActual,
+                /* isActual              = */ oldDescriptor.isActual,
                 /* isExternal            = */ oldDescriptor.isExternal,
                 /* isDelegated           = */ oldDescriptor.isDelegated
             ).apply {
@@ -378,6 +381,7 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
 
 //-----------------------------------------------------------------------------//
 
+    @Suppress("DEPRECATION")
     inner class InlineCopyIr : DeepCopyIrTree() {
 
         override fun mapClassDeclaration            (descriptor: ClassDescriptor)                 = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassDescriptor
@@ -596,8 +600,6 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
         }
     }
 
-    val context = context
-
 }
 
 class SubstitutedDescriptor(val inlinedFunction: FunctionDescriptor, val descriptor: DeclarationDescriptor)
@@ -633,10 +635,11 @@ class DescriptorSubstitutorForExternalScope(val globalSubstituteMap: MutableMap<
             startOffset              = oldExpression.startOffset,
             endOffset                = oldExpression.endOffset,
             type                     = oldExpression.type,
-            calleeDescriptor         = newDescriptor,
+            symbol                   = createFunctionSymbol(newDescriptor),
+            descriptor               = newDescriptor,
             typeArguments            = oldExpression.typeArguments,
             origin                   = oldExpression.origin,
-            superQualifierDescriptor = oldExpression.superQualifier
+            superQualifierSymbol     = createClassSymbolOrNull(oldExpression.superQualifier)
         ).apply {
             oldExpression.descriptor.valueParameters.forEach {
                 val valueArgument = oldExpression.getValueArgument(it)
@@ -659,7 +662,7 @@ class DescriptorSubstitutorForExternalScope(val globalSubstituteMap: MutableMap<
         if (newDescriptor == oldDescriptor)
             return oldExpression
 
-        return oldExpression.shallowCopy(oldExpression.origin, newDescriptor, oldExpression.superQualifier)
+        return oldExpression.shallowCopy(oldExpression.origin, createFunctionSymbol(newDescriptor), oldExpression.superQualifierSymbol)
     }
 }
 
