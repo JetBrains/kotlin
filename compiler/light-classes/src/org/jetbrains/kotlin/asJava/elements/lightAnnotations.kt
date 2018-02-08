@@ -266,7 +266,7 @@ class KtLightAnnotationForSourceEntry(
             PsiNameValuePair {
             override fun setValue(newValue: PsiAnnotationMemberValue): PsiAnnotationMemberValue = psiNameValuePair.setValue(newValue)
             override fun getNameIdentifier(): PsiIdentifier? = psiNameValuePair.nameIdentifier
-            override fun getLiteralValue(): String? = (value as? PsiLiteralValue)?.value?.toString()
+            override fun getLiteralValue(): String? = (value as? PsiLiteral)?.value?.toString()
             override val kotlinOrigin: KtElement? = null
 
             override fun getValue(): PsiAnnotationMemberValue? = psiNameValuePair.value?.let { wrapAnnotationValue(it) }
