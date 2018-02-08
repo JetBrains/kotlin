@@ -174,27 +174,12 @@ public class KtPsiUtil {
         }
     }
 
-    @Nullable
-    public static Name getShortName(@NotNull KtAnnotationEntry annotation) {
-        KtTypeReference typeReference = annotation.getTypeReference();
-        assert typeReference != null : "Annotation entry hasn't typeReference " + annotation.getText();
-        KtTypeElement typeElement = typeReference.getTypeElement();
-        if (typeElement instanceof KtUserType) {
-            KtUserType userType = (KtUserType) typeElement;
-            String shortName = userType.getReferencedName();
-            if (shortName != null) {
-                return Name.identifier(shortName);
-            }
-        }
-        return null;
-    }
-
     public static boolean isDeprecated(@NotNull KtModifierListOwner owner) {
         KtModifierList modifierList = owner.getModifierList();
         if (modifierList != null) {
             List<KtAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
             for (KtAnnotationEntry annotation : annotationEntries) {
-                Name shortName = getShortName(annotation);
+                Name shortName = annotation.getShortName();
                 if (KotlinBuiltIns.FQ_NAMES.deprecated.shortName().equals(shortName)) {
                     return true;
                 }

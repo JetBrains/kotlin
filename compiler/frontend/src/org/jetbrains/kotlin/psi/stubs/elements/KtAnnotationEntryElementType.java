@@ -40,8 +40,8 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
 
     @Override
     public KotlinAnnotationEntryStub createStub(@NotNull KtAnnotationEntry psi, StubElement parentStub) {
-        Name shortName = KtPsiUtil.getShortName(psi);
-        String resultName = shortName != null ? shortName.asString() : psi.getText();
+        Name shortName = psi.getShortName();
+        String resultName = shortName != null ? shortName.asString() : null;
         KtValueArgumentList valueArgumentList = psi.getValueArgumentList();
         boolean hasValueArguments = valueArgumentList != null && !valueArgumentList.getArguments().isEmpty();
         return new KotlinAnnotationEntryStubImpl(parentStub, StringRef.fromString(resultName), hasValueArguments);
