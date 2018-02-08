@@ -17,6 +17,7 @@ import com.intellij.util.Consumer
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
+import org.jetbrains.kotlin.utils.PathUtil
 import javax.swing.JComponent
 
 class KotlinSdkType : SdkType("KotlinSDK") {
@@ -47,7 +48,7 @@ class KotlinSdkType : SdkType("KotlinSDK") {
     fun createSdkWithUniqueName(existingSdks: Collection<Sdk>): ProjectJdkImpl {
         val sdkName = suggestSdkName(SdkConfigurationUtil.createUniqueSdkName(this, "", existingSdks), "")
         return ProjectJdkImpl(sdkName, this).apply {
-            homePath = "not applicable"
+            homePath = PathUtil.kotlinPathsForIdeaPlugin.homePath.absolutePath
         }
     }
 
