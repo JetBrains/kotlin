@@ -102,6 +102,18 @@ public class ForeignJava8AnnotationsNoAnnotationInClasspathWithFastClassReadingT
             doTest(fileName);
         }
 
+        @TestMetadata("notNullVarargsOverrides.kt")
+        public void testNotNullVarargsOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/notNullVarargsOverrides.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableVarargsOverrides.kt")
+        public void testNullableVarargsOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/nullableVarargsOverrides.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("returnTypeDifferentConstructor.kt")
         public void testReturnTypeDifferentConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/returnTypeDifferentConstructor.kt");

@@ -13303,6 +13303,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("notNullVarargOverride.kt")
+                public void testNotNullVarargOverride() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/notNullVarargOverride.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nullableVarargOverride.kt")
+                public void testNullableVarargOverride() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/nullableVarargOverride.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("overridesDefaultValue.kt")
                 public void testOverridesDefaultValue() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/overridesDefaultValue.kt");
