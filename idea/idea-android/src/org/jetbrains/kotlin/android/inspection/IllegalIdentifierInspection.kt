@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.android.inspection
 
 import com.android.builder.model.AndroidProject.ARTIFACT_UNIT_TEST
 import com.android.tools.idea.AndroidPsiUtils
-import com.android.tools.idea.gradle.project.model.AndroidModuleModel
+import com.android.tools.idea.gradle.AndroidGradleModel
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
@@ -112,7 +112,7 @@ class IllegalIdentifierInspection : AbstractKotlinInspection() {
 
     private fun getJunitTestPaths(module: Module): List<File> {
         val androidFacet = AndroidFacet.getInstance(module) ?: return emptyList()
-        val androidModuleModel = AndroidModuleModel.get(androidFacet) ?: return emptyList()
+        val androidModuleModel = AndroidGradleModel.get(androidFacet) ?: return emptyList()
 
         return androidModuleModel.getTestSourceProviders(ARTIFACT_UNIT_TEST).flatMap { it.javaDirectories }
     }
