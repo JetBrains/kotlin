@@ -1,7 +1,8 @@
 // PROBLEM: none
 fun test() {
-    val foo = ""<caret>;
+    foo()<caret>;
     // comment
     { i: Int ->  }.doIt()
 }
+fun foo() {}
 fun ((Int) -> Unit).doIt() {}
