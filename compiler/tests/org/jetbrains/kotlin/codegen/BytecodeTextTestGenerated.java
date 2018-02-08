@@ -1974,6 +1974,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("skipCallToUnderlyingValueOfInlineClass.kt")
+        public void testSkipCallToUnderlyingValueOfInlineClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/skipCallToUnderlyingValueOfInlineClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("uIntArrayIteratorWithoutBoxing.kt")
         public void testUIntArrayIteratorWithoutBoxing() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/uIntArrayIteratorWithoutBoxing.kt");

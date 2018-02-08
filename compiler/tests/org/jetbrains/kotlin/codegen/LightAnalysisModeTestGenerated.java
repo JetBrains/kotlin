@@ -10467,6 +10467,18 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("referToUnderlyingPropertyInsideInlineClass.kt")
+        public void testReferToUnderlyingPropertyInsideInlineClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("referToUnderlyingPropertyOfInlineClass.kt")
+        public void testReferToUnderlyingPropertyOfInlineClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("UIntArraySortExample.kt")
         public void testUIntArraySortExample() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/UIntArraySortExample.kt");

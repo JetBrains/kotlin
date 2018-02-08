@@ -1672,14 +1672,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            // `this` is represented as first parameter of function in erased inline class
-            boolean isThisOfErasedInlineClass =
-                    contextKind() == OwnerKind.ERASED_INLINE_CLASS &&
+            boolean isUnderlyingPropertyOfInlineClass =
                     InlineClassesUtilsKt.isInlineClass(propertyDescriptor.getContainingDeclaration()) &&
                     JvmCodegenUtil.hasBackingField(propertyDescriptor, contextKind(), bindingContext);
-            if (isThisOfErasedInlineClass) {
-                Type underlyingRepresentationType = typeMapper.mapType(propertyDescriptor.getType());
-                return StackValue.local(0, underlyingRepresentationType);
+
+            if (isUnderlyingPropertyOfInlineClass) {
+                KotlinType propertyType = propertyDescriptor.getType();
+                return StackValue.underlyingValueOfInlineClass(typeMapper.mapType(propertyType), propertyType, receiver);
             }
 
             Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Companion.getInstances(state.getProject());
