@@ -222,13 +222,15 @@ class KaptJavaLog(
         private val KOTLIN_LOCATION_PREFIX = "Kotlin location: "
 
         private val IGNORED_DIAGNOSTICS = setOf(
-                "compiler.err.name.clash.same.erasure",
-                "compiler.err.name.clash.same.erasure.no.override",
-                "compiler.err.name.clash.same.erasure.no.override.1",
-                "compiler.err.name.clash.same.erasure.no.hide",
-                "compiler.err.already.defined",
-                "compiler.err.annotation.type.not.applicable",
-                "compiler.err.doesnt.exist")
+            "compiler.err.name.clash.same.erasure",
+            "compiler.err.name.clash.same.erasure.no.override",
+            "compiler.err.name.clash.same.erasure.no.override.1",
+            "compiler.err.name.clash.same.erasure.no.hide",
+            "compiler.err.already.defined",
+            "compiler.err.annotation.type.not.applicable",
+            "compiler.err.doesnt.exist",
+            "compiler.err.duplicate.annotation.missing.container"
+        )
 
         internal fun preRegister(kaptContext: KaptContext<*>, messageCollector: MessageCollector, mapDiagnosticLocations: Boolean) {
             val interceptorData = DiagnosticInterceptorData()
