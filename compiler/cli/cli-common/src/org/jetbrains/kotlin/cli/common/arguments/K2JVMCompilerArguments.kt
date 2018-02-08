@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -233,6 +234,14 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             jsr305,
             supportCompatqualCheckerFrameworkAnnotations
         )
+        return result
+    }
+
+    override fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
+        val result = super.configureLanguageFeatures(collector)
+        if (strictJavaNullabilityAssertions) {
+            result[LanguageFeature.StrictJavaNullabilityAssertions] = LanguageFeature.State.ENABLED
+        }
         return result
     }
 }

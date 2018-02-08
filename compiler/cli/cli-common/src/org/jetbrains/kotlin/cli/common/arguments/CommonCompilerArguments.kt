@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.*
 import java.util.*
 
 @SuppressWarnings("WeakerAccess")
@@ -164,8 +165,88 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             put(AnalysisFlag.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlag.experimental, experimental?.toList().orEmpty())
             put(AnalysisFlag.useExperimental, useExperimental?.toList().orEmpty())
+            put(AnalysisFlag.explicitApiVersion, apiVersion != null)
         }
     }
+
+    open fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> =
+        HashMap<LanguageFeature, LanguageFeature.State>().apply {
+            if (multiPlatform) {
+                put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
+            }
+
+            when (coroutinesState) {
+                CommonCompilerArguments.ERROR -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED_WITH_ERROR)
+                CommonCompilerArguments.ENABLE -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED)
+                CommonCompilerArguments.WARN -> {}
+                else -> {
+                    val message = "Invalid value of -Xcoroutines (should be: enable, warn or error): " + coroutinesState
+                    collector.report(CompilerMessageSeverity.ERROR, message, null)
+                }
+            }
+
+            if (newInference) {
+                put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
+            }
+
+            if (legacySmartCastAfterTry) {
+                put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED)
+            }
+
+            if (effectSystem) {
+                put(LanguageFeature.UseCallsInPlaceEffect, LanguageFeature.State.ENABLED)
+                put(LanguageFeature.UseReturnsEffect, LanguageFeature.State.ENABLED)
+            }
+
+            if (readDeserializedContracts) {
+                put(LanguageFeature.ReadDeserializedContracts, LanguageFeature.State.ENABLED)
+            }
+
+            if (properIeee754Comparisons) {
+                put(LanguageFeature.ProperIeee754Comparisons, LanguageFeature.State.ENABLED)
+            }
+        }
+
+    fun configureLanguageVersionSettings(collector: MessageCollector): LanguageVersionSettings {
+
+        // If only "-api-version" is specified, language version is assumed to be the latest stable
+        val languageVersion = parseVersion(collector, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE
+
+        // If only "-language-version" is specified, API version is assumed to be equal to the language version
+        // (API version cannot be greater than the language version)
+        val apiVersion = parseVersion(collector, apiVersion, "API") ?: languageVersion
+
+        if (apiVersion > languageVersion) {
+            collector.report(
+                CompilerMessageSeverity.ERROR,
+                "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})"
+            )
+        }
+
+        if (!languageVersion.isStable) {
+            collector.report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                "Language version ${languageVersion.versionString} is experimental, there are no backwards compatibility guarantees for new language and library features"
+            )
+        }
+
+        return LanguageVersionSettingsImpl(
+            languageVersion,
+            ApiVersion.createByLanguageVersion(apiVersion),
+            configureAnalysisFlags(collector),
+            configureLanguageFeatures(collector)
+        )
+    }
+
+    private fun parseVersion(collector: MessageCollector, value: String?, versionOf: String): LanguageVersion? =
+        if (value == null) null
+        else LanguageVersion.fromVersionString(value)
+                ?: run {
+                    val versionStrings = LanguageVersion.values().map(LanguageVersion::description)
+                    val message = "Unknown $versionOf version: $value\nSupported $versionOf versions: ${versionStrings.joinToString(", ")}"
+                    collector.report(CompilerMessageSeverity.ERROR, message, null)
+                    null
+                }
 
     // Used only for serialize and deserialize settings. Don't use in other places!
     class DummyImpl : CommonCompilerArguments()
