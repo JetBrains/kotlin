@@ -55,6 +55,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("annotations3.kt")
+    public void testAnnotations3() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/annotations3.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("comments.kt")
     public void testComments() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/comments.kt");
