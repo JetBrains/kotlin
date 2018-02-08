@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
-import org.jetbrains.kotlin.resolve.calls.checkers.DslScopeViolationCallChecker.extractDslMarkerFqNames
+import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
@@ -350,7 +350,7 @@ fun Collection<ReceiverType>.shadowedByDslMarkers(): Set<ReceiverType> {
 
     this
             .mapNotNull { receiver ->
-                val dslMarkers = receiver.type.extractDslMarkerFqNames()
+                val dslMarkers = DslMarkerUtils.extractDslMarkerFqNames(receiver.type)
                 (receiver to dslMarkers).takeIf { dslMarkers.isNotEmpty() }
             }
             .forEach { (v, dslMarkers) -> dslMarkers.forEach { typesByDslScopes.getOrPut(it, { mutableListOf() }) += v } }

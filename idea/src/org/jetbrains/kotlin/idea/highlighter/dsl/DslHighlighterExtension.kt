@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.highlighter.HighlighterExtension
+import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -61,6 +62,6 @@ class DslHighlighterExtension : HighlighterExtension() {
 
 internal fun ClassDescriptor.isDslHighlightingMarker(): Boolean {
     return annotations.any {
-        it.annotationClass?.fqNameSafe?.asString() == "kotlin.DslMarker"
+        it.annotationClass?.fqNameSafe == DslMarkerUtils.DSL_MARKER_FQ_NAME
     }
 }
