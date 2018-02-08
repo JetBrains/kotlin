@@ -154,15 +154,17 @@ private val FunctionDescriptor.signature: String
             typeToHashString(it.type)
         }.joinToString(";")
 
-        // Just distinguish value types and references - it's needed for calling virtual methods through bridges.
-        val returnTypePart =
+        // Distinguish value types and references - it's needed for calling virtual methods through bridges.
+        // Also is function has type arguments - frontend allows exactly matching overrides.
+        val signatureSuffix =
                 when {
+                    this.typeParameters.isNotEmpty() -> "Generic"
                     returnType.let { it != null && it.isValueType() } -> "ValueType"
                     returnType.let { it != null && !KotlinBuiltIns.isUnitOrNullableUnit(it) } -> "Reference"
                     else -> ""
                 }
 
-        return "$extensionReceiverPart($argsPart)$returnTypePart"
+        return "$extensionReceiverPart($argsPart)$signatureSuffix"
     }
 
 // TODO: rename to indicate that it has signature included
