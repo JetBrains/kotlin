@@ -50,10 +50,12 @@ class RedundantObjectTypeCheckInspection : AbstractKotlinInspection() {
             }
 
             private fun registerProblem(element: KtElement, quickFix: LocalQuickFix) {
-                holder.registerProblem(element,
-                                       TextRange(0, 2),
-                                       "Redundant type checks for object",
-                                       quickFix)
+                holder.registerProblem(
+                    element,
+                    TextRange(0, 2),
+                    "Redundant type checks for object",
+                    quickFix
+                )
             }
         }
     }
