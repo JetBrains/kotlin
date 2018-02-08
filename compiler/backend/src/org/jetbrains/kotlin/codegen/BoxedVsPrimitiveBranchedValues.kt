@@ -295,3 +295,83 @@ class PrimitiveToObjectEquality private constructor(
                     rightType.sort == Type.OBJECT
     }
 }
+
+
+class Ieee754Equality private constructor(
+    private val frameMap: FrameMap,
+    left: StackValue,
+    right: StackValue,
+    operandType: Type
+) : NumberLikeCompare(left, right, operandType, KtTokens.EQEQ) {
+
+    init {
+        assert(operandType == Type.FLOAT_TYPE || operandType == Type.DOUBLE_TYPE) {
+            "Unexpected operandType for IEEE 754 equality (should be F or D): $operandType"
+        }
+    }
+
+    private val leftType = left.type
+    private val rightType = right.type
+
+    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+        val leftIsBoxed = !AsmUtil.isPrimitive(leftType)
+        val rightIsBoxed = !AsmUtil.isPrimitive(rightType)
+
+        frameMap.evaluateOnce(arg1, leftType, v) { left ->
+            frameMap.evaluateOnce(arg2!!, rightType, v) { right ->
+                val endLabel = Label()
+                val bothNonNullLabel = Label()
+
+                when {
+                    leftIsBoxed && rightIsBoxed -> {
+                        val leftNonNullLabel = Label()
+                        left.put(leftType, v)
+                        v.ifnonnull(leftNonNullLabel)
+                        // left == null
+                        right.put(rightType, v)
+                        v.ifnonnull(if (jumpIfFalse) jumpLabel else endLabel)
+                        // left == null && right == null
+                        if (jumpIfFalse) v.goTo(endLabel) else v.goTo(jumpLabel)
+
+                        v.mark(leftNonNullLabel)
+                        // left != null
+                        right.put(rightType, v)
+                        v.ifnull(if (jumpIfFalse) jumpLabel else endLabel)
+                    }
+                    leftIsBoxed -> {
+                        left.put(leftType, v)
+                        v.ifnull(if (jumpIfFalse) jumpLabel else endLabel)
+                    }
+                    rightIsBoxed -> {
+                        right.put(rightType, v)
+                        v.ifnull(if (jumpIfFalse) jumpLabel else endLabel)
+                    }
+                }
+
+                v.mark(bothNonNullLabel)
+                left.put(operandType, v)
+                right.put(operandType, v)
+                v.cmpg(operandType)
+                if (jumpIfFalse) {
+                    v.ifne(jumpLabel)
+                } else {
+                    v.ifeq(jumpLabel)
+                }
+
+                v.mark(endLabel)
+            }
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        fun create(frameMap: FrameMap, left: StackValue, right: StackValue, comparisonType: Type, opToken: IElementType) =
+            Ieee754Equality(frameMap, left, right, comparisonType).let {
+                when (opToken) {
+                    KtTokens.EQEQ -> it
+                    KtTokens.EXCLEQ -> Invert(it)
+                    else -> throw AssertionError("Unexpected operator: $opToken")
+                }
+            }
+    }
+}

@@ -127,6 +127,12 @@ public class AsmUtil {
         return primitiveTypeByBoxedType.get(boxedType);
     }
 
+    @NotNull
+    public static Type unboxUnlessPrimitive(@NotNull Type boxedOrPrimitiveType) {
+        if (isPrimitive(boxedOrPrimitiveType)) return boxedOrPrimitiveType;
+        return unboxType(boxedOrPrimitiveType);
+    }
+
     public static boolean isBoxedTypeOf(@NotNull Type boxedType, @NotNull Type unboxedType) {
         return unboxPrimitiveTypeOrNull(boxedType) == unboxedType;
     }

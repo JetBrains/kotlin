@@ -10917,6 +10917,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("comparableToTWithTLV13.kt")
+        public void testComparableToTWithTLV13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/comparableToTWithTLV13.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("comparableTypeCast.kt")
         public void testComparableTypeCast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/comparableTypeCast.kt");
@@ -11049,6 +11055,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nullableDoubleEqualsLV13.kt")
+        public void testNullableDoubleEqualsLV13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/nullableDoubleEqualsLV13.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullableDoubleNotEquals.kt")
         public void testNullableDoubleNotEquals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/nullableDoubleNotEquals.kt");
@@ -11103,9 +11115,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("smartCastOnWhenSubjectAfterCheckInBranchLV13.kt")
+        public void testSmartCastOnWhenSubjectAfterCheckInBranchLV13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastOnWhenSubjectAfterCheckInBranchLV13.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("smartCastToDifferentTypes.kt")
         public void testSmartCastToDifferentTypes() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypes.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+
+        @TestMetadata("smartCastToDifferentTypesLV13.kt")
+        public void testSmartCastToDifferentTypesLV13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesLV13.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastToDifferentTypesWithNumericPromotionLV13.kt")
+        public void testSmartCastToDifferentTypesWithNumericPromotionLV13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesWithNumericPromotionLV13.kt");
             try {
                 doTest(fileName);
             }

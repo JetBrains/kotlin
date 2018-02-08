@@ -124,7 +124,7 @@ open class BranchedValue(
                 IFEQ
             )
 
-        fun cmp(opToken: IElementType, operandType: Type, left: StackValue, right: StackValue): StackValue =
+        fun cmp(opToken: IElementType, operandType: Type, left: StackValue, right: StackValue): BranchedValue =
             if (operandType.sort == Type.OBJECT)
                 ObjectCompare(opToken, operandType, left, right)
             else

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -35,10 +34,8 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -49,7 +46,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -274,37 +270,7 @@ private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) 
 
 fun Collection<VariableDescriptor>.filterOutDescriptorsWithSpecialNames() = filterNot { it.name.isSpecial }
 
-
-class TypeAndNullability(@JvmField val type: Type, @JvmField val isNullable: Boolean)
-
 class JvmKotlinType(val type: Type, val kotlinType: KotlinType?)
-
-fun calcTypeForIEEE754ArithmeticIfNeeded(
-    expression: KtExpression?,
-    bindingContext: BindingContext,
-    descriptor: DeclarationDescriptor,
-    languageVersionSettings: LanguageVersionSettings
-): TypeAndNullability? {
-    val ktType = expression.kotlinType(bindingContext) ?: return null
-
-    if (KotlinBuiltIns.isDoubleOrNullableDouble(ktType)) {
-        return TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(ktType))
-    }
-
-    if (KotlinBuiltIns.isFloatOrNullableFloat(ktType)) {
-        return TypeAndNullability(Type.FLOAT_TYPE, TypeUtils.isNullableType(ktType))
-    }
-
-    val dataFlow = DataFlowValueFactory.createDataFlowValue(expression!!, ktType, bindingContext, descriptor)
-    val stableTypes = bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow, languageVersionSettings)
-    return stableTypes.firstNotNullResult {
-        when {
-            KotlinBuiltIns.isDoubleOrNullableDouble(it) -> TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(it))
-            KotlinBuiltIns.isFloatOrNullableFloat(it) -> TypeAndNullability(Type.FLOAT_TYPE, TypeUtils.isNullableType(it))
-            else -> null
-        }
-    }
-}
 
 fun KotlinType.asmType(typeMapper: KotlinTypeMapper) = typeMapper.mapType(this)
 
@@ -439,3 +405,22 @@ val CodegenContext<*>.parentContexts
 
 val CodegenContext<*>.contextStackText
     get() = parentContextsWithSelf.joinToString(separator = "\n") { it.toString() }
+
+inline fun FrameMap.evaluateOnce(
+    value: StackValue,
+    asType: Type,
+    v: InstructionAdapter,
+    body: (StackValue) -> Unit
+) {
+    val valueOrTmp: StackValue =
+        if (value.canHaveSideEffects())
+            StackValue.local(enterTemp(asType), asType).apply { store(value, v) }
+        else
+            value
+
+    body(valueOrTmp)
+
+    if (valueOrTmp != value) {
+        leaveTemp(asType)
+    }
+}

@@ -9993,6 +9993,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("comparableToTWithTLV13.kt")
+        public void testComparableToTWithTLV13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/comparableToTWithTLV13.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("comparableTypeCast.kt")
         public void testComparableTypeCast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/comparableTypeCast.kt");
@@ -10101,6 +10107,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("nullableDoubleEqualsLV13.kt")
+        public void testNullableDoubleEqualsLV13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/nullableDoubleEqualsLV13.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullableDoubleNotEquals.kt")
         public void testNullableDoubleNotEquals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/nullableDoubleNotEquals.kt");
@@ -10149,9 +10161,27 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("smartCastOnWhenSubjectAfterCheckInBranchLV13.kt")
+        public void testSmartCastOnWhenSubjectAfterCheckInBranchLV13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastOnWhenSubjectAfterCheckInBranchLV13.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("smartCastToDifferentTypes.kt")
         public void testSmartCastToDifferentTypes() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastToDifferentTypesLV13.kt")
+        public void testSmartCastToDifferentTypesLV13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesLV13.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastToDifferentTypesWithNumericPromotionLV13.kt")
+        public void testSmartCastToDifferentTypesWithNumericPromotionLV13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesWithNumericPromotionLV13.kt");
             doTest(fileName);
         }
 

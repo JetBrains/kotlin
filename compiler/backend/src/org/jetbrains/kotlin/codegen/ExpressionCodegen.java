@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
+import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluatorKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -100,9 +101,7 @@ import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
@@ -2991,7 +2990,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
         else if (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ ||
                  opToken == KtTokens.EQEQEQ || opToken == KtTokens.EXCLEQEQEQ) {
-            return generateEquals(expression.getLeft(), expression.getRight(), opToken, null);
+            return generateEquals(
+                    expression.getLeft(), expression.getRight(), opToken, null,
+                    bindingContext.get(BindingContext.PRIMITIVE_NUMERIC_COMPARISON_INFO, expression)
+            );
         }
         else if (opToken == KtTokens.LT || opToken == KtTokens.LTEQ ||
                  opToken == KtTokens.GT || opToken == KtTokens.GTEQ) {
@@ -3054,7 +3056,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @Nullable KtExpression left,
             @Nullable KtExpression right,
             @NotNull IElementType opToken,
-            @Nullable StackValue pregeneratedLeft
+            @Nullable StackValue pregeneratedLeft,
+            @Nullable PrimitiveNumericComparisonInfo primitiveNumericComparisonInfo
     ) {
         Type leftType = expressionType(left);
         Type rightType = expressionType(right);
@@ -3139,7 +3142,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             );
         }
 
-        return genEqualsForExpressionsPreferIEEE754Arithmetic(left, right, opToken, leftType, rightType, pregeneratedLeft);
+        return genEqualsForExpressionsPreferIeee754Arithmetic(
+                left, right, opToken, leftType, rightType, pregeneratedLeft, primitiveNumericComparisonInfo
+        );
     }
 
     private boolean isSelectorPureNonNullType(@NotNull KtSafeQualifiedExpression safeExpression) {
@@ -3186,38 +3191,65 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         );
     }
 
+    @Nullable
+    private static KotlinType getLeftOperandType(@Nullable PrimitiveNumericComparisonInfo numericComparisonInfo) {
+        if (numericComparisonInfo == null) return null;
+        return numericComparisonInfo.getLeftType();
+    }
+
+    @Nullable
+    private static KotlinType getRightOperandType(@Nullable PrimitiveNumericComparisonInfo numericComparisonInfo) {
+        if (numericComparisonInfo == null) return null;
+        return numericComparisonInfo.getRightType();
+    }
+
     /*tries to use IEEE 754 arithmetic*/
-    private StackValue genEqualsForExpressionsPreferIEEE754Arithmetic(
+    private StackValue genEqualsForExpressionsPreferIeee754Arithmetic(
             @Nullable KtExpression left,
             @Nullable KtExpression right,
             @NotNull IElementType opToken,
             @NotNull Type leftType,
             @NotNull Type rightType,
-            @Nullable StackValue pregeneratedLeft
+            @Nullable StackValue pregeneratedLeft,
+            @Nullable PrimitiveNumericComparisonInfo primitiveNumericComparisonInfo
     ) {
         assert (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) : "Optoken should be '==' or '!=', but: " + opToken;
 
-        TypeAndNullability left754Type = calcTypeForIEEE754ArithmeticIfNeeded(left);
-        TypeAndNullability right754Type = calcTypeForIEEE754ArithmeticIfNeeded(right);
-        if (left754Type != null && right754Type != null && left754Type.type.equals(right754Type.type)) {
-            //check nullability cause there is some optimizations in codegen for non-nullable case
-            if (left754Type.isNullable || right754Type.isNullable) {
-                if (state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_1) >= 0) {
-                    return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
-                        generate754EqualsForNullableTypesViaIntrinsic(v, opToken, pregeneratedLeft, left, left754Type, right, right754Type);
-                        return Unit.INSTANCE;
-                    });
+        TypeAndNullability left754Type = calcTypeForIeee754ArithmeticIfNeeded(left, getLeftOperandType(primitiveNumericComparisonInfo));
+        TypeAndNullability right754Type = calcTypeForIeee754ArithmeticIfNeeded(right, getRightOperandType(primitiveNumericComparisonInfo));
+        if (left754Type != null && right754Type != null) {
+            if (left754Type.type.equals(right754Type.type)) {
+                //check nullability cause there is some optimizations in codegen for non-nullable case
+                if (left754Type.isNullable || right754Type.isNullable) {
+                    if (state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_1) >= 0) {
+                        return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+                            generate754EqualsForNullableTypesViaIntrinsic(v, opToken, pregeneratedLeft, left, left754Type, right, right754Type);
+                            return Unit.INSTANCE;
+                        });
+                    }
+                    else {
+                        return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+                            generate754EqualsForNullableTypes(v, opToken, pregeneratedLeft, left, left754Type, right, right754Type);
+                            return Unit.INSTANCE;
+                        });
+                    }
                 }
                 else {
-                    return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
-                        generate754EqualsForNullableTypes(v, opToken, pregeneratedLeft, left, left754Type, right, right754Type);
-                        return Unit.INSTANCE;
-                    });
+                    leftType = left754Type.type;
+                    rightType = right754Type.type;
                 }
             }
-            else {
-                leftType = left754Type.type;
-                rightType = right754Type.type;
+            else if (shouldUseProperNumberComparisons()) {
+                Type comparisonType = comparisonOperandType(left754Type.type, right754Type.type);
+                if (comparisonType == Type.FLOAT_TYPE || comparisonType == Type.DOUBLE_TYPE) {
+                    return Ieee754Equality.create(
+                            myFrameMap,
+                            genLazy(left, boxIfNullable(left754Type)),
+                            genLazy(right, boxIfNullable(right754Type)),
+                            comparisonType,
+                            opToken
+                    );
+                }
             }
         }
 
@@ -3226,6 +3258,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 genLazyUnlessProvided(pregeneratedLeft, left, leftType),
                 genLazy(right, rightType)
         );
+    }
+
+    @NotNull
+    private static Type boxIfNullable(@NotNull TypeAndNullability ieee754Type) {
+        if (ieee754Type.isNullable) return AsmUtil.boxType(ieee754Type.type);
+        return ieee754Type.type;
     }
 
     private void generate754EqualsForNullableTypesViaIntrinsic(
@@ -3400,6 +3438,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     private StackValue generateComparison(KtBinaryExpression expression, StackValue receiver) {
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
+        PrimitiveNumericComparisonInfo primitiveNumericComparisonInfo =
+                bindingContext.get(BindingContext.PRIMITIVE_NUMERIC_COMPARISON_INFO, expression);
 
         KtExpression left = expression.getLeft();
         KtExpression right = expression.getRight();
@@ -3409,12 +3449,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         StackValue rightValue;
         Type leftType = expressionType(left);
         Type rightType = expressionType(right);
-        TypeAndNullability left754Type = calcTypeForIEEE754ArithmeticIfNeeded(left);
-        TypeAndNullability right754Type = calcTypeForIEEE754ArithmeticIfNeeded(right);
+        TypeAndNullability left754Type = calcTypeForIeee754ArithmeticIfNeeded(left, getLeftOperandType(primitiveNumericComparisonInfo));
+        TypeAndNullability right754Type = calcTypeForIeee754ArithmeticIfNeeded(right, getRightOperandType(primitiveNumericComparisonInfo));
         Callable callable = resolveToCallable((FunctionDescriptor) resolvedCall.getResultingDescriptor(), false, resolvedCall);
-        boolean is754Arithmetic = left754Type != null && right754Type != null && left754Type.type.equals(right754Type.type);
-        if (callable instanceof IntrinsicCallable && ((isPrimitive(leftType) && isPrimitive(rightType)) || is754Arithmetic)) {
-            type = is754Arithmetic ? left754Type.type : comparisonOperandType(leftType, rightType);
+        boolean isSame754ArithmeticTypes = left754Type != null && right754Type != null && left754Type.type.equals(right754Type.type);
+        boolean properNumberComparisons = shouldUseProperNumberComparisons();
+
+        if (properNumberComparisons && left754Type != null && right754Type != null) {
+            type = comparisonOperandType(leftType, rightType);
+            leftValue = gen(left);
+            rightValue = gen(right);
+        }
+        else if (!properNumberComparisons &&
+                 callable instanceof IntrinsicCallable && ((isPrimitive(leftType) && isPrimitive(rightType)) || isSame754ArithmeticTypes)) {
+            type = isSame754ArithmeticTypes ? left754Type.type : comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
         }
@@ -3426,9 +3474,25 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return StackValue.cmp(expression.getOperationToken(), type, leftValue, rightValue);
     }
 
-    private TypeAndNullability calcTypeForIEEE754ArithmeticIfNeeded(@Nullable KtExpression expression) {
-        return CodegenUtilKt.calcTypeForIEEE754ArithmeticIfNeeded(
-                expression, bindingContext, context.getFunctionDescriptor(), state.getLanguageVersionSettings());
+    @Nullable
+    private TypeAndNullability calcTypeForIeee754ArithmeticIfNeeded(
+            @Nullable KtExpression expression,
+            @Nullable KotlinType inferredPrimitiveType
+    ) {
+        if (expression == null) {
+            return null;
+        }
+        else if (shouldUseProperNumberComparisons()) {
+            return Ieee754Kt.calcProperTypeForIeee754ArithmeticIfNeeded(expression, bindingContext, inferredPrimitiveType, typeMapper);
+        }
+        else {
+            return Ieee754Kt.legacyCalcTypeForIeee754ArithmeticIfNeeded(
+                    expression, bindingContext, context.getFunctionDescriptor(), state.getLanguageVersionSettings());
+        }
+    }
+
+    private boolean shouldUseProperNumberComparisons() {
+        return state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ProperNumberComparisons);
     }
 
     private StackValue generateAssignmentExpression(KtBinaryExpression expression) {
@@ -4251,7 +4315,10 @@ The "returned" value of try expression with no finally is either the last expres
 
     private StackValue generateExpressionMatch(StackValue expressionToMatch, KtExpression subjectExpression, KtExpression patternExpression) {
         if (expressionToMatch != null) {
-            return generateEquals(subjectExpression, patternExpression, KtTokens.EQEQ, expressionToMatch);
+            return generateEquals(
+                    subjectExpression, patternExpression, KtTokens.EQEQ, expressionToMatch,
+                    bindingContext.get(BindingContext.PRIMITIVE_NUMERIC_COMPARISON_INFO, patternExpression)
+            );
         }
         else {
             return gen(patternExpression);
