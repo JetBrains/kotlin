@@ -1,3 +1,5 @@
+// PROBLEM: none
+
 object O
 
 fun foo(arg: Any) {
