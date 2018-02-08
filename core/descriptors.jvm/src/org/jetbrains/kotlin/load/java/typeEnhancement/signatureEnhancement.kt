@@ -195,6 +195,9 @@ class SignatureEnhancement(
         private val containerContext: LazyJavaResolverContext,
         private val containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType
     ) {
+
+        private val isForVarargParameter get() = typeContainer.safeAs<ValueParameterDescriptor>()?.varargElementType != null
+
         fun enhance(predefined: TypeEnhancementInfo? = null): PartEnhancementResult {
             val qualifiers = computeIndexedQualifiersForOverride()
 
@@ -352,7 +355,12 @@ class SignatureEnhancement(
             val ownNullabilityForWarning = own.nullability
 
             val isCovariantPosition = isCovariant && isHeadTypeConstructor
-            val nullability = nullabilityFromSupertypes.select(ownNullability, isCovariantPosition)
+            val nullability =
+                nullabilityFromSupertypes.select(ownNullability, isCovariantPosition)
+                    // Vararg value parameters effectively have non-nullable type in Kotlin
+                    // and having nullable types in Java may lead to impossibility of overriding them in Kotlin
+                    ?.takeUnless { isForVarargParameter && isHeadTypeConstructor && it == NullabilityQualifier.NULLABLE }
+
             val mutability =
                 mutabilityFromSupertypes
                     .select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability, isCovariantPosition)
