@@ -151,6 +151,10 @@ public abstract class StackValue {
         return new Local(index, type);
     }
 
+    public static Local local(int index, @NotNull Type type, @Nullable KotlinType kotlinType) {
+        return new Local(index, type, kotlinType);
+    }
+
     @NotNull
     public static Local local(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor) {
         return new Local(index, type, descriptor.getType(), descriptor.isLateInit(), descriptor.getName());
@@ -800,6 +804,10 @@ public abstract class StackValue {
 
         private Local(int index, Type type) {
             this(index, type, null, false, null);
+        }
+
+        private Local(int index, Type type, KotlinType kotlinType) {
+            this(index, type, kotlinType, false, null);
         }
 
         @Override
