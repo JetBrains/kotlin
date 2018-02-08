@@ -403,6 +403,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveNestedClass/nonInnerToTopLevelPrivateClass/nonInnerToTopLevelPrivateClass.test")
+    public void testKotlin_moveNestedClass_nonInnerToTopLevelPrivateClass_NonInnerToTopLevelPrivateClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/nonInnerToTopLevelPrivateClass/nonInnerToTopLevelPrivateClass.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveNestedClass/objectToTopLevel/objectToTopLevel.test")
     public void testKotlin_moveNestedClass_objectToTopLevel_ObjectToTopLevel() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/objectToTopLevel/objectToTopLevel.test");

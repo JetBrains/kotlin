@@ -52,10 +52,7 @@ import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.contains
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
@@ -331,7 +328,9 @@ class MoveConflictChecker(
             val referencedDescriptor = resolutionFacade.resolveToDescriptor(referencedElement)
 
             if (referencedDescriptor is DeclarationDescriptorWithVisibility
-                && referencedDescriptor.visibility == Visibilities.PUBLIC) continue
+                && referencedDescriptor.visibility == Visibilities.PUBLIC
+                && moveTarget is KotlinMoveTargetForExistingElement
+                && moveTarget.targetElement.parentsWithSelf.filterIsInstance<KtClassOrObject>().all { it.isPublic }) continue
 
             val container = element.getUsageContext()
             if (!declarationToContainers.getOrPut(referencedElement) { HashSet<PsiElement>() }.add(container)) continue

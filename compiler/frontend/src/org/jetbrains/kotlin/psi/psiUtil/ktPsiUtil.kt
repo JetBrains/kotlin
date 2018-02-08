@@ -431,6 +431,13 @@ fun KtModifierList.visibilityModifierType(): KtModifierKeywordToken? = visibilit
 
 fun KtModifierListOwner.visibilityModifier() = modifierList?.modifierFromTokenSet(KtTokens.VISIBILITY_MODIFIERS)
 
+val KtModifierListOwner.isPublic: Boolean
+    get() {
+        if (this is KtDeclaration && KtPsiUtil.isLocal(this)) return false
+        val visibilityModifier = visibilityModifierType()
+        return visibilityModifier == null || visibilityModifier == KtTokens.PUBLIC_KEYWORD
+    }
+
 fun KtModifierListOwner.visibilityModifierType(): KtModifierKeywordToken? =
     visibilityModifier()?.node?.elementType as KtModifierKeywordToken?
 
