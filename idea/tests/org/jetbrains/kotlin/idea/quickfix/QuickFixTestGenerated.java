@@ -1933,6 +1933,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("callInWhenEntry.kt")
+                public void testCallInWhenEntry() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callInWhenEntry.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("callNoReceiver.kt")
                 public void testCallNoReceiver() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callNoReceiver.kt");
