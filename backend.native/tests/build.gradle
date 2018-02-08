@@ -907,6 +907,10 @@ task bridges_special(type: RunKonanTest) {
     source = "codegen/bridges/special.kt"
 }
 
+task returnTypeSignature(type: RunKonanTest) {
+    source = "codegen/bridges/returnTypeSignature.kt"
+}
+
 task classDelegation_method(type: RunKonanTest) {
     goldValue = "OKOK\n"
     source = "codegen/classDelegation/method.kt"

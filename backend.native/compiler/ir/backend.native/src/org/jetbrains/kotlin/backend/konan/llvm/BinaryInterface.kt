@@ -160,7 +160,7 @@ private val FunctionDescriptor.signature: String
                 when {
                     this.typeParameters.isNotEmpty() -> "Generic"
                     returnType.let { it != null && it.isValueType() } -> "ValueType"
-                    returnType.let { it != null && !KotlinBuiltIns.isUnitOrNullableUnit(it) } -> "Reference"
+                    returnType.let { it != null && !KotlinBuiltIns.isUnitOrNullableUnit(it) } -> typeToHashString(returnType!!)
                     else -> ""
                 }
 
