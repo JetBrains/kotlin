@@ -38,17 +38,14 @@ class RedundantObjectTypeCheckInspection : AbstractKotlinInspection() {
                 super.visitIsExpression(expression)
                 val typeReference = expression.typeReference ?: return
                 if (!typeReference.isObject()) return
-                registerProblem(expression.operationReference, ReplaceWithEqualityFix(expression.isNegated))
-            }
-
-            private fun registerProblem(element: KtElement, quickFix: LocalQuickFix) {
                 holder.registerProblem(
-                    element,
-                    TextRange(0, 2),
+                    expression.operationReference,
+                    TextRange(0, if (expression.isNegated) 3 else 2),
                     "Redundant type checks for object",
-                    quickFix
+                    ReplaceWithEqualityFix(expression.isNegated)
                 )
             }
+
         }
     }
 }
