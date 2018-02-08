@@ -29,7 +29,7 @@ task buildSamplesWithPlatformLibs() {
     dependsOn ':win32:build'
     dependsOn ':workers:build'
     dependsOn ':calculator:build'
-
+    dependsOn ':globalState:build'
 }
 
 task buildAllSamples() {
