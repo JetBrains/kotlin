@@ -59,22 +59,18 @@
             <sourceRoot path="../core/builtins/native" platforms="JVM"/>
             <sourceRoot path="../core/builtins/src" platforms="JVM"/>
             <sourceRoot path="../core/reflection.jvm/src" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/annotations" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/PurelyImplements.kt" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin/TypeAliases.kt" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin/text/TypeAliases.kt" platforms="JVM"/>
+            <sourceRoot path="stdlib/jvm/runtime/kotlin/jvm/annotations" platforms="JVM"/>
+            <sourceRoot path="stdlib/jvm/runtime/kotlin/jvm/JvmClassMapping.kt" platforms="JVM"/>
+            <sourceRoot path="stdlib/jvm/runtime/kotlin/jvm/PurelyImplements.kt" platforms="JVM"/>
+            <sourceRoot path="stdlib/jvm/runtime/kotlin/TypeAliases.kt" platforms="JVM"/>
+            <sourceRoot path="stdlib/jvm/runtime/kotlin/text/TypeAliases.kt" platforms="JVM"/>
 
 
             <sourceRoot path="../core/builtins/native" platforms="JS"/>
             <sourceRoot path="../core/builtins/src" platforms="JS"/>
 
-            <sourceRoot path="../js/js.libraries/src/browser" platforms="JS"/>
-            <sourceRoot path="../js/js.libraries/src/core" platforms="JS"/>
-            <sourceRoot path="../js/js.libraries/src/dom" platforms="JS"/>
-            <sourceRoot path="../js/js.libraries/src/generated" platforms="JS"/>
-            <sourceRoot path="../js/js.libraries/src/js" platforms="JS"/>
-            <sourceRoot path="../js/js.libraries/src/reflect" platforms="JS"/>
+            <sourceRoot path="stdlib/js/src" platforms="JS"/>
+            <sourceRoot path="../js/js.libraries/src/core/generated" platforms="JS"/>
             <sourceRoot path="${js.stdlib.common.src.path}" platforms="JS"/>
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
@@ -82,6 +78,7 @@
             <!-- TODO Docs? -->
             <packageOptions prefix="org.w3c" reportUndocumented="false"/>
             <packageOptions prefix="org.khronos" reportUndocumented="false"/>
+            <packageOptions prefix="jquery" suppress="true"/>
             <packageOptions prefix="kotlin.reflect.jvm.internal" suppress="true"/>
         </dokka>
         <makeurl file="${docs.output}/jre8/kotlin-stdlib/package-list" property="stdlib.package.list"/>
