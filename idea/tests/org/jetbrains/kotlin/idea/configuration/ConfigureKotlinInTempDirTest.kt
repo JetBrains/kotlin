@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.impl.ApplicationImpl
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.junit.Assert
@@ -127,5 +129,9 @@ class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
         KotlinCommonCompilerArgumentsHolder.getInstance(myProject)
         val settings = myProject.getLanguageVersionSettings()
         Assert.assertEquals(ApiVersion.KOTLIN_1_1, settings.apiVersion)
+    }
+
+    fun testKotlinSdkAdded() {
+        Assert.assertTrue(ProjectJdkTable.getInstance().allJdks.any { it.sdkType is KotlinSdkType })
     }
 }

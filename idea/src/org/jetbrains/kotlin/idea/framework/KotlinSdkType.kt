@@ -10,12 +10,15 @@
 
 package org.jetbrains.kotlin.idea.framework
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.util.Consumer
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.utils.PathUtil
 import javax.swing.JComponent
@@ -23,6 +26,20 @@ import javax.swing.JComponent
 class KotlinSdkType : SdkType("KotlinSDK") {
     companion object {
         @JvmField val INSTANCE = KotlinSdkType()
+
+        val defaultHomePath: String
+            get() = PathUtil.kotlinPathsForIdeaPlugin.homePath.absolutePath
+
+        fun setUpIfNeeded() {
+            with(ProjectSdksModel()) {
+                reset(null)
+                if (sdks.any { it.sdkType is KotlinSdkType }) return
+                addSdk(INSTANCE, defaultHomePath, null)
+                ApplicationManager.getApplication().invokeAndWait {
+                    runWriteAction { apply(null, true) }
+                }
+            }
+        }
     }
 
     override fun getPresentableName() = "Kotlin SDK"
@@ -48,7 +65,7 @@ class KotlinSdkType : SdkType("KotlinSDK") {
     fun createSdkWithUniqueName(existingSdks: Collection<Sdk>): ProjectJdkImpl {
         val sdkName = suggestSdkName(SdkConfigurationUtil.createUniqueSdkName(this, "", existingSdks), "")
         return ProjectJdkImpl(sdkName, this).apply {
-            homePath = PathUtil.kotlinPathsForIdeaPlugin.homePath.absolutePath
+            homePath = defaultHomePath
         }
     }
 
