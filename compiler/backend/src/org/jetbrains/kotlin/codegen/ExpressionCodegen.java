@@ -2342,7 +2342,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             List<JvmMethodParameterSignature> callableParameters = ((CallableMethod) callableMethod).getValueParameters();
             for (JvmMethodParameterSignature parameter: callableParameters) {
                 if (parameter.getKind() == JvmMethodParameterKind.CONSTRUCTOR_MARKER) {
-                    callGenerator.putValueIfNeeded(parameter.getAsmType(), StackValue.constant(null, parameter.getAsmType()));
+                    callGenerator.putValueIfNeeded(
+                            new JvmKotlinType(parameter.getAsmType(), null), StackValue.constant(null, parameter.getAsmType())
+                    );
                 }
             }
         }
@@ -2584,10 +2586,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     private StackValue generateExtensionReceiver(@NotNull CallableDescriptor descriptor) {
-        if (myFrameMap.getIndex(descriptor.getExtensionReceiverParameter()) != -1) {
+        ReceiverParameterDescriptor parameter = descriptor.getExtensionReceiverParameter();
+        if (myFrameMap.getIndex(parameter) != -1) {
+            KotlinType type = parameter.getReturnType();
             return StackValue.local(
-                    myFrameMap.getIndex(descriptor.getExtensionReceiverParameter()),
-                    typeMapper.mapType(descriptor.getExtensionReceiverParameter())
+                    myFrameMap.getIndex(parameter),
+                    typeMapper.mapType(type),
+                    type
             );
         }
 

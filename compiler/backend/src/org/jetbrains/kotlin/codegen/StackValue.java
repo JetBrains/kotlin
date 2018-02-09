@@ -1294,7 +1294,10 @@ public abstract class StackValue {
 
             coerce(topOfStackType, topOfStackKotlinType, lastParameterType, lastParameterKotlinType, v);
 
-            getCallGenerator().putValueIfNeeded(lastParameterType, StackValue.onStack(lastParameterType));
+            getCallGenerator().putValueIfNeeded(
+                    new JvmKotlinType(lastParameterType, lastParameterKotlinType),
+                    StackValue.onStack(lastParameterType, lastParameterKotlinType)
+            );
 
             //Convention setter couldn't have default parameters, just getter can have it at last positions
             //We should remove default parameters of getter from stack*/
@@ -1481,7 +1484,7 @@ public abstract class StackValue {
                     putReceiver(v, false);
                 }
                 callGenerator.processAndPutHiddenParameters(true);
-                callGenerator.putValueIfNeeded(rightSide.type, rightSide);
+                callGenerator.putValueIfNeeded(new JvmKotlinType(rightSide.type, rightSide.kotlinType), rightSide);
                 callGenerator.putHiddenParamsIntoLocals();
                 callGenerator.genCall(setter, resolvedCall, false, codegen);
             }

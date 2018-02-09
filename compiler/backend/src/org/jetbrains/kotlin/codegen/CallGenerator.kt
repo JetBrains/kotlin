@@ -59,8 +59,8 @@ interface CallGenerator {
             stackValue.put(stackValue.type, codegen.v)
         }
 
-        override fun putValueIfNeeded(parameterType: Type, value: StackValue, kind: ValueKind, parameterIndex: Int) {
-            value.put(value.type, codegen.v)
+        override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) {
+            value.put(value.type, value.kotlinType, codegen.v)
         }
 
         override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) {
@@ -104,13 +104,13 @@ interface CallGenerator {
             parameterIndex: Int)
 
     fun putValueIfNeeded(
-            parameterType: Type,
+            parameterType: JvmKotlinType,
             value: StackValue) {
         putValueIfNeeded(parameterType, value, ValueKind.GENERAL)
     }
 
     fun putValueIfNeeded(
-            parameterType: Type,
+            parameterType: JvmKotlinType,
             value: StackValue,
             kind: ValueKind = ValueKind.GENERAL,
             parameterIndex: Int = -1)

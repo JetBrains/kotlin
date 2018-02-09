@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
@@ -52,7 +41,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.expressions.LabelResolver
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -326,20 +314,21 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
     }
 
     protected fun putArgumentOrCapturedToLocalVal(
-            type: Type,
-            stackValue: StackValue,
-            capturedParamIndex: Int,
-            parameterIndex: Int,
-            kind: ValueKind
+        jvmKotlinType: JvmKotlinType,
+        stackValue: StackValue,
+        capturedParamIndex: Int,
+        parameterIndex: Int,
+        kind: ValueKind
     ) {
         val isDefaultParameter = kind === ValueKind.DEFAULT_PARAMETER
-        if (!isDefaultParameter && shouldPutGeneralValue(type, stackValue)) {
-            stackValue.put(type, codegen.v)
+        val jvmType = jvmKotlinType.type
+        if (!isDefaultParameter && shouldPutGeneralValue(jvmType, stackValue)) {
+            stackValue.put(jvmType, jvmKotlinType.kotlinType, codegen.v)
         }
 
-        if (!asFunctionInline && Type.VOID_TYPE !== type) {
+        if (!asFunctionInline && Type.VOID_TYPE !== jvmType) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
-            val couldBeRemapped = !shouldPutGeneralValue(type, stackValue) && kind !== ValueKind.DEFAULT_PARAMETER
+            val couldBeRemapped = !shouldPutGeneralValue(jvmType, stackValue) && kind !== ValueKind.DEFAULT_PARAMETER
             val remappedValue = if (couldBeRemapped) stackValue else null
 
             val info: ParameterInfo
@@ -349,7 +338,7 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                 info.setRemapValue(remappedValue)
             }
             else {
-                info = invocationParamBuilder.addNextValueParameter(type, false, remappedValue, parameterIndex)
+                info = invocationParamBuilder.addNextValueParameter(jvmType, false, remappedValue, parameterIndex)
             }
 
             recordParameterValueInLocalVal(
@@ -413,7 +402,7 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
     protected fun rememberCapturedForDefaultLambda(defaultLambda: DefaultLambda) {
         for ((paramIndex, captured) in defaultLambda.capturedVars.withIndex()) {
             putArgumentOrCapturedToLocalVal(
-                    captured.type,
+                    JvmKotlinType(captured.type),
                     //HACK: actually parameter would be placed on stack in default function
                     // also see ValueKind.DEFAULT_LAMBDA_CAPTURED_PARAMETER check
                     StackValue.onStack(captured.type),
@@ -736,7 +725,12 @@ class PsiInlineCodegen(
         }
         else {
             val value = codegen.gen(argumentExpression)
-            putValueIfNeeded(parameterType, value, ValueKind.GENERAL, valueParameterDescriptor.index)
+            putValueIfNeeded(
+                JvmKotlinType(parameterType, valueParameterDescriptor.original.type),
+                value,
+                ValueKind.GENERAL,
+                valueParameterDescriptor.index
+            )
         }
     }
 
@@ -753,7 +747,7 @@ class PsiInlineCodegen(
         }
     }
 
-    override fun putValueIfNeeded(parameterType: Type, value: StackValue, kind: ValueKind, parameterIndex: Int) {
+    override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) {
         if (processDefaultMaskOrMethodHandler(value, kind)) return
 
         assert(maskValues.isEmpty()) { "Additional default call arguments should be last ones, but " + value }
@@ -762,7 +756,9 @@ class PsiInlineCodegen(
     }
 
     override fun putCapturedValueOnStack(stackValue: StackValue, valueType: Type, paramIndex: Int) {
-        putArgumentOrCapturedToLocalVal(stackValue.type, stackValue, paramIndex, paramIndex, ValueKind.CAPTURED)
+        putArgumentOrCapturedToLocalVal(
+            JvmKotlinType(stackValue.type, stackValue.kotlinType), stackValue, paramIndex, paramIndex, ValueKind.CAPTURED
+        )
     }
 
     override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) = Unit

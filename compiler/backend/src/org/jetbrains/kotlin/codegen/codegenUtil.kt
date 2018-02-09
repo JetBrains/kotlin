@@ -270,7 +270,7 @@ private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) 
 
 fun Collection<VariableDescriptor>.filterOutDescriptorsWithSpecialNames() = filterNot { it.name.isSpecial }
 
-class JvmKotlinType(val type: Type, val kotlinType: KotlinType?)
+class JvmKotlinType(val type: Type, val kotlinType: KotlinType? = null)
 
 fun KotlinType.asmType(typeMapper: KotlinTypeMapper) = typeMapper.mapType(this)
 
