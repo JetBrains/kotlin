@@ -41,7 +41,7 @@ in few minutes after upload.
 
  Upload Gradle plugin to BinTray
 
-    BINTRAY_USER=... BINTRAY_KEY=... ./gradlew :uploadGradlePlugin
+    BINTRAY_USER=... BINTRAY_KEY=... ./gradlew :gradlePluginUpload
 
 ### Blog post ###
  
