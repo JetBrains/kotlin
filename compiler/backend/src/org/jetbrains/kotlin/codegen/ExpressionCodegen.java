@@ -3239,7 +3239,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     rightType = right754Type.type;
                 }
             }
-            else if (shouldUseProperNumberComparisons()) {
+            else if (shouldUseProperIeee754Comparisons()) {
                 Type comparisonType = comparisonOperandType(left754Type.type, right754Type.type);
                 if (comparisonType == Type.FLOAT_TYPE || comparisonType == Type.DOUBLE_TYPE) {
                     return Ieee754Equality.create(
@@ -3453,14 +3453,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         TypeAndNullability right754Type = calcTypeForIeee754ArithmeticIfNeeded(right, getRightOperandType(primitiveNumericComparisonInfo));
         Callable callable = resolveToCallable((FunctionDescriptor) resolvedCall.getResultingDescriptor(), false, resolvedCall);
         boolean isSame754ArithmeticTypes = left754Type != null && right754Type != null && left754Type.type.equals(right754Type.type);
-        boolean properNumberComparisons = shouldUseProperNumberComparisons();
+        boolean properIeee754Comparisons = shouldUseProperIeee754Comparisons();
 
-        if (properNumberComparisons && left754Type != null && right754Type != null) {
+        if (properIeee754Comparisons && left754Type != null && right754Type != null) {
             type = comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
         }
-        else if (!properNumberComparisons &&
+        else if (!properIeee754Comparisons &&
                  callable instanceof IntrinsicCallable && ((isPrimitive(leftType) && isPrimitive(rightType)) || isSame754ArithmeticTypes)) {
             type = isSame754ArithmeticTypes ? left754Type.type : comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
@@ -3482,7 +3482,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (expression == null) {
             return null;
         }
-        else if (shouldUseProperNumberComparisons()) {
+        else if (shouldUseProperIeee754Comparisons()) {
             return Ieee754Kt.calcProperTypeForIeee754ArithmeticIfNeeded(expression, bindingContext, inferredPrimitiveType, typeMapper);
         }
         else {
@@ -3491,8 +3491,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
-    private boolean shouldUseProperNumberComparisons() {
-        return state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ProperNumberComparisons);
+    private boolean shouldUseProperIeee754Comparisons() {
+        return state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ProperIeee754Comparisons);
     }
 
     private StackValue generateAssignmentExpression(KtBinaryExpression expression) {

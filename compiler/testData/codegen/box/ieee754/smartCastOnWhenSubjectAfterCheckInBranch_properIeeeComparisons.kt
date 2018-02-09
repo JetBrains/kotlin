@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.3
+// !LANGUAGE: +ProperIeee754Comparisons
 
 fun testF(x: Any) =
     when (x) {
@@ -15,10 +15,10 @@ fun testD(x: Any) =
     }
 
 fun box(): String {
-    val tf = testF(0.0F)
+    val tf = testF(-0.0F)
     if (tf != "0.0") return "Fail 1: $tf"
 
-    val td = testD(0.0)
+    val td = testD(-0.0)
     if (td != "0.0") return "Fail 2: $td"
 
     return "OK"

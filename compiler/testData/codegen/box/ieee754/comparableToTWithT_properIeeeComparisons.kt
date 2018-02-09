@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.3
+// !LANGUAGE: +ProperIeee754Comparisons
 
 fun less(x: Comparable<Float>, y: Float) = x is Float && x < y
 fun less(x: Comparable<Double>, y: Double) = x is Double && x < y

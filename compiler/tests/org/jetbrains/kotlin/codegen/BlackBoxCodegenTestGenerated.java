@@ -9993,9 +9993,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("comparableToTWithTLV13.kt")
-        public void testComparableToTWithTLV13() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/comparableToTWithTLV13.kt");
+        @TestMetadata("asComparableToDouble.kt")
+        public void testAsComparableToDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/asComparableToDouble.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("asComparableToDouble_properIeeeComparisons.kt")
+        public void testAsComparableToDouble_properIeeeComparisons() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/asComparableToDouble_properIeeeComparisons.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("comparableToTWithT_properIeeeComparisons.kt")
+        public void testComparableToTWithT_properIeeeComparisons() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/comparableToTWithT_properIeeeComparisons.kt");
             doTest(fileName);
         }
 
@@ -10161,9 +10173,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("smartCastOnWhenSubjectAfterCheckInBranchLV13.kt")
-        public void testSmartCastOnWhenSubjectAfterCheckInBranchLV13() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastOnWhenSubjectAfterCheckInBranchLV13.kt");
+        @TestMetadata("smartCastOnWhenSubjectAfterCheckInBranch_properIeeeComparisons.kt")
+        public void testSmartCastOnWhenSubjectAfterCheckInBranch_properIeeeComparisons() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastOnWhenSubjectAfterCheckInBranch_properIeeeComparisons.kt");
             doTest(fileName);
         }
 
@@ -10173,15 +10185,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("smartCastToDifferentTypesLV13.kt")
-        public void testSmartCastToDifferentTypesLV13() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesLV13.kt");
+        @TestMetadata("smartCastToDifferentTypesWithNumericPromotion.kt")
+        public void testSmartCastToDifferentTypesWithNumericPromotion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesWithNumericPromotion.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("smartCastToDifferentTypesWithNumericPromotionLV13.kt")
-        public void testSmartCastToDifferentTypesWithNumericPromotionLV13() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesWithNumericPromotionLV13.kt");
+        @TestMetadata("smartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons.kt")
+        public void testSmartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastToDifferentTypes_properIeeeComparisons.kt")
+        public void testSmartCastToDifferentTypes_properIeeeComparisons() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypes_properIeeeComparisons.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastToDoubleAndComparableToDouble.kt")
+        public void testSmartCastToDoubleAndComparableToDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDoubleAndComparableToDouble.kt");
             doTest(fileName);
         }
 

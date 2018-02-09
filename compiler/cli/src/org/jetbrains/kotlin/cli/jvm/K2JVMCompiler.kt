@@ -235,6 +235,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             extraLanguageFeatures[LanguageFeature.StrictJavaNullabilityAssertions] = LanguageFeature.State.ENABLED
         }
 
+        if (commandLineArguments.properIeee754Comparisons) {
+            extraLanguageFeatures[LanguageFeature.ProperIeee754Comparisons] = LanguageFeature.State.ENABLED
+        }
+
         super.setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, commandLineArguments)
     }
 

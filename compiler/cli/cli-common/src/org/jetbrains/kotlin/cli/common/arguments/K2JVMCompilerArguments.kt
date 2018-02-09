@@ -224,6 +224,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
 
+    @Argument(
+        value = "-Xproper-ieee754-comparisons",
+        description = "Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types"
+    )
+    var properIeee754Comparisons by FreezableVar(false)
+
     // Paths to output directories for friend modules.
     var friendPaths: Array<String>? by FreezableVar(null)
 

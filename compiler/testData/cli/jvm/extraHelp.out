@@ -28,6 +28,7 @@ where advanced options include:
   -Xno-optimize              Disable optimizations
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
+  -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xreport-perf              Report detailed performance statistics
   -Xscript-resolver-environment=<key=value[,]>
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)

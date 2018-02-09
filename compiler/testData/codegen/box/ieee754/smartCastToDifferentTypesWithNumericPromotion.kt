@@ -1,4 +1,3 @@
-// LANGUAGE_VERSION: 1.3
 // IGNORE_BACKEND: JS
 
 fun eqDI(x: Any?, y: Any?) = x is Double?   && y is Int?        && x == y
@@ -44,14 +43,14 @@ fun test0Null() {
 }
 
 fun testPlusMinus0() {
-    if (!eqDI(-0.0, 0)) throw Exception()
-    if (!eqDL(-0.0, 0L)) throw Exception()
-    if (!eqID(0, -0.0)) throw Exception()
-    if (!eqLD(0L, -0.0)) throw Exception()
-    if (!eqFI(-0.0F, 0)) throw Exception()
-    if (!eqFL(-0.0F, 0L)) throw Exception()
-    if (!eqIF(0, -0.0F)) throw Exception()
-    if (!eqLF(0L, -0.0F)) throw Exception()
+    if (eqDI(-0.0, 0)) throw Exception()
+    if (eqDL(-0.0, 0L)) throw Exception()
+    if (eqID(0, -0.0)) throw Exception()
+    if (eqLD(0L, -0.0)) throw Exception()
+    if (eqFI(-0.0F, 0)) throw Exception()
+    if (eqFL(-0.0F, 0L)) throw Exception()
+    if (eqIF(0, -0.0F)) throw Exception()
+    if (eqLF(0L, -0.0F)) throw Exception()
 }
 
 fun test01() {

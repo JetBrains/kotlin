@@ -66,9 +66,9 @@ enum class LanguageFeature(
     NestedClassesInAnnotations(KOTLIN_1_3),
     JvmStaticInInterface(KOTLIN_1_3),
     InlineClasses(KOTLIN_1_3),
-    ProperNumberComparisons(KOTLIN_1_3),
 
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
+    ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED),
 
     ReadDeserializedContracts(KOTLIN_1_3),
     UseReturnsEffect(KOTLIN_1_3),
