@@ -87,7 +87,7 @@ dependencies {
     testCompile(intellijPluginDep("java-i18n"))
     testCompileOnly(intellijDep()) { includeJars("groovy-all", "velocity", "gson", "idea_rt", "util", "log4j", rootProject = rootProject) }
     testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
-    testCompileOnly(intellijPluginDep("gradle")) { includeJars("gradle-base-services", "gradle-tooling-extension-impl", "gradle-wrapper", rootProject = rootProject) }
+    testCompileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-extension-impl", "gradle-wrapper", rootProject = rootProject) }
     testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
     //testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
 
