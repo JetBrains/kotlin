@@ -14,7 +14,7 @@ dependencies {
     compile(project(":idea:idea-gradle"))
     compile(project(":idea:idea-maven"))
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") } }
-    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api", "gradle", rootProject = rootProject) }
+    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-api", "gradle", rootProject = rootProject) }
     compileOnly(intellijDep()) { includeJars("openapi", "idea", "extensions", "jdom", "util") }
  }
 
