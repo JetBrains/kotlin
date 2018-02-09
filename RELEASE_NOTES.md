@@ -36,10 +36,9 @@ the following platforms:
 
  ## Compatibility and features ##
 
-To run _Kotlin/Native_ JDK8 for the host platform has to be installed.
-Note that Java 9 not yet supported.
+To run _Kotlin/Native_ JDK 8 or Java 9 (JDK) for the host platform has to be installed.
 
-On macOS it also requires Xcode 9.2 or newer.
+On macOS it also requires Xcode 9.2 or newer to be installed.
 
 The language and library version supported by this EAP release mostly match Kotlin 1.2.
 However, there are certain limitations, see section [Known Limitations](#limitations).
@@ -79,6 +78,8 @@ for benchmarking and competitive analysis of any kind.
 missing functionality. Note, that standard Java APIs, such as `java.lang.Math` or `java.io`
 is not available in current _Kotlin_ standard library, but using C interoperability, one could
 call similar APIs from the POSIX library, see this [`sample`](https://github.com/JetBrains/kotlin-native/blob/master/samples/csvparser).
+  Also Kotlin/Native standard library contains certain native-specific extensions, mostly around
+memory management and concurrency.
 
 ### Reflection ###
 

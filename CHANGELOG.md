@@ -1,3 +1,17 @@
+## v0.6 (Feb 2018)
+  * Support multiplatform projects (expect/actual) in compiler and Gradle plugin
+  * Support first embedded target (STM32 board)
+  * Support Kotlin 1.2.20
+  * Support Java 9
+  * Support Gradle 4.5
+  * Support kotlin.math on WebAssembly target
+  * Transparent Objective-C/Kotlin container classes interoperability
+  * Produce optimized WebAssembly binaries (10x smaller than it used to be)
+  * Improved APIs for object transfer between threads and workers
+  * Allow exporting top level C function in reverse interop with @CName annotation
+  * Supported debugging of code with inline functions
+  * Multiple bugfixes and performance optimizations
+
 ## v0.5 (Dec 2017)
   * Reverse interop allowing to call Kotlin/Native code compiled as framework from Objective-C/Swift programs
   * Reverse interop allowing to call Kotlin/Native code compiled as shared object from C/C++ programs
