@@ -1058,6 +1058,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeParameterWithPrimitiveNumericSupertype.kt")
+            public void testTypeParameterWithPrimitiveNumericSupertype() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/typeParameterWithPrimitiveNumericSupertype.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("whenByFloatingPoint.kt")
             public void testWhenByFloatingPoint() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/whenByFloatingPoint.kt");
