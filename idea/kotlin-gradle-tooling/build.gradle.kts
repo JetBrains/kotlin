@@ -9,11 +9,9 @@ dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":compiler:cli-common"))
     compile(intellijPluginDep("gradle")) {
-        includeJars("gradle-tooling-api",
+        includeJars("gradle-api",
                     "gradle-tooling-extension-api",
                     "gradle",
-                    "gradle-core",
-                    "gradle-base-services-groovy",
                     rootProject = rootProject)
     }
 }
