@@ -114,13 +114,12 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         nestedClassNameList.forEach { append(nestedClassAsString(it)) }
     }
 
-    // TODO: val/var parameters are printed twice
     // TODO: Support nested/inner and sealed classes
     private fun ProtoBuf.Class.asString(classes: KonanLinkData.Classes): String {
         if (isEnumEntry) return "" // TODO: Make better
         if (hasTypeTable()) TypeTables.push(typeTable)
         val result = buildString {
-            val className   = getName(fqName)
+            val className   = if (!isCompanionObject) getName(fqName) else ""
             val classKind   = Flags.CLASS_KIND.get(flags).asString()
             val modality    = Flags.MODALITY  .get(flags).asString()
             val visibility  = Flags.VISIBILITY.get(flags).asString()
@@ -131,7 +130,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val supertypes = supertypesToString(supertypes(TypeTables.peek()))
             val annotations = annotationsToString(getExtension(KonanSerializerProtocol.classAnnotation), "\n")
 
-            val primaryConstructor = if (!isObject) {
+            val primaryConstructor = if (!isObject && !isCompanionObject) {
                 primaryConstructor()?.asString(isEnumClass, true) ?: ""
             } else {
                 ""
@@ -410,9 +409,11 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     //-------------------------------------------------------------------------//
 
     private val ProtoBuf.Class.isObject: Boolean
-        get() = Flags.CLASS_KIND.get(flags).let {
-            it == ProtoBuf.Class.Kind.OBJECT || it == ProtoBuf.Class.Kind.COMPANION_OBJECT
-        }
+        get() = Flags.CLASS_KIND.get(flags) == ProtoBuf.Class.Kind.OBJECT
+
+    private val ProtoBuf.Class.isCompanionObject: Boolean
+        get() = Flags.CLASS_KIND.get(flags) == ProtoBuf.Class.Kind.COMPANION_OBJECT
+
 
     private fun ProtoBuf.Class.Kind.asString() =
         when (this) {
