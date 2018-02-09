@@ -62,10 +62,10 @@ import java.util.concurrent.TimeUnit
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun doExecute(
-            arguments: K2JVMCompilerArguments,
-            configuration: CompilerConfiguration,
-            rootDisposable: Disposable,
-            paths: KotlinPaths?
+        arguments: K2JVMCompilerArguments,
+        configuration: CompilerConfiguration,
+        rootDisposable: Disposable,
+        paths: KotlinPaths?
     ): ExitCode {
         PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf)
 
@@ -83,8 +83,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val file = File(arg)
                 if (file.extension == JavaFileType.DEFAULT_EXTENSION) {
                     configuration.addJavaSourceRoot(file)
-                }
-                else {
+                } else {
                     configuration.addKotlinSourceRoot(arg)
                     if (file.isDirectory) {
                         configuration.addJavaSourceRoot(file)
@@ -120,10 +119,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val jvmTarget = JvmTarget.fromString(arguments.jvmTarget!!)
             if (jvmTarget != null) {
                 configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
-            }
-            else {
-                messageCollector.report(ERROR, "Unknown JVM target version: ${arguments.jvmTarget}\n" +
-                                               "Supported versions: ${JvmTarget.values().joinToString { it.description }}")
+            } else {
+                messageCollector.report(
+                    ERROR, "Unknown JVM target version: ${arguments.jvmTarget}\n" +
+                            "Supported versions: ${JvmTarget.values().joinToString { it.description }}"
+                )
             }
         }
 
@@ -138,8 +138,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             if (arguments.buildFile != null) {
                 if (destination != null) {
                     messageCollector.report(
-                            STRONG_WARNING,
-                            "The '-d' option with a directory destination is ignored because '-Xbuild-file' is specified"
+                        STRONG_WARNING,
+                        "The '-d' option with a directory destination is ignored because '-Xbuild-file' is specified"
                     )
                 }
 
@@ -152,48 +152,45 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, moduleChunk.modules, buildFile)
 
                 val environment = createCoreEnvironment(rootDisposable, configuration, arguments, messageCollector)
-                                  ?: return COMPILATION_ERROR
+                        ?: return COMPILATION_ERROR
 
                 registerJavacIfNeeded(environment, arguments).let {
                     if (!it) return COMPILATION_ERROR
                 }
 
                 KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, moduleChunk.modules)
-            }
-            else if (arguments.script) {
+            } else if (arguments.script) {
                 val sourcePath = arguments.freeArgs.first()
                 configuration.addKotlinSourceRoot(sourcePath)
 
                 configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
                 val environment = createCoreEnvironment(rootDisposable, configuration, arguments, messageCollector)
-                                  ?: return COMPILATION_ERROR
+                        ?: return COMPILATION_ERROR
 
                 val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(environment.project)
                 val scriptFile = File(sourcePath)
                 if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)) {
                     val extensionHint =
-                            if (configuration.get(JVMConfigurationKeys.SCRIPT_DEFINITIONS) == listOf(StandardScriptDefinition)) " (.kts)"
-                            else ""
+                        if (configuration.get(JVMConfigurationKeys.SCRIPT_DEFINITIONS) == listOf(StandardScriptDefinition)) " (.kts)"
+                        else ""
                     messageCollector.report(ERROR, "Specify path to the script file$extensionHint as the first argument")
                     return COMPILATION_ERROR
                 }
 
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
                 return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, scriptArgs)
-            }
-            else {
+            } else {
                 if (destination != null) {
                     if (destination.endsWith(".jar")) {
                         configuration.put(JVMConfigurationKeys.OUTPUT_JAR, File(destination))
-                    }
-                    else {
+                    } else {
                         configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(destination))
                     }
                 }
 
                 val environment = createCoreEnvironment(rootDisposable, configuration, arguments, messageCollector)
-                                  ?: return COMPILATION_ERROR
+                        ?: return COMPILATION_ERROR
 
                 registerJavacIfNeeded(environment, arguments).let {
                     if (!it) return COMPILATION_ERROR
@@ -220,20 +217,19 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 PerformanceCounter.report { s -> reportPerf(configuration, s) }
             }
             return OK
-        }
-        catch (e: CompilationException) {
+        } catch (e: CompilationException) {
             messageCollector.report(
-                    EXCEPTION,
-                    OutputMessageUtil.renderException(e),
-                    MessageUtil.psiElementToMessageLocation(e.element)
+                EXCEPTION,
+                OutputMessageUtil.renderException(e),
+                MessageUtil.psiElementToMessageLocation(e.element)
             )
             return INTERNAL_ERROR
         }
     }
 
     override fun setupPlatformSpecificLanguageFeatureSettings(
-            extraLanguageFeatures: MutableMap<LanguageFeature, LanguageFeature.State>,
-            commandLineArguments: K2JVMCompilerArguments
+        extraLanguageFeatures: MutableMap<LanguageFeature, LanguageFeature.State>,
+        commandLineArguments: K2JVMCompilerArguments
     ) {
         if (commandLineArguments.strictJavaNullabilityAssertions) {
             extraLanguageFeatures[LanguageFeature.StrictJavaNullabilityAssertions] = LanguageFeature.State.ENABLED
@@ -242,8 +238,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         super.setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, commandLineArguments)
     }
 
-    private fun registerJavacIfNeeded(environment: KotlinCoreEnvironment,
-                                      arguments: K2JVMCompilerArguments): Boolean {
+    private fun registerJavacIfNeeded(
+        environment: KotlinCoreEnvironment,
+        arguments: K2JVMCompilerArguments
+    ): Boolean {
         if (arguments.useJavac) {
             environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
             if (arguments.compileJava) {
@@ -255,8 +253,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         return true
     }
 
-    private fun compileJavaFilesIfNeeded(environment: KotlinCoreEnvironment,
-                                         arguments: K2JVMCompilerArguments): Boolean  {
+    private fun compileJavaFilesIfNeeded(
+        environment: KotlinCoreEnvironment,
+        arguments: K2JVMCompilerArguments
+    ): Boolean {
         if (arguments.compileJava) {
             return JavacWrapper.getInstance(environment.project).use { it.compile() }
         }
@@ -264,10 +264,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     }
 
     private fun createCoreEnvironment(
-            rootDisposable: Disposable,
-            configuration: CompilerConfiguration,
-            arguments: K2JVMCompilerArguments,
-            messageCollector: MessageCollector
+        rootDisposable: Disposable,
+        configuration: CompilerConfiguration,
+        arguments: K2JVMCompilerArguments,
+        messageCollector: MessageCollector
     ): KotlinCoreEnvironment? {
         val scriptResolverEnv = createScriptResolverEnvironment(arguments, messageCollector) ?: return null
         configureScriptDefinitions(arguments.scriptTemplates, configuration, messageCollector, scriptResolverEnv)
@@ -290,7 +290,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     }
 
     override fun setupPlatformSpecificArgumentsAndServices(
-            configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
+        configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
     ) {
         if (IncrementalCompilation.isEnabled()) {
             services.get(LookupTracker::class.java)?.let {
@@ -335,7 +335,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
-        @JvmStatic fun main(args: Array<String>) {
+        @JvmStatic
+        fun main(args: Array<String>) {
             CLITool.doMain(K2JVMCompiler(), args)
         }
 
@@ -366,17 +367,25 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, arguments.noCallAssertions)
             configuration.put(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS, arguments.noReceiverAssertions)
             configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions)
-            configuration.put(JVMConfigurationKeys.NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL, arguments.noExceptionOnExplicitEqualsForBoxedNull)
+            configuration.put(
+                JVMConfigurationKeys.NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL,
+                arguments.noExceptionOnExplicitEqualsForBoxedNull
+            )
             configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
 
-            val constructorCallNormalizationMode = JVMConstructorCallNormalizationMode.fromStringOrNull(arguments.constructorCallNormalizationMode)
+            val constructorCallNormalizationMode =
+                JVMConstructorCallNormalizationMode.fromStringOrNull(arguments.constructorCallNormalizationMode)
             if (constructorCallNormalizationMode == null) {
-                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                        .report(ERROR, "Unknown constructor call normalization mode: ${arguments.constructorCallNormalizationMode}, " +
-                                       "supported modes: ${JVMConstructorCallNormalizationMode.values().map { it.description }}")
+                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                    ERROR,
+                    "Unknown constructor call normalization mode: ${arguments.constructorCallNormalizationMode}, " +
+                            "supported modes: ${JVMConstructorCallNormalizationMode.values().map { it.description }}"
+                )
             }
-            configuration.put(JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
-                              constructorCallNormalizationMode ?: JVMConstructorCallNormalizationMode.DEFAULT)
+            configuration.put(
+                JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
+                constructorCallNormalizationMode ?: JVMConstructorCallNormalizationMode.DEFAULT
+            )
 
             configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts)
             configuration.put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
@@ -384,7 +393,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             if (arguments.useOldClassFilesReading) {
                 configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                             .report(INFO, "Using the old java class files reading implementation")
+                    .report(INFO, "Using the old java class files reading implementation")
             }
 
             configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
@@ -412,8 +421,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 if (isModularJava) {
                     configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
                     configuration.add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, moduleName)
-                }
-                else {
+                } else {
                     configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
                 }
             }
@@ -429,7 +437,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
-        private fun configureJdkHome(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration, messageCollector: MessageCollector): ExitCode {
+        private fun configureJdkHome(
+            arguments: K2JVMCompilerArguments,
+            configuration: CompilerConfiguration,
+            messageCollector: MessageCollector
+        ): ExitCode {
             if (arguments.noJdk) {
                 configuration.put(JVMConfigurationKeys.NO_JDK, true)
 
@@ -454,14 +466,17 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             return OK
         }
 
-        fun configureScriptDefinitions(scriptTemplates: Array<String>?,
-                                       configuration: CompilerConfiguration,
-                                       messageCollector: MessageCollector,
-                                       scriptResolverEnv: HashMap<String, Any?>) {
+        fun configureScriptDefinitions(
+            scriptTemplates: Array<String>?,
+            configuration: CompilerConfiguration,
+            messageCollector: MessageCollector,
+            scriptResolverEnv: HashMap<String, Any?>
+        ) {
             val classpath = configuration.jvmClasspathRoots
             // TODO: consider using escaping to allow kotlin escaped names in class names
             if (scriptTemplates != null && scriptTemplates.isNotEmpty()) {
-                val classloader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), Thread.currentThread().contextClassLoader)
+                val classloader =
+                    URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), Thread.currentThread().contextClassLoader)
                 var hasErrors = false
                 for (template in scriptTemplates) {
                     try {
@@ -469,16 +484,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                         val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, scriptResolverEnv)
                         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
                         messageCollector.report(
-                                INFO,
-                                "Added script definition $template to configuration: files pattern = \"${def.scriptFilePattern}\", " +
-                                "resolver = ${def.dependencyResolver.javaClass.name}"
+                            INFO,
+                            "Added script definition $template to configuration: files pattern = \"${def.scriptFilePattern}\", " +
+                                    "resolver = ${def.dependencyResolver.javaClass.name}"
                         )
-                    }
-                    catch (ex: ClassNotFoundException) {
+                    } catch (ex: ClassNotFoundException) {
                         messageCollector.report(ERROR, "Cannot find script definition template class $template")
                         hasErrors = true
-                    }
-                    catch (ex: Exception) {
+                    } catch (ex: Exception) {
                         messageCollector.report(ERROR, "Error processing script definition template $template: ${ex.message}")
                         hasErrors = true
                         break
@@ -507,7 +520,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                         messageCollector.report(ERROR, "Unable to parse script-resolver-environment argument $envParam")
                         return null
                     }
-                    scriptResolverEnv.put(match.groupValues[1], match.groupValues.drop(2).firstOrNull { it.isNotEmpty() }?.let { unescapeRe.replace(it, "\$1") })
+                    scriptResolverEnv.put(
+                        match.groupValues[1],
+                        match.groupValues.drop(2).firstOrNull { it.isNotEmpty() }?.let { unescapeRe.replace(it, "\$1") })
                 }
             }
             return scriptResolverEnv

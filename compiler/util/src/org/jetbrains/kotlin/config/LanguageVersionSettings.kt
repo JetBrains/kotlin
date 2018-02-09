@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.utils.DescriptionAware
 import java.util.*
 
 enum class LanguageFeature(
-        val sinceVersion: LanguageVersion?,
-        val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
-        val hintUrl: String? = null,
-        val defaultState: State = State.ENABLED
+    val sinceVersion: LanguageVersion?,
+    val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
+    val hintUrl: String? = null,
+    val defaultState: State = State.ENABLED
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
     TypeAliases(KOTLIN_1_1),
@@ -77,7 +77,11 @@ enum class LanguageFeature(
 
     // Experimental features
 
-    Coroutines(KOTLIN_1_1, ApiVersion.KOTLIN_1_1, "https://kotlinlang.org/docs/diagnostics/experimental-coroutines", State.ENABLED_WITH_WARNING),
+    Coroutines(
+        KOTLIN_1_1, ApiVersion.KOTLIN_1_1,
+        "https://kotlinlang.org/docs/diagnostics/experimental-coroutines",
+        State.ENABLED_WITH_WARNING
+    ),
 
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
 
@@ -86,7 +90,7 @@ enum class LanguageFeature(
     ;
 
     val presentableName: String
-        // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
+    // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
         get() = name.split("(?<!^)(?=[A-Z])".toRegex()).joinToString(separator = " ", transform = String::toLowerCase)
 
     val presentableText get() = if (hintUrl == null) presentableName else "$presentableName (See: $hintUrl)"
@@ -126,7 +130,8 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
         fun fromVersionString(str: String?) = values().find { it.versionString == str }
 
         @JvmStatic
-        fun fromFullVersionString(str: String) = str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
+        fun fromFullVersionString(str: String) =
+            str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         @JvmField
         val LATEST_STABLE = KOTLIN_1_2
@@ -137,7 +142,7 @@ interface LanguageVersionSettings {
     fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State
 
     fun supportsFeature(feature: LanguageFeature): Boolean =
-            getFeatureSupport(feature).let { it == LanguageFeature.State.ENABLED || it == LanguageFeature.State.ENABLED_WITH_WARNING }
+        getFeatureSupport(feature).let { it == LanguageFeature.State.ENABLED || it == LanguageFeature.State.ENABLED_WITH_WARNING }
 
     fun <T> getFlag(flag: AnalysisFlag<T>): T
 
@@ -148,10 +153,10 @@ interface LanguageVersionSettings {
 }
 
 class LanguageVersionSettingsImpl @JvmOverloads constructor(
-        override val languageVersion: LanguageVersion,
-        override val apiVersion: ApiVersion,
-        analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
-        specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
+    override val languageVersion: LanguageVersion,
+    override val apiVersion: ApiVersion,
+    analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
+    specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
 ) : LanguageVersionSettings {
     private val analysisFlags: Map<AnalysisFlag<*>, *> = Collections.unmodifiableMap(analysisFlags)
     private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = Collections.unmodifiableMap(specificFeatures)
@@ -189,7 +194,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
 }
 
 fun LanguageVersionSettings.isPreRelease(): Boolean =
-        languageVersion.isPreRelease()
+    languageVersion.isPreRelease()
 
 fun LanguageVersion.isPreRelease(): Boolean {
     if (!isStable) return true

@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.config.JvmTarget
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
-        @JvmStatic private val serialVersionUID = 0L
+        @JvmStatic
+        private val serialVersionUID = 0L
     }
 
     @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated class files")
@@ -38,9 +39,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @GradleOption(DefaultValues.StringNullDefault::class)
     @Argument(
-            value = "-jdk-home",
-            valueDescription = "<path>",
-            description = "Path to JDK home directory to include into classpath, if differs from default JAVA_HOME"
+        value = "-jdk-home",
+        valueDescription = "<path>",
+        description = "Path to JDK home directory to include into classpath, if differs from default JAVA_HOME"
     )
     var jdkHome: String? by FreezableVar(null)
 
@@ -60,9 +61,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var script: Boolean by FreezableVar(false)
 
     @Argument(
-            value = "-script-templates",
-            valueDescription = "<fully qualified class name[,]>",
-            description = "Script definition template classes"
+        value = "-script-templates",
+        valueDescription = "<fully qualified class name[,]>",
+        description = "Script definition template classes"
     )
     var scriptTemplates: Array<String>? by FreezableVar(null)
 
@@ -71,9 +72,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @GradleOption(DefaultValues.JvmTargetVersions::class)
     @Argument(
-            value = "-jvm-target",
-            valueDescription = "<version>",
-            description = "Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6"
+        value = "-jvm-target",
+        valueDescription = "<version>",
+        description = "Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6"
     )
     var jvmTarget: String? by FreezableVar(JvmTarget.DEFAULT.description)
 
@@ -87,20 +88,26 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var javaModulePath: String? by FreezableVar(null)
 
     @Argument(
-            value = "-Xadd-modules",
-            valueDescription = "<module[,]>",
-            description = "Root modules to resolve in addition to the initial modules,\n" +
-                          "or all modules on the module path if <module> is ALL-MODULE-PATH"
+        value = "-Xadd-modules",
+        valueDescription = "<module[,]>",
+        description = "Root modules to resolve in addition to the initial modules,\n" +
+                "or all modules on the module path if <module> is ALL-MODULE-PATH"
     )
     var additionalJavaModules: Array<String>? by FreezableVar(null)
 
     @Argument(value = "-Xno-call-assertions", description = "Don't generate not-null assertions for arguments of platform types")
     var noCallAssertions: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xno-receiver-assertions", description = "Don't generate not-null assertion for extension receiver arguments of platform types")
+    @Argument(
+        value = "-Xno-receiver-assertions",
+        description = "Don't generate not-null assertion for extension receiver arguments of platform types"
+    )
     var noReceiverAssertions: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xno-param-assertions", description = "Don't generate not-null assertions on parameters of methods accessible from Java")
+    @Argument(
+        value = "-Xno-param-assertions",
+        description = "Don't generate not-null assertions on parameters of methods accessible from Java"
+    )
     var noParamAssertions: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xstrict-java-nullability-assertions", description = "Generate nullability assertions for non-null Java expressions")
@@ -110,51 +117,65 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var noOptimize: Boolean by FreezableVar(false)
 
     @Argument(
-            value = "-Xnormalize-constructor-calls",
-            valueDescription = "{disable|enable}",
-            description = "Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable"
+        value = "-Xnormalize-constructor-calls",
+        valueDescription = "{disable|enable}",
+        description = "Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable"
     )
     var constructorCallNormalizationMode: String? by FreezableVar(JVMConstructorCallNormalizationMode.DEFAULT.description)
 
     @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
     var reportPerf: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xbuild-file", deprecatedName = "-module", valueDescription = "<path>", description = "Path to the .xml build file to compile")
+    @Argument(
+        value = "-Xbuild-file",
+        deprecatedName = "-module",
+        valueDescription = "<path>",
+        description = "Path to the .xml build file to compile"
+    )
     var buildFile: String? by FreezableVar(null)
 
     @Argument(value = "-Xmultifile-parts-inherit", description = "Compile multifile classes as a hierarchy of parts and facade")
     var inheritMultifileParts: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xskip-runtime-version-check", description = "Allow Kotlin runtime libraries of incompatible versions in the classpath")
+    @Argument(
+        value = "-Xskip-runtime-version-check",
+        description = "Allow Kotlin runtime libraries of incompatible versions in the classpath"
+    )
     var skipRuntimeVersionCheck: Boolean by FreezableVar(false)
 
     @Argument(
-            value = "-Xuse-old-class-files-reading",
-            description = "Use old class files reading implementation " +
-                          "(may slow down the build and should be used in case of problems with the new implementation)"
+        value = "-Xuse-old-class-files-reading",
+        description = "Use old class files reading implementation " +
+                "(may slow down the build and should be used in case of problems with the new implementation)"
     )
     var useOldClassFilesReading: Boolean by FreezableVar(false)
 
     @Argument(
-            value = "-Xdump-declarations-to",
-            valueDescription = "<path>",
-            description = "Path to JSON file to dump Java to Kotlin declaration mappings"
+        value = "-Xdump-declarations-to",
+        valueDescription = "<path>",
+        description = "Path to JSON file to dump Java to Kotlin declaration mappings"
     )
     var declarationsOutputPath: String? by FreezableVar(null)
 
     @Argument(value = "-Xsingle-module", description = "Combine modules for source files and binary dependencies into a single module")
     var singleModule: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xadd-compiler-builtins", description = "Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)")
+    @Argument(
+        value = "-Xadd-compiler-builtins",
+        description = "Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)"
+    )
     var addCompilerBuiltIns: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xload-builtins-from-dependencies", description = "Load definitions of built-in declarations from module dependencies, instead of from the compiler")
+    @Argument(
+        value = "-Xload-builtins-from-dependencies",
+        description = "Load definitions of built-in declarations from module dependencies, instead of from the compiler"
+    )
     var loadBuiltInsFromDependencies: Boolean by FreezableVar(false)
 
     @Argument(
-            value = "-Xscript-resolver-environment",
-            valueDescription = "<key=value[,]>",
-            description = "Script resolver environment in key-value pairs (the value could be quoted and escaped)"
+        value = "-Xscript-resolver-environment",
+        valueDescription = "<key=value[,]>",
+        description = "Script resolver environment in key-value pairs (the value could be quoted and escaped)"
     )
     var scriptResolverEnvironment: Array<String>? by FreezableVar(null)
 
@@ -166,25 +187,26 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var compileJava by FreezableVar(false)
 
     @Argument(
-            value = "-Xjavac-arguments",
-            valueDescription = "<option[,]>",
-            description = "Java compiler arguments")
+        value = "-Xjavac-arguments",
+        valueDescription = "<option[,]>",
+        description = "Java compiler arguments"
+    )
     var javacArguments: Array<String>? by FreezableVar(null)
 
     @Argument(
-            value = "-Xjsr305",
-            deprecatedName = "-Xjsr305-annotations",
-            valueDescription = "{ignore/strict/warn}" +
-                               "|under-migration:{ignore/strict/warn}" +
-                               "|@<fq.name>:{ignore/strict/warn}",
-            description = "Specify behavior for JSR-305 nullability annotations:\n" +
-                          "-Xjsr305={ignore/strict/warn}                   globally (all non-@UnderMigration annotations)\n" +
-                          "-Xjsr305=under-migration:{ignore/strict/warn}   all @UnderMigration annotations\n" +
-                          "-Xjsr305=@<fq.name>:{ignore/strict/warn}        annotation with the given fully qualified class name\n" +
-                          "Modes:\n" +
-                          "  * ignore\n" +
-                          "  * strict (experimental; treat as other supported nullability annotations)\n" +
-                          "  * warn (report a warning)"
+        value = "-Xjsr305",
+        deprecatedName = "-Xjsr305-annotations",
+        valueDescription = "{ignore/strict/warn}" +
+                "|under-migration:{ignore/strict/warn}" +
+                "|@<fq.name>:{ignore/strict/warn}",
+        description = "Specify behavior for JSR-305 nullability annotations:\n" +
+                "-Xjsr305={ignore/strict/warn}                   globally (all non-@UnderMigration annotations)\n" +
+                "-Xjsr305=under-migration:{ignore/strict/warn}   all @UnderMigration annotations\n" +
+                "-Xjsr305=@<fq.name>:{ignore/strict/warn}        annotation with the given fully qualified class name\n" +
+                "Modes:\n" +
+                "  * ignore\n" +
+                "  * strict (experimental; treat as other supported nullability annotations)\n" +
+                "  * warn (report a warning)"
     )
     var jsr305: Array<String>? by FreezableVar(null)
 
@@ -197,8 +219,8 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var supportCompatqualCheckerFrameworkAnnotations: String? by FreezableVar(null)
 
     @Argument(
-            value = "-Xno-exception-on-explicit-equals-for-boxed-null",
-            description = "Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type"
+        value = "-Xno-exception-on-explicit-equals-for-boxed-null",
+        description = "Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type"
     )
     var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
 
