@@ -114,8 +114,7 @@ object JvmRuntimeVersionsConsistencyChecker {
                     "Consider using the runtime of version $apiVersion, or pass '-api-version $actualRuntimeVersion' explicitly to " +
                     "restrict the available APIs to the runtime of version $actualRuntimeVersion. " +
                     "You can also pass '-language-version $actualRuntimeVersion' instead, which will restrict " +
-                    "not only the APIs to the specified version, but also the language features. " +
-                    "Alternatively, you can use '-Xskip-runtime-version-check' to suppress this warning"
+                    "not only the APIs to the specified version, but also the language features"
             )
 
             val actualApi = ApiVersion.parse(actualRuntimeVersion.toString())
@@ -145,8 +144,7 @@ object JvmRuntimeVersionsConsistencyChecker {
         else if (consistency != ClasspathConsistency.Consistent) {
             messageCollector.issue(
                     null,
-                    "Some runtime JAR files in the classpath have an incompatible version. " +
-                    "Consider removing them from the classpath or use '-Xskip-runtime-version-check' to suppress this warning"
+                    "Some runtime JAR files in the classpath have an incompatible version. Consider removing them from the classpath"
             )
         }
 
@@ -156,7 +154,7 @@ object JvmRuntimeVersionsConsistencyChecker {
                     null,
                     "Some JAR files in the classpath have the Kotlin Runtime library bundled into them. " +
                     "This may cause difficult to debug problems if there's a different version of the Kotlin Runtime library in the classpath. " +
-                    "Consider removing these libraries from the classpath or use '-Xskip-runtime-version-check' to suppress this warning"
+                    "Consider removing these libraries from the classpath"
             )
 
             for (library in librariesWithBundled) {
