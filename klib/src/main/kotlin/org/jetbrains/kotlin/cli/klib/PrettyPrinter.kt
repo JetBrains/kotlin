@@ -174,7 +174,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         val visibility  = if (!isEnumClass) Flags.VISIBILITY.get(flags).asString() else ""
         // TODO: '\n' was used here as a separator (see annotationsToString code). Return it?
         val annotations = annotationsToString(getExtension(KonanSerializerProtocol.constructorAnnotation))
-        val parameters  = valueParameterList.joinToString(", ", prefix = "(", postfix = ")") { it.asString(true) }
+        val parameters  = valueParameterList.joinToString(", ", prefix = "(", postfix = ")") { it.asString() }
 
         val header = "$visibility$annotations"
         if (isPrimary) {
@@ -262,17 +262,14 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
-    private fun ProtoBuf.ValueParameter.asString(isConstructor: Boolean = false): String {
+    private fun ProtoBuf.ValueParameter.asString(): String {
         val parameterName = stringTable.getString(name)
         val type = TypeTables.type(typeId).asString()
 
-        val isVar = if (isConstructor) Flags.IS_VAR.asString(flags) else ""
         val isCrossInline = Flags.IS_CROSSINLINE.asString(flags)
-        val visibility0 = Flags.VISIBILITY.get(flags).asString()
-        val visibility = if (visibility0 == "internal ") "" else visibility0
         val annotations = annotationsToString(getExtension(KonanSerializerProtocol.parameterAnnotation))
 
-        return "$annotations$isCrossInline$visibility$isVar$parameterName: $type"
+        return "$annotations$isCrossInline$parameterName: $type"
     }
 
     //-------------------------------------------------------------------------//
