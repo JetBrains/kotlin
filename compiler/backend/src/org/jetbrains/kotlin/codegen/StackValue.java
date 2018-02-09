@@ -450,7 +450,7 @@ public abstract class StackValue {
             if (isFromTypeUnboxed && !isToTypeUnboxed) {
                 boxInlineClass(fromKotlinType, v);
             }
-            else if (!isFromTypeUnboxed) {
+            else if (!isFromTypeUnboxed && isToTypeUnboxed) {
                 unboxInlineClass(fromType, fromKotlinType, v);
             }
         }

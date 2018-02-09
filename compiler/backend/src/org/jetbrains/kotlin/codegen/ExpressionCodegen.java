@@ -1510,8 +1510,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 return Unit.INSTANCE;
             }
 
-            Type returnType = isNonLocalReturn ? nonLocalReturn.returnType : this.returnType;
-            KotlinType returnKotlinType = isNonLocalReturn ? null : this.context.getFunctionDescriptor().getReturnType();
+            Type returnType;
+            KotlinType returnKotlinType;
+            if (isNonLocalReturn) {
+                returnType = nonLocalReturn.returnType.getType();
+                returnKotlinType = nonLocalReturn.returnType.getKotlinType();
+            }
+            else {
+                returnType = this.returnType;
+                returnKotlinType = this.context.getFunctionDescriptor().getReturnType();
+            }
             StackValue valueToReturn = returnedExpression != null ? gen(returnedExpression) : StackValue.none();
 
             putStackValue(returnedExpression, returnType, returnKotlinType, valueToReturn);
@@ -1558,7 +1566,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     FunctionDescriptor containingFunction =
                             BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, true).getFirst();
                     //FIRST_FUN_LABEL to prevent clashing with existing labels
-                    return new NonLocalReturnInfo(typeMapper.mapReturnType(containingFunction), FIRST_FUN_LABEL);
+                    return new NonLocalReturnInfo(
+                            new JvmKotlinType(typeMapper.mapReturnType(containingFunction), containingFunction.getReturnType()),
+                            FIRST_FUN_LABEL
+                    );
                 } else {
                     //local
                     return null;
@@ -1570,7 +1581,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 DeclarationDescriptor elementDescriptor = typeMapper.getBindingContext().get(DECLARATION_TO_DESCRIPTOR, element);
                 assert element != null : "Expression should be not null " + expression.getText();
                 assert elementDescriptor != null : "Descriptor should be not null: " + element.getText();
-                return new NonLocalReturnInfo(typeMapper.mapReturnType((CallableDescriptor) elementDescriptor), expression.getLabelName());
+                CallableDescriptor function = (CallableDescriptor) elementDescriptor;
+                return new NonLocalReturnInfo(
+                        new JvmKotlinType(typeMapper.mapReturnType(function), function.getReturnType()),
+                        expression.getLabelName()
+                );
             }
         }
         return null;
@@ -4574,11 +4589,11 @@ The "returned" value of try expression with no finally is either the last expres
 
     private static class NonLocalReturnInfo {
 
-        private final Type returnType;
+        private final JvmKotlinType returnType;
 
         private final String labelName;
 
-        private NonLocalReturnInfo(@NotNull Type type, @NotNull String name) {
+        private NonLocalReturnInfo(@NotNull JvmKotlinType type, @NotNull String name) {
             returnType = type;
             labelName = name;
         }

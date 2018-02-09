@@ -10419,6 +10419,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("checkBoxingForNonLocalAndLabeledReturns.kt")
+        public void testCheckBoxingForNonLocalAndLabeledReturns() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturns.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("checkBoxingFromReturnTypeForInlineClasses.kt")
         public void testCheckBoxingFromReturnTypeForInlineClasses() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClasses.kt");
