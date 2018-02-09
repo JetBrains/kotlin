@@ -49,103 +49,152 @@ class JKClassImpl(override var modifierList: JKModifierList, override var name: 
 }
 
 
-class JKNameIdentifierImpl(override val name: String) : JKNameIdentifier, JKElementBase() {
+class JKNameIdentifierImpl(override var name: String) : JKNameIdentifier, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitNameIdentifier(this, data)
 }
 
-
 class JKModifierListImpl : JKModifierList, JKElementBase() {
-    override val modifiers = mutableListOf<JKModifier>()
+    override var modifiers = listOf<JKModifier>()
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitModifierList(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         modifiers.forEach { it.accept(visitor, data) }
     }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        modifiers = modifiers.map { it.transform<JKModifier, D>(transformer, data) }
+    }
 }
 
-class JKValueArgumentImpl(override val type: JKTypeIdentifier,
+class JKValueArgumentImpl(override var type: JKTypeIdentifier,
                           override val name: String) : JKValueArgument, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitValueArgument(this, data)
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        type = type.transform(transformer, data)
+    }
 }
 
 class JKBlockImpl(override var statements: List<JKStatement>) : JKBlock, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlock(this, data)
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        statements = statements.map { it.transform<JKStatement, D>(transformer, data) }
+    }
 }
 
 class JKStringLiteralExpressionImpl(override val text: String) : JKStringLiteralExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitStringLiteralExpression(this, data)
 }
 
-class JKBinaryExpressionImpl(override val left: JKExpression, override val right: JKExpression?,
-                             override val operator: JKOperatorIdentifier) : JKBinaryExpression, JKElementBase() {
+class JKBinaryExpressionImpl(override var left: JKExpression, override var right: JKExpression?,
+                             override var operator: JKOperatorIdentifier) : JKBinaryExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBinaryExpression(this, data)
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         left.accept(visitor, data)
         operator.accept(visitor, data)
         right?.accept(visitor, data)
     }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        left = left.transform(transformer, data)
+        right = right?.transform(transformer, data)
+        operator = operator.transform(transformer, data)
+    }
 }
 
-class JKPrefixExpressionImpl(override val expression: JKExpression?,
-                             override val operator: JKOperatorIdentifier) : JKPrefixExpression, JKElementBase() {
+class JKPrefixExpressionImpl(override var expression: JKExpression,
+                             override var operator: JKOperatorIdentifier) : JKPrefixExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPrefixExpression(this, data)
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         expression?.accept(visitor, data)
         operator.accept(visitor, data)
     }
-}
 
-class JKPostfixExpressionImpl(override val expression: JKExpression,
-                              override val operator: JKOperatorIdentifier) : JKPostfixExpression, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPostfixExpression(this, data)
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        expression.accept(visitor, data)
-        operator.accept(visitor, data)
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        expression = expression?.transform(transformer, data)
+        operator = operator.transform(transformer, data)
     }
 }
 
-class JKExpressionListImpl(override val expressions: Array<JKExpression>) : JKExpressionList, JKElementBase() {
+class JKPostfixExpressionImpl(override var expression: JKExpression,
+                              override var operator: JKOperatorIdentifier) : JKPostfixExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPostfixExpression(this, data)
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        expression?.accept(visitor, data)
+        operator.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        expression = expression?.transform(transformer, data)
+        operator = operator.transform(transformer, data)
+    }
+}
+
+class JKExpressionListImpl(override var expressions: Array<JKExpression>) : JKExpressionList, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitExpressionList(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         expressions.forEach { it.accept(visitor, data) }
     }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        expressions = expressions.map { it.transform<JKExpression, D>(transformer, data) }.toTypedArray()
+    }
 }
 
-class JKQualifiedExpressionImpl(override val receiver: JKExpression, override val operator: JKQualificationIdentifier,
-                                override val selector: JKStatement) : JKQualifiedExpression, JKElementBase() {
+class JKQualifiedExpressionImpl(override var receiver: JKExpression, override var operator: JKQualificationIdentifier,
+                                override var selector: JKStatement) : JKQualifiedExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitQualifiedExpression(this, data)
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         receiver.accept(visitor, data)
         operator.accept(visitor, data)
         selector.accept(visitor, data)
     }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        receiver = receiver.transform(transformer, data)
+        operator = operator.transform(transformer, data)
+        selector = selector.transform(transformer, data)
+    }
 }
 
-class JKArrayAccessExpressionImpl(override val expression: JKExpression, override val indexExpression: JKExpression?) : JKArrayAccessExpression, JKElementBase() {
+class JKArrayAccessExpressionImpl(override var expression: JKExpression, override var indexExpression: JKExpression?) : JKArrayAccessExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitArrayAccessExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         expression.accept(visitor, data)
         indexExpression?.accept(visitor, data)
     }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        expression = expression.transform(transformer, data)
+        indexExpression = expression.transform(transformer, data)
+    }
 }
 
-class JKParenthesizedExpressionImpl(override val expression: JKExpression?) : JKParenthesizedExpression, JKElementBase() {
+class JKParenthesizedExpressionImpl(override var expression: JKExpression?) : JKParenthesizedExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitParenthesizedExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         expression?.accept(visitor, data)
     }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        expression = expression?.transform(transformer, data)
+    }
 }
 
-class JKTypeCastExpressionImpl(override val expression: JKExpression?, override val type: JKTypeReference?) : JKTypeCastExpression, JKElementBase() {
+class JKTypeCastExpressionImpl(override var expression: JKExpression?, override var type: JKTypeReference?) : JKTypeCastExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeCastExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         expression?.accept(visitor, data)
         type?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        expression = expression?.transform(transformer, data)
+        type = type?.transform(transformer, data)
     }
 }
 

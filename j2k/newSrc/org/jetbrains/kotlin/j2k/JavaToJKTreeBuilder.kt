@@ -241,9 +241,9 @@ class JavaToJKTreeBuilder {
             val modifierList = JKModifierListImpl()
             if (this == null) return modifierList
 
-            PsiModifier.MODIFIERS
+            modifierList.modifiers = PsiModifier.MODIFIERS
                     .filter { hasExplicitModifier(it) }
-                    .mapTo(modifierList.modifiers) { modifierToJK(it) }
+                    .map { modifierToJK(it) }
 
             return modifierList
         }
