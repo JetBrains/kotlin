@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
 class TypeMappingMode private constructor(
         val needPrimitiveBoxing: Boolean = true,
-        val needInlineClassWrapping: Boolean = false,
+        val needInlineClassWrapping: Boolean = true,
         val isForAnnotationParameter: Boolean = false,
         // Here DeclarationSiteWildcards means wildcard generated because of declaration-site variance
         val skipDeclarationSiteWildcards: Boolean = false,
@@ -38,7 +39,7 @@ class TypeMappingMode private constructor(
          * kotlin.Int is mapped to I
          */
         @JvmField
-        val DEFAULT = TypeMappingMode(genericArgumentMode = GENERIC_ARGUMENT, needPrimitiveBoxing = false)
+        val DEFAULT = TypeMappingMode(genericArgumentMode = GENERIC_ARGUMENT, needPrimitiveBoxing = false, needInlineClassWrapping = false)
 
         /**
          * kotlin.Int is mapped to I
@@ -120,7 +121,9 @@ class TypeMappingMode private constructor(
                     skipDeclarationSiteWildcards = !canBeUsedInSupertypePosition,
                     skipDeclarationSiteWildcardsIfPossible = true,
                     genericContravariantArgumentMode = contravariantArgumentMode,
-                    genericInvariantArgumentMode = invariantArgumentMode)
+                    genericInvariantArgumentMode = invariantArgumentMode,
+                    needInlineClassWrapping = !type.isInlineClassType()
+            )
         }
 
         @JvmStatic
@@ -140,4 +143,10 @@ class TypeMappingMode private constructor(
                 Variance.INVARIANT -> genericInvariantArgumentMode ?: this
                 else -> genericArgumentMode ?: this
             }
+
+    fun wrapInlineClassesMode(): TypeMappingMode =
+            TypeMappingMode(
+                needPrimitiveBoxing, true, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
+                genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode
+            )
 }

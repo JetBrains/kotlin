@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
@@ -133,7 +134,8 @@ fun <T : Any> mapType(
             if (descriptor.isInline && !mode.needInlineClassWrapping) {
                 val typeForMapping = computeUnderlyingType(kotlinType)
                 if (typeForMapping != null) {
-                    return mapType(typeForMapping, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
+                    val newMode = if (typeForMapping.isInlineClassType()) mode else mode.wrapInlineClassesMode()
+                    return mapType(typeForMapping, factory, newMode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
                 }
             }
 

@@ -582,6 +582,24 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineClassAsGenericArgument.kt")
+        public void testInlineClassAsGenericArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/inlineClasses/inlineClassAsGenericArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineClassBasedOnOtherInlineClass.kt")
+        public void testInlineClassBasedOnOtherInlineClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/inlineClasses/inlineClassBasedOnOtherInlineClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineClassWithComplexSubstitutedType.kt")
+        public void testInlineClassWithComplexSubstitutedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/inlineClasses/inlineClassWithComplexSubstitutedType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullableInlineClassType.kt")
         public void testNullableInlineClassType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/inlineClasses/nullableInlineClassType.kt");
