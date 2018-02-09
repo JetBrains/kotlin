@@ -161,6 +161,10 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             }
         }
 
+        if (!useModulePerSourceSet()) {
+            super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+        }
+
         addTransitiveDependenciesOnImplementedModules()
 
         ideModule.isResolved = true
@@ -170,7 +174,9 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.platformPluginId = gradleModel.platformPluginId
         addImplementedModuleNames(ideModule, ideProject, gradleModel)
 
-        super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+        if (useModulePerSourceSet()) {
+            super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+        }
     }
 
     private fun addImplementedModuleNames(

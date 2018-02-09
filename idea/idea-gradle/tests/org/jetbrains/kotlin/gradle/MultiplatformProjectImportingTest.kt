@@ -367,29 +367,43 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
         """)
 
-        importProject()
+        val isResolveModulePerSourceSet = getCurrentExternalProjectSettings().isResolveModulePerSourceSet
 
-        assertModuleModuleDepScope("project1_test", "project1_main", DependencyScope.COMPILE)
+        try {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = true
+            importProject()
 
-        assertModuleModuleDepScope("project2_main", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project1_test", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project2_test", "project2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project2_test", "project1_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project2_test", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_main", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project2_custom", "project1_custom", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_test", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_test", "project1_test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_test", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project3_main", "project2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_main", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_custom", "project1_custom", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project3_test", "project3_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project2_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project1_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_main", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_main", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project3_custom", "project1_custom", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_custom", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project3_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project2_test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project1_test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project1_main", DependencyScope.COMPILE)
+
+            assertModuleModuleDepScope("project3_custom", "project1_custom", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_custom", "project2_main", DependencyScope.COMPILE)
+
+            currentExternalProjectSettings.isResolveModulePerSourceSet = false
+            importProject()
+
+            assertModuleModuleDepScope("project2", "project1", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3", "project2", DependencyScope.TEST, DependencyScope.PROVIDED, DependencyScope.RUNTIME)
+            assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+        } finally {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
+        }
     }
 
     @Test
