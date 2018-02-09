@@ -83,40 +83,39 @@ class Strings {
     //Indices is IntRange
     @Sample
     fun slice() {
-        assertPrints("abcdef".slice(IntRange(1,2)),"bc")
-        assertPrints("abcdef".slice(IntRange(0,0)),"a")
+        assertPrints("abcdef".slice(1..2),"bc")
+        assertPrints("abcdef".slice(0..0),"a")
     }
 
     //Without the startIndex
     @Sample
     fun startsWith(){
-        assertPrints("abcd".startsWith("ab",true),"true")
-        assertPrints("abcd".startsWith("Ab",true),"true")
-        assertPrints("Abcd".startsWith("Ab",false),"true")
-        assertPrints("abcd".startsWith("ab",false),"true")
+        assertPrints("abcd".startsWith(prefix = "ab",ignoreCase = true),"true")
+        assertPrints("abcd".startsWith(prefix = "Ab",ignoreCase = true),"true")
+        assertPrints("Abcd".startsWith(prefix = "Ab",ignoreCase = false),"true")
+        assertPrints("abcd".startsWith(prefix = "ab",ignoreCase = false),"true")
 
     }
 
     //With the startIndex
     @Sample
     fun startsWithStartIndex(){
-        assertPrints("abcd".startsWith("B",1,true),"true")
-        assertPrints("abcd".startsWith("c",0,true),"false")
-        assertPrints("abcd".startsWith("Ab",0,true),"true")
-        assertPrints("Abcd".startsWith("Ab",0,false),"true")
-        assertPrints("abcd".startsWith("c",2,false),"true")
-        assertPrints("abcd".startsWith("C",2,false),"false")
+        assertPrints("abcd".startsWith(prefix = "B",startIndex = 1,ignoreCase = true),"true")
+        assertPrints("abcd".startsWith(prefix = "c",startIndex = 0,ignoreCase = true),"false")
+        assertPrints("abcd".startsWith(prefix = "Ab",startIndex =  0,ignoreCase = true),"true")
+        assertPrints("Abcd".startsWith(prefix = "Ab",startIndex = 0,ignoreCase = false),"true")
+        assertPrints("abcd".startsWith(prefix = "c",startIndex = 2,ignoreCase = false),"true")
+        assertPrints("abcd".startsWith(prefix = "C",startIndex = 2,ignoreCase = false),"false")
     }
 
     //delimiter: Char
 
     @Sample
     fun substringBefore(){
-        assertPrints("abcd".substringBefore("c"),"ab")
+        assertPrints("she-sells@shells".substringBefore("-"),"she")
         assertPrints("abcd".substringBefore("8"),"abcd")
-        assertPrints("kotlinot".substringBefore("ot"),"k")
         assertPrints("kotlin".substringBefore('k'),"")
-
+        assertPrints("kotlin".substringBefore(delimiter = 'm',missingDelimiterValue = "kotlin is the best"),"kotlin is the best")
     }
 
     @Sample
@@ -125,6 +124,7 @@ class Strings {
         assertPrints("abcd".substringAfter("8"),"abcd")
         assertPrints("kotlinot".substringAfter("ot"),"linot")
         assertPrints("kotlin".substringAfter('o'),"tlin")
+        assertPrints("kotlin".substringAfter(delimiter = 'm',missingDelimiterValue = "kotlin is the best"),"kotlin is the best")
 
     }
 
@@ -138,32 +138,32 @@ class Strings {
 
     @Sample
     fun toBoolean(){
-        assertPrints("true".toBoolean(),"true")
-        assertPrints("True".toBoolean(),"true")
-        assertPrints("false".toBoolean(),"false")
-        assertPrints("truethis".toBoolean(),"false")
+        assertTrue("true".toBoolean())
+        assertTrue("True".toBoolean())
+        assertFalse("false".toBoolean())
+        assertFalse("truethis".toBoolean())
     }
 
     @Sample
-    fun stringtoCharArray(){
+    fun stringToCharArray(){
 
-        val chararray=CharArray(10)
-        val expectchararray=CharArray(10)
-        expectchararray.set(0,'a')
-        expectchararray.set(1,'b')
-        expectchararray.set(2,'c')
-        expectchararray.set(3,'d')
-        assertPrints("abcd".toCharArray(chararray).contentToString(),expectchararray.contentToString())
+        val charArray=CharArray(10)
+        val expectCharArray=CharArray(10)
+        expectCharArray.set(0,'a')
+        expectCharArray.set(1,'b')
+        expectCharArray.set(2,'c')
+        expectCharArray.set(3,'d')
+        assertPrints("abcd".toCharArray(charArray).contentToString(),expectCharArray.contentToString())
 
-        val expectchararray1=CharArray(10)
-        expectchararray1.set(2,'b')
-        val chararray1=CharArray(10)
-        assertPrints("abcd".toCharArray(chararray1,2,1,2).contentToString(),expectchararray1.contentToString())
+        val expectCharArray1=CharArray(10)
+        expectCharArray1.set(2,'b')
+        val charArray1=CharArray(10)
+        assertPrints("abcd".toCharArray(charArray1,2,1,2).contentToString(),expectCharArray1.contentToString())
 
     }
 
     @Sample
-    fun stringTODoubleorNull(){
+    fun stringToDoubleOrNull(){
         assertPrints("abcd".toDoubleOrNull(),"null")
         assertPrints("55".toDoubleOrNull(),"55.0")
         assertPrints("-5".toDoubleOrNull(),"-5.0")
