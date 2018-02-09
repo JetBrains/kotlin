@@ -124,7 +124,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val typeParameters = typeParameterList
                     .joinToString("<", "> ") { it.asString() }
                     .let { if (it.isEmpty()) " " else it }
-            val primaryConstructor = primaryConstructor().asString(isEnumClass, true)
+            val primaryConstructor = primaryConstructor()?.asString(isEnumClass, true) ?: ""
             val supertypes = supertypesToString(supertypeIdList)
             val annotations = annotationsToString(getExtension(KonanSerializerProtocol.classAnnotation), "\n")
 
@@ -353,7 +353,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     //-------------------------------------------------------------------------//
 
     private fun getParentName(id: Int) = qualifiedNameTable.getQualifiedName(id).parentQualifiedName
-    private fun ProtoBuf.Class.primaryConstructor()    = constructorList.first  { !Flags.IS_SECONDARY.get(it.flags) }
+    private fun ProtoBuf.Class.primaryConstructor()    = constructorList.firstOrNull  { !Flags.IS_SECONDARY.get(it.flags) }
     private fun ProtoBuf.Class.secondaryConstructors() = constructorList.filter {  Flags.IS_SECONDARY.get(it.flags) }
 
     private val ProtoBuf.Class.isEnumClass: Boolean
