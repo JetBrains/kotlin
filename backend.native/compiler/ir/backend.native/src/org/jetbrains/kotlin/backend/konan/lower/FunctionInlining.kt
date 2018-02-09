@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
-import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
@@ -331,6 +329,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
 
         val parameterToArgumentOld = buildParameterToArgument(irCall, functionDeclaration)  // Create map parameter_descriptor -> original_argument_expression.
         val evaluationStatements   = mutableListOf<IrStatement>()                           // List of evaluation statements.
+        val substitutor = ParameterSubstitutor()
         parameterToArgumentOld.forEach {
             val parameterDescriptor = it.parameterDescriptor
 
@@ -340,9 +339,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             }
 
             val newVariable = currentScope.scope.createTemporaryVariable(                   // Create new variable and init it with the parameter expression.
-                irExpression = copyIrElement
-                        .copy(it.argumentExpression, typeSubstitutor = null)                // Clone expression.
-                        .transform(ParameterSubstitutor(), data = null) as IrExpression,    // Arguments may reference the previous ones - substitute them.
+                irExpression = it.argumentExpression.transform(substitutor, data = null),   // Arguments may reference the previous ones - substitute them.
                 nameHint     = functionDeclaration.descriptor.name.toString(),
                 isMutable    = false)
 
