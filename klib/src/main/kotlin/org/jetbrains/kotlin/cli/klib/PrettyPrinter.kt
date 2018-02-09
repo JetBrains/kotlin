@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.cli.klib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializerProtocol
 import org.jetbrains.kotlin.backend.konan.serialization.parseModuleHeader
 import org.jetbrains.kotlin.backend.konan.serialization.parsePackageFragment
+import org.jetbrains.kotlin.codegen.mapSupertypesNames
 import org.jetbrains.kotlin.renderer.renderFqName
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.Flags.*
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.utils.Printer
 import java.lang.System.out
 
@@ -72,10 +74,11 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     //-------------------------------------------------------------------------//
 
     object TypeTables {
-        val tables = mutableListOf<ProtoBuf.TypeTable>()
-        fun push(table: ProtoBuf.TypeTable) { tables.add(table) }
+        val tables = mutableListOf<TypeTable>()
+        fun push(table: ProtoBuf.TypeTable) { tables.add(TypeTable(table)) }
         fun pop() = tables.removeAt(tables.lastIndex)
-        fun type(typeId: Int) = tables.last().getType(typeId)!!
+        fun peek() = tables.last()
+        fun type(typeId: Int) = tables.last().get(typeId)
     }
 
     //-------------------------------------------------------------------------//
@@ -124,9 +127,15 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val typeParameters = typeParameterList
                     .joinToString("<", "> ") { it.asString() }
                     .let { if (it.isEmpty()) " " else it }
-            val primaryConstructor = primaryConstructor()?.asString(isEnumClass, true) ?: ""
-            val supertypes = supertypesToString(supertypeIdList)
+
+            val supertypes = supertypesToString(supertypes(TypeTables.peek()))
             val annotations = annotationsToString(getExtension(KonanSerializerProtocol.classAnnotation), "\n")
+
+            val primaryConstructor = if (!isObject) {
+                primaryConstructor()?.asString(isEnumClass, true) ?: ""
+            } else {
+                ""
+            }
 
             append("$annotations$Indent$modality$visibility$classKind$className$typeParameters$primaryConstructor$supertypes")
 
@@ -158,9 +167,9 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
-    private fun supertypesToString(supertypesId: List<Int>): String {
-        val result = supertypesId.joinToString {
-            val supertype = TypeTables.type(it).asString()
+    private fun supertypesToString(supertypes: List<ProtoBuf.Type>): String {
+        val result = supertypes.joinToString {
+            val supertype = it.asString()
             // TODO: Use fq names here.
             if (supertype == "Any" || supertype.startsWith("Enum<")) "" else supertype
         }
@@ -218,7 +227,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val isVar      = Flags.IS_VAR.asString(flags)
             val modality   = Flags.MODALITY.get(flags).asString()
             val visibility = Flags.VISIBILITY.get(flags).asString()
-            val returnType = TypeTables.type(returnTypeId).asString()
+            val returnType = returnType(TypeTables.peek()).asString()
             val annotations = annotationsToString(getExtension(KonanSerializerProtocol.propertyAnnotation), "\n")
             append("$annotations$Indent$modality$visibility$isVar$name: $returnType\n")
         }
@@ -233,14 +242,13 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     //-------------------------------------------------------------------------//
 
     private fun ProtoBuf.Function.receiverType(): String {
-        if (!hasReceiverTypeId()) return ""
-        return TypeTables.type(receiverTypeId).asString() + "."
+        return receiverType(TypeTables.peek())?.let { it.asString() + "." } ?: ""
     }
 
     //-------------------------------------------------------------------------//
 
     private fun ProtoBuf.Function.returnType(): String {
-        val returnType = TypeTables.type(returnTypeId).asString()
+        val returnType = returnType(TypeTables.peek()).asString()
         return if (returnType == "Unit") "" else ": " + returnType
     }
 
@@ -248,23 +256,23 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     private fun ProtoBuf.TypeParameter.asString(): String {
         val parameterName = stringTable.getString(name)
-        val upperBounds   = upperBoundsToString(upperBoundIdList)
+        val upperBounds   = upperBoundsToString(upperBounds(TypeTables.peek()))
         val isReified     = if (reified) "reified " else ""
         val variance      = variance.asString()
         val annotations = annotationsToString(getExtension(KonanSerializerProtocol.typeParameterAnnotation))
         return "$annotations$isReified$variance$parameterName$upperBounds"
     }
 
-    private fun upperBoundsToString(upperBounds: List<Int>): String {
+    private fun upperBoundsToString(upperBounds: List<ProtoBuf.Type>): String {
         if (upperBounds.isEmpty()) return ""
-        return ": " + TypeTables.type(upperBounds.first()).asString()
+        return ": " + upperBounds.first().asString()
     }
 
     //-------------------------------------------------------------------------//
 
     private fun ProtoBuf.ValueParameter.asString(): String {
         val parameterName = stringTable.getString(name)
-        val type = TypeTables.type(typeId).asString()
+        val type = type(TypeTables.peek()).asString()
 
         val isCrossInline = Flags.IS_CROSSINLINE.asString(flags)
         val annotations = annotationsToString(getExtension(KonanSerializerProtocol.parameterAnnotation))
@@ -310,7 +318,8 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     private fun ProtoBuf.Type.asValueString(): String {
         val builder = StringBuilder(name())
-        argumentList.joinTo(builder, "<", ">") { it.type.asString() }
+        // TODO: Use more clever check for <*>
+        argumentList.joinTo(builder, "<", ">") { it.type(TypeTables.peek())?.asString() ?: "*" }
         if (nullable) builder.append("?")
         return builder.toString()
     }
@@ -319,9 +328,15 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     private fun ProtoBuf.Type.asCallableString(): String {
         val builder = StringBuilder()
-        argumentList.dropLast(1).joinTo(builder, ", ", "(", ") -> ") { TypeTables.type(it.typeId).asString() }
+        argumentList.dropLast(1).joinTo(builder, ", ", "(", ") -> ") {
+            // TODO: We use Nothing because Function<*, R> is (Nothing) -> R. Can we make a more clever check?
+            it.type(TypeTables.peek())?.asString() ?: "Nothing"
+        }
         val returnType = argumentList.lastOrNull()
-        if (returnType != null) builder.append(TypeTables.type(returnType.typeId).asString())
+            if (returnType != null) {
+                // TODO: We use Any? because Function<P, *> is (P) -> Any?. Can we make a more clever check?
+                builder.append(returnType.type(TypeTables.peek())?.asString() ?: "Any?")
+            }
         return builder.toString()
     }
 
@@ -393,6 +408,11 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         }
 
     //-------------------------------------------------------------------------//
+
+    private val ProtoBuf.Class.isObject: Boolean
+        get() = Flags.CLASS_KIND.get(flags).let {
+            it == ProtoBuf.Class.Kind.OBJECT || it == ProtoBuf.Class.Kind.COMPANION_OBJECT
+        }
 
     private fun ProtoBuf.Class.Kind.asString() =
         when (this) {
