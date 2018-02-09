@@ -1,4 +1,3 @@
-// JAVAC_EXPECTED_FILE
 // SKIP_COMPILED_JAVA
 // FILE: BaseClass.java
 import org.checkerframework.checker.nullness.qual.*;
