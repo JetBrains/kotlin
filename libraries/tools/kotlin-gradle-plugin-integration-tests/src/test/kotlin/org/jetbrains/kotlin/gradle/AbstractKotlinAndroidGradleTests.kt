@@ -276,7 +276,7 @@ fun getSomething() = 10
                 ":libAndroid:compileReleaseUnitTestKotlin"
             )
 
-            val kotlinFolder = if (VersionNumber.parse(project.chooseWrapperVersionOrFinishTest()).major > 3) "kotlin" else ""
+            val kotlinFolder = if (project.testGradleVersionAtLeast("4.0")) "kotlin" else ""
 
             assertFileExists("lib/build/classes/$kotlinFolder/main/foo/PlatformClass.kotlin_metadata")
             assertFileExists("lib/build/classes/$kotlinFolder/test/foo/PlatformTest.kotlin_metadata")

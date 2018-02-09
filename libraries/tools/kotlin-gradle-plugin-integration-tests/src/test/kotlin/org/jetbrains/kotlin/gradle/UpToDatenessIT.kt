@@ -121,7 +121,7 @@ class UpToDateIT : BaseGradleIT() {
 
         override fun mutateProject(project: Project) = with(project) {
             val kotlinOutputPath =
-                if (GradleVersion.version(project.chooseWrapperVersionOrFinishTest()) >= GradleVersion.version("4.0"))
+                if (testGradleVersionAtLeast("4.0"))
                     project.classesDir() else
                     // Before 4.0, we should delete the classes from the temporary dir to make compileKotlin rerun:
                     "build/kotlin-classes/main/"

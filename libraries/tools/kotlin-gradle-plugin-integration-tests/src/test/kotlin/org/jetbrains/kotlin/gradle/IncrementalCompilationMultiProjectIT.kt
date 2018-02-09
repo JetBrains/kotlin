@@ -95,6 +95,10 @@ open class A {
             assertSuccessful()
         }
 
+        if (project.testGradleVersionAtLeast("4.0")) {
+            File(project.projectDir, "lib/build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
+        }
+
         project.build(":lib:clean", ":lib:build") {
             assertSuccessful()
             val affectedSources = File(project.projectDir, "lib").allKotlinFiles()
@@ -139,7 +143,8 @@ open class A {
     // that is not JavaCompile or KotlinCompile
     @Test
     fun testCompileLibWithGroovy() {
-        val project = Project("incrementalMultiproject")
+        val gradleVersion = GradleVersionRequired.Exact("3.5") // With newer versions, Groovy uses separate classes dirs
+        val project = Project("incrementalMultiproject", gradleVersion)
         project.setupWorkingDir()
         val lib = File(project.projectDir, "lib")
         val libBuildGradle = File(lib, "build.gradle")

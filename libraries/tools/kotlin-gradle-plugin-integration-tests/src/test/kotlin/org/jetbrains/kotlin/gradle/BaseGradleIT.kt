@@ -443,17 +443,18 @@ abstract class BaseGradleIT {
 
     fun Project.resourcesDir(subproject: String? = null, sourceSet: String = "main"): String =
             (subproject?.plus("/") ?: "") + "build/" +
-            (if (GradleVersion.version(chooseWrapperVersionOrFinishTest()) < GradleVersion.version("4.0"))
-                "classes/"
-            else "resources/") +
+            (if (testGradleVersionBelow("4.0")) "classes/" else "resources/") +
             sourceSet + "/"
 
     fun Project.classesDir(subproject: String? = null, sourceSet: String = "main", language: String = "kotlin"): String =
             (subproject?.plus("/") ?: "") + "build/classes/" +
-            (if (GradleVersion.version(chooseWrapperVersionOrFinishTest()) >= GradleVersion.version("4.0"))
-                "$language/"
-            else "") +
+            (if (testGradleVersionAtLeast("4.0")) "$language/" else "") +
             sourceSet + "/"
+
+    fun Project.testGradleVersionAtLeast(version: String): Boolean =
+        GradleVersion.version(chooseWrapperVersionOrFinishTest()) >= GradleVersion.version(version)
+
+    fun Project.testGradleVersionBelow(version: String): Boolean = !testGradleVersionAtLeast(version)
 
     fun CompiledProject.kotlinClassesDir(subproject: String? = null, sourceSet: String = "main"): String =
             project.classesDir(subproject, sourceSet, language = "kotlin")
@@ -494,7 +495,13 @@ abstract class BaseGradleIT {
                 System.getProperty("maven.repo.local")?.let {
                     add("-Dmaven.repo.local=$it") // TODO: proper escaping
                 }
-                add(if (options.withBuildCache) "--build-cache" else "--no-build-cache")
+
+                if (options.withBuildCache) {
+                    add("--build-cache")
+                } else {
+                    // Override possibly enabled system-wide caching:
+                    add("-Dorg.gradle.caching=false")
+                }
 
                 // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
                 add("--console=plain")
