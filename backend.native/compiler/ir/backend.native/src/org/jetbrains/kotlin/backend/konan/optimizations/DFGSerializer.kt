@@ -520,13 +520,14 @@ internal object DFGSerializer {
         }
     }
 
-    class Variable(val values: Array<Edge>, val temp: Boolean) {
+    class Variable(val values: Array<Edge>, val type: Int, val kind: Byte) {
 
-        constructor(data: ArraySlice) : this(data.readArray { Edge(this) }, data.readBoolean())
+        constructor(data: ArraySlice) : this(data.readArray { Edge(this) }, data.readInt(), data.readByte())
 
         fun write(result: ArraySlice) {
             result.writeArray(values) { it.write(this) }
-            result.writeBoolean(temp)
+            result.writeInt(type)
+            result.writeByte(kind)
         }
     }
 
@@ -626,8 +627,8 @@ internal object DFGSerializer {
             fun arrayWrite(array: Edge, index: Edge, value: Edge) =
                     Node().also { it.arrayWrite = ArrayWrite(array, index, value) }
 
-            fun variable(values: Array<Edge>, temp: Boolean) =
-                    Node().also { it.variable = Variable(values, temp) }
+            fun variable(values: Array<Edge>, type: Int, kind: DataFlowIR.VariableKind) =
+                    Node().also { it.variable = Variable(values, type, kind.ordinal.toByte()) }
 
             fun read(data: ArraySlice): Node {
                 val type = enumValues<NodeType>()[data.readByte().toInt()]
@@ -808,7 +809,7 @@ internal object DFGSerializer {
                                         Node.arrayWrite(buildEdge(node.array), buildEdge(node.index), buildEdge(node.value))
 
                                     is DataFlowIR.Node.Variable ->
-                                        Node.variable(node.values.map { buildEdge(it) }.toTypedArray(), node.temp)
+                                        Node.variable(node.values.map { buildEdge(it) }.toTypedArray(), typeMap[node.type]!!, node.kind)
 
                                     else -> error("Unknown node $node")
                                 }
@@ -1030,7 +1031,8 @@ internal object DFGSerializer {
 
                             NodeType.VARIABLE -> {
                                 val variable = it.variable!!
-                                DataFlowIR.Node.Variable(variable.values.map { deserializeEdge(it) }, variable.temp)
+                                DataFlowIR.Node.Variable(variable.values.map { deserializeEdge(it) },
+                                        types[variable.type], enumValues<DataFlowIR.VariableKind>()[variable.kind.toInt()])
                             }
 
                             else -> error("Unknown node: $it")

@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import java.util.*
 
-// TODO: Exceptions.
-
 // Devirtualization analysis is performed using Variable Type Analysis algorithm.
 // See http://web.cs.ucla.edu/~palsberg/tba/papers/sundaresan-et-al-oopsla00.pdf for details.
 internal object Devirtualization {
@@ -139,7 +137,7 @@ internal object Devirtualization {
             class CastEdge(val node: Node, val suitableTypes: BitSet)
         }
 
-        class Function(val symbol: DataFlowIR.FunctionSymbol, val parameters: Array<Node>, val returns: Node)
+        class Function(val symbol: DataFlowIR.FunctionSymbol, val parameters: Array<Node>, val returns: Node, val throws: Node)
 
         class VirtualCallSiteReceivers(val receiver: Node, val caller: DataFlowIR.FunctionSymbol, val devirtualizedCallees: List<DevirtualizedCallee>)
 
@@ -594,6 +592,7 @@ internal object Devirtualization {
 
                     body.nodes.forEach { dfgNodeToConstraintNode(functionConstraintGraph, it) }
                     functionNodesMap[body.returns]!!.addEdge(functionConstraintGraph.returns)
+                    functionNodesMap[body.throws]!!.addEdge(functionConstraintGraph.throws)
 
 
                     DEBUG_OUTPUT(0) {
@@ -631,7 +630,8 @@ internal object Devirtualization {
                 }
 
                 val returnsNode = ordinaryNode { "Returns\$$symbol" }
-                val functionConstraintGraph = Function(symbol, parameters, returnsNode)
+                val throwsNode = ordinaryNode { "Throws\$$symbol" }
+                val functionConstraintGraph = Function(symbol, parameters, returnsNode, throwsNode)
                 constraintGraph.functions[symbol] = functionConstraintGraph
 
                 stack.push(symbol)
@@ -701,6 +701,7 @@ internal object Devirtualization {
                             fictitiousReturnNode
                         }
                     } else {
+                        calleeConstraintGraph.throws.addEdge(function.throws)
                         if (receiverType == null)
                             doCall(calleeConstraintGraph, arguments)
                         else {
@@ -713,7 +714,7 @@ internal object Devirtualization {
                     }
                 }
 
-                if (node is DataFlowIR.Node.Variable && !node.temp) {
+                if (node is DataFlowIR.Node.Variable && node.kind != DataFlowIR.VariableKind.Temporary) {
                     var variableNode = variables[node]
                     if (variableNode == null) {
                         variableNode = ordinaryNode { "Variable\$${function.symbol}" }
@@ -721,6 +722,8 @@ internal object Devirtualization {
                         for (value in node.values) {
                             edgeToConstraintNode(value).addEdge(variableNode)
                         }
+                        if (node.kind == DataFlowIR.VariableKind.CatchParameter)
+                            function.throws.addCastEdge(createCastEdge(variableNode, node.type.resolved()))
                     }
                     return variableNode
                 }
@@ -794,6 +797,8 @@ internal object Devirtualization {
                             if (!returnType.isFinal) {
                                 receiverNode.addCastEdge(Node.CastEdge(returnsNode, virtualTypeFilter))
                             }
+                            // And throw anything.
+                            receiverNode.addCastEdge(Node.CastEdge(function.throws, virtualTypeFilter))
                             // And write to some array anything. TODO: This is conservative.
                             receiverNode.addCastEdge(Node.CastEdge(fieldNode(constraintGraph.arrayItemField), virtualTypeFilter))
 

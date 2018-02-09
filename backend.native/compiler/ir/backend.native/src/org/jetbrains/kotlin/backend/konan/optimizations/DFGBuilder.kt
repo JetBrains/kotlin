@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
@@ -287,7 +284,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 }
 
                 val function = FunctionDFGBuilder(expressionValuesExtractor, visitor.variableValues,
-                        descriptor, visitor.expressions, visitor.returnValues, visitor.thrownValues).build()
+                        descriptor, visitor.expressions, visitor.returnValues, visitor.thrownValues, visitor.catchParameters).build()
 
                 DEBUG_OUTPUT(0) {
                     function.debugOutput()
@@ -322,6 +319,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         val variableValues = VariableValues()
         val returnValues = mutableListOf<IrExpression>()
         val thrownValues = mutableListOf<IrExpression>()
+        val catchParameters = mutableSetOf<VariableDescriptor>()
 
         private val returnableBlocks = mutableMapOf<FunctionDescriptor, IrReturnableBlock>()
         private val suspendableExpressionStack = mutableListOf<IrSuspendableExpression>()
@@ -398,6 +396,11 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             super.visitThrow(expression)
         }
 
+        override fun visitCatch(aCatch: IrCatch) {
+            catchParameters.add(aCatch.parameter)
+            super.visitCatch(aCatch)
+        }
+
         override fun visitSetVariable(expression: IrSetVariable) {
             super.visitSetVariable(expression)
             assignVariable(expression.descriptor, expression.value)
@@ -429,7 +432,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                            val descriptor: CallableDescriptor,
                                            val expressions: List<IrExpression>,
                                            val returnValues: List<IrExpression>,
-                                           val thrownValues: List<IrExpression>) {
+                                           val thrownValues: List<IrExpression>,
+                                           val catchParameters: Set<VariableDescriptor>) {
 
         private val allParameters = (descriptor as? FunctionDescriptor)?.allParameters ?: emptyList()
         private val templateParameters = allParameters.withIndex().associateBy({ it.value }, { DataFlowIR.Node.Parameter(it.index) })
@@ -446,10 +450,15 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         private fun getContinuation() = continuationParameter ?: error("Function $descriptor has no continuation parameter")
 
         private val nodes = mutableMapOf<IrExpression, DataFlowIR.Node>()
-        private val variables = variableValues.elementData.keys.associateBy(
-                { it },
-                { DataFlowIR.Node.Variable(mutableListOf(), false) }
-        )
+        private val variables = variableValues.elementData.keys.associate {
+                it to DataFlowIR.Node.Variable(
+                        values = mutableListOf(),
+                        type   = symbolTable.mapType(it.type),
+                        kind   = if (catchParameters.contains(it))
+                                     DataFlowIR.VariableKind.CatchParameter
+                                 else DataFlowIR.VariableKind.Ordinary
+                )
+        }
 
         private fun choosePrimary(erasure: List<ClassDescriptor>): ClassDescriptor {
             if (erasure.size == 1) return erasure[0]
@@ -459,8 +468,16 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
         fun build(): DataFlowIR.Function {
             expressions.forEach { getNode(it) }
-            val returnsNode = DataFlowIR.Node.Variable(returnValues.map { expressionToEdge(it) }, true)
-            val throwsNode = DataFlowIR.Node.Variable(thrownValues.map { expressionToEdge(it) }, true)
+            val returnsNode = DataFlowIR.Node.Variable(
+                    values = returnValues.map { expressionToEdge(it) },
+                    type   = symbolTable.mapType(descriptor.returnType ?: context.builtIns.unitType),
+                    kind   = DataFlowIR.VariableKind.Temporary
+            )
+            val throwsNode = DataFlowIR.Node.Variable(
+                    values = thrownValues.map { expressionToEdge(it) },
+                    type   = symbolTable.mapClass(context.builtIns.throwable),
+                    kind   = DataFlowIR.VariableKind.Temporary
+            )
             variables.forEach { descriptor, node ->
                 variableValues.elementData[descriptor]!!.forEach {
                     node.values += expressionToEdge(it)
@@ -499,7 +516,11 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 val values = mutableListOf<IrExpression>()
                 expressionValuesExtractor.forEachValue(expression) { values += it }
                 if (values.size != 1) {
-                    DataFlowIR.Node.Variable(values.map { expressionToEdge(it) }, true)
+                    DataFlowIR.Node.Variable(
+                            values = values.map { expressionToEdge(it) },
+                            type   = symbolTable.mapType(expression.type),
+                            kind   = DataFlowIR.VariableKind.Temporary
+                    )
                 } else {
                     val value = values[0]
                     if (value != expression) {
@@ -507,7 +528,11 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         if (edge.castToType == null)
                             edge.node
                         else
-                            DataFlowIR.Node.Variable(listOf(edge), true)
+                            DataFlowIR.Node.Variable(
+                                    values = listOf(edge),
+                                    type   = symbolTable.mapType(expression.type),
+                                    kind   = DataFlowIR.VariableKind.Temporary
+                            )
                     } else {
                         when (value) {
                             is IrGetValue -> getNode(value)

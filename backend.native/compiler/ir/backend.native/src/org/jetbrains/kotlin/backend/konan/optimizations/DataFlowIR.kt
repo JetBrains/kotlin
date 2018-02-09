@@ -189,6 +189,12 @@ internal object DataFlowIR {
         }
     }
 
+    enum class VariableKind {
+        Ordinary,
+        Temporary,
+        CatchParameter
+    }
+
     sealed class Node {
         class Parameter(val index: Int) : Node()
 
@@ -226,7 +232,7 @@ internal object DataFlowIR {
 
         class ArrayWrite(val array: Edge, val index: Edge, val value: Edge) : Node()
 
-        class Variable(values: List<Edge>, val temp: Boolean) : Node() {
+        class Variable(values: List<Edge>, val type: Type, val kind: VariableKind) : Node() {
             val values = mutableListOf<Edge>().also { it += values }
         }
     }
@@ -385,7 +391,7 @@ internal object DataFlowIR {
 
                 is Node.Variable -> {
                     val result = StringBuilder()
-                    result.appendln("        ${if (node.temp) "TEMP VAR" else "VARIABLE"} ")
+                    result.appendln("       ${node.kind}")
                     node.values.forEach {
                         result.append("            VAL #${ids[it.node]!!}")
                         if (it.castToType == null)
