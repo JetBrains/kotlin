@@ -204,12 +204,17 @@ public abstract class StackValue {
 
     @NotNull
     public static StackValue constant(@Nullable Object value, @NotNull Type type) {
+        return constant(value, type, null);
+    }
+
+    @NotNull
+    public static StackValue constant(@Nullable Object value, @NotNull Type type, @Nullable KotlinType kotlinType) {
         if (type == Type.BOOLEAN_TYPE) {
             assert value instanceof Boolean : "Value for boolean constant should have boolean type: " + value;
             return BranchedValue.Companion.booleanConstant((Boolean) value);
         }
         else {
-            return new Constant(value, type);
+            return new Constant(value, type, kotlinType);
         }
     }
 
@@ -567,10 +572,21 @@ public abstract class StackValue {
     }
 
     public static StackValue coercion(@NotNull StackValue value, @NotNull Type castType, @Nullable KotlinType castKotlinType) {
-        if (value.type.equals(castType)) {
+        return coercionValueForArgumentOfInlineClassConstructor(value, castType, castKotlinType, null);
+    }
+
+    public static StackValue coercionValueForArgumentOfInlineClassConstructor(
+            @NotNull StackValue value,
+            @NotNull Type castType,
+            @Nullable KotlinType castKotlinType,
+            @Nullable KotlinType underlyingKotlinType
+    ) {
+        boolean kotlinTypesAreEqual = value.kotlinType == null && castKotlinType == null ||
+                                      value.kotlinType != null && castKotlinType != null && castKotlinType.equals(value.kotlinType);
+        if (value.type.equals(castType) && kotlinTypesAreEqual) {
             return value;
         }
-        return new CoercionValue(value, castType, castKotlinType);
+        return new CoercionValue(value, castType, castKotlinType, underlyingKotlinType);
     }
 
     @NotNull
@@ -925,8 +941,8 @@ public abstract class StackValue {
         @Nullable
         public final Object value;
 
-        public Constant(@Nullable Object value, Type type) {
-            super(type, false);
+        public Constant(@Nullable Object value, Type type, KotlinType kotlinType) {
+            super(type, kotlinType, false);
             assert !Type.BOOLEAN_TYPE.equals(type) : "Boolean constants should be created via 'StackValue.constant'";
             this.value = value;
         }

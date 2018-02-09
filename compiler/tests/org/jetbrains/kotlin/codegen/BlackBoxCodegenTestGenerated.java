@@ -10431,6 +10431,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("createInlineClassInArgumentPosition.kt")
+        public void testCreateInlineClassInArgumentPosition() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPosition.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyConstructorForInlineClass.kt")
         public void testEmptyConstructorForInlineClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt");
