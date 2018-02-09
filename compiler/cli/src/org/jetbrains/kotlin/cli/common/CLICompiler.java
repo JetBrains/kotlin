@@ -165,18 +165,19 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         LanguageVersion languageVersion = parseVersion(configuration, arguments.getLanguageVersion(), "language");
         LanguageVersion apiVersion = parseVersion(configuration, arguments.getApiVersion(), "API");
 
+        if (languageVersion != null || apiVersion != null) {
+            configuration.put(CLIConfigurationKeys.IS_API_VERSION_EXPLICIT, true);
+        }
+
         if (languageVersion == null) {
-            // If only "-api-version" is specified, language version is assumed to be the latest stable
+            // If no "-language-version" is specified, language version is assumed to be the latest stable
             languageVersion = LanguageVersion.LATEST_STABLE;
         }
 
         if (apiVersion == null) {
-            // If only "-language-version" is specified, API version is assumed to be equal to the language version
+            // If no "-api-version" is specified, API version is assumed to be equal to the language version
             // (API version cannot be greater than the language version)
             apiVersion = languageVersion;
-        }
-        else {
-            configuration.put(CLIConfigurationKeys.IS_API_VERSION_EXPLICIT, true);
         }
 
         MessageCollector collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
