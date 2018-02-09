@@ -600,6 +600,12 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineClassesInsideFunctionalTypes.kt")
+        public void testInlineClassesInsideFunctionalTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/inlineClasses/inlineClassesInsideFunctionalTypes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullableInlineClassType.kt")
         public void testNullableInlineClassType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/inlineClasses/nullableInlineClassType.kt");

@@ -11433,6 +11433,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("checkLambdaWithInlineClassesInFunctionalType.kt")
+        public void testCheckLambdaWithInlineClassesInFunctionalType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("computablePropertyInsideInlineClass.kt")
         public void testComputablePropertyInsideInlineClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/computablePropertyInsideInlineClass.kt");

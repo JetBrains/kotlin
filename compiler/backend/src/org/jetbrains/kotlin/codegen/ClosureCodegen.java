@@ -297,7 +297,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         int slot = 1;
         for (int i = 0; i < calleeParameters.size(); i++) {
             Type type = myParameterTypes[i];
-            StackValue.local(slot, type).put(typeMapper.mapType(calleeParameters.get(i)), iv);
+            ParameterDescriptor calleeParameter = calleeParameters.get(i);
+            KotlinType parameterType = calleeParameter.getType();
+            StackValue.local(slot, type, parameterType).put(typeMapper.mapType(calleeParameter), parameterType, iv);
             slot += type.getSize();
         }
 

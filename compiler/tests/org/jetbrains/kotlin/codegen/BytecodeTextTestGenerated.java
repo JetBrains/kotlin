@@ -1938,6 +1938,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("boxUnboxOfInlineClassesWithFunctionalTypes.kt")
+        public void testBoxUnboxOfInlineClassesWithFunctionalTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/boxUnboxOfInlineClassesWithFunctionalTypes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("boxUnboxOnInlinedParameters.kt")
         public void testBoxUnboxOnInlinedParameters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/boxUnboxOnInlinedParameters.kt");
