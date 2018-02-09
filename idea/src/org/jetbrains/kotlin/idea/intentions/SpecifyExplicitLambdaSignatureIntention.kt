@@ -25,23 +25,15 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isError
 
-class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaExpression>(KtLambdaExpression::class.java, "Specify explicit lambda signature"), LowPriorityAction {
+class SpecifyExplicitLambdaSignatureIntention :
+    SelfTargetingIntention<KtLambdaExpression>(KtLambdaExpression::class.java, "Specify explicit lambda signature"), LowPriorityAction {
 
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
-        val arrow = element.functionLiteral.arrow
-        if (arrow != null) {
-            if (caretOffset > arrow.endOffset) return false
-            if (element.valueParameters.all { it.typeReference != null }) return false
-        }
-        else {
-            if (!element.leftCurlyBrace.textRange.containsOffset(caretOffset)) return false
-        }
-
+        if (element.functionLiteral.arrow != null && element.valueParameters.all { it.typeReference != null }) return false
         val functionDescriptor = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.FUNCTION, element.functionLiteral] ?: return false
         return functionDescriptor.valueParameters.none { it.type.isError }
     }
@@ -55,12 +47,12 @@ class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaE
         val functionDescriptor = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.FUNCTION, functionLiteral]!!
 
         val parameterString = functionDescriptor.valueParameters
-                .mapIndexed { index, parameterDescriptor ->
-                    parameterDescriptor.render(psiName = functionLiteral.valueParameters.getOrNull(index)?.let {
-                        it.name ?: it.destructuringDeclaration?.text
-                    } )
-                }
-                .joinToString()
+            .mapIndexed { index, parameterDescriptor ->
+                parameterDescriptor.render(psiName = functionLiteral.valueParameters.getOrNull(index)?.let {
+                    it.name ?: it.destructuringDeclaration?.text
+                })
+            }
+            .joinToString()
         applyWithParameters(element, parameterString)
     }
 
@@ -72,8 +64,7 @@ class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaE
             val oldParameterList = functionLiteral.valueParameterList
             if (oldParameterList != null && newParameterList != null) {
                 oldParameterList.replace(newParameterList)
-            }
-            else {
+            } else {
                 val openBraceElement = functionLiteral.lBrace
                 val nextSibling = openBraceElement.nextSibling
                 val addNewline = nextSibling is PsiWhiteSpace && nextSibling.text?.contains("\n") ?: false
