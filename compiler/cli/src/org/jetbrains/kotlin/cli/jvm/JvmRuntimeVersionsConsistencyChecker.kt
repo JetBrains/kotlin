@@ -107,7 +107,8 @@ object JvmRuntimeVersionsConsistencyChecker {
         val consistency = checkCompilerClasspathConsistency(messageCollector, currentApi.version, runtimeJarsInfo)
         if (consistency is ClasspathConsistency.InconsistentWithApiVersion) {
             val actualRuntimeVersion = consistency.actualRuntimeVersion
-            messageCollector.issue(
+            if (currentApi.isStable) {
+                messageCollector.issue(
                     null,
                     "Runtime JAR files in the classpath have the version $actualRuntimeVersion, " +
                     "which is older than the API version ${currentApi.version}. " +
@@ -115,13 +116,14 @@ object JvmRuntimeVersionsConsistencyChecker {
                     "explicitly to restrict the available APIs to the runtime of version $actualRuntimeVersion. " +
                     "You can also pass '-language-version $actualRuntimeVersion' instead, which will restrict " +
                     "not only the APIs to the specified version, but also the language features"
-            )
-
-            for (jar in consistency.incompatibleJars) {
-                messageCollector.issue(
-                    jar.file,
-                    "Runtime JAR file has version ${jar.version} which is older than required for API version ${currentApi.version}"
                 )
+
+                for (jar in consistency.incompatibleJars) {
+                    messageCollector.issue(
+                        jar.file,
+                        "Runtime JAR file has version ${jar.version} which is older than required for API version ${currentApi.version}"
+                    )
+                }
             }
 
             val actualApi = ApiVersion.parse(actualRuntimeVersion.toString())
