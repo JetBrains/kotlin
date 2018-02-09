@@ -62,6 +62,12 @@ class JKJavaMethodImpl(override var modifierList: JKModifierList,
                        override var block: JKBlock?) : JKJavaMethod, JKElementBase() {
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        modifierList = modifierList.transform(transformer, data)
+        name = name.transform(transformer, data)
+        valueArguments = valueArguments.map { it.transform<JKValueArgument, D>(transformer, data) }
+        block = block?.transform(transformer, data)
+    }
 }
 
 sealed class JKJavaOperatorIdentifierImpl : JKJavaOperatorIdentifier, JKElementBase() {
@@ -77,30 +83,44 @@ sealed class JKJavaQualificationIdentifierImpl : JKJavaQualificationIdentifier, 
     object DOT : JKJavaQualificationIdentifierImpl()
 }
 
-class JKJavaMethodCallExpressionImpl(override val identifier: JKMethodReference,
-                                     override val arguments: JKExpressionList) : JKJavaMethodCallExpression, JKElementBase() {
+class JKJavaMethodCallExpressionImpl(override var identifier: JKMethodReference,
+                                     override var arguments: JKExpressionList) : JKJavaMethodCallExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodCallExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         identifier.accept(visitor, data)
         arguments.accept(visitor, data)
     }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        identifier = identifier.transform(transformer, data)
+        arguments = arguments.transform(transformer, data)
+    }
 }
 
-class JKJavaFieldAccessExpressionImpl(override val identifier: JKFieldReference) : JKJavaFieldAccessExpression, JKElementBase() {
+class JKJavaFieldAccessExpressionImpl(override var identifier: JKFieldReference) : JKJavaFieldAccessExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaFieldAccessExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         identifier.accept(visitor, data)
     }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        identifier = identifier.transform(transformer, data)
+    }
 }
 
-class JKJavaNewExpressionImpl(override val identifier: JKClassReference,
-                              override val arguments: JKExpressionList) : JKJavaNewExpression, JKElementBase() {
+class JKJavaNewExpressionImpl(override var identifier: JKClassReference,
+                              override var arguments: JKExpressionList) : JKJavaNewExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         identifier.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        identifier = identifier.transform(transformer, data)
+        arguments = arguments.transform(transformer, data)
     }
 }
 
@@ -128,18 +148,26 @@ class JKJavaClassReferenceImpl() : JKJavaClassReference, JKElementBase() {
     }
 }
 
-class JKJavaNewEmptyArrayImpl(override val initializer: List<JKLiteralExpression?>) : JKJavaNewEmptyArray, JKElementBase() {
+class JKJavaNewEmptyArrayImpl(override var initializer: List<JKLiteralExpression?>) : JKJavaNewEmptyArray, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewEmptyArray(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
 
     }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        initializer = initializer.map { it?.transform<JKLiteralExpression, D>(transformer, data) }
+    }
 }
 
-class JKJavaNewArrayImpl(override val initializer: List<JKExpression>) : JKJavaNewArray, JKElementBase() {
+class JKJavaNewArrayImpl(override var initializer: List<JKExpression>) : JKJavaNewArray, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewArray(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
 
+    }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        initializer = initializer.map { it.transform<JKLiteralExpression, D>(transformer, data) }
     }
 }

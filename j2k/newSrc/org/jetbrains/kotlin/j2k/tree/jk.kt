@@ -29,9 +29,9 @@ interface JKElement {
 }
 
 interface JKClass : JKDeclaration, JKModifierListOwner {
-    var name: JKNameIdentifier
-    var declarations: List<JKDeclaration>
-    var classKind: ClassKind
+    val name: JKNameIdentifier
+    val declarations: List<JKDeclaration>
+    val classKind: ClassKind
 
     enum class ClassKind {
         ABSTRACT, ANNOTATION, CLASS, ENUM, INTERFACE
@@ -117,7 +117,7 @@ interface JKLoop : JKStatement
 interface JKDeclaration : JKElement
 
 interface JKBlock : JKElement {
-    var statements: List<JKStatement>
+    val statements: List<JKStatement>
 }
 
 interface JKIdentifier : JKElement
@@ -131,7 +131,7 @@ interface JKNameIdentifier : JKIdentifier {
 interface JKLiteralExpression : JKExpression
 
 interface JKModifierList : JKElement {
-    val modifiers: MutableList<JKModifier>
+    val modifiers: List<JKModifier>
 }
 
 interface JKModifier : JKElement

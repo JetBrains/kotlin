@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.j2k.tree
 
 interface JKJavaField : JKDeclaration, JKModifierListOwner {
-    var type: JKTypeIdentifier
-    var name: JKNameIdentifier
-    var initializer: JKExpression?
+    val type: JKTypeIdentifier
+    val name: JKNameIdentifier
+    val initializer: JKExpression?
 }
 
 interface JKJavaMethod : JKDeclaration {
-    var modifierList: JKModifierList
-    var name: JKNameIdentifier
-    var valueArguments: List<JKValueArgument>
-    var block: JKBlock?
+    val modifierList: JKModifierList
+    val name: JKNameIdentifier
+    val valueArguments: List<JKValueArgument>
+    val block: JKBlock?
 }
 
 interface JKJavaForLoop : JKLoop
