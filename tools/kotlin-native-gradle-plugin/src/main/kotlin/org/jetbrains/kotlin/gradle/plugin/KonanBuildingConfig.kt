@@ -49,19 +49,24 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
         get() = project.hostManager.toKonanTargets(targets).distinct()
 
     init {
-        for (target in konanTargets) {
-            if (!project.hostManager.isEnabled(target)) {
-                project.logger.warn("The target is not enabled on the current host: ${target.visibleName}")
+        for (targetName in targets.distinct()) {
+            val konanTarget = project.hostManager.targetByName(targetName)
+
+            if (!project.hostManager.isEnabled(konanTarget)) {
+                project.logger.warn("The target is not enabled on the current host: $targetName")
                 continue
             }
-            if (!targetIsSupported(target)) {
-                project.logger.warn("The target ${target.visibleName} is not supported by the artifact $name")
+            if (!targetIsSupported(konanTarget)) {
+                project.logger.warn("The target ${targetName} is not supported by the artifact $name")
                 continue
             }
-            super.add(createTask(target))
+            if (this[konanTarget] == null) super.add(createTask(konanTarget))
+
+            if (targetName != konanTarget.visibleName) {
+                createTargetAliasTaskIfDeclared(targetName)
+            }
         }
         aggregateBuildTask = createAggregateTask()
-        createHostTaskIfDeclared()
     }
 
     protected open fun generateTaskName(target: KonanTarget) =
@@ -70,12 +75,12 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     protected open fun generateAggregateTaskName() =
             "compileKonan${name.capitalize()}"
 
-    protected open fun generateHostTaskName() =
-            "compileKonan${name.capitalize()}Host"
+    protected open fun generateTargetAliasTaskName(targetName: String) =
+            "compileKonan${name.capitalize()}${targetName.capitalize()}"
 
     protected abstract fun generateTaskDescription(task: T): String
     protected abstract fun generateAggregateTaskDescription(task: Task): String
-    protected abstract fun generateHostTaskDescription(task: Task, hostTarget: KonanTarget): String
+    protected abstract fun generateTargetAliasTaskDescription(task: Task, targetName: String): String
 
     protected abstract val defaultBaseDir: File
 
@@ -102,19 +107,22 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
                 this.filter {
                     project.targetIsRequested(it.konanTarget)
                 }.forEach {
-                    task.dependsOn(it)
-                }
+                            task.dependsOn(it)
+                        }
                 project.compileAllTask.dependsOn(task)
             }
 
-    protected fun createHostTaskIfDeclared(): Task? =
-            this[HostManager.host]?.let { hostBuild ->
-                project.tasks.create(generateHostTaskName()) {
-                    it.group = BasePlugin.BUILD_GROUP
-                    it.description = generateHostTaskDescription(it, hostBuild.konanTarget)
-                    it.dependsOn(hostBuild)
-                }
+    protected fun createTargetAliasTaskIfDeclared(targetName: String): Task? {
+        val canonicalTarget = project.hostManager.targetByName(targetName)
+
+        return this[canonicalTarget]?.let { canonicalBuild ->
+            project.tasks.create(generateTargetAliasTaskName(targetName)) {
+                it.group = BasePlugin.BUILD_GROUP
+                it.description = generateTargetAliasTaskDescription(it, targetName)
+                it.dependsOn(canonicalBuild)
             }
+        }
+    }
 
     internal operator fun get(target: KonanTarget) = targetToTask[target]
 

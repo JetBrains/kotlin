@@ -44,8 +44,8 @@ internal class ObjCExport(val context: Context) {
 
         val framework = File(context.config.outputFile)
         val frameworkContents = when (target) {
-            KonanTarget.IPHONE, KonanTarget.IPHONE_SIM -> framework
-            KonanTarget.MACBOOK -> framework.child("Versions/A")
+            KonanTarget.IOS_ARM64, KonanTarget.IOS_X64 -> framework
+            KonanTarget.MACOS_X64 -> framework.child("Versions/A")
             else -> error(target)
         }
 
@@ -73,7 +73,7 @@ internal class ObjCExport(val context: Context) {
 
         emitInfoPlist(frameworkContents, frameworkName)
 
-        if (target == KonanTarget.MACBOOK) {
+        if (target == KonanTarget.MACOS_X64) {
             framework.child("Versions/Current").createAsSymlink("A")
             for (child in listOf(frameworkName, "Headers", "Modules", "Resources")) {
                 framework.child(child).createAsSymlink("Versions/Current/$child")
@@ -86,9 +86,9 @@ internal class ObjCExport(val context: Context) {
 
     private fun emitInfoPlist(frameworkContents: File, name: String) {
         val directory = when (target) {
-            KonanTarget.IPHONE,
-            KonanTarget.IPHONE_SIM -> frameworkContents
-            KonanTarget.MACBOOK -> frameworkContents.child("Resources").also { it.mkdirs() }
+            KonanTarget.IOS_ARM64,
+            KonanTarget.IOS_X64 -> frameworkContents
+            KonanTarget.MACOS_X64 -> frameworkContents.child("Resources").also { it.mkdirs() }
             else -> error(target)
         }
 
@@ -97,9 +97,9 @@ internal class ObjCExport(val context: Context) {
         val bundleId = pkg.child(Name.identifier(name)).asString()
 
         val platform = when (target) {
-            KonanTarget.IPHONE -> "iPhoneOS"
-            KonanTarget.IPHONE_SIM -> "iPhoneSimulator"
-            KonanTarget.MACBOOK -> "MacOSX"
+            KonanTarget.IOS_ARM64 -> "iPhoneOS"
+            KonanTarget.IOS_X64 -> "iPhoneSimulator"
+            KonanTarget.MACOS_X64 -> "MacOSX"
             else -> error(target)
         }
         val properties = context.config.platform.configurables as AppleConfigurables
@@ -134,8 +134,8 @@ internal class ObjCExport(val context: Context) {
 
 
         contents.append(when (target) {
-            KonanTarget.IPHONE,
-            KonanTarget.IPHONE_SIM -> """
+            KonanTarget.IOS_ARM64,
+            KonanTarget.IOS_X64 -> """
                 |    <key>MinimumOSVersion</key>
                 |    <string>$minimumOsVersion</string>
                 |    <key>UIDeviceFamily</key>
@@ -145,11 +145,11 @@ internal class ObjCExport(val context: Context) {
                 |    </array>
 
                 """.trimMargin()
-            KonanTarget.MACBOOK -> ""
+            KonanTarget.MACOS_X64 -> ""
             else -> error(target)
         })
 
-        if (target == KonanTarget.IPHONE) {
+        if (target == KonanTarget.IOS_ARM64) {
             contents.append("""
                 |    <key>UIRequiredDeviceCapabilities</key>
                 |    <array>

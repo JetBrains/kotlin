@@ -40,8 +40,8 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     override fun generateAggregateTaskDescription(task: Task) =
             "Build the Kotlin/Native $typeForDescription '${task.name}' for all supported and declared targets"
 
-    override fun generateHostTaskDescription(task: Task, hostTarget: KonanTarget) =
-            "Build the Kotlin/Native $typeForDescription '${task.name}' for current host"
+    override fun generateTargetAliasTaskDescription(task: Task, targetName: String) =
+            "Build the Kotlin/Native $typeForDescription '${task.name}' for target '$targetName'"
 
     override fun srcDir(dir: Any) = forEach { it.srcDir(dir) }
     override fun srcFiles(vararg files: Any) = forEach { it.srcFiles(*files) }
@@ -123,7 +123,7 @@ open class KonanFramework(name: String,
         get() = project.konanBinBaseDir
 
     override fun targetIsSupported(target: KonanTarget): Boolean =
-        target == MACBOOK || target == IPHONE || target == IPHONE_SIM
+        target == MACOS_X64 || target == IOS_ARM64 || target == IOS_X64
 }
 
 open class KonanLibrary(name: String,
@@ -162,8 +162,8 @@ open class KonanBitcode(name: String,
     override fun generateAggregateTaskDescription(task: Task) =
             "Generates bitcode for the artifact '${task.name}' for all supported and declared targets'"
 
-    override fun generateHostTaskDescription(task: Task, hostTarget: KonanTarget) =
-            "Generates bitcode for the artifact '${task.name}' for current host"
+    override fun generateTargetAliasTaskDescription(task: Task, targetName: String) =
+            "Generates bitcode for the artifact '${task.name}' for '$targetName'"
 
     override val defaultBaseDir: File
         get() = project.konanBitcodeBaseDir

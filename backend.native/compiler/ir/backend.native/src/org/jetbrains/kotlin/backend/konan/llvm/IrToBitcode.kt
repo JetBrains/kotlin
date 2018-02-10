@@ -2268,8 +2268,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         // unaligned fields (there are some complicated exceptions currently ignored). The latter condition
         // is "encoded" by stub generator by emitting either `getMessenger` or `getMessengerLU` intrinsic call.
         val isStret = when (context.config.target) {
-            KonanTarget.MACBOOK, KonanTarget.IPHONE_SIM -> isLU // x86_64
-            KonanTarget.IPHONE -> false // aarch64
+            KonanTarget.MACOS_X64, KonanTarget.IOS_X64 -> isLU // x86_64
+            KonanTarget.IOS_ARM64 -> false // aarch64
             else -> TODO()
         }
 

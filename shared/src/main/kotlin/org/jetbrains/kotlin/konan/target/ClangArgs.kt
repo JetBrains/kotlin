@@ -27,9 +27,9 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     val specificClangArgs: List<String>
         get() {
             val result = when (target) {
-                KonanTarget.LINUX ->
+                KonanTarget.LINUX_X64 ->
                     listOf("--sysroot=$absoluteTargetSysRoot")
-                KonanTarget.RASPBERRYPI ->
+                KonanTarget.LINUX_ARM32_HFP ->
                     listOf("-target", targetArg!!,
                             "-mfpu=vfp", "-mfloat-abi=hard",
                             "--sysroot=$absoluteTargetSysRoot",
@@ -49,16 +49,16 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                             "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4",
                             "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4/mipsel-unknown-linux-gnu")
 
-                KonanTarget.MINGW ->
+                KonanTarget.MINGW_X64 ->
                     listOf("-target", targetArg!!, "--sysroot=$absoluteTargetSysRoot", "-Xclang", "-flto-visibility-public-std")
 
-                KonanTarget.MACBOOK ->
+                KonanTarget.MACOS_X64 ->
                     listOf("--sysroot=$absoluteTargetSysRoot", "-mmacosx-version-min=10.11")
 
-                KonanTarget.IPHONE ->
+                KonanTarget.IOS_ARM64 ->
                     listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=8.0.0")
 
-                KonanTarget.IPHONE_SIM ->
+                KonanTarget.IOS_X64 ->
                     listOf("-stdlib=libc++", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=8.0.0")
 
                 KonanTarget.ANDROID_ARM32 ->
@@ -106,10 +106,10 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
     val clangArgsSpecificForKonanSources
         get() = when (target) {
-            KonanTarget.LINUX ->
+            KonanTarget.LINUX_X64 ->
                 listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64")
 
-            KonanTarget.RASPBERRYPI ->
+            KonanTarget.LINUX_ARM32_HFP ->
                 listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
 
             KonanTarget.LINUX_MIPS32 ->
@@ -118,16 +118,16 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             KonanTarget.LINUX_MIPSEL32 ->
                 listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
 
-            KonanTarget.MINGW ->
+            KonanTarget.MINGW_X64 ->
                 listOf("-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1", "-DKONAN_NO_MEMMEM=1")
 
-            KonanTarget.MACBOOK ->
+            KonanTarget.MACOS_X64 ->
                 listOf("-DKONAN_OSX=1", "-DKONAN_OBJC_INTEROP=1")
 
-            KonanTarget.IPHONE ->
+            KonanTarget.IOS_ARM64 ->
                 listOf("-DKONAN_OBJC_INTEROP=1")
 
-            KonanTarget.IPHONE_SIM ->
+            KonanTarget.IOS_X64 ->
                 listOf("-DKONAN_OBJC_INTEROP=1")
 
             KonanTarget.ANDROID_ARM32 ->
@@ -150,9 +150,9 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     private val host = HostManager.host
 
     private val binDir = when (host) {
-        KonanTarget.LINUX -> "$absoluteTargetToolchain/bin"
-        KonanTarget.MINGW -> "$absoluteTargetToolchain/bin"
-        KonanTarget.MACBOOK -> "$absoluteTargetToolchain/usr/bin"
+        KonanTarget.LINUX_X64 -> "$absoluteTargetToolchain/bin"
+        KonanTarget.MINGW_X64 -> "$absoluteTargetToolchain/bin"
+        KonanTarget.MACOS_X64 -> "$absoluteTargetToolchain/usr/bin"
         else -> throw TargetSupportException("Unexpected host platform")
     }
 

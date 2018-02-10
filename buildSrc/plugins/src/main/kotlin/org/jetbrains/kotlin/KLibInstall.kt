@@ -30,7 +30,7 @@ open class KlibInstall: Exec() {
         val result = super.configure(config)
         val konanHomePath = project.findProperty("konan.home") ?: "dist"
         val konanHome = project.rootProject.file(konanHomePath)
-        val suffix = if (HostManager.host == KonanTarget.MINGW) ".bat" else  ""
+        val suffix = if (HostManager.host == KonanTarget.MINGW_X64) ".bat" else  ""
         val klibProgram = "$konanHome/bin/klib$suffix"
 
         doFirst {

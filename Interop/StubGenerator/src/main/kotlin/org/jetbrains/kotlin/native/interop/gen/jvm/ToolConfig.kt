@@ -47,7 +47,7 @@ class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform) {
     val sysRoot = platform.absoluteTargetSysRoot
 
     val libclang = when (host) {
-        KonanTarget.MINGW -> "$llvmHome/bin/libclang.dll"
+        KonanTarget.MINGW_X64 -> "$llvmHome/bin/libclang.dll"
         else -> "$llvmHome/lib/${System.mapLibraryName("clang")}"
     }
 }

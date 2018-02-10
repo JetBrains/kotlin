@@ -34,8 +34,8 @@ abstract class LinkerFlags(val configurables: Configurables)
     protected val llvmLib = "${configurables.absoluteLlvmHome}/lib"
 
     private val libLTODir = when (HostManager.host) {
-        KonanTarget.MACBOOK, KonanTarget.LINUX -> llvmLib
-        KonanTarget.MINGW -> llvmBin
+        KonanTarget.MACOS_X64, KonanTarget.LINUX_X64 -> llvmLib
+        KonanTarget.MINGW_X64 -> llvmBin
         else -> error("Don't know libLTO location for this platform.")
     }
 
@@ -306,15 +306,15 @@ open class ZephyrLinker(targetProperties: ZephyrConfigurables)
 
 fun linker(configurables: Configurables): LinkerFlags  =
     when (configurables.target) {
-        KonanTarget.LINUX, KonanTarget.RASPBERRYPI ->
+        KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM32_HFP ->
             LinuxBasedLinker(configurables as LinuxConfigurables)
         KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32 ->
             LinuxBasedLinker(configurables as LinuxMIPSConfigurables)
-        KonanTarget.MACBOOK, KonanTarget.IPHONE, KonanTarget.IPHONE_SIM ->
+        KonanTarget.MACOS_X64, KonanTarget.IOS_ARM64, KonanTarget.IOS_X64 ->
             MacOSBasedLinker(configurables as AppleConfigurables)
         KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64 ->
             AndroidLinker(configurables as AndroidConfigurables)
-        KonanTarget.MINGW ->
+        KonanTarget.MINGW_X64 ->
             MingwLinker(configurables as MingwConfigurables)
         KonanTarget.WASM32 ->
             WasmLinker(configurables as WasmConfigurables)

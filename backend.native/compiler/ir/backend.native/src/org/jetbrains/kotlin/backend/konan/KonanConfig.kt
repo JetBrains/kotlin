@@ -50,7 +50,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     init {
         if (!platformManager.isEnabled(target)) {
-            error("Target $target is not available on the ${HostManager.host} host")
+            error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")
         }
     }
 

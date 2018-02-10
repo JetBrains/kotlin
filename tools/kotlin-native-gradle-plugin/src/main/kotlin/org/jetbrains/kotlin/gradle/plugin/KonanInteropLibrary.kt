@@ -42,8 +42,8 @@ open class KonanInteropLibrary(name: String,
     override fun generateAggregateTaskDescription(task: Task) =
             "Build the Kotlin/Native interop library '${task.name}' for all supported and declared targets'"
 
-    override fun generateHostTaskDescription(task: Task, hostTarget: KonanTarget) =
-            "Build the Kotlin/Native interop library '${task.name}' for current host"
+    override fun generateTargetAliasTaskDescription(task: Task, targetName: String) =
+            "Build the Kotlin/Native interop library '${task.name}' for '$targetName'"
 
     override val defaultBaseDir: File
         get() = project.konanLibsBaseDir

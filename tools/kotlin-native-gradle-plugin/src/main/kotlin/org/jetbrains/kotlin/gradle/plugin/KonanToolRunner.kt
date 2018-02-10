@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.plugin.tasks.host
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 internal interface KonanToolRunner: Named {
@@ -81,7 +82,7 @@ internal class KonanInteropRunner(project: Project)
     : KonanCliRunner("cinterop", "Kotlin/Native cinterop tool", project)
 {
     init {
-        if (project.host == "mingw") {
+        if (HostManager.host == KonanTarget.MINGW_X64) {
 	    //TODO: Oh-ho-ho fix it in more convinient way.
             environment.put("PATH", DependencyProcessor.defaultDependenciesRoot.absolutePath +
                     "\\msys2-mingw-w64-x86_64-gcc-7.2.0-clang-llvm-5.0.0-windows-x86-64" +
