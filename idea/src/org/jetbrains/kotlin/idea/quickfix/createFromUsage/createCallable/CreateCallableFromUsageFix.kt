@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.isAbstract
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import java.util.*
 
 open class CreateCallableFromUsageFix<E : KtElement>(
@@ -212,8 +213,14 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         }
 
         val popupTitle = "Choose target class or interface"
-        val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfo.receiverTypeInfo).let {
-            if (callableInfo.isAbstract) it.filter { it.theType.isAbstract() } else it
+        val receiverTypeInfo = callableInfo.receiverTypeInfo
+        val receiverTypeCandidates = callableBuilder.computeTypeCandidates(receiverTypeInfo).let {
+            if (callableInfo.isAbstract)
+                it.filter { it.theType.isAbstract() }
+            else if (!isExtension && receiverTypeInfo != TypeInfo.Empty)
+                it.filter { !it.theType.isTypeParameter() }
+            else
+                it
         }
         if (receiverTypeCandidates.isNotEmpty()) {
             val containers = receiverTypeCandidates
@@ -224,7 +231,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
             }
         }
         else {
-            assert(callableInfo.receiverTypeInfo is TypeInfo.Empty) {
+            assert(receiverTypeInfo is TypeInfo.Empty) {
                 "No receiver type candidates: ${element.text} in ${file.text}"
             }
 
