@@ -47,19 +47,19 @@ import org.jetbrains.kotlin.types.KotlinType
 
 fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: TranslationContext): JsNode {
     val conditionExpression = expression.condition ?:
-                              throw IllegalArgumentException("condition expression should not be null: ${expression.text}")
+            throw IllegalArgumentException("condition expression should not be null: ${expression.text}")
     val conditionBlock = JsBlock()
     var jsCondition = Translation.translateAsExpression(conditionExpression, context, conditionBlock)
     val body = expression.body
     var bodyStatement =
-        if (body != null)
-            Translation.translateAsStatementAndMergeInBlockIfNeeded(body, context)
-        else
-            JsEmpty
+            if (body != null)
+                Translation.translateAsStatementAndMergeInBlockIfNeeded(body, context)
+            else
+                JsEmpty
 
     if (!conditionBlock.isEmpty) {
         val breakIfConditionIsFalseStatement = JsIf(not(jsCondition), JsBreak().apply { source = expression })
-                .apply { source = expression }
+            .apply { source = expression }
         val bodyBlock = convertToBlock(bodyStatement)
         jsCondition = JsBooleanLiteral(true)
 
@@ -70,8 +70,7 @@ fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: Tr
             conditionBlock.statements.add(breakIfConditionIsFalseStatement)
             val ifStatement = JsIf(secondRun, conditionBlock, assignment(secondRun, JsBooleanLiteral(true)).source(expression).makeStmt())
             bodyBlock.statements.add(0, ifStatement.apply { source = expression })
-        }
-        else {
+        } else {
             conditionBlock.statements.add(breakIfConditionIsFalseStatement)
             bodyBlock.statements.addAll(0, conditionBlock.statements)
         }
@@ -117,7 +116,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         if (resolvedCall.resultingDescriptor.fqNameSafe == stepFunctionName) {
             step = resolvedCall.call.valueArguments[0].getArgumentExpression() ?: return null
             resolvedCall = (resolvedCall.extensionReceiver as? ExpressionReceiver)?.expression?.getResolvedCall(context.bindingContext()) ?:
-                           return null
+                    return null
         }
 
         val first = ((resolvedCall.extensionReceiver ?: resolvedCall.dispatchReceiver) as? ExpressionReceiver)?.expression ?: return null
@@ -142,8 +141,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
     val destructuringParameter: KtDestructuringDeclaration? = loopParameter.destructuringDeclaration
     val parameterName = if (destructuringParameter == null) {
         context.getNameForElement(loopParameter)
-    }
-    else {
+    } else {
         JsScope.declareTemporary()
     }
 
@@ -160,14 +158,14 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
             indicesFqName -> {
                 if (destructuringParameter != null) return null
                 val varDescriptor = context.bindingContext()[BindingContext.DECLARATION_TO_DESCRIPTOR, loopParameter] as?
-                                            VariableDescriptor ?: return null
+                        VariableDescriptor ?: return null
                 Pair(varDescriptor, null)
             }
             else -> return null
         }
 
         val receiverClass = resolvedCall.resultingDescriptor.extensionReceiverParameter?.type?.constructor?.declarationDescriptor as?
-                                    ClassDescriptor ?: return null
+                ClassDescriptor ?: return null
         val receiverType = when {
             KotlinBuiltIns.isArrayOrPrimitiveArray(receiverClass) -> WithIndexReceiverType.ARRAY
             KotlinBuiltIns.isCollectionOrNullableCollection(receiverClass.defaultType) -> WithIndexReceiverType.COLLECTION
@@ -190,26 +188,28 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val realBody = expression.body?.let { Translation.translateAsStatementAndMergeInBlockIfNeeded(it, context) }
         if (itemValue == null && destructuringParameter == null) {
             return realBody
-        }
-        else {
+        } else {
             val block = JsBlock()
 
             val currentVarInit =
-                if (destructuringParameter == null) {
-                    val loopParameterDescriptor = (getDescriptorForElement(context.bindingContext(), loopParameter) as CallableDescriptor)
-                    val loopParameterType = loopParameterDescriptor.returnType ?: context.currentModule.builtIns.anyType
-                    val coercedItemValue = itemValue?.let { TranslationUtils.coerce(context, it, loopParameterType) }
-                    newVar(parameterName, coercedItemValue).apply { source = expression.loopRange }
-                }
-                else {
-                    val innerBlockContext = context.innerBlock(block)
-                    if (itemValue != null) {
-                        val parameterStatement = JsAstUtils.newVar(parameterName, itemValue).apply { source = expression.loopRange }
-                        innerBlockContext.addStatementToCurrentBlock(parameterStatement)
+                    if (destructuringParameter == null) {
+                        val loopParameterDescriptor = (getDescriptorForElement(
+                                context.bindingContext(),
+                                loopParameter
+                        ) as CallableDescriptor)
+                        val loopParameterType = loopParameterDescriptor.returnType ?: context.currentModule.builtIns.anyType
+                        val coercedItemValue = itemValue?.let { TranslationUtils.coerce(context, it, loopParameterType) }
+                        newVar(parameterName, coercedItemValue).apply { source = expression.loopRange }
+                    } else {
+                        val innerBlockContext = context.innerBlock(block)
+                        if (itemValue != null) {
+                            val parameterStatement = JsAstUtils.newVar(parameterName, itemValue).apply { source = expression.loopRange }
+                            innerBlockContext.addStatementToCurrentBlock(parameterStatement)
+                        }
+                        DestructuringDeclarationTranslator.translate(
+                                destructuringParameter, JsAstUtils.pureFqn(parameterName, null), innerBlockContext
+                        )
                     }
-                    DestructuringDeclarationTranslator.translate(
-                            destructuringParameter, JsAstUtils.pureFqn(parameterName, null), innerBlockContext)
-                }
             block.statements += currentVarInit
             block.statements += if (realBody is JsBlock) realBody.statements else listOfNotNull(realBody)
 
@@ -246,8 +246,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
                 RangeType.DOWN_TO -> JsUnaryOperator.DEC
             }
             JsPostfixOperation(incrementOperator, parameterName.makeRef()).source(expression)
-        }
-        else {
+        } else {
             val incrementOperator = when (literal.type) {
                 RangeType.RANGE_TO,
                 RangeType.UNTIL -> JsBinaryOperator.ASG_ADD
@@ -313,7 +312,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
     }
 
     fun findCollection() =
-            context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.collection))!!
+        context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.collection))!!
 
     fun translateForOverCollectionIndices(info: WithIndexInfo): JsStatement {
         val range = context.cacheExpressionIfNeeded(info.range)
@@ -337,7 +336,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.iterable))!!
 
     fun findSequence() =
-            context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(sequenceFqName))!!
+        context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(sequenceFqName))!!
 
     fun translateForOverCollectionWithIndex(info: WithIndexInfo): JsStatement {
         val range = context.cacheExpressionIfNeeded(info.range)
@@ -348,7 +347,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
 
         val iteratorVar = JsScope.declareTemporary()
         val rangeOwner = if (info.receiverType == WithIndexReceiverType.SEQUENCE) findSequence() else findIterable()
-        val iteratorDescriptor =  getFunctionByName(rangeOwner.unsubstitutedMemberScope, Name.identifier("iterator"))
+        val iteratorDescriptor = getFunctionByName(rangeOwner.unsubstitutedMemberScope, Name.identifier("iterator"))
         val iteratorName = context.getNameForDescriptor(iteratorDescriptor)
         val initExpression = newVar(iteratorVar, JsInvocation(pureFqn(iteratorName, range))).apply { source = expression }
 
@@ -367,8 +366,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val body = JsBlock()
         body.statements += if (valueVar != null) {
             newVar(valueVar, nextInvocation).apply { source = expression }
-        }
-        else {
+        } else {
             asSyntheticStatement(nextInvocation)
         }
         expression.body?.let { body.statements += Translation.translateAsStatement(it, context.innerBlock(body)) }
@@ -378,9 +376,9 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
     fun translateForOverIterator(): JsStatement {
 
         fun translateMethodInvocation(
-                receiver: JsExpression?,
-                resolvedCall: ResolvedCall<FunctionDescriptor>,
-                block: JsBlock
+            receiver: JsExpression?,
+            resolvedCall: ResolvedCall<FunctionDescriptor>,
+            block: JsBlock
         ): JsExpression = CallTranslator.translate(context.innerBlock(block), resolvedCall, receiver)
 
         fun iteratorMethodInvocation(): JsExpression {
@@ -405,8 +403,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val bodyStatements = mutableListOf<JsStatement>()
         val exitCondition = if (hasNextBlock.isEmpty) {
             hasNextInvocation
-        }
-        else {
+        } else {
             bodyStatements += hasNextBlock.statements
             bodyStatements += JsIf(notOptimized(hasNextInvocation), JsBreak().apply { source = expression }).apply { source = expression }
             JsBooleanLiteral(true)
@@ -431,8 +428,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
                 WithIndexReceiverType.COLLECTION -> {
                     if (withIndexCall.value == null && withIndexCall.receiverType == WithIndexReceiverType.COLLECTION) {
                         translateForOverCollectionIndices(withIndexCall)
-                    }
-                    else {
+                    } else {
                         translateForOverCollectionWithIndex(withIndexCall)
                     }
                 }
@@ -460,9 +456,9 @@ private enum class RangeType {
 private class RangeLiteral(val type: RangeType, val first: KtExpression, val second: KtExpression, var step: KtExpression?)
 
 private class WithIndexInfo(
-        val receiverType: WithIndexReceiverType,
-        val index: VariableDescriptor?, val value: VariableDescriptor?,
-        val range: JsExpression
+    val receiverType: WithIndexReceiverType,
+    val index: VariableDescriptor?, val value: VariableDescriptor?,
+    val range: JsExpression
 )
 
 private enum class WithIndexReceiverType {
