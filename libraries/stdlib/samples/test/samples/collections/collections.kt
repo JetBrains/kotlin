@@ -312,6 +312,28 @@ class Collections {
         }
 
         @Sample
+        fun joinTo() {
+            val sb = StringBuilder("An existing string and a list:")
+            val numbers = listOf(1, 2, 3)
+            assertPrints(numbers.joinTo(sb, prefix = "[", postfix = "]").toString(), "An existing string and a list:[1, 2, 3]")
+            
+            val lotOfNumbers = (1..100).asIterable()
+            val firstNumbers = StringBuilder("First five numbers: ")
+            assertPrints(lotOfNumbers.joinTo(firstNumbers, limit = 5).toString(), "First five numbers: 1, 2, 3, 4, 5, ...")
+        }
+        
+        @Sample
+        fun joinToString() {
+            val numbers = listOf(1, 2, 3, 4, 5, 6)
+            assertPrints(numbers.joinToString(), "1, 2, 3, 4, 5, 6")
+            assertPrints(numbers.joinToString(prefix = "[", postfix = "]"), "[1, 2, 3, 4, 5, 6]")
+            assertPrints(numbers.joinToString(prefix = "<", postfix = ">", separator = "•"), "<1•2•3•4•5•6>")
+
+            val chars = charArrayOf('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q')
+            assertPrints(chars.joinToString(limit = 5, truncated = "...!") { it.toUpperCase().toString() }, "A, B, C, D, E, ...!")
+        }
+
+        @Sample
         fun chunked() {
             val words = "one two three four five six seven eight nine ten".split(' ')
             val chunks = words.chunked(3)
