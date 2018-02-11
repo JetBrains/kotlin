@@ -85,13 +85,12 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
     private void writeExternalBase(Element element, CommonCodeStyleSettings defaultSettings) throws WriteExternalException {
         Set<String> supportedFields = getSupportedFields();
         if (supportedFields != null) {
+            supportedFields.add("PARENT_SETTINGS_INSTALLED");
             supportedFields.add("FORCE_REARRANGE_MODE");
             supportedFields.add("CODE_STYLE_DEFAULTS");
         }
         //noinspection deprecation
         DefaultJDOMExternalizer.writeExternal(this, element, new SupportedFieldsDiffFilter(this, supportedFields, defaultSettings));
-        List<Integer> softMargins = getSoftMargins();
-        serializeInto(softMargins, element);
 
         IndentOptions myIndentOptions = getIndentOptions();
         if (myIndentOptions != null) {
@@ -140,21 +139,6 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
             commonSettings.setArrangementSettings(arrangementSettings.clone());
         }
 
-        try {
-            Method setRootSettingsMethod = ArraysKt.singleOrNull(
-                    CommonCodeStyleSettings.class.getDeclaredMethods(),
-                    method -> "setSoftMargins".equals(method.getName()));
-
-            if (setRootSettingsMethod != null) {
-                // Method was introduced in 173
-                setRootSettingsMethod.setAccessible(true);
-                setRootSettingsMethod.invoke(commonSettings, getSoftMargins());
-            }
-        }
-        catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException(e);
-        }
-
         return commonSettings;
     }
 
@@ -169,9 +153,6 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         }
 
         CommonCodeStyleSettings other = (CommonCodeStyleSettings) obj;
-        if (!getSoftMargins().equals(other.getSoftMargins())) {
-            return false;
-        }
 
         IndentOptions options = getIndentOptions();
         if ((options == null && other.getIndentOptions() != null) ||
@@ -180,13 +161,6 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         }
 
         return arrangementSettingsEqual(other);
-    }
-
-    // SoftMargins.serializeInfo
-    private void serializeInto(@NotNull List<Integer> softMargins, @NotNull Element element) {
-        if (softMargins.size() > 0) {
-            XmlSerializer.serializeInto(this, element);
-        }
     }
     //</editor-fold>
 
