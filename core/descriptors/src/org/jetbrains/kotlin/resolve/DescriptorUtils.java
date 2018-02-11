@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ public class DescriptorUtils {
     private static final FqName VOLATILE = new FqName("kotlin.jvm.Volatile");
     private static final FqName SYNCHRONIZED = new FqName("kotlin.jvm.Synchronized");
     public static final FqName COROUTINES_PACKAGE_FQ_NAME = new FqName("kotlin.coroutines.experimental");
+    public static final FqName COROUTINES_INTRINSICS_PACKAGE_FQ_NAME = COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("intrinsics"));
     public static final FqName CONTINUATION_INTERFACE_FQ_NAME = COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("Continuation"));
 
     private DescriptorUtils() {
@@ -284,7 +285,13 @@ public class DescriptorUtils {
         return isClass(descriptor) && descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED);
     }
 
-    public static boolean isNonCompanionObject(@NotNull DeclarationDescriptor descriptor) {
+    @SuppressWarnings("unused")
+    public static boolean isAnonymousFunction(@NotNull DeclarationDescriptor descriptor) {
+        return descriptor instanceof SimpleFunctionDescriptor &&
+               descriptor.getName().equals(SpecialNames.ANONYMOUS_FUNCTION);
+    }
+
+    public static boolean isNonCompanionObject(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isCompanionObject();
     }
 
@@ -458,7 +465,11 @@ public class DescriptorUtils {
                KotlinTypeChecker.DEFAULT.equalTypes(builtIns.getAnyType(), type);
     }
 
-    public static boolean classCanHaveAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
+    public static boolean classCanHaveAbstractFakeOverride(@NotNull ClassDescriptor classDescriptor) {
+        return classCanHaveAbstractDeclaration(classDescriptor) || classDescriptor.isExpect();
+    }
+
+    public static boolean classCanHaveAbstractDeclaration(@NotNull ClassDescriptor classDescriptor) {
         return classDescriptor.getModality() == Modality.ABSTRACT
                || isSealedClass(classDescriptor)
                || classDescriptor.getKind() == ClassKind.ENUM_CLASS;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,53 +16,9 @@
 
 package kotlin
 
-import kotlin.annotation.AnnotationTarget.*
+import kotlin.annotation.AnnotationTarget.FIELD
+import kotlin.annotation.AnnotationTarget.PROPERTY
 
-open expect class Error : Throwable {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class Exception : Throwable {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class IllegalArgumentException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class IllegalStateException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class IndexOutOfBoundsException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class NoSuchElementException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class RuntimeException : Exception {
-    constructor()
-    constructor(message: String)
-}
-
-open expect class UnsupportedOperationException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-// TODO: Provide typealias impl in stdlib-jvm
-open expect class AssertionError : Error {
-    constructor()
-    constructor(message: String)
-}
 
 
 expect interface Comparator<T> {
@@ -73,12 +29,7 @@ expect inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): C
 
 // From kotlin.kt
 
-internal expect fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T>
-internal inline expect fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V>
-internal inline expect fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
-internal inline expect fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?>
 
-internal expect interface Serializable
 
 // From numbers.kt
 
@@ -89,11 +40,53 @@ expect fun Float.isInfinite(): Boolean
 expect fun Double.isFinite(): Boolean
 expect fun Float.isFinite(): Boolean
 
+/**
+ * Returns a bit representation of the specified floating-point value as [Long]
+ * according to the IEEE 754 floating-point "double format" bit layout.
+ */
+@SinceKotlin("1.2")
+public expect fun Double.toBits(): Long
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Long]
+ * according to the IEEE 754 floating-point "double format" bit layout,
+ * preserving `NaN` values exact layout.
+ */
+@SinceKotlin("1.2")
+public expect fun Double.toRawBits(): Long
+
+/**
+ * Returns the [Double] value corresponding to a given bit representation.
+ */
+@SinceKotlin("1.2")
+public expect fun Double.Companion.fromBits(bits: Long): Double
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Int]
+ * according to the IEEE 754 floating-point "single format" bit layout.
+ */
+@SinceKotlin("1.2")
+public expect fun Float.toBits(): Int
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Int]
+ * according to the IEEE 754 floating-point "single format" bit layout,
+ * preserving `NaN` values exact layout.
+ */
+@SinceKotlin("1.2")
+public expect fun Float.toRawBits(): Int
+
+/**
+ * Returns the [Float] value corresponding to a given bit representation.
+ */
+@SinceKotlin("1.2")
+public expect fun Float.Companion.fromBits(bits: Int): Float
+
 
 // From concurrent.kt
 
-@Target(PROPERTY, FIELD)
-expect annotation class Volatile
+@Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
+public typealias Volatile = kotlin.jvm.Volatile
 
 public expect inline fun <R> synchronized(lock: Any, block: () -> R): R
 

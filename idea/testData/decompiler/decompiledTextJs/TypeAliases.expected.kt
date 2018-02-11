@@ -9,7 +9,7 @@ package test
 
 public final class Outer<E, F> public constructor() {
     public final inner class Inner<G> public constructor() {
-        @kotlin.Suppress public typealias TA<H>  = kotlin.collections.Map<kotlin.collections.Map<E, F>, kotlin.collections.Map<G, H>>
+        @kotlin.Suppress public typealias TA<H> = kotlin.collections.Map<kotlin.collections.Map<E, F>, kotlin.collections.Map<G, H>>
     }
 }
 
@@ -18,6 +18,6 @@ public final class TypeAliases public constructor() {
 
     @kotlin.Suppress public typealias B = (dependency.A) -> kotlin.Unit
 
-    @test.Ann @kotlin.Suppress private typealias Parametrized<E, F>  = kotlin.collections.Map<E, F>
+    @test.Ann @kotlin.Suppress private typealias Parametrized<E, F> = kotlin.collections.Map<E, F>
 }
 

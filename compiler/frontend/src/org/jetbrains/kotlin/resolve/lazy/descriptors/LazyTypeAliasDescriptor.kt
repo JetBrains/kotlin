@@ -32,15 +32,15 @@ import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 
 class LazyTypeAliasDescriptor(
-        override val storageManager: StorageManager,
-        private val trace: BindingTrace,
-        containingDeclaration: DeclarationDescriptor,
-        annotations: Annotations,
-        name: Name,
-        sourceElement: SourceElement,
-        visibility: Visibility
+    override val storageManager: StorageManager,
+    private val trace: BindingTrace,
+    containingDeclaration: DeclarationDescriptor,
+    annotations: Annotations,
+    name: Name,
+    sourceElement: SourceElement,
+    visibility: Visibility
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, sourceElement, visibility),
-        TypeAliasDescriptor {
+    TypeAliasDescriptor {
     override val constructors: Collection<TypeAliasConstructorDescriptor> by storageManager.createLazyValue {
         getTypeAliasConstructors()
     }
@@ -59,9 +59,9 @@ class LazyTypeAliasDescriptor(
     override fun isActual(): Boolean = isActual
 
     fun initialize(
-            declaredTypeParameters: List<TypeParameterDescriptor>,
-            lazyUnderlyingType: NotNullLazyValue<SimpleType>,
-            lazyExpandedType: NotNullLazyValue<SimpleType>
+        declaredTypeParameters: List<TypeParameterDescriptor>,
+        lazyUnderlyingType: NotNullLazyValue<SimpleType>,
+        lazyExpandedType: NotNullLazyValue<SimpleType>
     ) {
         super.initialize(declaredTypeParameters)
         this.underlyingTypeImpl = lazyUnderlyingType
@@ -81,43 +81,52 @@ class LazyTypeAliasDescriptor(
     }
 
     private val lazyTypeConstructorParameters =
-            storageManager.createRecursionTolerantLazyValue({ this.computeConstructorTypeParameters() }, emptyList())
+        storageManager.createRecursionTolerantLazyValue({ this.computeConstructorTypeParameters() }, emptyList())
 
     fun initialize(
-            declaredTypeParameters: List<TypeParameterDescriptor>,
-            underlyingType: SimpleType,
-            expandedType: SimpleType
-    ) = initialize(declaredTypeParameters, storageManager.createLazyValue { underlyingType }, storageManager.createLazyValue { expandedType })
+        declaredTypeParameters: List<TypeParameterDescriptor>,
+        underlyingType: SimpleType,
+        expandedType: SimpleType
+    ) = initialize(
+        declaredTypeParameters,
+        storageManager.createLazyValue { underlyingType },
+        storageManager.createLazyValue { expandedType }
+    )
 
     override fun substitute(substitutor: TypeSubstitutor): TypeAliasDescriptor {
         if (substitutor.isEmpty) return this
-        val substituted = LazyTypeAliasDescriptor(storageManager, trace,
-                                                  containingDeclaration, annotations, name, source, visibility)
+        val substituted = LazyTypeAliasDescriptor(
+            storageManager, trace,
+            containingDeclaration, annotations, name, source, visibility
+        )
         substituted.initialize(declaredTypeParameters,
-                                   storageManager.createLazyValue {
-                                       substitutor.substitute(underlyingType, Variance.INVARIANT)!!.asSimpleType()
-                                   },
-                                   storageManager.createLazyValue {
-                                       substitutor.substitute(expandedType, Variance.INVARIANT)!!.asSimpleType()
-                                   }
-                               )
+                               storageManager.createLazyValue {
+                                   substitutor.substitute(underlyingType, Variance.INVARIANT)!!.asSimpleType()
+                               },
+                               storageManager.createLazyValue {
+                                   substitutor.substitute(expandedType, Variance.INVARIANT)!!.asSimpleType()
+                               }
+        )
         return substituted
     }
 
     override fun getTypeConstructorTypeParameters(): List<TypeParameterDescriptor> =
-            lazyTypeConstructorParameters()
+        lazyTypeConstructorParameters()
 
     companion object {
-        @JvmStatic fun create(
-                storageManager: StorageManager,
-                trace: BindingTrace,
-                containingDeclaration: DeclarationDescriptor,
-                annotations: Annotations,
-                name: Name,
-                sourceElement: SourceElement,
-                visibility: Visibility
+        @JvmStatic
+        fun create(
+            storageManager: StorageManager,
+            trace: BindingTrace,
+            containingDeclaration: DeclarationDescriptor,
+            annotations: Annotations,
+            name: Name,
+            sourceElement: SourceElement,
+            visibility: Visibility
         ): LazyTypeAliasDescriptor =
-                LazyTypeAliasDescriptor(storageManager, trace,
-                                        containingDeclaration, annotations, name, sourceElement, visibility)
+            LazyTypeAliasDescriptor(
+                storageManager, trace,
+                containingDeclaration, annotations, name, sourceElement, visibility
+            )
     }
 }

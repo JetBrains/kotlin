@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiImportStaticStatement
-import com.intellij.psi.PsiPolyVariantReference
-import com.intellij.psi.PsiReference
+import com.intellij.psi.*
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.PsiUtilCore
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.usageView.UsageInfo
@@ -58,6 +56,17 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
             element.toLightMethods().flatMapTo(references) { MethodReferencesSearch.search(it) }
         }
         return references
+    }
+
+    override fun getQualifiedNameAfterRename(element: PsiElement, newName: String?, nonJava: Boolean): String? {
+        if (!nonJava) return newName
+
+        val qualifiedName = when (element) {
+            is KtNamedDeclaration -> element.fqName?.asString() ?: element.name
+            is PsiClass -> element.qualifiedName ?: element.name
+            else -> return null
+        }
+        return PsiUtilCore.getQualifiedNameAfterRename(qualifiedName, newName)
     }
 
     override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {

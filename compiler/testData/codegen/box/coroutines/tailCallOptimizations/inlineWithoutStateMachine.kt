@@ -2,6 +2,8 @@
 // WITH_COROUTINES
 import helpers.*
 // CHECK_BYTECODE_LISTING
+// CHECK_NEW_COUNT: function=suspendHere count=0
+// CHECK_NEW_COUNT: function=complexSuspend count=0
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 

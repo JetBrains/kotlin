@@ -67,7 +67,7 @@ public abstract class MavenTestCase extends UsefulTestCase {
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setConnectTimeout(1000);
             int responseCode = urlConnection.getResponseCode();
-            if(responseCode < 400) {
+            if (responseCode < 400) {
                 mirrorDiscoverable = true;
             }
         }
@@ -137,7 +137,6 @@ public abstract class MavenTestCase extends UsefulTestCase {
                 });
             }
         });
-
     }
 
     private void ensureTempDirCreated() throws IOException {
@@ -277,7 +276,9 @@ public abstract class MavenTestCase extends UsefulTestCase {
     }
 
     protected static String getEnvVar() {
-        if (SystemInfo.isWindows) return "TEMP";
+        if (SystemInfo.isWindows) {
+            return "TEMP";
+        }
         else if (SystemInfo.isLinux) return "HOME";
         return "TMPDIR";
     }
@@ -409,8 +410,9 @@ public abstract class MavenTestCase extends UsefulTestCase {
         return f;
     }
 
-    @NonNls @Language(value="XML")
-    public static String createPomXml(@NonNls @Language(value="XML", prefix="<xml>", suffix="</xml>") String xml) {
+    @NonNls
+    @Language(value = "XML")
+    public static String createPomXml(@NonNls @Language(value = "XML", prefix = "<xml>", suffix = "</xml>") String xml) {
         return "<?xml version=\"1.0\"?>" +
                "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"" +
                "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
@@ -542,6 +544,7 @@ public abstract class MavenTestCase extends UsefulTestCase {
     protected static <T> void assertUnorderedElementsAreEqual(Collection<T> actual, Collection<T> expected) {
         assertEquals(new HashSet<T>(expected), new HashSet<T>(actual));
     }
+
     protected static void assertUnorderedPathsAreEqual(Collection<String> actual, Collection<String> expected) {
         assertEquals(new SetWithToString<String>(new THashSet<String>(expected, FileUtil.PATH_HASHING_STRATEGY)),
                      new SetWithToString<String>(new THashSet<String>(actual, FileUtil.PATH_HASHING_STRATEGY)));
@@ -641,5 +644,4 @@ public abstract class MavenTestCase extends UsefulTestCase {
             return myDelegate.hashCode();
         }
     }
-
 }

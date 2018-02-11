@@ -33,8 +33,8 @@ enum class RttiOperation {
 }
 
 class RttiExpressionInformation(
-        val subject: KtExpression,
-        val sourceType: KotlinType?,
-        val targetType: KotlinType?,
-        val operation: RttiOperation
+    val subject: KtExpression,
+    val sourceType: KotlinType?,
+    val targetType: KotlinType?,
+    val operation: RttiOperation
 )

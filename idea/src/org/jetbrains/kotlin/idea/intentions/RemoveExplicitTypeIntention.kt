@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
-        KtCallableDeclaration::class.java,
-        "Remove explicit type specification"
+    KtCallableDeclaration::class.java,
+    "Remove explicit type specification"
 ) {
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
@@ -42,6 +42,7 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
         fun getRange(element: KtCallableDeclaration): TextRange? {
             if (element.containingFile is KtCodeFragment) return null
             val typeReference = element.typeReference ?: return null
+            if (typeReference.annotationEntries.isNotEmpty()) return null
 
             if (element is KtParameter) {
                 if (element.isLoopParameter) return element.textRange

@@ -43,5 +43,5 @@ public final class Unrelated {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 public typealias B = Base
-public typealias GB</*0*/ T>  = GenericBase<T>
+public typealias GB</*0*/ T> = GenericBase<T>
 public typealias U = Unrelated

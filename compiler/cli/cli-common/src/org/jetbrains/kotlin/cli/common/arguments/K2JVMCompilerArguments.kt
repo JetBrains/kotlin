@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.utils.Jsr305State
-import org.jetbrains.kotlin.utils.ReportLevel
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -51,11 +49,11 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var noJdk: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
-    @Argument(value = "-no-stdlib", description = "Don't include Kotlin runtime into classpath")
+    @Argument(value = "-no-stdlib", description = "Don't include kotlin-stdlib.jar or kotlin-reflect.jar into classpath")
     var noStdlib: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
-    @Argument(value = "-no-reflect", description = "Don't include Kotlin reflection implementation into classpath")
+    @Argument(value = "-no-reflect", description = "Don't include kotlin-reflect.jar into classpath")
     var noReflect: Boolean by FreezableVar(false)
 
     @Argument(value = "-script", description = "Evaluate the script file")
@@ -68,7 +66,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var scriptTemplates: Array<String>? by FreezableVar(null)
 
-    @Argument(value = "-module-name", description = "Module name")
+    @Argument(value = "-module-name", valueDescription = "<name>", description = "Name of the generated .kotlin_module file")
     var moduleName: String? by FreezableVar(null)
 
     @GradleOption(DefaultValues.JvmTargetVersions::class)
@@ -105,8 +103,18 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xno-param-assertions", description = "Don't generate not-null assertions on parameters of methods accessible from Java")
     var noParamAssertions: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xstrict-java-nullability-assertions", description = "Generate nullability assertions for non-null Java expressions")
+    var strictJavaNullabilityAssertions: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xno-optimize", description = "Disable optimizations")
     var noOptimize: Boolean by FreezableVar(false)
+
+    @Argument(
+            value = "-Xnormalize-constructor-calls",
+            valueDescription = "{disable|enable}",
+            description = "Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable"
+    )
+    var constructorCallNormalizationMode: String? by FreezableVar(JVMConstructorCallNormalizationMode.DEFAULT.description)
 
     @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
     var reportPerf: Boolean by FreezableVar(false)
@@ -166,15 +174,27 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
             value = "-Xjsr305",
             deprecatedName = "-Xjsr305-annotations",
-            valueDescription = "{ignore|strict|warn}" +
-                               "|under-migration:{ignore-strict-warn}" +
-                               "|@<fully qualified class name>:{ignore|strict|warn}",
-            description = "Specify behaviors for JSR-305 nullability annotations for: " +
-                          "global, annotated with @UnderMigration or custom annotation " +
-                          "with specific value: ignore, treat as other supported nullability annotations, or report a warning. " +
-                          "Note that strict value is experimental yet"
+            valueDescription = "{ignore/strict/warn}" +
+                               "|under-migration:{ignore/strict/warn}" +
+                               "|@<fq.name>:{ignore/strict/warn}",
+            description = "Specify behavior for JSR-305 nullability annotations:\n" +
+                          "-Xjsr305={ignore/strict/warn}                   globally (all non-@UnderMigration annotations)\n" +
+                          "-Xjsr305=under-migration:{ignore/strict/warn}   all @UnderMigration annotations\n" +
+                          "-Xjsr305=@<fq.name>:{ignore/strict/warn}        annotation with the given fully qualified class name\n" +
+                          "Modes:\n" +
+                          "  * ignore\n" +
+                          "  * strict (experimental; treat as other supported nullability annotations)\n" +
+                          "  * warn (report a warning)"
     )
     var jsr305: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xsupport-compatqual-checker-framework-annotations",
+        valueDescription = "enable|disable",
+        description = "Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).\n" +
+                "Default value is 'enable'"
+    )
+    var supportCompatqualCheckerFrameworkAnnotations: String? by FreezableVar(null)
 
     @Argument(
             value = "-Xno-exception-on-explicit-equals-for-boxed-null",
@@ -187,81 +207,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
-        result[AnalysisFlag.jsr305] = parseJsr305(collector)
+        result[AnalysisFlag.jsr305] = Jsr305Parser(collector).parse(
+            jsr305,
+            supportCompatqualCheckerFrameworkAnnotations
+        )
         return result
-    }
-
-    fun parseJsr305(collector: MessageCollector): Jsr305State {
-        var global: ReportLevel? = null
-        var migration: ReportLevel? = null
-        val userDefined = mutableMapOf<String, ReportLevel>()
-
-        fun parseJsr305UnderMigration(collector: MessageCollector, item: String): ReportLevel? {
-            val rawState = item.split(":").takeIf { it.size == 2 }?.get(1)
-            return ReportLevel.findByDescription(rawState) ?: reportUnrecognizedJsr305(collector, item).let { null }
-        }
-
-        jsr305?.forEach { item ->
-            when {
-                item.startsWith("@") -> {
-                    val (name, state) = parseJsr305UserDefined(collector, item) ?: return@forEach
-                    val current = userDefined[name]
-                    if (current != null) {
-                        reportDuplicateJsr305(collector, "@$name:${current.description}", item)
-                        return@forEach
-                    }
-                    userDefined[name] = state
-                }
-                item.startsWith("under-migration") -> {
-                    if (migration != null) {
-                        reportDuplicateJsr305(collector, "under-migration:${migration?.description}", item)
-                        return@forEach
-                    }
-
-                    migration = parseJsr305UnderMigration(collector, item)
-                }
-                item == "enable" -> {
-                    collector.report(
-                            CompilerMessageSeverity.STRONG_WARNING,
-                            "Option 'enable' for -Xjsr305 flag is deprecated. Please use 'strict' instead"
-                    )
-                    if (global != null) return@forEach
-
-                    global = ReportLevel.STRICT
-                }
-                else -> {
-                    if (global != null) {
-                        reportDuplicateJsr305(collector, global!!.description, item)
-                        return@forEach
-                    }
-                    global = ReportLevel.findByDescription(item)
-                }
-            }
-        }
-
-        val state = Jsr305State(global ?: ReportLevel.WARN, migration, userDefined)
-        return if (state == Jsr305State.DISABLED) Jsr305State.DISABLED else state
-    }
-
-    private fun reportUnrecognizedJsr305(collector: MessageCollector, item: String) {
-        collector.report(CompilerMessageSeverity.ERROR, "Unrecognized -Xjsr305 value: $item")
-    }
-
-    private fun reportDuplicateJsr305(collector: MessageCollector, first: String, second: String) {
-        collector.report(CompilerMessageSeverity.ERROR, "Conflict duplicating -Xjsr305 value: $first, $second")
-    }
-
-    private fun parseJsr305UserDefined(collector: MessageCollector, item: String): Pair<String, ReportLevel>? {
-        val (name, rawState) = item.substring(1).split(":").takeIf { it.size == 2 } ?: run {
-            reportUnrecognizedJsr305(collector, item)
-            return null
-        }
-
-        val state = ReportLevel.findByDescription(rawState) ?: run {
-            reportUnrecognizedJsr305(collector, item)
-            return null
-        }
-
-        return name to state
     }
 }

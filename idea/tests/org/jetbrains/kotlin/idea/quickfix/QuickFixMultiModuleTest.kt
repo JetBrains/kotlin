@@ -40,13 +40,13 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
         doQuickFixTest()
     }
 
-    private fun doTestHeaderWithJvmAndJs() {
+    private fun doTestHeaderWithJvmAndJs(expectName: String = "header") {
         doMultiPlatformTest(impls = *arrayOf("jvm" to TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], "js" to TargetPlatformKind.JavaScript))
     }
 
     @Test
     fun testAbstract() {
-        doMultiPlatformTest(impls = "js" to TargetPlatformKind.JavaScript)
+        doMultiPlatformTest(impls = *arrayOf("js" to TargetPlatformKind.JavaScript))
     }
 
     @Test
@@ -56,6 +56,26 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testClass() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testClassFunction() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testClassOverloadedFunction() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testClassSomeProperties() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testCompanionAbsence() {
         doMultiPlatformTest()
     }
 
@@ -81,7 +101,7 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testEnum() {
-        doMultiPlatformTest(impls = "js" to TargetPlatformKind.JavaScript)
+        doMultiPlatformTest(impls = *arrayOf("js" to TargetPlatformKind.JavaScript))
     }
 
     @Test
@@ -91,6 +111,11 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testInterface() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testNested() {
         doMultiPlatformTest()
     }
 
@@ -125,12 +150,12 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
-    fun testNested() {
+    fun testPrimaryConstructor() {
         doMultiPlatformTest()
     }
 
     @Test
-    fun testPrimaryConstructor() {
+    fun testPrimaryConstructorAbsence() {
         doMultiPlatformTest()
     }
 
@@ -141,11 +166,35 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testSealed() {
-        doMultiPlatformTest(impls = "js" to TargetPlatformKind.JavaScript)
+        doMultiPlatformTest(impls = *arrayOf("js" to TargetPlatformKind.JavaScript))
+    }
+
+    @Test
+    fun testSecondaryConstructorAbsence() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testWithFakeJvm() {
+        val commonModule = module("header")
+        commonModule.createFacet(TargetPlatformKind.Common, false)
+        val jvmKind = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        arrayOf("fake_jvm" to jvmKind, "jvm" to jvmKind).forEach { (implName, implKind) ->
+            val implModule = module(implName)
+            implModule.createFacet(implKind, implementedModuleName = "header".takeIf { implName == "jvm" })
+            implModule.enableMultiPlatform()
+            implModule.addDependency(commonModule)
+        }
+        doQuickFixTest()
     }
 
     @Test
     fun testWithTest() {
+        doMultiPlatformTest(expectName = "common", withTests = true)
+    }
+
+    @Test
+    fun testWithTestDummy() {
         doMultiPlatformTest(expectName = "common", withTests = true)
     }
 
@@ -195,9 +244,6 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     fun testFunctionTypeReceiverToParameterByImpl() = doTestHeaderWithJvmAndJs()
 
     @Test
-    fun testImplementMembersInHeaderClass() = doMultiPlatformTest(impls = *arrayOf())
-
-    @Test
     fun testImplementMembersInImplClassNonImplInheritor() = doMultiPlatformTest()
 
     @Test
@@ -208,4 +254,25 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testAddActualToTopLevelMember() = doMultiPlatformTest()
+
+    @Test
+    fun testCreateFunInExpectClass() = doMultiPlatformTest()
+
+    @Test
+    fun testCreateValInExpectClass() = doMultiPlatformTest()
+
+    @Test
+    fun testCreateVarInExpectClass() = doMultiPlatformTest()
+
+    @Test
+    fun testConvertExpectSealedClassToEnum() = doTestHeaderWithJvmAndJs("header")
+
+    @Test
+    fun testConvertActualSealedClassToEnum() = doTestHeaderWithJvmAndJs("js")
+
+    @Test
+    fun testConvertExpectEnumToSealedClass() = doTestHeaderWithJvmAndJs("header")
+
+    @Test
+    fun testConvertActualEnumToSealedClass() = doTestHeaderWithJvmAndJs("js")
 }

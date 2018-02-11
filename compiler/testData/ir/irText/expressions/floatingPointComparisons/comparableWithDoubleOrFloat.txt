@@ -1,0 +1,49 @@
+FILE fqName:<root> fileName:/comparableWithDoubleOrFloat.kt
+  FUN name:testD visibility:public modality:FINAL <> (x:kotlin.Comparable<kotlin.Double>, y:kotlin.Comparable<kotlin.Double>) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Comparable<kotlin.Double> flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Comparable<kotlin.Double> flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testD(Comparable<Double>, Comparable<Double>): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'value-parameter x: Comparable<Double>' type=kotlin.Comparable<kotlin.Double> origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'value-parameter y: Comparable<Double>' type=kotlin.Comparable<kotlin.Double> origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CALL 'less(Double, Double): Boolean' type=kotlin.Boolean origin=LT
+              arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                GET_VAR 'value-parameter x: Comparable<Double>' type=kotlin.Comparable<kotlin.Double> origin=null
+              arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                GET_VAR 'value-parameter y: Comparable<Double>' type=kotlin.Comparable<kotlin.Double> origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:testF visibility:public modality:FINAL <> (x:kotlin.Comparable<kotlin.Float>, y:kotlin.Comparable<kotlin.Float>) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Comparable<kotlin.Float> flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Comparable<kotlin.Float> flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testF(Comparable<Float>, Comparable<Float>): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter x: Comparable<Float>' type=kotlin.Comparable<kotlin.Float> origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter y: Comparable<Float>' type=kotlin.Comparable<kotlin.Float> origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CALL 'less(Float, Float): Boolean' type=kotlin.Boolean origin=LT
+              arg0: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                GET_VAR 'value-parameter x: Comparable<Float>' type=kotlin.Comparable<kotlin.Float> origin=null
+              arg1: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                GET_VAR 'value-parameter y: Comparable<Float>' type=kotlin.Comparable<kotlin.Float> origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false

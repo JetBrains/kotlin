@@ -77,6 +77,15 @@ public final class KotlinDescriptorIconProvider {
         return null;
     }
 
+    private static Modality getModalitySafe(@NotNull MemberDescriptor descriptor) {
+        try {
+            return descriptor.getModality();
+        }
+        catch (InvalidModuleException ex) {
+            return Modality.FINAL;
+        }
+    }
+
     private static Icon getBaseIcon(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof PackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) {
             return PlatformIcons.PACKAGE_ICON;
@@ -84,13 +93,13 @@ public final class KotlinDescriptorIconProvider {
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             if (functionDescriptor.getExtensionReceiverParameter() != null) {
-                return Modality.ABSTRACT == functionDescriptor.getModality()
+                return Modality.ABSTRACT == getModalitySafe(functionDescriptor)
                        ? KotlinIcons.ABSTRACT_EXTENSION_FUNCTION
                        : KotlinIcons.EXTENSION_FUNCTION;
             }
 
             if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-                return Modality.ABSTRACT == functionDescriptor.getModality()
+                return Modality.ABSTRACT == getModalitySafe(functionDescriptor)
                        ? PlatformIcons.ABSTRACT_METHOD_ICON
                        : PlatformIcons.METHOD_ICON;
             }
@@ -112,7 +121,7 @@ public final class KotlinDescriptorIconProvider {
                 case OBJECT:
                     return KotlinIcons.OBJECT;
                 case CLASS:
-                    return Modality.ABSTRACT == classDescriptor.getModality() ?
+                    return Modality.ABSTRACT == getModalitySafe(classDescriptor) ?
                            KotlinIcons.ABSTRACT_CLASS :
                            KotlinIcons.CLASS;
                 default:

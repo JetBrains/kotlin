@@ -54,7 +54,7 @@ open class RenameIdentifierFix : LocalQuickFix {
     protected open fun getElementToRename(element: PsiElement): PsiElement? = element.parent
 
     private fun renameWithoutEditor(element: PsiElement) {
-        val elementToRename = getElementToRename(element)
+        val elementToRename = getElementToRename(element) ?: return
         val factory = RefactoringFactory.getInstance(element.project)
         val renameRefactoring = factory.createRename(elementToRename, null, true, true)
         renameRefactoring.run()

@@ -2,9 +2,9 @@
 // FUN: foo
 BB 0
 CONTENT
-      1 FUN public fun foo(): kotlin.Unit
+      1 FUN name:foo visibility:public modality:FINAL <> () returnType:Unit flags:
 OUTGOING -> NONE
-    Function exit: FUN public fun foo(): kotlin.Unit
+    Function exit: FUN name:foo visibility:public modality:FINAL <> () returnType:Unit flags:
 
 // END FUN: foo
 

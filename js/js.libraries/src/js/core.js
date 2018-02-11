@@ -46,7 +46,7 @@ Kotlin.hashCode = function (obj) {
         return getObjectHashCode(obj);
     }
     if ("number" === objType) {
-        return numberHashCode(obj);
+        return Kotlin.numberHashCode(obj);
     }
     if ("boolean" === objType) {
         return Number(obj)
@@ -56,38 +56,6 @@ Kotlin.hashCode = function (obj) {
     return getStringHashCode(str);
 };
 
-var numberHashCode;
-
-if (typeof ArrayBuffer === "function") {
-    var bufferForNumberConversion = new ArrayBuffer(8);
-    var arrayForDoubleConversion = new Float64Array(bufferForNumberConversion);
-    var arrayForIntegerConversion = new Int32Array(bufferForNumberConversion);
-
-    // Detect endiannes of ArrayBuffer
-    var lowerIntegerIndex = 0;
-    var upperIntegerIndex = 1;
-    (function() {
-        arrayForDoubleConversion[0] = 1.2;
-        if (arrayForIntegerConversion[0] !== 0x3FF33333) {
-            lowerIntegerIndex = 1;
-            upperIntegerIndex = 0;
-        }
-    })();
-    numberHashCode = function(obj) {
-        if ((obj | 0) === obj) {
-            return obj | 0;
-        }
-        else {
-            arrayForDoubleConversion[0] = obj;
-            return (arrayForIntegerConversion[lowerIntegerIndex] * 31 | 0) + arrayForIntegerConversion[upperIntegerIndex] | 0;
-        }
-    }
-}
-else {
-    numberHashCode = function(obj) {
-        return obj | 0;
-    }
-}
 
 Kotlin.toString = function (o) {
     if (o == null) {

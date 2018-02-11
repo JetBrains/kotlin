@@ -108,6 +108,19 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testLambdaArgument1() {
+        doTest();
+    }
+    public void testLambdaArgument2() {
+        doTest();
+    }
+    public void testLambdaArgument3() {
+        doTest();
+    }
+    public void testLambdaArgument4() {
+        doTest();
+    }
+
     public void testArrayBrackets() {
         doTest();
     }

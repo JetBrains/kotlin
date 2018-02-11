@@ -34,38 +34,38 @@ class VariableFixationFinder {
     data class VariableForFixation(val variable: TypeConstructor, val hasProperConstraint: Boolean)
 
     fun findFirstVariableForFixation(
-            c: Context,
-            allTypeVariables: List<TypeConstructor>,
-            postponedKtPrimitives: List<PostponedResolvedAtom>,
-            completionMode: ConstraintSystemCompletionMode,
-            topLevelType: UnwrappedType
+        c: Context,
+        allTypeVariables: List<TypeConstructor>,
+        postponedKtPrimitives: List<PostponedResolvedAtom>,
+        completionMode: ConstraintSystemCompletionMode,
+        topLevelType: UnwrappedType
     ): VariableForFixation? = c.findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
 
     private enum class TypeVariableFixationReadiness {
         FORBIDDEN,
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
-        RELATED_TO_ANY_OUTPUT_TYPE,
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
+        RELATED_TO_ANY_OUTPUT_TYPE,
         READY_FOR_FIXATION,
     }
 
     private fun Context.getTypeVariableReadiness(
-            variable: TypeConstructor,
-            dependencyProvider: TypeVariableDependencyInformationProvider
+        variable: TypeConstructor,
+        dependencyProvider: TypeVariableDependencyInformationProvider
     ): TypeVariableFixationReadiness = when {
         !notFixedTypeVariables.contains(variable) ||
-        dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
+                dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
-        dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
+        dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
         else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
     }
 
     private fun Context.findTypeVariableForFixation(
-            allTypeVariables: List<TypeConstructor>,
-            postponedKtPrimitives: List<PostponedResolvedAtom>,
-            completionMode: ConstraintSystemCompletionMode,
-            topLevelType: UnwrappedType
+        allTypeVariables: List<TypeConstructor>,
+        postponedKtPrimitives: List<PostponedResolvedAtom>,
+        completionMode: ConstraintSystemCompletionMode,
+        topLevelType: UnwrappedType
     ): VariableForFixation? {
         val dependencyProvider = TypeVariableDependencyInformationProvider(notFixedTypeVariables, postponedKtPrimitives,
                                                                            topLevelType.takeIf { completionMode == PARTIAL })
@@ -89,12 +89,12 @@ class VariableFixationFinder {
     }
 
     private fun Context.variableHasProperArgumentConstraints(variable: TypeConstructor): Boolean =
-            notFixedTypeVariables[variable]?.constraints?.any { isProperArgumentConstraint(it) } ?: false
+        notFixedTypeVariables[variable]?.constraints?.any { isProperArgumentConstraint(it) } ?: false
 
     private fun Context.isProperArgumentConstraint(c: Constraint) =
-            isProperType(c.type) && c.position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition
+        isProperType(c.type) && c.position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition
 
     private fun Context.isProperType(type: UnwrappedType): Boolean =
-            !type.contains { notFixedTypeVariables.containsKey(it.constructor) }
+        !type.contains { notFixedTypeVariables.containsKey(it.constructor) }
 
 }

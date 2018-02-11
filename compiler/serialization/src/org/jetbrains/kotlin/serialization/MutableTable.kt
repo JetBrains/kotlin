@@ -63,10 +63,10 @@ class MutableTypeTable : MutableTable<ProtoBuf.Type.Builder, ProtoBuf.TypeTable,
     }
 }
 
-class MutableSinceKotlinInfoTable : MutableTable<ProtoBuf.SinceKotlinInfo.Builder, ProtoBuf.SinceKotlinInfoTable, ProtoBuf.SinceKotlinInfoTable.Builder>() {
-    override fun createTableBuilder(): ProtoBuf.SinceKotlinInfoTable.Builder = ProtoBuf.SinceKotlinInfoTable.newBuilder()
+class MutableVersionRequirementTable : MutableTable<ProtoBuf.VersionRequirement.Builder, ProtoBuf.VersionRequirementTable, ProtoBuf.VersionRequirementTable.Builder>() {
+    override fun createTableBuilder(): ProtoBuf.VersionRequirementTable.Builder = ProtoBuf.VersionRequirementTable.newBuilder()
 
-    override fun addElement(builder: ProtoBuf.SinceKotlinInfoTable.Builder, element: ProtoBuf.SinceKotlinInfo.Builder) {
-        builder.addInfo(element)
+    override fun addElement(builder: ProtoBuf.VersionRequirementTable.Builder, element: ProtoBuf.VersionRequirement.Builder) {
+        builder.addRequirement(element)
     }
 }

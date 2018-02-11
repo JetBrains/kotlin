@@ -1,1 +1,6 @@
 13 val <bold>x = A()</bold>
+16 	<bold>x</bold>[1]
+17 	<bold>x</bold>[1] = y
+18 	<bold>x</bold>[1] += y
+19 	<bold>x</bold>[1] *= y
+20 	<bold>x</bold>[1]++

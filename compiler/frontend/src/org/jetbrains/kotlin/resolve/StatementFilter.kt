@@ -25,7 +25,8 @@ open class StatementFilter {
         get() = null
 
     companion object {
-        @JvmField val NONE = object : StatementFilter() {
+        @JvmField
+        val NONE = object : StatementFilter() {
             override fun toString() = "NONE"
         }
     }

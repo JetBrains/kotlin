@@ -38,5 +38,6 @@ internal class GradleIncrementalCompilerEnvironment(
         val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null,
         val artifactFile: File? = null,
         val buildHistoryFile: File? = null,
-        val friendBuildHistoryFile: File? = null
+        val friendBuildHistoryFile: File? = null,
+        val usePreciseJavaTracking: Boolean = false
 ) : GradleCompilerEnvironment(compilerClasspath, messageCollector, outputItemsCollector, compilerArgs)

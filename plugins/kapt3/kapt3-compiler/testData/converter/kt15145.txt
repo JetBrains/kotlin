@@ -1,0 +1,15 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public abstract interface MyInterface {
+
+    public abstract void someFun();
+
+    @kotlin.Metadata()
+    public static final class MyDefaultInferface {
+
+        public MyDefaultInferface() {
+            super();
+        }
+    }
+}

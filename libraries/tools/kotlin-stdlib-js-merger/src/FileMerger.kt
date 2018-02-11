@@ -22,16 +22,10 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.facade.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.inline.util.fixForwardNameReferences
 import org.jetbrains.kotlin.js.parser.parse
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapLocationRemapper
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
+import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.util.TextOutputImpl
-import org.json.JSONArray
-import org.json.JSONObject
-import org.json.JSONTokener
 import java.io.File
 import java.io.StringReader
 
@@ -78,7 +72,7 @@ fun main(args: Array<String>) {
     val sourceMapFile = File(outputFile.parentFile, outputFile.name + ".map")
     val textOutput = TextOutputImpl()
     val sourceMapBuilder = SourceMap3Builder(outputFile, textOutput, "")
-    val consumer = SourceMapBuilderConsumer(sourceMapBuilder, SourceFilePathResolver(mutableListOf()), true, true)
+    val consumer = SourceMapBuilderConsumer(File("."), sourceMapBuilder, SourceFilePathResolver(mutableListOf()), true, true)
     program.globalBlock.accept(JsToStringGenerationVisitor(textOutput, consumer))
     val sourceMapContent = sourceMapBuilder.build()
 
@@ -86,20 +80,20 @@ fun main(args: Array<String>) {
 
     outputFile.writeText(programText + "\n//# sourceMappingURL=${sourceMapFile.name}\n")
 
-    val sourceMapJson = StringReader(sourceMapContent).use { JSONObject(JSONTokener(it)) }
-    val sources = sourceMapJson["sources"] as JSONArray
+    val sourceMapJson = StringReader(sourceMapContent).use { parseJson(it) }
+    val sources = (sourceMapJson as JsonObject).properties["sources"] as JsonArray
 
-    sourceMapJson.put("sourcesContent", sources.map { sourcePath ->
-        val sourceFile = File(sourcePath as String)
+    sourceMapJson.properties["sourcesContent"] = JsonArray(*sources.elements.map { sourcePath ->
+        val sourceFile = File((sourcePath as JsonString).value)
         if (sourceFile.exists()) {
-            sourceFile.readText()
+            JsonString(sourceFile.readText())
         }
         else {
-            null
+            JsonNull
         }
-    })
+    }.toTypedArray())
 
-    sourceMapFile.writeText(sourceMapJson.toString(2))
+    sourceMapFile.writeText(sourceMapJson.toString())
 }
 
 private fun List<JsStatement>.createInsertionPlace(): JsBlock {

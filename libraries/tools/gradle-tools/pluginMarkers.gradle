@@ -14,7 +14,7 @@ ext.pluginMarkerProject = { String pluginProjectId ->
     apply plugin: 'java'
 
     dependencies {
-        compile pluginProject
+        compile project(path: pluginProject.path, configuration: 'runtimeJar')
     }
 
     // Remove the default JAR artifact added by the Java plugin

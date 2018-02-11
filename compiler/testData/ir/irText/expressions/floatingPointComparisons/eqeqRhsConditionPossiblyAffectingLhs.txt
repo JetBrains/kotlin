@@ -1,0 +1,27 @@
+FILE fqName:<root> fileName:/eqeqRhsConditionPossiblyAffectingLhs.kt
+  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test(Any): Boolean'
+        CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+          arg0: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          arg1: WHEN type=kotlin.Double origin=null
+            BRANCH
+              if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
+                GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+              then: BLOCK type=kotlin.Nothing origin=EXCLEXCL
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Nothing? flags:val
+                  CONST Null type=kotlin.Nothing? value=null
+                WHEN type=kotlin.Nothing origin=null
+                  BRANCH
+                    if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                      arg0: GET_VAR 'tmp0_notnull: Nothing?' type=kotlin.Nothing? origin=null
+                      arg1: CONST Null type=kotlin.Nothing? value=null
+                    then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: GET_VAR 'tmp0_notnull: Nothing?' type=kotlin.Nothing? origin=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null

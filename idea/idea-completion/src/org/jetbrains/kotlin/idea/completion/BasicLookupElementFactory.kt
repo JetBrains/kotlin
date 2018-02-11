@@ -37,9 +37,11 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import javax.swing.Icon
 
 class BasicLookupElementFactory(
         private val project: Project,

@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -29,19 +31,20 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.DOUBLE_COLON_LHS
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
 class ConvertReferenceToLambdaInspection : IntentionBasedInspection<KtCallableReferenceExpression>(ConvertReferenceToLambdaIntention::class)
 
 class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntention<KtCallableReferenceExpression>(
-        KtCallableReferenceExpression::class.java, "Convert reference to lambda"
+    KtCallableReferenceExpression::class.java, "Convert reference to lambda"
 ) {
-    private val SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE
 
     override fun applyTo(element: KtCallableReferenceExpression, editor: Editor?) {
         val context = element.analyze(BodyResolveMode.PARTIAL)
@@ -52,9 +55,11 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         val receiverType = receiverExpression?.let {
             (context[DOUBLE_COLON_LHS, it] as? DoubleColonLHS.Type)?.type
         }
-        val receiverNameAndType = receiverType?.let { KotlinNameSuggester.suggestNamesByType(it, validator = {
-            name -> name !in parameterNamesAndTypes.map { it.first }
-        }, defaultName = "receiver").first() to it }
+        val receiverNameAndType = receiverType?.let {
+            KotlinNameSuggester.suggestNamesByType(it, validator = { name ->
+                name !in parameterNamesAndTypes.map { it.first }
+            }, defaultName = "receiver").first() to it
+        }
 
         val valueArgumentParent = element.parent as? KtValueArgument
         val callGrandParent = valueArgumentParent?.parent?.parent as? KtCallExpression
@@ -63,14 +68,14 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         val matchingParameterIsExtension = matchingParameterType?.isExtensionFunctionType ?: false
 
         val acceptsReceiverAsParameter = receiverNameAndType != null && !matchingParameterIsExtension &&
-                                         (targetDescriptor.dispatchReceiverParameter != null ||
-                                          targetDescriptor.extensionReceiverParameter != null)
+                (targetDescriptor.dispatchReceiverParameter != null ||
+                        targetDescriptor.extensionReceiverParameter != null)
 
         val factory = KtPsiFactory(element)
         val targetName = reference.text
         val lambdaParameterNamesAndTypes =
-                if (acceptsReceiverAsParameter) listOf(receiverNameAndType!!) + parameterNamesAndTypes
-                else parameterNamesAndTypes
+            if (acceptsReceiverAsParameter) listOf(receiverNameAndType!!) + parameterNamesAndTypes
+            else parameterNamesAndTypes
 
         val receiverPrefix = when {
             acceptsReceiverAsParameter -> receiverNameAndType!!.first + "."
@@ -79,35 +84,33 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         }
 
         val lambdaExpression = if (valueArgumentParent != null &&
-                                   lambdaParameterNamesAndTypes.size == 1 &&
-                                   receiverExpression?.text != "it") {
+            lambdaParameterNamesAndTypes.size == 1 &&
+            receiverExpression?.text != "it") {
             factory.createLambdaExpression(
-                    parameters = "",
-                    body = when {
-                        acceptsReceiverAsParameter ->
-                            if (targetDescriptor is PropertyDescriptor) "it.$targetName"
-                            else "it.$targetName()"
-                        else ->
-                            "$receiverPrefix$targetName(it)"
-                    }
+                parameters = "",
+                body = when {
+                    acceptsReceiverAsParameter ->
+                        if (targetDescriptor is PropertyDescriptor) "it.$targetName"
+                        else "it.$targetName()"
+                    else ->
+                        "$receiverPrefix$targetName(it)"
+                }
             )
-        }
-        else {
+        } else {
             factory.createLambdaExpression(
-                    parameters = lambdaParameterNamesAndTypes.joinToString(separator = ", ") {
-                        if (valueArgumentParent != null) it.first
-                        else it.first + ": " + SOURCE_RENDERER.renderType(it.second)
-                    },
-                    body = if (targetDescriptor is PropertyDescriptor) {
-                        "$receiverPrefix$targetName"
-                    }
-                    else {
-                        parameterNamesAndTypes.joinToString(
-                                prefix = "$receiverPrefix$targetName(",
-                                separator = ", ",
-                                postfix = ")"
-                        ) { it.first }
-                    }
+                parameters = lambdaParameterNamesAndTypes.joinToString(separator = ", ") {
+                    if (valueArgumentParent != null) it.first
+                    else it.first + ": " + SOURCE_RENDERER.renderType(it.second)
+                },
+                body = if (targetDescriptor is PropertyDescriptor) {
+                    "$receiverPrefix$targetName"
+                } else {
+                    parameterNamesAndTypes.joinToString(
+                        prefix = "$receiverPrefix$targetName(",
+                        separator = ", ",
+                        postfix = ")"
+                    ) { it.first }
+                }
             )
         }
 
@@ -116,7 +119,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
             else -> false
         }
         val wrappedExpression =
-                if (needParentheses) factory.createExpressionByPattern("($0)", lambdaExpression) else lambdaExpression
+            if (needParentheses) factory.createExpressionByPattern("($0)", lambdaExpression) else lambdaExpression
         ShortenReferences.DEFAULT.process(element.replaced(wrappedExpression))
 
         if (valueArgumentParent != null && callGrandParent != null) {
@@ -127,5 +130,15 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         }
     }
 
-    override fun isApplicableTo(element: KtCallableReferenceExpression) = true
+    override fun isApplicableTo(element: KtCallableReferenceExpression): Boolean {
+        val context = element.analyze(BodyResolveMode.PARTIAL)
+        val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, element] ?: return true
+        val expectedTypeDescriptor = expectedType.constructor.declarationDescriptor as? ClassDescriptor ?: return true
+        val expectedTypeFqName = expectedTypeDescriptor.fqNameSafe
+        return expectedTypeFqName.isRoot || expectedTypeFqName.parent() != KOTLIN_REFLECT_FQ_NAME
+    }
+
+    companion object {
+        private val SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE
+    }
 }

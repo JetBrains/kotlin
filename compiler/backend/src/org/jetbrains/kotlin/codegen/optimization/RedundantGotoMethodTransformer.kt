@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.codegen.optimization
 
-import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.LabelNode
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
+import org.jetbrains.org.objectweb.asm.tree.LabelNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class RedundantGotoMethodTransformer : MethodTransformer() {
     /**
@@ -38,7 +38,7 @@ class RedundantGotoMethodTransformer : MethodTransformer() {
                 insn is LabelNode ->
                     currentLabels.add(insn)
                 insn.opcode == Opcodes.GOTO &&
-                (insn as JumpInsnNode).label in currentLabels ->
+                        (insn as JumpInsnNode).label in currentLabels ->
                     insnsToRemove.add(insn)
                 insn.isMeaningful ->
                     currentLabels.clear()

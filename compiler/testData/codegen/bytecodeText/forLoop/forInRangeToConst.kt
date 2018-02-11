@@ -9,4 +9,4 @@ fun test(): Int {
 }
 
 // 0 IF_ICMPEQ
-// 1 IF_ICMPGE
+// 1 IF_ICMPGT

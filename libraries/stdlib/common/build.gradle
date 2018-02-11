@@ -2,9 +2,11 @@ description = 'Kotlin Common Standard Library'
 
 apply plugin: 'kotlin-platform-common'
 
+configureDist(project)
 configurePublishing(project)
 
-ext.commonSrcDir = "${buildDir}/common-sources"
+def commonSrcDir = "${buildDir}/common-sources"
+def commonTestSrcDir = "${buildDir}/common-test-sources"
 
 sourceSets {
     main {
@@ -13,9 +15,21 @@ sourceSets {
             srcDir commonSrcDir
         }
     }
+    test {
+        kotlin {
+            srcDir commonTestSrcDir
+            srcDir 'test'
+        }
+    }
+}
+
+dependencies {
+    testCompile project(":kotlin-test:kotlin-test-common")
+    testCompile project(":kotlin-test:kotlin-test-annotations-common")
 }
 
 createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
+createPreprocessorTask(project, "Test", "${projectDir}/../test", commonTestSrcDir)
 
 compileKotlinCommon {
     dependsOn preprocessSourcesMain
@@ -33,6 +47,12 @@ compileKotlinCommon {
     }
 }
 */
+
+compileTestKotlinCommon {
+    dependsOn preprocessSourcesTest
+}
+
+kotlin.experimental.coroutines 'enable'
 
 jar {
     manifestAttributes(manifest, project, 'Main')

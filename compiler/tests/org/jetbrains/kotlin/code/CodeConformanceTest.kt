@@ -28,20 +28,20 @@ class CodeConformanceTest : TestCase() {
         private val SOURCES_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)")
         private val EXCLUDED_FILES_AND_DIRS = listOf(
                 "android.tests.dependencies",
+                "buildSrc",
                 "core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections",
+                "js/js.tests/.gradle",
+                "js/js.translator/testData/node_modules",
                 "libraries/kotlin.test/js/it/.gradle",
                 "libraries/kotlin.test/js/it/node_modules",
                 "libraries/stdlib/js/node_modules",
-                "libraries/tools/kotlin-reflect/build",
-                "libraries/tools/kotlin-reflect/target/copied-sources",
+                "libraries/reflect/build",
                 "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
                 "dependencies",
                 "js/js.translator/qunit/qunit.js",
                 "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
                 "out",
                 "dist",
-                "ideaSDK",
-                "ultimate/ideaSDK",
                 "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
                 "libraries/tools/kotlin-maven-plugin/target",
                 "compiler/testData/psi/kdoc",
@@ -53,16 +53,18 @@ class CodeConformanceTest : TestCase() {
                 "dependencies",
                 "out",
                 "dist",
-                "ideaSDK",
-                "ultimate/ideaSDK",
                 "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
-                "idea/src/org/jetbrains/kotlin/idea/copyright",
+                "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
+                "js/js.tests/.gradle",
+                "js/js.translator/testData/node_modules",
                 "libraries/stdlib/common/build",
                 "libraries/stdlib/common/target",
                 "libraries/stdlib/js/build",
                 "libraries/kotlin.test/js/it/.gradle",
                 "libraries/kotlin.test/js/it/node_modules",
-                "libraries/stdlib/js/node_modules"
+                "libraries/stdlib/js/node_modules",
+                "buildSrc/prepare-deps/android-dx/build",
+                "buildSrc/prepare-deps/intellij-sdk/build"
         )
     }
 

@@ -9,7 +9,8 @@ import org.springframework.context.annotation.ComponentScan
 
 @Component
 open class FooBean {
-    @Autowired lateinit var barBean<caret>: BarBean
+    @Autowired
+    lateinit var barBean<caret>: BarBean
 
 }
 

@@ -69,10 +69,6 @@ public fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
 public fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 
-internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {
-    return arrayOfNulls<Any>(size).unsafeCast<Array<T>>()
-}
-
 internal fun fillFrom(src: dynamic, dst: dynamic): dynamic {
     val srcLen: Int = src.length
     val dstLen: Int = dst.length
@@ -113,18 +109,3 @@ internal inline fun copyArrayType(from: dynamic, to: dynamic) {
         to.`$type$` = from.`$type$`
     }
 }
-
-// no singleton map implementation in js, return map as is
-internal inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = this
-
-internal inline fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> = this.toMutableMap()
-
-internal inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
-        if (isVarargs)
-            // no need to copy vararg array in JS
-            this
-        else
-            this.copyOf()
-
-// temporary for shared code, until we have an annotation like JvmSerializable
-internal interface Serializable

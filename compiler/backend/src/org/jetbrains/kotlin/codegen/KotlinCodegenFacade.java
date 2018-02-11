@@ -16,19 +16,13 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.util.containers.MultiMap;
-import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 public class KotlinCodegenFacade {
 
@@ -50,42 +44,10 @@ public class KotlinCodegenFacade {
             @NotNull GenerationState state,
             @NotNull CompilationErrorHandler errorHandler
     ) {
-        MultiMap<FqName, KtFile> filesInPackages = new MultiMap<>();
-        MultiMap<FqName, KtFile> filesInMultifileClasses = new MultiMap<>();
+        state.getCodegenFactory().generateModule(state, files, errorHandler);
 
-        for (KtFile file : files) {
-            if (file == null) throw new IllegalArgumentException("A null file given for compilation");
-
-            JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file);
-
-            if (fileClassInfo.getWithJvmMultifileClass()) {
-                filesInMultifileClasses.putValue(fileClassInfo.getFacadeClassFqName(), file);
-            }
-            else {
-                filesInPackages.putValue(file.getPackageFqName(), file);
-            }
-        }
-
-        Set<FqName> obsoleteMultifileClasses = new HashSet<>(state.getObsoleteMultifileClasses());
-        for (FqName multifileClassFqName : SetsKt.plus(filesInMultifileClasses.keySet(), obsoleteMultifileClasses)) {
-            doCheckCancelled(state);
-            generateMultifileClass(state, multifileClassFqName, filesInMultifileClasses.get(multifileClassFqName), errorHandler);
-        }
-
-        Set<FqName> packagesWithObsoleteParts = new HashSet<>(state.getPackagesWithObsoleteParts());
-        for (FqName packageFqName : SetsKt.plus(packagesWithObsoleteParts, filesInPackages.keySet())) {
-            doCheckCancelled(state);
-            generatePackage(state, packageFqName, filesInPackages.get(packageFqName), errorHandler);
-        }
-
-        doCheckCancelled(state);
+        CodegenFactory.Companion.doCheckCancelled(state);
         state.getFactory().done();
-    }
-
-    private static void doCheckCancelled(GenerationState state) {
-        if (state.getClassBuilderMode().generateBodies) {
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-        }
     }
 
     public static void generatePackage(
@@ -94,20 +56,7 @@ public class KotlinCodegenFacade {
             @NotNull Collection<KtFile> jetFiles,
             @NotNull CompilationErrorHandler errorHandler
     ) {
-        // We do not really generate package class, but use old package fqName to identify package in module-info.
-        //FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName);
-        PackageCodegen codegen = state.getFactory().forPackage(packageFqName, jetFiles);
-        codegen.generate(errorHandler);
-    }
-
-    private static void generateMultifileClass(
-            @NotNull GenerationState state,
-            @NotNull FqName multifileClassFqName,
-            @NotNull Collection<KtFile> files,
-            @NotNull CompilationErrorHandler handler
-    ) {
-        MultifileClassCodegen codegen = state.getFactory().forMultifileClass(multifileClassFqName, files);
-        codegen.generate(handler);
+        DefaultCodegenFactory.INSTANCE.generatePackage(state, packageFqName, jetFiles, errorHandler);
     }
 
     private KotlinCodegenFacade() {}

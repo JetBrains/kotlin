@@ -58,6 +58,6 @@ object UnderscoreUsageChecker : CallChecker {
     }
 
     private fun String.isUnderscoreOnlyName() =
-            isNotEmpty() && all { it == '_' }
+        isNotEmpty() && all { it == '_' }
 
 }

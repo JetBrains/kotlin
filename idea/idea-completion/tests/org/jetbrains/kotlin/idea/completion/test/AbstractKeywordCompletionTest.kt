@@ -34,10 +34,11 @@ abstract class AbstractKeywordCompletionTest : KotlinFixtureCompletionBaseTestCa
     }
 
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor {
-        if ("LangLevel10" in fileName()) {
-            return KotlinProjectDescriptorWithFacet.KOTLIN_10
+        when {
+            "LangLevel10" in fileName() -> return KotlinProjectDescriptorWithFacet.KOTLIN_10
+            "LangLevel11" in fileName() -> return KotlinProjectDescriptorWithFacet.KOTLIN_11
+            else -> return KotlinProjectDescriptorWithFacet.KOTLIN_STABLE_WITH_MULTIPLATFORM
         }
-        return KotlinProjectDescriptorWithFacet.KOTLIN_STABLE_WITH_MULTIPLATFORM
     }
 
     override fun defaultInvocationCount() = 1

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.spring.tests.gutter;
 
-import com.intellij.idea.Bombed;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -38,9 +37,6 @@ public class SpringClassAnnotatorTestGenerated extends AbstractSpringClassAnnota
     }
 
     @TestMetadata("autowiredBeanCandidates/autowiredBeanCandidates.test")
-    @Bombed(day = 1, month = 10, year = 2017,
-            description = "flacky because SpringAutowireUtil#getAutowiredMembers() collecting duplicate elements for kotlin sometimes",
-            user = "nicolay.mitropolsky")
     public void testAutowiredBeanCandidates_AutowiredBeanCandidates() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/gutter/autowiredBeanCandidates/autowiredBeanCandidates.test");
         doTest(fileName);

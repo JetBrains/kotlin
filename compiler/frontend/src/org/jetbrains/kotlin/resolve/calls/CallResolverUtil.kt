@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticConstructors
@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
@@ -81,13 +80,13 @@ fun replaceReturnTypeForCallable(type: KotlinType, given: KotlinType): KotlinTyp
 fun replaceReturnTypeByUnknown(type: KotlinType) = replaceReturnTypeForCallable(type, DONT_CARE)
 
 private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjection>) =
-        KotlinTypeFactory.simpleType(type.annotations, type.constructor, newArguments, type.isMarkedNullable, type.memberScope)
+    KotlinTypeFactory.simpleType(type.annotations, type.constructor, newArguments, type.isMarkedNullable)
 
 private fun getParameterArgumentsOfCallableType(type: KotlinType) =
-        type.arguments.dropLast(1)
+    type.arguments.dropLast(1)
 
 fun getReturnTypeForCallable(type: KotlinType) =
-        type.arguments.last().type
+    type.arguments.last().type
 
 private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constraintSystem: ConstraintSystem): Boolean {
     val returnType = returnType ?: return false
@@ -126,8 +125,10 @@ fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescript
         receiverType.constructor
     }
 
-    return KotlinTypeFactory.simpleType(receiverType.annotations, receiverTypeConstructor, fakeTypeArguments,
-                                        receiverType.isMarkedNullable, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true))
+    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+        receiverType.annotations, receiverTypeConstructor, fakeTypeArguments,
+        receiverType.isMarkedNullable, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true)
+    )
 }
 
 fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boolean {
@@ -164,7 +165,7 @@ fun isInfixCall(call: Call): Boolean {
 }
 
 fun isSuperOrDelegatingConstructorCall(call: Call): Boolean =
-        call.calleeExpression.let { it is KtConstructorCalleeExpression  || it is KtConstructorDelegationReferenceExpression }
+    call.calleeExpression.let { it is KtConstructorCalleeExpression || it is KtConstructorDelegationReferenceExpression }
 
 fun isInvokeCallOnVariable(call: Call): Boolean {
     if (call.callType !== Call.CallType.INVOKE) return false
@@ -184,9 +185,9 @@ fun getSuperCallExpression(call: Call): KtSuperExpression? {
 }
 
 fun getEffectiveExpectedType(
-        parameterDescriptor: ValueParameterDescriptor,
-        argument: ValueArgument,
-        context: ResolutionContext<*>
+    parameterDescriptor: ValueParameterDescriptor,
+    argument: ValueArgument,
+    context: ResolutionContext<*>
 ): KotlinType {
     if (argument.getSpreadElement() != null || shouldCheckAsArray(parameterDescriptor, argument, context)) {
         if (parameterDescriptor.varargElementType == null) {
@@ -204,20 +205,15 @@ fun getEffectiveExpectedType(
 }
 
 private fun shouldCheckAsArray(
-        parameterDescriptor: ValueParameterDescriptor,
-        argument: ValueArgument,
-        context: ResolutionContext<*>
+    parameterDescriptor: ValueParameterDescriptor,
+    argument: ValueArgument,
+    context: ResolutionContext<*>
 ): Boolean {
     if (!context.languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
 
     if (!isParameterOfAnnotation(parameterDescriptor)) return false
 
     return argument.isNamed() && parameterDescriptor.isVararg && isArrayOrArrayLiteral(argument, context)
-}
-
-fun isParameterOfAnnotation(parameterDescriptor: ValueParameterDescriptor): Boolean {
-    val constructedClass = parameterDescriptor.containingDeclaration.safeAs<ConstructorDescriptor>()?.constructedClass
-    return DescriptorUtils.isAnnotationClass(constructedClass)
 }
 
 fun isArrayOrArrayLiteral(argument: ValueArgument, context: ResolutionContext<*>): Boolean {
@@ -229,29 +225,30 @@ fun isArrayOrArrayLiteral(argument: ValueArgument, context: ResolutionContext<*>
 }
 
 fun createResolutionCandidatesForConstructors(
-        lexicalScope: LexicalScope,
-        call: Call,
-        typeWithConstructors: KotlinType,
-        useKnownTypeSubstitutor: Boolean,
-        syntheticScopes: SyntheticScopes
+    lexicalScope: LexicalScope,
+    call: Call,
+    typeWithConstructors: KotlinType,
+    useKnownTypeSubstitutor: Boolean,
+    syntheticScopes: SyntheticScopes
 ): List<ResolutionCandidate<ConstructorDescriptor>> {
     val classWithConstructors = typeWithConstructors.constructor.declarationDescriptor as ClassDescriptor
 
     val unwrappedType = typeWithConstructors.unwrap()
     val knownSubstitutor =
-            if (useKnownTypeSubstitutor)
-                TypeSubstitutor.create(
-                        (unwrappedType as? AbbreviatedType)?.abbreviation ?: unwrappedType
-                )
-            else null
+        if (useKnownTypeSubstitutor)
+            TypeSubstitutor.create(
+                (unwrappedType as? AbbreviatedType)?.abbreviation ?: unwrappedType
+            )
+        else null
 
     val typeAliasDescriptor =
-            if (unwrappedType is AbbreviatedType)
-                unwrappedType.abbreviation.constructor.declarationDescriptor as? TypeAliasDescriptor
-            else
-                null
+        if (unwrappedType is AbbreviatedType)
+            unwrappedType.abbreviation.constructor.declarationDescriptor as? TypeAliasDescriptor
+        else
+            null
 
-    val constructors = typeAliasDescriptor?.constructors?.mapNotNull(TypeAliasConstructorDescriptor::withDispatchReceiver) ?: classWithConstructors.constructors
+    val constructors = typeAliasDescriptor?.constructors?.mapNotNull(TypeAliasConstructorDescriptor::withDispatchReceiver)
+            ?: classWithConstructors.constructors
 
     if (constructors.isEmpty()) return emptyList()
 
@@ -268,8 +265,7 @@ fun createResolutionCandidatesForConstructors(
 
         receiverKind = ExplicitReceiverKind.DISPATCH_RECEIVER
         dispatchReceiver = receiver.value
-    }
-    else {
+    } else {
         receiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
         dispatchReceiver = null
     }
@@ -282,12 +278,12 @@ fun createResolutionCandidatesForConstructors(
 }
 
 fun KtLambdaExpression.getCorrespondingParameterForFunctionArgument(
-        bindingContext: BindingContext
+    bindingContext: BindingContext
 ): ValueParameterDescriptor? {
     val resolvedCall = KtPsiUtil.getParentCallIfPresent(this)?.getResolvedCall(bindingContext) ?: return null
     val valueArgument =
-            resolvedCall.call.getValueArgumentForExpression(this)
-            ?: return null
+        resolvedCall.call.getValueArgumentForExpression(this)
+                ?: return null
     val mapping = resolvedCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: return null
 
     return mapping.valueParameter

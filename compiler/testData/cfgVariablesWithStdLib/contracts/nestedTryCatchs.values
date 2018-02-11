@@ -1,0 +1,118 @@
+== myRun ==
+inline fun <T> myRun(block: () -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+                                                                                   <v0>: {<: () -> T}                      NEW: magic[FAKE_INITIALIZER](block: () -> T) -> <v0>
+{ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                               <v1>: {<: ContractBuilder.() -> Unit}   NEW: r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                      <v2>: *                                 NEW: call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+block                                                                              <v3>: {<: () -> T}                      NEW: r(block) -> <v3>
+block()                                                                            <v4>: {<: T}                            NEW: call(block(), invoke|<v3>) -> <v4>
+return block()                                                                     !<v5>: *
+{ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() }   !<v5>: *                                COPY
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+                                                   <v0>: {<: ContractBuilder}   NEW: magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+block                                              <v1>: {<: Function<T>}       NEW: r(block) -> <v1>
+EXACTLY_ONCE                                       <v2>: {<: InvocationKind}    NEW: r(EXACTLY_ONCE) -> <v2>
+InvocationKind.EXACTLY_ONCE                        <v2>: {<: InvocationKind}    COPY
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      NEW: call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      COPY
+=====================
+== innerComputation ==
+fun innerComputation(): Int = 42
+---------------------
+42   <v0>: Int   NEW: r(42) -> <v0>
+=====================
+== outerComputation ==
+fun outerComputation(): Int = 52
+---------------------
+52   <v0>: Int   NEW: r(52) -> <v0>
+=====================
+== innerTryCatchInitializes ==
+fun innerTryCatchInitializes() {
+    val x: Int
+
+    try {
+        myRun {
+            try {
+                x = innerComputation()
+                x.inc()
+            }
+            catch (e: java.lang.Exception) {
+                /** Potential reassignment because x.inc() could threw */
+                x = 42
+                x.inc()
+            }
+        }
+        // Can get here only when inlined lambda exited properly, i.e. x is initialized
+        x.inc()
+        outerComputation()
+
+    } catch (e: java.lang.Exception) {
+        // Can get here if innerComputation() threw an exception that wasn't catched by the inner catch (x is not initialized)
+        // OR if outerComputation() threw an exception (x is initialized because we reach outer computation only when inner finished ok)
+        // So, x=I? here
+        x.inc()
+
+        // Potential reasignment
+        x = 42
+    }
+    // Here x=I because outer try-catch either exited normally (x=I) or catched exception (x=I, with reassingment, though)
+    x.inc()
+}
+---------------------
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <v5>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v5>
+{ try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <v0>: {<: () -> Int}   NEW: r({ try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } }) -> <v0>
+myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <v1>: *                NEW: call(myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } }, myRun|<v0>) -> <v1>
+x                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <v2>: Int              NEW: r(x) -> <v2>
+inc()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <v3>: *                NEW: call(inc(), inc|<v2>) -> <v3>
+x.inc()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             <v3>: *                COPY
+outerComputation()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <v4>: *                NEW: call(outerComputation(), outerComputation) -> <v4>
+{ myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } } // Can get here only when inlined lambda exited properly, i.e. x is initialized x.inc() outerComputation() }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <v4>: *                COPY
+x                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <v6>: Int              NEW: r(x) -> <v6>
+inc()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <v7>: *                NEW: call(inc(), inc|<v6>) -> <v7>
+x.inc()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             <v7>: *                COPY
+42                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <v8>: Int              NEW: r(42) -> <v8>
+x = 42                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              !<v9>: *
+{ // Can get here if innerComputation() threw an exception that wasn't catched by the inner catch (x is not initialized) // OR if outerComputation() threw an exception (x is initialized because we reach outer computation only when inner finished ok) // So, x=I? here x.inc() // Potential reasignment x = 42 }                                                                                                                                                                                                                                                                                                                                                                                                                                                                !<v9>: *               COPY
+try { myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } } // Can get here only when inlined lambda exited properly, i.e. x is initialized x.inc() outerComputation() } catch (e: java.lang.Exception) { // Can get here if innerComputation() threw an exception that wasn't catched by the inner catch (x is not initialized) // OR if outerComputation() threw an exception (x is initialized because we reach outer computation only when inner finished ok) // So, x=I? here x.inc() // Potential reasignment x = 42 }                                                                                                                                                 <v10>: *               NEW: merge(try { myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } } // Can get here only when inlined lambda exited properly, i.e. x is initialized x.inc() outerComputation() } catch (e: java.lang.Exception) { // Can get here if innerComputation() threw an exception that wasn't catched by the inner catch (x is not initialized) // OR if outerComputation() threw an exception (x is initialized because we reach outer computation only when inner finished ok) // So, x=I? here x.inc() // Potential reasignment x = 42 }|<v4>, !<v9>) -> <v10>
+x                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <v11>: Int             NEW: r(x) -> <v11>
+inc()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <v12>: *               NEW: call(inc(), inc|<v11>) -> <v12>
+x.inc()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             <v12>: *               COPY
+{ val x: Int try { myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } } // Can get here only when inlined lambda exited properly, i.e. x is initialized x.inc() outerComputation() } catch (e: java.lang.Exception) { // Can get here if innerComputation() threw an exception that wasn't catched by the inner catch (x is not initialized) // OR if outerComputation() threw an exception (x is initialized because we reach outer computation only when inner finished ok) // So, x=I? here x.inc() // Potential reasignment x = 42 } // Here x=I because outer try-catch either exited normally (x=I) or catched exception (x=I, with reassingment, though) x.inc() }   <v12>: *               COPY
+=====================
+== inlined anonymous_1 ==
+{
+            try {
+                x = innerComputation()
+                x.inc()
+            }
+            catch (e: java.lang.Exception) {
+                /** Potential reassignment because x.inc() could threw */
+                x = 42
+                x.inc()
+            }
+        }
+---------------------
+                                                                                                                                                     <v3>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v3>
+innerComputation()                                                                                                                                   <v0>: Int              NEW: call(innerComputation(), innerComputation) -> <v0>
+x                                                                                                                                                    <v1>: Int              NEW: r(x) -> <v1>
+inc()                                                                                                                                                <v2>: Int              NEW: call(inc(), inc|<v1>) -> <v2>
+x.inc()                                                                                                                                              <v2>: Int              COPY
+{ x = innerComputation() x.inc() }                                                                                                                   <v2>: Int              COPY
+42                                                                                                                                                   <v4>: Int              NEW: r(42) -> <v4>
+x                                                                                                                                                    <v5>: Int              NEW: r(x) -> <v5>
+inc()                                                                                                                                                <v6>: Int              NEW: call(inc(), inc|<v5>) -> <v6>
+x.inc()                                                                                                                                              <v6>: Int              COPY
+{ /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() }                                                                         <v6>: Int              COPY
+try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() }   <v7>: Int              NEW: merge(try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() }|<v2>, <v6>) -> <v7>
+try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() }   <v7>: Int              COPY
+=====================

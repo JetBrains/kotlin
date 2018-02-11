@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -58,7 +57,10 @@ class MetadataPackageFragmentProvider(
                 LookupTracker.DO_NOTHING,
                 FlexibleTypeDeserializer.ThrowException,
                 emptyList(),
-                notFoundClasses, AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All
+                notFoundClasses,
+                ContractDeserializer.DEFAULT,
+                AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All,
+                BuiltInSerializerProtocol.extensionRegistry
         )
     }
 

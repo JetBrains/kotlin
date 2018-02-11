@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
+// CHECK_NEW_COUNT: function=suspendHere count=0
 import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*

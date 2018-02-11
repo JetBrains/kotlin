@@ -1,5 +1,5 @@
 var tape = require('tape');
-var kotlin_test = require('kotlin-test');
+var kotlin_test = require('../build/node_modules/kotlin-test.js');
 
 var suiteContext = {
     test: tape

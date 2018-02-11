@@ -1,0 +1,8 @@
+package test
+
+public fun deeplyNested(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?, /*2*/ b: kotlin.Boolean, /*3*/ s: kotlin.String?): kotlin.Unit
+    Returns(TRUE) -> ((x is Int && x is String) || (x is Int && y is A) || b || (!b)) && s != null && (y is A || x is String)
+
+public final class A {
+    /*primary*/ public constructor A()
+}

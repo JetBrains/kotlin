@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -90,7 +79,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
     }
 
     protected open fun isApplicable(module: Module): Boolean =
-            KotlinPluginUtil.isGradleModule(module) && !KotlinPluginUtil.isAndroidGradleModule(module)
+            module.getBuildSystemType() == Gradle
 
     protected open fun getMinimumSupportedVersion() = "1.0.0"
 
@@ -118,28 +107,39 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
                              modulesToConfigure: List<Module>,
                              kotlinVersion: String,
                              collector: NotificationMessageCollector): HashSet<PsiFile> {
-        val changedFiles = HashSet<PsiFile>()
+        val filesToOpen = HashSet<PsiFile>()
         val buildScript = project.getTopLevelBuildScriptPsiFile()
         if (buildScript != null && canConfigureFile(buildScript)) {
             val isModified = configureBuildScript(buildScript, true, kotlinVersion, collector)
             if (isModified) {
-                changedFiles.add(buildScript)
+                filesToOpen.add(buildScript)
             }
         }
 
         for (module in modulesToConfigure) {
             val file = module.getBuildScriptPsiFile()
             if (file != null && canConfigureFile(file)) {
-                val isModified = configureBuildScript(file, false, kotlinVersion, collector)
-                if (isModified) {
-                    changedFiles.add(file)
-                }
+                configureModule(module, file, false, kotlinVersion, collector, filesToOpen)
             }
             else {
                 showErrorMessage(project, "Cannot find build.gradle file for module " + module.name)
             }
         }
-        return changedFiles
+        return filesToOpen
+    }
+
+    open fun configureModule(
+            module: Module,
+            file: PsiFile,
+            isTopLevelProjectFile: Boolean,
+            version: String,
+            collector: NotificationMessageCollector,
+            filesToOpen: MutableCollection<PsiFile>
+    ) {
+        val isModified = configureBuildScript(file, isTopLevelProjectFile, version, collector)
+        if (isModified) {
+            filesToOpen.add(file)
+        }
     }
 
     protected fun configureModuleBuildScript(file: PsiFile, version: String): Boolean {
@@ -171,7 +171,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         return false
     }
 
-    fun configureBuildScript(
+    private fun configureBuildScript(
             file: PsiFile,
             isTopLevelProjectFile: Boolean,
             version: String,
@@ -266,7 +266,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             }
 
             getManipulator(buildScript)
-                    .addKotlinLibraryToModuleBuildScript(scope, libraryDescriptor, KotlinPluginUtil.isAndroidGradleModule(module))
+                    .addKotlinLibraryToModuleBuildScript(scope, libraryDescriptor, module.getBuildSystemType() == AndroidGradle)
 
             buildScript.virtualFile?.let {
                 createConfigureKotlinNotificationCollector(buildScript.project)

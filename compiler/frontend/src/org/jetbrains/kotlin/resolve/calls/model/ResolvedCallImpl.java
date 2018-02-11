@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve.calls.model;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.SmartList;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -81,6 +83,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private Boolean hasInferredReturnType = null;
     private boolean completed = false;
     private KotlinType smartCastDispatchReceiverType = null;
+    private Queue<Function0<Unit>> remainingTasks = null;
 
     private ResolvedCallImpl(
             @NotNull ResolutionCandidate<D> candidate,
@@ -283,7 +286,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         for (int i = 0; i < candidateDescriptor.getValueParameters().size(); ++i) {
             arguments.add(null);
         }
-        
+
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : valueArguments.entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
             ResolvedValueArgument value = entry.getValue();
@@ -299,7 +302,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
                 return null;
             }
         }
-        
+
         return arguments;
     }
 
@@ -353,6 +356,23 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         constraintSystem = null;
         tracing = null;
         completed = true;
+        remainingTasks = null;
+    }
+
+    @Override
+    public void addRemainingTasks(Function0<Unit> task) {
+        if (remainingTasks == null) {
+            remainingTasks = new ArrayDeque<>();
+        }
+        remainingTasks.add(task);
+    }
+
+    @Override
+    public void performRemainingTasks() {
+        if (remainingTasks == null) return;
+        while (!remainingTasks.isEmpty()) {
+            remainingTasks.poll().invoke();
+        }
     }
 
     @Override

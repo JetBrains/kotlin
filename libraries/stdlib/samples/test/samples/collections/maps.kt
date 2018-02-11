@@ -104,7 +104,104 @@ class Maps {
                                          // prints: meal - 12.4
                                          // prints: dessert - 5.8
             }
+        }
 
+    }
+
+    class Filtering {
+
+        @Sample
+        fun filterKeys() {
+            val originalMap = mapOf("key1" to 1, "key2" to 2, "something_else" to 3)
+
+            val filteredMap = originalMap.filterKeys { it.contains("key") }
+            assertPrints(filteredMap, "{key1=1, key2=2}")
+            // original map has not changed
+            assertPrints(originalMap, "{key1=1, key2=2, something_else=3}")
+
+            val nonMatchingPredicate: (String) -> Boolean = { it == "key3" }
+            val emptyMap = originalMap.filterKeys(nonMatchingPredicate)
+            assertPrints(emptyMap, "{}")
+        }
+
+        @Sample
+        fun filterValues() {
+            val originalMap = mapOf("key1" to 1, "key2" to 2, "key3" to 3)
+
+            val filteredMap = originalMap.filterValues { it >= 2 }
+            assertPrints(filteredMap, "{key2=2, key3=3}")
+            // original map has not changed
+            assertPrints(originalMap, "{key1=1, key2=2, key3=3}")
+
+            val nonMatchingPredicate: (Int) -> Boolean = { it == 0 }
+            val emptyMap = originalMap.filterValues(nonMatchingPredicate)
+            assertPrints(emptyMap, "{}")
+        }
+
+        @Sample
+        fun filterTo() {
+            val originalMap = mapOf("key1" to 1, "key2" to 2, "key3" to 3)
+            val destinationMap = mutableMapOf("key40" to 40, "key50" to 50)
+
+            val filteredMap = originalMap.filterTo(destinationMap) { it.value < 3 }
+
+            //destination map is updated with filtered items from the original map
+            assertTrue(destinationMap === filteredMap)
+            assertPrints(destinationMap, "{key40=40, key50=50, key1=1, key2=2}")
+            // original map has not changed
+            assertPrints(originalMap, "{key1=1, key2=2, key3=3}")
+
+            val nonMatchingPredicate: ((Map.Entry<String, Int>)) -> Boolean = { it.value == 0 }
+            val anotherDestinationMap = mutableMapOf("key40" to 40, "key50" to 50)
+            val filteredMapWithNothingMatched = originalMap.filterTo(anotherDestinationMap, nonMatchingPredicate)
+            assertPrints(filteredMapWithNothingMatched, "{key40=40, key50=50}")
+        }
+
+        @Sample
+        fun filter() {
+            val originalMap = mapOf("key1" to 1, "key2" to 2, "key3" to 3)
+
+            val filteredMap = originalMap.filter { it.value < 2 }
+
+            assertPrints(filteredMap, "{key1=1}")
+            // original map has not changed
+            assertPrints(originalMap, "{key1=1, key2=2, key3=3}")
+
+            val nonMatchingPredicate: ((Map.Entry<String, Int>)) -> Boolean = { it.value == 0 }
+            val emptyMap = originalMap.filter(nonMatchingPredicate)
+            assertPrints(emptyMap, "{}")
+        }
+
+        @Sample
+        fun filterNotTo() {
+            val originalMap = mapOf("key1" to 1, "key2" to 2, "key3" to 3)
+            val destinationMap = mutableMapOf("key40" to 40, "key50" to 50)
+
+            val filteredMap = originalMap.filterNotTo(destinationMap) { it.value < 3 }
+            //destination map instance has been updated
+            assertTrue(destinationMap === filteredMap)
+            assertPrints(destinationMap, "{key40=40, key50=50, key3=3}")
+            // original map has not changed
+            assertPrints(originalMap, "{key1=1, key2=2, key3=3}")
+
+            val anotherDestinationMap = mutableMapOf("key40" to 40, "key50" to 50)
+            val matchAllPredicate: ((Map.Entry<String, Int>)) -> Boolean = { it.value > 0 }
+            val filteredMapWithEverythingMatched = originalMap.filterNotTo(anotherDestinationMap, matchAllPredicate)
+            assertPrints(filteredMapWithEverythingMatched, "{key40=40, key50=50}")
+        }
+
+        @Sample
+        fun filterNot() {
+            val originalMap = mapOf("key1" to 1, "key2" to 2, "key3" to 3)
+
+            val filteredMap = originalMap.filterNot { it.value < 3 }
+            assertPrints(filteredMap, "{key3=3}")
+            // original map has not changed
+            assertPrints(originalMap, "{key1=1, key2=2, key3=3}")
+
+            val matchAllPredicate: ((Map.Entry<String, Int>)) -> Boolean = { it.value > 0 }
+            val emptyMap = originalMap.filterNot(matchAllPredicate)
+            assertPrints(emptyMap, "{}")
         }
     }
 

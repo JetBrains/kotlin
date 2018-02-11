@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 @Suppress("unused")
 @Deprecated("Migrate to symbols")
 class IrMemberFunctionBuilder(
-        context: IrGeneratorContext,
-        val irClass: IrClass,
-        val function: FunctionDescriptor,
-        val origin: IrDeclarationOrigin,
-        startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET
+    context: IrGeneratorContext,
+    val irClass: IrClass,
+    val function: FunctionDescriptor,
+    val origin: IrDeclarationOrigin,
+    startOffset: Int = UNDEFINED_OFFSET,
+    endOffset: Int = UNDEFINED_OFFSET
 ) : IrBlockBodyBuilder(context, Scope(function), startOffset, endOffset) {
     lateinit var irFunction: IrFunction
 

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -23,6 +12,7 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
@@ -46,6 +36,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -77,7 +68,6 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isAnnotationOrJvmInterfaceWithoutDefaults;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceWithDefaultsMember;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
@@ -101,7 +91,7 @@ public class FunctionCodegen {
     private final Function1<DeclarationDescriptor, Boolean> IS_PURE_INTERFACE_CHECKER = new Function1<DeclarationDescriptor, Boolean>() {
         @Override
         public Boolean invoke(DeclarationDescriptor descriptor) {
-            return JvmCodegenUtil.isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, state);
+            return JvmCodegenUtil.isInterfaceWithoutDefaults(descriptor, state);
         }
     };
 
@@ -137,7 +127,8 @@ public class FunctionCodegen {
                         state,
                         CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
                         function,
-                        v.getThisName()
+                        v.getThisName(),
+                        state.getConstructorCallNormalizationMode()
                 );
             }
             else {
@@ -183,7 +174,8 @@ public class FunctionCodegen {
             @NotNull FunctionGenerationStrategy strategy
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
-        if (isInterface(functionDescriptor.getContainingDeclaration()) &&
+        DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
+        if (isInterface(containingDeclaration) &&
             functionDescriptor.getVisibility() == Visibilities.PRIVATE &&
             !processInterfaceMember(functionDescriptor, contextKind, state)) {
             return;
@@ -223,9 +215,8 @@ public class FunctionCodegen {
 
         generateMethodAnnotations(functionDescriptor, asmMethod, mv);
 
-        JvmMethodSignature signature = typeMapper.mapSignatureSkipGeneric(functionDescriptor);
-        generateParameterAnnotations(functionDescriptor, mv, signature);
-        GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, signature, state, (flags & ACC_SYNTHETIC) != 0);
+        generateParameterAnnotations(functionDescriptor, mv, jvmSignature);
+        GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, jvmSignature, state, (flags & ACC_SYNTHETIC) != 0);
 
         generateBridges(functionDescriptor);
 
@@ -242,64 +233,115 @@ public class FunctionCodegen {
         boolean isOpenSuspendInClass =
                 functionDescriptor.isSuspend() &&
                 functionDescriptor.getModality() != Modality.ABSTRACT && isOverridable(functionDescriptor) &&
-                !isInterface(functionDescriptor.getContainingDeclaration()) &&
+                !isInterface(containingDeclaration) &&
+                !(containingDeclaration instanceof PackageFragmentDescriptor) &&
                 origin.getOriginKind() != JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL;
 
+        boolean isMethodInInlineClassWrapper =
+                isClass(containingDeclaration) &&
+                ((ClassDescriptor) containingDeclaration).isInline() &&
+                contextKind != OwnerKind.ERASED_INLINE_CLASS &&
+                functionDescriptor instanceof SimpleFunctionDescriptor;
+
         if (isOpenSuspendInClass) {
-            mv.visitCode();
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
-            int index = 1;
-            for (Type type : asmMethod.getArgumentTypes()) {
-                mv.visitVarInsn(type.getOpcode(Opcodes.ILOAD), index);
-                index += type.getSize();
-            }
-
-            Method asmMethodForOpenSuspendImpl = CoroutineCodegenUtilKt.getImplForOpenMethod(asmMethod, v.getThisName());
-            // remove generic signature as it's unnecessary for synthetic methods
-            JvmMethodSignature jvmSignatureForOpenSuspendImpl =
-                    new JvmMethodGenericSignature(
-                            asmMethodForOpenSuspendImpl,
-                            jvmSignature.getValueParameters(),
-                            null
-                    );
-
-            mv.visitMethodInsn(
-                    Opcodes.INVOKESTATIC,
-                    v.getThisName(), asmMethodForOpenSuspendImpl.getName(), asmMethodForOpenSuspendImpl.getDescriptor(),
-                    false
+            generateOpenMethodInSuspendClass(
+                    origin, functionDescriptor, methodContext, strategy, mv, jvmSignature, asmMethod, flags, staticInCompanionObject
             );
-
-            mv.visitInsn(Opcodes.ARETURN);
-            mv.visitEnd();
-
-            int flagsForOpenSuspendImpl = flags;
-            flagsForOpenSuspendImpl |= Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC;
-            flagsForOpenSuspendImpl &= ~getVisibilityAccessFlag(functionDescriptor);
-            flagsForOpenSuspendImpl |= AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
-
-            MethodVisitor mvForOpenSuspendImpl = strategy.wrapMethodVisitor(
-                    v.newMethod(origin,
-                                flagsForOpenSuspendImpl,
-                                asmMethodForOpenSuspendImpl.getName(),
-                                asmMethodForOpenSuspendImpl.getDescriptor(),
-                                null,
-                                getThrownExceptions(functionDescriptor, typeMapper)
-                    ),
-                    flagsForOpenSuspendImpl, asmMethodForOpenSuspendImpl.getName(),
-                    asmMethodForOpenSuspendImpl.getDescriptor()
-            );
-
-            generateMethodBody(
-                    origin, functionDescriptor, methodContext, strategy, mvForOpenSuspendImpl, jvmSignatureForOpenSuspendImpl,
-                    staticInCompanionObject
-            );
+        }
+        else if (isMethodInInlineClassWrapper) {
+            generateMethodInsideInlineClassWrapper(origin, functionDescriptor, (ClassDescriptor) containingDeclaration, mv);
         }
         else {
             generateMethodBody(
                     origin, functionDescriptor, methodContext, strategy, mv, jvmSignature, staticInCompanionObject
             );
         }
+    }
 
+    private void generateMethodInsideInlineClassWrapper(
+            @NotNull JvmDeclarationOrigin origin,
+            @NotNull FunctionDescriptor functionDescriptor,
+            ClassDescriptor containingDeclaration,
+            MethodVisitor mv
+    ) {
+        mv.visitCode();
+
+        Type inlineErasedType = typeMapper.mapErasedInlineClass(containingDeclaration);
+        Method erasedMethodImpl = typeMapper.mapAsmMethod(functionDescriptor.getOriginal(), OwnerKind.ERASED_INLINE_CLASS);
+
+        Type fieldOwnerType = typeMapper.mapClass(containingDeclaration);
+
+        ValueParameterDescriptor valueRepresentation = InlineClassesUtilsKt.underlyingRepresentation(containingDeclaration);
+        if (valueRepresentation == null) return;
+
+        Type fieldType = typeMapper.mapType(valueRepresentation);
+
+        generateDelegateToStaticErasedVersion(
+                mv, erasedMethodImpl, inlineErasedType.getInternalName(),
+                fieldOwnerType, valueRepresentation.getName().asString(), fieldType
+        );
+
+        endVisit(mv, null, origin.getElement());
+    }
+
+    private void generateOpenMethodInSuspendClass(
+            @NotNull JvmDeclarationOrigin origin,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull MethodContext methodContext,
+            @NotNull FunctionGenerationStrategy strategy,
+            @NotNull MethodVisitor mv,
+            @NotNull JvmMethodSignature jvmSignature,
+            @NotNull Method asmMethod,
+            int flags,
+            boolean staticInCompanionObject
+    ) {
+        mv.visitCode();
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        int index = 1;
+        for (Type type : asmMethod.getArgumentTypes()) {
+            mv.visitVarInsn(type.getOpcode(Opcodes.ILOAD), index);
+            index += type.getSize();
+        }
+
+        Method asmMethodForOpenSuspendImpl = CoroutineCodegenUtilKt.getImplForOpenMethod(asmMethod, v.getThisName());
+        // remove generic signature as it's unnecessary for synthetic methods
+        JvmMethodSignature jvmSignatureForOpenSuspendImpl =
+                new JvmMethodGenericSignature(
+                        asmMethodForOpenSuspendImpl,
+                        jvmSignature.getValueParameters(),
+                        null
+                );
+
+        mv.visitMethodInsn(
+                Opcodes.INVOKESTATIC,
+                v.getThisName(), asmMethodForOpenSuspendImpl.getName(), asmMethodForOpenSuspendImpl.getDescriptor(),
+                false
+        );
+
+        mv.visitInsn(Opcodes.ARETURN);
+        mv.visitEnd();
+
+        int flagsForOpenSuspendImpl = flags;
+        flagsForOpenSuspendImpl |= Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC;
+        flagsForOpenSuspendImpl &= ~getVisibilityAccessFlag(functionDescriptor);
+        flagsForOpenSuspendImpl |= AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
+
+        MethodVisitor mvForOpenSuspendImpl = strategy.wrapMethodVisitor(
+                v.newMethod(origin,
+                            flagsForOpenSuspendImpl,
+                            asmMethodForOpenSuspendImpl.getName(),
+                            asmMethodForOpenSuspendImpl.getDescriptor(),
+                            null,
+                            getThrownExceptions(functionDescriptor, typeMapper)
+                ),
+                flagsForOpenSuspendImpl, asmMethodForOpenSuspendImpl.getName(),
+                asmMethodForOpenSuspendImpl.getDescriptor()
+        );
+
+        generateMethodBody(
+                origin, functionDescriptor, methodContext, strategy, mvForOpenSuspendImpl, jvmSignatureForOpenSuspendImpl,
+                staticInCompanionObject
+        );
     }
 
     private void generateMethodBody(
@@ -544,8 +586,10 @@ public class FunctionCodegen {
             methodEnd = new Label();
         }
         else {
-            FrameMap frameMap = createFrameMap(parentCodegen.state, functionDescriptor, signature, isStaticMethod(context.getContextKind(),
-                                                                                                                  functionDescriptor));
+            FrameMap frameMap = createFrameMap(
+                    parentCodegen.state, signature, functionDescriptor.getExtensionReceiverParameter(),
+                    functionDescriptor.getValueParameters(), isStaticMethod(context.getContextKind(), functionDescriptor)
+            );
             if (context.isInlineMethodContext()) {
                 functionFakeIndex = frameMap.enterTemp(Type.INT_TYPE);
             }
@@ -558,7 +602,7 @@ public class FunctionCodegen {
             mv.visitLabel(methodEntry);
             context.setMethodStartLabel(methodEntry);
 
-            if (!KotlinTypeMapper.isAccessor(functionDescriptor)) {
+            if (!strategy.skipNotNullAssertionsForParameters()) {
                 genNotNullAssertionsForParameters(new InstructionAdapter(mv), parentCodegen.state, functionDescriptor, frameMap);
             }
 
@@ -787,6 +831,35 @@ public class FunctionCodegen {
         iv.areturn(asmMethod.getReturnType());
     }
 
+    private static void generateDelegateToStaticErasedVersion(
+            @NotNull MethodVisitor mv,
+            @NotNull Method erasedStaticAsmMethod,
+            @NotNull String classToDelegateTo,
+            @NotNull Type fieldOwnerType,
+            @NotNull String fieldName,
+            @NotNull Type fieldType
+    ) {
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        Type[] argTypes = erasedStaticAsmMethod.getArgumentTypes();
+
+        Label label = new Label();
+        iv.visitLabel(label);
+        iv.visitLineNumber(1, label);
+
+        iv.load(0, AsmTypes.OBJECT_TYPE);
+        iv.visitFieldInsn(Opcodes.GETFIELD, fieldOwnerType.getInternalName(), fieldName, fieldType.getDescriptor());
+
+        int k = 1;
+        for (int i = 1; i < argTypes.length; i++) {
+            Type argType = argTypes[i];
+            iv.load(k, argType);
+            k += argType.getSize();
+        }
+
+        iv.invokestatic(classToDelegateTo, erasedStaticAsmMethod.getName(), erasedStaticAsmMethod.getDescriptor(), false);
+        iv.areturn(erasedStaticAsmMethod.getReturnType());
+    }
+
     private static void generateDelegateToStaticMethodBody(
             boolean isStatic,
             @NotNull MethodVisitor mv,
@@ -865,7 +938,7 @@ public class FunctionCodegen {
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) return;
         if (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS) return;
-        if (isAnnotationOrJvmInterfaceWithoutDefaults(descriptor.getContainingDeclaration(), state)) return;
+        if (IS_PURE_INTERFACE_CHECKER.invoke(descriptor.getContainingDeclaration())) return;
 
         // equals(Any?), hashCode(), toString() never need bridges
         if (isMethodOfAny(descriptor)) return;
@@ -976,7 +1049,7 @@ public class FunctionCodegen {
             return;
         }
 
-        if (!isDefaultNeeded(functionDescriptor)) {
+        if (!isDefaultNeeded(functionDescriptor, function)) {
             return;
         }
 
@@ -1036,8 +1109,12 @@ public class FunctionCodegen {
         GenerationState state = parentCodegen.state;
         JvmMethodSignature signature = state.getTypeMapper().mapSignatureWithGeneric(functionDescriptor, methodContext.getContextKind());
 
+        // 'null' because the "could not find expected declaration" error has been already reported in isDefaultNeeded earlier
+        List<ValueParameterDescriptor> valueParameters =
+                CodegenUtil.getFunctionParametersForDefaultValueGeneration(functionDescriptor, null);
+
         boolean isStatic = isStaticMethod(methodContext.getContextKind(), functionDescriptor);
-        FrameMap frameMap = createFrameMap(state, functionDescriptor, signature, isStatic);
+        FrameMap frameMap = createFrameMap(state, signature, functionDescriptor.getExtensionReceiverParameter(), valueParameters, isStatic);
 
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, signature.getReturnType(), methodContext, state, parentCodegen);
 
@@ -1053,7 +1130,6 @@ public class FunctionCodegen {
             capturedArgumentsCount++;
         }
 
-        List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
         assert valueParameters.size() > 0 : "Expecting value parameters to generate default function " + functionDescriptor;
         int firstMaskIndex = frameMap.enterTemp(Type.INT_TYPE);
         for (int index = 1; index < valueParameters.size(); index++) {
@@ -1121,10 +1197,11 @@ public class FunctionCodegen {
     }
 
     @NotNull
-    public static FrameMap createFrameMap(
+    private static FrameMap createFrameMap(
             @NotNull GenerationState state,
-            @NotNull FunctionDescriptor function,
             @NotNull JvmMethodSignature signature,
+            @Nullable ReceiverParameterDescriptor extensionReceiverParameter,
+            @NotNull List<ValueParameterDescriptor> valueParameters,
             boolean isStatic
     ) {
         FrameMap frameMap = new FrameMap();
@@ -1134,9 +1211,8 @@ public class FunctionCodegen {
 
         for (JvmMethodParameterSignature parameter : signature.getValueParameters()) {
             if (parameter.getKind() == JvmMethodParameterKind.RECEIVER) {
-                ReceiverParameterDescriptor receiverParameter = function.getExtensionReceiverParameter();
-                if (receiverParameter != null) {
-                    frameMap.enter(receiverParameter, state.getTypeMapper().mapType(receiverParameter));
+                if (extensionReceiverParameter != null) {
+                    frameMap.enter(extensionReceiverParameter, state.getTypeMapper().mapType(extensionReceiverParameter));
                 }
                 else {
                     frameMap.enterTemp(parameter.getAsmType());
@@ -1147,7 +1223,7 @@ public class FunctionCodegen {
             }
         }
 
-        for (ValueParameterDescriptor parameter : function.getValueParameters()) {
+        for (ValueParameterDescriptor parameter : valueParameters) {
             frameMap.enter(parameter, state.getTypeMapper().mapType(parameter));
         }
 
@@ -1175,17 +1251,10 @@ public class FunctionCodegen {
         }
     }
 
-    private static boolean isDefaultNeeded(FunctionDescriptor functionDescriptor) {
-        boolean needed = false;
-        if (functionDescriptor != null) {
-            for (ValueParameterDescriptor parameterDescriptor : functionDescriptor.getValueParameters()) {
-                if (parameterDescriptor.declaresDefaultValue()) {
-                    needed = true;
-                    break;
-                }
-            }
-        }
-        return needed;
+    private boolean isDefaultNeeded(@NotNull FunctionDescriptor descriptor, @Nullable KtNamedFunction function) {
+        List<ValueParameterDescriptor> parameters =
+                CodegenUtil.getFunctionParametersForDefaultValueGeneration(descriptor, state.getDiagnostics());
+        return CollectionsKt.any(parameters, ValueParameterDescriptor::declaresDefaultValue);
     }
 
     private void generateBridge(
@@ -1382,6 +1451,11 @@ public class FunctionCodegen {
                         stackValue.put(delegateMethod.getReturnType(), iv);
 
                         iv.areturn(delegateMethod.getReturnType());
+                    }
+
+                    @Override
+                    public boolean skipNotNullAssertionsForParameters() {
+                        return false;
                     }
                 }
         );

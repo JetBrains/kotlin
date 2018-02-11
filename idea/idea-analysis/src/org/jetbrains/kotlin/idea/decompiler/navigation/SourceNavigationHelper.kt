@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
@@ -29,9 +18,11 @@ import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.BinaryModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.getBinaryLibrariesModuleInfos
+import org.jetbrains.kotlin.idea.caches.resolve.getLibrarySourcesModuleInfos
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
@@ -40,9 +31,9 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.resolve.TargetPlatform
 
 object SourceNavigationHelper {
     private val LOG = Logger.getInstance(SourceNavigationHelper::class.java)
@@ -64,11 +55,22 @@ object SourceNavigationHelper {
         val vFile = containingFile.virtualFile ?: return null
 
         return when (navigationKind) {
-            NavigationKind.CLASS_FILES_TO_SOURCES -> getBinaryLibrariesModuleInfos(declaration.project, vFile)
-                    .mapNotNull { it.sourcesModuleInfo?.sourceScope() }.union()
+            NavigationKind.CLASS_FILES_TO_SOURCES -> {
+                val binaryModuleInfos = getBinaryLibrariesModuleInfos(declaration.project, vFile)
+                binaryModuleInfos.map { binaryModuleInfo ->
+                    val platform = binaryModuleInfo.platform
+                    if (platform == null || platform == TargetPlatform.Common) {
+                        listOf(binaryModuleInfo)
+                    } else {
+                        binaryModuleInfo.dependencies().filterIsInstance<BinaryModuleInfo>().filter {
+                            it.platform == TargetPlatform.Common
+                        } + binaryModuleInfo
+                    }
+                }.flatten().mapNotNull { it.sourcesModuleInfo?.sourceScope() }.union()
+            }
 
             NavigationKind.SOURCES_TO_CLASS_FILES -> getLibrarySourcesModuleInfos(declaration.project, vFile)
-                    .map { it.binariesModuleInfo.binariesScope() }.union()
+                .map { it.binariesModuleInfo.binariesScope() }.union()
         }
     }
 
@@ -97,8 +99,8 @@ object SourceNavigationHelper {
     }
 
     private fun convertPropertyOrFunction(
-            declaration: KtNamedDeclaration,
-            navigationKind: NavigationKind
+        declaration: KtNamedDeclaration,
+        navigationKind: NavigationKind
     ): KtNamedDeclaration? {
         if (declaration is KtPrimaryConstructor) {
             val sourceClassOrObject = findClassOrObject(declaration.getContainingClassOrObject(), navigationKind)
@@ -131,10 +133,12 @@ object SourceNavigationHelper {
                     }
                 }
             }
-            else -> throw IllegalStateException("Unexpected container of " +
-                                                (if (navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES) "decompiled" else "source") +
-                                                " declaration: " +
-                                                decompiledContainer::class.java.simpleName)
+            else -> throw IllegalStateException(
+                "Unexpected container of " +
+                        (if (navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES) "decompiled" else "source") +
+                        " declaration: " +
+                        decompiledContainer::class.java.simpleName
+            )
         }
 
         if (candidates.isEmpty()) {
@@ -162,7 +166,8 @@ object SourceNavigationHelper {
             val candidateDescriptor = candidate.resolveToDescriptorIfAny() as? CallableDescriptor ?: continue
             if (receiversMatch(declaration, candidateDescriptor)
                 && valueParametersTypesMatch(declaration, candidateDescriptor)
-                && typeParametersMatch(declaration as KtTypeParameterListOwner, candidateDescriptor.typeParameters)) {
+                && typeParametersMatch(declaration as KtTypeParameterListOwner, candidateDescriptor.typeParameters)
+            ) {
                 return candidate
             }
         }
@@ -171,12 +176,11 @@ object SourceNavigationHelper {
     }
 
     private fun <T : KtNamedDeclaration> findFirstMatchingInIndex(
-            entity: T,
-            navigationKind: NavigationKind,
-            index: StringStubIndexExtension<T>
+        entity: T,
+        navigationKind: NavigationKind,
+        index: StringStubIndexExtension<T>
     ): T? {
-        val classFqName = entity.fqName!!
-
+        val classFqName = entity.fqName ?: return null
         val scope = targetScope(entity, navigationKind) ?: return null
         return index.get(classFqName.asString(), entity.project, scope).firstOrNull()
     }
@@ -186,8 +190,8 @@ object SourceNavigationHelper {
     }
 
     private fun getInitialTopLevelCandidates(
-            declaration: KtNamedDeclaration,
-            navigationKind: NavigationKind
+        declaration: KtNamedDeclaration,
+        navigationKind: NavigationKind
     ): Collection<KtNamedDeclaration> {
         val scope = targetScope(declaration, navigationKind) ?: return emptyList()
         val index = getIndexForTopLevelPropertyOrFunction(declaration)
@@ -195,7 +199,7 @@ object SourceNavigationHelper {
     }
 
     private fun getIndexForTopLevelPropertyOrFunction(
-            decompiledDeclaration: KtNamedDeclaration
+        decompiledDeclaration: KtNamedDeclaration
     ): StringStubIndexExtension<out KtNamedDeclaration> = when (decompiledDeclaration) {
         is KtNamedFunction -> KotlinTopLevelFunctionFqnNameIndex.getInstance()
         is KtProperty -> KotlinTopLevelPropertyFqnNameIndex.getInstance()
@@ -203,26 +207,11 @@ object SourceNavigationHelper {
     }
 
     private fun getInitialMemberCandidates(
-            sourceClassOrObject: KtClassOrObject,
-            name: Name,
-            declarationClass: Class<out KtNamedDeclaration>
-    ) = sourceClassOrObject.declarations.filterIsInstance(declarationClass).filter {
-        declaration ->
+        sourceClassOrObject: KtClassOrObject,
+        name: Name,
+        declarationClass: Class<out KtNamedDeclaration>
+    ) = sourceClassOrObject.declarations.filterIsInstance(declarationClass).filter { declaration ->
         name == declaration.nameAsSafeName
-    }
-
-    fun getOriginalPsiClassOrCreateLightClass(classOrObject: KtClassOrObject): PsiClass? {
-        val fqName = classOrObject.fqName
-        if (fqName != null) {
-            val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())
-            if (javaClassId != null) {
-                return JavaPsiFacade.getInstance(classOrObject.project).findClass(
-                        javaClassId.asSingleFqName().asString(),
-                        GlobalSearchScope.allScope(classOrObject.project)
-                )
-            }
-        }
-        return classOrObject.toLightClass()
     }
 
     fun getOriginalClass(classOrObject: KtClassOrObject): PsiClass? {
@@ -246,10 +235,7 @@ object SourceNavigationHelper {
 
             override fun contains(file: VirtualFile): Boolean {
                 val entries = idx.getOrderEntriesForFile(file)
-                for (entry in entries) {
-                    if (orderEntries.contains(entry)) return true
-                }
-                return false
+                return entries.any { orderEntries.contains(it) }
             }
 
             override fun isSearchInModuleContent(aModule: Module): Boolean {
@@ -267,15 +253,16 @@ object SourceNavigationHelper {
     fun getOriginalElement(declaration: KtDeclaration) = navigateToDeclaration(declaration, NavigationKind.SOURCES_TO_CLASS_FILES)
 
     private fun navigateToDeclaration(
-            from: KtDeclaration,
-            navigationKind: NavigationKind
+        from: KtDeclaration,
+        navigationKind: NavigationKind
     ): KtDeclaration {
         if (DumbService.isDumb(from.project)) return from
 
         when (navigationKind) {
             SourceNavigationHelper.NavigationKind.CLASS_FILES_TO_SOURCES -> if (!from.containingKtFile.isCompiled) return from
             SourceNavigationHelper.NavigationKind.SOURCES_TO_CLASS_FILES -> {
-                if (from.containingKtFile.isCompiled) return from
+                val file = from.containingFile
+                if (file is KtFile && file.isCompiled) return from
                 if (!ProjectRootsUtil.isInContent(from, false, true, false, true)) return from
                 if (KtPsiUtil.isLocal(from)) return from
             }
@@ -294,8 +281,8 @@ object SourceNavigationHelper {
 
         override fun visitClass(klass: KtClass, data: Unit) = findClassOrObject(klass, navigationKind)
 
-        override fun visitTypeAlias(typeAlias: KtTypeAlias, data: Unit)
-                = findFirstMatchingInIndex(typeAlias, navigationKind, KotlinTopLevelTypeAliasFqNameIndex.getInstance())
+        override fun visitTypeAlias(typeAlias: KtTypeAlias, data: Unit) =
+            findFirstMatchingInIndex(typeAlias, navigationKind, KotlinTopLevelTypeAliasFqNameIndex.getInstance())
 
         override fun visitParameter(parameter: KtParameter, data: Unit): KtDeclaration? {
             val callableDeclaration = parameter.parent.parent as KtCallableDeclaration
@@ -305,14 +292,14 @@ object SourceNavigationHelper {
             val sourceCallable = callableDeclaration.accept(this, Unit) as? KtCallableDeclaration ?: return null
             val sourceParameters = sourceCallable.valueParameters
             if (sourceParameters.size != parameters.size) return null
-            return sourceParameters.get(index)
+            return sourceParameters[index]
         }
 
-        override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit)
-                = convertPropertyOrFunction(constructor, navigationKind)
+        override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit) =
+            convertPropertyOrFunction(constructor, navigationKind)
 
-        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit)
-                = convertPropertyOrFunction(constructor, navigationKind)
+        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit) =
+            convertPropertyOrFunction(constructor, navigationKind)
     }
 }
 

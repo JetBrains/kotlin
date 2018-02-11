@@ -1,17 +1,6 @@
-
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 description = "Kotlin JPS plugin"
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    }
-}
 
 plugins {
     `java-base`
@@ -23,7 +12,8 @@ val projectsToShadow = listOf(
         ":kotlin-compiler-runner",
         ":kotlin-daemon-client",
         ":compiler:daemon-common",
-        ":core",
+        ":core:descriptors",
+        ":core:descriptors.jvm",
         ":idea:idea-jps-common",
         ":jps-plugin",
         ":kotlin-preloader",

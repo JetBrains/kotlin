@@ -2,8 +2,9 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(project(":core"))
+    compile(protobufFull())
     compile(project(":idea"))
+    compile(project(":idea:idea-jvm"))
     compile(project(":j2k"))
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))
@@ -16,41 +17,36 @@ dependencies {
     compile(project(":idea:idea-test-framework"))
     compile(projectDist(":kotlin-test:kotlin-test-jvm"))
     compile(projectTests(":kotlin-build-common"))
-    compile(projectTests(":compiler"))
-    compile(projectTests(":compiler:tests-java8"))
+    compile(projectTests(":compiler:tests-common"))
     compile(projectTests(":compiler:container"))
     compile(projectTests(":compiler:incremental-compilation-impl"))
+    compile(projectTests(":compiler:cli"))
     compile(projectTests(":idea"))
     compile(projectTests(":idea:idea-gradle"))
     compile(projectTests(":idea:idea-maven"))
     compile(projectTests(":j2k"))
     compile(projectTests(":idea:idea-android"))
     compile(projectTests(":jps-plugin"))
-    compile(projectTests(":plugins:plugins-tests"))
+    compile(projectTests(":plugins:android-extensions-compiler"))
     compile(projectTests(":plugins:android-extensions-ide"))
+    compile(projectTests(":plugins:android-extensions-jps"))
     compile(projectTests(":kotlin-annotation-processing"))
+    compile(projectTests(":kotlin-allopen-compiler-plugin"))
+    compile(projectTests(":kotlin-noarg-compiler-plugin"))
+    compile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     compile(projectTests(":plugins:uast-kotlin"))
     compile(projectTests(":js:js.tests"))
-    compile(protobufFull())
-    compile(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
-    testCompile(project(":compiler.tests-common"))
+    compile(projectTests(":generators:test-generator"))
+    compileOnly(intellijDep("jps-build-test"))
+    compileOnly(project(":kotlin-reflect-api"))
+
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":compiler:incremental-compilation-impl"))
     testCompile(commonDep("junit:junit"))
-    testCompile(ideaSdkDeps("openapi", "idea"))
-    testRuntime(ideaSdkDeps("*.jar"))
-    testRuntime(ideaPluginDeps("idea-junit", "resources_en", plugin = "junit"))
-    testRuntime(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
-    testRuntime(ideaPluginDeps("jcommander", "testng", "testng-plugin", "resources_en", plugin = "testng"))
-    testRuntime(ideaPluginDeps("copyright", plugin = "copyright"))
-    testRuntime(ideaPluginDeps("properties", "resources_en", plugin = "properties"))
-    testRuntime(ideaPluginDeps("java-i18n", plugin = "java-i18n"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
-    testRuntime(ideaPluginDeps("coverage", "jacocoant", plugin = "coverage"))
-    testRuntime(ideaPluginDeps("java-decompiler", plugin = "java-decompiler"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    testCompile(intellijDep("jps-build-test"))
+
+    testRuntime(intellijDep()) { includeJars("idea_rt") }
+    testRuntime(projectDist(":kotlin-reflect"))
 }
 
 sourceSets {
@@ -62,10 +58,9 @@ projectTest {
     workingDir = rootDir
 }
 
-val generateTests by task<JavaExec> {
-    classpath = the<JavaPluginConvention>().sourceSets["test"].runtimeClasspath
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateTestsKt")
 
-    main = "org.jetbrains.kotlin.generators.tests.GenerateTestsKt"
+val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt")
+val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare")
 
-    workingDir = rootDir
-}
+val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt")

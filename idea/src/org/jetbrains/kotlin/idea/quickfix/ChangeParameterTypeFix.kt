@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -49,8 +48,8 @@ class ChangeParameterTypeFix(element: KtParameter, type: KotlinType) : KotlinQui
 
     override fun startInWriteAction(): Boolean = false
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return super.isAvailable(project, editor, file) && containingDeclarationName != null
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
+        return containingDeclarationName != null
     }
 
     override fun getText(): String {

@@ -26,6 +26,8 @@ val LIBRARIES = listOf(
         "kotlin-stdlib-common",
         "kotlin-stdlib-jre7",
         "kotlin-stdlib-jre8",
+        "kotlin-stdlib-jdk7",
+        "kotlin-stdlib-jdk8",
         "kotlin-reflect",
         "kotlin-script-runtime"
 )

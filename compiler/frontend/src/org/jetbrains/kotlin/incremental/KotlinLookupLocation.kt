@@ -32,7 +32,7 @@ class KotlinLookupLocation(val element: KtElement) : LookupLocation {
             if (containingJetFile.doNotAnalyze != null) return null
 
             return object : LocationInfo {
-                override val filePath = containingJetFile.virtualFile.path
+                override val filePath = containingJetFile.virtualFilePath
 
                 override val position: Position
                     get() = getLineAndColumnInPsiFile(containingJetFile, element.textRange).let { Position(it.line, it.column) }

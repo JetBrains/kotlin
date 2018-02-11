@@ -18,7 +18,6 @@
 
 package org.jetbrains.kotlin.script.jsr223
 
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
 import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
 import org.jetbrains.kotlin.script.util.*
@@ -30,7 +29,6 @@ class KotlinJsr223JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFacto
 
     override fun getScriptEngine(): ScriptEngine =
             KotlinJsr223JvmLocalScriptEngine(
-                    Disposer.newDisposable(),
                     this,
                     scriptCompilationClasspathFromContext("kotlin-script-util.jar"),
                     KotlinStandardJsr223ScriptTemplate::class.qualifiedName!!,
@@ -43,7 +41,6 @@ class KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory : KotlinJsr223JvmScriptE
 
     override fun getScriptEngine(): ScriptEngine =
             KotlinJsr223JvmDaemonCompileScriptEngine(
-                    Disposer.newDisposable(),
                     this,
                     KotlinJars.compilerClasspath,
                     scriptCompilationClasspathFromContext("kotlin-script-util.jar"),

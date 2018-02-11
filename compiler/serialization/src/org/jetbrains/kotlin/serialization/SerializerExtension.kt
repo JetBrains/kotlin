@@ -27,6 +27,15 @@ abstract class SerializerExtension {
     val annotationSerializer by lazy { AnnotationSerializer(stringTable) }
 
     open fun shouldUseTypeTable(): Boolean = false
+    open fun shouldUseNormalizedVisibility(): Boolean = false
+
+    interface ClassMembersProducer {
+        fun getCallableMembers(classDescriptor: ClassDescriptor): Collection<CallableMemberDescriptor>
+    }
+
+    open val customClassMembersProducer: ClassMembersProducer?
+        get() = null
+
 
     open fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
     }

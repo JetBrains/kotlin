@@ -1,0 +1,3 @@
+[NotNull Values]
+20 	val <bold>x = a.foo()</bold>
+20 		val <bold>x = a.foo()</bold>

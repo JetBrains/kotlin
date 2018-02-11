@@ -551,7 +551,7 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
         list = ArrayList<T>(resultSize)
         if (this is List<T>) {
             if (this is RandomAccess) {
-                for (index in n..size - 1)
+                for (index in n until size)
                     list.add(this[index])
             } else {
                 for (item in listIterator(n))
@@ -645,10 +645,26 @@ public inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.inter
 }
 
 /**
+ * Returns a list containing all elements that are instances of specified class.
+ */
+public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
+    return filterIsInstanceTo(ArrayList<R>(), klass)
+}
+
+/**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
  */
 public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements that are instances of specified class to the given [destination].
+ */
+public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    @Suppress("UNCHECKED_CAST")
+    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
 }
 
@@ -742,7 +758,7 @@ public fun <T> List<T>.takeLast(n: Int): List<T> {
     if (n == 1) return listOf(last())
     val list = ArrayList<T>(n)
     if (this is RandomAccess) {
-        for (index in size - n .. size - 1)
+        for (index in size - n until size)
             list.add(this[index])
     } else {
         for (item in listIterator(size - n))
@@ -1101,9 +1117,8 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
-public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): SortedSet<T> {
-    return toCollection(TreeSet<T>())
+public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): java.util.SortedSet<T> {
+    return toCollection(java.util.TreeSet<T>())
 }
 
 /**
@@ -1111,9 +1126,8 @@ public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): SortedSet<T> {
  * 
  * Elements in the set returned are sorted according to the given [comparator].
  */
-@kotlin.jvm.JvmVersion
-public fun <T> Iterable<T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
-    return toCollection(TreeSet<T>(comparator))
+public fun <T> Iterable<T>.toSortedSet(comparator: Comparator<in T>): java.util.SortedSet<T> {
+    return toCollection(java.util.TreeSet<T>(comparator))
 }
 
 /**
@@ -1799,6 +1813,39 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
 }
 
 /**
+ * Splits this collection into a list of lists each not exceeding the given [size].
+ * 
+ * The last list in the resulting list may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.chunked(size: Int): List<List<T>> {
+    return windowed(size, size, partialWindows = true)
+}
+
+/**
+ * Splits this collection into several lists each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return list of results of the [transform] applied to an each list.
+ * 
+ * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * The last list may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
+ * 
+ * @sample samples.text.Strings.chunkedTransform
+ */
+@SinceKotlin("1.2")
+public fun <T, R> Iterable<T>.chunked(size: Int, transform: (List<T>) -> R): List<R> {
+    return windowed(size, size, partialWindows = true, transform = transform)
+}
+
+/**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
 public operator fun <T> Iterable<T>.minus(element: T): List<T> {
@@ -1968,6 +2015,83 @@ public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
 }
 
 /**
+ * Returns a list of snapshots of the window of the given [size]
+ * sliding along this collection with the given [step], where each
+ * snapshot is a list.
+ * 
+ * Several last lists may have less elements than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.takeWindows
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): List<List<T>> {
+    checkWindowSizeStep(size, step)
+    if (this is RandomAccess && this is List) {
+        val thisSize = this.size
+        val result = ArrayList<List<T>>((thisSize + step - 1) / step)
+        var index = 0
+        while (index < thisSize) {
+            val windowSize = size.coerceAtMost(thisSize - index)
+            if (windowSize < size && !partialWindows) break
+            result.add(List(windowSize) { this[it + index] })
+            index += step
+        }
+        return result
+    }
+    val result = ArrayList<List<T>>()
+    windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = false).forEach {
+        result.add(it)
+    }
+    return result
+}
+
+/**
+ * Returns a list of results of applying the given [transform] function to
+ * an each list representing a view over the window of the given [size]
+ * sliding along this collection with the given [step].
+ * 
+ * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * Several last lists may have less elements than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.averageWindows
+ */
+@SinceKotlin("1.2")
+public fun <T, R> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R): List<R> {
+    checkWindowSizeStep(size, step)
+    if (this is RandomAccess && this is List) {
+        val thisSize = this.size
+        val result = ArrayList<R>((thisSize + step - 1) / step)
+        val window = MovingSubList(this)
+        var index = 0
+        while (index < thisSize) {
+            window.move(index, (index + size).coerceAtMost(thisSize))
+            if (!partialWindows && window.size < size) break
+            result.add(transform(window))
+            index += step
+        }
+        return result
+    }
+    val result = ArrayList<R>()
+    windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = true).forEach {
+        result.add(transform(it))
+    }
+    return result
+}
+
+/**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
@@ -2006,6 +2130,40 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T
         list.add(transform(first.next(), second.next()))
     }
     return list
+}
+
+/**
+ * Returns a list of pairs of each two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.zipWithNext(): List<Pair<T, T>> {
+    return zipWithNext { a, b -> a to b }
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ */
+@SinceKotlin("1.2")
+public inline fun <T, R> Iterable<T>.zipWithNext(transform: (a: T, b: T) -> R): List<R> {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return emptyList()
+    val result = mutableListOf<R>()
+    var current = iterator.next()
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+        result.add(transform(current, next))
+        current = next
+    }
+    return result
 }
 
 /**
@@ -2209,23 +2367,5 @@ public fun Iterable<Double>.sum(): Double {
         sum += element
     }
     return sum
-}
-
-/**
- * Returns a list containing all elements that are instances of specified class.
- */
-@kotlin.jvm.JvmVersion
-public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
-    return filterIsInstanceTo(ArrayList<R>(), klass)
-}
-
-/**
- * Appends all elements that are instances of specified class to the given [destination].
- */
-@kotlin.jvm.JvmVersion
-public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
-    @Suppress("UNCHECKED_CAST")
-    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
-    return destination
 }
 

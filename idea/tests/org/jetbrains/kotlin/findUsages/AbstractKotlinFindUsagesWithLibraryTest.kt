@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.findUsages
 
-import com.intellij.psi.PsiElement
-import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
 abstract class AbstractKotlinFindUsagesWithLibraryTest : AbstractFindUsagesTest() {
     override fun getProjectDescriptor() =
-            JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/findUsages/libraryUsages/_library", true)
+        SdkAndMockLibraryProjectDescriptor(
+            PluginTestCaseBase.getTestDataPathBase() + "/findUsages/libraryUsages/_library",
+            true
+        )
 }

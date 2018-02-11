@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.SmartSet
@@ -103,7 +104,11 @@ class MoveConflictChecker(
                     is KtNamedDeclaration -> resolutionFacade.resolveToDescriptor(targetElement)
 
                     is KtFile -> {
-                        val packageFragment = resolutionFacade.analyze(targetElement)[BindingContext.FILE_TO_PACKAGE_FRAGMENT, targetElement]
+                        val packageFragment =
+                                targetElement
+                                        .findModuleDescriptor()
+                                        .findPackageFragmentForFile(targetElement)
+
                         packageFragment?.withSource(targetElement)
                     }
 
@@ -113,13 +118,8 @@ class MoveConflictChecker(
 
             is KotlinDirectoryBasedMoveTarget -> {
                 val packageFqName = targetContainerFqName ?: return null
-                val targetDir = directory?.virtualFile ?: targetFile
-                val targetModuleDescriptor = if (targetDir != null) {
-                    getModuleDescriptor(targetDir) ?: return null
-                }
-                else {
-                    resolutionFacade.moduleDescriptor
-                }
+                val targetModuleDescriptor = targetScope?.let { getModuleDescriptor(it) ?: return null }
+                                             ?: resolutionFacade.moduleDescriptor
                 MutablePackageFragmentDescriptor(targetModuleDescriptor, packageFqName).withSource(fakeFile)
             }
 
@@ -166,11 +166,11 @@ class MoveConflictChecker(
     // Based on RefactoringConflictsUtil.analyzeModuleConflicts
     fun analyzeModuleConflictsInUsages(project: Project,
                                        usages: Collection<UsageInfo>,
-                                       targetFile: VirtualFile,
+                                       targetScope: VirtualFile,
                                        conflicts: MultiMap<PsiElement, String>) {
-        val targetModule = targetFile.getModule(project) ?: return
+        val targetModule = targetScope.getModule(project) ?: return
 
-        val isInTestSources = ModuleRootManager.getInstance(targetModule).fileIndex.isInTestSourceContent(targetFile)
+        val isInTestSources = ModuleRootManager.getInstance(targetModule).fileIndex.isInTestSourceContent(targetScope)
         NextUsage@ for (usage in usages) {
             val element = usage.element ?: continue
             if (PsiTreeUtil.getParentOfType(element, PsiImportStatement::class.java, false) != null) continue
@@ -200,9 +200,9 @@ class MoveConflictChecker(
 
     fun checkModuleConflictsInUsages(externalUsages: MutableSet<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
         val newConflicts = MultiMap<PsiElement, String>()
-        val targetFile = moveTarget.targetFile ?: return
+        val targetScope = moveTarget.targetScope ?: return
 
-        analyzeModuleConflictsInUsages(project, externalUsages, targetFile, newConflicts)
+        analyzeModuleConflictsInUsages(project, externalUsages, targetScope, newConflicts)
         if (!newConflicts.isEmpty) {
             val referencedElementsToSkip = newConflicts.keySet().mapNotNullTo(HashSet()) { it.namedUnwrappedElement }
             externalUsages.removeIf {
@@ -242,8 +242,8 @@ class MoveConflictChecker(
             internalUsages: MutableSet<UsageInfo>,
             conflicts: MultiMap<PsiElement, String>
     ) {
-        val targetFile = moveTarget.targetFile ?: return
-        val targetModule = targetFile.getModule(project) ?: return
+        val targetScope = moveTarget.targetScope ?: return
+        val targetModule = targetScope.getModule(project) ?: return
         val resolveScope = targetModule.getScopeWithPlatformAwareDependencies()
 
         fun isInScope(targetElement: PsiElement, targetDescriptor: DeclarationDescriptor): Boolean {
@@ -255,7 +255,7 @@ class MoveConflictChecker(
             val renderedImportableTarget = DESCRIPTOR_RENDERER_FOR_COMPARISON.render(importableDescriptor)
             val renderedTarget by lazy { DESCRIPTOR_RENDERER_FOR_COMPARISON.render(targetDescriptor) }
 
-            val targetModuleInfo = getModuleInfoByVirtualFile(project, targetFile)
+            val targetModuleInfo = getModuleInfoByVirtualFile(project, targetScope)
             val dummyFile = KtPsiFactory(targetElement.project).createFile("dummy.kt", "").apply {
                 moduleInfo = targetModuleInfo
                 targetPlatform = TargetPlatformDetector.getPlatform(targetModule)
@@ -427,8 +427,7 @@ class MoveConflictChecker(
     private fun isToBeMoved(element: PsiElement): Boolean = allElementsToMove.any { it.isAncestor(element, false) }
 
     private fun checkInternalMemberUsages(conflicts: MultiMap<PsiElement, String>) {
-        val sourceRoot = moveTarget.targetFile ?: return
-        val targetModule = ModuleUtilCore.findModuleForFile(sourceRoot, project) ?: return
+        val targetModule = moveTarget.getTargetModule(project) ?: return
 
         val membersToCheck = LinkedHashSet<KtDeclaration>()
         val memberCollector = object : KtVisitorVoid() {

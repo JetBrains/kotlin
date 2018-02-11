@@ -76,7 +76,7 @@ abstract class AssignToVariableResultTransformation(
             copy
         }
         else {
-            psiFactory.createExpressionByPattern("$0 = $1", initialization.variable.nameAsSafeName, resultCallChain)
+            psiFactory.createExpressionByPattern("$0 = $1", initialization.variable.nameAsSafeName, resultCallChain, reformat = false)
         }
     }
 

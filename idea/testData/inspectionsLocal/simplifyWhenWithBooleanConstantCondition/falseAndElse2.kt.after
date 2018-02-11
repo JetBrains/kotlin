@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+fun test() {
+    val x = run {
+        println(2)
+        2
+    }
+}

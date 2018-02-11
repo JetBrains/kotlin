@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight;
@@ -41,18 +30,6 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("branched/ifThenToElvis/inspectionData/inspections.test")
         public void testBranched_ifThenToElvis_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/inspectionData/inspections.test");
-            doTest(fileName);
-        }
-
-        @TestMetadata("branched/ifThenToSafeAccess/inspectionData/inspections.test")
-        public void testBranched_ifThenToSafeAccess_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/inspectionData/inspections.test");
-            doTest(fileName);
-        }
-
-        @TestMetadata("conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test")
-        public void testConventionNameCalls_replaceGetOrSet_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test");
             doTest(fileName);
         }
 
@@ -95,12 +72,6 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("removeExplicitTypeArguments/inspectionData/inspections.test")
         public void testRemoveExplicitTypeArguments_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/inspectionData/inspections.test");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simplifyNegatedBinaryExpression/inspectionData/inspections.test")
-        public void testSimplifyNegatedBinaryExpression_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/inspectionData/inspections.test");
             doTest(fileName);
         }
     }
@@ -263,6 +234,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("naming/objectProperty/inspectionData/inspections.test")
+        public void testNaming_objectProperty_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/objectProperty/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("naming/privateProperty/inspectionData/inspections.test")
         public void testNaming_privateProperty_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/privateProperty/inspectionData/inspections.test");
@@ -311,6 +288,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("redundantNotNullExtensionReceiverOfInline/inspectionData/inspections.test")
+        public void testRedundantNotNullExtensionReceiverOfInline_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantNotNullExtensionReceiverOfInline/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("redundantSamConstructor/inspectionData/inspections.test")
         public void testRedundantSamConstructor_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantSamConstructor/inspectionData/inspections.test");
@@ -320,6 +303,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("redundantSemicolon/inspectionData/inspections.test")
         public void testRedundantSemicolon_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantSemicolon/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("redundantSuspendModifier/inspectionData/inspections.test")
+        public void testRedundantSuspendModifier_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantSuspendModifier/inspectionData/inspections.test");
             doTest(fileName);
         }
 
@@ -476,6 +465,33 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("wrapUnaryOperator/inspectionData/inspections.test")
         public void testWrapUnaryOperator_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/wrapUnaryOperator/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/inspectionsLocal")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InspectionsLocal extends AbstractInspectionTest {
+        public void testAllFilesPresentInInspectionsLocal() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/inspectionsLocal"), Pattern.compile("^(inspections\\.test)$"), TargetBackend.ANY);
+        }
+
+        @TestMetadata("branched/ifThenToSafeAccess/inspectionData/inspections.test")
+        public void testBranched_ifThenToSafeAccess_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test")
+        public void testConventionNameCalls_replaceGetOrSet_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simplifyNegatedBinaryExpression/inspectionData/inspections.test")
+        public void testSimplifyNegatedBinaryExpression_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/inspectionData/inspections.test");
             doTest(fileName);
         }
     }

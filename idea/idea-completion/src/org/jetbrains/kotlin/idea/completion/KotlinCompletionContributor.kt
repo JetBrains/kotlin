@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.util.Key
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns.elementType
@@ -131,10 +132,12 @@ class KotlinCompletionContributor : CompletionContributor() {
                 }
             }
 
-            if (tokenAt.node.elementType == KtTokens.IDENTIFIER) {
+            // IDENTIFIER when 'f<caret>oo: Foo'
+            // COLON when 'foo<caret>: Foo'
+            if (tokenAt.node.elementType == KtTokens.IDENTIFIER || tokenAt.node.elementType == KtTokens.COLON) {
                 val parameter = tokenAt.parent as? KtParameter
                 if (parameter != null) {
-                    context.offsetMap.addOffset(ParameterNameAndTypeCompletion.REPLACEMENT_OFFSET, parameter.endOffset)
+                    context.offsetMap.addOffset(VariableOrParameterNameWithTypeCompletion.REPLACEMENT_OFFSET, parameter.endOffset)
                 }
             }
         }
@@ -229,8 +232,9 @@ class KotlinCompletionContributor : CompletionContributor() {
 
     private fun performCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
         val position = parameters.position
-        if (position.containingFile !is KtFile) return
-        if ((parameters.originalFile as KtFile).doNotComplete ?: false) return
+        val parametersOriginFile = parameters.originalFile
+        if (position.containingFile !is KtFile || parametersOriginFile !is KtFile) return
+        if (parametersOriginFile.doNotComplete == true) return
 
         val toFromOriginalFileMapper = ToFromOriginalFileMapper.create(parameters)
 
@@ -277,7 +281,9 @@ class KotlinCompletionContributor : CompletionContributor() {
             return
         }
 
-        if (PropertyKeyCompletion.perform(parameters, result)) return
+        for (extension in KotlinCompletionExtension.EP_NAME.getExtensions()) {
+            if (extension.perform(parameters, result)) return
+        }
 
         fun addPostProcessor(session: CompletionSession) {
             if (lookupElementPostProcessor != null) {
@@ -331,9 +337,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                 val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
                 psiDocumentManager.commitAllDocuments()
 
-                assert(startOffset > 1 && document.charsSequence[startOffset - 1] == '.')
-                val token = context.file.findElementAt(startOffset - 2)!!
-                assert(token.node.elementType == KtTokens.IDENTIFIER || token.node.elementType == KtTokens.THIS_KEYWORD)
+                val token = getToken(context.file, document.charsSequence, startOffset)
                 val nameRef = token.parent as KtNameReferenceExpression
 
                 document.insertString(nameRef.startOffset, "{")
@@ -343,6 +347,15 @@ class KotlinCompletionContributor : CompletionContributor() {
                 context.tailOffset = tailOffset
 
                 super.handleInsert(context)
+            }
+
+            private fun getToken(file: PsiFile, charsSequence: CharSequence, startOffset: Int): PsiElement {
+                assert(startOffset > 1 && charsSequence[startOffset - 1] == '.')
+                val token = file.findElementAt(startOffset - 2)!!
+                return if (token.node.elementType == KtTokens.IDENTIFIER || token.node.elementType == KtTokens.THIS_KEYWORD)
+                    token
+                else
+                    getToken(file, charsSequence, token.startOffset + 1)
             }
         }
     }
@@ -456,5 +469,14 @@ class KotlinCompletionContributor : CompletionContributor() {
 
     private fun isInSimpleStringTemplate(tokenBefore: PsiElement?): Boolean {
         return tokenBefore?.parents?.firstIsInstanceOrNull<KtStringTemplateExpression>()?.isPlain() ?: false
+    }
+}
+
+abstract class KotlinCompletionExtension {
+    abstract fun perform(parameters: CompletionParameters, result: CompletionResultSet): Boolean
+
+    companion object {
+        val EP_NAME: ExtensionPointName<KotlinCompletionExtension> =
+                ExtensionPointName.create<KotlinCompletionExtension>("org.jetbrains.kotlin.completionExtension")
     }
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -90,7 +79,7 @@ class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpress
 
 class NotPropertiesServiceImpl(private val project: Project) : NotPropertiesService {
     override fun getNotProperties(element: PsiElement): Set<FqNameUnsafe> {
-        val profile = InspectionProjectProfileManager.getInstance(project).inspectionProfile
+        val profile = InspectionProjectProfileManager.getInstance(project).currentProfile
         val tool = profile.getUnwrappedTool(USE_PROPERTY_ACCESS_INSPECTION, element)
         return (tool?.fqNameList ?: default.map(::FqNameUnsafe)).toSet()
     }
@@ -119,14 +108,14 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
     }
 
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
-        applyTo(element, detectPropertyNameToUse(element)!!)
+        applyTo(element, detectPropertyNameToUse(element)!!, reformat = true)
     }
 
-    fun applyTo(element: KtCallExpression, propertyName: Name): KtExpression {
+    fun applyTo(element: KtCallExpression, propertyName: Name, reformat: Boolean): KtExpression {
         val arguments = element.valueArguments
         return when (arguments.size) {
             0 -> replaceWithPropertyGet(element, propertyName)
-            1 -> replaceWithPropertySet(element, propertyName)
+            1 -> replaceWithPropertySet(element, propertyName, reformat)
             else -> error("More than one argument in call to accessor")
         }
     }
@@ -168,7 +157,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         if (isSetUsage && property.type != function.valueParameters.single().type) {
             val qualifiedExpressionCopy = qualifiedExpression.copied()
             val callExpressionCopy = ((qualifiedExpressionCopy as? KtQualifiedExpression)?.selectorExpression ?: qualifiedExpressionCopy) as KtCallExpression
-            val newExpression = applyTo(callExpressionCopy, property.name)
+            val newExpression = applyTo(callExpressionCopy, property.name, reformat = false)
             val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
             val newBindingContext = newExpression.analyzeInContext(
                     resolutionScope,
@@ -195,7 +184,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
     ): Boolean {
         val project = resolvedCall.call.callElement.project
         val newCall = object : DelegatingCall(resolvedCall.call) {
-            private val newCallee = KtPsiFactory(project).createExpressionByPattern("$0", property.name)
+            private val newCallee = KtPsiFactory(project).createExpressionByPattern("$0", property.name, reformat = false)
 
             override fun getCalleeExpression() = newCallee
             override fun getValueArgumentList(): KtValueArgumentList? = null
@@ -227,7 +216,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         return callExpression.replaced(newExpression)
     }
 
-    private fun replaceWithPropertySet(callExpression: KtCallExpression, propertyName: Name): KtExpression {
+    private fun replaceWithPropertySet(callExpression: KtCallExpression, propertyName: Name, reformat: Boolean): KtExpression {
         val call = callExpression.getQualifiedExpressionForSelector() ?: callExpression
         val callParent = call.parent
         var callToConvert = callExpression
@@ -251,7 +240,8 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
                     pattern,
                     qualifiedExpression.receiverExpression,
                     propertyName,
-                    argument.getArgumentExpression()!!
+                    argument.getArgumentExpression()!!,
+                    reformat = reformat
             )
             return qualifiedExpression.replaced(newExpression)
         }

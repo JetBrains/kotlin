@@ -1,7 +1,6 @@
 package test.comparisons
 
 import kotlin.test.*
-import org.junit.Test
 import kotlin.comparisons.*
 
 data class Item(val name: String, val rating: Int) : Comparable<Item> {

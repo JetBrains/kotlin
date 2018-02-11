@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class A
 
 fun test(a: Any): String {
@@ -7,5 +8,5 @@ fun test(a: Any): String {
         is A -> q!!
     }
     // When is not exhaustive
-    return <!TYPE_MISMATCH!>q<!>
+    return <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>q<!>
 }

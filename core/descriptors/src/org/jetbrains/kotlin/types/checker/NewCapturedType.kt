@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ fun prepareArgumentTypeRegardingCaptureTypes(argumentType: UnwrappedType): Unwra
         return intersectTypes(preparedSuperTypes).makeNullableAsSpecified(simpleType.isMarkedNullable)
     }
     if (simpleType is NewCapturedType) {
-        // todo may be we should respect flexible capture types also...
+        // todo may be we should respect flexible/definitelyNotNull captured types also...
         return simpleType.constructor.supertypes.takeIf { it.isNotEmpty() }?.let {
             intersectTypes(it).makeNullableAsSpecified(simpleType.isMarkedNullable)
         } ?: argumentType.builtIns.nullableAnyType

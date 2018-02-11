@@ -1,0 +1,8 @@
+package
+
+public fun bar1(/*0*/ a: Array2D<kotlin.Int> /* = kotlin.Array<kotlin.Array<kotlin.Int>> */): Array2D<out kotlin.Number> /* = kotlin.Array<kotlin.Array<out kotlin.Number>> */
+public fun bar2(/*0*/ m: TMap<*> /* = kotlin.collections.Map<*, *> */): kotlin.collections.Map<out kotlin.Any?, kotlin.Any?>
+public fun foo1(/*0*/ a: Array2D<out kotlin.Number> /* = kotlin.Array<kotlin.Array<out kotlin.Number>> */): Array2D<out kotlin.Number> /* = kotlin.Array<kotlin.Array<out kotlin.Number>> */
+public fun </*0*/ T> foo2(/*0*/ m: TMap<T> /* = kotlin.collections.Map<T, T> */): TMap<T> /* = kotlin.collections.Map<T, T> */
+public typealias Array2D</*0*/ T>  = kotlin.Array<kotlin.Array<T>>
+public typealias TMap</*0*/ T>  = kotlin.collections.Map<T, T>

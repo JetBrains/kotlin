@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
 val flag = true
 
 // type of a was checked by txt
@@ -15,5 +17,5 @@ val b = run {
 val c = run {
     if (flag) return@run
 
-    return@run <!RETURN_TYPE_MISMATCH!>4<!>
+    return@run <!OI;RETURN_TYPE_MISMATCH!>4<!>
 }

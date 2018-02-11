@@ -33,10 +33,12 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
         AndroidLintInspectionBase.invalidateInspectionShortName2IssueMap()
         (myFixture as CodeInsightTestFixtureImpl).setVirtualFileFilter { false } // Allow access to tree elements.
         ConfigLibraryUtil.configureKotlinRuntime(myModule)
+        ConfigLibraryUtil.addLibrary(myModule, "androidExtensionsRuntime", "dist/kotlinc/lib", arrayOf("android-extensions-runtime.jar"))
     }
 
     override fun tearDown() {
         ConfigLibraryUtil.unConfigureKotlinRuntime(myModule)
+        ConfigLibraryUtil.removeLibrary(myModule, "androidExtensionsRuntime")
         super.tearDown()
     }
 

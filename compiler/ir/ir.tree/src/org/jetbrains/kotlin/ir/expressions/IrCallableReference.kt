@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol

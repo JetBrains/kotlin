@@ -1,4 +1,8 @@
 package org.junit
 
+/** @suppress */
 @Suppress("NO_ACTUAL_FOR_EXPECT")
-expect annotation class Test
+@Deprecated("Use 'Test' from kotlin.test package",
+            replaceWith = ReplaceWith("kotlin.test.Test", "kotlin.test.Test"),
+            level = DeprecationLevel.WARNING)
+expect annotation class Test()

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 package foo
@@ -44,7 +45,7 @@ fun main(args : Array<String>) {
 
     val b = fooT2<Int>()(1)
     checkSubtype<Int>(b)
-    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
+    <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
 
     <!FUNCTION_EXPECTED!>1<!>()
     <!FUNCTION_EXPECTED!>1<!>{}

@@ -1,7 +1,7 @@
 package kotlin.js
 
 /**
- * An interface for indexing access to a collection of key-value pairs, where type of key is [String] and type of value is [Any?].
+ * An interface for indexing access to a collection of key-value pairs, where type of key is [String] and type of value is [Any?][Any].
  */
 public external interface Json {
     /**
@@ -74,9 +74,9 @@ public fun Json.add(other: Json): Json {
  */
 public external object JSON {
     public fun stringify(o: Any?): String
-    public fun stringify(o: Any?, replacer: (key: String, value: Any?) -> Any?): String
-    public fun stringify(o: Any?, replacer: (key: String, value: Any?) -> Any?, space: Int): String
-    public fun stringify(o: Any?, replacer: (key: String, value: Any?) -> Any?, space: String): String
+    public fun stringify(o: Any?, replacer: ((key: String, value: Any?) -> Any?)): String
+    public fun stringify(o: Any?, replacer: ((key: String, value: Any?) -> Any?)? = definedExternally, space: Int): String
+    public fun stringify(o: Any?, replacer: ((key: String, value: Any?) -> Any?)? = definedExternally, space: String): String
     public fun stringify(o: Any?, replacer: Array<String>): String
     public fun stringify(o: Any?, replacer: Array<String>, space: Int): String
     public fun stringify(o: Any?, replacer: Array<String>, space: String): String

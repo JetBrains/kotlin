@@ -26,8 +26,8 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class MutableDiagnosticsWithSuppression @JvmOverloads constructor(
-        private val bindingContext: BindingContext,
-        private val delegateDiagnostics: Diagnostics = Diagnostics.EMPTY
+    private val bindingContext: BindingContext,
+    private val delegateDiagnostics: Diagnostics = Diagnostics.EMPTY
 ) : Diagnostics {
     private val diagnosticList = ArrayList<Diagnostic>()
 
@@ -60,5 +60,6 @@ class MutableDiagnosticsWithSuppression @JvmOverloads constructor(
         modificationTracker.incModificationCount()
     }
 
-    @TestOnly fun getReadonlyView(): DiagnosticsWithSuppression = readonlyView()
+    @TestOnly
+    fun getReadonlyView(): DiagnosticsWithSuppression = readonlyView()
 }

@@ -5,13 +5,9 @@ interface Test {
 fun test(t: Test) {
     t.foo()
 
-    t.
-            foo()
+    t.foo()
 
-    t.
-
-
-            foo()
+    t.foo()
 
     t
 
@@ -24,13 +20,9 @@ fun test(t: Test) {
 
     t?.foo()
 
-    t?.
-            foo()
+    t?.foo()
 
-    t?.
-
-
-            foo()
+    t?.foo()
 
     t
 

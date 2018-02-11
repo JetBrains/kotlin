@@ -1,0 +1,120 @@
+package
+
+public fun constructor(): kotlin.Unit
+public fun f(): kotlin.Unit
+
+public final class C {
+    public constructor C()
+    public final fun constructor(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class `$metadata$` {
+        public constructor `$metadata$`()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class length {
+        public constructor length()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class prototype {
+        public constructor prototype()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class D {
+    public constructor D()
+    private final fun constructor(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    private final class `$metadata$` {
+        public constructor `$metadata$`()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    private final class length {
+        public constructor length()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    private final class prototype {
+        public constructor prototype()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class E {
+    public constructor E()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.js.JsName(name = "constructor") public final fun f(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    @kotlin.js.JsName(name = "prototype") public final class D {
+        public constructor D()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class F {
+    public constructor F()
+    @kotlin.js.JsName(name = "f") public final fun constructor(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    @kotlin.js.JsName(name = "B") public final class length {
+        public constructor length()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsName(name = "A") public final class prototype {
+        public constructor prototype()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public external interface Object {
+    public abstract val constructor: kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class length {
+    public constructor length()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class prototype {
+    public constructor prototype()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

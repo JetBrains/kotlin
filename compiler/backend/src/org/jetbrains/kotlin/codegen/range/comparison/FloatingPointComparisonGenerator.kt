@@ -20,24 +20,24 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-sealed class FloatingPointComparisonGenerator(override val comparedType: Type): ComparisonGenerator {
+sealed class FloatingPointComparisonGenerator(override val comparedType: Type) : ComparisonGenerator {
     override fun jumpIfGreaterOrEqual(v: InstructionAdapter, label: Label) {
-        v.cmpl(comparedType)
+        v.cmpg(comparedType)
         v.ifge(label)
     }
 
     override fun jumpIfLessOrEqual(v: InstructionAdapter, label: Label) {
-        v.cmpg(comparedType)
+        v.cmpl(comparedType)
         v.ifle(label)
     }
 
     override fun jumpIfGreater(v: InstructionAdapter, label: Label) {
-        v.cmpl(comparedType)
+        v.cmpg(comparedType)
         v.ifgt(label)
     }
 
     override fun jumpIfLess(v: InstructionAdapter, label: Label) {
-        v.cmpg(comparedType)
+        v.cmpl(comparedType)
         v.iflt(label)
     }
 }

@@ -28,16 +28,16 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
 
 fun createValueParametersForInvokeInFunctionType(
-        functionDescriptor: FunctionDescriptor, parameterTypes: List<TypeProjection>
+    functionDescriptor: FunctionDescriptor, parameterTypes: List<TypeProjection>
 ): List<ValueParameterDescriptor> {
     return parameterTypes.mapIndexed { i, typeProjection ->
         ValueParameterDescriptorImpl(
-                functionDescriptor, null, i, Annotations.EMPTY,
-                Name.identifier("p${i + 1}"), typeProjection.type,
-                /* declaresDefaultValue = */ false,
-                /* isCrossinline = */ false,
-                /* isNoinline = */ false,
-                null, SourceElement.NO_SOURCE
+            functionDescriptor, null, i, Annotations.EMPTY,
+            Name.identifier("p${i + 1}"), typeProjection.type,
+            /* declaresDefaultValue = */ false,
+            /* isCrossinline = */ false,
+            /* isNoinline = */ false,
+            null, SourceElement.NO_SOURCE
         )
     }
 }

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collections;
@@ -158,26 +157,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression toShort(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.SHORT.getIdentifier(), expression);
-    }
-
-    @NotNull
-    public static JsExpression toByte(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.BYTE.getIdentifier(), expression);
-    }
-
-    @NotNull
-    public static JsExpression toLong(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.LONG.getIdentifier(), expression);
-    }
-
-    @NotNull
-    public static JsExpression toChar(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.CHAR.getIdentifier(), expression);
-    }
-
-    @NotNull
     public static JsExpression compareTo(@NotNull JsExpression left, @NotNull JsExpression right) {
         return invokeKotlinFunction(OperatorNameConventions.COMPARE_TO.getIdentifier(), left, right);
     }
@@ -188,26 +167,31 @@ public final class JsAstUtils {
     }
 
     public static JsExpression newLong(long value) {
+        JsExpression result;
         if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
             int low = (int) value;
             int high = (int) (value >> 32);
             List<JsExpression> args = new SmartList<>();
             args.add(new JsIntLiteral(low));
             args.add(new JsIntLiteral(high));
-            return new JsNew(Namer.kotlinLong(), args);
+            result = new JsNew(Namer.kotlinLong(), args);
         }
         else {
             if (value == 0) {
-                return new JsNameRef(Namer.LONG_ZERO, Namer.kotlinLong());
+                result = new JsNameRef(Namer.LONG_ZERO, Namer.kotlinLong());
             }
             else if (value == 1) {
-                return new JsNameRef(Namer.LONG_ONE, Namer.kotlinLong());
+                result = new JsNameRef(Namer.LONG_ONE, Namer.kotlinLong());
             }
             else if (value == -1) {
-                return new JsNameRef(Namer.LONG_NEG_ONE, Namer.kotlinLong());
+                result = new JsNameRef(Namer.LONG_NEG_ONE, Namer.kotlinLong());
             }
-            return longFromInt(new JsIntLiteral((int) value));
+            else {
+                result = longFromInt(new JsIntLiteral((int) value));
+            }
         }
+        MetadataProperties.setSideEffects(result, SideEffectKind.PURE);
+        return result;
     }
 
     @NotNull
@@ -470,26 +454,6 @@ public final class JsAstUtils {
         return new JsObjectLiteral(Collections.singletonList(new JsPropertyInitializer(label, value)));
     }
 
-    public static JsExpression replaceRootReference(@NotNull JsNameRef fullQualifier, @NotNull JsExpression newQualifier) {
-        if (fullQualifier.getQualifier() == null) {
-            assert Namer.getRootPackageName().equals(fullQualifier.getIdent()) : "Expected root package, but: " + fullQualifier.getIdent();
-            return newQualifier;
-        }
-
-        fullQualifier = fullQualifier.deepCopy();
-        JsNameRef qualifier = fullQualifier;
-        while (true) {
-            JsExpression parent = qualifier.getQualifier();
-            assert parent instanceof JsNameRef : "unexpected qualifier: " + parent + ", original: " + fullQualifier;
-            if (((JsNameRef) parent).getQualifier() == null) {
-                assert Namer.getRootPackageName().equals(((JsNameRef) parent).getIdent());
-                qualifier.setQualifier(newQualifier);
-                return fullQualifier;
-            }
-            qualifier = (JsNameRef) parent;
-        }
-    }
-
     @NotNull
     public static List<JsStatement> flattenStatement(@NotNull JsStatement statement) {
         if (statement instanceof JsBlock) {
@@ -543,7 +507,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsExpression stateMachineReceiver() {
-        JsNameRef result = new JsNameRef("$this$");
+        JsNameRef result = pureFqn("$this$", null);
         MetadataProperties.setCoroutineReceiver(result, true);
         return result;
     }

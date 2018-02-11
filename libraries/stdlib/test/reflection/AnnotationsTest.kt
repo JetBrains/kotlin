@@ -3,7 +3,6 @@
 package test.reflection
 
 import kotlin.test.*
-import org.junit.Test
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class MyAnno

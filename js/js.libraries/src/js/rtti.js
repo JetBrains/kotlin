@@ -22,52 +22,50 @@ Kotlin.Kind = {
 
 Kotlin.callGetter = function (thisObject, klass, propertyName) {
     var propertyDescriptor = Object.getOwnPropertyDescriptor(klass, propertyName);
-    if (propertyDescriptor != null) {
-        if (propertyDescriptor.get != null) {
-            return propertyDescriptor.get.call(thisObject);
-        }
-        else if ("value" in propertyDescriptor) {
-            return propertyDescriptor.value;
-        }
+    if (propertyDescriptor != null && propertyDescriptor.get != null) {
+        return propertyDescriptor.get.call(thisObject);
     }
-    else {
-        return Kotlin.callGetter(thisObject, Object.getPrototypeOf(klass), propertyName);
+
+    propertyDescriptor = Object.getOwnPropertyDescriptor(thisObject, propertyName);
+    if (propertyDescriptor != null && "value" in propertyDescriptor) {
+        return thisObject[propertyName];
     }
-    return null;
+
+    return Kotlin.callGetter(thisObject, Object.getPrototypeOf(klass), propertyName);
 };
 
 Kotlin.callSetter = function (thisObject, klass, propertyName, value) {
     var propertyDescriptor = Object.getOwnPropertyDescriptor(klass, propertyName);
-    if (propertyDescriptor != null) {
-        if (propertyDescriptor.set != null) {
-            propertyDescriptor.set.call(thisObject, value);
-        }
-        else if ("value" in propertyDescriptor) {
-            throw new Error("Assertion failed: Kotlin compiler should not generate simple JavaScript properties for overridable " +
-                            "Kotlin properties.");
-        }
+    if (propertyDescriptor != null && propertyDescriptor.set != null) {
+        propertyDescriptor.set.call(thisObject, value);
+        return;
     }
-    else {
-        return Kotlin.callSetter(thisObject, Object.getPrototypeOf(klass), propertyName, value);
+
+    propertyDescriptor = Object.getOwnPropertyDescriptor(thisObject, propertyName);
+    if (propertyDescriptor != null && "value" in propertyDescriptor) {
+        thisObject[propertyName] = value;
+        return
     }
+
+    Kotlin.callSetter(thisObject, Object.getPrototypeOf(klass), propertyName, value);
 };
 
-function isInheritanceFromInterface(metadata, iface) {
-    if (metadata == null) return false;
+function isInheritanceFromInterface(ctor, iface) {
+    if (ctor === iface) return true;
 
-    var interfaces = metadata.interfaces;
-    var i;
-    for (i = 0; i < interfaces.length; i++) {
-        if (interfaces[i] === iface) {
-            return true;
+    var metadata = ctor.$metadata$;
+    if (metadata != null) {
+        var interfaces = metadata.interfaces;
+        for (var i = 0; i < interfaces.length; i++) {
+            if (isInheritanceFromInterface(interfaces[i], iface)) {
+                return true;
+            }
         }
     }
-    for (i = 0; i < interfaces.length; i++) {
-        if (isInheritanceFromInterface(interfaces[i].$metadata$, iface)) {
-            return true;
-        }
-    }
-    return false;
+
+    var superPrototype = ctor.prototype != null ? Object.getPrototypeOf(ctor.prototype) : null;
+    var superConstructor = superPrototype != null ? superPrototype.constructor : null;
+    return superConstructor != null && isInheritanceFromInterface(superConstructor, iface);
 }
 
 /**
@@ -114,10 +112,7 @@ Kotlin.isType = function (object, klass) {
     }
 
     if (klassMetadata.kind === Kotlin.Kind.INTERFACE && object.constructor != null) {
-        metadata = object.constructor.$metadata$;
-        if (metadata != null) {
-            return isInheritanceFromInterface(metadata, klass);
-        }
+        return isInheritanceFromInterface(object.constructor, klass);
     }
 
     return false;

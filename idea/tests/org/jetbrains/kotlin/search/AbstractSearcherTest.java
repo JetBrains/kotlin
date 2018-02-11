@@ -68,7 +68,9 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
         for (Object member : actual) {
             if (member instanceof PsiClass) {
                 String qualifiedName = ((PsiClass) member).getQualifiedName();
-                assert qualifiedName != null;
+                if (qualifiedName == null) {
+                    continue;
+                }
 
                 boolean filterOut = CollectionsKt.any(classFqnFilters, qualifiedName::startsWith);
 

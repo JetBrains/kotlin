@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment.Companion.DOT_METADATA_FILE_EXTENSION
-import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
+import org.jetbrains.kotlin.serialization.jvm.JvmModuleProtoBuf
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.File
@@ -121,7 +121,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
         }
 
         val kotlinModuleFile = File(destDir, JvmCodegenUtil.getMappingFileName(JvmCodegenUtil.getModuleName(module)))
-        val packageTableBytes = JvmPackageTable.PackageTable.newBuilder().apply {
+        val packageTableBytes = JvmModuleProtoBuf.Module.newBuilder().apply {
             for (table in packageTable.values) {
                 table.addTo(this)
             }

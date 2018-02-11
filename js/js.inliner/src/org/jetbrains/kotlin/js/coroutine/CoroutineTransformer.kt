@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.js.coroutine
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
+import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineableCoroutineBody
+import org.jetbrains.kotlin.js.translate.declaration.transformCoroutineMetadataToSpecialFunctions
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
@@ -53,6 +55,14 @@ class CoroutineTransformer : JsVisitorWithContextImpl() {
                 additionalStatementsByNode[x] = CoroutineFunctionTransformer(expression, expression.name?.ident).transform()
                 return false
             }
+        }
+        return super.visit(x, ctx)
+    }
+
+    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
+        if (x.isInlineableCoroutineBody) {
+            x.body = transformCoroutineMetadataToSpecialFunctions(x.body)
+            return false
         }
         return super.visit(x, ctx)
     }

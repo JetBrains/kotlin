@@ -1,0 +1,243 @@
+== callsAndInverts ==
+fun callsAndInverts(b: Boolean, block: () -> Unit): Boolean {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        returns(true) implies (!b)
+        returns(false) implies b
+    }
+
+    block()
+    return !b
+}
+---------------------
+L0:
+  1 <START>
+    v(b: Boolean)
+    magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+    w(b|<v0>)
+    v(block: () -> Unit)
+    magic[FAKE_INITIALIZER](block: () -> Unit) -> <v1>
+    w(block|<v1>)
+  2 mark({ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b } block() return !b })
+    mark({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b })
+    jmp?(L2)                                                                                                                                          NEXT:[r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b }) -> <v2>, d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b })]
+    d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b })                                       NEXT:[<SINK>]
+L2 [after local declaration]:
+    r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b }) -> <v2>                               PREV:[jmp?(L2)]
+    mark(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b })
+    call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b }, contract|<v2>) -> <v3>
+    r(block) -> <v4>
+    mark(block())
+    call(block(), invoke|<v4>) -> <v5>
+    r(b) -> <v6>
+    mark(!b)
+    call(!b, not|<v6>) -> <v7>
+    ret(*|<v7>) L1
+L1:
+  1 <END>                                                                                                                                             NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                                                                           PREV:[]
+sink:
+    <SINK>                                                                                                                                            PREV:[<ERROR>, <END>, d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b })]
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        returns(true) implies (!b)
+        returns(false) implies b
+    }
+---------------------
+L3:
+  3 <START>
+  4 mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b)
+    magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+    r(block) -> <v1>
+    mark(InvocationKind.EXACTLY_ONCE)
+    r(EXACTLY_ONCE) -> <v2>
+    mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+    magic[IMPLICIT_RECEIVER](returns(true)) -> <v4>
+    r(true) -> <v5>
+    mark(returns(true))
+    call(returns(true), returns|<v4>, <v5>) -> <v6>
+    mark((!b))
+    r(b) -> <v7>
+    mark(!b)
+    call(!b, not|<v7>) -> <v8>
+    mark(returns(true) implies (!b))
+    call(returns(true) implies (!b), implies|<v6>, <v8>) -> <v9>
+    magic[IMPLICIT_RECEIVER](returns(false)) -> <v10>
+    r(false) -> <v11>
+    mark(returns(false))
+    call(returns(false), returns|<v10>, <v11>) -> <v12>
+    r(b) -> <v13>
+    mark(returns(false) implies b)
+    call(returns(false) implies b, implies|<v12>, <v13>) -> <v14>
+L4:
+  3 <END>                                                                                                         NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                                       PREV:[]
+sink:
+    <SINK>                                                                                                        PREV:[<ERROR>, <END>]
+=====================
+== smartcastAndInitialization ==
+fun smartcastAndInitialization(x: Any?) {
+    val y: Int
+
+    if (callsAndInverts(x !is String) { y = 42 }) {
+        println(y)
+        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    }
+    else {
+        println(y)
+        x.<!UNRESOLVED_REFERENCE!>length<!>
+    }
+    println(y)
+}
+---------------------
+L0:
+  1 <START>
+    v(x: Any?)
+    magic[FAKE_INITIALIZER](x: Any?) -> <v0>
+    w(x|<v0>)
+  2 mark({ val y: Int if (callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> } println(y) })
+    v(val y: Int)
+    mark(if (callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })
+    mark(x !is String)
+    r(x) -> <v1>
+    magic[IS](x !is String|<v1>) -> <v2>
+    mark({ y = 42 })
+    r({ y = 42 }) -> <v3>
+    mark(callsAndInverts(x !is String) { y = 42 })
+    call(callsAndInverts(x !is String) { y = 42 }, callsAndInverts|<v2>, <v3>) -> <v4>
+L2 [before inlined declaration]:
+    inlined({ y = 42 })
+L3 [after inlined declaration]:
+    jf(L6|<v4>)                                                                                                                                                                                 NEXT:[mark({ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }), mark({ println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length })]
+  3 mark({ println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length })
+    r(y) -> <v5>
+    mark(println(y))
+    call(println(y), println|<v5>) -> <v6>
+    magic[UNRESOLVED_CALL](DEBUG_INFO_SMARTCAST) -> <v7>
+    mark(!DEBUG_INFO_SMARTCAST)
+    call(!DEBUG_INFO_SMARTCAST, <ERROR FUNCTION>|<v7>) -> <v8>
+  2 jmp(L7)                                                                                                                                                                                     NEXT:[merge(if (callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }|<v8>, <v12>) -> <v13>]
+L6 [else branch]:
+  3 mark({ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })                                                                                                                                    PREV:[jf(L6|<v4>)]
+    r(y) -> <v9>
+    mark(println(y))
+    call(println(y), println|<v9>) -> <v10>
+    mark(x.<)
+    r(x) -> <v11>
+    magic[UNSUPPORTED_ELEMENT](x.<|<v11>) -> <v12>
+L7 ['if' expression result]:
+  2 merge(if (callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }|<v8>, <v12>) -> <v13>        PREV:[jmp(L7), magic[UNSUPPORTED_ELEMENT](x.<|<v11>) -> <v12>]
+    r(y) -> <v14>
+    mark(println(y))
+    call(println(y), println|<v14>) -> <v15>
+L1:
+  1 <END>                                                                                                                                                                                       NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                                                                                                                     PREV:[]
+sink:
+    <SINK>                                                                                                                                                                                      PREV:[<ERROR>, <END>]
+=====================
+== inlined anonymous_1 ==
+{ y = 42 }
+---------------------
+L4:
+  3 <START>
+  4 mark(y = 42)
+    r(42) -> <v0>
+    w(y|<v0>)
+L5:
+  3 <END>            NEXT:[<SINK>]
+error:
+-   <ERROR>          PREV:[]
+sink:
+    <SINK>           PREV:[<END>]
+=====================
+== inPresenceOfLazy ==
+fun inPresenceOfLazy(x: Any?, unknownBoolean: Boolean) {
+    val y: Int
+
+    if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) {
+        println(y)
+        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    }
+    else {
+        println(y)
+        x.<!UNRESOLVED_REFERENCE!>length<!>
+    }
+    println(y)
+}
+---------------------
+L0:
+  1 <START>
+    v(x: Any?)
+    magic[FAKE_INITIALIZER](x: Any?) -> <v0>
+    w(x|<v0>)
+    v(unknownBoolean: Boolean)
+    magic[FAKE_INITIALIZER](unknownBoolean: Boolean) -> <v1>
+    w(unknownBoolean|<v1>)
+  2 mark({ val y: Int if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> } println(y) })
+    v(val y: Int)
+    mark(if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })
+    r(unknownBoolean) -> <v2>
+    jf(L2|<v2>)                                                                                                                                                                                                   NEXT:[magic[AND](unknownBoolean && callsAndInverts(x !is String) { y = 42 }|<v2>, <v6>) -> <v7>, mark(x !is String)]
+    mark(x !is String)
+    r(x) -> <v3>
+    magic[IS](x !is String|<v3>) -> <v4>
+    mark({ y = 42 })
+    r({ y = 42 }) -> <v5>
+    mark(callsAndInverts(x !is String) { y = 42 })
+    call(callsAndInverts(x !is String) { y = 42 }, callsAndInverts|<v4>, <v5>) -> <v6>
+L3 [before inlined declaration]:
+    inlined({ y = 42 })
+L2 [result of boolean operation]:
+L4 [after inlined declaration]:
+    magic[AND](unknownBoolean && callsAndInverts(x !is String) { y = 42 }|<v2>, <v6>) -> <v7>                                                                                                                     PREV:[jf(L2|<v2>), inlined({ y = 42 })]
+    jf(L7|<v7>)                                                                                                                                                                                                   NEXT:[mark({ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }), mark({ println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length })]
+  3 mark({ println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length })
+    r(y) -> <v8>
+    mark(println(y))
+    call(println(y), println|<v8>) -> <v9>
+    magic[UNRESOLVED_CALL](DEBUG_INFO_SMARTCAST) -> <v10>
+    mark(!DEBUG_INFO_SMARTCAST)
+    call(!DEBUG_INFO_SMARTCAST, <ERROR FUNCTION>|<v10>) -> <v11>
+  2 jmp(L8)                                                                                                                                                                                                       NEXT:[merge(if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }|<v11>, <v15>) -> <v16>]
+L7 [else branch]:
+  3 mark({ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })                                                                                                                                                      PREV:[jf(L7|<v7>)]
+    r(y) -> <v12>
+    mark(println(y))
+    call(println(y), println|<v12>) -> <v13>
+    mark(x.<)
+    r(x) -> <v14>
+    magic[UNSUPPORTED_ELEMENT](x.<|<v14>) -> <v15>
+L8 ['if' expression result]:
+  2 merge(if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }|<v11>, <v15>) -> <v16>       PREV:[jmp(L8), magic[UNSUPPORTED_ELEMENT](x.<|<v14>) -> <v15>]
+    r(y) -> <v17>
+    mark(println(y))
+    call(println(y), println|<v17>) -> <v18>
+L1:
+  1 <END>                                                                                                                                                                                                         NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                                                                                                                                       PREV:[]
+sink:
+    <SINK>                                                                                                                                                                                                        PREV:[<ERROR>, <END>]
+=====================
+== inlined anonymous_2 ==
+{ y = 42 }
+---------------------
+L5:
+  3 <START>
+  4 mark(y = 42)
+    r(42) -> <v0>
+    w(y|<v0>)
+L6:
+  3 <END>            NEXT:[<SINK>]
+error:
+-   <ERROR>          PREV:[]
+sink:
+    <SINK>           PREV:[<END>]
+=====================

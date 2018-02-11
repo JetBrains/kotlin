@@ -1,0 +1,32 @@
+package
+
+package a {
+    public fun a(): kotlin.Unit
+}
+
+package b {
+    public fun b(): kotlin.Unit
+}
+
+package c {
+    public fun c(): kotlin.Unit
+}
+
+package d {
+    public fun d(): kotlin.Unit
+
+    public final class D {
+        public constructor D()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package e {
+    public fun e(): kotlin.Unit
+}
+
+package f {
+    public const val name: kotlin.String = "f"
+}

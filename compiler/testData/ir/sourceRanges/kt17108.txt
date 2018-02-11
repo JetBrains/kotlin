@@ -1,24 +1,24 @@
-@0:0..26:1 FILE /kt17108.kt
-  @0:0..26:1 CLASS INTERFACE Boolean
-    @0:0..26:1 VALUE_PARAMETER this@Boolean: Boolean
-    @5:4..8:38 FUN public abstract operator fun not(): Boolean
-      @5:4..8:38 VALUE_PARAMETER this@Boolean: Boolean
-    @10:4..13:42 FUN public abstract infix fun and(other: Boolean): Boolean
-      @10:4..13:42 VALUE_PARAMETER this@Boolean: Boolean
-      @13:18..32 VALUE_PARAMETER value-parameter other: Boolean
-    @15:4..18:41 FUN public abstract infix fun or(other: Boolean): Boolean
-      @15:4..18:41 VALUE_PARAMETER this@Boolean: Boolean
-      @18:17..31 VALUE_PARAMETER value-parameter other: Boolean
-    @20:4..23:42 FUN public abstract infix fun xor(other: Boolean): Boolean
-      @20:4..23:42 VALUE_PARAMETER this@Boolean: Boolean
-      @23:18..32 VALUE_PARAMETER value-parameter other: Boolean
-    @25:4..38 FUN public abstract fun compareTo(other: Boolean): kotlin.Int
-      @25:4..38 VALUE_PARAMETER this@Boolean: Boolean
-      @25:18..32 VALUE_PARAMETER value-parameter other: Boolean
-    @0:0..26:1 FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      @0:0..26:1 VALUE_PARAMETER this@Any: Any
-      @-1:-1..-1 VALUE_PARAMETER value-parameter other: kotlin.Any?
-    @0:0..26:1 FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
-      @0:0..26:1 VALUE_PARAMETER this@Any: Any
-    @0:0..26:1 FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
-      @0:0..26:1 VALUE_PARAMETER this@Any: Any
+@0:0..26:1 FILE fqName:<root> fileName:/kt17108.kt
+  @0:0..26:1 CLASS INTERFACE name:Boolean modality:ABSTRACT visibility:public flags:
+    @0:0..26:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Boolean flags:
+    @5:4..8:38 FUN name:not visibility:public modality:ABSTRACT <> ($this:Boolean) returnType:Boolean flags:
+      @5:4..8:38 VALUE_PARAMETER name:<this> type:Boolean flags:
+    @10:4..13:42 FUN name:and visibility:public modality:ABSTRACT <> ($this:Boolean, other:Boolean) returnType:Boolean flags:
+      @10:4..13:42 VALUE_PARAMETER name:<this> type:Boolean flags:
+      @13:18..32 VALUE_PARAMETER name:other index:0 type:Boolean flags:
+    @15:4..18:41 FUN name:or visibility:public modality:ABSTRACT <> ($this:Boolean, other:Boolean) returnType:Boolean flags:
+      @15:4..18:41 VALUE_PARAMETER name:<this> type:Boolean flags:
+      @18:17..31 VALUE_PARAMETER name:other index:0 type:Boolean flags:
+    @20:4..23:42 FUN name:xor visibility:public modality:ABSTRACT <> ($this:Boolean, other:Boolean) returnType:Boolean flags:
+      @20:4..23:42 VALUE_PARAMETER name:<this> type:Boolean flags:
+      @23:18..32 VALUE_PARAMETER name:other index:0 type:Boolean flags:
+    @25:4..38 FUN name:compareTo visibility:public modality:ABSTRACT <> ($this:Boolean, other:Boolean) returnType:Int flags:
+      @25:4..38 VALUE_PARAMETER name:<this> type:Boolean flags:
+      @25:18..32 VALUE_PARAMETER name:other index:0 type:Boolean flags:
+    @0:0..26:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      @0:0..26:1 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      @-1:-1..-1 VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    @0:0..26:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      @0:0..26:1 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    @0:0..26:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      @0:0..26:1 VALUE_PARAMETER name:<this> type:kotlin.Any flags:

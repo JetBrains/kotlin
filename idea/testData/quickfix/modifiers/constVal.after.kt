@@ -1,4 +1,4 @@
-// "Add 'const' modifier" "true"
+// "Make 'i' const" "true"
 // ERROR: Only 'const val' can be used in constant expressions
 
 package constVal

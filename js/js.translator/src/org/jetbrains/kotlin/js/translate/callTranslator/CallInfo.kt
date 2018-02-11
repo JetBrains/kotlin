@@ -20,16 +20,15 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import org.jetbrains.kotlin.js.backend.ast.JsBlock
-import org.jetbrains.kotlin.js.backend.ast.JsConditional
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsNullLiteral
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.type
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForReceiver
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.js.translate.utils.createCoroutineResult
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -45,6 +44,8 @@ interface CallInfo {
     val extensionReceiver: JsExpression?
 
     fun constructSafeCallIfNeeded(result: JsExpression): JsExpression
+
+    fun constructSuspendSafeCallIfNeeded(result: JsStatement): JsStatement
 }
 
 abstract class AbstractCallInfo : CallInfo {
@@ -165,7 +166,7 @@ private fun TranslationContext.createCallInfo(
 
     if (dispatchReceiverType != null) {
         dispatchReceiver = dispatchReceiver?.let {
-            TranslationUtils.coerce(this, it, dispatchReceiverType!!)
+            TranslationUtils.coerce(this, it, dispatchReceiverType)
         }
     }
 
@@ -191,6 +192,30 @@ private fun TranslationContext.createCallInfo(
                 result.type = type
                 notNullConditionalForSafeCall.thenExpression = TranslationUtils.coerce(context, result, type.makeNullable())
                 notNullConditionalForSafeCall
+            }
+        }
+
+        override fun constructSuspendSafeCallIfNeeded(result: JsStatement): JsStatement {
+            return if (notNullConditionalForSafeCall == null) {
+                result
+            }
+            else {
+                val callElement = resolvedCall.call.callElement
+                val coroutineResult = context.createCoroutineResult(resolvedCall)
+                val nullAssignment = JsAstUtils.assignment(coroutineResult, JsNullLiteral()).source(callElement)
+
+                val thenBlock = JsBlock()
+                thenBlock.statements += result
+                val thenContext = context.innerBlock(thenBlock)
+                val lhs = coroutineResult.deepCopy()
+                val rhsOriginal = coroutineResult.deepCopy().apply { type = resolvedCall.getReturnType() }
+                val rhs = TranslationUtils.coerce(thenContext, rhsOriginal, resolvedCall.getReturnType().makeNullable())
+                if (rhs != rhsOriginal) {
+                    thenBlock.statements += JsAstUtils.asSyntheticStatement(JsAstUtils.assignment(lhs, rhs).source(callElement))
+                }
+
+                val thenStatement = if (thenBlock.statements.size == 1) thenBlock.statements.first() else thenBlock
+                JsIf(notNullConditionalForSafeCall.testExpression, thenStatement, nullAssignment.makeStmt())
             }
         }
     }

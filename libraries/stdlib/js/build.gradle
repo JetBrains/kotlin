@@ -5,7 +5,9 @@ plugins {
 description = 'Kotlin Standard Library for JS'
 
 apply plugin: 'kotlin2js'
+apply plugin: 'idea'
 
+configureDist(project)
 configurePublishing(project)
 
 
@@ -58,6 +60,12 @@ configurations {
 dependencies {
     testCompile project(':kotlin-test:kotlin-test-js')
     merger project(":tools:kotlin-stdlib-js-merger")
+}
+
+idea {
+    module {
+        excludeDirs = excludeDirs + files('node_modules')
+    }
 }
 
 createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
@@ -128,6 +136,7 @@ compileKotlin2Js {
         outputFile = "${buildDir}/classes/main/kotlin.js"
         sourceMap = true
         sourceMapPrefix = "./"
+        freeCompilerArgs += [ "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir ].join(File.pathSeparator) ]
     }
 }
 
@@ -151,8 +160,10 @@ task compileJs(type: JavaExec) {
     }
 
     main = "org.jetbrains.kotlin.js.FileMergerKt"
-    args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path } +
-           ["$buildDir/classes/builtins/kotlin.js", "$buildDir/classes/main/kotlin.js"]
+    doFirst {
+        args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path } +
+               ["$buildDir/classes/builtins/kotlin.js", "$buildDir/classes/main/kotlin.js"]
+    }
     classpath = configurations.merger
 
     doLast {
@@ -281,6 +292,7 @@ karma {
 
 karmaGenerateConfig.outputs.upToDateWhen { false }
 karmaRun {
+    ignoreExitValue = Boolean.valueOf(ignoreTestFailures)
     dependsOn testClasses
     dependsOn tasks.getByPath(':kotlin-test:kotlin-test-js:testClasses')
 }

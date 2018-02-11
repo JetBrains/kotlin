@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
@@ -114,7 +115,8 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             val dataFlow = DataFlowValueFactory.createDataFlowValue(expression, ktType, bindingContext, descriptor)
             val isPrimitiveFn = KotlinBuiltIns::isPrimitiveTypeOrNullablePrimitiveType
 
-            return bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow).find(isPrimitiveFn) ?: // Smart-casts
+            val languageVersionSettings = context.config.configuration.languageVersionSettings
+            return bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow, languageVersionSettings).find(isPrimitiveFn) ?: // Smart-casts
                    TypeUtils.getAllSupertypes(ktType).find(isPrimitiveFn) ?: // Generic super-types
                    ktType // Default
         }

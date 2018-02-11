@@ -78,9 +78,8 @@ class AnnotationSerializer(private val stringTable: StringTable) {
 
             override fun visitEnumValue(value: EnumValue, data: Unit) {
                 type = Type.ENUM
-                val enumEntry = value.value
-                classId = stringTable.getFqNameIndex(enumEntry.containingDeclaration as ClassDescriptor)
-                enumValueId = stringTable.getStringIndex(enumEntry.name.asString())
+                classId = stringTable.getClassIdIndex(value.enumClassId)
+                enumValueId = stringTable.getStringIndex(value.enumEntryName.asString())
             }
 
             override fun visitErrorValue(value: ErrorValue, data: Unit) {
@@ -97,9 +96,12 @@ class AnnotationSerializer(private val stringTable: StringTable) {
                 intValue = value.value.toLong()
             }
 
-            override fun visitKClassValue(value: KClassValue?, data: Unit?) {
-                // TODO: support class literals
-                throw UnsupportedOperationException("Class literal annotation arguments are not yet supported: $value")
+            override fun visitKClassValue(value: KClassValue, data: Unit) {
+                val descriptor = value.value.constructor.declarationDescriptor as? ClassDescriptor
+                ?: throw UnsupportedOperationException("Class literal annotation argument should be a class: $value")
+
+                type = Type.CLASS
+                classId = stringTable.getFqNameIndex(descriptor)
             }
 
             override fun visitLongValue(value: LongValue, data: Unit) {

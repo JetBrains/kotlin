@@ -17,10 +17,10 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULiteralExpression
 
@@ -46,4 +46,6 @@ class KotlinStringULiteralExpression(
         get() = text
 
     override fun evaluate() = value
+
+    override fun getExpressionType(): PsiType? = PsiType.getJavaLangString(psi.manager, psi.resolveScope)
 }

@@ -29,20 +29,21 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 
 object SenselessComparisonChecker {
-    @JvmStatic fun checkSenselessComparisonWithNull(
-            expression: KtBinaryExpression,
-            left: KtExpression,
-            right: KtExpression,
-            context: ResolutionContext<*>,
-            getType: (KtExpression) -> KotlinType?,
-            getNullability: (DataFlowValue) -> Nullability
+    @JvmStatic
+    fun checkSenselessComparisonWithNull(
+        expression: KtBinaryExpression,
+        left: KtExpression,
+        right: KtExpression,
+        context: ResolutionContext<*>,
+        getType: (KtExpression) -> KotlinType?,
+        getNullability: (DataFlowValue) -> Nullability
     ) {
         val expr =
-                when {
-                    KtPsiUtil.isNullConstant(left) -> right
-                    KtPsiUtil.isNullConstant(right) -> left
-                    else -> return
-                }
+            when {
+                KtPsiUtil.isNullConstant(left) -> right
+                KtPsiUtil.isNullConstant(right) -> left
+                else -> return
+            }
 
         val type = getType(expr)
         if (type == null || type.isError) return
@@ -50,16 +51,17 @@ object SenselessComparisonChecker {
         val operationSign = expression.operationReference
         val value = DataFlowValueFactory.createDataFlowValue(expr, type, context)
 
-        val equality = operationSign.getReferencedNameElementType() == KtTokens.EQEQ || operationSign.getReferencedNameElementType() == KtTokens.EQEQEQ
+        val equality =
+            operationSign.getReferencedNameElementType() == KtTokens.EQEQ || operationSign.getReferencedNameElementType() == KtTokens.EQEQEQ
         val nullability = getNullability(value)
 
         val expressionIsAlways =
-                when (nullability) {
-                    Nullability.NULL -> equality
-                    Nullability.NOT_NULL -> !equality
-                    Nullability.IMPOSSIBLE -> false
-                    else -> return
-                }
+            when (nullability) {
+                Nullability.NULL -> equality
+                Nullability.NOT_NULL -> !equality
+                Nullability.IMPOSSIBLE -> false
+                else -> return
+            }
 
         context.trace.report(Errors.SENSELESS_COMPARISON.on(expression, expression, expressionIsAlways))
     }

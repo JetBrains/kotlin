@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring
@@ -332,7 +321,10 @@ fun PsiFile.getLineStartOffset(line: Int): Int? {
         val startOffset = doc.getLineStartOffset(line)
         val element = findElementAt(startOffset) ?: return startOffset
 
-        return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java, PsiComment::class.java)?.startOffset ?: startOffset
+        if (element is PsiWhiteSpace || element is PsiComment) {
+            return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java, PsiComment::class.java)?.startOffset ?: startOffset
+        }
+        return startOffset
     }
 
     return null
@@ -761,11 +753,25 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
 
     if (commonCount == 0) return originalList.listReplacer(newList)
 
+    val lastOriginalParameter = oldParameters.last()
+
     if (oldCount > commonCount) {
-        originalList.deleteChildRange(oldParameters[commonCount - 1].nextSibling, oldParameters.last())
+        originalList.deleteChildRange(oldParameters[commonCount - 1].nextSibling, lastOriginalParameter)
     }
     else if (newCount > commonCount) {
-        originalList.addRangeAfter(newParameters[commonCount - 1].nextSibling, newParameters.last(), oldParameters.last())
+        val psiBeforeLastParameter = lastOriginalParameter.prevSibling
+        val withMultiline = (psiBeforeLastParameter is PsiWhiteSpace || psiBeforeLastParameter is PsiComment) && psiBeforeLastParameter.textContains('\n')
+        val extraSpace = if (withMultiline) KtPsiFactory(originalList).createNewLine() else null
+        originalList.addRangeAfter(newParameters[commonCount - 1].nextSibling, newParameters.last(), lastOriginalParameter)
+        if (extraSpace != null) {
+            val addedItems = originalList.itemsFun().subList(commonCount, newCount)
+            for (addedItem in addedItems) {
+                val elementBefore = addedItem.prevSibling
+                if ((elementBefore !is PsiWhiteSpace && elementBefore !is PsiComment) || !elementBefore.textContains('\n')) {
+                    addedItem.parent.addBefore(extraSpace, addedItem)
+                }
+            }
+        }
     }
 
     return originalList
@@ -821,6 +827,7 @@ internal fun DeclarationDescriptor.getThisLabelName(): String {
     if (this is AnonymousFunctionDescriptor) {
         val function = source.getPsi() as? KtFunction
         val argument = function?.parent as? KtValueArgument
+                ?: (function?.parent as? KtLambdaExpression)?.parent as? KtValueArgument
         val callElement = argument?.getStrictParentOfType<KtCallElement>()
         val callee = callElement?.calleeExpression as? KtSimpleNameExpression
         if (callee != null) return callee.text
@@ -910,7 +917,7 @@ fun checkSuperMethods(
 
 fun checkSuperMethodsWithPopup(
         declaration: KtNamedDeclaration,
-        deepestSuperMethods: List<PsiMethod>,
+        deepestSuperMethods: List<PsiElement>,
         actionString: String,
         editor: Editor,
         action: (List<PsiElement>) -> Unit
@@ -919,7 +926,12 @@ fun checkSuperMethodsWithPopup(
 
     val superMethod = deepestSuperMethods.first()
 
-    val superClass = superMethod.containingClass ?: return action(listOf(declaration))
+    val (superClass, isAbstract) = when (superMethod) {
+        is PsiMember -> superMethod.containingClass to superMethod.hasModifierProperty(PsiModifier.ABSTRACT)
+        is KtNamedDeclaration -> superMethod.containingClassOrObject to superMethod.isAbstract()
+        else -> null
+    } ?: return action(listOf(declaration))
+    if (superClass == null) return action(listOf(declaration))
 
     if (ApplicationManager.getApplication().isUnitTestMode) return action(deepestSuperMethods)
 
@@ -942,7 +954,7 @@ fun checkSuperMethodsWithPopup(
     val renameCurrent = actionString + " only current $kind"
     val title = buildString {
         append(declaration.name)
-        append(if (superMethod.hasModifierProperty(PsiModifier.ABSTRACT)) " implements " else " overrides ")
+        append(if (isAbstract) " implements " else " overrides ")
         append(ElementDescriptionUtil.getElementDescription(superMethod, UsageViewTypeLocation.INSTANCE))
         append(" of ")
         append(SymbolPresentationUtil.getSymbolPresentableText(superClass))

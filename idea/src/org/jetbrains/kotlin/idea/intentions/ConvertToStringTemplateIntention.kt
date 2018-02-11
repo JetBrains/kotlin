@@ -75,7 +75,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
             }
         }
 
-        private fun buildText(expr: KtExpression?, forceBraces: Boolean): String {
+        fun buildText(expr: KtExpression?, forceBraces: Boolean): String {
             if (expr == null) return ""
             val expression = KtPsiUtil.safeDeparenthesize(expr)
             val expressionText = expression.text

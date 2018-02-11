@@ -1,0 +1,187 @@
+== myRun ==
+inline fun <T> myRun(block: () -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+L0:
+  1 <START>
+    v(block: () -> T)
+    magic[FAKE_INITIALIZER](block: () -> T) -> <v0>
+    w(block|<v0>)
+  2 mark({ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() })
+    mark({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    jmp?(L2)                                                                                      NEXT:[r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>, d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })]
+    d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })                                       NEXT:[<SINK>]
+L2 [after local declaration]:
+    r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>                               PREV:[jmp?(L2)]
+    mark(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+    r(block) -> <v3>
+    mark(block())
+    call(block(), invoke|<v3>) -> <v4>
+    ret(*|<v4>) L1
+L1:
+  1 <END>                                                                                         NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                       PREV:[]
+sink:
+    <SINK>                                                                                        PREV:[<ERROR>, <END>, d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })]
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+L3:
+  3 <START>
+  4 mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+    r(block) -> <v1>
+    mark(InvocationKind.EXACTLY_ONCE)
+    r(EXACTLY_ONCE) -> <v2>
+    mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+L4:
+  3 <END>                                                                                            NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                          PREV:[]
+sink:
+    <SINK>                                                                                           PREV:[<ERROR>, <END>]
+=====================
+== someComputation ==
+fun someComputation(): Int = 42
+---------------------
+L0:
+  1 <START>
+    r(42) -> <v0>
+    ret(*|<v0>) L1
+L1:
+    <END>             NEXT:[<SINK>]
+error:
+    <ERROR>           PREV:[]
+sink:
+    <SINK>            PREV:[<ERROR>, <END>]
+=====================
+== report ==
+fun report(x: Int) = Unit
+---------------------
+L0:
+  1 <START>
+    v(x: Int)
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>
+    w(x|<v0>)
+    r(Unit) -> <v1>
+    ret(*|<v1>) L1
+L1:
+    <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== innerTryCatchFinally ==
+fun innerTryCatchFinally() {
+    val x: Int
+
+    myRun {
+        try {
+            x = someComputation()
+            report(x)
+        } catch (e: java.lang.Exception) {
+            x = 42
+            report(x)
+        } finally {
+            x = 0
+        }
+    }
+
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ val x: Int myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } } x.inc() })
+    v(val x: Int)
+    mark({ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } })
+    r({ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }) -> <v0>
+    mark(myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } })
+    call(myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }, myRun|<v0>) -> <v1>
+L2 [before inlined declaration]:
+    inlined({ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } })
+L3 [after inlined declaration]:
+    mark(x.inc())
+    r(x) -> <v2>
+    mark(inc())
+    call(inc(), inc|<v2>) -> <v3>
+L1:
+  1 <END>                                                                                                                                                   NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                                                                                 PREV:[]
+sink:
+    <SINK>                                                                                                                                                  PREV:[<ERROR>, <END>]
+=====================
+== inlined anonymous_1 ==
+{
+        try {
+            x = someComputation()
+            report(x)
+        } catch (e: java.lang.Exception) {
+            x = 42
+            report(x)
+        } finally {
+            x = 0
+        }
+    }
+---------------------
+L4:
+  3 <START>
+  4 mark(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 })
+    mark(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 })
+    jmp?(L6)                                                                                                                                   NEXT:[v(e: java.lang.Exception), jmp?(L7)]
+    jmp?(L7)                                                                                                                                   NEXT:[mark({ x = 0 }), mark({ x = someComputation() report(x) })]
+  5 mark({ x = someComputation() report(x) })
+    mark(someComputation())
+    call(someComputation(), someComputation) -> <v0>
+    w(x|<v0>)
+    r(x) -> <v1>
+    mark(report(x))
+    call(report(x), report|<v1>) -> <v2>
+  4 jmp?(L6)                                                                                                                                   NEXT:[v(e: java.lang.Exception), jmp?(L7)]
+    jmp?(L7)                                                                                                                                   NEXT:[mark({ x = 0 }), jmp(L8)]
+    jmp(L8)                                                                                                                                    NEXT:[jmp(L9)]
+L6 [onException]:
+  5 v(e: java.lang.Exception)                                                                                                                  PREV:[jmp?(L6), jmp?(L6)]
+    magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v3>
+    w(e|<v3>)
+  6 mark({ x = 42 report(x) })
+    r(42) -> <v4>
+    w(x|<v4>)
+    r(x) -> <v5>
+    mark(report(x))
+    call(report(x), report|<v5>) -> <v6>
+  5 jmp(L8)
+L8 [afterCatches]:
+  4 jmp(L9)                                                                                                                                    NEXT:[mark({ x = 0 })]                                                                                                                            PREV:[jmp(L8), jmp(L8)]
+L7 [onExceptionToFinallyBlock]:
+L10 [start finally]:
+  5 mark({ x = 0 })                                                                                                                            PREV:[jmp?(L7), jmp?(L7)]
+    r(0) -> <v7>
+    w(x|<v7>)
+L11 [finish finally]:
+  4 jmp(error)                                                                                                                                 NEXT:[<ERROR>]
+L9 [skipFinallyToErrorBlock]:
+L12 [copy of L7, onExceptionToFinallyBlock]:
+  5 mark({ x = 0 })                                                                                                                            PREV:[jmp(L9)]
+    r(0) -> <v7>
+    w(x|<v7>)
+  4 merge(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 }|<v2>, <v6>) -> <v9>
+L5:
+  3 <END>                                                                                                                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                                                                    PREV:[jmp(error)]
+sink:
+    <SINK>                                                                                                                                     PREV:[<ERROR>, <END>]
+=====================

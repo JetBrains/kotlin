@@ -20,9 +20,9 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.testFramework.LightProjectDescriptor
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 class KotlinLibInjectionTest : AbstractInjectionTest() {
     override fun setUp() {
@@ -55,8 +55,10 @@ class KotlinLibInjectionTest : AbstractInjectionTest() {
 
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JdkAndMockLibraryProjectDescriptor(
+        val ideaSdkPath = System.getProperty("idea.home.path")?.takeIf { File(it).isDirectory }
+                          ?: throw RuntimeException("Unable to get a valid path from 'idea.home.path' property, please point it to the Idea location")
+        return SdkAndMockLibraryProjectDescriptor(
                 PluginTestCaseBase.getTestDataPathBase() + "/injection/lib/", false, false, false, true,
-                listOf(KotlinTestUtils.getHomeDirectory() + "/ideaSDK/lib/annotations.jar"))
+                listOf(File(ideaSdkPath, "lib/annotations.jar").absolutePath))
     }
 }

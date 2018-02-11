@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 val f: Boolean = true
 private fun doUpdateRegularTasks() {
     try {

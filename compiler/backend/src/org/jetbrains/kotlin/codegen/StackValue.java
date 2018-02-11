@@ -187,6 +187,9 @@ public abstract class StackValue {
         else if (type == Type.BYTE_TYPE || type == Type.SHORT_TYPE || type == Type.INT_TYPE) {
             return constant(Integer.valueOf(value), type);
         }
+        else if (type == Type.CHAR_TYPE) {
+            return constant(Character.valueOf((char) value), type);
+        }
         else {
             throw new AssertionError("Unexpected integer type: " + type);
         }
@@ -392,7 +395,15 @@ public abstract class StackValue {
             }
         }
         else if (toType.getSort() == Type.ARRAY) {
-            v.checkcast(toType);
+            if (fromType.getSort() != Type.ARRAY) {
+                v.checkcast(toType);
+            }
+            else if (toType.getDimensions() != fromType.getDimensions()) {
+                v.checkcast(toType);
+            }
+            else if (!toType.getElementType().equals(OBJECT_TYPE)) {
+                v.checkcast(toType);
+            }
         }
         else if (toType.getSort() == Type.OBJECT) {
             if (fromType.getSort() == Type.OBJECT || fromType.getSort() == Type.ARRAY) {
@@ -529,8 +540,15 @@ public abstract class StackValue {
         }
 
         ReceiverValue callExtensionReceiver = resolvedCall.getExtensionReceiver();
+
+        boolean isImportedObjectMember = false;
+        if (descriptor instanceof ImportedFromObjectCallableDescriptor) {
+            isImportedObjectMember = true;
+            descriptor = ((ImportedFromObjectCallableDescriptor) descriptor).getCallableFromObject();
+        }
+
         if (callDispatchReceiver != null || callExtensionReceiver != null
-            || isLocalFunCall(callableMethod) || isCallToMemberObjectImportedByName(resolvedCall)) {
+            || isLocalFunCall(callableMethod) || isImportedObjectMember) {
             ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
             ReceiverParameterDescriptor extensionReceiverParameter = descriptor.getExtensionReceiverParameter();
 
@@ -540,10 +558,10 @@ public abstract class StackValue {
 
             boolean hasExtensionReceiver = callExtensionReceiver != null;
             StackValue dispatchReceiver = platformStaticCallIfPresent(
-                    genReceiver(hasExtensionReceiver ? none() : receiver, codegen, resolvedCall, callableMethod, callDispatchReceiver, false),
+                    genReceiver(hasExtensionReceiver ? none() : receiver, codegen, descriptor, callableMethod, callDispatchReceiver, false),
                     descriptor
             );
-            StackValue extensionReceiver = genReceiver(receiver, codegen, resolvedCall, callableMethod, callExtensionReceiver, true);
+            StackValue extensionReceiver = genReceiver(receiver, codegen, descriptor, callableMethod, callExtensionReceiver, true);
             return CallReceiver.generateCallReceiver(
                     resolvedCall, codegen, callableMethod,
                     dispatchReceiverParameter, dispatchReceiver,
@@ -556,22 +574,24 @@ public abstract class StackValue {
     private static StackValue genReceiver(
             @NotNull StackValue receiver,
             @NotNull ExpressionCodegen codegen,
-            @NotNull ResolvedCall resolvedCall,
+            @NotNull CallableDescriptor descriptor,
             @Nullable Callable callableMethod,
             @Nullable ReceiverValue receiverValue,
             boolean isExtension
     ) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (receiver == none()) {
             if (receiverValue != null) {
                 return codegen.generateReceiverValue(receiverValue, false);
             }
             else if (isLocalFunCall(callableMethod) && !isExtension) {
-                StackValue value = codegen.findLocalOrCapturedValue(resolvedCall.getResultingDescriptor().getOriginal());
-                assert value != null : "Local fun should be found in locals or in captured params: " + resolvedCall;
+                StackValue value = codegen.findLocalOrCapturedValue(descriptor.getOriginal());
+                assert value != null : "Local fun should be found in locals or in captured params: " + descriptor;
                 return value;
             }
-            else if (isCallToMemberObjectImportedByName(resolvedCall)) {
-                return singleton(((ImportedFromObjectCallableDescriptor) resolvedCall.getResultingDescriptor()).getContainingObject(), codegen.typeMapper);
+            else if (!isExtension && DescriptorUtils.isObject(containingDeclaration)) {
+                // Object member could be imported by name, in which case it has no explicit dispatch receiver
+                return singleton((ClassDescriptor) containingDeclaration, codegen.typeMapper);
             }
         }
         else if (receiverValue != null) {
@@ -580,12 +600,8 @@ public abstract class StackValue {
         return none();
     }
 
-    private static boolean isCallToMemberObjectImportedByName(@NotNull ResolvedCall resolvedCall) {
-        return resolvedCall.getResultingDescriptor() instanceof ImportedFromObjectCallableDescriptor;
-    }
-
     private static StackValue platformStaticCallIfPresent(@NotNull StackValue resultReceiver, @NotNull CallableDescriptor descriptor) {
-        if (CodegenUtilKt.isJvmStaticInObjectOrClass(descriptor)) {
+        if (CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(descriptor)) {
             if (resultReceiver.canHaveSideEffects()) {
                 return coercion(resultReceiver, Type.VOID_TYPE);
             }
@@ -621,8 +637,8 @@ public abstract class StackValue {
         return field(FieldInfo.createForSingleton(classDescriptor, typeMapper), none());
     }
 
-    public static Field singletonViaInstance(ClassDescriptor classDescriptor, KotlinTypeMapper typeMapper) {
-        return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper), none());
+    public static Field createSingletonViaInstance(@NotNull ClassDescriptor classDescriptor, @NotNull KotlinTypeMapper typeMapper, @NotNull String name) {
+        return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper, name), none());
     }
 
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {

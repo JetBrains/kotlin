@@ -3,8 +3,11 @@ package org.jetbrains.uast.test.kotlin
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
+import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
+import org.jetbrains.uast.JvmDeclarationUElement
 import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UFile
@@ -32,6 +35,7 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
         }
 
         file.checkContainingFileForAllElements()
+        file.checkJvmDeclarationsImplementations()
     }
 
     private fun checkParentConsistency(file: UFile) {
@@ -72,7 +76,7 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
                 if (expectedParents != null) {
                     assertNotNull("Expected to be able to convert PSI element $element", uElement)
                     val parents = generateSequence(uElement!!.uastParent) { it.uastParent }.joinToString { it.asLogString() }
-                    assertEquals("Inconsistent parents for ${uElement.asLogString()} (converted from $element)", expectedParents, parents)
+                    assertEquals("Inconsistent parents for ${uElement.asRenderString()}(${uElement.asLogString()})(${uElement.javaClass}) (converted from $element[${element.text}])", expectedParents, parents)
                 }
                 super.visitElement(element)
             }
@@ -89,6 +93,29 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
                 val anchorPsi = (node as? UDeclaration)?.uastAnchor?.psi
                 if (anchorPsi != null) {
                     anchorPsi.containingFile.assertedCast<KtFile> { "uastAnchor.containingFile should be KtFile for ${node.asLogString()}" }
+                }
+
+                return false
+            }
+        })
+    }
+
+    private fun UFile.checkJvmDeclarationsImplementations() {
+        accept(object : UastVisitor {
+            override fun visitElement(node: UElement): Boolean {
+
+                val jvmDeclaration = node as? JvmDeclarationUElement
+                                     ?: throw AssertionError("${node.javaClass} should implement 'JvmDeclarationUElement'")
+
+                jvmDeclaration.sourcePsi?.let {
+                    assertTrue("sourcePsi should be physical but ${it.javaClass} found for [${it.text}] " +
+                                       "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}",
+                               it is KtElement || it is LeafPsiElement
+                    )
+                }
+                jvmDeclaration.javaPsi?.let {
+                    assertTrue("javaPsi should be light but ${it.javaClass} found for [${it.text}] " +
+                               "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}", it !is KtElement)
                 }
 
                 return false

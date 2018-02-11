@@ -1,0 +1,22 @@
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt'
+
+dependencies {
+	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    compile project(":annotation-processor")
+    kapt project(":annotation-processor")
+
+    compile files("a")
+
+    testCompile 'junit:junit:4.12'
+}
+
+apply plugin: 'idea'
+
+idea {
+    module {
+        sourceDirs += files('build/generated/source/kapt/main', 'build/generated/source/kaptKotlin/main')
+        generatedSourceDirs += files('build/generated/source/kapt/main', 'build/generated/source/kaptKotlin/main')
+    }
+}

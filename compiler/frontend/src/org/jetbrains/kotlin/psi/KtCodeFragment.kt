@@ -31,13 +31,21 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 abstract class KtCodeFragment(
-        private val _project: Project,
-        name: String,
-        text: CharSequence,
-        imports: String?, // Should be separated by JetCodeFragment.IMPORT_SEPARATOR
-        elementType: IElementType,
-        private val context: PsiElement?
-): KtFile((PsiManager.getInstance(_project) as PsiManagerEx).fileManager.createFileViewProvider(LightVirtualFile(name, KotlinFileType.INSTANCE, text), true), false), JavaCodeFragment {
+    private val _project: Project,
+    name: String,
+    text: CharSequence,
+    imports: String?, // Should be separated by JetCodeFragment.IMPORT_SEPARATOR
+    elementType: IElementType,
+    private val context: PsiElement?
+) : KtFile(
+    (PsiManager.getInstance(_project) as PsiManagerEx).fileManager.createFileViewProvider(
+        LightVirtualFile(
+            name,
+            KotlinFileType.INSTANCE,
+            text
+        ), true
+    ), false
+), JavaCodeFragment {
 
     private var viewProvider = super.getViewProvider() as SingleRootFileViewProvider
     private var imports = LinkedHashSet<String>()
@@ -93,7 +101,8 @@ abstract class KtCodeFragment(
         clone.isPhysical = false
         clone.originalFile = this
         clone.imports = imports
-        clone.viewProvider = SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(name, KotlinFileType.INSTANCE, text), false)
+        clone.viewProvider =
+                SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(name, KotlinFileType.INSTANCE, text), false)
         clone.viewProvider.forceCachedPsi(clone)
         return clone
     }
@@ -147,7 +156,7 @@ abstract class KtCodeFragment(
     override val importDirectives: List<KtImportDirective>
         get() = importsAsImportList()?.imports ?: emptyList()
 
-    override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) { }
+    override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) {}
 
     override fun getVisibilityChecker() = JavaCodeFragment.VisibilityChecker.EVERYTHING_VISIBLE
 

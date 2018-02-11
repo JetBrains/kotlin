@@ -1,0 +1,72 @@
+package
+
+public val inv1: Inv1<kotlin.Int> /* = Inv<kotlin.Int> */
+public fun inIn_In(/*0*/ x: In2<in kotlin.Int> /* = In<in kotlin.Int> */): In2<in kotlin.Int> /* = In<in kotlin.Int> */
+public fun inIn_Inv(/*0*/ x: In2<kotlin.Int> /* = In<in kotlin.Int> */): In2<kotlin.Int> /* = In<in kotlin.Int> */
+public fun inIn_Out(/*0*/ x: In2<out kotlin.Int> /* = In<out kotlin.Int> */): [ERROR : Inconsistent type: In<out Int> (0 parameter has declared variance: in, but argument variance is out)]
+public fun inIn_Star(/*0*/ x: In2<*> /* = In<*> */): In2<*> /* = In<*> */
+public fun inInv_In(/*0*/ x: In1<in kotlin.Int> /* = In<in kotlin.Int> */): In1<in kotlin.Int> /* = In<in kotlin.Int> */
+public fun inInv_Inv(/*0*/ x: In1<kotlin.Int> /* = In<kotlin.Int> */): In1<kotlin.Int> /* = In<kotlin.Int> */
+public fun inInv_Out(/*0*/ x: In1<out kotlin.Int> /* = In<out kotlin.Int> */): [ERROR : Inconsistent type: In<out Int> (0 parameter has declared variance: in, but argument variance is out)]
+public fun inInv_Star(/*0*/ x: In1<*> /* = In<*> */): In1<*> /* = In<*> */
+public fun inOut_In(/*0*/ x: In3<in kotlin.Int> /* = In<in kotlin.Int> */): In3<in kotlin.Int> /* = In<in kotlin.Int> */
+public fun inOut_Inv(/*0*/ x: In3<kotlin.Int> /* = In<out kotlin.Int> */): [ERROR : Inconsistent type: In<out Int> (0 parameter has declared variance: in, but argument variance is out)]
+public fun inOut_Out(/*0*/ x: In3<out kotlin.Int> /* = In<out kotlin.Int> */): [ERROR : Inconsistent type: In<out Int> (0 parameter has declared variance: in, but argument variance is out)]
+public fun inOut_Star(/*0*/ x: In3<*> /* = In<*> */): In3<*> /* = In<*> */
+public fun invIn_In(/*0*/ x: Inv2<in kotlin.Int> /* = Inv<in kotlin.Int> */): Inv2<in kotlin.Int> /* = Inv<in kotlin.Int> */
+public fun invIn_Inv(/*0*/ x: Inv2<kotlin.Int> /* = Inv<in kotlin.Int> */): Inv2<kotlin.Int> /* = Inv<in kotlin.Int> */
+public fun invIn_Out(/*0*/ x: Inv2<out kotlin.Int> /* = Inv<out kotlin.Int> */): Inv2<out kotlin.Int> /* = Inv<out kotlin.Int> */
+public fun invIn_Star(/*0*/ x: Inv2<*> /* = Inv<*> */): Inv2<*> /* = Inv<*> */
+public fun invInv_In(/*0*/ x: Inv1<in kotlin.Int> /* = Inv<in kotlin.Int> */): Inv1<in kotlin.Int> /* = Inv<in kotlin.Int> */
+public fun invInv_Inv(/*0*/ x: Inv1<kotlin.Int> /* = Inv<kotlin.Int> */): Inv1<kotlin.Int> /* = Inv<kotlin.Int> */
+public fun invInv_Out(/*0*/ x: Inv1<out kotlin.Int> /* = Inv<out kotlin.Int> */): Inv1<out kotlin.Int> /* = Inv<out kotlin.Int> */
+public fun invInv_Star(/*0*/ x: Inv1<*> /* = Inv<*> */): Inv1<*> /* = Inv<*> */
+public fun invOut_In(/*0*/ x: Inv3<in kotlin.Int> /* = Inv<in kotlin.Int> */): Inv3<in kotlin.Int> /* = Inv<in kotlin.Int> */
+public fun invOut_Inv(/*0*/ x: Inv3<kotlin.Int> /* = Inv<out kotlin.Int> */): Inv3<kotlin.Int> /* = Inv<out kotlin.Int> */
+public fun invOut_Out(/*0*/ x: Inv3<out kotlin.Int> /* = Inv<out kotlin.Int> */): Inv3<out kotlin.Int> /* = Inv<out kotlin.Int> */
+public fun invOut_Star(/*0*/ x: Inv3<*> /* = Inv<*> */): Inv3<*> /* = Inv<*> */
+public fun outIn_In(/*0*/ x: Out2<in kotlin.Int> /* = Out<in kotlin.Int> */): [ERROR : Inconsistent type: Out<in Int> (0 parameter has declared variance: out, but argument variance is in)]
+public fun outIn_Inv(/*0*/ x: Out2<kotlin.Int> /* = Out<in kotlin.Int> */): [ERROR : Inconsistent type: Out<in Int> (0 parameter has declared variance: out, but argument variance is in)]
+public fun outIn_Out(/*0*/ x: Out2<out kotlin.Int> /* = Out<out kotlin.Int> */): Out2<out kotlin.Int> /* = Out<out kotlin.Int> */
+public fun outIn_Star(/*0*/ x: Out2<*> /* = Out<*> */): Out2<*> /* = Out<*> */
+public fun outInv_In(/*0*/ x: Out1<in kotlin.Int> /* = Out<in kotlin.Int> */): [ERROR : Inconsistent type: Out<in Int> (0 parameter has declared variance: out, but argument variance is in)]
+public fun outInv_Inv(/*0*/ x: Out1<kotlin.Int> /* = Out<kotlin.Int> */): Out1<kotlin.Int> /* = Out<kotlin.Int> */
+public fun outInv_Out(/*0*/ x: Out1<out kotlin.Int> /* = Out<out kotlin.Int> */): Out1<out kotlin.Int> /* = Out<out kotlin.Int> */
+public fun outInv_Star(/*0*/ x: Out1<*> /* = Out<*> */): Out1<*> /* = Out<*> */
+public fun outOut_In(/*0*/ x: Out3<in kotlin.Int> /* = Out<in kotlin.Int> */): [ERROR : Inconsistent type: Out<in Int> (0 parameter has declared variance: out, but argument variance is in)]
+public fun outOut_Inv(/*0*/ x: Out3<kotlin.Int> /* = Out<out kotlin.Int> */): Out3<kotlin.Int> /* = Out<out kotlin.Int> */
+public fun outOut_Out(/*0*/ x: Out3<out kotlin.Int> /* = Out<out kotlin.Int> */): Out3<out kotlin.Int> /* = Out<out kotlin.Int> */
+public fun outOut_Star(/*0*/ x: Out3<*> /* = Out<*> */): Out3<*> /* = Out<*> */
+
+public final class In</*0*/ in T> {
+    public constructor In</*0*/ in T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Out</*0*/ out T> {
+    public constructor Out</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias In1</*0*/ T>  = In<T>
+public typealias In2</*0*/ T>  = In<in T>
+public typealias In3</*0*/ T>  = In<out T>
+public typealias In4</*0*/ T>  = In<*>
+public typealias Inv1</*0*/ T>  = Inv<T>
+public typealias Inv2</*0*/ T>  = Inv<in T>
+public typealias Inv3</*0*/ T>  = Inv<out T>
+public typealias Inv4</*0*/ T>  = Inv<*>
+public typealias Out1</*0*/ T>  = Out<T>
+public typealias Out2</*0*/ T>  = Out<in T>
+public typealias Out3</*0*/ T>  = Out<out T>
+public typealias Out4</*0*/ T>  = Out<*>

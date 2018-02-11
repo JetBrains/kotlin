@@ -21,5 +21,5 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 
 fun IrVariable.defaultLoad(): IrExpression =
-        IrGetValueImpl(startOffset, endOffset, symbol)
+    IrGetValueImpl(startOffset, endOffset, symbol)
 

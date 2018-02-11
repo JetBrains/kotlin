@@ -1,0 +1,10 @@
+package
+
+public fun equalsFalse(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun equalsNull(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun equalsTrue(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun notEqualsFalse(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun notEqualsNull(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun notEqualsTrue(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun safeIsString(/*0*/ x: kotlin.Any?): kotlin.Boolean?
+    Returns(TRUE) -> x is String

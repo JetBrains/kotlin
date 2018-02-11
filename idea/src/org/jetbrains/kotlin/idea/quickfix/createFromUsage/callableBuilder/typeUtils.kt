@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.project.builtIns
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -75,7 +76,14 @@ private fun KotlinType.renderSingle(typeParameterNameMap: Map<TypeParameterDescr
                     override fun getTypeConstructor() = wrappingTypeConstructor
                 }
 
-                val wrappingType = KotlinTypeFactory.simpleType(typeParameter.defaultType, constructor = wrappingTypeConstructor)
+                val defaultType = typeParameter.defaultType
+                val wrappingType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+                        defaultType.annotations,
+                        wrappingTypeConstructor,
+                        defaultType.arguments,
+                        defaultType.isMarkedNullable,
+                        defaultType.memberScope
+                )
                 TypeProjectionImpl(wrappingType)
             }
             .mapKeys { it.key.typeConstructor }
@@ -142,7 +150,8 @@ fun KtExpression.guessTypes(
     val theType1 = context.getType(this)
     if (theType1 != null && isAcceptable(theType1)) {
         val dataFlowInfo = context.getDataFlowInfoAfter(this)
-        val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module))
+        val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module),
+                                                           languageVersionSettings)
         return if (possibleTypes.isNotEmpty()) possibleTypes.toTypedArray() else arrayOf(theType1)
     }
 
@@ -286,7 +295,7 @@ internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, varianc
             val (projection, typeParameter) = pair
             TypeProjectionImpl(Variance.INVARIANT, projection.type.substitute(substitution, typeParameter.variance))
         }
-        KotlinTypeFactory.simpleType(annotations, constructor, newArguments, isMarkedNullable, memberScope)
+        KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations, constructor, newArguments, isMarkedNullable, memberScope)
     }
 }
 

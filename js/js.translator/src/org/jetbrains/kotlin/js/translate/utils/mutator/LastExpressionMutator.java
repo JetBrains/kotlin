@@ -51,6 +51,9 @@ public final class LastExpressionMutator {
         if (node instanceof JsExpressionStatement) {
             return applyToStatement((JsExpressionStatement) node);
         }
+        if (node instanceof JsSwitch) {
+            return applyToSwitch((JsSwitch) node);
+        }
         return mutator.mutate(node);
     }
 
@@ -86,6 +89,21 @@ public final class LastExpressionMutator {
 
         int size = statements.size();
         statements.set(size - 1, convertToStatement(apply(statements.get(size - 1))));
+        return node;
+    }
+
+    @NotNull
+    private JsNode applyToSwitch(@NotNull JsSwitch node) {
+        for (JsSwitchMember member : node.getCases()) {
+            int size = member.getStatements().size();
+            if (size < 2) continue;
+
+            JsNode lastStatement = apply(member.getStatements().get(size - 1));
+            if (!(lastStatement instanceof JsBreak)) continue;
+
+            member.getStatements().set(size - 2, convertToStatement(apply(member.getStatements().get(size - 2))));
+        }
+
         return node;
     }
 }

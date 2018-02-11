@@ -56,12 +56,21 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
 
         @Synchronized
         private fun getOrCreateDaemonConnection(newConnection: ()-> CompileServiceSession?): CompileServiceSession? {
-            if (_jpsCompileServiceSession == null) {
+            // TODO: consider adding state "ping" to the daemon interface
+            if (_jpsCompileServiceSession == null || _jpsCompileServiceSession!!.compileService.getDaemonOptions() !is CompileService.CallResult.Good<DaemonOptions>) {
+                _jpsCompileServiceSession?. let {
+                    try {
+                        it.compileService.releaseCompileSession(it.sessionId)
+                    }
+                    catch (_: Throwable) {}
+                }
                 _jpsCompileServiceSession = newConnection()
             }
 
             return _jpsCompileServiceSession
         }
+
+        const val FAIL_ON_FALLBACK_PROPERTY = "test.kotlin.jps.compiler.runner.fail.on.fallback"
     }
 
     fun runK2JvmCompiler(
@@ -147,7 +156,8 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         val verbose = compilerArgs.verbose
         val options = CompilationOptions(compilerMode, targetPlatform, reportCategories(verbose), reportSeverity(verbose), requestedCompilationResults = emptyArray())
         val res = daemon.compile(sessionId, withAdditionalCompilerArgs(compilerArgs), options, JpsCompilerServicesFacadeImpl(environment), null)
-        return exitCodeFromProcessExitCode(res.get())
+        // TODO: consider implementing connection retry, instead of fallback here
+        return res.takeUnless { it is CompileService.CallResult.Dying }?.let { exitCodeFromProcessExitCode(it.get()) }
     }
 
     private fun withAdditionalCompilerArgs(compilerArgs: CommonCompilerArguments): Array<String> {
@@ -182,6 +192,10 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             compilerClassName: String,
             environment: JpsCompilerEnvironment
     ): ExitCode {
+        if ("true" == System.getProperty("kotlin.jps.tests") && "true" == System.getProperty(FAIL_ON_FALLBACK_PROPERTY)) {
+            error("Fallback strategy is disabled in tests!")
+        }
+
         // otherwise fallback to in-process
         log.info("Compile in-process")
 

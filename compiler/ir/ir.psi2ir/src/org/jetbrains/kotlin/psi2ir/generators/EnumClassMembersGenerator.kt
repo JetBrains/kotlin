@@ -33,38 +33,38 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
     private fun generateValues(irClass: IrClass) {
         val valuesFunction = irClass.descriptor.staticScope.findFirstFunction("values") {
             it.dispatchReceiverParameter == null &&
-            it.extensionReceiverParameter == null &&
-            it.valueParameters.size == 0
+                    it.extensionReceiverParameter == null &&
+                    it.valueParameters.size == 0
         }
 
         irClass.addMember(
-                context.symbolTable.declareSimpleFunction(
-                        irClass.startOffset, irClass.endOffset,
-                        IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                        valuesFunction
-                ).also { irFunction ->
-                    FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irFunction, null, null)
-                    irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUES)
-                }
+            context.symbolTable.declareSimpleFunction(
+                irClass.startOffset, irClass.endOffset,
+                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
+                valuesFunction
+            ).also { irFunction ->
+                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irFunction, null, null)
+                irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUES)
+            }
         )
     }
 
     private fun generateValueOf(irClass: IrClass) {
         val valueOfFunction = irClass.descriptor.staticScope.findFirstFunction("valueOf") {
             it.dispatchReceiverParameter == null &&
-            it.extensionReceiverParameter == null &&
-            it.valueParameters.size == 1
+                    it.extensionReceiverParameter == null &&
+                    it.valueParameters.size == 1
         }
 
         irClass.addMember(
-                context.symbolTable.declareSimpleFunction(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                        valueOfFunction
-                ).also { irFunction ->
-                    FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irFunction, null, null)
-                    irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUEOF)
-                }
+            context.symbolTable.declareSimpleFunction(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
+                valueOfFunction
+            ).also { irFunction ->
+                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irFunction, null, null)
+                irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUEOF)
+            }
         )
     }
 }

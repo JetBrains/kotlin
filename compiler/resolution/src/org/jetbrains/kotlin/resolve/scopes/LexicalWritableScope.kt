@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
 class LexicalWritableScope(
-        parent: LexicalScope,
-        override val ownerDescriptor: DeclarationDescriptor,
-        override val isOwnerDescriptorAccessibleByLabel: Boolean,
-        redeclarationChecker: LocalRedeclarationChecker,
-        override val kind: LexicalScopeKind
+    parent: LexicalScope,
+    override val ownerDescriptor: DeclarationDescriptor,
+    override val isOwnerDescriptorAccessibleByLabel: Boolean,
+    redeclarationChecker: LocalRedeclarationChecker,
+    override val kind: LexicalScopeKind
 ) : LexicalScopeStorage(parent, redeclarationChecker) {
 
     override val implicitReceiver: ReceiverParameterDescriptor?
@@ -68,11 +68,14 @@ class LexicalWritableScope(
     }
 
     private inner class Snapshot(val descriptorLimit: Int) : LexicalScope by this {
-        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-                = addedDescriptors.subList(0, descriptorLimit)
+        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) =
+            addedDescriptors.subList(0, descriptorLimit)
 
-        override fun getContributedClassifier(name: Name, location: LookupLocation) = variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
-        override fun getContributedVariables(name: Name, location: LookupLocation) = listOfNotNull(variableOrClassDescriptorByName(name, descriptorLimit) as? VariableDescriptor)
+        override fun getContributedClassifier(name: Name, location: LookupLocation) =
+            variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
+
+        override fun getContributedVariables(name: Name, location: LookupLocation) =
+            listOfNotNull(variableOrClassDescriptorByName(name, descriptorLimit) as? VariableDescriptor)
 
         override fun getContributedFunctions(name: Name, location: LookupLocation) = functionsByName(name, descriptorLimit)
 
@@ -88,8 +91,10 @@ class LexicalWritableScope(
     override fun toString(): String = kind.toString()
 
     override fun printStructure(p: Printer) {
-        p.println(this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
-                  " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {")
+        p.println(
+            this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
+            " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {"
+        )
         p.pushIndent()
 
         p.print("parent = ")

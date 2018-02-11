@@ -11,7 +11,7 @@ public final expect class Bar {
 public final expect class Baz {
     public constructor Baz(/*0*/ w: kotlin.collections.List<kotlin.String>)
     public expect final val w: kotlin.collections.List<kotlin.String>
-    public final operator expect fun component1(): kotlin.collections.List<kotlin.String>
+    public final expect operator fun component1(): kotlin.collections.List<kotlin.String>
     public open expect override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open expect override /*1*/ fun hashCode(): kotlin.Int
     public open expect override /*1*/ fun toString(): kotlin.String

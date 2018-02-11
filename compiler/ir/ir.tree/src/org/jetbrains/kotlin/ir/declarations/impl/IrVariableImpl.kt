@@ -24,22 +24,48 @@ import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
 
 class IrVariableImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrVariableSymbol,
+    override val name: Name,
+    override val type: KotlinType,
+    override val isVar: Boolean,
+    override val isConst: Boolean,
+    override val isLateinit: Boolean
+) : IrDeclarationBase(startOffset, endOffset, origin),
+    IrVariable {
+
+    constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val symbol: IrVariableSymbol
-) : IrDeclarationBase(startOffset, endOffset, origin), IrVariable {
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: VariableDescriptor) :
-            this(startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor))
+        symbol: IrVariableSymbol
+    ) : this(
+        startOffset, endOffset, origin, symbol,
+        symbol.descriptor.name, symbol.descriptor.type,
+        isVar = symbol.descriptor.isVar,
+        isConst = symbol.descriptor.isConst,
+        isLateinit = symbol.descriptor.isLateInit
+    )
 
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            descriptor: VariableDescriptor,
-            initializer: IrExpression?
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: VariableDescriptor
+    ) : this(startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor))
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: VariableDescriptor,
+        initializer: IrExpression?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.initializer = initializer
     }
@@ -52,9 +78,8 @@ class IrVariableImpl(
 
     override var initializer: IrExpression? = null
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitVariable(this, data)
-    }
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitVariable(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         initializer?.accept(visitor, data)

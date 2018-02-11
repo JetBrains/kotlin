@@ -49,6 +49,14 @@ open class KotlinUSimpleReferenceExpression(
     override fun accept(visitor: UastVisitor) {
         visitor.visitSimpleNameReferenceExpression(this)
 
+        if (psi.parent.destructuringDeclarationInitializer != true) {
+            visitAccessorCalls(visitor)
+        }
+
+        visitor.afterVisitSimpleNameReferenceExpression(this)
+    }
+
+    private fun visitAccessorCalls(visitor: UastVisitor) {
         // Visit Kotlin get-set synthetic Java property calls as function calls
         val bindingContext = psi.analyze()
         val access = psi.readWriteAccess()
@@ -78,8 +86,6 @@ open class KotlinUSimpleReferenceExpression(
                 }
             }
         }
-
-        visitor.afterVisitSimpleNameReferenceExpression(this)
     }
 
     private tailrec fun findAssignment(prev: PsiElement?, element: PsiElement?): KtBinaryExpression? = when (element) {
@@ -95,7 +101,7 @@ open class KotlinUSimpleReferenceExpression(
             private val resolvedCall: ResolvedCall<*>,
             private val accessorDescriptor: DeclarationDescriptor,
             val setterValue: KtExpression?
-    ) : UCallExpression {
+    ) : UCallExpression, JvmDeclarationUElement {
         override val methodName: String?
             get() = accessorDescriptor.name.asString()
 
@@ -107,6 +113,9 @@ open class KotlinUSimpleReferenceExpression(
                 else
                     null
             }
+
+        override val javaPsi: PsiElement? = null
+        override val sourcePsi: PsiElement? = psi
 
         override val annotations: List<UAnnotation>
             get() = emptyList()
@@ -183,7 +192,7 @@ open class KotlinUSimpleReferenceExpression(
 }
 
 class KotlinClassViaConstructorUSimpleReferenceExpression(
-        override val psi: KtCallExpression,
+        override val psi: KtCallElement,
         override val identifier: String,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression, KotlinUElementWithType {

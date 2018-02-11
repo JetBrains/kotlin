@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinInvokedExpressionSelectioner : ExtendWordSelectionHandlerBase() {
-    override fun canSelect(e: PsiElement?): Boolean {
+    override fun canSelect(e: PsiElement): Boolean {
         return e is KtDotQualifiedExpression
     }
 
-    override fun select(e: PsiElement?, editorText: CharSequence?, cursorOffset: Int, editor: Editor): List<TextRange>? {
+    override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         if (e !is KtDotQualifiedExpression) return null
         val endOffset = e.selectorExpression?.children?.firstOrNull { it is KtNameReferenceExpression }?.endOffset ?: return null
         return listOf(TextRange(e.startOffset, endOffset))

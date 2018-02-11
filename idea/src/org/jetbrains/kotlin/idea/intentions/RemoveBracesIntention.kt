@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.*
 
 class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Remove braces") {
@@ -61,8 +62,17 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
 
         val newElement = block.replace(statement.copy())
 
+        val factory = KtPsiFactory(block)
+
         if (construct is KtDoWhileExpression) {
-            newElement.parent!!.addAfter(KtPsiFactory(block).createNewLine(), newElement)
+            newElement.parent!!.addAfter(factory.createNewLine(), newElement)
+        }
+
+        if (construct is KtIfExpression &&
+            container.node.elementType == KtNodeTypes.ELSE &&
+            construct.parent is KtExpression &&
+            construct.parent !is KtStatementExpression) {
+            construct.replace(factory.createExpressionByPattern("($0)", construct))
         }
     }
 

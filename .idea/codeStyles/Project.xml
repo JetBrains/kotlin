@@ -2,14 +2,8 @@
   <code_scheme name="Project" version="173">
     <option name="OTHER_INDENT_OPTIONS">
       <value>
-        <option name="INDENT_SIZE" value="4" />
         <option name="CONTINUATION_INDENT_SIZE" value="4" />
         <option name="TAB_SIZE" value="8" />
-        <option name="USE_TAB_CHARACTER" value="false" />
-        <option name="SMART_TABS" value="false" />
-        <option name="LABEL_INDENT_SIZE" value="0" />
-        <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        <option name="USE_RELATIVE_INDENTS" value="false" />
       </value>
     </option>
     <option name="LINE_SEPARATOR" value="&#10;" />
@@ -61,6 +55,16 @@
         </value>
       </option>
     </JavaCodeStyleSettings>
+    <JetCodeStyleSettings>
+      <option name="CONTINUATION_INDENT_IN_PARAMETER_LISTS" value="false" />
+      <option name="CONTINUATION_INDENT_IN_ARGUMENT_LISTS" value="false" />
+      <option name="CONTINUATION_INDENT_FOR_EXPRESSION_BODIES" value="false" />
+      <option name="CONTINUATION_INDENT_FOR_CHAINED_CALLS" value="false" />
+      <option name="CONTINUATION_INDENT_IN_SUPERTYPE_LISTS" value="false" />
+      <option name="CONTINUATION_INDENT_IN_IF_CONDITIONS" value="false" />
+      <option name="WRAP_EXPRESSION_BODY_FUNCTIONS" value="1" />
+      <option name="IF_RPAREN_ON_NEW_LINE" value="true" />
+    </JetCodeStyleSettings>
     <MarkdownNavigatorCodeStyleSettings>
       <option name="RIGHT_MARGIN" value="72" />
     </MarkdownNavigatorCodeStyleSettings>
@@ -81,12 +85,10 @@
       <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
       <option name="FOR_STATEMENT_WRAP" value="5" />
       <option name="ASSIGNMENT_WRAP" value="1" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     </codeStyleSettings>
     <codeStyleSettings language="CoffeeScript">
       <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
       <option name="METHOD_PARAMETERS_WRAP" value="5" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     </codeStyleSettings>
     <codeStyleSettings language="ECMA Script Level 4">
       <option name="ELSE_ON_NEW_LINE" value="true" />
@@ -111,7 +113,6 @@
       <option name="DOWHILE_BRACE_FORCE" value="1" />
       <option name="WHILE_BRACE_FORCE" value="1" />
       <option name="FOR_BRACE_FORCE" value="1" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     </codeStyleSettings>
     <codeStyleSettings language="GSP">
       <indentOptions>
@@ -145,7 +146,6 @@
       <option name="WHILE_BRACE_FORCE" value="1" />
       <option name="FOR_BRACE_FORCE" value="1" />
       <option name="FIELD_ANNOTATION_WRAP" value="0" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     </codeStyleSettings>
     <codeStyleSettings language="HTML">
       <indentOptions>
@@ -192,7 +192,6 @@
       <option name="WHILE_BRACE_FORCE" value="1" />
       <option name="FOR_BRACE_FORCE" value="1" />
       <option name="FIELD_ANNOTATION_WRAP" value="0" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
       <indentOptions>
         <option name="TAB_SIZE" value="8" />
       </indentOptions>
@@ -217,7 +216,6 @@
       <option name="DOWHILE_BRACE_FORCE" value="1" />
       <option name="WHILE_BRACE_FORCE" value="1" />
       <option name="FOR_BRACE_FORCE" value="1" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     </codeStyleSettings>
     <codeStyleSettings language="Scala">
       <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="0" />
@@ -227,7 +225,6 @@
       <option name="FINALLY_ON_NEW_LINE" value="true" />
       <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
       <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
-      <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
       <option name="ALIGN_MULTILINE_PARENTHESIZED_EXPRESSION" value="true" />
       <option name="CALL_PARAMETERS_WRAP" value="1" />
       <option name="METHOD_PARAMETERS_WRAP" value="5" />
@@ -241,7 +238,6 @@
       <option name="WHILE_BRACE_FORCE" value="1" />
       <option name="FOR_BRACE_FORCE" value="1" />
       <option name="FIELD_ANNOTATION_WRAP" value="0" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
       <option name="ELSE_ON_NEW_LINE" value="true" />
@@ -266,7 +262,6 @@
       <option name="DOWHILE_BRACE_FORCE" value="1" />
       <option name="WHILE_BRACE_FORCE" value="1" />
       <option name="FOR_BRACE_FORCE" value="1" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     </codeStyleSettings>
     <codeStyleSettings language="XML">
       <indentOptions>
@@ -275,13 +270,16 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="kotlin">
-      <option name="ELSE_ON_NEW_LINE" value="true" />
-      <option name="WHILE_ON_NEW_LINE" value="true" />
-      <option name="CATCH_ON_NEW_LINE" value="true" />
-      <option name="FINALLY_ON_NEW_LINE" value="true" />
       <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
-      <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
+      <option name="CALL_PARAMETERS_WRAP" value="5" />
+      <option name="CALL_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
+      <option name="CALL_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />
+      <option name="METHOD_PARAMETERS_WRAP" value="5" />
+      <option name="METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
+      <option name="METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />
+      <option name="EXTENDS_LIST_WRAP" value="1" />
+      <option name="METHOD_CALL_CHAIN_WRAP" value="1" />
+      <option name="ASSIGNMENT_WRAP" value="1" />
     </codeStyleSettings>
   </code_scheme>
 </component>

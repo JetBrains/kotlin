@@ -114,8 +114,8 @@ done
             environment: Map<String, Any?>? = null,
             suppressOutput: Boolean = false
     ): Class<*>? =
-            compileScriptImpl("src/test/resources/scripts/" + scriptFileName,
-                              KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, null, null, environment), suppressOutput)
+            compileScriptImpl("libraries/tools/kotlin-script-util/src/test/resources/scripts/" + scriptFileName,
+                              KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, environment), suppressOutput)
 
     private fun compileScriptImpl(
             scriptPath: String,
@@ -145,7 +145,7 @@ done
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
             }
 
-            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             try {
                 return KotlinToJVMBytecodeCompiler.compileScript(environment)
@@ -164,12 +164,6 @@ done
         finally {
             Disposer.dispose(rootDisposable)
         }
-    }
-
-    private inline fun <R> ifFailed(default: R, block: () -> R) = try {
-        block()
-    } catch (t: Throwable) {
-        default
     }
 
     private fun String.linesSplitTrim() =

@@ -1,12 +1,12 @@
-
 description = "Kotlin Android Extensions Runtime"
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     compile(project(":kotlin-stdlib"))
-    compile(ideaPluginDeps("layoutlib", plugin = "android"))
-    runtime(commonDep("com.google.android", "android"))
+    compileOnly(commonDep("com.google.android", "android"))
 }
 
 sourceSets {

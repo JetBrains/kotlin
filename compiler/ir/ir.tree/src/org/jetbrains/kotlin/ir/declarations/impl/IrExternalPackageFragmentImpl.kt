@@ -24,10 +24,15 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.FqName
 
 class IrExternalPackageFragmentImpl(
-        override val symbol: IrExternalPackageFragmentSymbol
+    override val symbol: IrExternalPackageFragmentSymbol,
+    override val fqName: FqName
 ) : IrExternalPackageFragment, IrElementBase(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+
+    constructor(symbol: IrExternalPackageFragmentSymbol) : this(symbol, symbol.descriptor.fqName)
+
     init {
         symbol.bind(this)
     }
@@ -37,7 +42,7 @@ class IrExternalPackageFragmentImpl(
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitExternalPackageFragment(this, data)
+        visitor.visitExternalPackageFragment(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }

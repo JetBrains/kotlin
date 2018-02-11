@@ -1,8 +1,9 @@
+// !WITH_NEW_INFERENCE
 // See KT-13468, KT-13765
 
 fun basic(): String {
     var current: String? = null
-    current = if (current == null) "bar" else current
+    current = if (current == null) "bar" else <!NI;DEBUG_INFO_SMARTCAST!>current<!>
     return <!DEBUG_INFO_SMARTCAST!>current<!>
 }
 
@@ -68,5 +69,5 @@ fun gau(flag: Boolean, arg: String?) {
         }
     }
 
-    x<!UNSAFE_CALL!>.<!>hashCode()
+    <!NI;DEBUG_INFO_SMARTCAST!>x<!><!OI;UNSAFE_CALL!>.<!>hashCode()
 }

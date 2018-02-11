@@ -1,0 +1,110 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum E {
+    /*public static final*/ X /* = new E() */,
+    /*public static final*/ Y /* = new E() */;
+
+    public abstract void a();
+
+    public final void b() {
+    }
+
+    E() {
+    }
+
+    @kotlin.Metadata()
+    public static final class Obj {
+        public static final E.Obj INSTANCE = null;
+
+        private Obj() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class NestedClass {
+
+        public NestedClass() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum E2 {
+    /*public static final*/ X /* = new E2() */,
+    /*public static final*/ Y /* = new E2() */;
+
+    public abstract void a();
+
+    E2(int n) {
+    }
+
+    E2(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum E3 {
+    /*public static final*/ X /* = new E3() */,
+    /*public static final*/ Y /* = new E3() */;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    E3(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum E4 {
+    /*public static final*/ X /* = new E4() */;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+    private final int b = 0;
+    private final long c = 0L;
+    private final boolean d = false;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    public final int getB() {
+        return 0;
+    }
+
+    public final long getC() {
+        return 0L;
+    }
+
+    public final boolean getD() {
+        return false;
+    }
+
+    E4(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, int b, long c, boolean d) {
+    }
+}

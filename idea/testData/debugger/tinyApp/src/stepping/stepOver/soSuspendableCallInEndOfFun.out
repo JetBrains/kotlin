@@ -1,11 +1,11 @@
-LineBreakpoint created at soSuspendableCallInEndOfFun.kt:24
+LineBreakpoint created at soSuspendableCallInEndOfFun.kt:27
 Run Java
 Connected to the target VM
-soSuspendableCallInEndOfFun.kt:24
-soSuspendableCallInEndOfFun.kt:21
-soSuspendableCallInEndOfFun.kt:25
-soSuspendableCallInEndOfFun.kt:-1
-soSuspendableCallInEndOfFun.kt:32
+soSuspendableCallInEndOfFun.kt:27
+soSuspendableCallInEndOfFun.kt:15
+soSuspendableCallInEndOfFun.kt:14
+soSuspendableCallInEndOfFun.kt:16
+soSuspendableCallInEndOfFun.kt:35
 Disconnected from the target VM
 
 Process finished with exit code 0

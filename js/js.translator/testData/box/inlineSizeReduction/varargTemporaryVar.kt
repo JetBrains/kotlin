@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1026
+// EXPECTED_REACHABLE_NODES: 1132
 // CHECK_VARS_COUNT: function=test1 count=0
 // CHECK_VARS_COUNT: function=test2 count=0
 // CHECK_VARS_COUNT: function=test3 count=1

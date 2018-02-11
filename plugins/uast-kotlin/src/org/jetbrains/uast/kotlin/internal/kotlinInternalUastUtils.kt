@@ -36,13 +36,13 @@ import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
@@ -87,7 +87,14 @@ internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: B
             "kotlin.Double" -> PsiType.DOUBLE.orBoxed()
             "kotlin.Float" -> PsiType.FLOAT.orBoxed()
             "kotlin.String" -> PsiType.getJavaLangString(element.manager, GlobalSearchScope.projectScope(element.project))
-            else -> null
+            else -> {
+                val typeConstructor = this.constructor
+                if (typeConstructor is IntegerValueTypeConstructor) {
+                    typeConstructor.supertypes.first().toPsiType(source, element, boxed)
+                } else {
+                    null
+                }
+            }
         }
         if (psiType != null) return psiType
     }
@@ -113,11 +120,8 @@ internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: B
 
 private fun KotlinType.containsLocalTypes(): Boolean {
     val typeDeclarationDescriptor = this.constructor.declarationDescriptor
-    if (typeDeclarationDescriptor is ClassDescriptor) {
-        val containerDescriptor = typeDeclarationDescriptor.containingDeclaration
-        if (containerDescriptor is PropertyDescriptor || containerDescriptor is FunctionDescriptor) {
-            return true
-        }
+    if (typeDeclarationDescriptor is ClassDescriptor && DescriptorUtils.isLocal(typeDeclarationDescriptor)) {
+        return true
     }
 
     return arguments.any { !it.isStarProjection && it.type.containsLocalTypes() }

@@ -32,17 +32,14 @@ public class ClassTypeConstructorImpl extends AbstractClassTypeConstructor imple
     private final ClassDescriptor classDescriptor;
     private final List<TypeParameterDescriptor> parameters;
     private final Collection<KotlinType> supertypes;
-    private final boolean isFinal;
 
     public ClassTypeConstructorImpl(
             @NotNull ClassDescriptor classDescriptor,
-            boolean isFinal,
             @NotNull List<? extends TypeParameterDescriptor> parameters,
             @NotNull Collection<KotlinType> supertypes
     ) {
         super(LockBasedStorageManager.NO_LOCKS);
         this.classDescriptor = classDescriptor;
-        this.isFinal = isFinal;
         this.parameters = Collections.unmodifiableList(new ArrayList<TypeParameterDescriptor>(parameters));
         this.supertypes = Collections.unmodifiableCollection(supertypes);
     }
@@ -56,11 +53,6 @@ public class ClassTypeConstructorImpl extends AbstractClassTypeConstructor imple
     @Override
     public String toString() {
         return DescriptorUtils.getFqName(classDescriptor).asString();
-    }
-
-    @Override
-    public boolean isFinal() {
-        return isFinal;
     }
 
     @Override

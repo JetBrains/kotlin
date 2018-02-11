@@ -23,14 +23,14 @@ public interface SAM {
 public interface Supertype1 : suspend () -> kotlin.Unit {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract suspend override /*1*/ /*fake_override*/ fun invoke(): kotlin.Unit
+    public abstract override /*1*/ suspend /*fake_override*/ fun invoke(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Supertype2 : suspend kotlin.String.() -> kotlin.Unit {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract suspend override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: kotlin.String): kotlin.Unit
+    public abstract override /*1*/ suspend /*fake_override*/ fun invoke(/*0*/ p1: kotlin.String): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 public typealias Action = () -> kotlin.Unit

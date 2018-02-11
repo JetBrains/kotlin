@@ -198,4 +198,9 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
         assert(nestedTarget.name == "C")
         assert(handler.canMove(elementsToMove, nestedTarget))
     }
+
+    fun testTypeAlias() = doTest { rootDir, handler ->
+        val typeAlias = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtTypeAlias>()!!
+        assert(handler.canMove(arrayOf<PsiElement>(typeAlias), null))
+    }
 }

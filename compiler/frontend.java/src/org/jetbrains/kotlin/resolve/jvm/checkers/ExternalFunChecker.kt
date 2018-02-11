@@ -17,55 +17,50 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-class ExternalFunChecker : SimpleDeclarationChecker {
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+class ExternalFunChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is MemberDescriptor || !descriptor.isExternal) return
 
+        val trace = context.trace
         if (descriptor !is FunctionDescriptor) {
             val target = when (descriptor) {
                 is PropertyDescriptor -> "property"
                 is ClassDescriptor -> "class"
                 else -> "non-function declaration"
             }
-            diagnosticHolder.report(Errors.WRONG_MODIFIER_TARGET.on(declaration, KtTokens.EXTERNAL_KEYWORD, target))
+            trace.report(Errors.WRONG_MODIFIER_TARGET.on(declaration, KtTokens.EXTERNAL_KEYWORD, target))
             return
         }
 
         if (DescriptorUtils.isInterface(descriptor.containingDeclaration)) {
-            diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE.on(declaration))
+            trace.report(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE.on(declaration))
         }
         else if (descriptor.modality == Modality.ABSTRACT) {
             if (declaration is KtPropertyAccessor) {
-                diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration.property))
+                trace.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration.property))
             }
             else {
-                diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
+                trace.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
             }
         }
 
         if (descriptor !is ConstructorDescriptor && declaration is KtDeclarationWithBody && declaration.hasBody()) {
-            diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY.on(declaration))
+            trace.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY.on(declaration))
         }
 
         if (InlineUtil.isInline(descriptor)) {
-            diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_INLINED.on(declaration))
+            trace.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_INLINED.on(declaration))
         }
     }
 }

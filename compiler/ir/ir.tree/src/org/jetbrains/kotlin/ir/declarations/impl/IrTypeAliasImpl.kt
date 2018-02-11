@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrTypeAliasImpl(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val descriptor: TypeAliasDescriptor
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val descriptor: TypeAliasDescriptor
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrTypeAlias {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitTypeAlias(this, data)

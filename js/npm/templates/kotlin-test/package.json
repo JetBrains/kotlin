@@ -1,0 +1,26 @@
+{
+  "name": "kotlin-test",
+  "version": "$version",
+  "description": "Standard Testing Library for Kotlin Applications",
+  "main": "kotlin-test.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://git@github.com/JetBrains/kotlin.git"
+  },
+  "keywords": [
+    "Kotlin",
+    "Language",
+    "Testing",
+    "JavaScript",
+    "JetBrains"
+  ],
+  "author": "JetBrains",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "kotl.in/issue"
+  },
+  "homepage": "kotlinlang.org",
+  "dependencies": {
+    "kotlin": "$version"
+  }
+}

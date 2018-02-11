@@ -119,7 +119,7 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
 
         fun tryResolveReference(reference: PsiQualifiedReference): Boolean {
             if (reference.resolve() != null) return true
-            val referenceName = reference.referenceName!!
+            val referenceName = reference.referenceName ?: return false
             if (referenceName in failedToResolveReferenceNames) return false
             val classes = shortNameCache.getClassesByName(referenceName, scope)
                     .mapNotNull { psiClass ->

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun example() {
@@ -29,5 +30,5 @@ fun example() {
         return <!TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (true) true<!>
     }
 
-    return if (true) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!> else {}
+    return <!NI;TYPE_MISMATCH!>if (true) <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!> else {}<!>
 }

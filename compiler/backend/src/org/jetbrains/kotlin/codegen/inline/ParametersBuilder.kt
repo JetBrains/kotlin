@@ -124,8 +124,10 @@ class ParametersBuilder private constructor() {
                 objectType: Type, descriptor: String, inlineLambda: LambdaInfo? = null
         ): ParametersBuilder {
             val builder = newBuilder()
-            //skipped this for inlined lambda cause it will be removed
-            builder.addThis(objectType, inlineLambda != null).lambda = inlineLambda
+            if (inlineLambda?.hasDispatchReceiver != false) {
+                //skipped this for inlined lambda cause it will be removed
+                builder.addThis(objectType, inlineLambda != null).lambda = inlineLambda
+            }
 
             for (type in Type.getArgumentTypes(descriptor)) {
                 builder.addNextParameter(type, false)

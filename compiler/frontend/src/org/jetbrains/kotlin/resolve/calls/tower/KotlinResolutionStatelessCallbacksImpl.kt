@@ -31,30 +31,30 @@ import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinResolutionStatelessCallbacksImpl(
-        private val deprecationResolver: DeprecationResolver
+    private val deprecationResolver: DeprecationResolver
 ) : KotlinResolutionStatelessCallbacks {
     override fun isDescriptorFromSource(descriptor: CallableDescriptor) =
-            DescriptorToSourceUtils.descriptorToDeclaration(descriptor) != null
+        DescriptorToSourceUtils.descriptorToDeclaration(descriptor) != null
 
     override fun isInfixCall(kotlinCall: KotlinCall) =
-            kotlinCall is PSIKotlinCallImpl && isInfixCall(kotlinCall.psiCall)
+        kotlinCall is PSIKotlinCallImpl && isInfixCall(kotlinCall.psiCall)
 
     override fun isOperatorCall(kotlinCall: KotlinCall) =
-            (kotlinCall is PSIKotlinCallForInvoke) ||
-            (kotlinCall is PSIKotlinCallImpl && isConventionCall(kotlinCall.psiCall))
+        (kotlinCall is PSIKotlinCallForInvoke) ||
+                (kotlinCall is PSIKotlinCallImpl && isConventionCall(kotlinCall.psiCall))
 
     override fun isSuperOrDelegatingConstructorCall(kotlinCall: KotlinCall) =
-            kotlinCall is PSIKotlinCallImpl && isSuperOrDelegatingConstructorCall(kotlinCall.psiCall)
+        kotlinCall is PSIKotlinCallImpl && isSuperOrDelegatingConstructorCall(kotlinCall.psiCall)
 
     override fun isHiddenInResolution(descriptor: DeclarationDescriptor, kotlinCall: KotlinCall) =
-            deprecationResolver.isHiddenInResolution(descriptor, isSuperOrDelegatingConstructorCall(kotlinCall))
+        deprecationResolver.isHiddenInResolution(descriptor, isSuperOrDelegatingConstructorCall(kotlinCall))
 
     override fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean =
-            receiver?.psiExpression is KtSuperExpression
+        receiver?.psiExpression is KtSuperExpression
 
     override fun getScopeTowerForCallableReferenceArgument(argument: CallableReferenceKotlinCallArgument): ImplicitScopeTower =
-            (argument as CallableReferenceKotlinCallArgumentImpl).scopeTowerForResolution
+        (argument as CallableReferenceKotlinCallArgumentImpl).scopeTowerForResolution
 
     override fun getVariableCandidateIfInvoke(functionCall: KotlinCall) =
-            functionCall.safeAs<PSIKotlinCallForInvoke>()?.variableCall
+        functionCall.safeAs<PSIKotlinCallForInvoke>()?.variableCall
 }

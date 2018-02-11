@@ -16,35 +16,61 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrPropertyImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val descriptor: PropertyDescriptor,
+    override val name: Name,
+    override val type: KotlinType,
+    override val visibility: Visibility,
+    override val modality: Modality,
+    override val isVar: Boolean,
+    override val isConst: Boolean,
+    override val isLateinit: Boolean,
+    override val isDelegated: Boolean
+) : IrDeclarationBase(startOffset, endOffset, origin),
+    IrProperty {
+
+    constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val isDelegated: Boolean,
-        override val descriptor: PropertyDescriptor
-) : IrDeclarationBase(startOffset, endOffset, origin), IrProperty {
+        isDelegated: Boolean,
+        descriptor: PropertyDescriptor
+    ) : this(
+        startOffset, endOffset, origin, descriptor,
+        descriptor.name, descriptor.type, descriptor.visibility, descriptor.modality,
+        descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
+        isDelegated
+    )
+
     constructor(
-            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
-            descriptor: PropertyDescriptor
+        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
+        descriptor: PropertyDescriptor
     ) : this(startOffset, endOffset, origin, descriptor.isDelegated, descriptor)
 
     constructor(
-            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, isDelegated: Boolean, descriptor: PropertyDescriptor,
-            backingField: IrField?
+        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, isDelegated: Boolean, descriptor: PropertyDescriptor,
+        backingField: IrField?
     ) : this(startOffset, endOffset, origin, isDelegated, descriptor) {
         this.backingField = backingField
     }
 
     constructor(
-            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, isDelegated: Boolean, descriptor: PropertyDescriptor,
-            backingField: IrField?, getter: IrFunction?, setter: IrFunction?
+        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, isDelegated: Boolean, descriptor: PropertyDescriptor,
+        backingField: IrField?, getter: IrFunction?, setter: IrFunction?
     ) : this(startOffset, endOffset, origin, isDelegated, descriptor, backingField) {
         this.getter = getter
         this.setter = setter

@@ -23,7 +23,11 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
 class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStringTemplateExpression>() {
-    override fun handleContentChange(element: KtStringTemplateExpression, range: TextRange, newContent: String): KtStringTemplateExpression? {
+    override fun handleContentChange(
+        element: KtStringTemplateExpression,
+        range: TextRange,
+        newContent: String
+    ): KtStringTemplateExpression? {
         val node = element.node
         val content = if (element.isSingleQuoted()) StringUtil.escapeStringCharacters(newContent) else newContent
         val oldText = node.text

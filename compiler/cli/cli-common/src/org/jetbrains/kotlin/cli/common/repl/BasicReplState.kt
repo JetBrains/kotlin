@@ -53,6 +53,7 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
         lock.write {
             val removed = map { it.id }
             clear()
+            currentGeneration.incrementAndGet()
             return removed
         }
     }
@@ -67,7 +68,10 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
                 currentGeneration.incrementAndGet()
                 removed
             }
-            else emptyList()
+            else {
+                currentGeneration.incrementAndGet()
+                emptyList()
+            }
         }
     }
 }

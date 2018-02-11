@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -SENSELESS_COMPARISON, -DEBUG_INFO_SMARTCAST
 
 fun <T: Any?> test1(t: Any?): Any {
@@ -26,14 +27,14 @@ fun test() {
     takeNotNull(nullable() ?: "")
 
     val x: String? = null
-    takeNotNull(dependOn(x) ?: "")
-    takeNotNull(dependOn(dependOn(x)) ?: "")
+    takeNotNull(dependOn(x) <!NI;USELESS_ELVIS!>?: ""<!>)
+    takeNotNull(dependOn(dependOn(x)) <!NI;USELESS_ELVIS!>?: ""<!>)
     takeNotNull(dependOn(dependOn(x as String)) <!USELESS_ELVIS!>?: ""<!>)
 
     if (x != null) {
         takeNotNull(dependOn(x) <!USELESS_ELVIS!>?: ""<!>)
         takeNotNull(dependOn(dependOn(x)) <!USELESS_ELVIS!>?: ""<!>)
-        takeNotNull(dependOn(dependOn(x) as? String) ?: "")
+        takeNotNull(dependOn(dependOn(x) as? String) <!NI;USELESS_ELVIS!>?: ""<!>)
     }
 
     takeNotNull(bar()!!)

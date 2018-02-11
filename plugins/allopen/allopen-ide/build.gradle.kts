@@ -3,19 +3,21 @@ description = "Kotlin AllOpen IDEA Plugin"
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     compile(project(":kotlin-allopen-compiler-plugin"))
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:cli-common"))
     compile(project(":idea"))
+    compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":plugins:annotation-based-compiler-plugins-ide-support"))
-    compile(ideaSdkDeps("openapi", "idea"))
-    compile(ideaPluginDeps("maven", plugin = "maven"))
-    compile(ideaPluginDeps("gradle-tooling-api", "gradle", plugin = "gradle"))
+    compileOnly(intellijDep()) { includeJars("openapi", "idea") }
+    excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) { includeJars("maven") } }
+    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api", "gradle", rootProject = rootProject) }
 }
-
 
 sourceSets {
     "main" { projectDefault() }

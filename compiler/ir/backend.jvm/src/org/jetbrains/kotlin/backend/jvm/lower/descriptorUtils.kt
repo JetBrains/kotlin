@@ -34,22 +34,20 @@ fun FunctionDescriptor.toStatic(
     )
 
     var offset = 0
-    val dispatchReceiver = this.dispatchReceiverParameter?.let {
-        offset++
+    val dispatchReceiver = dispatchReceiverParameter?.let {
         ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                newFunction, null, 0, AnnotationsImpl(emptyList()), Name.identifier("this"),
+                newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("this"),
                 dispatchReceiverClass!!.defaultType, false, false, false, null, dispatchReceiverClass.source, null)
     }
 
     val extensionReceiver = extensionReceiverParameter?.let {
-        offset++
         ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                newFunction, null, 1, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
+                newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
                 it.value.type, false, false, false, null, it.source, null)
     }
 
-    val valueParameters = listOf(dispatchReceiver, extensionReceiver).filterNotNull() +
-                                                     valueParameters.map { it.copy(newFunction, it.name, it.index + offset) }
+    val valueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
+                          valueParameters.map { it.copy(newFunction, it.name, it.index + offset) }
 
     newFunction.initialize(
             null, null, emptyList()/*TODO: type parameters*/,

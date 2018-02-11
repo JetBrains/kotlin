@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.containsStarProjections
@@ -68,8 +67,7 @@ class LetImplementInterfaceFix(
     override fun getFamilyName() = "Let type implement interface"
     override fun getText() = "$prefix interface '$expectedTypeName'"
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) =
-            super.isAvailable(project, editor, file) && validExpectedType
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = validExpectedType
 
     override fun startInWriteAction() = false
 

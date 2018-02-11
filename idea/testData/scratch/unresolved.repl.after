@@ -1,0 +1,1 @@
+foo()    // ERROR: error: unresolved reference: foo

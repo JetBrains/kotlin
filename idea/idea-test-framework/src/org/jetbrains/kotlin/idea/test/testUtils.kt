@@ -61,14 +61,15 @@ fun Module.configureAs(descriptor: KotlinLightProjectDescriptor) {
     })
 }
 
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated("Please use correct ProjectDescriptor in tests from the very beginning")
 fun Module.configureAs(kind: ModuleKind) {
-    when(kind) {
+    when (kind) {
         ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES ->
             this.configureAs(ProjectDescriptorWithStdlibSources.INSTANCE)
         ModuleKind.KOTLIN_JAVASCRIPT -> {
             this.configureAs(KotlinStdJSProjectDescriptor)
         }
-
     }
 }
 

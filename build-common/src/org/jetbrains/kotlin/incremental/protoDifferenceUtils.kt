@@ -224,8 +224,8 @@ class DifferenceCalculatorForClass(
                 ProtoBufClassKind.TYPE_TABLE -> {
                     // TODO
                 }
-                ProtoCompareGenerated.ProtoBufClassKind.SINCE_KOTLIN_INFO,
-                ProtoCompareGenerated.ProtoBufClassKind.SINCE_KOTLIN_INFO_TABLE -> {
+                ProtoCompareGenerated.ProtoBufClassKind.VERSION_REQUIREMENT,
+                ProtoCompareGenerated.ProtoBufClassKind.VERSION_REQUIREMENT_TABLE -> {
                     // TODO
                 }
                 ProtoBufClassKind.FLAGS,
@@ -243,6 +243,16 @@ class DifferenceCalculatorForClass(
                 }
                 ProtoBufClassKind.JVM_EXT_CLASS_LOCAL_VARIABLE_LIST -> {
                     // Not affected, local variables are not accessible outside of a file
+                }
+                ProtoBufClassKind.JAVA_EXT_IS_PACKAGE_PRIVATE_CLASS -> {
+                    isClassAffected = true
+                    areSubclassesAffected = true
+                }
+                ProtoBufClassKind.BUILT_INS_EXT_CLASS_ANNOTATION_LIST -> {
+                    isClassAffected = true
+                }
+                ProtoCompareGenerated.ProtoBufClassKind.JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME -> {
+                    // Not affected, this extension is not used in the compiler
                 }
             }
         }
@@ -281,13 +291,16 @@ class DifferenceCalculatorForPackageFacade(
                 ProtoBufPackageKind.TYPE_ALIAS_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getTypeAliasList))
                 ProtoBufPackageKind.TYPE_TABLE,
-                ProtoBufPackageKind.SINCE_KOTLIN_INFO_TABLE,
+                ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE,
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_MODULE_NAME,
                 ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME-> {
                     // TODO
                 }
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST -> {
                     // Not affected, local variables are not accessible outside of a file
+                }
+                ProtoBufPackageKind.BUILT_INS_EXT_PACKAGE_FQ_NAME -> {
+                    // Not affected
                 }
             }
         }

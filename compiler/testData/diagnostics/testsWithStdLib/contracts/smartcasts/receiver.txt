@@ -1,0 +1,14 @@
+package
+
+public fun smartcastOnReceiver(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun kotlin.Any?.isNull(): kotlin.Boolean
+    Returns(FALSE) -> <this> != null
+
+public final class UnstableReceiver {
+    public constructor UnstableReceiver()
+    public final var x: kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun smartcastOnUnstableReceiver(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

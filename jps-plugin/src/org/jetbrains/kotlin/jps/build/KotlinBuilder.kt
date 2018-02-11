@@ -47,11 +47,8 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
-import org.jetbrains.kotlin.config.CompilerRunnerConstants
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
-import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -160,13 +157,26 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                         }
 
                 val lastBuildLangVersion = LanguageVersion.fromVersionString(lastBuildMetaInfo.languageVersionString)
-                // reuse logic from compiler?
-                if (lastBuildLangVersion != LanguageVersion.KOTLIN_1_0
-                    && lastBuildMetaInfo.isEAP
-                    && !currentBuildMetaInfo.isEAP
-                ) {
-                    // If EAP->Non-EAP build with IC, then rebuild all kotlin
-                    LOG.info("Last build was compiled with EAP-plugin. Performing non-incremental rebuild (kotlin only)")
+                val lastBuildApiVersion = ApiVersion.parse(lastBuildMetaInfo.apiVersionString)
+                val currentLangVersion = args.languageVersion?.let { LanguageVersion.fromVersionString(it) } ?: LanguageVersion.LATEST_STABLE
+                val currentApiVersion = args.apiVersion?.let { ApiVersion.parse(it) } ?: ApiVersion.createByLanguageVersion(currentLangVersion)
+
+                val reasonToRebuild = when {
+                    currentLangVersion != lastBuildLangVersion -> {
+                        "Language version was changed ($lastBuildLangVersion -> $currentLangVersion)"
+                    }
+                    currentApiVersion != lastBuildApiVersion -> {
+                        "Api version was changed ($lastBuildApiVersion -> $currentApiVersion)"
+                    }
+                    lastBuildLangVersion != LanguageVersion.KOTLIN_1_0 && lastBuildMetaInfo.isEAP && !currentBuildMetaInfo.isEAP -> {
+                        // If EAP->Non-EAP build with IC, then rebuild all kotlin
+                        "Last build was compiled with EAP-plugin"
+                    }
+                    else -> null
+                }
+
+                if (reasonToRebuild != null) {
+                    LOG.info("$reasonToRebuild. Performing non-incremental rebuild (kotlin only)")
                     actions.add(CacheVersion.Action.REBUILD_ALL_KOTLIN)
                 }
             }
@@ -323,7 +333,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val changesCollector = ChangesCollector()
         for ((target, files) in generatedFiles) {
-            updateIncrementalCache(files, incrementalCaches[target]!!, changesCollector)
+            updateIncrementalCache(files, incrementalCaches[target]!!, changesCollector, null)
         }
         updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
 
@@ -431,19 +441,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             project: JpsProject
     ): OutputItemsCollector? {
 
-        if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
-            LOG.debug("Compiling to JS ${filesToCompile.values().size} files in ${filesToCompile.keySet().joinToString { it.presentableName }}")
-            return compileToJs(chunk, commonArguments, environment, project)
-        }
-
-        if (IncrementalCompilation.isEnabled()) {
-            for (target in chunk.targets) {
-                val cache = incrementalCaches[target]!!
-                val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map(::File)
-                cache.markDirty(removedAndDirtyFiles)
-            }
-        }
-
         val representativeTarget = chunk.representativeTarget()
 
         fun concatenate(strings: Array<String>?, cp: List<String>) = arrayOf(*strings.orEmpty(), *cp.toTypedArray())
@@ -457,6 +454,19 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                                                            argumentProvider.getClasspath(representativeTarget, context))
 
             LOG.debug("Plugin loaded: ${argumentProvider::class.java.simpleName}")
+        }
+
+        if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
+            LOG.debug("Compiling to JS ${filesToCompile.values().size} files in ${filesToCompile.keySet().joinToString { it.presentableName }}")
+            return compileToJs(chunk, commonArguments, environment, project)
+        }
+
+        if (IncrementalCompilation.isEnabled()) {
+            for (target in chunk.targets) {
+                val cache = incrementalCaches[target]!!
+                val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map(::File)
+                cache.markDirty(removedAndDirtyFiles)
+            }
         }
 
         return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile)
@@ -648,10 +658,21 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeModule)
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(representativeModule)
 
-        val sourceRoots = representativeModule.contentRootsList.urls
-                .map { URI.create(it) }
-                .filter { it.scheme == "file" }
-                .map { File(it) }
+        // Compiler starts to produce path relative to base dirs in source maps if at least one statement is true:
+        // 1) base dirs are specified;
+        // 2) prefix is specified (i.e. non-empty)
+        // Otherwise compiler produces paths relative to source maps location.
+        // We don't have UI to configure base dirs, but we have UI to configure prefix.
+        // If prefix is not specified (empty) in UI, we want to produce paths relative to source maps location
+        val sourceRoots = if (k2JsArguments.sourceMapPrefix.isNullOrBlank()) {
+            emptyList()
+        }
+        else {
+            representativeModule.contentRootsList.urls
+                    .map { URI.create(it) }
+                    .filter { it.scheme == "file" }
+                    .map { File(it.path) }
+        }
 
         val friendPaths = KotlinBuilderModuleScriptGenerator.getProductionModulesWhichInternalsAreVisible(representativeTarget).mapNotNull {
             val file = getOutputMetaFile(it, false)
@@ -725,9 +746,15 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                                 + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
                                 + " in " + filesToCompile.keySet().joinToString { it.presentableName })
 
-        val compilerRunner = JpsKotlinCompilerRunner()
-        compilerRunner.runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, environment, moduleFile)
-        moduleFile.delete()
+        try {
+            val compilerRunner = JpsKotlinCompilerRunner()
+            compilerRunner.runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, environment, moduleFile)
+        }
+        finally {
+            if (System.getProperty("kotlin.jps.delete.module.file.after.build") != "false") {
+                moduleFile.delete()
+            }
+        }
 
         return environment.outputItemsCollector
     }
@@ -778,7 +805,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 }
 
 private class JpsICReporter : ICReporter {
-    override fun report(message: ()->String) {
+    override fun report(message: () -> String) {
         if (KotlinBuilder.LOG.isDebugEnabled) {
             KotlinBuilder.LOG.debug(message())
         }

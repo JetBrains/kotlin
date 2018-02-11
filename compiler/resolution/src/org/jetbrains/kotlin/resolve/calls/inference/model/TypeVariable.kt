@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 
 
-class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debugName: String): TypeConstructor, NewTypeVariableConstructor {
+class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debugName: String) : TypeConstructor,
+    NewTypeVariableConstructor {
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
     override fun getSupertypes(): Collection<KotlinType> = emptyList()
     override fun isFinal(): Boolean = false
@@ -46,19 +47,20 @@ sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) {
 
     // member scope is used if we have receiver with type TypeVariable(T)
     // todo add to member scope methods from supertypes for type variable
-    val defaultType: SimpleType = KotlinTypeFactory.simpleType(
-            Annotations.EMPTY, freshTypeConstructor, arguments = emptyList(),
-            nullable = false, memberScope = builtIns.any.unsubstitutedMemberScope)
+    val defaultType: SimpleType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+        Annotations.EMPTY, freshTypeConstructor, arguments = emptyList(),
+        nullable = false, memberScope = builtIns.any.unsubstitutedMemberScope
+    )
 
     override fun toString() = freshTypeConstructor.toString()
 }
 
 class TypeVariableFromCallableDescriptor(
-        val originalTypeParameter: TypeParameterDescriptor
+    val originalTypeParameter: TypeParameterDescriptor
 ) : NewTypeVariable(originalTypeParameter.builtIns, originalTypeParameter.name.identifier)
 
 class TypeVariableForLambdaReturnType(
-        val lambdaArgument: LambdaKotlinCallArgument,
-        builtIns: KotlinBuiltIns,
-        name: String
+    val lambdaArgument: LambdaKotlinCallArgument,
+    builtIns: KotlinBuiltIns,
+    name: String
 ) : NewTypeVariable(builtIns, name)

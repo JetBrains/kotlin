@@ -22,5 +22,5 @@ import org.jetbrains.kotlin.types.KotlinType
 data class ImplicitSmartCasts private constructor(val receiverTypes: Map<ImplicitReceiver, KotlinType>) {
     operator fun plus(other: ImplicitSmartCasts) = ImplicitSmartCasts(receiverTypes + other.receiverTypes)
 
-    constructor(receiver: ImplicitReceiver, type: KotlinType): this(mapOf(receiver to type))
+    constructor(receiver: ImplicitReceiver, type: KotlinType) : this(mapOf(receiver to type))
 }

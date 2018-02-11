@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1124
+// EXPECTED_REACHABLE_NODES: 1251
 // DECLARES_VARIABLE: function=doResume name=k
 // PROPERTY_READ_COUNT: name=local$o count=1
 // PROPERTY_WRITE_COUNT: name=local$o count=2

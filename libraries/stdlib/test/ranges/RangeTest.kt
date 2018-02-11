@@ -1,7 +1,6 @@
 package test.ranges
 
 import kotlin.test.*
-import org.junit.Test
 
 public class RangeTest {
     @Test fun intRange() {

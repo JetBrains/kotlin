@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.transformer.CompositeMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class FixStackWithLabelNormalizationMethodTransformer : CompositeMethodTransformer(
-        LabelNormalizationMethodTransformer(),
-        FixStackMethodTransformer()
+    LabelNormalizationMethodTransformer(),
+    FixStackMethodTransformer()
 )

@@ -12,7 +12,7 @@ fun <T> f2() where T : C2, T : <!ONLY_ONE_CLASS_BOUND_ALLOWED!>C3<!> {}
 fun <T> f3() where T : C3, T : <!ONLY_ONE_CLASS_BOUND_ALLOWED!>C2<!> {}
 
 enum class E1
-class A5<<!CONFLICTING_UPPER_BOUNDS!>T<!>> where T : C1, T : <!ONLY_ONE_CLASS_BOUND_ALLOWED, FINAL_UPPER_BOUND!>E1<!>
+class A5<T> where T : C1, T : <!ONLY_ONE_CLASS_BOUND_ALLOWED!>E1<!>
 
 object O1
 class A6<<!CONFLICTING_UPPER_BOUNDS!>T<!>> where T : <!FINAL_UPPER_BOUND!>O1<!>, T : <!ONLY_ONE_CLASS_BOUND_ALLOWED!>C2<!>

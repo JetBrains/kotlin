@@ -29,14 +29,17 @@ import org.jetbrains.kotlin.lexer.KtTokens
  */
 class KDocLinkParser : PsiParser {
     companion object {
-        @JvmStatic fun parseMarkdownLink(root: IElementType, chameleon: ASTNode): ASTNode {
+        @JvmStatic
+        fun parseMarkdownLink(root: IElementType, chameleon: ASTNode): ASTNode {
             val parentElement = chameleon.treeParent.psi
             val project = parentElement.project
-            val builder = PsiBuilderFactory.getInstance().createBuilder(project,
-                                                                        chameleon,
-                                                                        KotlinLexer(),
-                                                                        root.language,
-                                                                        chameleon.text)
+            val builder = PsiBuilderFactory.getInstance().createBuilder(
+                project,
+                chameleon,
+                KotlinLexer(),
+                root.language,
+                chameleon.text
+            )
             val parser = KDocLinkParser()
 
             return parser.parse(root, builder).firstChildNode
@@ -60,8 +63,7 @@ class KDocLinkParser : PsiParser {
             if (builder.tokenType == KtTokens.RBRACKET) {
                 builder.advanceLexer()
             }
-        }
-        else {
+        } else {
             if (!builder.eof()) {
                 builder.error("Expression expected")
                 while (!builder.eof()) {

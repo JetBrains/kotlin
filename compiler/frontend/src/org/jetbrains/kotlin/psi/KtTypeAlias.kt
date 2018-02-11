@@ -30,22 +30,22 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
     constructor(stub: KotlinTypeAliasStub) : super(stub, KtStubElementTypes.TYPEALIAS)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
-            visitor.visitTypeAlias(this, data)
+        visitor.visitTypeAlias(this, data)
 
     fun isTopLevel(): Boolean =
-            stub?.isTopLevel() ?: parent is KtFile
+        stub?.isTopLevel() ?: parent is KtFile
 
     @IfNotParsed
     fun getTypeAliasKeyword(): PsiElement? =
-            findChildByType(KtTokens.TYPE_ALIAS_KEYWORD)
+        findChildByType(KtTokens.TYPE_ALIAS_KEYWORD)
 
     @IfNotParsed
     fun getTypeReference(): KtTypeReference? {
         return if (stub != null) {
-            val typeReferences = getStubOrPsiChildrenAsList<KtTypeReference, KotlinPlaceHolderStub<KtTypeReference>>(KtStubElementTypes.TYPE_REFERENCE)
+            val typeReferences =
+                getStubOrPsiChildrenAsList<KtTypeReference, KotlinPlaceHolderStub<KtTypeReference>>(KtStubElementTypes.TYPE_REFERENCE)
             typeReferences[0]
-        }
-        else {
+        } else {
             findChildByType(KtNodeTypes.TYPE_REFERENCE)
         }
     }

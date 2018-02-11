@@ -1,2 +1,2 @@
-error: cannot open output file '$TESTDATA_DIR$/min/simple.js': is a directory
+error: cannot open output file '$TESTDATA_DIR$/min/simple.js': it is a directory
 COMPILATION_ERROR

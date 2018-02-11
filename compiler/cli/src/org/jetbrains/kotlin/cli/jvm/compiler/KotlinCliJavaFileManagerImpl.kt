@@ -80,7 +80,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     private val binaryCache: MutableMap<ClassId, JavaClass?> = THashMap()
     private val signatureParsingComponent =
-            BinaryClassSignatureParser(ClassifierResolutionContext { findClass(it, allScope) })
+            BinaryClassSignatureParser()
 
     override fun findClass(classId: ClassId, searchScope: GlobalSearchScope): JavaClass? {
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null

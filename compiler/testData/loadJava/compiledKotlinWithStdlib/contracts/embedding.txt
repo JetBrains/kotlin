@@ -1,0 +1,13 @@
+package test
+
+public fun embedInstancePredicate(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> x is String && y is String
+
+public fun embedNullCheckPredicate(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Int?): kotlin.Unit
+    Returns(WILDCARD) -> y != null && x is String
+
+public fun embedVariable(/*0*/ x: kotlin.Any, /*1*/ b: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> b && x is String
+
+public fun kotlin.Boolean.embedReceiverReference(/*0*/ b: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> (!<this>) && b

@@ -43,13 +43,14 @@ class StubProducerExtension(
             bindingTrace: BindingTrace,
             files: Collection<KtFile>
     ): AnalysisResult? {
-        val generationState = GenerationState(
+        val generationState = GenerationState.Builder(
                 project, 
                 StubClassBuilderFactory(),
                 module, 
                 bindingTrace.bindingContext, 
                 files.toList(),
-                CompilerConfiguration.EMPTY)
+                CompilerConfiguration.EMPTY
+        ).build()
 
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 

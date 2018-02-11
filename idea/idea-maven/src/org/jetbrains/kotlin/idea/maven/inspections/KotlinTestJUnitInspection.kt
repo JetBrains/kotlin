@@ -45,14 +45,15 @@ class KotlinTestJUnitInspection : DomElementsInspection<MavenDomProjectModel>(Ma
         }
 
         val kotlinTestDependencies = domFileElement.rootElement.dependencies
-                .dependencies.filter { it.groupId.rawText == KotlinMavenConfigurator.GROUP_ID && it.artifactId.rawText == KotlinJavaMavenConfigurator.TEST_LIB_ID }
+            .dependencies.filter { it.groupId.rawText == KotlinMavenConfigurator.GROUP_ID && it.artifactId.rawText == KotlinJavaMavenConfigurator.TEST_LIB_ID }
 
         kotlinTestDependencies.forEach {
-            holder.createProblem(it.artifactId,
-                                 HighlightSeverity.WEAK_WARNING,
-                                 "kotlin-test-junit is better with junit",
-                                 ReplaceToKotlinTest(it)
-                                 )
+            holder.createProblem(
+                it.artifactId,
+                HighlightSeverity.WEAK_WARNING,
+                "kotlin-test-junit is better with junit",
+                ReplaceToKotlinTest(it)
+            )
         }
     }
 

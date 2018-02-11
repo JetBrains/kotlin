@@ -1,0 +1,17 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        mavenLocal()
+        maven { url 'https://jitpack.io' }
+    }
+}

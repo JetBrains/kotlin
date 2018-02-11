@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
 
 abstract class IrWhenBase(startOffset: Int, endOffset: Int, type: KotlinType, override val origin: IrStatementOrigin? = null) :
-        IrExpressionBase(startOffset, endOffset, type), IrWhen {
+    IrExpressionBase(startOffset, endOffset, type), IrWhen {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitWhen(this, data)
+        visitor.visitWhen(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         branches.forEach { it.accept(visitor, data) }
@@ -41,14 +41,14 @@ abstract class IrWhenBase(startOffset: Int, endOffset: Int, type: KotlinType, ov
 }
 
 class IrWhenImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val origin: IrStatementOrigin? = null
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    override val origin: IrStatementOrigin? = null
 ) : IrWhenBase(startOffset, endOffset, type) {
     constructor(
-            startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?,
-            branches: List<IrBranch>
+        startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?,
+        branches: List<IrBranch>
     ) : this(startOffset, endOffset, type, origin) {
         this.branches.addAll(branches)
     }
@@ -57,7 +57,7 @@ class IrWhenImpl(
 }
 
 open class IrBranchImpl(startOffset: Int, endOffset: Int, override var condition: IrExpression, override var result: IrExpression) :
-        IrElementBase(startOffset, endOffset), IrBranch {
+    IrElementBase(startOffset, endOffset), IrBranch {
     constructor(condition: IrExpression, result: IrExpression) : this(condition.startOffset, condition.endOffset, condition, result)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
@@ -72,14 +72,14 @@ open class IrBranchImpl(startOffset: Int, endOffset: Int, override var condition
 
     companion object {
         fun elseBranch(result: IrExpression) =
-                IrElseBranchImpl(
-                        IrConstImpl.boolean(result.startOffset, result.endOffset, result.type.builtIns.booleanType, true),
-                        result
-                )
+            IrElseBranchImpl(
+                IrConstImpl.boolean(result.startOffset, result.endOffset, result.type.builtIns.booleanType, true),
+                result
+            )
     }
 }
 
 class IrElseBranchImpl(startOffset: Int, endOffset: Int, condition: IrExpression, result: IrExpression) :
-        IrBranchImpl(startOffset, endOffset, condition, result), IrElseBranch {
+    IrBranchImpl(startOffset, endOffset, condition, result), IrElseBranch {
     constructor(condition: IrExpression, result: IrExpression) : this(condition.startOffset, condition.endOffset, condition, result)
 }

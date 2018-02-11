@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 interface Condition {
-    fun asExpression(): KtExpression
-    fun asNegatedExpression(): KtExpression
+    fun asExpression(reformat: Boolean): KtExpression
+    fun asNegatedExpression(reformat: Boolean): KtExpression
     fun toAtomicConditions(): List<AtomicCondition>
 
     companion object {
@@ -62,28 +62,28 @@ class AtomicCondition(val expression: KtExpression, private val isNegated: Boole
         assert(expression.isPhysical)
     }
 
-    override fun asExpression() = if (isNegated) expression.negate() else expression
-    override fun asNegatedExpression() = if (isNegated) expression else expression.negate()
+    override fun asExpression(reformat: Boolean) = if (isNegated) expression.negate(reformat) else expression
+    override fun asNegatedExpression(reformat: Boolean) = if (isNegated) expression else expression.negate(reformat)
     override fun toAtomicConditions() = listOf(this)
 
     fun negate() = AtomicCondition(expression, !isNegated)
 }
 
 class CompositeCondition private constructor(val conditions: List<AtomicCondition>) : Condition {
-    override fun asExpression(): KtExpression {
+    override fun asExpression(reformat: Boolean): KtExpression {
         val factory = KtPsiFactory(conditions.first().expression)
-        return factory.buildExpression {
+        return factory.buildExpression(reformat = reformat) {
             for ((index, condition) in conditions.withIndex()) {
                 if (index > 0) {
                     appendFixedText("&&")
                 }
-                appendExpression(condition.asExpression())
+                appendExpression(condition.asExpression(reformat))
             }
         }
     }
 
-    override fun asNegatedExpression(): KtExpression {
-        return asExpression().negate()
+    override fun asNegatedExpression(reformat: Boolean): KtExpression {
+        return asExpression(reformat).negate()
     }
 
     override fun toAtomicConditions() = conditions

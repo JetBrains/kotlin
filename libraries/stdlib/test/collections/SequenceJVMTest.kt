@@ -1,8 +1,7 @@
 @file:kotlin.jvm.JvmVersion
 package test.collections
 
-import org.junit.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 class SequenceJVMTest {
 

@@ -149,9 +149,9 @@ fun <D : CallableMemberDescriptor> D.getDirectlyOverriddenDeclarations(): Collec
     return OverridingUtil.filterOutOverridden(result)
 }
 
-fun <D : CallableMemberDescriptor> D.getDeepestSuperDeclarations(): Collection<D> {
+fun <D : CallableMemberDescriptor> D.getDeepestSuperDeclarations(withThis: Boolean = true): Collection<D> {
     val overriddenDeclarations = DescriptorUtils.getAllOverriddenDeclarations(this)
-    if (overriddenDeclarations.isEmpty()) {
+    if (overriddenDeclarations.isEmpty() && withThis) {
         return setOf(this)
     }
 

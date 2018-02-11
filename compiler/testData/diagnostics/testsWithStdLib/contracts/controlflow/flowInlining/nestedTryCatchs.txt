@@ -1,0 +1,8 @@
+package
+
+public fun innerComputation(): kotlin.Int
+public fun innerTryCatchInitializes(): kotlin.Unit
+public inline fun </*0*/ T> myRun(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun outerComputation(): kotlin.Int

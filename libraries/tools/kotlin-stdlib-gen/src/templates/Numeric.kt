@@ -1,14 +1,37 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package templates
 
-import templates.Family.*
+object Numeric : TemplateGroupBase() {
 
-fun numeric(): List<GenericFunction> {
-    val templates = arrayListOf<GenericFunction>()
+    init {
+        defaultBuilder {
+            sequenceClassification(SequenceClass.terminal)
+        }
+    }
 
-    templates add f("sum()") {
-        exclude(Strings)
-        buildFamilies.default!!.forEach { family -> onlyPrimitives(family, numericPrimitives) }
-        doc { f -> "Returns the sum of all elements in the ${f.collection}." }
+    // TODO: use just numericPrimitives
+    private val numericPrimitivesDefaultOrder = PrimitiveType.defaultPrimitives intersect PrimitiveType.numericPrimitives
+
+    val f_sum = fn("sum()") {
+        Family.defaultFamilies.forEach { family -> include(family, numericPrimitivesDefaultOrder) }
+    } builder {
+
+        doc { "Returns the sum of all elements in the ${f.collection}." }
         returns("SUM")
         platformName("sumOf<T>")
         body {
@@ -22,10 +45,10 @@ fun numeric(): List<GenericFunction> {
         }
     }
 
-    templates add f("average()") {
-        exclude(Strings)
-        buildFamilies.default!!.forEach { family -> onlyPrimitives(family, numericPrimitives) }
-        doc { f -> "Returns an average value of elements in the ${f.collection}."}
+    val f_average = fn("average()") {
+        Family.defaultFamilies.forEach { family -> include(family, numericPrimitivesDefaultOrder) }
+    } builder {
+        doc { "Returns an average value of elements in the ${f.collection}."}
         returns("Double")
         platformName("averageOf<T>")
         body {
@@ -41,7 +64,4 @@ fun numeric(): List<GenericFunction> {
         }
     }
 
-    templates.forEach { it.sequenceClassification(SequenceClass.terminal) }
-
-    return templates
 }

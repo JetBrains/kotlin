@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.config;
 
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.load.java.JavaClassesTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
@@ -57,6 +58,8 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("disable not-null call receiver assertions");
     public static final CompilerConfigurationKey<Boolean> DISABLE_PARAM_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null parameter assertions");
+    public static final CompilerConfigurationKey<JVMConstructorCallNormalizationMode> CONSTRUCTOR_CALL_NORMALIZATION_MODE =
+            CompilerConfigurationKey.create("constructor call normalization mode");
     public static final CompilerConfigurationKey<Boolean> NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL =
             CompilerConfigurationKey.create("do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type");
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =
@@ -102,6 +105,9 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<IncrementalCompilationComponents> INCREMENTAL_COMPILATION_COMPONENTS =
             CompilerConfigurationKey.create("incremental cache provider");
+
+    public static final CompilerConfigurationKey<JavaClassesTracker> JAVA_CLASSES_TRACKER =
+            CompilerConfigurationKey.create("Java classes tracker");
 
     public static final CompilerConfigurationKey<File> MODULE_XML_FILE =
             CompilerConfigurationKey.create("path to module.xml");

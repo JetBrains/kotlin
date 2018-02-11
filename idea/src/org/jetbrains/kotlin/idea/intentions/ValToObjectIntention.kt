@@ -41,14 +41,13 @@ class ValToObjectIntention : SelfTargetingIntention<KtProperty>(KtProperty::clas
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
-        val modifier = element.visibilityModifier()
         val name = element.name ?: return
         val objectLiteral = element.initializer as? KtObjectLiteralExpression ?: return
         val declaration = objectLiteral.objectDeclaration
         val superTypeList = declaration.getSuperTypeList()
         val body = declaration.getBody() ?: return
 
-        val prefix = modifier?.text?.plus(" ") ?: ""
+        val prefix = element.modifierList?.text?.plus(" ") ?: ""
         val superTypesText = superTypeList?.text?.plus(" ") ?: ""
 
         val replacementText = "${prefix}object $name: $superTypesText${body.text}"

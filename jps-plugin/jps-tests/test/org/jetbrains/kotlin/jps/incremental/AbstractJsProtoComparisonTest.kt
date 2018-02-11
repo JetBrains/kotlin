@@ -56,7 +56,7 @@ abstract class AbstractJsProtoComparisonTest : AbstractProtoComparisonTest<Proto
             outputFile = File(outputDir, "out.js").canonicalPath
             metaInfo = true
             main = K2JsArgumentConstants.NO_CALL
-            freeArgs.addAll(ktFiles)
+            freeArgs = ktFiles
         }
 
         val env = createTestingCompilerEnvironment(messageCollector, outputItemsCollector, services)

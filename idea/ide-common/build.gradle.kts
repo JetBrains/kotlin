@@ -7,7 +7,8 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":js:js.frontend"))
     compile(project(":js:js.serializer"))
-    compile(ideaSdkCoreDeps("annotations", "guava", "intellij-core"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("annotations", "guava", rootProject = rootProject) }
 }
 
 sourceSets {

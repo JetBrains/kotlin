@@ -57,11 +57,12 @@ class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProj
                 createFixes(project, plugin.version, stdlibVersion + version)
             } ?: emptyList()
 
-            holder.createProblem(plugin.version,
-                                 HighlightSeverity.WARNING,
-                                 "Plugin version (${plugin.version}) is not the same as library version (${stdlibVersion.joinToString(",", "", "")})",
-                                 *fixes.toTypedArray()
-                                 )
+            holder.createProblem(
+                plugin.version,
+                HighlightSeverity.WARNING,
+                "Plugin version (${plugin.version}) is not the same as library version (${stdlibVersion.joinToString(",", "", "")})",
+                *fixes.toTypedArray()
+            )
         }
 
         pomFile.findDependencies(MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID, null))
@@ -71,10 +72,12 @@ class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProj
                     createFixes(project, dependency.version, listOf(version, pluginVersion))
                 } ?: emptyList()
 
-                holder.createProblem(dependency.version,
-                                     HighlightSeverity.WARNING,
-                                     "Plugin version ($pluginVersion) is not the same as library version (${dependency.version})",
-                                     *fixes.toTypedArray())
+                holder.createProblem(
+                    dependency.version,
+                    HighlightSeverity.WARNING,
+                    "Plugin version ($pluginVersion) is not the same as library version (${dependency.version})",
+                    *fixes.toTypedArray()
+                )
             }
     }
 
@@ -87,11 +90,14 @@ class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProj
         val properties = project.properties.entries.filter { it.value == bestVersion }.map { "\${${it.key}}" }
 
         return properties.map { SetVersionQuickFix(versionElement, it, bestVersion) } +
-            SetVersionQuickFix(versionElement, bestVersion, null)
+                SetVersionQuickFix(versionElement, bestVersion, null)
     }
 
-    private class SetVersionQuickFix(val versionElement: GenericDomValue<*>, val newVersion: String, val versionResolved: String?) : LocalQuickFix {
-        override fun getName() = if (versionResolved == null) "Change version to $newVersion" else "Change version to $newVersion ($versionResolved)"
+    private class SetVersionQuickFix(val versionElement: GenericDomValue<*>, val newVersion: String, val versionResolved: String?) :
+        LocalQuickFix {
+        override fun getName() =
+            if (versionResolved == null) "Change version to $newVersion" else "Change version to $newVersion ($versionResolved)"
+
         override fun getFamilyName() = "Change version"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

@@ -1,0 +1,93 @@
+== myRun ==
+inline fun <T> myRun(block: () -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+                                                                                   <v0>: {<: () -> T}                      NEW: magic[FAKE_INITIALIZER](block: () -> T) -> <v0>
+{ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                               <v1>: {<: ContractBuilder.() -> Unit}   NEW: r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                      <v2>: *                                 NEW: call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+block                                                                              <v3>: {<: () -> T}                      NEW: r(block) -> <v3>
+block()                                                                            <v4>: {<: T}                            NEW: call(block(), invoke|<v3>) -> <v4>
+return block()                                                                     !<v5>: *
+{ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() }   !<v5>: *                                COPY
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+                                                   <v0>: {<: ContractBuilder}   NEW: magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+block                                              <v1>: {<: Function<T>}       NEW: r(block) -> <v1>
+EXACTLY_ONCE                                       <v2>: {<: InvocationKind}    NEW: r(EXACTLY_ONCE) -> <v2>
+InvocationKind.EXACTLY_ONCE                        <v2>: {<: InvocationKind}    COPY
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      NEW: call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      COPY
+=====================
+== someComputation ==
+fun someComputation(): Int = 42
+---------------------
+42   <v0>: Int   NEW: r(42) -> <v0>
+=====================
+== report ==
+fun report(x: Int) = Unit
+---------------------
+       <v0>: Int    NEW: magic[FAKE_INITIALIZER](x: Int) -> <v0>
+Unit   <v1>: Unit   NEW: r(Unit) -> <v1>
+=====================
+== innerTryCatchFinally ==
+fun innerTryCatchFinally() {
+    val x: Int
+
+    myRun {
+        try {
+            x = someComputation()
+            report(x)
+        } catch (e: java.lang.Exception) {
+            x = 42
+            report(x)
+        } finally {
+            x = 0
+        }
+    }
+
+    x.inc()
+}
+---------------------
+{ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }                                <v0>: {<: () -> Unit}   NEW: r({ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }) -> <v0>
+myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }                          <v1>: *                 NEW: call(myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }, myRun|<v0>) -> <v1>
+x                                                                                                                                                <v2>: Int               NEW: r(x) -> <v2>
+inc()                                                                                                                                            <v3>: *                 NEW: call(inc(), inc|<v2>) -> <v3>
+x.inc()                                                                                                                                          <v3>: *                 COPY
+{ val x: Int myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } } x.inc() }   <v3>: *                 COPY
+=====================
+== inlined anonymous_1 ==
+{
+        try {
+            x = someComputation()
+            report(x)
+        } catch (e: java.lang.Exception) {
+            x = 42
+            report(x)
+        } finally {
+            x = 0
+        }
+    }
+---------------------
+                                                                                                                <v3>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v3>
+someComputation()                                                                                               <v0>: Int              NEW: call(someComputation(), someComputation) -> <v0>
+x                                                                                                               <v1>: Int              NEW: r(x) -> <v1>
+report(x)                                                                                                       <v2>: *                NEW: call(report(x), report|<v1>) -> <v2>
+{ x = someComputation() report(x) }                                                                             <v2>: *                COPY
+42                                                                                                              <v4>: Int              NEW: r(42) -> <v4>
+x                                                                                                               <v5>: Int              NEW: r(x) -> <v5>
+report(x)                                                                                                       <v6>: *                NEW: call(report(x), report|<v5>) -> <v6>
+{ x = 42 report(x) }                                                                                            <v6>: *                COPY
+0                                                                                                               <v7>: Int              NEW: r(0) -> <v7>
+x = 0                                                                                                           !<v8>: *
+{ x = 0 }                                                                                                       !<v8>: *               COPY
+try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 }   <v9>: *                NEW: merge(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 }|<v2>, <v6>) -> <v9>
+try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 }   <v9>: *                COPY
+=====================

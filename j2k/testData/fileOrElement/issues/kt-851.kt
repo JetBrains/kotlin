@@ -3,6 +3,6 @@ internal class Test {
 
     fun test() {
         val b = 10
-        putInt(b.toInt())
+        putInt(b)
     }
 }

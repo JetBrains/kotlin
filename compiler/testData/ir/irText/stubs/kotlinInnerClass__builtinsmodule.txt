@@ -1,8 +1,8 @@
-MODULE_FRAGMENT <built-ins module>
-  EXTERNAL_PACKAGE_FRAGMENT kotlin
-    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS Any
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor Any()
-      FUN IR_EXTERNAL_DECLARATION_STUB public open fun hashCode(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open fun toString(): kotlin.String
-      FUN IR_EXTERNAL_DECLARATION_STUB public open operator fun equals(other: kotlin.Any?): kotlin.Boolean
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
+MODULE_FRAGMENT name:<built-ins module>
+  EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions;
@@ -32,6 +21,42 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionTest {
+    @TestMetadata("addJvmStaticToCompanionObjectFun/addJvmStaticToCompanionObjectFun.test")
+    public void testAddJvmStaticToCompanionObjectFun_AddJvmStaticToCompanionObjectFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToCompanionObjectFun/addJvmStaticToCompanionObjectFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("addJvmStaticToCompanionObjectProperty/addJvmStaticToCompanionObjectProperty.test")
+    public void testAddJvmStaticToCompanionObjectProperty_AddJvmStaticToCompanionObjectProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToCompanionObjectProperty/addJvmStaticToCompanionObjectProperty.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("addJvmStaticToNamedCompanionObjectFun/addJvmStaticToNamedCompanionObjectFun.test")
+    public void testAddJvmStaticToNamedCompanionObjectFun_AddJvmStaticToNamedCompanionObjectFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToNamedCompanionObjectFun/addJvmStaticToNamedCompanionObjectFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("addJvmStaticToNamedCompanionObjectProperty/addJvmStaticToNamedCompanionObjectProperty.test")
+    public void testAddJvmStaticToNamedCompanionObjectProperty_AddJvmStaticToNamedCompanionObjectProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToNamedCompanionObjectProperty/addJvmStaticToNamedCompanionObjectProperty.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("addJvmStaticToObjectFun/addJvmStaticToObjectFun.test")
+    public void testAddJvmStaticToObjectFun_AddJvmStaticToObjectFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToObjectFun/addJvmStaticToObjectFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("addJvmStaticToObjectProperty/addJvmStaticToObjectProperty.test")
+    public void testAddJvmStaticToObjectProperty_AddJvmStaticToObjectProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToObjectProperty/addJvmStaticToObjectProperty.test");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInMultiFileIntentions() throws Exception {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileIntentions"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
@@ -96,24 +121,6 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
         doTest(fileName);
     }
 
-    @TestMetadata("moveFileToPackageMatchingDirectory/moveToDefaultDirectory/moveToDefaultDirectory.test")
-    public void testMoveFileToPackageMatchingDirectory_moveToDefaultDirectory_MoveToDefaultDirectory() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveFileToPackageMatchingDirectory/moveToDefaultDirectory/moveToDefaultDirectory.test");
-        doTest(fileName);
-    }
-
-    @TestMetadata("moveFileToPackageMatchingDirectory/moveToNonDefaultDirectory/moveToNonDefaultDirectory.test")
-    public void testMoveFileToPackageMatchingDirectory_moveToNonDefaultDirectory_MoveToNonDefaultDirectory() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveFileToPackageMatchingDirectory/moveToNonDefaultDirectory/moveToNonDefaultDirectory.test");
-        doTest(fileName);
-    }
-
-    @TestMetadata("moveFileToPackageMatchingDirectory/packageMatchesDirectory/packageMatchesDirectory.test")
-    public void testMoveFileToPackageMatchingDirectory_packageMatchesDirectory_PackageMatchesDirectory() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveFileToPackageMatchingDirectory/packageMatchesDirectory/packageMatchesDirectory.test");
-        doTest(fileName);
-    }
-
     @TestMetadata("moveOutOfCompanion/moveClass/moveClass.test")
     public void testMoveOutOfCompanion_moveClass_MoveClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveOutOfCompanion/moveClass/moveClass.test");
@@ -147,36 +154,6 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
     @TestMetadata("objectLiteralToLambda/objectLiteralToLambda.test")
     public void testObjectLiteralToLambda_ObjectLiteralToLambda() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/objectLiteralToLambda/objectLiteralToLambda.test");
-        doTest(fileName);
-    }
-
-    @TestMetadata("reconcilePackageWithDirectory/addQuotation/addQuotation.test")
-    public void testReconcilePackageWithDirectory_addQuotation_AddQuotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/reconcilePackageWithDirectory/addQuotation/addQuotation.test");
-        doTest(fileName);
-    }
-
-    @TestMetadata("reconcilePackageWithDirectory/changeToDefaultPackage/changeToDefaultPackage.test")
-    public void testReconcilePackageWithDirectory_changeToDefaultPackage_ChangeToDefaultPackage() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/reconcilePackageWithDirectory/changeToDefaultPackage/changeToDefaultPackage.test");
-        doTest(fileName);
-    }
-
-    @TestMetadata("reconcilePackageWithDirectory/changeToNonDefaultPackage/changeToNonDefaultPackage.test")
-    public void testReconcilePackageWithDirectory_changeToNonDefaultPackage_ChangeToNonDefaultPackage() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/reconcilePackageWithDirectory/changeToNonDefaultPackage/changeToNonDefaultPackage.test");
-        doTest(fileName);
-    }
-
-    @TestMetadata("reconcilePackageWithDirectory/innerClass/innerClass.test")
-    public void testReconcilePackageWithDirectory_innerClass_InnerClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/reconcilePackageWithDirectory/innerClass/innerClass.test");
-        doTest(fileName);
-    }
-
-    @TestMetadata("reconcilePackageWithDirectory/packageMatchesDirectory/packageMatchesDirectory.test")
-    public void testReconcilePackageWithDirectory_packageMatchesDirectory_PackageMatchesDirectory() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/reconcilePackageWithDirectory/packageMatchesDirectory/packageMatchesDirectory.test");
         doTest(fileName);
     }
 }

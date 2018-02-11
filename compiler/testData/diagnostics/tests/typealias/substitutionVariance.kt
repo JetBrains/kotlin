@@ -1,3 +1,5 @@
+// NI_EXPECTED_FILE
+
 class In<in T>
 class Out<out T>
 class Inv<T>

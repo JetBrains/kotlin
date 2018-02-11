@@ -32,7 +32,7 @@ class IrExpressionBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(sta
     override lateinit var expression: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitExpressionBody(this, data)
+        visitor.visitExpressionBody(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         expression.accept(visitor, data)

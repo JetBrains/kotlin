@@ -4,7 +4,6 @@ package test.exceptions
 import kotlin.test.*
 import test.collections.assertArrayNotSameButEquals
 
-import org.junit.Test
 import java.io.PrintWriter
 import java.io.*
 import java.nio.charset.Charset

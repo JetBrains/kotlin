@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -28,16 +27,15 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import java.lang.IllegalArgumentException
@@ -62,12 +60,17 @@ fun KtCallExpression.isMethodCall(fqMethodName: String): Boolean {
     return resolvedCall.resultingDescriptor.fqNameUnsafe.asString() == fqMethodName
 }
 
-fun isAutoCreatedItUsage(expression: KtNameReferenceExpression): Boolean {
-    if (expression.getReferencedName() != "it") return false
+fun isAutoCreatedItUsage(expression: KtNameReferenceExpression) = resolveToAutoCreatedItDescriptor(expression) != null
+
+fun resolveToAutoCreatedItDescriptor(expression: KtNameReferenceExpression): ValueParameterDescriptor? {
+    if (expression.getReferencedName() != "it") return null
     val context = expression.analyze(BodyResolveMode.PARTIAL)
-    val target = expression.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return false
-    return context[BindingContext.AUTO_CREATED_IT, target]!!
+    val target = expression.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor ?: return null
+    return if (context[BindingContext.AUTO_CREATED_IT, target] == true) target else null
 }
+
+fun getLambdaByImplicitItReference(expression: KtNameReferenceExpression) =
+        resolveToAutoCreatedItDescriptor(expression)?.containingDeclaration?.source?.getPsi() as? KtFunctionLiteral
 
 // returns assignment which replaces initializer
 fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression {
@@ -115,10 +118,10 @@ fun KtQualifiedExpression.isReceiverExpressionWithValue(): Boolean {
     return analyze().getType(receiver) != null
 }
 
-fun KtExpression.negate(): KtExpression {
-    val specialNegation = specialNegation()
+fun KtExpression.negate(reformat: Boolean = true): KtExpression {
+    val specialNegation = specialNegation(reformat)
     if (specialNegation != null) return specialNegation
-    return KtPsiFactory(this).createExpressionByPattern("!$0", this)
+    return KtPsiFactory(this).createExpressionByPattern("!$0", this, reformat = reformat)
 }
 
 fun KtExpression.resultingWhens(): List<KtWhenExpression> = when (this) {
@@ -139,7 +142,7 @@ fun KtExpression?.hasResultingIfWithoutElse(): Boolean = when (this) {
     else -> false
 }
 
-private fun KtExpression.specialNegation(): KtExpression? {
+private fun KtExpression.specialNegation(reformat: Boolean): KtExpression? {
     val factory = KtPsiFactory(this)
     when (this) {
         is KtPrefixExpression -> {
@@ -160,14 +163,18 @@ private fun KtExpression.specialNegation(): KtExpression? {
             if (operator !in NEGATABLE_OPERATORS) return null
             val left = left ?: return null
             val right = right ?: return null
-            return factory.createExpressionByPattern("$0 $1 $2", left, getNegatedOperatorText(operator), right)
+            return factory.createExpressionByPattern(
+                    "$0 $1 $2", left, getNegatedOperatorText(operator), right,
+                    reformat = reformat
+            )
         }
 
         is KtIsExpression -> {
             return factory.createExpressionByPattern("$0 $1 $2",
                                                      leftHandSide,
                                                      if (isNegated) "is" else "!is",
-                                                     typeReference ?: return null)
+                                                     typeReference ?: return null,
+                                                     reformat = reformat)
         }
 
         is KtConstantExpression -> {

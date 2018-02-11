@@ -57,9 +57,21 @@ class ReachabilityTracker(
             analysisResult.nodeMap[x] == null && x !in analysisResult.astNodesToEliminate
 
     override fun visitNameRef(nameRef: JsNameRef) {
-        if (nameRef in analysisResult.astNodesToSkip) return
+        if (visitNameLikeNode(nameRef)) {
+            super.visitNameRef(nameRef)
+        }
+    }
 
-        val node = context.extractNode(nameRef)
+    override fun visitArrayAccess(x: JsArrayAccess) {
+        if (visitNameLikeNode(x)) {
+            super.visitArrayAccess(x)
+        }
+    }
+
+    private fun visitNameLikeNode(x: JsExpression): Boolean {
+        if (x in analysisResult.astNodesToSkip) return false
+
+        val node = context.extractNode(x)
         if (node != null) {
             if (!node.reachable) {
                 reportAndNest("reach: referenced name $node", currentNodeWithLocation) {
@@ -67,9 +79,10 @@ class ReachabilityTracker(
                     currentNodeWithLocation?.let { node.usedByAstNodes += it }
                 }
             }
+            return false
         }
         else {
-            super.visitNameRef(nameRef)
+            return true
         }
     }
 
@@ -179,6 +192,7 @@ class ReachabilityTracker(
         }
         else if (!node.declarationReachable) {
             node.declarationReachable = true
+            reachableNodesImpl += node
 
             node.original.qualifier?.parent?.let {
                 reportAndNest("reach-decl: parent $it", null) {
@@ -197,8 +211,8 @@ class ReachabilityTracker(
     override fun visitPrefixOperation(x: JsPrefixOperation) {
         if (x.operator == JsUnaryOperator.TYPEOF) {
             val arg = x.arg
-            if (arg is JsNameRef && arg.qualifier == null) {
-                context.extractNode(arg)?.let { reachDeclaration(it) }
+            context.extractNode(arg)?.let {
+                reachDeclaration(it)
                 return
             }
         }

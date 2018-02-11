@@ -41,27 +41,41 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
                 var resultWithoutCycles =
                         supertypeLoopChecker.findLoopsInSupertypesAndDisconnect(
                             this, supertypes.allSupertypes,
-                            { it.computeNeighbours() },
-                            { reportSupertypeLoopError(it) })
+                            { it.computeNeighbours(useCompanions = false) },
+                            { reportSupertypeLoopError(it) }
+                        )
 
                 if (resultWithoutCycles.isEmpty()) {
                     resultWithoutCycles = defaultSupertypeIfEmpty()?.let { listOf(it) }.orEmpty()
                 }
 
+                // We also check if there are a loop with additional edges going from owner of companion to
+                // the companion itself.
+                // Note that we use already disconnected types to not report two diagnostics on cyclic supertypes
+                supertypeLoopChecker.findLoopsInSupertypesAndDisconnect(
+                        this, resultWithoutCycles,
+                        { it.computeNeighbours(useCompanions = true) },
+                        { reportScopesLoopError(it) }
+                )
+
                 supertypes.supertypesWithoutCycles = (resultWithoutCycles as? List<KotlinType>) ?: resultWithoutCycles.toList()
             })
 
-    private fun TypeConstructor.computeNeighbours(): Collection<KotlinType> =
+    private fun TypeConstructor.computeNeighbours(useCompanions: Boolean): Collection<KotlinType> =
             (this as? AbstractTypeConstructor)?.let {
                 abstractClassifierDescriptor ->
                 abstractClassifierDescriptor.supertypes().allSupertypes +
-                abstractClassifierDescriptor.getAdditionalNeighboursInSupertypeGraph()
+                abstractClassifierDescriptor.getAdditionalNeighboursInSupertypeGraph(useCompanions)
             } ?: supertypes
 
     protected abstract fun computeSupertypes(): Collection<KotlinType>
     protected abstract val supertypeLoopChecker: SupertypeLoopChecker
     protected open fun reportSupertypeLoopError(type: KotlinType) {}
-    protected open fun getAdditionalNeighboursInSupertypeGraph(): Collection<KotlinType> = emptyList()
+
+    // TODO: overload in AbstractTypeParameterDescriptor?
+    protected open fun reportScopesLoopError(type: KotlinType) {}
+
+    protected open fun getAdditionalNeighboursInSupertypeGraph(useCompanions: Boolean): Collection<KotlinType> = emptyList()
     protected open fun defaultSupertypeIfEmpty(): KotlinType? = null
 
 }

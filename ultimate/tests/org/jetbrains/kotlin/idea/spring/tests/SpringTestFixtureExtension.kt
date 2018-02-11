@@ -18,41 +18,31 @@ package org.jetbrains.kotlin.idea.spring.tests
 
 import com.intellij.facet.impl.FacetUtil
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import com.intellij.spring.facet.SpringFacet
 import com.intellij.spring.facet.SpringFileSet
+import com.intellij.spring.settings.SpringGeneralSettings
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.TestFixtureExtension
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.tests.ULTIMATE_TEST_ROOT
-import java.util.*
+import java.io.File
 
 @Suppress("unused")
 class SpringTestFixtureExtension() : TestFixtureExtension {
     private var module: Module? = null
 
-    enum class SpringFramework(val version: String, vararg val artifactIds: String) {
-        FRAMEWORK_4_2_0(
-                "4.2.0.RELEASE",
-                "core", "beans", "context", "tx", "web"
-        )
-    }
-
-    val SPRING_LIBRARY_ROOT = "$ULTIMATE_TEST_ROOT/dependencies/spring"
-
     override fun setUp(module: Module) {
         this.module = module
-        val library = SpringFramework.FRAMEWORK_4_2_0
-        val libraryPath = "$SPRING_LIBRARY_ROOT/${library.version}/"
-        val jarNames = HashSet<String>(library.artifactIds.size)
-        for (id in library.artifactIds) {
-            jarNames.add("spring-$id-${library.version}.jar")
-        }
-        ConfigLibraryUtil.addLibrary(module, "spring" + library.version, libraryPath, jarNames.toTypedArray())
+
+        val springClasspath = System.getProperty("spring.classpath")
+                              ?: throw RuntimeException("Unable to get a valid classpath from 'spring.classpath' property, please set it accordingly");
+
+        ConfigLibraryUtil.addLibrary(module, "spring", null, springClasspath.split(File.pathSeparator).toTypedArray())
 
         FacetUtil.addFacet(module, SpringFacet.getSpringFacetType())
     }
@@ -77,7 +67,7 @@ class SpringTestFixtureExtension() : TestFixtureExtension {
                     facet.removeFileSets()
                     FacetUtil.deleteFacet(facet)
                 }
-                ConfigLibraryUtil.removeLibrary(module, "spring" + SpringFramework.FRAMEWORK_4_2_0.version)
+                ConfigLibraryUtil.removeLibrary(module, "spring")
             }
         }
         finally {
@@ -97,4 +87,9 @@ fun configureSpringFileSetByDirective(module: Module, directives: String, psiFil
     if (!InTextDirectivesUtils.isDirectiveDefined(directives, "// CONFIGURE_SPRING_FILE_SET")) return
     val fileSet = SpringFacet.getInstance(module)!!.addFileSet("default", "default")!!
     psiFiles.forEach { fileSet.addFile(it.virtualFile) }
+}
+
+fun forbidSpringFileSetAutoConfigureByDirective(project: Project, directives: String) {
+    if (!InTextDirectivesUtils.isDirectiveDefined(directives, "// FORBID_SPRING_FILE_SET_AUTOCONFIGURE")) return
+    SpringGeneralSettings.getInstance(project).isAllowAutoConfigurationMode = false
 }

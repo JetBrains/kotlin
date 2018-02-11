@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object OperatorModifierChecker {
     fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            languageVersionSettings: LanguageVersionSettings
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink,
+        languageVersionSettings: LanguageVersionSettings
     ) {
         val functionDescriptor = descriptor as? FunctionDescriptor ?: return
         if (!functionDescriptor.isOperator) return
@@ -64,7 +64,12 @@ object OperatorModifierChecker {
         diagnosticHolder.report(Errors.INAPPLICABLE_OPERATOR_MODIFIER.on(modifier, errorDescription))
     }
 
-    private fun checkSupportsFeature(feature: LanguageFeature, languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, modifier: PsiElement) {
+    private fun checkSupportsFeature(
+        feature: LanguageFeature,
+        languageVersionSettings: LanguageVersionSettings,
+        diagnosticHolder: DiagnosticSink,
+        modifier: PsiElement
+    ) {
         if (!languageVersionSettings.supportsFeature(feature)) {
             diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, feature to languageVersionSettings))
         }

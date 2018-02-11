@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
+import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
@@ -125,10 +126,13 @@ class SpecialDescriptorsFactory(
     private fun createObjectInstanceFieldDescriptor(objectDescriptor: ClassDescriptor): PropertyDescriptor {
         assert(objectDescriptor.kind == ClassKind.OBJECT) { "Should be an object: $objectDescriptor" }
 
+        val isNotMappedCompanion = objectDescriptor.isCompanionObject && !isMappedIntrinsicCompanionObject(objectDescriptor)
+        val name = if (isNotMappedCompanion) objectDescriptor.name else Name.identifier("INSTANCE")
+        val containingDeclaration = if (isNotMappedCompanion) objectDescriptor.containingDeclaration else objectDescriptor
         return PropertyDescriptorImpl.create(
-                objectDescriptor,
+                containingDeclaration,
                 Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, false,
-                Name.identifier("INSTANCE"),
+                name,
                 CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE, /* lateInit = */ false, /* isConst = */ false,
                 /* isExpect = */ false, /* isActual = */ false, /* isExternal = */ false, /* isDelegated = */ false
         ).initialize(objectDescriptor.defaultType)

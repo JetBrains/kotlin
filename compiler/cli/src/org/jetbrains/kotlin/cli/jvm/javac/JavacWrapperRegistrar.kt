@@ -20,7 +20,7 @@ import com.intellij.mock.MockProject
 import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -48,7 +48,7 @@ object JavacWrapperRegistrar {
             Class.forName(JAVAC_CONTEXT_CLASS)
         }
         catch (e: ClassNotFoundException) {
-            messageCollector.report(STRONG_WARNING, "'$JAVAC_CONTEXT_CLASS' class can't be found ('tools.jar' is not found)")
+            messageCollector.report(ERROR, "'$JAVAC_CONTEXT_CLASS' class can't be found ('tools.jar' is not found)")
             return false
         }
 

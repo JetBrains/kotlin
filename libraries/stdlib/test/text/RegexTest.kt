@@ -1,11 +1,22 @@
+@file:Suppress("NAMED_ARGUMENTS_NOT_ALLOWED") // for common tests
 package test.text
 
 import kotlin.text.*
 
 import kotlin.test.*
-import org.junit.Test
 
 class RegexTest {
+
+    @Test fun properties() {
+        val pattern = "\\s+$"
+        val regex1 = Regex(pattern, RegexOption.IGNORE_CASE)
+        assertEquals(pattern, regex1.pattern)
+        assertEquals(setOf(RegexOption.IGNORE_CASE), regex1.options)
+
+        val options2 = setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE)
+        val regex2 = Regex(pattern, options2)
+        assertEquals(options2, regex2.options)
+    }
 
     @Test fun matchResult() {
         val p = "\\d+".toRegex()

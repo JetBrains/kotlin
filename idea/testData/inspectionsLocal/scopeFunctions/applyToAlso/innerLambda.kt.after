@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+// FIX: Convert to 'also'
+
+val x = "".also {
+    "".also { s ->
+        s.length + it.length
+    }
+}

@@ -19,55 +19,47 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 
-object JsModuleChecker : SimpleDeclarationChecker {
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
-        checkSuperClass(bindingContext, diagnosticHolder, descriptor, declaration)
+object JsModuleChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        val trace = context.trace
+        checkSuperClass(declaration, descriptor, trace)
         if (AnnotationsUtils.getModuleName(descriptor) == null && !AnnotationsUtils.isNonModule(descriptor)) return
 
         if (descriptor is PropertyDescriptor && descriptor.isVar) {
-            diagnosticHolder.report(ErrorsJs.JS_MODULE_PROHIBITED_ON_VAR.on(declaration))
+            trace.report(ErrorsJs.JS_MODULE_PROHIBITED_ON_VAR.on(declaration))
         }
 
         if (!AnnotationsUtils.isNativeObject(descriptor)) {
-            diagnosticHolder.report(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE.on(declaration))
+            trace.report(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE.on(declaration))
         }
 
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            val isFileModuleOrNonModule = AnnotationsUtils.getFileModuleName(bindingContext, descriptor) != null ||
-                                          AnnotationsUtils.isFromNonModuleFile(bindingContext, descriptor)
+            val isFileModuleOrNonModule = AnnotationsUtils.getFileModuleName(trace.bindingContext, descriptor) != null ||
+                                          AnnotationsUtils.isFromNonModuleFile(trace.bindingContext, descriptor)
             if (isFileModuleOrNonModule) {
-                diagnosticHolder.report(ErrorsJs.NESTED_JS_MODULE_PROHIBITED.on(declaration))
+                trace.report(ErrorsJs.NESTED_JS_MODULE_PROHIBITED.on(declaration))
             }
         }
     }
 
-    private fun checkSuperClass(
-            bindingContext: BindingContext,
-            diagnosticHolder: DiagnosticSink,
-            descriptor: DeclarationDescriptor,
-            declaration: KtDeclaration
-    ) {
+    private fun checkSuperClass(declaration: KtDeclaration, descriptor: DeclarationDescriptor, trace: BindingTrace) {
         if (descriptor !is ClassDescriptor) return
         val superClass = descriptor.getSuperClassNotAny() ?: return
 
         val psi = (declaration as KtClassOrObject).superTypeListEntries.firstOrNull { entry ->
-            bindingContext[BindingContext.TYPE, entry.typeReference]?.constructor?.declarationDescriptor == superClass
+            trace[BindingContext.TYPE, entry.typeReference]?.constructor?.declarationDescriptor == superClass
         }
 
-        checkJsModuleUsage(bindingContext, diagnosticHolder, descriptor, superClass, psi ?: declaration)
+        checkJsModuleUsage(trace.bindingContext, trace, descriptor, superClass, psi ?: declaration)
     }
 }

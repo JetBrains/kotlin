@@ -67,6 +67,34 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+      FUN[fqName=test.TypeAliases.order, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=order]
+        MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=path]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=String]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]
+      FUN[fqName=test.TypeAliases.order, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=order]
+        MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=body]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=test]
+                REFERENCE_EXPRESSION[referencedName=Z]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]
       TYPEALIAS[fqName=test.TypeAliases.B, isTopLevel=false, name=B]
         MODIFIER_LIST[public]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Suppress]

@@ -23,5 +23,5 @@ import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinUserTypeStubImpl(
-        parent: StubElement<out PsiElement>?
+    parent: StubElement<out PsiElement>?
 ) : KotlinStubBaseImpl<KtUserType>(parent, KtStubElementTypes.USER_TYPE), KotlinUserTypeStub

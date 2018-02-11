@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYS
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.withIC
+import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.LibraryDependency.*
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
@@ -71,72 +72,14 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert
-import java.io.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 import java.net.URLClassLoader
 import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
-
-class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
-    var isICEnabledBackup: Boolean = false
-
-    override fun setUp() {
-        super.setUp()
-        isICEnabledBackup = IncrementalCompilation.isEnabled()
-        IncrementalCompilation.setIsEnabled(true)
-    }
-
-    override fun tearDown() {
-        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
-        super.tearDown()
-    }
-
-    fun testManyFiles() {
-        doTest()
-
-        val module = myProject.modules.get(0)
-        assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
-
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar")))
-
-        checkWhen(del("src/main.kt"),
-                  pathsToCompile = null,
-                  pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
-        assertFilesNotExistInOutput(module, "foo/MainKt.class")
-
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar")))
-    }
-
-    fun testManyFilesForPackage() {
-        doTest()
-
-        val module = myProject.modules.get(0)
-        assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
-
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"),
-                  arrayOf("src/Bar.kt"),
-                  arrayOf(klass("kotlinProject", "foo.Bar"),
-                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
-                          module("kotlinProject")))
-
-        checkWhen(del("src/main.kt"),
-                  pathsToCompile = null,
-                  pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
-
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), null,
-                  arrayOf(klass("kotlinProject", "foo.Bar"),
-                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
-                          module("kotlinProject")))
-    }
-}
 
 open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     companion object {
@@ -226,7 +169,8 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             }
         }
 
-        private fun findFileInOutputDir(module: JpsModule, relativePath: String): File {
+        @JvmStatic
+        protected fun findFileInOutputDir(module: JpsModule, relativePath: String): File {
             val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
             assertNotNull(outputUrl)
             val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
@@ -293,7 +237,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     override fun doGetProjectDir(): File = workDir
 
-    private fun initProject(libraryDependency: LibraryDependency = NONE) {
+    protected fun initProject(libraryDependency: LibraryDependency = NONE) {
         addJdk(JDK_NAME)
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
 
@@ -360,6 +304,18 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         val sourceMapContent = File(getOutputDir(PROJECT_NAME), "$PROJECT_NAME.js.map").readText()
         val expectedPath = "prefix-dir/src/pkg/test1.kt"
+        assertTrue("Source map file should contain relative path ($expectedPath)", sourceMapContent.contains("\"$expectedPath\""))
+
+        val librarySourceMapFile = File(getOutputDir(PROJECT_NAME), "lib/kotlin.js.map")
+        assertTrue("Source map for stdlib should be copied to $librarySourceMapFile", librarySourceMapFile.exists())
+    }
+
+    fun testKotlinJavaScriptProjectWithSourceMapRelativePaths() {
+        initProject(JS_STDLIB)
+        buildAllModules().assertSuccessful()
+
+        val sourceMapContent = File(getOutputDir(PROJECT_NAME), "$PROJECT_NAME.js.map").readText()
+        val expectedPath = "../../../src/pkg/test1.kt"
         assertTrue("Source map file should contain relative path ($expectedPath)", sourceMapContent.contains("\"$expectedPath\""))
 
         val librarySourceMapFile = File(getOutputDir(PROJECT_NAME), "lib/kotlin.js.map")
@@ -585,6 +541,19 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesNotExistInOutput(myProject.modules.get(0), "_DefaultPackage.class")
     }
 
+    fun testDefaultLanguageVersionCustomApiVersion() {
+        initProject(JVM_FULL_RUNTIME)
+        buildAllModules().assertFailed()
+
+        assertEquals(1, myProject.modules.size)
+        val module = myProject.modules.first()
+        val args = JpsKotlinCompilerSettings.getCommonCompilerArguments(module)
+        args.apiVersion = "1.2"
+        JpsKotlinCompilerSettings.setCommonCompilerArguments(myProject, args)
+
+        buildAllModules().assertSuccessful()
+    }
+
     fun testKotlinJavaProject() {
         doTestWithRuntime()
     }
@@ -775,29 +744,46 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         buildAllModules().assertSuccessful()
     }
 
-    fun testCancelLongKotlinCompilation() {
-        generateLongKotlinFile("Foo.kt", "foo", "Foo")
+    fun testCheckIsCancelledIsCalledOftenEnough() {
+        val classCount = 30
+        val methodCount = 30
+
+        fun generateFiles() {
+            val srcDir = File(workDir, "src")
+            srcDir.mkdirs()
+
+            for (i in 0..classCount) {
+                val code = buildString {
+                    appendln("package foo")
+                    appendln("class Foo$i {")
+                    for (j in 0..methodCount) {
+                        appendln("  fun get${j*j}(): Int = square($j)")
+                    }
+                    appendln("}")
+
+                }
+                File(srcDir, "Foo$i.kt").writeText(code)
+            }
+        }
+
+        generateFiles()
         initProject(JVM_MOCK_RUNTIME)
 
-        val INITIAL_DELAY = 2000
-
-        val start = System.currentTimeMillis()
-        val canceledStatus = CanceledStatus() { System.currentTimeMillis() - start > INITIAL_DELAY }
+        var checkCancelledCalledCount = 0
+        val countingCancelledStatus = CanceledStatus {
+            checkCancelledCalledCount++
+            false
+        }
 
         val logger = TestProjectBuilderLogger()
         val buildResult = BuildResult()
-        buildCustom(canceledStatus, logger, buildResult)
-        val interval = System.currentTimeMillis() - start - INITIAL_DELAY
 
-        assertCanceled(buildResult)
+        buildCustom(countingCancelledStatus, logger, buildResult)
+
         buildResult.assertSuccessful()
-        assert(interval < 8000) { "expected time for canceled compilation < 8000 ms, but $interval" }
-
-        val module = myProject.modules.get(0)
-        assertFilesNotExistInOutput(module, "foo/Foo.class")
-
-        val expectedLog = workDir.absolutePath + File.separator + "expected.log"
-        checkFullLog(logger, File(expectedLog))
+        assert(checkCancelledCalledCount > classCount) {
+            "isCancelled should be called at least once per class. Expected $classCount, but got $checkCancelledCalledCount"
+        }
     }
 
     fun testCancelKotlinCompilation() {
@@ -890,7 +876,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         buildAllModules().assertSuccessful()
 
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
-        assertTrue(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
+        assertFalse(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
         assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
     }
 
@@ -907,7 +893,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         }
 
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
-        assertTrue(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
+        assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
         assertFalse(File(storageRoot, "targets/java-production/module2/kotlin").exists())
     }
 
@@ -1055,32 +1041,9 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         }
     }
 
-    private fun checkFullLog(logger: TestProjectBuilderLogger, expectedLogFile: File) {
-        UsefulTestCase.assertSameLinesWithFile(expectedLogFile.absolutePath, logger.getFullLog(orCreateProjectDir, myDataStorageRoot))
-    }
-
     private fun assertCanceled(buildResult: BuildResult) {
         val list = buildResult.getMessages(BuildMessage.Kind.INFO)
         assertTrue("The build has been canceled" == list.last().messageText)
-    }
-
-    private fun generateLongKotlinFile(filePath: String, packagename: String, className: String)  {
-        val file = File(workDir.absolutePath + File.separator + "src" + File.separator + filePath)
-        FileUtilRt.createIfNotExists(file)
-        val writer = BufferedWriter(FileWriter(file))
-        try {
-            writer.write("package $packagename\n\n")
-            writer.write("public class $className {\n")
-
-            for (i in 0..10000) {
-                writer.write("fun f$i():Int = $i\n\n")
-            }
-
-            writer.write("}\n")
-        }
-        finally {
-            writer.close()
-        }
     }
 
     private fun findModule(name: String): JpsModule {
@@ -1140,7 +1103,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         if (tests) {
             testsOut.walk().filterTo(outputFiles) { it.isFile }
         }
-        return outputFiles.map { it.relativeTo(workDir).path }
+        return outputFiles.map { FileUtilRt.toSystemIndependentName(it.relativeTo(workDir).path) }
     }
 
     private val JpsModule.prodOut: File

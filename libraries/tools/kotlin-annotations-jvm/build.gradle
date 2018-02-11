@@ -3,11 +3,12 @@ description = 'Kotlin annotations for JVM'
 apply plugin: 'kotlin'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
 
 sourceSets {
     main {
-        kotlin {
+        java {
             srcDir 'src'
         }
     }
@@ -30,6 +31,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
+            "-Xnormalize-constructor-calls=enable",
             "-module-name", project.name
     ]
 }

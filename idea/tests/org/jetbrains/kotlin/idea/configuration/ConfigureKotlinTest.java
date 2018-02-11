@@ -22,14 +22,17 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.RootPolicy;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiJavaModule;
 import com.intellij.psi.PsiRequiresStatement;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder;
 import org.jetbrains.kotlin.idea.facet.FacetUtilsKt;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil;
@@ -37,15 +40,29 @@ import org.jetbrains.kotlin.idea.project.PlatformKt;
 import org.jetbrains.kotlin.idea.util.Java9StructureUtilKt;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleKt;
+import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.StreamSupport;
 
 public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     public void testNewLibrary_copyJar() {
         doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
+
+        ModuleRootManager.getInstance(getModule()).orderEntries().forEachLibrary(library -> {
+            assertSameElements(
+                    Arrays.stream(library.getRootProvider().getFiles(OrderRootType.CLASSES)).map(VirtualFile::getName).toArray(),
+                    PathUtil.KOTLIN_JAVA_STDLIB_JAR, PathUtil.KOTLIN_JAVA_REFLECT_JAR, PathUtil.KOTLIN_TEST_JAR);
+
+            assertSameElements(
+                    Arrays.stream(library.getRootProvider().getFiles(OrderRootType.SOURCES)).map(VirtualFile::getName).toArray(),
+                    PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR, PathUtil.KOTLIN_REFLECT_SRC_JAR, PathUtil.KOTLIN_TEST_SRC_JAR);
+
+            return true;
+        });
     }
 
     public void testNewLibrary_doNotCopyJar() {
@@ -142,8 +159,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     }
 
     public void testProjectWithoutFacetWithRuntime11WithoutLanguageLevel() {
-        assertEquals(LanguageVersion.KOTLIN_1_1, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
-        assertEquals(LanguageVersion.KOTLIN_1_1, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
+        assertEquals(LanguageVersion.LATEST_STABLE, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.LATEST_STABLE, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
     }
 
     public void testProjectWithoutFacetWithRuntime11WithLanguageLevel10() {
@@ -152,7 +169,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     }
 
     public void testProjectWithFacetWithRuntime11WithLanguageLevel10() {
-        assertEquals(LanguageVersion.KOTLIN_1_1, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.LATEST_STABLE, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
         assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
     }
 
@@ -262,6 +279,13 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
 
     public void testJava9WithModuleInfoWithStdlibAlready() {
         checkAddStdlibModule();
+    }
+
+    public void testProjectWithFreeArgs() {
+        assertEquals(
+                Collections.singletonList("true"),
+                KotlinCommonCompilerArgumentsHolder.Companion.getInstance(myProject).getSettings().getFreeArgs()
+        );
     }
 
     private void checkAddStdlibModule() {

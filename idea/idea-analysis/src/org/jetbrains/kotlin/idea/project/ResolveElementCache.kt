@@ -172,8 +172,8 @@ class ResolveElementCache(
                 val resolveToCache = CachedPartialResolve(bindingContext, file, bodyResolveMode)
 
                 for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
-                    if (!partialResolveMap.containsKey(statement) && bindingContext[BindingContext.PROCESSED, statement] == true) {
-                        partialResolveMap[statement] = resolveToCache
+                    if (bindingContext[BindingContext.PROCESSED, statement] == true) {
+                        partialResolveMap.putIfAbsent(statement, resolveToCache)
                     }
                 }
 
@@ -238,7 +238,8 @@ class ResolveElementCache(
                 KtTypeConstraint::class.java,
                 KtPackageDirective::class.java,
                 KtCodeFragment::class.java,
-                KtTypeAlias::class.java) as KtElement?
+                KtTypeAlias::class.java
+        ) as KtElement?
 
         when (elementOfAdditionalResolve) {
             null -> {
@@ -251,7 +252,8 @@ class ResolveElementCache(
                     return element
                 }
 
-                return null
+                // Case of pure script element, like val (x, y) = ... on top of the script
+                return element.getParentOfType<KtScript>(strict = false)
             }
 
             is KtPackageDirective -> return element
@@ -334,6 +336,8 @@ class ResolveElementCache(
 
             is KtCodeFragment -> codeFragmentAdditionalResolve(resolveElement, bodyResolveMode)
 
+            is KtScript -> scriptAdditionalResolve(resolveSession, resolveElement, bodyResolveMode.bindingTraceFilter)
+
             else -> {
                 if (resolveElement.getParentOfType<KtPackageDirective>(true) != null) {
                     packageRefAdditionalResolve(resolveSession, resolveElement, bodyResolveMode.bindingTraceFilter)
@@ -345,7 +349,9 @@ class ResolveElementCache(
         }
 
         val controlFlowTrace = DelegatingBindingTrace(trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true)
-        ControlFlowInformationProvider(resolveElement, controlFlowTrace, resolveElement.languageVersionSettings).checkDeclaration()
+        ControlFlowInformationProvider(
+                resolveElement, controlFlowTrace, resolveElement.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
+        ).checkDeclaration()
         controlFlowTrace.addOwnDataTo(trace, null, false)
 
         return Pair(trace.bindingContext, statementFilterUsed)
@@ -481,9 +487,20 @@ class ResolveElementCache(
         forceResolveAnnotationsInside(property)
 
         for (accessor in property.accessors) {
-            ControlFlowInformationProvider(accessor, trace, accessor.languageVersionSettings).checkDeclaration()
+            ControlFlowInformationProvider(
+                    accessor, trace, accessor.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
+            ).checkDeclaration()
         }
 
+        return trace
+    }
+
+    private fun scriptAdditionalResolve(resolveSession: ResolveSession, script: KtScript,
+                                        bindingTraceFilter: BindingTraceFilter): BindingTrace {
+        val trace = createDelegatingTrace(script, bindingTraceFilter)
+        val scriptDescriptor = resolveSession.resolveToDescriptor(script) as ScriptDescriptor
+        ForceResolveUtil.forceResolveAllContents(scriptDescriptor)
+        forceResolveAnnotationsInside(script)
         return trace
     }
 

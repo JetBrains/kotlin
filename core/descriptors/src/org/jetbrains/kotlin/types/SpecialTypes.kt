@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.checker.NullabilityChecker
+import org.jetbrains.kotlin.types.typeUtil.canHaveUndefinedNullability
 
 abstract class DelegatingSimpleType : SimpleType() {
     protected abstract val delegate: SimpleType
@@ -55,3 +59,59 @@ class LazyWrappedType(storageManager: StorageManager, computation: () -> KotlinT
 
     override fun isComputed(): Boolean = lazyValue.isComputed()
 }
+
+class DefinitelyNotNullType private constructor(val original: SimpleType) : DelegatingSimpleType(), CustomTypeVariable {
+    companion object {
+        internal fun makeDefinitelyNotNull(type: UnwrappedType): DefinitelyNotNullType? {
+            return when {
+                type is DefinitelyNotNullType -> type
+
+                makesSenseToBeDefinitelyNotNull(type) -> {
+                    if (type is FlexibleType) {
+                        assert(type.lowerBound.constructor == type.upperBound.constructor) {
+                            "DefinitelyNotNullType for flexible type ($type) can be created only from type variable with the same constructor for bounds"
+                        }
+                    }
+
+
+                    DefinitelyNotNullType(type.lowerIfFlexible())
+                }
+
+                else -> null
+            }
+        }
+
+        fun makesSenseToBeDefinitelyNotNull(type: UnwrappedType): Boolean =
+                type.canHaveUndefinedNullability() && !NullabilityChecker.isSubtypeOfAny(type)
+    }
+
+    override val delegate: SimpleType
+        get() = original
+
+    override val isMarkedNullable: Boolean
+        get() = false
+
+    override val isTypeVariable: Boolean
+        get() = delegate.constructor is NewTypeVariableConstructor ||
+                delegate.constructor.declarationDescriptor is TypeParameterDescriptor
+
+    override fun substitutionResult(replacement: KotlinType): KotlinType =
+            replacement.unwrap().makeDefinitelyNotNullOrNotNull()
+
+    override fun replaceAnnotations(newAnnotations: Annotations): DefinitelyNotNullType =
+            DefinitelyNotNullType(delegate.replaceAnnotations(newAnnotations))
+
+    override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType =
+            if (newNullability) delegate.makeNullableAsSpecified(newNullability) else this
+
+    override fun toString(): String = "$delegate!!"
+}
+
+val KotlinType.isDefinitelyNotNullType: Boolean
+    get() = unwrap() is DefinitelyNotNullType
+
+fun SimpleType.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleType =
+        DefinitelyNotNullType.makeDefinitelyNotNull(this) ?: makeNullableAsSpecified(false)
+
+fun UnwrappedType.makeDefinitelyNotNullOrNotNull(): UnwrappedType =
+        DefinitelyNotNullType.makeDefinitelyNotNull(this) ?: makeNullableAsSpecified(false)

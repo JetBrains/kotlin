@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
  * Underlying token is [org.jetbrains.kotlin.KtNodeTypes.TYPE_REFERENCE]
  */
 class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeReference>>,
-        KtAnnotated, KtAnnotationsContainer {
+    KtAnnotated, KtAnnotationsContainer {
 
     constructor(node: ASTNode) : super(node)
 

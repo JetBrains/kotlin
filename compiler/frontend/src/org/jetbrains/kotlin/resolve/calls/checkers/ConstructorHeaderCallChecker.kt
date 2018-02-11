@@ -37,19 +37,18 @@ object ConstructorHeaderCallChecker : CallChecker {
 
         val callElement = resolvedCall.call.callElement
         val labelReferenceClass =
-                if (callElement is KtInstanceExpressionWithLabel) {
-                    context.trace.get(BindingContext.REFERENCE_TARGET, callElement.instanceReference) as? ClassDescriptor
-                }
-                else null
+            if (callElement is KtInstanceExpressionWithLabel) {
+                context.trace.get(BindingContext.REFERENCE_TARGET, callElement.instanceReference) as? ClassDescriptor
+            } else null
 
         if (dispatchReceiverClass == null && extensionReceiverClass == null && labelReferenceClass == null) return
 
         val classes = setOf(dispatchReceiverClass, extensionReceiverClass, labelReferenceClass)
 
         if (context.scope.parentsWithSelf.any { scope ->
-            scope is LexicalScope && scope.kind == LexicalScopeKind.CONSTRUCTOR_HEADER &&
-            (scope.ownerDescriptor as ClassConstructorDescriptor).containingDeclaration in classes
-        }) {
+                scope is LexicalScope && scope.kind == LexicalScopeKind.CONSTRUCTOR_HEADER &&
+                        (scope.ownerDescriptor as ClassConstructorDescriptor).containingDeclaration in classes
+            }) {
             context.trace.report(Errors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(reportOn, resolvedCall.resultingDescriptor))
         }
     }

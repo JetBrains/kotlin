@@ -41,6 +41,8 @@ var JsInvocation.inlineStrategy: InlineStrategy? by MetadataProperty(default = n
 
 var JsInvocation.isCallableReference by MetadataProperty(default = false)
 
+var JsInvocation.callableReferenceReceiver: JsExpression? by MetadataProperty(default = null)
+
 var JsInvocation.descriptor: CallableDescriptor? by MetadataProperty(default = null)
 
 var JsInvocation.psiElement: PsiElement? by MetadataProperty(default = null)
@@ -94,8 +96,6 @@ var HasMetadata.sideEffects: SideEffectKind by MetadataProperty(default = SideEf
  */
 var JsExpression.isSuspend: Boolean by MetadataProperty(default = false)
 
-var JsExpression.isTailCallSuspend: Boolean by MetadataProperty(default = false)
-
 /**
  * Denotes a reference to coroutine's `result` field that contains result of
  * last suspended invocation.
@@ -113,9 +113,15 @@ var JsNameRef.coroutineController by MetadataProperty(default = false)
  */
 var JsNameRef.coroutineReceiver by MetadataProperty(default = false)
 
+var JsFunction.forceStateMachine by MetadataProperty(default = false)
+
+var JsFunction.isInlineableCoroutineBody by MetadataProperty(default = false)
+
 var JsName.imported by MetadataProperty(default = false)
 
 var JsFunction.coroutineMetadata: CoroutineMetadata? by MetadataProperty(default = null)
+
+var JsExpression.range: Pair<RangeType, RangeKind>? by MetadataProperty(default = null)
 
 data class CoroutineMetadata(
         val doResumeName: JsName,
@@ -152,11 +158,22 @@ enum class SpecialFunction(val suggestedName: String) {
     SUSPEND_CALL("suspendCall"),
     COROUTINE_RESULT("coroutineResult"),
     COROUTINE_CONTROLLER("coroutineController"),
-    COROUTINE_RECEIVER("coroutineReceiver")
+    COROUTINE_RECEIVER("coroutineReceiver"),
+    SET_COROUTINE_RESULT("setCoroutineResult")
 }
 
 enum class BoxingKind {
     NONE,
     BOXING,
     UNBOXING
+}
+
+enum class RangeType {
+    INT,
+    LONG
+}
+
+enum class RangeKind {
+    RANGE_TO,
+    UNTIL
 }

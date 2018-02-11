@@ -1,0 +1,4 @@
+class My(val x: Int?)
+fun foo(arg: Any) {
+    val y = if ((arg as? My)?.x != null) (arg as? My)?.x else 42
+}

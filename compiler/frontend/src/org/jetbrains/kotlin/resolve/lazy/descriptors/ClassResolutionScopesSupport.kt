@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.utils.ThrowingLexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.ErrorLexicalScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 class ClassResolutionScopesSupport(
-        private val classDescriptor: ClassDescriptor,
-        storageManager: StorageManager,
-        private val getOuterScope: () -> LexicalScope
+    private val classDescriptor: ClassDescriptor,
+    storageManager: StorageManager,
+    private val getOuterScope: () -> LexicalScope
 ) {
     private fun scopeWithGenerics(parent: LexicalScope): LexicalScopeImpl {
         return LexicalScopeImpl(parent, classDescriptor, false, null, LexicalScopeKind.CLASS_HEADER) {
@@ -46,39 +46,46 @@ class ClassResolutionScopesSupport(
         scopeWithGenerics(inheritanceScopeWithMe())
     }
 
-    private val inheritanceScopeWithoutMe: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
+    private val inheritanceScopeWithoutMe: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createErrorLexicalScope) {
         classDescriptor.getAllSuperclassesWithoutAny().asReversed().fold(getOuterScope()) { scope, currentClass ->
             createInheritanceScope(parent = scope, ownerDescriptor = classDescriptor, classDescriptor = currentClass)
         }
     }
 
-    private val inheritanceScopeWithMe: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
+    private val inheritanceScopeWithMe: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createErrorLexicalScope) {
         createInheritanceScope(parent = inheritanceScopeWithoutMe(), ownerDescriptor = classDescriptor, classDescriptor = classDescriptor)
     }
 
-    val scopeForCompanionObjectHeaderResolution: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
-        createInheritanceScope(inheritanceScopeWithoutMe(), classDescriptor, classDescriptor, withCompanionObject = false)
-    }
+    val scopeForCompanionObjectHeaderResolution: () -> LexicalScope =
+        storageManager.createLazyValue(onRecursion = createErrorLexicalScope) {
+            createInheritanceScope(inheritanceScopeWithoutMe(), classDescriptor, classDescriptor, withCompanionObject = false)
+        }
 
-    val scopeForMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue {
+    val scopeForMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createErrorLexicalScope) {
         val scopeWithGenerics = scopeWithGenerics(inheritanceScopeWithMe())
-        LexicalScopeImpl(scopeWithGenerics, classDescriptor, true, classDescriptor.thisAsReceiverParameter, LexicalScopeKind.CLASS_MEMBER_SCOPE)
+        LexicalScopeImpl(
+            scopeWithGenerics,
+            classDescriptor,
+            true,
+            classDescriptor.thisAsReceiverParameter,
+            LexicalScopeKind.CLASS_MEMBER_SCOPE
+        )
     }
 
-    val scopeForStaticMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
-        if (classDescriptor.kind.isSingleton) {
-            scopeForMemberDeclarationResolution()
+    val scopeForStaticMemberDeclarationResolution: () -> LexicalScope =
+        storageManager.createLazyValue(onRecursion = createErrorLexicalScope) {
+            if (classDescriptor.kind.isSingleton) {
+                scopeForMemberDeclarationResolution()
+            } else {
+                inheritanceScopeWithMe()
+            }
         }
-        else {
-            inheritanceScopeWithMe()
-        }
-    }
 
     private fun createInheritanceScope(
-            parent: LexicalScope,
-            ownerDescriptor: DeclarationDescriptor,
-            classDescriptor: ClassDescriptor,
-            withCompanionObject: Boolean = true
+        parent: LexicalScope,
+        ownerDescriptor: DeclarationDescriptor,
+        classDescriptor: ClassDescriptor,
+        withCompanionObject: Boolean = true
     ): LexicalScope {
         val staticScopes = ArrayList<MemberScope>(3)
 
@@ -97,40 +104,46 @@ class ClassResolutionScopesSupport(
 
             parentForNewScope = classDescriptor.companionObjectDescriptor?.let {
                 it.getAllSuperclassesWithoutAny().asReversed().fold(parent) { scope, currentClass ->
-                    createInheritanceScope(parent = scope, ownerDescriptor = ownerDescriptor, classDescriptor = currentClass, withCompanionObject = false)
+                    createInheritanceScope(
+                        parent = scope,
+                        ownerDescriptor = ownerDescriptor,
+                        classDescriptor = currentClass,
+                        withCompanionObject = false
+                    )
                 }
             } ?: parent
-        }
-        else {
+        } else {
             implicitReceiver = null
             parentForNewScope = parent
         }
 
-        return LexicalChainedScope(parentForNewScope, ownerDescriptor, false,
-                                   implicitReceiver,
-                                   LexicalScopeKind.CLASS_INHERITANCE,
-                                   memberScopes = staticScopes, isStaticScope = true)
+        return LexicalChainedScope(
+            parentForNewScope, ownerDescriptor, false,
+            implicitReceiver,
+            LexicalScopeKind.CLASS_INHERITANCE,
+            memberScopes = staticScopes, isStaticScope = true
+        )
     }
 
     private fun <T : Any> StorageManager.createLazyValue(onRecursion: ((Boolean) -> T), compute: () -> T) =
-            createLazyValueWithPostCompute(compute, onRecursion, {})
+        createLazyValueWithPostCompute(compute, onRecursion, {})
 
     companion object {
-        private val createThrowingLexicalScope: (Boolean) -> LexicalScope =  { ThrowingLexicalScope() }
+        private val createErrorLexicalScope: (Boolean) -> LexicalScope = { ErrorLexicalScope() }
     }
 }
 
 fun scopeForInitializerResolution(
-        classDescriptor: LazyClassDescriptor,
-        parentDescriptor: DeclarationDescriptor,
-        primaryConstructorParameters: List<KtParameter>
+    classDescriptor: LazyClassDescriptor,
+    parentDescriptor: DeclarationDescriptor,
+    primaryConstructorParameters: List<KtParameter>
 ): LexicalScope {
     return LexicalScopeImpl(
-            classDescriptor.scopeForMemberDeclarationResolution,
-            parentDescriptor,
-            false,
-            null,
-            LexicalScopeKind.CLASS_INITIALIZER
+        classDescriptor.scopeForMemberDeclarationResolution,
+        parentDescriptor,
+        false,
+        null,
+        LexicalScopeKind.CLASS_INITIALIZER
     ) {
         if (primaryConstructorParameters.isNotEmpty()) {
             val parameterDescriptors = classDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters

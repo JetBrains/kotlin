@@ -14,4 +14,4 @@ public final class C</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias GTC</*0*/ T>  = C<T>
+public typealias GTC</*0*/ T> = C<T>

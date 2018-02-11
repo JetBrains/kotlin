@@ -16,23 +16,9 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
-import java.util.Arrays;
-import java.util.List;
-
 public enum EnvironmentConfigFiles {
-    JVM_CONFIG_FILES("extensions/common.xml", "extensions/kotlin2jvm.xml"),
-    JS_CONFIG_FILES("extensions/common.xml", "extensions/kotlin2js.xml"),
-    NATIVE_CONFIG_FILES("extensions/common.xml"),
-    METADATA_CONFIG_FILES("extensions/common.xml"),
-    EMPTY();
-
-    private final List<String> files;
-
-    EnvironmentConfigFiles(String... fileArray) {
-        files = Arrays.asList(fileArray);
-    }
-
-    public List<String> getFiles() {
-        return files;
-    }
+    JVM_CONFIG_FILES,
+    JS_CONFIG_FILES,
+    NATIVE_CONFIG_FILES,
+    METADATA_CONFIG_FILES,
 }

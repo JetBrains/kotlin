@@ -1,0 +1,18 @@
+package
+
+public fun onlyFalse(/*0*/ b: kotlin.Boolean): kotlin.Boolean
+    Returns(FALSE) -> !b
+
+public fun onlyTrue(/*0*/ b: kotlin.Boolean): kotlin.Boolean
+    Returns(TRUE) -> b
+
+public fun trueAndFalse(/*0*/ b: kotlin.Boolean): kotlin.Boolean
+    Returns(TRUE) -> b
+    Returns(FALSE) -> !b
+
+public fun useOnlyFalseInFalseBranch(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun useOnlyFalseInTrueBranch(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun useOnlyTrueInFalseBranch(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun useOnlyTrueInTrueBranch(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun useTrueAndFalseInFalseBranch(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun useTrueAndFalseInTrueBranch(/*0*/ x: kotlin.Any?): kotlin.Unit

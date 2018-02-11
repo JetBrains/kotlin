@@ -22,10 +22,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.moveInsideParentheses
 import org.jetbrains.kotlin.psi.KtLambdaArgument
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
+import org.jetbrains.kotlin.psi.unpackFunctionLiteral
 
-class MoveLambdaInsideParenthesesIntention : SelfTargetingIntention<KtLambdaArgument>(KtLambdaArgument::class.java, "Move lambda argument into parentheses"), LowPriorityAction {
+class MoveLambdaInsideParenthesesIntention : SelfTargetingIntention<KtLambdaArgument>(
+    KtLambdaArgument::class.java, "Move lambda argument into parentheses"
+), LowPriorityAction {
     override fun isApplicableTo(element: KtLambdaArgument, caretOffset: Int): Boolean {
-        val body = element.getLambdaExpression().bodyExpression ?: return true
+        val body = element.getArgumentExpression().unpackFunctionLiteral()?.bodyExpression ?: return true
         return !body.textRange.containsInside(caretOffset)
     }
 

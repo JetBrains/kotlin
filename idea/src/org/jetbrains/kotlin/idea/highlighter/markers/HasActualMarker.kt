@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
@@ -26,16 +27,16 @@ import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import java.awt.event.MouseEvent
 
 fun ModuleDescriptor.hasActualsFor(descriptor: MemberDescriptor) =
         actualsFor(descriptor).isNotEmpty()
 
-fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: Boolean = true): List<DeclarationDescriptor> =
-        with(ExpectedActualDeclarationChecker) {
+fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: Boolean = false): List<DeclarationDescriptor> =
+        with(ExpectedActualResolver) {
             if (checkCompatible) {
                 descriptor.findCompatibleActualForExpected(this@actualsFor)
             }
@@ -44,8 +45,8 @@ fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: B
             }
         }
 
-fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
-    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return null
+fun getPlatformActualTooltip(declaration: KtDeclaration?): String? {
+    val descriptor = declaration?.toDescriptor() as? MemberDescriptor ?: return null
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
     val platformModulesWithActuals = commonModuleDescriptor.implementingDescriptors.filter {
@@ -58,13 +59,15 @@ fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
     }
 }
 
-fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration) {
-    val actuals = declaration.actualsForExpected()
-    if (actuals.isEmpty()) return
+fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration?) {
+    val actualDeclarations = declaration?.actualsForExpected() ?: return
+    if (actualDeclarations.isEmpty()) return
 
-    val renderer = DefaultPsiElementCellRenderer()
+    val renderer = object : DefaultPsiElementCellRenderer() {
+        override fun getContainerText(element: PsiElement?, name: String?) = ""
+    }
     PsiElementListNavigator.openTargets(e,
-                                        actuals.toTypedArray(),
+                                        actualDeclarations.toTypedArray(),
                                         "Choose actual for ${declaration.name}",
                                         "Actuals for ${declaration.name}",
                                         renderer)

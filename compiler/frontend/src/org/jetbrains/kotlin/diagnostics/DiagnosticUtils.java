@@ -24,6 +24,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiInvalidElementAccessException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -68,16 +69,31 @@ public class DiagnosticUtils {
     }
 
     public static String atLocation(@NotNull PsiElement element) {
-        return atLocation(element.getNode());
+        if (element.isValid()) {
+            return atLocation(element.getContainingFile(), element.getTextRange());
+        }
+
+        PsiFile file = null;
+        int offset = -1;
+        try {
+            file = element.getContainingFile();
+            offset = element.getTextOffset();
+        }
+        catch (PsiInvalidElementAccessException invalidException) {
+            // ignore
+        }
+
+        return "at offset: " + (offset != -1 ? offset : "<unknown>") + " file: " + (file != null ? file : "<unknown>");
     }
 
     public static String atLocation(@NotNull ASTNode node) {
         int startOffset = node.getStartOffset();
         PsiElement element = getClosestPsiElement(node);
-        if (element != null && element.isValid()) {
-            return atLocation(element.getContainingFile(), element.getTextRange());
+        if (element != null) {
+            return atLocation(element);
         }
-        return "' at offset " + startOffset + " (line and file unknown: no PSI element)";
+
+        return "at offset " + startOffset + " (line and file unknown: no PSI element)";
     }
 
     @Nullable

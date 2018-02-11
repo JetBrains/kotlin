@@ -253,7 +253,7 @@ public fun String.dropLast(n: Int): String {
  * Returns a subsequence of this char sequence containing all characters except last characters that satisfy the given [predicate].
  */
 public inline fun CharSequence.dropLastWhile(predicate: (Char) -> Boolean): CharSequence {
-    for (index in this.indices.reversed())
+    for (index in lastIndex downTo 0)
         if (!predicate(this[index]))
             return subSequence(0, index + 1)
     return ""
@@ -263,7 +263,7 @@ public inline fun CharSequence.dropLastWhile(predicate: (Char) -> Boolean): Char
  * Returns a string containing all characters except last characters that satisfy the given [predicate].
  */
 public inline fun String.dropLastWhile(predicate: (Char) -> Boolean): String {
-    for (index in this.indices.reversed())
+    for (index in lastIndex downTo 0)
         if (!predicate(this[index]))
             return substring(0, index + 1)
     return ""
@@ -359,7 +359,7 @@ public inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, pred
  * Appends all characters matching the given [predicate] to the given [destination].
  */
 public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predicate: (Char) -> Boolean): C {
-    for (index in 0..length - 1) {
+    for (index in 0 until length) {
         val element = get(index)
         if (predicate(element)) destination.append(element)
     }
@@ -465,7 +465,7 @@ public inline fun String.takeLastWhile(predicate: (Char) -> Boolean): String {
  * Returns a subsequence of this char sequence containing the first characters that satisfy the given [predicate].
  */
 public inline fun CharSequence.takeWhile(predicate: (Char) -> Boolean): CharSequence {
-    for (index in 0..length - 1)
+    for (index in 0 until length)
         if (!predicate(get(index))) {
             return subSequence(0, index)
         }
@@ -476,7 +476,7 @@ public inline fun CharSequence.takeWhile(predicate: (Char) -> Boolean): CharSequ
  * Returns a string containing the first characters that satisfy the given [predicate].
  */
 public inline fun String.takeWhile(predicate: (Char) -> Boolean): String {
-    for (index in 0..length - 1)
+    for (index in 0 until length)
         if (!predicate(get(index))) {
             return substring(0, index)
         }
@@ -628,9 +628,8 @@ public fun CharSequence.toSet(): Set<Char> {
 /**
  * Returns a [SortedSet] of all characters.
  */
-@kotlin.jvm.JvmVersion
-public fun CharSequence.toSortedSet(): SortedSet<Char> {
-    return toCollection(TreeSet<Char>())
+public fun CharSequence.toSortedSet(): java.util.SortedSet<Char> {
+    return toCollection(java.util.TreeSet<Char>())
 }
 
 /**
@@ -1111,6 +1110,72 @@ public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
 }
 
 /**
+ * Splits this char sequence into a list of strings each not exceeding the given [size].
+ * 
+ * The last string in the resulting list may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ */
+@SinceKotlin("1.2")
+public fun CharSequence.chunked(size: Int): List<String> {
+    return windowed(size, size, partialWindows = true)
+}
+
+/**
+ * Splits this char sequence into several char sequences each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return list of results of the [transform] applied to an each char sequence.
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * The last char sequence may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.text.Strings.chunkedTransform
+ */
+@SinceKotlin("1.2")
+public fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): List<R> {
+    return windowed(size, size, partialWindows = true, transform = transform)
+}
+
+/**
+ * Splits this char sequence into a sequence of strings each not exceeding the given [size].
+ * 
+ * The last string in the resulting sequence may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ */
+@SinceKotlin("1.2")
+public fun CharSequence.chunkedSequence(size: Int): Sequence<String> {
+    return chunkedSequence(size) { it.toString() }
+}
+
+/**
+ * Splits this char sequence into several char sequences each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return sequence of results of the [transform] applied to an each char sequence.
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * The last char sequence may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.text.Strings.chunkedTransformToSequence
+ */
+@SinceKotlin("1.2")
+public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R> {
+    return windowedSequence(size, size, partialWindows = true, transform = transform)
+}
+
+/**
  * Splits the original char sequence into pair of char sequences,
  * where *first* char sequence contains characters for which [predicate] yielded `true`,
  * while *second* char sequence contains characters for which [predicate] yielded `false`.
@@ -1147,6 +1212,102 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
 }
 
 /**
+ * Returns a list of snapshots of the window of the given [size]
+ * sliding along this char sequence with the given [step], where each
+ * snapshot is a string.
+ * 
+ * Several last strings may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.takeWindows
+ */
+@SinceKotlin("1.2")
+public fun CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): List<String> {
+    return windowed(size, step, partialWindows) { it.toString() }
+}
+
+/**
+ * Returns a list of results of applying the given [transform] function to
+ * an each char sequence representing a view over the window of the given [size]
+ * sliding along this char sequence with the given [step].
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * Several last char sequences may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.averageWindows
+ */
+@SinceKotlin("1.2")
+public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): List<R> {
+    checkWindowSizeStep(size, step)
+    val thisSize = this.length
+    val result = ArrayList<R>((thisSize + step - 1) / step)
+    var index = 0
+    while (index < thisSize) {
+        val end = index + size
+        val coercedEnd = if (end > thisSize) { if (partialWindows) thisSize else break } else end
+        result.add(transform(subSequence(index, coercedEnd)))
+        index += step
+    }
+    return result
+}
+
+/**
+ * Returns a sequence of snapshots of the window of the given [size]
+ * sliding along this char sequence with the given [step], where each
+ * snapshot is a string.
+ * 
+ * Several last strings may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.takeWindows
+ */
+@SinceKotlin("1.2")
+public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<String> {
+    return windowedSequence(size, step, partialWindows) { it.toString() }
+}
+
+/**
+ * Returns a sequence of results of applying the given [transform] function to
+ * an each char sequence representing a view over the window of the given [size]
+ * sliding along this char sequence with the given [step].
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * Several last char sequences may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.averageWindows
+ */
+@SinceKotlin("1.2")
+public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): Sequence<R> {
+    checkWindowSizeStep(size, step)
+    val windows = (if (partialWindows) indices else 0 until length - size + 1) step step
+    return windows.asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
+}
+
+/**
  * Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.
  */
 public infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, Char>> {
@@ -1159,10 +1320,41 @@ public infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, Char>> {
 public inline fun <V> CharSequence.zip(other: CharSequence, transform: (a: Char, b: Char) -> V): List<V> {
     val length = minOf(this.length, other.length)
     val list = ArrayList<V>(length)
-    for (i in 0..length-1) {
+    for (i in 0 until length) {
         list.add(transform(this[i], other[i]))
     }
     return list
+}
+
+/**
+ * Returns a list of pairs of each two adjacent characters in this char sequence.
+ * 
+ * The returned list is empty if this char sequence contains less than two characters.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ */
+@SinceKotlin("1.2")
+public fun CharSequence.zipWithNext(): List<Pair<Char, Char>> {
+    return zipWithNext { a, b -> a to b }
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent characters in this char sequence.
+ * 
+ * The returned list is empty if this char sequence contains less than two characters.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ */
+@SinceKotlin("1.2")
+public inline fun <R> CharSequence.zipWithNext(transform: (a: Char, b: Char) -> R): List<R> {
+    val size = length - 1
+    if (size < 1) return emptyList()
+    val result = ArrayList<R>(size)
+    for (index in 0 until size) {
+        result.add(transform(this[index], this[index + 1]))
+    }
+    return result
 }
 
 /**

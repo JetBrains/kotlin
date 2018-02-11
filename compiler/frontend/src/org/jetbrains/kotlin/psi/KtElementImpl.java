@@ -19,14 +19,12 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceService;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     public KtElementImpl(@NotNull ASTNode node) {
@@ -95,5 +93,11 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     @Override
     public KtElement getPsiOrParent() {
         return this;
+    }
+
+    @Override
+    public PsiElement getParent() {
+        PsiElement substitute = KtPsiUtilKt.getParentSubstitute(this);
+        return substitute != null ? substitute : super.getParent();
     }
 }

@@ -22,8 +22,8 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.*
 
 abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
-    val tryBlocksMetaInfo: IntervalMetaInfo<TryCatchBlockNodeInfo> = IntervalMetaInfo()
-    val localVarsMetaInfo: IntervalMetaInfo<LocalVarNodeWrapper> = IntervalMetaInfo()
+    val tryBlocksMetaInfo: IntervalMetaInfo<TryCatchBlockNodeInfo> = IntervalMetaInfo(this)
+    val localVarsMetaInfo: IntervalMetaInfo<LocalVarNodeWrapper> = IntervalMetaInfo(this)
 
     var nextFreeLocalIndex: Int = parameterSize
         private set
@@ -84,30 +84,37 @@ abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
     }
 }
 
-class IntervalMetaInfo<T : SplittableInterval<T>> {
+class IntervalMetaInfo<T : SplittableInterval<T>>(private val processor: CoveringTryCatchNodeProcessor) {
     val intervalStarts = LinkedListMultimap.create<LabelNode, T>()
     val intervalEnds = LinkedListMultimap.create<LabelNode, T>()
     val allIntervals: ArrayList<T> = arrayListOf()
     val currentIntervals: MutableSet<T> = linkedSetOf()
 
     fun addNewInterval(newInfo: T) {
+        newInfo.verify(processor)
         intervalStarts.put(newInfo.startLabel, newInfo)
         intervalEnds.put(newInfo.endLabel, newInfo)
         allIntervals.add(newInfo)
     }
 
     private fun remapStartLabel(oldStart: LabelNode, remapped: T) {
+        remapped.verify(processor)
         intervalStarts.remove(oldStart, remapped)
         intervalStarts.put(remapped.startLabel, remapped)
     }
 
     private fun remapEndLabel(oldEnd: LabelNode, remapped: T) {
+        remapped.verify(processor)
         intervalEnds.remove(oldEnd, remapped)
         intervalEnds.put(remapped.endLabel, remapped)
     }
 
     fun splitCurrentIntervals(by: Interval, keepStart: Boolean): List<SplitPair<T>> {
         return currentIntervals.map { split(it, by, keepStart) }
+    }
+
+    fun splitAndRemoveCurrentIntervals(by: Interval, keepStart: Boolean) {
+        currentIntervals.map { splitAndRemoveInterval(it, by, keepStart) }
     }
 
     fun processCurrent(curIns: LabelNode, directOrder: Boolean) {

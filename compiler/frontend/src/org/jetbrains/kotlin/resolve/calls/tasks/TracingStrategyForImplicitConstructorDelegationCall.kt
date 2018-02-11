@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 
 class TracingStrategyForImplicitConstructorDelegationCall(
-        val delegationCall: KtConstructorDelegationCall, call: Call
+    val delegationCall: KtConstructorDelegationCall, call: Call
 ) : AbstractTracingStrategy(delegationCall.calleeExpression!!, call) {
 
     val calleeExpression = delegationCall.calleeExpression
@@ -83,9 +83,7 @@ class TracingStrategyForImplicitConstructorDelegationCall(
     }
 
     private fun reportError(trace: BindingTrace) {
-        if (!trace.bindingContext.diagnostics.forElement(delegationCall).
-            any { it.factory == Errors.EXPLICIT_DELEGATION_CALL_REQUIRED }
-        ) {
+        if (!trace.bindingContext.diagnostics.forElement(delegationCall).any { it.factory == Errors.EXPLICIT_DELEGATION_CALL_REQUIRED }) {
             trace.report(Errors.EXPLICIT_DELEGATION_CALL_REQUIRED.on(delegationCall))
         }
     }
@@ -105,7 +103,7 @@ class TracingStrategyForImplicitConstructorDelegationCall(
     }
 
     override fun nestedClassAccessViaInstanceReference(
-            trace: BindingTrace, classDescriptor: ClassDescriptor, explicitReceiverKind: ExplicitReceiverKind
+        trace: BindingTrace, classDescriptor: ClassDescriptor, explicitReceiverKind: ExplicitReceiverKind
     ) {
         unexpectedError("nestedClassAccessViaInstanceReference")
     }
@@ -118,7 +116,12 @@ class TracingStrategyForImplicitConstructorDelegationCall(
         unexpectedError("missingReceiver")
     }
 
-    override fun wrongReceiverType(trace: BindingTrace, receiverParameter: ReceiverParameterDescriptor, receiverArgument: ReceiverValue, c: ResolutionContext<*>) {
+    override fun wrongReceiverType(
+        trace: BindingTrace,
+        receiverParameter: ReceiverParameterDescriptor,
+        receiverArgument: ReceiverValue,
+        c: ResolutionContext<*>
+    ) {
         unexpectedError("wrongReceiverType")
     }
 

@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
@@ -51,12 +53,17 @@ object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactor
 
         val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])
         val returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType)
-        val newReturnJetType = KotlinTypeFactory.simpleType(returnJetType.annotations,
+        val newReturnJetType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(returnJetType.annotations,
                                                             returnJetType.constructor,
                                                             returnJetTypeArguments,
                                                             returnJetType.isMarkedNullable,
                                                             returnJetType.memberScope)
         val returnType = TypeInfo(newReturnJetType, Variance.OUT_VARIANCE)
-        return FunctionInfo(OperatorNameConventions.ITERATOR.asString(), iterableType, returnType, isOperator = true)
+        return FunctionInfo(
+                OperatorNameConventions.ITERATOR.asString(),
+                iterableType,
+                returnType,
+                modifierList = KtPsiFactory(element).createModifierList(KtTokens.OPERATOR_KEYWORD)
+        )
     }
 }

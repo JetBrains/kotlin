@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/werror.kt
+-d
+$TEMP_DIR$
+-Werror

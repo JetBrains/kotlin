@@ -24,6 +24,7 @@ public fun <T> Iterator<T>.asSequence(): Sequence<T> = Sequence { this }.constra
 
 /**
  * Creates a sequence that returns all values from this enumeration. The sequence is constrained to be iterated only once.
+ * @sample samples.collections.Sequences.Building.sequenceFromEnumeration
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly

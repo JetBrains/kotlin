@@ -18,7 +18,7 @@ class K : C()
 
 fun main(args: Array<String>) {
     I.a
-    I.<!INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET!>foo<!>()
+    I.<!INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>foo<!>()
 
     C.a
     C.b

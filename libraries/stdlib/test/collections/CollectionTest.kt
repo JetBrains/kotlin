@@ -16,8 +16,8 @@
 
 package test.collections
 
+import test.assertStaticAndRuntimeTypeIs
 import kotlin.test.*
-import org.junit.Test
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.comparisons.*
@@ -54,9 +54,7 @@ class CollectionTest {
         assertEquals(2, foo.size)
         assertEquals(listOf("foo", "bar"), foo)
 
-        assertTrue {
-            foo is List<String>
-        }
+        assertStaticAndRuntimeTypeIs<List<String>>(foo)
     }
 
     /*
@@ -94,9 +92,7 @@ class CollectionTest {
         assertEquals(1, foo.size)
         assertEquals(hashSetOf("foo"), foo)
 
-        assertTrue {
-            foo is HashSet<String>
-        }
+        assertStaticAndRuntimeTypeIs<HashSet<String>>(foo)
     }
 
     @Test fun filterIsInstanceList() {
@@ -905,7 +901,7 @@ class CollectionTest {
     }
 
     @Test fun randomAccess() {
-        assertTrue(arrayListOf(1) is RandomAccess, "ArrayList is RandomAccess")
+        assertStaticAndRuntimeTypeIs<RandomAccess>(arrayListOf(1))
         assertTrue(listOf(1, 2) is RandomAccess, "Default read-only list implementation is RandomAccess")
         assertTrue(listOf(1) is RandomAccess, "Default singleton list is RandomAccess")
         assertTrue(emptyList<Int>() is RandomAccess, "Empty list is RandomAccess")

@@ -2,7 +2,6 @@ package test.collections.js
 
 import kotlin.test.*
 import kotlin.comparisons.*
-import org.junit.Test
 
 class JsCollectionsTest {
     val TEST_LIST = arrayOf(2, 0, 9, 7, 1).toList()
@@ -35,6 +34,13 @@ class JsCollectionsTest {
     @Test fun arrayListDoesNotCreateArrayView() {
         snapshotDoesNotCreateView(arrayOf(1, 2), { arrayListOf(*it) })
         snapshotDoesNotCreateView(arrayOf<Any>("first", "last"), { arrayListOf(*it) })
+    }
+
+    @Suppress("USELESS_CAST")
+    @Test fun asListHidesPrimitivenessOfArray() {
+        assertTrue(intArrayOf(1).asList().toTypedArray() as Any is Array<*>, "IntArray primitiveness leaks")
+        assertTrue(longArrayOf(1).asList().toTypedArray() as Any is Array<*>, "LongArray primitiveness leaks")
+        assertTrue(charArrayOf(' ').asList().toTypedArray() as Any is Array<*>, "CharArray primitiveness leaks")
     }
 
     @Test fun arrayListCapacity() {

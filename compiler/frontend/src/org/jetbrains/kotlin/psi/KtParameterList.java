@@ -89,4 +89,9 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
     public PsiElement getLeftParenthesis() {
         return findChildByType(KtTokens.LPAR);
     }
+
+    @Nullable
+    public PsiElement getFirstComma() {
+        return findChildByType(KtTokens.COMMA);
+    }
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.context;
@@ -57,13 +46,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private static class AccessorKey {
         public final DeclarationDescriptor descriptor;
         public final ClassDescriptor superCallLabelTarget;
+        public final FieldAccessorKind fieldAccessorKind;
 
         public AccessorKey(
                 @NotNull DeclarationDescriptor descriptor,
-                @Nullable ClassDescriptor superCallLabelTarget
+                @Nullable ClassDescriptor superCallLabelTarget,
+                @NotNull FieldAccessorKind fieldAccessorKind
         ) {
             this.descriptor = descriptor;
             this.superCallLabelTarget = superCallLabelTarget;
+            this.fieldAccessorKind = fieldAccessorKind;
         }
 
         @Override
@@ -71,13 +63,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (!(obj instanceof AccessorKey)) return false;
             AccessorKey other = (AccessorKey) obj;
             return descriptor.equals(other.descriptor) &&
+                   fieldAccessorKind == other.fieldAccessorKind &&
                    (superCallLabelTarget == null ? other.superCallLabelTarget == null
                                                  : superCallLabelTarget.equals(other.superCallLabelTarget));
         }
 
         @Override
         public int hashCode() {
-            return 31 * descriptor.hashCode() + (superCallLabelTarget == null ? 0 : superCallLabelTarget.hashCode());
+            return 31 * descriptor.hashCode() +
+                   fieldAccessorKind.hashCode() +
+                   (superCallLabelTarget == null ? 0 : superCallLabelTarget.hashCode());
         }
 
         @Override
@@ -215,13 +210,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private StackValue getOuterExpression(@Nullable StackValue prefix, boolean ignoreNoOuter, boolean captureThis) {
         if (outerExpression.invoke() == null) {
             if (!ignoreNoOuter) {
-                throw new UnsupportedOperationException("Don't know how to generate outer expression for " + getContextDescriptor());
+                throw new UnsupportedOperationException("Don't know how to generate outer expression: " + this);
             }
             return null;
         }
         if (captureThis) {
             if (closure == null) {
-                throw new IllegalStateException("Can't capture this for context without closure: " + getContextDescriptor());
+                throw new IllegalStateException("Can't capture this for context without closure: " + this);
             }
             closure.setCaptureThis();
         }
@@ -343,18 +338,49 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return new ClosureContext(typeMapper, jvmViewOfSuspendLambda, this, localLookup, originalSuspendLambdaDescriptor);
     }
 
+    public ClassContext intoWrapperForErasedInlineClass(ClassDescriptor descriptor, GenerationState state) {
+        return new ClassContext(state.getTypeMapper(), descriptor, OwnerKind.ERASED_INLINE_CLASS, this, null);
+    }
+
     @Nullable
     public CodegenContext getParentContext() {
         return parentContext;
     }
 
-    public ClassDescriptor getEnclosingClass() {
-        CodegenContext cur = getParentContext();
-        while (cur != null && !(cur.getContextDescriptor() instanceof ClassDescriptor)) {
+    public boolean isContextWithUninitializedThis() {
+        return false;
+    }
+
+    @Nullable
+    public CodegenContext getEnclosingClassContext() {
+        CodegenContext cur = getEnclosingThisContext();
+        while (cur != null) {
+            DeclarationDescriptor curDescriptor = cur.getContextDescriptor();
+            if (curDescriptor instanceof ClassDescriptor) {
+                return cur;
+            }
             cur = cur.getParentContext();
         }
+        return null;
+    }
 
-        return cur == null ? null : (ClassDescriptor) cur.getContextDescriptor();
+    @Nullable
+    public CodegenContext getEnclosingThisContext() {
+        CodegenContext cur = getParentContext();
+        while (cur != null && cur.isContextWithUninitializedThis()) {
+            CodegenContext parent = cur.getParentContext();
+            assert parent != null : "Context " + cur + " should have a parent";
+            cur = parent.getParentContext();
+        }
+        return cur;
+    }
+
+    @Nullable
+    public ClassDescriptor getEnclosingClass() {
+        // TODO store enclosing context class in the context itself
+        CodegenContext enclosingClassContext = getEnclosingClassContext();
+        if (enclosingClassContext == null) return null;
+        return (ClassDescriptor) enclosingClassContext.getContextDescriptor();
     }
 
     @Nullable
@@ -431,7 +457,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         D descriptor = (D) possiblySubstitutedDescriptor.getOriginal();
-        AccessorKey key = new AccessorKey(descriptor, superCallTarget);
+        AccessorKey key = new AccessorKey(descriptor, superCallTarget, accessorKind);
 
         // NB should check for property accessor factory first (or change property accessor tracking under propertyAccessorFactory creation)
         if (propertyAccessorFactories.containsKey(key)) {
@@ -474,7 +500,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             );
         }
         else {
-            throw new UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor);
+            throw new UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor +
+                                                    " in context " + this);
         }
 
         accessors.put(key, accessor);
@@ -490,9 +517,9 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
         StackValue myOuter = null;
         if (closure != null) {
-            EnclosedValueDescriptor answer = closure.getCaptureVariables().get(d);
-            if (answer != null) {
-                return StackValue.changeReceiverForFieldAndSharedVar(answer.getInnerValue(), result);
+            EnclosedValueDescriptor capturedVariable = closure.getCaptureVariables().get(d);
+            if (capturedVariable != null) {
+                return StackValue.changeReceiverForFieldAndSharedVar(capturedVariable.getInnerValue(), result);
             }
 
             for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
@@ -515,8 +542,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         StackValue resultValue;
         if (myOuter != null && getEnclosingClass() == d) {
             resultValue = result;
-        } else {
-            resultValue = parentContext != null ? parentContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
+        }
+        else {
+            CodegenContext enclosingClassContext = getEnclosingThisContext();
+            resultValue = enclosingClassContext != null ? enclosingClassContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
         }
 
         if (myOuter != null && resultValue != null && !isStaticField(resultValue)) {
@@ -682,5 +711,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     public CodegenContext getFirstCrossInlineOrNonInlineContext() {
         return this;
+    }
+
+    @Nullable
+    public LocalLookup getEnclosingLocalLookup() {
+        return enclosingLocalLookup;
     }
 }

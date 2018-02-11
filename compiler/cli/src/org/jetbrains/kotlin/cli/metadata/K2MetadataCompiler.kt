@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -53,6 +54,9 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     ): ExitCode {
         val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
+        val pluginLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration)
+        if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
+
         for (arg in arguments.freeArgs) {
             configuration.addKotlinSourceRoot(arg)
         }
@@ -60,7 +64,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             configuration.addJvmClasspathRoots(arguments.classpath!!.split(File.pathSeparatorChar).map(::File))
         }
 
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME)
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
         val destination = arguments.destination
         if (destination != null) {

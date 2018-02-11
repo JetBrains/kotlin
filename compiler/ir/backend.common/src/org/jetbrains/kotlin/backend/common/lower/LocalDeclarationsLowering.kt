@@ -38,7 +38,15 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContainerLoweringPass {
+interface LocalNameProvider {
+    fun localName(descriptor: DeclarationDescriptor): String =
+            descriptor.name.asString()
+    companion object {
+        val DEFAULT = object : LocalNameProvider {}
+    }
+}
+
+class LocalDeclarationsLowering(val context: BackendContext, val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT) : DeclarationContainerLoweringPass {
 
     private object DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE :
             IrDeclarationOriginImpl("FIELD_FOR_CAPTURED_VALUE") {}
@@ -430,7 +438,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                     return "lambda-${it.index}"
             }
 
-            return descriptor.name.asString()
+            return localNameProvider.localName(descriptor)
         }
 
         private fun generateNameForLiftedDeclaration(descriptor: DeclarationDescriptor,

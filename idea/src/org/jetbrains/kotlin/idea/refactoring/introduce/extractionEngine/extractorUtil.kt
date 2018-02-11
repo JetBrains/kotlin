@@ -404,10 +404,10 @@ private fun makeCall(
 }
 
 private var KtExpression.isJumpElementToReplace: Boolean
-        by NotNullableCopyableUserDataProperty(Key.create("IS_JUMP_ELEMENT_TO_REPLACE"), false)
+        by NotNullablePsiCopyableUserDataProperty(Key.create("IS_JUMP_ELEMENT_TO_REPLACE"), false)
 
 private var KtReturnExpression.isReturnForLabelRemoval: Boolean
-        by NotNullableCopyableUserDataProperty(Key.create("IS_RETURN_FOR_LABEL_REMOVAL"), false)
+        by NotNullablePsiCopyableUserDataProperty(Key.create("IS_RETURN_FOR_LABEL_REMOVAL"), false)
 
 fun ExtractionGeneratorConfiguration.generateDeclaration(
         declarationToReplace: KtNamedDeclaration? = null

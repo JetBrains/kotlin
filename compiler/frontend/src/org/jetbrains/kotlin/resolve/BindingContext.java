@@ -24,6 +24,9 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.cfg.LeakingThisDescriptor;
 import org.jetbrains.kotlin.cfg.TailRecursionKind;
+import org.jetbrains.kotlin.contracts.description.InvocationKind;
+import org.jetbrains.kotlin.contracts.model.Computation;
+import org.jetbrains.kotlin.contracts.model.Functor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.name.FqName;
@@ -37,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ExplicitSmartCasts;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ImplicitSmartCasts;
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
+import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -102,6 +106,8 @@ public interface BindingContext {
     WritableSlice<KtExpression, KotlinTypeInfo> EXPRESSION_TYPE_INFO = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, DataFlowInfo> DATA_FLOW_INFO_BEFORE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, KotlinType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<KtElement, Computation> EXPRESSION_EFFECTS = Slices.createSimpleSlice();
+    WritableSlice<FunctionDescriptor, Functor> FUNCTOR = Slices.createSimpleSlice();
     WritableSlice<KtFunction, KotlinType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, DataFlowInfo> DATAFLOW_INFO_AFTER_CONDITION = Slices.createSimpleSlice();
     WritableSlice<VariableDescriptor, DataFlowValue> BOUND_INITIALIZER_VALUE = Slices.createSimpleSlice();
@@ -137,7 +143,6 @@ public interface BindingContext {
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
 
     WritableSlice<Call, FunctionDescriptor> ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL = Slices.createSimpleSlice();
-    WritableSlice<FunctionDescriptor, Boolean> CONTAINS_NON_TAIL_SUSPEND_CALLS = Slices.createSimpleSetSlice();
 
     WritableSlice<VariableAccessorDescriptor, ResolvedCall<FunctionDescriptor>> DELEGATED_PROPERTY_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<VariableAccessorDescriptor, Call> DELEGATED_PROPERTY_CALL = Slices.createSimpleSlice();
@@ -213,6 +218,8 @@ public interface BindingContext {
     WritableSlice<PropertyDescriptor, Boolean> IS_UNINITIALIZED = Slices.createSimpleSetSlice();
     WritableSlice<PropertyDescriptor, Boolean> MUST_BE_LATEINIT = Slices.createSimpleSetSlice();
 
+    WritableSlice<KtLambdaExpression, InvocationKind> LAMBDA_INVOCATIONS = Slices.createSimpleSlice();
+
     WritableSlice<KtLambdaExpression, Boolean> BLOCK = new SetSlice<KtLambdaExpression>(DO_NOTHING) {
         @Override
         public Boolean computeValue(SlicedMap map, KtLambdaExpression expression, Boolean isBlock, boolean valueNotFound) {
@@ -256,10 +263,12 @@ public interface BindingContext {
     WritableSlice<ClassDescriptor, FunctionDescriptor> DATA_CLASS_COPY_FUNCTION = Slices.createSimpleSlice();
 
     WritableSlice<FqNameUnsafe, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<>(DO_NOTHING, true);
-    WritableSlice<KtFile, PackageFragmentDescriptor> FILE_TO_PACKAGE_FRAGMENT = Slices.createSimpleSlice();
     WritableSlice<FqName, Collection<KtFile>> PACKAGE_TO_FILES = Slices.createSimpleSlice();
+    WritableSlice<KtBinaryExpressionWithTypeRHS, Boolean> CAST_TYPE_USED_AS_EXPECTED_TYPE = Slices.createSimpleSlice();
 
     WritableSlice<KtFunction, KotlinResolutionCallbacksImpl.LambdaInfo> NEW_INFERENCE_LAMBDA_INFO = new BasicWritableSlice<>(DO_NOTHING);
+
+    WritableSlice<KtExpression, PrimitiveNumericComparisonInfo> PRIMITIVE_NUMERIC_COMPARISON_INFO = Slices.createSimpleSlice();
 
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer

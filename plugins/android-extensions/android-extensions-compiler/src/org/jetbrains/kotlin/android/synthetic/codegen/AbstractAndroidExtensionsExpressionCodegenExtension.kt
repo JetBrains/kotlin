@@ -24,17 +24,13 @@ import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackageFragmentDescriptor
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFunction
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.FunctionCodegen
-import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -64,6 +60,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
             val classOrObject: KtClassOrObject,
             val containerOptions: ContainerOptionsProxy)
 
+    protected abstract fun isEnabled(element: KtElement?): Boolean
     protected abstract fun isExperimental(element: KtElement?): Boolean
     protected abstract fun getGlobalCacheImpl(element: KtElement?): CacheImplementation
 
@@ -152,6 +149,8 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {
         val classBuilder = codegen.v
         val targetClass = codegen.myClass as? KtClass ?: return
+
+        if (!isEnabled(targetClass)) return
 
         val container = codegen.descriptor
         if (container.kind != ClassKind.CLASS && container.kind != ClassKind.OBJECT) return

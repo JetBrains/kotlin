@@ -47,15 +47,15 @@ class VarianceChecker(trace: BindingTrace) {
 }
 
 class VarianceConflictDiagnosticData(
-        val containingType: KotlinType,
-        val typeParameter: TypeParameterDescriptor,
-        val occurrencePosition: Variance
+    val containingType: KotlinType,
+    val typeParameter: TypeParameterDescriptor,
+    val occurrencePosition: Variance
 )
 
 class VarianceCheckerCore(
-        val context: BindingContext,
-        private val diagnosticSink: DiagnosticSink,
-        private val manualVariance: ManualVariance? = null
+    val context: BindingContext,
+    private val diagnosticSink: DiagnosticSink,
+    private val manualVariance: ManualVariance? = null
 ) {
 
     fun check(c: TopDownAnalysisContext) {
@@ -86,10 +86,10 @@ class VarianceCheckerCore(
     }
 
     fun checkMember(member: KtCallableDeclaration, descriptor: CallableMemberDescriptor) =
-            Visibilities.isPrivate(descriptor.visibility) || checkCallableDeclaration(context, member, descriptor)
+        Visibilities.isPrivate(descriptor.visibility) || checkCallableDeclaration(context, member, descriptor)
 
     private fun TypeParameterDescriptor.varianceWithManual() =
-            if (manualVariance != null && this.original == manualVariance.descriptor) manualVariance.variance else variance
+        if (manualVariance != null && this.original == manualVariance.descriptor) manualVariance.variance else variance
 
     fun recordPrivateToThisIfNeeded(descriptor: CallableMemberDescriptor) {
         if (isIrrelevant(descriptor) || descriptor.visibility != Visibilities.PRIVATE) return
@@ -102,9 +102,9 @@ class VarianceCheckerCore(
     }
 
     private fun checkCallableDeclaration(
-            trace: BindingContext,
-            declaration: KtCallableDeclaration,
-            descriptor: CallableDescriptor
+        trace: BindingContext,
+        declaration: KtCallableDeclaration,
+        descriptor: CallableDescriptor
     ): Boolean {
         if (isIrrelevant(descriptor)) return true
         var noError = true
@@ -124,8 +124,8 @@ class VarianceCheckerCore(
     }
 
     private fun KtTypeParameterListOwner.checkTypeParameters(
-            trace: BindingContext,
-            typePosition: Variance
+        trace: BindingContext,
+        typePosition: Variance
     ): Boolean {
         var noError = true
         for (typeParameter in typeParameters) {
@@ -137,20 +137,21 @@ class VarianceCheckerCore(
         return noError
     }
 
-    private fun KtTypeReference.checkTypePosition(trace: BindingContext, position: Variance)
-            = createTypeBinding(trace)?.checkTypePosition(position)
+    private fun KtTypeReference.checkTypePosition(trace: BindingContext, position: Variance) =
+        createTypeBinding(trace)?.checkTypePosition(position)
 
     private fun TypeBinding<PsiElement>.checkTypePosition(position: Variance) = checkTypePosition(type, position)
 
     private fun TypeBinding<PsiElement>.checkTypePosition(containingType: KotlinType, position: Variance): Boolean =
         checkTypePosition(
-                position,
-                {   typeParameterDescriptor, typeBinding, errorPosition ->
-                    val varianceConflictDiagnosticData = VarianceConflictDiagnosticData(containingType, typeParameterDescriptor, errorPosition)
-                    val diagnostic = if (typeBinding.isInAbbreviation) Errors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else Errors.TYPE_VARIANCE_CONFLICT
-                    diagnosticSink.report(diagnostic.on(typeBinding.psiElement, varianceConflictDiagnosticData))
-                },
-                customVariance = { it.varianceWithManual() }
+            position,
+            { typeParameterDescriptor, typeBinding, errorPosition ->
+                val varianceConflictDiagnosticData = VarianceConflictDiagnosticData(containingType, typeParameterDescriptor, errorPosition)
+                val diagnostic =
+                    if (typeBinding.isInAbbreviation) Errors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else Errors.TYPE_VARIANCE_CONFLICT
+                diagnosticSink.report(diagnostic.on(typeBinding.psiElement, varianceConflictDiagnosticData))
+            },
+            customVariance = { it.varianceWithManual() }
         )
 
     private fun isIrrelevant(descriptor: CallableDescriptor): Boolean {

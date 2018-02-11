@@ -66,13 +66,15 @@ import java.util.concurrent.TimeUnit
 
 object KotlinToJVMBytecodeCompiler {
 
-    private fun getAbsolutePaths(directory: File, module: Module): List<String> {
+    private fun getAbsolutePaths(buildFile: File, module: Module): List<String> {
         return module.getSourceFiles().map { sourceFile ->
-            var source = File(sourceFile)
+            val source = File(sourceFile)
             if (!source.isAbsolute) {
-                source = File(directory, sourceFile)
+                File(buildFile.absoluteFile.parentFile, sourceFile).absolutePath
             }
-            source.absolutePath
+            else {
+                source.absolutePath
+            }
         }
     }
 
@@ -111,13 +113,12 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    fun compileModules(environment: KotlinCoreEnvironment, directory: File): Boolean {
+    internal fun compileModules(environment: KotlinCoreEnvironment, buildFile: File, chunk: List<Module>): Boolean {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
 
         val projectConfiguration = environment.configuration
-        val chunk = projectConfiguration.getNotNull(JVMConfigurationKeys.MODULES)
         for (module in chunk) {
             moduleVisibilityManager.addModule(module)
         }
@@ -141,7 +142,7 @@ object KotlinToJVMBytecodeCompiler {
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             val ktFiles = CompileEnvironmentUtil.getKtFiles(
-                    environment.project, getAbsolutePaths(directory, module), projectConfiguration
+                    environment.project, getAbsolutePaths(buildFile, module), projectConfiguration
             ) { path -> throw IllegalStateException("Should have been checked before: $path") }
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
 
@@ -180,9 +181,9 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, directory: File) {
+    internal fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, buildFile: File) {
         for (module in chunk) {
-            configuration.addKotlinSourceRoots(getAbsolutePaths(directory, module))
+            configuration.addKotlinSourceRoots(getAbsolutePaths(buildFile, module))
         }
 
         for (module in chunk) {
@@ -421,6 +422,13 @@ object KotlinToJVMBytecodeCompiler {
         override fun toString() = "All files under: $directories"
     }
 
+    private fun GenerationState.Builder.withModule(module: Module?) =
+            apply {
+                targetId(module?.let { TargetId(it) })
+                moduleName(module?.getModuleName())
+                outDirectory(module?.let { File(it.getOutputDirectory()) })
+            }
+
     private fun generate(
             environment: KotlinCoreEnvironment,
             configuration: CompilerConfiguration,
@@ -429,20 +437,19 @@ object KotlinToJVMBytecodeCompiler {
             module: Module?
     ): GenerationState {
         val isKapt2Enabled = environment.project.getUserData(IS_KAPT2_ENABLED_KEY) ?: false
-        val generationState = GenerationState(
+        val generationState = GenerationState.Builder(
                 environment.project,
                 ClassBuilderFactories.binaries(isKapt2Enabled),
                 result.moduleDescriptor,
                 result.bindingContext,
                 sourceFiles,
-                configuration,
-                GenerationState.GenerateClassFilter.GENERATE_ALL,
-                if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory,
-                module?.let(::TargetId),
-                module?.let(Module::getModuleName),
-                module?.let { File(it.getOutputDirectory()) },
-                createOutputFilesFlushingCallbackIfPossible(configuration)
+                configuration
         )
+                .codegenFactory(if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory)
+                .withModule(module)
+                .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
+                .build()
+
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val generationStart = PerformanceCounter.currentTime()

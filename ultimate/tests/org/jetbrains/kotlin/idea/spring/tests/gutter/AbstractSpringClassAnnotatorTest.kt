@@ -55,6 +55,8 @@ abstract class AbstractSpringClassAnnotatorTest : KotlinLightCodeInsightFixtureT
 
         val config = JsonParser().parse(FileUtil.loadFile(configFile, true)) as JsonObject
 
+        PluginTestCaseBase.addJdk(myFixture.projectDisposable, PluginTestCaseBase::mockJdk)
+
         val withRuntime = config["withRuntime"]?.asBoolean ?: false
         if (withRuntime) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
@@ -71,9 +73,10 @@ abstract class AbstractSpringClassAnnotatorTest : KotlinLightCodeInsightFixtureT
 
             val fileName = config.getString("file")
             val iconName = config.getString("icon")
-            val icon = SpringApiIcons::class.java.getField(iconName)[null]
+            val icon = SpringApiIcons.Gutter::class.java.getField(iconName)[null]
 
-            val gutterMark = myFixture.findGutter(fileName)!!.let {
+            val gutter = myFixture.findGutter(fileName) ?: throw AssertionError("no gutter for '$fileName'")
+            val gutterMark = gutter.let {
                 if (it.icon == icon) it
                 else myFixture.findGuttersAtCaret().let { gutters ->
                     gutters.firstOrNull() { it.icon == icon }

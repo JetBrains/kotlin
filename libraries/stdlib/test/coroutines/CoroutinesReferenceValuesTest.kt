@@ -16,8 +16,8 @@
 
 package test.coroutines
 
+import test.assertStaticAndRuntimeTypeIs
 import kotlin.test.*
-import org.junit.Test
 import kotlin.coroutines.experimental.*
 
 /**
@@ -40,8 +40,8 @@ class CoroutinesReferenceValuesTest {
 
     // state machine
     suspend fun checkBadClassTwice() {
-        assertTrue(getBadClassViaSuspend() is BadClass)
-        assertTrue(getBadClassViaSuspend() is BadClass)
+        assertStaticAndRuntimeTypeIs<BadClass>(getBadClassViaSuspend())
+        assertStaticAndRuntimeTypeIs<BadClass>(getBadClassViaSuspend())
     }
 
     fun <T> suspend(block: suspend () -> T) = block

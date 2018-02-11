@@ -34,6 +34,10 @@ the Kotlin IntelliJ IDEA plugin:
  - Path: js/js.libraries/src/js/long.js
       - License: Apache 2 (license/third_party/closure-compiler_LICENSE.txt)
       - Origin: Google Closure Library, Copyright 2009 The Closure Library Authors
+      
+ - Path: js/js.libraries/src/js/polyfills.js
+      - License: Boost Software License 1.0 (license/third_party/boost_LICENSE.txt)
+      - Origin: Derived from boost special math functions, Copyright Eric Ford & Hubert Holin 2001.
  
  - Path: js/js.parser/src/com/google
       - License: Netscape Public License 1.1 (license/third_party/rhino_LICENSE.txt)
@@ -48,7 +52,11 @@ the Kotlin IntelliJ IDEA plugin:
  - Path: libraries/stdlib/src/kotlin/collections
       - License: Apache 2 (license/third_party/gwt_license.txt)
       - Origin: Derived from GWT, (C) 2007-08 Google Inc.
-    
+          
+ - Path: libraries/stdlib/src/kotlin/util/MathJVM.kt
+      - License: Boost Software License 1.0 (license/third_party/boost_LICENSE.txt)
+      - Origin: Derived from boost special math functions, Copyright Eric Ford & Hubert Holin 2001.
+
  - Path: plugins/lint/android-annotations
       - License: Apache 2 (license/third_party/aosp_license.txt)
       - Origin: Copyright (C) 2011-15 The Android Open Source Project

@@ -1,0 +1,6 @@
+// JS
+fun test() {
+    val d: dynamic = Any()
+    var s: String = ""
+    s = d as String
+}

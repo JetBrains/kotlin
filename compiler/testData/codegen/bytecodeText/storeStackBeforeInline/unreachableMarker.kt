@@ -1,5 +1,10 @@
+inline fun <T> runAfterLoop(fn: () -> T): T {
+    for (i in 1..2);
+    return fn()
+}
+
 inline fun bar(block: () -> String) : String {
-    return block()
+    return runAfterLoop(block)
 }
 
 inline fun bar2() : String {
@@ -16,6 +21,6 @@ fun foo() : String {
     )
 }
 
-// 10 ALOAD
+// 12 ALOAD
 // 2 ASTORE
 // 0 InlineMarker

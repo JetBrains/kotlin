@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -99,6 +88,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
     @TestMetadata("invokeDefaultViaSuper.kt")
     public void testInvokeDefaultViaSuper() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/invokeDefaultViaSuper.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("invokeDefaultViaSuper_16.kt")
+    public void testInvokeDefaultViaSuper_16() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/invokeDefaultViaSuper_16.kt");
         doTest(fileName);
     }
 
@@ -299,6 +294,18 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         @TestMetadata("kt16588.kt")
         public void testKt16588() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/kt16588.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt6301.kt")
+        public void testKt6301() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/kt6301.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt6301_2.kt")
+        public void testKt6301_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/kt6301_2.kt");
             doTest(fileName);
         }
 
@@ -570,6 +577,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
     public static class ParametersMetadata extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInParametersMetadata() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/parametersMetadata"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("defaultImpls.kt")
+        public void testDefaultImpls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/parametersMetadata/defaultImpls.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("enum.kt")

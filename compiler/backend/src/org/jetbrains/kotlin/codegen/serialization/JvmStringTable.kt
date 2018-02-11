@@ -28,14 +28,22 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record
 import org.jetbrains.kotlin.types.ErrorUtils
 import java.io.OutputStream
-import java.util.*
 
 // TODO: optimize by reordering records to minimize storage of 'range' fields
 class JvmStringTable(private val typeMapper: KotlinTypeMapper) : StringTable {
     val strings = ArrayList<String>()
     private val records = ArrayList<Record.Builder>()
     private val map = HashMap<String, Int>()
-    private val localNames = HashSet<Int>()
+    private val localNames = LinkedHashSet<Int>()
+
+    constructor(typeMapper: KotlinTypeMapper, nameResolver: JvmNameResolver) : this(typeMapper) {
+        strings.addAll(nameResolver.strings)
+        nameResolver.records.mapTo(records, JvmProtoBuf.StringTableTypes.Record::toBuilder)
+        for (index in strings.indices) {
+            map[nameResolver.getString(index)] = index
+        }
+        localNames.addAll(nameResolver.types.localNameList)
+    }
 
     override fun getStringIndex(string: String): Int =
             map.getOrPut(string) {
@@ -59,16 +67,18 @@ class JvmStringTable(private val typeMapper: KotlinTypeMapper) : StringTable {
             throw IllegalStateException("Cannot get FQ name of error class: " + descriptor)
         }
 
-        // We use the following format to encode ClassId: "pkg/Outer.Inner".
-        // It represents a unique name, but such names don't usually appear in the constant pool, so we're writing "Lpkg/Outer$Inner;"
-        // instead and an instruction to drop the first and the last character in this string and replace all '$' with '.'.
-        // This works most of the time, except in two rare cases:
-        // - the name of the class or any of its outer classes contains dollars. In this case we're just storing the described
-        //   string literally: "pkg/Outer.Inner$with$dollars"
-        // - the class is local or nested in local. In this case we're also storing the literal string, and also storing the fact that
-        //   this name represents a local class in a separate list
+        return getClassIdIndex(descriptor.classId)
+    }
 
-        val classId = descriptor.classId
+    // We use the following format to encode ClassId: "pkg/Outer.Inner".
+    // It represents a unique name, but such names don't usually appear in the constant pool, so we're writing "Lpkg/Outer$Inner;"
+    // instead and an instruction to drop the first and the last character in this string and replace all '$' with '.'.
+    // This works most of the time, except in two rare cases:
+    // - the name of the class or any of its outer classes contains dollars. In this case we're just storing the described
+    //   string literally: "pkg/Outer.Inner$with$dollars"
+    // - the class is local or nested in local. In this case we're also storing the literal string, and also storing the fact that
+    //   this name represents a local class in a separate list
+    override fun getClassIdIndex(classId: ClassId): Int {
         val string = classId.asString()
 
         map[string]?.let { recordedIndex ->

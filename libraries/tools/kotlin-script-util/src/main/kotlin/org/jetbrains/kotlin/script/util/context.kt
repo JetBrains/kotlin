@@ -51,7 +51,7 @@ fun File.matchMaybeVersionedFile(baseName: String) =
         name == baseName.removeSuffix(".jar") || // for classes dirs
         Regex(Regex.escape(baseName.removeSuffix(".jar")) + "(-\\d.*)?\\.jar").matches(name)
 
-private const val KOTLIN_COMPILER_EMBEDDABLE_JAR = "${PathUtil.KOTLIN_COMPILER}-embeddable.jar"
+private const val KOTLIN_COMPILER_EMBEDDABLE_JAR = "${PathUtil.KOTLIN_COMPILER_NAME}-embeddable.jar"
 
 internal fun List<File>.takeIfContainsAll(vararg keyNames: String): List<File>? =
         takeIf { classpath ->

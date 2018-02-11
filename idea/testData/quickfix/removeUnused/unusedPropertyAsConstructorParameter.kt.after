@@ -1,2 +1,2 @@
 // "Safe delete 'property'" "true"
-class UnusedPropertyAsConstructorParameter()
+class UnusedPropertyAsConstructorParameter<caret>

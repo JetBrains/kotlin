@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -58,9 +57,9 @@ class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryCons
         editor?.moveCaret(leftParOffset + 1)
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
-        return super.isAvailable(project, editor, file) && element.hasImplicitDelegationCall()
+        return element.hasImplicitDelegationCall()
     }
 
     object InsertThisDelegationCallFactory : KotlinSingleIntentionActionFactory() {

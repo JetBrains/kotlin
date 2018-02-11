@@ -10,10 +10,10 @@ enum class E(val x: Int) {
     E1(0)
 }
 ---------------------
-      <v0>: Int   NEW: magic[FAKE_INITIALIZER](val x: Int) -> <v0>
-      <v1>: E     NEW: magic[FAKE_INITIALIZER](E1(0)) -> <v1>
-0     <v2>: Int   NEW: r(0) -> <v2>
-(0)   <v3>: *     NEW: call((0), <init>|<v2>) -> <v3>
+      <v0>: Int      NEW: magic[FAKE_INITIALIZER](val x: Int) -> <v0>
+      <v1>: {<: E}   NEW: magic[FAKE_INITIALIZER](E1(0)) -> <v1>
+0     <v2>: Int      NEW: r(0) -> <v2>
+(0)   <v3>: *        NEW: call((0), <init>|<v2>) -> <v3>
 =====================
 == C ==
 class C {
@@ -26,7 +26,7 @@ class C {
 == foo ==
 fun foo() = E1.x + O.y + C.z
 ---------------------
-E1                 <v0>: E             NEW: r(E1) -> <v0>
+E1                 <v0>: {<: E}        NEW: r(E1) -> <v0>
 x                  <v1>: Int           NEW: r(x|<v0>) -> <v1>
 E1.x               <v1>: Int           COPY
 O                  <v2>: O             NEW: r(O) -> <v2>

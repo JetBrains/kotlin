@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // KT-282 Nullability in extension functions and in binary calls
 
 class Set {

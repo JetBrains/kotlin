@@ -1,0 +1,148 @@
+FILE fqName:<root> fileName:/whenByFloatingPoint.kt
+  FUN name:testSimple visibility:public modality:FINAL <> (x:kotlin.Double) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testSimple(Double): Int'
+        BLOCK type=kotlin.Int origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Double flags:val
+            GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
+          WHEN type=kotlin.Int origin=WHEN
+            BRANCH
+              if: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'tmp0_subject: Double' type=kotlin.Double origin=null
+                arg1: CONST Double type=kotlin.Double value=0.0
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=1
+  FUN name:testSmartCastInWhenSubject visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='testSmartCastInWhenSubject(Any): Int'
+            CONST Int type=kotlin.Int value=-1
+      RETURN type=kotlin.Nothing from='testSmartCastInWhenSubject(Any): Int'
+        BLOCK type=kotlin.Int origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any flags:val
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          WHEN type=kotlin.Int origin=WHEN
+            BRANCH
+              if: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  GET_VAR 'tmp0_subject: Any' type=kotlin.Any origin=null
+                arg1: CONST Double type=kotlin.Double value=0.0
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=1
+  FUN name:testSmartCastInWhenCondition visibility:public modality:FINAL <> (x:kotlin.Double, y:kotlin.Any) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
+            GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='testSmartCastInWhenCondition(Double, Any): Int'
+            CONST Int type=kotlin.Int value=-1
+      RETURN type=kotlin.Nothing from='testSmartCastInWhenCondition(Double, Any): Int'
+        BLOCK type=kotlin.Int origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Double flags:val
+            GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
+          WHEN type=kotlin.Int origin=WHEN
+            BRANCH
+              if: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'tmp0_subject: Double' type=kotlin.Double origin=null
+                arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=1
+  FUN name:testSmartCastInWhenConditionInBranch visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testSmartCastInWhenConditionInBranch(Any): Int'
+        BLOCK type=kotlin.Int origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any flags:val
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          WHEN type=kotlin.Int origin=WHEN
+            BRANCH
+              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                GET_VAR 'tmp0_subject: Any' type=kotlin.Any origin=null
+              then: CONST Int type=kotlin.Int value=-1
+            BRANCH
+              if: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  GET_VAR 'tmp0_subject: Any' type=kotlin.Any origin=null
+                arg1: CONST Double type=kotlin.Double value=0.0
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=1
+  FUN name:testSmartCastToDifferentTypes visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='testSmartCastToDifferentTypes(Any, Any): Int'
+            CONST Int type=kotlin.Int value=-1
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Float
+            GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='testSmartCastToDifferentTypes(Any, Any): Int'
+            CONST Int type=kotlin.Int value=-1
+      RETURN type=kotlin.Nothing from='testSmartCastToDifferentTypes(Any, Any): Int'
+        BLOCK type=kotlin.Int origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any flags:val
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          WHEN type=kotlin.Int origin=WHEN
+            BRANCH
+              if: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  GET_VAR 'tmp0_subject: Any' type=kotlin.Any origin=null
+                arg1: CALL 'toDouble(): Double' type=kotlin.Double origin=null
+                  $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                    GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=1
+  FUN name:foo visibility:public modality:FINAL <> (x:kotlin.Double) returnType:Double flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='foo(Double): Double'
+        GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
+  FUN name:testWithPrematureExitInConditionSubexpression visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testWithPrematureExitInConditionSubexpression(Any): Int'
+        BLOCK type=kotlin.Int origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any flags:val
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          WHEN type=kotlin.Int origin=WHEN
+            BRANCH
+              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'tmp0_subject: Any' type=kotlin.Any origin=null
+                arg1: CALL 'foo(Double): Double' type=kotlin.Double origin=null
+                  x: WHEN type=kotlin.Double origin=null
+                    BRANCH
+                      if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
+                        GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+                      then: RETURN type=kotlin.Nothing from='testWithPrematureExitInConditionSubexpression(Any): Int'
+                        CONST Int type=kotlin.Int value=42
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                        GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=1

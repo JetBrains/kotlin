@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.js.test.NashornJsTestChecker
 import java.io.File
 import javax.script.ScriptException
 
-class MultiModuleOrderTest : BasicBoxTest("$TEST_DATA_DIR_PATH/multiModuleOrder/cases/", "$TEST_DATA_DIR_PATH/multiModuleOrder/out/") {
+private val testGroupDir = "multiModuleOrder/"
+private val pathToTestGroupDir = BasicBoxTest.TEST_DATA_DIR_PATH + testGroupDir
+
+class MultiModuleOrderTest : BasicBoxTest(pathToTestGroupDir, testGroupDir) {
     fun testPlain() {
         runTest("plain")
     }
@@ -31,7 +34,7 @@ class MultiModuleOrderTest : BasicBoxTest("$TEST_DATA_DIR_PATH/multiModuleOrder/
     }
 
     fun runTest(name: String) {
-        val fullPath = "$TEST_DATA_DIR_PATH/multiModuleOrder/cases/$name.kt"
+        val fullPath = pathToTestGroupDir + "$name.kt"
         doTest(fullPath)
         checkWrongOrderReported(fullPath, name)
     }

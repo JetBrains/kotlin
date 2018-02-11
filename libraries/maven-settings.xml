@@ -3,15 +3,6 @@
           xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <mirrors>
-        <mirror>
-            <mirrorOf>central</mirrorOf>
-            <name>repo</name>
-            <url>http://repository.jetbrains.com/remote-repos</url>
-            <id>repo</id>
-        </mirror>
-    </mirrors>
-
     <servers>
         <server>
             <id>jetbrains-kotlin</id>

@@ -1,0 +1,3 @@
+4 @JvmField val <bold>x = 1</bold>
+3 	int x = new A().<bold>x</bold>;
+3 		int <bold>x = new A().x;</bold>

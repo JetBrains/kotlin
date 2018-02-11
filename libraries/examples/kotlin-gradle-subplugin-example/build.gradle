@@ -1,10 +1,10 @@
+
 apply plugin: 'kotlin'
 apply plugin: 'maven'
 
 repositories {
     mavenLocal()
     jcenter()
-    maven { url 'http://repository.jetbrains.com/utils/' }
 }
 
 dependencies {
@@ -20,5 +20,13 @@ dependencies {
     compileOnly project(':compiler:cli-common')
     compileOnly project(':compiler:cli')
     
-    compileOnly "org.jetbrains.kotlin:gradle-api:1.6"
+    compileOnly gradleApi()
+
+    compileOnly("kotlin.build.custom.deps:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
+        artifact {
+            name = 'intellij-core'
+            type = 'jar'
+            extension = 'jar'
+        }
+    }
 }

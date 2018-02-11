@@ -1,0 +1,18 @@
+package
+
+public val asA: A
+public val correct1: A
+public val correct2: A
+public val correct3: A
+public val no2A: A
+public val receiverParenthesized: A
+public fun </*0*/ T> foo(): T
+public fun </*0*/ V> id(/*0*/ value: V): V
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun </*0*/ T> fooA(): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

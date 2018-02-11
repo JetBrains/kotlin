@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.repl
 
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -45,6 +46,9 @@ open class GenericReplCompiler(disposable: Disposable,
                                protected val compilerConfiguration: CompilerConfiguration,
                                messageCollector: MessageCollector
 ) : ReplCompiler {
+
+    constructor(scriptDefinition: KotlinScriptDefinition, compilerConfiguration: CompilerConfiguration, messageCollector: MessageCollector) :
+        this(Disposer.newDisposable(), scriptDefinition, compilerConfiguration, messageCollector)
 
     private val checker = GenericReplChecker(disposable, scriptDefinition, compilerConfiguration, messageCollector)
 
@@ -83,14 +87,14 @@ open class GenericReplCompiler(disposable: Disposable,
                 else -> error("Unexpected result ${analysisResult::class.java}")
             }
 
-            val generationState = GenerationState(
+            val generationState = GenerationState.Builder(
                     psiFile.project,
                     ClassBuilderFactories.binaries(false),
                     compilerState.analyzerEngine.module,
                     compilerState.analyzerEngine.trace.bindingContext,
                     listOf(psiFile),
                     compilerConfiguration
-            )
+            ).build()
             generationState.replSpecific.scriptResultFieldName = SCRIPT_RESULT_FIELD_NAME
             generationState.replSpecific.earlierScriptsForReplInterpreter = compilerState.history.map { it.item }
             generationState.beforeCompile()

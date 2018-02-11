@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -36,7 +35,7 @@ class ChangeAccessorTypeFix(element: KtPropertyAccessor) : KotlinQuickFixAction<
     private fun getType(): KotlinType? =
             (element!!.property.resolveToDescriptorIfAny() as? VariableDescriptor)?.type?.takeUnless(KotlinType::isError)
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) = super.isAvailable(project, editor, file) && getType() != null
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = getType() != null
 
     override fun getFamilyName() = "Change accessor type"
 

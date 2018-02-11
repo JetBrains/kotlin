@@ -50,7 +50,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ACCIDENTAL_OVERRIDE, "Accidental override: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(CONFLICTING_INHERITED_JVM_DECLARATIONS, "Inherited platform declarations clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
 
-        MAP.put(JVM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and companion objects of classes can be annotated with '@JvmStatic'");
+        MAP.put(JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION, "Only members in named objects and companion objects of classes can be annotated with '@JvmStatic'");
+        MAP.put(JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION, "Only members in named objects and companion objects can be annotated with '@JvmStatic'");
+        MAP.put(JVM_STATIC_ON_NON_PUBLIC_MEMBER, "Only public members in interface companion objects can be annotated with '@JvmStatic'");
+        MAP.put(JVM_STATIC_IN_INTERFACE_1_6, "'@JvmStatic' annotation in interface supported only with JVM target 1.8 and above. Recompile with '-jvm-target 1.8'\"");
         MAP.put(JVM_STATIC_ON_CONST_OR_JVM_FIELD, "'@JvmStatic' annotation is useless for const or '@JvmField' properties");
         MAP.put(OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be '@JvmStatic' in object");
         MAP.put(OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "'@JvmOverloads' annotation has no effect for methods without default arguments");
@@ -116,13 +119,20 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 NAME, NAME, STRING);
 
         MAP.put(DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET, "Super calls to Java default methods are deprecated in JVM target 1.6. Recompile with '-jvm-target 1.8'");
+        MAP.put(DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR, "Super calls to Java default methods are prohibited in JVM target 1.6. Recompile with '-jvm-target 1.8'");
         MAP.put(INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, "Calls to static methods in Java interfaces are deprecated in JVM target 1.6. Recompile with '-jvm-target 1.8'");
+        MAP.put(INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR, "Calls to static methods in Java interfaces are prohibited in JVM target 1.6. Recompile with '-jvm-target 1.8'");
 
         MAP.put(INLINE_FROM_HIGHER_PLATFORM, "Cannot inline bytecode built with {0} into bytecode that is being built with {1}. Please specify proper ''-jvm-target'' option", STRING, STRING);
 
         MAP.put(JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE, "Symbol is declared in module ''{0}'' which current module does not depend on", STRING);
         MAP.put(JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE, "Symbol is declared in unnamed module which is not read by current module");
         MAP.put(JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE, "Symbol is declared in module ''{0}'' which does not export package ''{1}''", STRING, STRING);
+
+        MAP.put(API_VERSION_IS_AT_LEAST_ARGUMENT_SHOULD_BE_CONSTANT, "'apiVersionIsAtLeast' argument should be a constant expression");
+
+        MAP.put(ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE, "Assignment to a for-in-array loop range variable. Behavior may change in Kotlin 1.3. " +
+                                                   "See https://youtrack.jetbrains.com/issue/KT-21354 for more details");
     }
 
     @NotNull

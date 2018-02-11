@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaOrKotlinMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.javaResolutionFacade
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.keysToMap
@@ -527,7 +529,7 @@ fun KotlinChangeInfo.getAffectedCallables(): Collection<UsageInfo> = methodDescr
 
 fun ChangeInfo.toJetChangeInfo(
         originalChangeSignatureDescriptor: KotlinMethodDescriptor,
-        resolutionFacade: ResolutionFacade? = null
+        resolutionFacade: ResolutionFacade = method.javaResolutionFacade()
 ): KotlinChangeInfo {
     val method = method as PsiMethod
 
@@ -555,11 +557,14 @@ fun ChangeInfo.toJetChangeInfo(
                 }
 
         val parameterType = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].type else currentType
+        val originalKtParameter = originalParameterDescriptors.getOrNull(oldIndex)?.source?.getPsi() as? KtParameter
+        val valOrVar = originalKtParameter?.valOrVarKeyword?.toValVar() ?: KotlinValVar.None
         KotlinParameterInfo(callableDescriptor = functionDescriptor,
                             originalIndex = oldIndex,
                             name = info.name,
                             originalTypeInfo = KotlinTypeInfo(false, parameterType),
-                            defaultValueForCall = defaultValueExpr).apply {
+                            defaultValueForCall = defaultValueExpr,
+                            valOrVar = valOrVar).apply {
             currentTypeInfo = KotlinTypeInfo(false, currentType)
         }
     }

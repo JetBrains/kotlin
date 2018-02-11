@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 import org.picocontainer.MutablePicoContainer
 import java.util.*
+import java.util.Collections.synchronizedList
 
 object LightClassComputationControl {
     fun testWithControl(project: Project, testText: String, testBody: () -> Unit) {
@@ -33,7 +34,7 @@ object LightClassComputationControl {
                 testText, "// $LIGHT_CLASS_DIRECTIVE"
         ).map { it.trim() }
 
-        val actualFqNames = ArrayList<String>()
+        val actualFqNames = synchronizedList(ArrayList<String>())
         val stubComputationTracker = object : StubComputationTracker {
             override fun onStubComputed(javaFileStub: PsiJavaFileStub, context: LightClassConstructionContext) {
                 val qualifiedName = (javaFileStub.childrenStubs.single() as PsiClassStub<*>).qualifiedName!!
@@ -45,7 +46,7 @@ object LightClassComputationControl {
             testBody()
         }
 
-        if (expectedLightClassFqNames.toSortedSet() != actualFqNames.toSortedSet()) {
+        if (expectedLightClassFqNames.toSortedSet() != synchronized(actualFqNames) { actualFqNames.toSortedSet() }) {
             Assert.fail(
                     "Expected to compute: ${expectedLightClassFqNames.prettyToString()}\n" +
                     "Actually computed: ${actualFqNames.prettyToString()}\n" +

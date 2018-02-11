@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.types.checker.prepareArgumentTypeRegardingCaptureTyp
 interface DetailedReceiver
 
 class ReceiverValueWithSmartCastInfo(
-        val receiverValue: ReceiverValue,
-        val possibleTypes: Set<KotlinType>, // doesn't include receiver.type
-        val isStable: Boolean
-): DetailedReceiver {
+    val receiverValue: ReceiverValue,
+    val possibleTypes: Set<KotlinType>, // doesn't include receiver.type
+    val isStable: Boolean
+) : DetailedReceiver {
     override fun toString() = receiverValue.toString()
 }
 

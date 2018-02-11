@@ -107,6 +107,31 @@ class MethodOrderTest: CodegenTestCase() {
         )
     }
 
+    fun testDeterministicDefaultMethodImplOrder() {
+        doTest(
+                """
+                    interface Base<K, V> {
+                        fun getSize(): Int = 5
+                        fun size(): Int = getSize()
+                        fun getKeys(): Int = 4
+                        fun keySet() = getKeys()
+                        fun getEntries(): Int = 3
+                        fun entrySet() = getEntries()
+                        fun getValues(): Int = 2
+                        fun values() = getValues()
+
+                        fun removeEldestEntry(eldest: Any?): Boolean
+                    }
+
+                    class MinMap<K, V> : Base<K, V> {
+                        override fun removeEldestEntry(eldest: Any?) = true
+                    }
+                """,
+                "MinMap",
+                listOf("removeEldestEntry(Ljava/lang/Object;)Z", "<init>()V", "getSize()I", "size()I", "getKeys()I", "keySet()I", "getEntries()I", "entrySet()I", "getValues()I", "values()I")
+        )
+    }
+
     private fun doTest(sourceText: String, classSuffix: String, expectedOrder: List<String>) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY)
         myFiles = CodegenTestFiles.create("file.kt", sourceText, myEnvironment!!.project)

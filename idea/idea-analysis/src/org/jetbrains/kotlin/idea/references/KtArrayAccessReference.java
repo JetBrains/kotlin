@@ -27,8 +27,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtArrayAccessExpression;
-import org.jetbrains.kotlin.psi.KtContainerNode;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -98,6 +97,22 @@ public class KtArrayAccessReference extends KtSimpleReference<KtArrayAccessExpre
     @Nullable
     @Override
     public PsiElement handleElementRename(@Nullable String newElementName) {
+        KtArrayAccessExpression arrayAccessExpression = getExpression();
+        if (OperatorNameConventions.INVOKE.asString().equals(newElementName)) {
+            KtExpression callExpression = CreateByPatternKt.buildExpression(
+                    new KtPsiFactory(arrayAccessExpression.getProject()),
+                    true,
+                    pattern -> {
+                        pattern.appendExpression(arrayAccessExpression.getArrayExpression());
+                        pattern.appendFixedText("(");
+                        pattern.appendExpressions(arrayAccessExpression.getIndexExpressions(), ",");
+                        pattern.appendFixedText(")");
+                        return null;
+                    }
+            );
+            return arrayAccessExpression.replace(callExpression);
+        }
+
         return ReferenceUtilKt.renameImplicitConventionalCall(this, newElementName);
     }
 

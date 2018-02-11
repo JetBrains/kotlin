@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.android.parcel
 
+import kotlinx.android.parcel.IgnoredOnParcel
 import org.jetbrains.kotlin.android.parcel.serializers.ParcelSerializer
 import org.jetbrains.kotlin.android.parcel.serializers.isParcelable
 import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid
 import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -33,7 +35,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
@@ -44,31 +47,27 @@ val ANDROID_PARCELABLE_CLASS_FQNAME = FqName("android.os.Parcelable")
 val ANDROID_PARCELABLE_CREATOR_CLASS_FQNAME = FqName("android.os.Parcelable.Creator")
 val ANDROID_PARCEL_CLASS_FQNAME = FqName("android.os.Parcel")
 
-class ParcelableDeclarationChecker : SimpleDeclarationChecker {
+class ParcelableDeclarationChecker : DeclarationChecker {
     private companion object {
-        private val TRANSIENT_FQNAME = FqName(Transient::class.java.canonicalName)
+        private val IGNORED_ON_PARCEL_FQNAME = FqName(IgnoredOnParcel::class.java.canonicalName)
     }
 
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        val trace = context.trace
         when (descriptor) {
-            is ClassDescriptor -> checkParcelableClass(descriptor, declaration, diagnosticHolder, bindingContext)
+            is ClassDescriptor -> checkParcelableClass(descriptor, declaration, trace, trace.bindingContext)
             is SimpleFunctionDescriptor -> {
                 val containingClass = descriptor.containingDeclaration as? ClassDescriptor
                 val ktFunction = declaration as? KtFunction
                 if (containingClass != null && ktFunction != null) {
-                    checkParcelableClassMethod(descriptor, containingClass, ktFunction, diagnosticHolder)
+                    checkParcelableClassMethod(descriptor, containingClass, ktFunction, trace)
                 }
             }
             is PropertyDescriptor -> {
                 val containingClass = descriptor.containingDeclaration as? ClassDescriptor
                 val ktProperty = declaration as? KtProperty
                 if (containingClass != null && ktProperty != null) {
-                    checkParcelableClassProperty(descriptor, containingClass, ktProperty, diagnosticHolder, bindingContext)
+                    checkParcelableClassProperty(descriptor, containingClass, ktProperty, trace, trace.bindingContext)
                 }
             }
         }
@@ -97,7 +96,7 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
     ) {
         if (containingClass.isParcelize
                 && (declaration.hasDelegate() || bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property] == true)
-                && !property.annotations.hasAnnotation(TRANSIENT_FQNAME)
+                && !property.annotations.hasAnnotation(IGNORED_ON_PARCEL_FQNAME)
         ) {
             val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED.on(reportElement), DefaultErrorMessagesAndroid)
@@ -212,7 +211,13 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             val asmType = typeMapper.mapType(type)
 
             try {
-                val context = ParcelSerializer.ParcelSerializerContext(typeMapper, typeMapper.mapType(containerClass.defaultType))
+                val parcelers = getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)
+                val context = ParcelSerializer.ParcelSerializerContext(
+                        typeMapper,
+                        typeMapper.mapType(containerClass.defaultType),
+                        parcelers,
+                        FrameMap())
+
                 ParcelSerializer.get(type, asmType, context, strict = true)
             }
             catch (e: IllegalArgumentException) {

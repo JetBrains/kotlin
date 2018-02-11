@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
 class DeclarationResolver(
-        private val annotationResolver: AnnotationResolver,
-        private val trace: BindingTrace
+    private val annotationResolver: AnnotationResolver,
+    private val trace: BindingTrace
 ) {
 
     fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
@@ -74,14 +74,17 @@ class DeclarationResolver(
         }
     }
 
-    fun checkRedeclarationsInPackages(topLevelDescriptorProvider: TopLevelDescriptorProvider, topLevelFqNames: Multimap<FqName, KtElement>) {
+    fun checkRedeclarationsInPackages(
+        topLevelDescriptorProvider: TopLevelDescriptorProvider,
+        topLevelFqNames: Multimap<FqName, KtElement>
+    ) {
         for ((fqName, declarationsOrPackageDirectives) in topLevelFqNames.asMap()) {
             if (fqName.isRoot) continue
 
             // TODO: report error on expected class and actual val, or vice versa
             val (expected, actual) =
                     getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
-                    .partition { it is MemberDescriptor && it.isExpect }
+                        .partition { it is MemberDescriptor && it.isExpect }
 
             for (descriptors in listOf(expected, actual)) {
                 if (descriptors.size > 1) {
@@ -94,7 +97,11 @@ class DeclarationResolver(
         }
     }
 
-    private fun getTopLevelDescriptorsByFqName(topLevelDescriptorProvider: TopLevelDescriptorProvider, fqName: FqName, location: LookupLocation): Set<DeclarationDescriptor> {
+    private fun getTopLevelDescriptorsByFqName(
+        topLevelDescriptorProvider: TopLevelDescriptorProvider,
+        fqName: FqName,
+        location: LookupLocation
+    ): Set<DeclarationDescriptor> {
         val descriptors = HashSet<DeclarationDescriptor>()
 
         descriptors.addIfNotNull(topLevelDescriptorProvider.getPackageFragment(fqName))

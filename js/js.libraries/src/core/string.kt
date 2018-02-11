@@ -35,7 +35,7 @@ public inline fun String.match(regex: String): Array<String>? = asDynamic().matc
 //native public fun String.trim(): String
 //TODO: String.replace to implement effective trimLeading and trimTrailing
 
-@Deprecated("Use length property instead.", ReplaceWith("length"), level = DeprecationLevel.WARNING) // TODO: ERROR in 1.2
+@Deprecated("Use length property instead.", ReplaceWith("length"), level = DeprecationLevel.ERROR)
 @kotlin.internal.InlineOnly
 public inline val CharSequence.size: Int get() = length
 

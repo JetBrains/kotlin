@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.annotation.plugin.ide
 import org.jdom.Element
 import org.jdom.Text
 import org.jetbrains.idea.maven.project.MavenProject
+import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedCompilerPluginSetup.PluginOption
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.maven.MavenProjectImportHandler
 import org.jetbrains.kotlin.idea.maven.KotlinMavenImporter.Companion.KOTLIN_PLUGIN_GROUP_ID
@@ -28,18 +29,16 @@ import java.io.File
 abstract class AbstractMavenImportHandler : MavenProjectImportHandler {
     abstract val compilerPluginId: String
     abstract val pluginName: String
-    abstract val annotationOptionName: String
     abstract val mavenPluginArtifactName: String
     abstract val pluginJarFileFromIdea: File
 
     override fun invoke(facet: KotlinFacet, mavenProject: MavenProject) {
         modifyCompilerArgumentsForPlugin(facet, getPluginSetup(mavenProject),
                                          compilerPluginId = compilerPluginId,
-                                         pluginName = pluginName,
-                                         annotationOptionName = annotationOptionName)
+                                         pluginName = pluginName)
     }
 
-    abstract fun getAnnotations(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<String>?
+    abstract fun getOptions(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<PluginOption>?
 
     private fun getPluginSetup(mavenProject: MavenProject): AnnotationBasedCompilerPluginSetup? {
         val kotlinPlugin = mavenProject.plugins.firstOrNull {
@@ -62,8 +61,8 @@ abstract class AbstractMavenImportHandler : MavenProjectImportHandler {
         // We can't use the plugin from Gradle as it may have the incompatible version
         val classpath = listOf(pluginJarFileFromIdea.absolutePath)
 
-        val annotationFqNames = getAnnotations(enabledCompilerPlugins, compilerPluginOptions) ?: return null
-        return AnnotationBasedCompilerPluginSetup(annotationFqNames, classpath)
+        val options = getOptions(enabledCompilerPlugins, compilerPluginOptions) ?: return null
+        return AnnotationBasedCompilerPluginSetup(options, classpath)
     }
 
     private fun Element.getElement(name: String) = content.firstOrNull { it is Element && it.name == name } as? Element

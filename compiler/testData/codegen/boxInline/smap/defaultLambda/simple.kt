@@ -51,9 +51,12 @@ Kotlin
 _2Kt
 + 2 1.kt
 test/_1Kt
++ 3 1.kt
+test/_1Kt$inlineFun$1
 *L
 1#1,9:1
 6#2,2:10
+6#3:12
 *E
 *S KotlinDebug
 *F
@@ -61,4 +64,5 @@ test/_1Kt
 _2Kt
 *L
 6#1,2:10
+6#1:12
 *E

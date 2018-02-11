@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FILE: b.kt
 package outer
 
@@ -19,7 +20,7 @@ class A
 infix operator fun A.plus(<!UNUSED_PARAMETER!>a<!> : Any) {
 
   1.foo()
-  true.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
+  true.<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
 
   <!UNUSED_EXPRESSION!>1<!>
 }

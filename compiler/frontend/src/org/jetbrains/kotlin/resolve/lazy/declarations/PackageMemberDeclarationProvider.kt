@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
-import org.jetbrains.annotations.ReadOnly
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFile
 
 interface PackageMemberDeclarationProvider : DeclarationProvider {
     fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean): Collection<FqName>
 
     fun getPackageFiles(): Collection<KtFile>
+
+    fun containsFile(file: KtFile): Boolean
 }

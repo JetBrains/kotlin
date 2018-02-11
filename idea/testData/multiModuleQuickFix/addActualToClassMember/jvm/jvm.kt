@@ -1,5 +1,5 @@
 // "Add 'actual' modifier" "true"
-// ERROR: Declaration should be marked with 'actual' (suppress with -Xno-check-actual)
+// ERROR: Declaration must be marked with 'actual'
 
 actual class Foo {
     fun <caret>foo() {}

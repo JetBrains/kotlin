@@ -32,18 +32,17 @@ class KDocSection(node: ASTNode) : KDocTag(node) {
      * or null for the default section).
      */
     override fun getName(): String? =
-            (firstChild as? KDocTag)?.name
+        (firstChild as? KDocTag)?.name
 
     override fun getSubjectName(): String? =
-            (firstChild as? KDocTag)?.getSubjectName()
+        (firstChild as? KDocTag)?.getSubjectName()
 
     override fun getContent(): String =
-            (firstChild as? KDocTag)?.getContent() ?: super.getContent()
+        (firstChild as? KDocTag)?.getContent() ?: super.getContent()
 
     fun findTagsByName(name: String): List<KDocTag> {
         return getChildrenOfType<KDocTag>().filter { it.name == name }
     }
 
-    fun findTagByName(name: String): KDocTag?
-        = findTagsByName(name).firstOrNull()
+    fun findTagByName(name: String): KDocTag? = findTagsByName(name).firstOrNull()
 }

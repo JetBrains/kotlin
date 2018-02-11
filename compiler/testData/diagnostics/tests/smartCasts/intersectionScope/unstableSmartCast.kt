@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 interface A {
@@ -30,8 +31,8 @@ fun test() {
         x.foo().checkType { _<CharSequence?>() }
         x.baz("")
         x.baz(1).checkType { _<Unit>() }
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.baz(1, 2)
+        <!OI;SMARTCAST_IMPOSSIBLE!>x<!>.baz(1, 2)
 
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.foobar().checkType { _<String>() }
+        <!OI;SMARTCAST_IMPOSSIBLE!>x<!>.foobar().checkType { _<String>() }
     }
 }

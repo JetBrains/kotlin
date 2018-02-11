@@ -43,8 +43,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
             if (this.modifierList == null) {
                 getConstructorKeyword()?.delete()
             }
-        }
-        else {
+        } else {
             if (modifier == KtTokens.PUBLIC_KEYWORD) return
             val newModifierList = KtPsiFactory(this).createModifierList(modifier)
             addBefore(newModifierList, getOrCreateConstructorKeyword())
@@ -62,8 +61,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
         val modifierList = modifierList
         return if (modifierList != null) {
             modifierList.addBefore(annotationEntry, modifierList.firstChild) as KtAnnotationEntry
-        }
-        else {
+        } else {
             val parameterList = valueParameterList!!
             val newModifierList = KtPsiFactory(project).createModifierList(annotationEntry.text)
             (addBefore(newModifierList, parameterList) as KtModifierList).annotationEntries.first()

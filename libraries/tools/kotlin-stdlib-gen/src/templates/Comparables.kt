@@ -1,14 +1,34 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package templates
 
 import templates.Family.*
 
-fun comparables(): List<GenericFunction> {
-    val templates = arrayListOf<GenericFunction>()
+object ComparableOps : TemplateGroupBase() {
 
-    templates add f("coerceAtLeast(minimumValue: SELF)") {
+    private val numericPrimitives = PrimitiveType.numericPrimitives.sortedBy { it.capacity }.toSet()
+    private val intPrimitives = setOf(PrimitiveType.Int, PrimitiveType.Long)
+    private val shortIntPrimitives = setOf(PrimitiveType.Byte, PrimitiveType.Short)
+
+    val f_coerceAtLeast = fn("coerceAtLeast(minimumValue: SELF)") {
+        include(Generic)
+        include(Primitives, numericPrimitives)
+    } builder {
         sourceFile(SourceFile.Ranges)
-        only(Primitives, Generic)
-        only(numericPrimitives)
         returns("SELF")
         typeParam("T: Comparable<T>")
         doc {
@@ -16,6 +36,7 @@ fun comparables(): List<GenericFunction> {
             Ensures that this value is not less than the specified [minimumValue].
 
             @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+            @sample samples.comparisons.ComparableOps.coerceAtLeast${if (f == Generic) "Comparable" else ""}
             """
         }
         body {
@@ -23,13 +44,13 @@ fun comparables(): List<GenericFunction> {
             return if (this < minimumValue) minimumValue else this
             """
         }
-
     }
 
-    templates add f("coerceAtMost(maximumValue: SELF)") {
+    val f_coerceAtMost = fn("coerceAtMost(maximumValue: SELF)") {
+        include(Generic)
+        include(Primitives, numericPrimitives)
+    } builder {
         sourceFile(SourceFile.Ranges)
-        only(Primitives, Generic)
-        only(numericPrimitives)
         returns("SELF")
         typeParam("T: Comparable<T>")
         doc {
@@ -37,6 +58,7 @@ fun comparables(): List<GenericFunction> {
             Ensures that this value is not greater than the specified [maximumValue].
 
             @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+            @sample samples.comparisons.ComparableOps.coerceAtMost${if (f == Generic) "Comparable" else ""}
             """
         }
         body {
@@ -46,10 +68,11 @@ fun comparables(): List<GenericFunction> {
         }
     }
 
-    templates add f("coerceIn(range: ClosedRange<T>)") {
+    val f_coerceIn_range_primitive = fn("coerceIn(range: ClosedRange<T>)") {
+        include(Generic)
+        include(Primitives, intPrimitives)
+    } builder {
         sourceFile(SourceFile.Ranges)
-        only(Primitives, Generic)
-        only(PrimitiveType.Int, PrimitiveType.Long)
         returns("SELF")
         typeParam("T: Comparable<T>")
         doc {
@@ -57,6 +80,7 @@ fun comparables(): List<GenericFunction> {
             Ensures that this value lies in the specified [range].
 
             @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+            @sample samples.comparisons.ComparableOps.coerceIn${if (f == Generic) "Comparable" else ""}
             """
         }
         body(Generic) {
@@ -87,9 +111,10 @@ fun comparables(): List<GenericFunction> {
         }
     }
 
-    templates add f("coerceIn(range: ClosedFloatingPointRange<T>)") {
+    val f_coerceIn_fpRange = fn("coerceIn(range: ClosedFloatingPointRange<T>)") {
+        include(Generic)
+    } builder {
         sourceFile(SourceFile.Ranges)
-        only(Generic)
         since("1.1")
         returns("SELF")
         typeParam("T: Comparable<T>")
@@ -98,6 +123,7 @@ fun comparables(): List<GenericFunction> {
             Ensures that this value lies in the specified [range].
 
             @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+            @sample samples.comparisons.ComparableOps.coerceInFloatingPointRange
             """
         }
         body(Generic) {
@@ -115,15 +141,15 @@ fun comparables(): List<GenericFunction> {
     }
 
 
-    templates add f("minOf(a: T, b: T)") {
+    val f_minOf_2 = fn("minOf(a: T, b: T)") {
+        include(Generic)
+        include(Primitives, numericPrimitives)
+    } builder {
         sourceFile(SourceFile.Comparisons)
-        only(Primitives, Generic)
-        only(numericPrimitives)
         since("1.1")
         typeParam("T: Comparable<T>")
         returns("T")
-        customReceiver("")
-        inline(Primitives) { Inline.Only }
+        receiver("")
         doc {
             """
             Returns the smaller of two values.
@@ -131,50 +157,74 @@ fun comparables(): List<GenericFunction> {
             """
         }
         // TODO: Add a note about NaN propagation for floats.
-        doc(Primitives) {
-            """Returns the smaller of two values."""
-        }
-        bodyForTypes(Primitives, PrimitiveType.Byte, PrimitiveType.Short) { p ->
-            "return Math.min(a.toInt(), b.toInt()).to$p()"
-        }
-        // TODO: custom body for JS minOf(Long, Long)
-        body(Primitives) {
-            "return Math.min(a, b)"
+        specialFor(Primitives) {
+            inlineOnly()
+            doc {
+                """Returns the smaller of two values."""
+            }
+            var convertBack = "to$primitive()"
+            on(Platform.JS) {
+                convertBack = "unsafeCast<$primitive>()"
+            }
+            body {
+                "return Math.min(a, b)"
+            }
+            if (primitive in shortIntPrimitives) {
+                body { "return Math.min(a.toInt(), b.toInt()).$convertBack" }
+            }
+            on(Platform.JS) {
+                if (primitive == PrimitiveType.Long) {
+                    inline(suppressWarning = true)
+                    body { "return if (a <= b) a else b" }
+                }
+            }
         }
         body(Generic) {
             "return if (a <= b) a else b"
         }
     }
 
-    templates add f("minOf(a: T, b: T, c: T)") {
+    val f_minOf = fn("minOf(a: T, b: T, c: T)") {
+        include(Generic)
+        include(Primitives, numericPrimitives)
+    } builder {
         sourceFile(SourceFile.Comparisons)
-        only(Primitives, Generic)
-        only(numericPrimitives)
         since("1.1")
         typeParam("T: Comparable<T>")
         returns("T")
-        customReceiver("")
-        inline(Primitives) { Inline.Only }
+        receiver("")
+        specialFor(Primitives) { inlineOnly() }
         // TODO: Add a note about NaN propagation for floats.
         doc {
             """
             Returns the smaller of three values.
             """
         }
-        bodyForTypes(Primitives, PrimitiveType.Byte, PrimitiveType.Short) { p ->
-            "return Math.min(a.toInt(), Math.min(b.toInt(), c.toInt())).to$p()"
-        }
         body {
             "return minOf(a, minOf(b, c))"
         }
+        specialFor(Primitives) {
+            if (primitive in shortIntPrimitives) {
+                body { "return Math.min(a.toInt(), Math.min(b.toInt(), c.toInt())).to$primitive()" }
+                on(Platform.JS) {
+                    body { "return Math.min(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
+                }
+            }
+            else if (primitive != PrimitiveType.Long) {
+                on(Platform.JS) {
+                    body { "return Math.min(a, b, c)" }
+                }
+            }
+        }
     }
 
-    templates add f("minOf(a: T, b: T, comparator: Comparator<in T>)") {
+    val f_minOf_2_comparator = fn("minOf(a: T, b: T, comparator: Comparator<in T>)") {
+        include(Generic)
+    } builder {
         sourceFile(SourceFile.Comparisons)
-        only(Generic)
         since("1.1")
         returns("T")
-        customReceiver("")
+        receiver("")
         doc {
             """
             Returns the smaller of two values according to the order specified by the given [comparator].
@@ -186,12 +236,13 @@ fun comparables(): List<GenericFunction> {
         }
     }
 
-    templates add f("minOf(a: T, b: T, c: T, comparator: Comparator<in T>)") {
+    val f_minOf_3_comparator = fn("minOf(a: T, b: T, c: T, comparator: Comparator<in T>)") {
+        include(Generic)
+    } builder {
         sourceFile(SourceFile.Comparisons)
-        only(Generic)
         since("1.1")
         returns("T")
-        customReceiver("")
+        receiver("")
         doc {
             """
             Returns the smaller of three values according to the order specified by the given [comparator].
@@ -201,16 +252,16 @@ fun comparables(): List<GenericFunction> {
             "return minOf(a, minOf(b, c, comparator), comparator)"
         }
     }
-    
-    templates add f("maxOf(a: T, b: T)") {
+
+    val f_maxOf_2 = fn("maxOf(a: T, b: T)") {
+        include(Generic)
+        include(Primitives, numericPrimitives)
+    } builder {
         sourceFile(SourceFile.Comparisons)
-        only(Primitives, Generic)
-        only(numericPrimitives)
         since("1.1")
         typeParam("T: Comparable<T>")
         returns("T")
-        customReceiver("")
-        inline(Primitives) { Inline.Only }
+        receiver("")
         doc {
             """
             Returns the greater of two values.
@@ -218,49 +269,74 @@ fun comparables(): List<GenericFunction> {
             """
         }
         // TODO: Add a note about NaN propagation for floats.
-        doc(Primitives) {
-            """Returns the greater of two values."""
-        }
-        bodyForTypes(Primitives, PrimitiveType.Byte, PrimitiveType.Short) { p ->
-            "return Math.max(a.toInt(), b.toInt()).to$p()"
-        }
-        body(Primitives) {
-            "return Math.max(a, b)"
+        specialFor(Primitives) {
+            inlineOnly()
+            doc {
+                """Returns the greater of two values."""
+            }
+            var convertBack = "to$primitive()"
+            on(Platform.JS) {
+                convertBack = "unsafeCast<$primitive>()"
+            }
+            body {
+                "return Math.max(a, b)"
+            }
+            if (primitive in shortIntPrimitives) {
+                body { "return Math.max(a.toInt(), b.toInt()).$convertBack" }
+            }
+            on(Platform.JS) {
+                if (primitive == PrimitiveType.Long) {
+                    inline(suppressWarning = true)
+                    body { "return if (a >= b) a else b" }
+                }
+            }
         }
         body(Generic) {
             "return if (a >= b) a else b"
         }
     }
 
-    templates add f("maxOf(a: T, b: T, c: T)") {
+    val f_maxOf_3 = fn("maxOf(a: T, b: T, c: T)") {
+        include(Generic)
+        include(Primitives, numericPrimitives)
+    } builder {
         sourceFile(SourceFile.Comparisons)
-        only(Primitives, Generic)
-        only(numericPrimitives)
         since("1.1")
         typeParam("T: Comparable<T>")
         returns("T")
-        customReceiver("")
-        inline(Primitives) { Inline.Only }
+        receiver("")
+        specialFor(Primitives) { inlineOnly() }
         // TODO: Add a note about NaN propagation for floats.
         doc {
             """
             Returns the greater of three values.
             """
         }
-        bodyForTypes(Primitives, PrimitiveType.Byte, PrimitiveType.Short) { p ->
-            "return Math.max(a.toInt(), Math.max(b.toInt(), c.toInt())).to$p()"
-        }
         body {
             "return maxOf(a, maxOf(b, c))"
         }
+        specialFor(Primitives) {
+            if (primitive in shortIntPrimitives) {
+                body { "return Math.max(a.toInt(), Math.max(b.toInt(), c.toInt())).to$primitive()" }
+                on(Platform.JS) {
+                    body { "return Math.max(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
+                }
+            }
+            else if (primitive != PrimitiveType.Long) {
+                on(Platform.JS) {
+                    body { "return Math.max(a, b, c)" }
+                }
+            }
+        }
     }
 
-    templates add f("maxOf(a: T, b: T, comparator: Comparator<in T>)") {
+    val f_maxOf_2_comparator = fn("maxOf(a: T, b: T, comparator: Comparator<in T>)") {
+        include(Generic)
+    } builder {
         sourceFile(SourceFile.Comparisons)
-        only(Generic)
         since("1.1")
         returns("T")
-        customReceiver("")
+        receiver("")
         doc {
             """
             Returns the greater of two values according to the order specified by the given [comparator].
@@ -272,12 +348,13 @@ fun comparables(): List<GenericFunction> {
         }
     }
 
-    templates add f("maxOf(a: T, b: T, c: T, comparator: Comparator<in T>)") {
+    val f_maxOf_3_comparator = fn("maxOf(a: T, b: T, c: T, comparator: Comparator<in T>)") {
+        include(Generic)
+    } builder {
         sourceFile(SourceFile.Comparisons)
-        only(Generic)
         since("1.1")
         returns("T")
-        customReceiver("")
+        receiver("")
         doc {
             """
             Returns the greater of three values according to the order specified by the given [comparator].
@@ -289,11 +366,13 @@ fun comparables(): List<GenericFunction> {
     }
 
 
-    templates add f("coerceIn(minimumValue: SELF, maximumValue: SELF)") {
+    val f_coerceIn_min_max = fn("coerceIn(minimumValue: SELF, maximumValue: SELF)") {
+        include(Generic)
+        include(Primitives, numericPrimitives)
+    } builder {
         sourceFile(SourceFile.Ranges)
-        only(Primitives, Generic)
-        only(numericPrimitives)
-        customSignature(Generic) { "coerceIn(minimumValue: SELF?, maximumValue: SELF?)" }
+
+        specialFor(Generic) { signature("coerceIn(minimumValue: SELF?, maximumValue: SELF?)", notForSorting = true) }
         typeParam("T: Comparable<T>")
         returns("SELF")
         doc {
@@ -301,6 +380,7 @@ fun comparables(): List<GenericFunction> {
             Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
 
             @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+            @sample samples.comparisons.ComparableOps.coerceIn${if (f == Generic) "Comparable" else ""}
             """
         }
         body(Primitives) {
@@ -326,6 +406,4 @@ fun comparables(): List<GenericFunction> {
             """
         }
     }
-
-    return templates
 }

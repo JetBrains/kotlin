@@ -61,6 +61,7 @@ messages/**)
 -dontwarn net.jpountz.lz4.LZ4Factory
 -dontwarn org.jetbrains.annotations.ReadOnly
 -dontwarn org.jetbrains.annotations.Mutable
+-dontwarn com.intellij.util.io.TarUtil
 
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
@@ -217,3 +218,8 @@ messages/**)
 
 # for coroutines
 -keep class kotlinx.coroutines.** { *; }
+
+# for webdemo
+-keep class com.intellij.openapi.progress.ProgressManager { *; }
+
+        

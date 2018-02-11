@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.inspections.SimplifyNegatedBinaryExpressionInspection
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -104,9 +105,9 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
 
     private fun simplifyConditionIfPossible(ifExpression: KtIfExpression, editor: Editor?) {
         val condition = ifExpression.condition as KtPrefixExpression
-        val simplifier = SimplifyNegatedBinaryExpressionIntention()
-        if (simplifier.isApplicableTo(condition)) {
-            simplifier.applyTo(condition, editor)
+        val simplifier = SimplifyNegatedBinaryExpressionInspection()
+        if (simplifier.isApplicable(condition)) {
+            simplifier.applyTo(condition.operationReference, editor = editor)
         }
     }
 

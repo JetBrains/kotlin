@@ -18,13 +18,11 @@
 
 package kotlin.coroutines.experimental.intrinsics
 
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.processBareContinuationResume
+import kotlin.coroutines.experimental.*
 
 /**
- * Obtains the current continuation instance inside suspend functions and either suspend
- * currently running coroutine or return result immediately without suspension.
+ * Obtains the current continuation instance inside suspend functions and either suspends
+ * currently running coroutine or returns result immediately without suspension.
  *
  * If the [block] returns the special [COROUTINE_SUSPENDED] value, it means that suspend function did suspend the execution and will
  * not return any result immediately. In this case, the [Continuation] provided to the [block] shall be invoked at some moment in the
@@ -42,8 +40,47 @@ import kotlin.coroutines.experimental.processBareContinuationResume
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 @Suppress("UNUSED_PARAMETER")
-public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
-        throw NotImplementedError("Implementation is intrinsic")
+public suspend inline fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+        suspendCoroutineUninterceptedOrReturn { cont -> block(cont.intercepted()) }
+
+/**
+ * Obtains the current continuation instance inside suspend functions and either suspends
+ * currently running coroutine or returns result immediately without suspension.
+ *
+ * Unlike [suspendCoroutineOrReturn] it does not intercept continuation.
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+        throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
+
+/**
+ * Intercept continuation with [ContinuationInterceptor].
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun <T> Continuation<T>.intercepted(): Continuation<T> =
+        throw NotImplementedError("Implementation of intercepted is intrinsic")
+
+/**
+ * Continuation context of current coroutine.
+ *
+ * This allows the user code to not pass an extra [CoroutineContext] parameter in basic coroutine builders
+ * like [launch](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/launch.html)
+ * and [async](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/async.html),
+ * but still provide easy access to coroutine context.
+ */
+@SinceKotlin("1.2")
+@Suppress("WRONG_MODIFIER_TARGET")
+@Deprecated(
+    "Use kotlin.coroutines.experimental.coroutineContext instead",
+    ReplaceWith("kotlin.coroutines.experimental.coroutineContext"),
+    DeprecationLevel.WARNING
+)
+public suspend inline val coroutineContext: CoroutineContext
+    get() {
+        throw NotImplementedError("Implemented as intrinsic")
+    }
 
 /**
  * This value is used as a return value of [suspendCoroutineOrReturn] `block` argument to state that

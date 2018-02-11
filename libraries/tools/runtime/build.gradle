@@ -3,6 +3,7 @@ description 'Kotlin Runtime (deprecated, use kotlin-stdlib artifact instead)'
 apply plugin: 'kotlin'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
 
 dependencies {
@@ -45,7 +46,8 @@ compileKotlin {
     kotlinOptions {
         freeCompilerArgs = [
                 "-Xallow-kotlin-package",
-                "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
+                "-Xnormalize-constructor-calls=enable",
+                "-Xdump-declarations-to=${buildDir}/runtime-declarations.json",
                 "-cp", "${rootDir}/dist/builtins",
                 "-module-name", project.name
         ]

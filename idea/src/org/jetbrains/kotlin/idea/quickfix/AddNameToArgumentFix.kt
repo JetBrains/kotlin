@@ -23,7 +23,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopupStep
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -40,9 +39,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isError
 
 class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtValueArgument>(argument) {
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
-        if (!super.isAvailable(project, editor, file)) return false
         if (element.getArgumentExpression() == null) return false
         return calculatePossibleArgumentNames().isNotEmpty()
     }

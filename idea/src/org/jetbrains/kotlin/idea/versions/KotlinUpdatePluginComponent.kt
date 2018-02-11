@@ -24,9 +24,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile
-import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.vfilefinder.*
 import java.io.File
 
 private val INSTALLED_KOTLIN_VERSION = "installed.kotlin.plugin.version"
@@ -49,16 +47,6 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
                 requestFullJarUpdate(libraryJarDescriptor.getPathInPlugin())
             }
 
-            // Force update indices for files under config directory
-            val fileBasedIndex = FileBasedIndex.getInstance()
-            fileBasedIndex.requestRebuild(KotlinJvmMetadataVersionIndex.name)
-            fileBasedIndex.requestRebuild(KotlinJsMetadataVersionIndex.name)
-            fileBasedIndex.requestRebuild(KotlinClassFileIndex.KEY)
-            fileBasedIndex.requestRebuild(KotlinJavaScriptMetaFileIndex.KEY)
-            fileBasedIndex.requestRebuild(KotlinMetadataFileIndex.KEY)
-            fileBasedIndex.requestRebuild(KotlinMetadataFilePackageIndex.KEY)
-            fileBasedIndex.requestRebuild(KotlinModuleMappingIndex.KEY)
-
             PropertiesComponent.getInstance()?.setValue(INSTALLED_KOTLIN_VERSION, KotlinPluginUtil.getPluginVersion())
         }
     }
@@ -77,9 +65,5 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
         val jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(localVirtualFile) ?: return
         VfsUtilCore.visitChildrenRecursively(jarFile, object : VirtualFileVisitor<Any?>() {})
         ((jarFile as NewVirtualFile)).markDirtyRecursively()
-
-        // Synchronous refresh lead to deadlocks during components initialization KT-4584
-        // jarFile.refresh(true, true)
-        // VfsUtil.markDirtyAndRefresh(true, false, true, localVirtualFile)
     }
 }

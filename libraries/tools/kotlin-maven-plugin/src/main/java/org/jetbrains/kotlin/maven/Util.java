@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.maven;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,5 +28,22 @@ public class Util {
         return classpath.stream().filter(s ->
                 new File(s).exists() || new File(basedir, s).exists()
         ).collect(Collectors.toList());
+    }
+
+    @NotNull
+    public static String[] joinArrays(@Nullable String[] first, @Nullable String[] second) {
+        if (first == null) {
+            first = new String[0];
+        }
+        if (second == null) {
+            second = new String[0];
+        }
+
+        String[] result = new String[first.length + second.length];
+
+        System.arraycopy(first, 0, result, 0, first.length);
+        System.arraycopy(second, 0, result, first.length, second.length);
+
+        return result;
     }
 }

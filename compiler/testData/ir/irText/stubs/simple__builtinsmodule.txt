@@ -1,134 +1,134 @@
-MODULE_FRAGMENT <built-ins module>
-  EXTERNAL_PACKAGE_FRAGMENT kotlin
-    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS Int
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB private constructor Int()
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Byte): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Byte
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Double): kotlin.Double
-        VALUE_PARAMETER value-parameter other: kotlin.Double
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Float): kotlin.Float
-        VALUE_PARAMETER value-parameter other: kotlin.Float
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Long): kotlin.Long
-        VALUE_PARAMETER value-parameter other: kotlin.Long
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Short): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Short
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Byte): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Byte
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Double): kotlin.Double
-        VALUE_PARAMETER value-parameter other: kotlin.Double
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Float): kotlin.Float
-        VALUE_PARAMETER value-parameter other: kotlin.Float
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Long): kotlin.Long
-        VALUE_PARAMETER value-parameter other: kotlin.Long
-      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Short): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Short
-      CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT companion object of Int
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB private constructor Companion()
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public const final val MAX_VALUE: kotlin.Int = 2147483647
-          FUN IR_EXTERNAL_DECLARATION_STUB public final fun <get-MAX_VALUE>(): kotlin.Int
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public const final val MIN_VALUE: kotlin.Int = -2147483648
-          FUN IR_EXTERNAL_DECLARATION_STUB public final fun <get-MIN_VALUE>(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-      FUN IR_EXTERNAL_DECLARATION_STUB public final fun inv(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun and(other: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun or(other: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun shl(bitCount: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter bitCount: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun shr(bitCount: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter bitCount: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun ushr(bitCount: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter bitCount: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun xor(other: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun compareTo(other: kotlin.Byte): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Byte
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun compareTo(other: kotlin.Double): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Double
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun compareTo(other: kotlin.Float): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Float
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun compareTo(other: kotlin.Long): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Long
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun compareTo(other: kotlin.Short): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Short
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun dec(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Byte): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Byte
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Double): kotlin.Double
-        VALUE_PARAMETER value-parameter other: kotlin.Double
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Float): kotlin.Float
-        VALUE_PARAMETER value-parameter other: kotlin.Float
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Long): kotlin.Long
-        VALUE_PARAMETER value-parameter other: kotlin.Long
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Short): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Short
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun inc(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Byte): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Byte
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Double): kotlin.Double
-        VALUE_PARAMETER value-parameter other: kotlin.Double
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Float): kotlin.Float
-        VALUE_PARAMETER value-parameter other: kotlin.Float
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Long): kotlin.Long
-        VALUE_PARAMETER value-parameter other: kotlin.Long
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Short): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Short
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Byte): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Byte
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Double): kotlin.Double
-        VALUE_PARAMETER value-parameter other: kotlin.Double
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Float): kotlin.Float
-        VALUE_PARAMETER value-parameter other: kotlin.Float
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Long): kotlin.Long
-        VALUE_PARAMETER value-parameter other: kotlin.Long
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Short): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Short
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun rangeTo(other: kotlin.Byte): kotlin.ranges.IntRange
-        VALUE_PARAMETER value-parameter other: kotlin.Byte
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun rangeTo(other: kotlin.Int): kotlin.ranges.IntRange
-        VALUE_PARAMETER value-parameter other: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange
-        VALUE_PARAMETER value-parameter other: kotlin.Long
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun rangeTo(other: kotlin.Short): kotlin.ranges.IntRange
-        VALUE_PARAMETER value-parameter other: kotlin.Short
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Byte): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Byte
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Double): kotlin.Double
-        VALUE_PARAMETER value-parameter other: kotlin.Double
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Float): kotlin.Float
-        VALUE_PARAMETER value-parameter other: kotlin.Float
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Long): kotlin.Long
-        VALUE_PARAMETER value-parameter other: kotlin.Long
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Short): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Short
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun unaryMinus(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun unaryPlus(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun compareTo(other: kotlin.Int): kotlin.Int
-        VALUE_PARAMETER value-parameter other: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toByte(): kotlin.Byte
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toChar(): kotlin.Char
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toDouble(): kotlin.Double
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toFloat(): kotlin.Float
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toInt(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toLong(): kotlin.Long
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toShort(): kotlin.Short
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+MODULE_FRAGMENT name:<built-ins module>
+  EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> (other:kotlin.Byte) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> (other:kotlin.Double) returnType:Double flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> (other:kotlin.Float) returnType:Float flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> (other:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> (other:kotlin.Long) returnType:Long flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> (other:kotlin.Short) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> (other:kotlin.Byte) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> (other:kotlin.Double) returnType:Double flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> (other:kotlin.Float) returnType:Float flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> (other:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> (other:kotlin.Long) returnType:Long flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> (other:kotlin.Short) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public flags:companion
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int.Companion flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public modality:FINAL flags:constmval
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MAX_VALUE> visibility:public modality:FINAL <> () returnType:Int flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public modality:FINAL flags:constmval
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MIN_VALUE> visibility:public modality:FINAL <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:inv visibility:public modality:FINAL <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:and visibility:public modality:FINAL <> (other:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:or visibility:public modality:FINAL <> (other:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:shl visibility:public modality:FINAL <> (bitCount:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:shr visibility:public modality:FINAL <> (bitCount:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:ushr visibility:public modality:FINAL <> (bitCount:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:xor visibility:public modality:FINAL <> (other:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> (other:kotlin.Byte) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> (other:kotlin.Double) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> (other:kotlin.Float) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> (other:kotlin.Long) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> (other:kotlin.Short) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:dec visibility:public modality:FINAL <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> (other:kotlin.Byte) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> (other:kotlin.Double) returnType:Double flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> (other:kotlin.Float) returnType:Float flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> (other:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> (other:kotlin.Long) returnType:Long flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> (other:kotlin.Short) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> (other:kotlin.Byte) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> (other:kotlin.Double) returnType:Double flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> (other:kotlin.Float) returnType:Float flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> (other:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> (other:kotlin.Long) returnType:Long flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> (other:kotlin.Short) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> (other:kotlin.Byte) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> (other:kotlin.Double) returnType:Double flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> (other:kotlin.Float) returnType:Float flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> (other:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> (other:kotlin.Long) returnType:Long flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> (other:kotlin.Short) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> (other:kotlin.Byte) returnType:IntRange flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> (other:kotlin.Int) returnType:IntRange flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> (other:kotlin.Long) returnType:LongRange flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> (other:kotlin.Short) returnType:IntRange flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> (other:kotlin.Byte) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> (other:kotlin.Double) returnType:Double flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> (other:kotlin.Float) returnType:Float flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> (other:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> (other:kotlin.Long) returnType:Long flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> (other:kotlin.Short) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:unaryMinus visibility:public modality:FINAL <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:unaryPlus visibility:public modality:FINAL <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN <> (other:kotlin.Int) returnType:Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:OPEN <> () returnType:Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toChar visibility:public modality:OPEN <> () returnType:Char flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toDouble visibility:public modality:OPEN <> () returnType:Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toFloat visibility:public modality:OPEN <> () returnType:Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toLong visibility:public modality:OPEN <> () returnType:Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:OPEN <> () returnType:Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:

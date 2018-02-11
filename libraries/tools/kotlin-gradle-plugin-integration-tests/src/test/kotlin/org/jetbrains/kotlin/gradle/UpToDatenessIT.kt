@@ -8,35 +8,52 @@ import java.io.File
 
 class UpToDateIT : BaseGradleIT() {
     @Test
-    fun testWithAllMutations() {
+    fun testLanguageVersionChange() {
+        testMutations(*propertyMutationChain("compileKotlin.kotlinOptions.languageVersion",
+                                             "null", "'1.1'", "'1.0'", "null"))
+    }
+
+    @Test
+    fun testApiVersionChange() {
+        testMutations(*propertyMutationChain("compileKotlin.kotlinOptions.apiVersion",
+                                             "null", "'1.1'", "'1.0'", "null"))
+    }
+
+    @Test
+    fun testOther() {
+        testMutations(emptyMutation,
+                      OptionMutation("compileKotlin.kotlinOptions.jvmTarget", "'1.6'", "'1.8'"),
+                      OptionMutation("compileKotlin.kotlinOptions.freeCompilerArgs", "[]", "['-Xallow-kotlin-package']"),
+                      OptionMutation("kotlin.experimental.coroutines", "'error'", "'enable'"),
+                      OptionMutation("archivesBaseName", "'someName'", "'otherName'"),
+                      subpluginOptionMutation,
+                      externalOutputMutation,
+                      compilerClasspathMutation)
+    }
+
+    private fun testMutations(vararg mutations: ProjectMutation) {
         val project = Project("simpleProject", "4.1")
         project.setupWorkingDir()
-        mutations.forEach { it.initProject(project) }
-        project.build("build") { assertSuccessful() }
         mutations.forEach {
+            it.initProject(project)
+            project.build("build") { assertSuccessful() }
+
             it.mutateProject(project)
             project.build("build") {
-                assertSuccessful()
-                it.checkAfterRebuild(this)
+                try {
+                    assertSuccessful()
+                    it.checkAfterRebuild(this)
+                }
+                catch (e: Throwable) {
+                    throw RuntimeException("Mutation '${it.name}' has failed", e)
+                }
             }
         }
     }
 
-    private val mutations
-        get() = listOf(
-                emptyMutation,
-                optionMutation("compileKotlin.kotlinOptions.jvmTarget", "'1.6'", "'1.8'",
-                               shouldOutdateCompileKotlin = true),
-                optionMutation("compileKotlin.kotlinOptions.freeCompilerArgs", "[]", "['-Xallow-kotlin-package']",
-                               shouldOutdateCompileKotlin = true),
-                optionMutation("kotlin.experimental.coroutines", "'error'", "'enable'",
-                               shouldOutdateCompileKotlin = true),
-                optionMutation("archivesBaseName", "'someName'", "'otherName'",
-                               shouldOutdateCompileKotlin = true),
-                externalOutputMutation,
-                compilerClasspathMutation)
-
     private val emptyMutation = object : ProjectMutation {
+        override val name = "emptyMutation"
+
         override fun initProject(project: Project) = Unit
         override fun mutateProject(project: Project) = Unit
 
@@ -46,6 +63,8 @@ class UpToDateIT : BaseGradleIT() {
     }
 
     private val compilerClasspathMutation = object : ProjectMutation {
+        override val name = "compilerClasspathMutation"
+
         lateinit var originalCompilerCp: List<String>
         val originalPaths get() = originalCompilerCp.map { it.replace("\\", "/") }.joinToString(", ") { "'$it'" }
 
@@ -72,7 +91,29 @@ class UpToDateIT : BaseGradleIT() {
         }
     }
 
+    private val subpluginOptionMutation = object : ProjectMutation {
+        override val name: String get() = "subpluginOptionMutation"
+
+        override fun initProject(project: Project) = with(project) {
+            buildGradle.appendText("\n" + """
+                buildscript { dependencies { classpath "org.jetbrains.kotlin:kotlin-allopen:${'$'}kotlin_version" } }
+                apply plugin: "kotlin-allopen"
+                allOpen { annotation("allopen.Foo"); annotation("allopen.Bar") }
+            """.trimIndent())
+        }
+
+        override fun mutateProject(project: Project) = with(project) {
+            buildGradle.modify { it.replace("allopen.Foo", "allopen.Baz") }
+        }
+
+        override fun checkAfterRebuild(compiledProject: CompiledProject) = with(compiledProject) {
+            assertTasksExecuted(listOf(":compileKotlin"))
+        }
+    }
+
     private val externalOutputMutation = object : ProjectMutation {
+        override val name = "externalOutputMutation"
+
         override fun initProject(project: Project) = Unit
 
         lateinit var helloWorldKtClass: File
@@ -95,16 +136,29 @@ class UpToDateIT : BaseGradleIT() {
         fun initProject(project: Project)
         fun mutateProject(project: Project)
         fun checkAfterRebuild(compiledProject: CompiledProject)
+        val name: String
     }
 
-    private fun optionMutation(
-            path: String,
-            oldValue: String,
-            newValue: String,
-            shouldOutdateCompileKotlin: Boolean
-    ) = object : ProjectMutation {
+    private fun propertyMutationChain(path: String, vararg values: String): Array<ProjectMutation> =
+            arrayListOf<ProjectMutation>().apply {
+                for (i in 1..values.lastIndex) {
+                    add(OptionMutation(path, values[i - 1], values[i], shouldInit = i == 1))
+                }
+
+            }.toTypedArray()
+
+    private inner class OptionMutation(
+        private val path: String,
+        private val oldValue: String,
+        private val newValue: String,
+        private val shouldInit: Boolean = true
+    ) : ProjectMutation {
+        override val name = "OptionMutation(path='$path', oldValue='$oldValue', newValue='$newValue')"
+
         override fun initProject(project: Project) = with(project) {
-            buildGradle.appendText("\n$path = $oldValue")
+            if (shouldInit) {
+                buildGradle.appendText("\n$path = $oldValue")
+            }
         }
 
         override fun mutateProject(project: Project) = with(project) {
@@ -112,12 +166,7 @@ class UpToDateIT : BaseGradleIT() {
         }
 
         override fun checkAfterRebuild(compiledProject: CompiledProject) = with(compiledProject) {
-            if (shouldOutdateCompileKotlin) {
-                assertTasksExecuted(listOf(":compileKotlin"))
-            }
-            else {
-                assertTasksUpToDate(listOf(":compileKotlin"))
-            }
+            assertTasksExecuted(listOf(":compileKotlin"))
         }
     }
 }

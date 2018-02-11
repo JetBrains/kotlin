@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.uast.UClass
-import org.jetbrains.uast.getParentOfType
-import org.jetbrains.uast.toUElement
+import org.jetbrains.uast.*
+import org.jetbrains.uast.test.env.findUElementByTextFromPsi
 
 class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
 
@@ -59,6 +59,36 @@ class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
         TestCase.assertSame("virtualFiles of element and file itself should be the same",
                             psiElement(copied).containingFile.originalFile.virtualFile,
                             copied.originalFile.virtualFile)
+    }
+
+    fun testParameterInAnnotationClassFromFactory() {
+
+        val detachedClass = KtPsiFactory(project).createClass("""
+        annotation class MyAnnotation(val myParam: String = "default")
+        """)
+
+        detachedClass.findUElementByTextFromPsi<UElement>("default")
+                .getParentOfType<UExpression>().let {
+            TestCase.assertNotNull("it should return something at least", it)
+        }
+
+    }
+
+    fun testLiteralInClassInitializerFromFactory() {
+
+        val detachedClass = KtPsiFactory(project).createClass("""
+        class MyAnnotation(){
+            init {
+                "default"
+            }
+        }
+        """)
+
+        val literalInside = detachedClass.findUElementByTextFromPsi<UElement>("default")
+        generateSequence(literalInside, { it.uastParent }).count().let {
+            TestCase.assertTrue("it should have some parents $it actually", it > 1)
+        }
+
     }
 
 }

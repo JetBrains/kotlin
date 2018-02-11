@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
@@ -48,7 +49,15 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             private fun check(callableDeclaration: KtCallableDeclaration) {
                 val receiverTypeReference = callableDeclaration.receiverTypeReference
                 if (receiverTypeReference == null || receiverTypeReference.textRange.isEmpty) return
-                if (callableDeclaration.isOverridable() || callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+
+                val context = receiverTypeReference.analyze()
+                val receiverType = context[BindingContext.TYPE, receiverTypeReference] ?: return
+                if (DescriptorUtils.isCompanionObject(receiverType.constructor.declarationDescriptor)) return
+
+                if (callableDeclaration.isOverridable() ||
+                    callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) ||
+                    callableDeclaration.hasModifier(KtTokens.OPERATOR_KEYWORD) ||
+                    callableDeclaration.hasModifier(KtTokens.INFIX_KEYWORD)) return
 
                 if (callableDeclaration is KtProperty && callableDeclaration.accessors.isEmpty()) return
                 if (callableDeclaration is KtNamedFunction && !callableDeclaration.hasBody()) return
@@ -93,7 +102,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                             receiverTypeReference,
                             KotlinBundle.message("unused.receiver.parameter"),
                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                            MyQuickFix(callableDeclaration)
+                            MyQuickFix()
                     )
                 }
             }
@@ -108,10 +117,8 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
         }
     }
 
-    private class MyQuickFix(val declaration: KtCallableDeclaration): LocalQuickFix {
-        override fun getName(): String {
-            return KotlinBundle.message("unused.receiver.parameter.remove")
-        }
+    private class MyQuickFix : LocalQuickFix {
+        override fun getName(): String = KotlinBundle.message("unused.receiver.parameter.remove")
 
         private fun configureChangeSignature() = object : KotlinChangeSignatureConfiguration {
             override fun performSilently(affectedFunctions: Collection<PsiElement>) = true

@@ -25,6 +25,7 @@ import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -52,6 +53,11 @@ public class PluginTestCaseBase {
 
     @NotNull
     private static Sdk getSdk(String sdkHome, String name) {
+        ProjectJdkTable table = ProjectJdkTable.getInstance();
+        Sdk existing = table.findJdk(name);
+        if (existing != null) {
+            return existing;
+        }
         return JavaSdk.getInstance().createJdk(name, sdkHome, true);
     }
 
@@ -74,7 +80,7 @@ public class PluginTestCaseBase {
     @TestOnly
     @NotNull
     public static Sdk mockJdk9() {
-        return createMockJdk("9", "compiler/testData/mockJDK9/jre");
+        return getSdk("compiler/testData/mockJDK9/jre", "9");
     }
 
     @NotNull
@@ -82,6 +88,13 @@ public class PluginTestCaseBase {
         String javaHome = System.getProperty("java.home");
         assert new File(javaHome).isDirectory();
         return getSdk(javaHome, "Full JDK");
+    }
+
+    @NotNull
+    public static Sdk addJdk(@NotNull Disposable disposable, @NotNull Function0<Sdk> getJdk) {
+        Sdk jdk = getJdk.invoke();
+        ApplicationManager.getApplication().runWriteAction(() -> ProjectJdkTable.getInstance().addJdk(jdk, disposable));
+        return jdk;
     }
 
     @NotNull

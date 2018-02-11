@@ -1,0 +1,12 @@
+package
+
+public fun isString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x is String
+
+public fun notIsString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(FALSE) -> x is String
+
+public fun testInversion(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testInversionSpilling(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testSimple(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testSpilling(/*0*/ x: kotlin.Any?): kotlin.Unit

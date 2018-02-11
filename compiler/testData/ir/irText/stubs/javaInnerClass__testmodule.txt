@@ -1,20 +1,20 @@
-MODULE_FRAGMENT <test-module>
-  EXTERNAL_PACKAGE_FRAGMENT <root>
-    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS J
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor J()
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB public final var x: kotlin.Int
-        FIELD IR_EXTERNAL_DECLARATION_STUB public final var x: kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open fun bar(): kotlin.Unit
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS JInner
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor JInner()
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final var z: kotlin.Int
-          FIELD IR_EXTERNAL_DECLARATION_STUB public final var z: kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open fun foo(): kotlin.Unit
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-          VALUE_PARAMETER value-parameter other: kotlin.Any?
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-        VALUE_PARAMETER value-parameter other: kotlin.Any?
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
-      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+MODULE_FRAGMENT name:<test-module>
+  EXTERNAL_PACKAGE_FRAGMENT fqName:<root>
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:J modality:OPEN visibility:public flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public modality:FINAL flags:var
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public
+      FUN IR_EXTERNAL_DECLARATION_STUB name:bar visibility:public modality:OPEN <> () returnType:Unit flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:JInner modality:OPEN visibility:public flags:
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J.JInner flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:z type:kotlin.Int visibility:public modality:FINAL flags:var
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:z type:kotlin.Int visibility:public
+        FUN IR_EXTERNAL_DECLARATION_STUB name:foo visibility:public modality:OPEN <> () returnType:Unit flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:

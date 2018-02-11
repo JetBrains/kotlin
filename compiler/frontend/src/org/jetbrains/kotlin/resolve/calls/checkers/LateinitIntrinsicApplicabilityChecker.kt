@@ -46,8 +46,7 @@ object LateinitIntrinsicApplicabilityChecker : CallChecker {
         val expression = (resolvedCall.extensionReceiver as? ExpressionReceiver)?.expression?.let(KtPsiUtil::safeDeparenthesize)
         if (expression !is KtCallableReferenceExpression) {
             context.trace.report(LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL.on(reportOn))
-        }
-        else {
+        } else {
             val propertyReferenceResolvedCall = expression.callableReference.getResolvedCall(context.trace.bindingContext) ?: return
             val referencedProperty = propertyReferenceResolvedCall.resultingDescriptor
             if (referencedProperty !is PropertyDescriptor) {
@@ -56,11 +55,9 @@ object LateinitIntrinsicApplicabilityChecker : CallChecker {
 
             if (!referencedProperty.isLateInit) {
                 context.trace.report(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT.on(reportOn))
-            }
-            else if (!isBackingFieldAccessible(referencedProperty, context)) {
+            } else if (!isBackingFieldAccessible(referencedProperty, context)) {
                 context.trace.report(LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY.on(reportOn, referencedProperty))
-            }
-            else if ((context.scope.ownerDescriptor as? FunctionDescriptor)?.isInline == true) {
+            } else if ((context.scope.ownerDescriptor as? FunctionDescriptor)?.isInline == true) {
                 context.trace.report(LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION.on(reportOn))
             }
         }
@@ -70,7 +67,7 @@ object LateinitIntrinsicApplicabilityChecker : CallChecker {
         // We can generate direct access to the backing field only if the property is defined in the same source file,
         // and the property is originally declared in a scope that is a parent of the usage scope
         val declaration =
-                OverridingUtil.filterOutOverridden(OverridingUtil.getOverriddenDeclarations(descriptor)).singleOrNull() ?: return false
+            OverridingUtil.filterOutOverridden(OverridingUtil.getOverriddenDeclarations(descriptor)).singleOrNull() ?: return false
         val declarationSourceFile = DescriptorToSourceUtils.getContainingFile(declaration) ?: return false
         val usageSourceFile = DescriptorToSourceUtils.getContainingFile(context.scope.ownerDescriptor) ?: return false
         if (declarationSourceFile != usageSourceFile) return false

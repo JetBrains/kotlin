@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.google.common.collect.Maps
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -252,12 +253,12 @@ fun reportTarget6InheritanceErrorIfNeeded(
     }
 }
 
-fun CallableDescriptor.isJvmStaticInObjectOrClass(): Boolean =
+fun CallableDescriptor.isJvmStaticInObjectOrClassOrInterface(): Boolean =
         isJvmStaticIn {
             DescriptorUtils.isNonCompanionObject(it) ||
             // This is necessary because for generation of @JvmStatic methods from companion of class A
             // we create a synthesized descriptor containing in class A
-            DescriptorUtils.isClassOrEnumClass(it)
+            DescriptorUtils.isClassOrEnumClass(it) || DescriptorUtils.isInterface(it)
         }
 
 fun CallableDescriptor.isJvmStaticInCompanionObject(): Boolean =
@@ -278,7 +279,12 @@ fun Collection<VariableDescriptor>.filterOutDescriptorsWithSpecialNames() = filt
 
 class TypeAndNullability(@JvmField val type: Type, @JvmField val isNullable: Boolean)
 
-fun calcTypeForIEEE754ArithmeticIfNeeded(expression: KtExpression?, bindingContext: BindingContext, descriptor: DeclarationDescriptor): TypeAndNullability? {
+fun calcTypeForIEEE754ArithmeticIfNeeded(
+        expression: KtExpression?,
+        bindingContext: BindingContext,
+        descriptor: DeclarationDescriptor,
+        languageVersionSettings: LanguageVersionSettings
+): TypeAndNullability? {
     val ktType = expression.kotlinType(bindingContext) ?: return null
 
     if (KotlinBuiltIns.isDoubleOrNullableDouble(ktType)) {
@@ -290,7 +296,7 @@ fun calcTypeForIEEE754ArithmeticIfNeeded(expression: KtExpression?, bindingConte
     }
 
     val dataFlow = DataFlowValueFactory.createDataFlowValue(expression!!, ktType, bindingContext, descriptor)
-    val stableTypes = bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow)
+    val stableTypes = bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow, languageVersionSettings)
     return stableTypes.firstNotNullResult {
         when {
             KotlinBuiltIns.isDoubleOrNullableDouble(it) -> TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(it))
@@ -415,12 +421,21 @@ fun extractReificationArgument(type: KotlinType): Pair<TypeParameterDescriptor, 
 fun unwrapInitialSignatureDescriptor(function: FunctionDescriptor): FunctionDescriptor =
         function.initialSignatureDescriptor ?: function
 
-fun ExpressionCodegen.generateCallReceiver(rangeCall: ResolvedCall<out CallableDescriptor>): StackValue =
-        generateReceiverValue(rangeCall.extensionReceiver ?: rangeCall.dispatchReceiver!!, false)
+fun ExpressionCodegen.generateCallReceiver(call: ResolvedCall<out CallableDescriptor>): StackValue =
+        generateReceiverValue(call.extensionReceiver ?: call.dispatchReceiver!!, false)
 
-fun ExpressionCodegen.generateCallSingleArgument(rangeCall: ResolvedCall<out CallableDescriptor>): StackValue =
-        gen(ExpressionCodegen.getSingleArgumentExpression(rangeCall)!!)
+fun ExpressionCodegen.generateCallSingleArgument(call: ResolvedCall<out CallableDescriptor>): StackValue =
+        gen(call.getFirstArgumentExpression()!!)
 
 fun ClassDescriptor.isPossiblyUninitializedSingleton() =
         DescriptorUtils.isEnumEntry(this) ||
-        DescriptorUtils.isCompanionObject(this) && DescriptorUtils.isInterface(this.containingDeclaration)
+        DescriptorUtils.isCompanionObject(this) && JvmCodegenUtil.isJvmInterface(this.containingDeclaration)
+
+val CodegenContext<*>.parentContextsWithSelf
+    get() = generateSequence(this) { it.parentContext }
+
+val CodegenContext<*>.parentContexts
+    get() = parentContext?.parentContextsWithSelf ?: emptySequence()
+
+val CodegenContext<*>.contextStackText
+    get() = parentContextsWithSelf.joinToString(separator = "\n") { it.toString() }

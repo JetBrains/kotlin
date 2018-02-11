@@ -7,6 +7,11 @@ class WithModifiersOnAccessors {
     @get:Strictfp
     var strict = 0.0
 
-    @Synchronized private fun methSync() {}
-    @Strictfp protected fun methStrict() {}
+    @Synchronized
+    private fun methSync() {
+    }
+
+    @Strictfp
+    protected fun methStrict() {
+    }
 }

@@ -80,7 +80,6 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.IDEAndroidExtensionsExpressionCodegenExtension"/>
-        <defaultErrorMessages implementation="org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid"/>
         <storageComponentContainerContributor implementation="org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor"/>
         <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.IDEAndroidOnDestroyClassBuilderInterceptorExtension"/>
         <packageFragmentProviderExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.res.IDEAndroidPackageFragmentProviderExtension"/>
@@ -90,7 +89,7 @@
 
         <quickFixContributor implementation="org.jetbrains.kotlin.android.quickfix.AndroidQuickFixRegistrar"/>
         <projectConfigurator implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidGradleModuleConfigurator"/>
-        <platformGradleDetector implementation="org.jetbrains.kotlin.android.configure.PlatformAndroidGradleDetector"/>
+        <gradleModelFacade implementation="org.jetbrains.kotlin.android.configure.AndroidGradleModelFacade"/>
         <completionInformationProvider implementation="org.jetbrains.kotlin.AndroidExtensionsCompletionInformationProvider" />
 
         <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.parcel.IDEParcelableCodegenExtension"/>

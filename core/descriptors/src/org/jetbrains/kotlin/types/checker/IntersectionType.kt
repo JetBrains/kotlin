@@ -86,12 +86,15 @@ object TypeIntersector {
         /**
          * resultNullability. Value description:
          * ACCEPT_NULL means that all types marked nullable
-         * NOT_NULL means that there is one type which is subtype of Any => all types can be marked not nullable
+         *
+         * NOT_NULL means that there is one type which is subtype of Any => all types can be made definitely not null,
+         * making types definitely not null (not just not null) makes sense when we have intersection of type parameters like {T!! & S}
+         *
          * UNKNOWN means, that we do not know, i.e. more precisely, all singleClassifier types marked nullable if any,
          * and other types is captured types or type parameters without not-null upper bound. Example: `String? & T` such types we should leave as is.
          */
         val correctNullability = inputTypes.mapTo(LinkedHashSet()) {
-            if (resultNullability == ResultNullability.NOT_NULL) it.makeNullableAsSpecified(false) else it
+            if (resultNullability == ResultNullability.NOT_NULL) it.makeSimpleTypeDefinitelyNotNullOrNotNull() else it
         }
 
         return intersectTypesWithoutIntersectionType(correctNullability)
@@ -121,7 +124,7 @@ object TypeIntersector {
         if (filteredSuperAndEqualTypes.size < 2) return filteredSuperAndEqualTypes.single()
 
         val constructor = IntersectionTypeConstructor(inputTypes)
-        return KotlinTypeFactory.simpleType(Annotations.EMPTY, constructor, listOf(), false, constructor.createScopeForKotlinType())
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(Annotations.EMPTY, constructor, listOf(), false, constructor.createScopeForKotlinType())
     }
 
     private fun isStrictSupertype(subtype: KotlinType, supertype: KotlinType): Boolean {
@@ -154,15 +157,10 @@ object TypeIntersector {
         abstract fun combine(nextType: UnwrappedType): ResultNullability
 
         protected val UnwrappedType.resultNullability: ResultNullability
-            get() {
-                if (isMarkedNullable) return ACCEPT_NULL
-
-                if (NullabilityChecker.isSubtypeOfAny(this)) {
-                    return NOT_NULL
-                }
-                else {
-                    return UNKNOWN
-                }
+            get() = when {
+                isMarkedNullable -> ACCEPT_NULL
+                NullabilityChecker.isSubtypeOfAny(this) -> NOT_NULL
+                else -> UNKNOWN
             }
     }
 }

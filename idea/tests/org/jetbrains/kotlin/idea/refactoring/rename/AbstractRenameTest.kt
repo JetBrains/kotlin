@@ -42,11 +42,13 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.rename.*
+import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import org.jetbrains.kotlin.asJava.finder.KtLightPackage
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -349,9 +351,19 @@ abstract class AbstractRenameTest : KotlinLightCodeInsightFixtureTestCase() {
                     else -> null
                 }
             }
-            val handler = RenameHandlerRegistry.getInstance().getRenameHandler(dataContext) ?: return@doTestCommittingDocuments
+            var handler = RenameHandlerRegistry.getInstance().getRenameHandler(dataContext) ?: return@doTestCommittingDocuments
             Assert.assertTrue(handler.isAvailableOnDataContext(dataContext))
-            handler.invoke(project, editor, psiFile, dataContext)
+            if (handler is KotlinRenameDispatcherHandler) {
+                handler = handler.getRenameHandler(dataContext)!!
+            }
+
+            if (handler is VariableInplaceRenameHandler) {
+                val elementToRename = psiFile.findElementAt(currentCaret.offset)!!.getNonStrictParentOfType<PsiNamedElement>()!!
+                CodeInsightTestUtil.doInlineRename(handler, newName, editor, elementToRename)
+            }
+            else {
+                handler.invoke(project, editor, psiFile, dataContext)
+            }
         }
     }
 

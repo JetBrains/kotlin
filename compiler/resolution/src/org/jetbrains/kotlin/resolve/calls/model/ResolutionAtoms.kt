@@ -46,10 +46,8 @@ sealed class ResolvedAtom {
 
     lateinit var subResolvedAtoms: List<ResolvedAtom>
         private set
-    lateinit var diagnostics: Collection<KotlinCallDiagnostic>
-        private set
 
-    protected open fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>, diagnostics: Collection<KotlinCallDiagnostic>) {
+    protected open fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>) {
         assert(!analyzed) {
             "Already analyzed: $this"
         }
@@ -57,7 +55,6 @@ sealed class ResolvedAtom {
         analyzed = true
 
         this.subResolvedAtoms = subResolvedAtoms
-        this.diagnostics = diagnostics
     }
 }
 
@@ -74,44 +71,44 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
 
 class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : ResolvedAtom() {
     init {
-        setAnalyzedResults(listOf(), listOf())
+        setAnalyzedResults(listOf())
     }
 }
+
 sealed class PostponedResolvedAtom : ResolvedAtom() {
     abstract val inputTypes: Collection<UnwrappedType>
     abstract val outputType: UnwrappedType?
 }
 
 class LambdaWithTypeVariableAsExpectedTypeAtom(
-        override val atom: LambdaKotlinCallArgument,
-        val expectedType: UnwrappedType
+    override val atom: LambdaKotlinCallArgument,
+    val expectedType: UnwrappedType
 ) : PostponedResolvedAtom() {
     override val inputTypes: Collection<UnwrappedType> get() = listOf(expectedType)
     override val outputType: UnwrappedType? get() = null
 
     fun setAnalyzed(resolvedLambdaAtom: ResolvedLambdaAtom) {
-        setAnalyzedResults(listOf(resolvedLambdaAtom), listOf())
+        setAnalyzedResults(listOf(resolvedLambdaAtom))
     }
 }
 
 class ResolvedLambdaAtom(
-        override val atom: LambdaKotlinCallArgument,
-        val isSuspend: Boolean,
-        val receiver: UnwrappedType?,
-        val parameters: List<UnwrappedType>,
-        val returnType: UnwrappedType,
-        val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?
+    override val atom: LambdaKotlinCallArgument,
+    val isSuspend: Boolean,
+    val receiver: UnwrappedType?,
+    val parameters: List<UnwrappedType>,
+    val returnType: UnwrappedType,
+    val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?
 ) : PostponedResolvedAtom() {
     lateinit var resultArguments: List<KotlinCallArgument>
         private set
 
     fun setAnalyzedResults(
-            resultArguments: List<KotlinCallArgument>,
-            subResolvedAtoms: List<ResolvedAtom>,
-            diagnostics: Collection<KotlinCallDiagnostic>
+        resultArguments: List<KotlinCallArgument>,
+        subResolvedAtoms: List<ResolvedAtom>
     ) {
         this.resultArguments = resultArguments
-        setAnalyzedResults(subResolvedAtoms, diagnostics)
+        setAnalyzedResults(subResolvedAtoms)
     }
 
     override val inputTypes: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
@@ -119,24 +116,23 @@ class ResolvedLambdaAtom(
 }
 
 class ResolvedCallableReferenceAtom(
-        override val atom: CallableReferenceKotlinCallArgument,
-        val expectedType: UnwrappedType?
+    override val atom: CallableReferenceKotlinCallArgument,
+    val expectedType: UnwrappedType?
 ) : PostponedResolvedAtom() {
     var candidate: CallableReferenceCandidate? = null
         private set
 
     fun setAnalyzedResults(
-            candidate: CallableReferenceCandidate?,
-            subResolvedAtoms: List<ResolvedAtom>,
-            diagnostics: Collection<KotlinCallDiagnostic>
+        candidate: CallableReferenceCandidate?,
+        subResolvedAtoms: List<ResolvedAtom>
     ) {
         this.candidate = candidate
-        setAnalyzedResults(subResolvedAtoms, diagnostics)
+        setAnalyzedResults(subResolvedAtoms)
     }
 
     override val inputTypes: Collection<UnwrappedType>
         get() {
-            val functionType = getFunctionTypeFromCallableReferenceExpectedType(expectedType) ?: return emptyList()
+            val functionType = getFunctionTypeFromCallableReferenceExpectedType(expectedType) ?: return listOfNotNull(expectedType)
             val parameters = functionType.getValueParameterTypesFromFunctionType().map { it.type.unwrap() }
             val receiver = functionType.getReceiverTypeFromFunctionType()?.unwrap()
             return receiver?.let { parameters + it } ?: parameters
@@ -150,20 +146,20 @@ class ResolvedCallableReferenceAtom(
 }
 
 class ResolvedCollectionLiteralAtom(
-        override val atom: CollectionLiteralKotlinCallArgument,
-        val expectedType: UnwrappedType?
+    override val atom: CollectionLiteralKotlinCallArgument,
+    val expectedType: UnwrappedType?
 ) : ResolvedAtom() {
     init {
-        setAnalyzedResults(listOf(), listOf())
+        setAnalyzedResults(listOf())
     }
 }
 
 class CallResolutionResult(
-        val type: Type,
-        val resultCallAtom: ResolvedCallAtom?,
-        diagnostics: List<KotlinCallDiagnostic>,
-        val constraintSystem: ConstraintStorage,
-        val allCandidates: Collection<KotlinResolutionCandidate>? = null
+    val type: Type,
+    val resultCallAtom: ResolvedCallAtom?,
+    val diagnostics: List<KotlinCallDiagnostic>,
+    val constraintSystem: ConstraintStorage,
+    val allCandidates: Collection<KotlinResolutionCandidate>? = null
 ) : ResolvedAtom() {
     override val atom: ResolutionAtom? get() = null
 
@@ -175,13 +171,14 @@ class CallResolutionResult(
     }
 
     init {
-        setAnalyzedResults(listOfNotNull(resultCallAtom), diagnostics)
+        setAnalyzedResults(listOfNotNull(resultCallAtom))
     }
 
     override fun toString() = "$type, resultCallAtom = $resultCallAtom, (${diagnostics.joinToString()})"
 }
 
-val ResolvedCallAtom.freshReturnType: UnwrappedType? get() {
-    val returnType = candidateDescriptor.returnType ?: return null
-    return substitutor.safeSubstitute(returnType.unwrap())
-}
+val ResolvedCallAtom.freshReturnType: UnwrappedType?
+    get() {
+        val returnType = candidateDescriptor.returnType ?: return null
+        return substitutor.safeSubstitute(returnType.unwrap())
+    }

@@ -51,7 +51,7 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
     )
 
     object JsSourceMapContentModes : DefaultValues(
-            "\"${K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING}\"",
+            "null",
             listOf(
                     K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER,
                     K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS,

@@ -818,4 +818,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private void setInitialSignatureDescriptor(@Nullable FunctionDescriptor initialSignatureDescriptor) {
         this.initialSignatureDescriptor = initialSignatureDescriptor;
     }
+
+    // Don't use on published descriptors
+    public <V> void putInUserDataMap(UserDataKey<V> key, Object value) {
+        userDataMap.put(key, value);
+    }
 }

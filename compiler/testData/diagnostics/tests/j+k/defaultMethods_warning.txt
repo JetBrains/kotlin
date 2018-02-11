@@ -1,0 +1,66 @@
+package
+
+public fun test(): kotlin.Unit
+
+public interface JavaInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun test(): kotlin.String!
+    public open fun testOverride(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun testStatic(): kotlin.String!
+}
+
+public open class KotlinClass : JavaInterface {
+    public constructor KotlinClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun testOverride(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class KotlinClassInderectInheritance : KotlinClass {
+    public constructor KotlinClassInderectInheritance()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public final fun foo2(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun testOverride(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class KotlinClassInderectInheritance2 : KotlinInterfaceInderectInheritance {
+    public constructor KotlinClassInderectInheritance2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun fooo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun foooo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun testOverride(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface KotlinInterface : JavaInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun fooo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String!
+    public open override /*1*/ fun testOverride(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface KotlinInterfaceInderectInheritance : KotlinInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun fooo(): kotlin.Unit
+    public open fun foooo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun testOverride(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

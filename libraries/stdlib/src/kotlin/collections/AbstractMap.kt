@@ -89,7 +89,7 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
      * Accessing this property first time creates a keys view from [entries].
      * All subsequent accesses just return the created instance.
      */
-    private @Volatile var _keys: Set<K>? = null
+    private @kotlin.jvm.Volatile var _keys: Set<K>? = null
     override val keys: Set<K> get() {
         if (_keys == null) {
             _keys = object : AbstractSet<K>() {
@@ -121,7 +121,7 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
      * Accessing this property first time creates a values view from [entries].
      * All subsequent accesses just return the created instance.
      */
-    private @Volatile var _values: Collection<V>? = null
+    private @kotlin.jvm.Volatile var _values: Collection<V>? = null
     override val values: Collection<V> get() {
         if (_values == null) {
             _values = object : AbstractCollection<V>() {

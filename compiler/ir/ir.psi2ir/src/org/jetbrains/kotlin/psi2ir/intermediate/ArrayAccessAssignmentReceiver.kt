@@ -26,18 +26,18 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.lang.AssertionError
 
 class ArrayAccessAssignmentReceiver(
-        val irArray: IrExpression,
-        val irIndices: List<IrExpression>,
-        val indexedGetCall: CallBuilder?,
-        val indexedSetCall: CallBuilder?,
-        val callGenerator: CallGenerator,
-        val startOffset: Int,
-        val endOffset: Int,
-        val origin: IrStatementOrigin
+    val irArray: IrExpression,
+    val irIndices: List<IrExpression>,
+    val indexedGetCall: CallBuilder?,
+    val indexedSetCall: CallBuilder?,
+    val callGenerator: CallGenerator,
+    val startOffset: Int,
+    val endOffset: Int,
+    val origin: IrStatementOrigin
 ) : AssignmentReceiver {
-    private val type: KotlinType = indexedGetCall?.run { descriptor.returnType!! } ?:
-                                   indexedSetCall?.run { descriptor.valueParameters.last().type } ?:
-                                   throw AssertionError("Array access should have either indexed-get call or indexed-set call")
+    private val type: KotlinType =
+        indexedGetCall?.run { descriptor.returnType!! } ?: indexedSetCall?.run { descriptor.valueParameters.last().type }
+        ?: throw AssertionError("Array access should have either indexed-get call or indexed-set call")
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression {
         val hasResult = origin.isAssignmentOperatorWithResult()

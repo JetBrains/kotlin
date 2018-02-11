@@ -26,7 +26,7 @@ import kotlin.collections.MutableMap.MutableEntry
 /**
  * Hash table based implementation of the [MutableMap] interface.
  *
- * This implementation makes no guarantees regarding the order of enumeration of [keys], [elements] and [entries] collections.
+ * This implementation makes no guarantees regarding the order of enumeration of [keys], [values] and [entries] collections.
  */
 public open class HashMap<K, V> : AbstractMutableMap<K, V> {
 

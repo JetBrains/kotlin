@@ -100,6 +100,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         if (!descriptor.isSuspend) return
 
         fillCoroutineMetadata(context, descriptor, hasController = descriptor.extensionReceiverParameter != null)
+        forceStateMachine = true
     }
 
     fun ValueParameterDescriptorImpl.WithDestructuringDeclaration.translate(context: TranslationContext): JsVars {

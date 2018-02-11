@@ -18,18 +18,14 @@ package org.jetbrains.kotlin.js.translate.utils
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.backend.common.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.CoroutineMetadata
-import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
-import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
@@ -39,28 +35,27 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 
 fun generateDelegateCall(
-        classDescriptor: ClassDescriptor,
-        fromDescriptor: FunctionDescriptor,
-        toDescriptor: FunctionDescriptor,
-        thisObject: JsExpression,
-        context: TranslationContext,
-        detectDefaultParameters: Boolean,
-        source: PsiElement?
+    classDescriptor: ClassDescriptor,
+    fromDescriptor: FunctionDescriptor,
+    toDescriptor: FunctionDescriptor,
+    thisObject: JsExpression,
+    context: TranslationContext,
+    detectDefaultParameters: Boolean,
+    source: PsiElement?
 ): JsStatement {
     fun FunctionDescriptor.getNameForFunctionWithPossibleDefaultParam() =
-            if (detectDefaultParameters && hasOrInheritsParametersWithDefaultValue()) {
-                context.scope().declareName(context.getNameForDescriptor(this).ident + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
-            }
-            else {
-                context.getNameForDescriptor(this)
-            }
+        if (detectDefaultParameters && hasOrInheritsParametersWithDefaultValue()) {
+            context.scope().declareName(context.getNameForDescriptor(this).ident + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
+        } else {
+            context.getNameForDescriptor(this)
+        }
 
     val overriddenMemberFunctionName = toDescriptor.getNameForFunctionWithPossibleDefaultParam()
     val overriddenMemberFunctionRef = JsNameRef(overriddenMemberFunctionName, thisObject)
@@ -84,8 +79,7 @@ fun generateDelegateCall(
     val intrinsic = context.intrinsics().getFunctionIntrinsic(toDescriptor)
     val invocation = if (intrinsic.exists() && intrinsic is FunctionIntrinsicWithReceiverComputed) {
         intrinsic.apply(thisObject, args, context)
-    }
-    else {
+    } else {
         JsInvocation(overriddenMemberFunctionRef, args)
     }
 
@@ -134,8 +128,8 @@ fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpr
 
             context.usageTracker()?.used(classifierDescriptor)
 
-            context.captureTypeIfNeedAndGetCapturedName(classifierDescriptor) ?:
-                    context.getNameForDescriptor(classifierDescriptor).makeRef()
+            context.captureTypeIfNeedAndGetCapturedName(classifierDescriptor)
+                    ?: context.getNameForDescriptor(classifierDescriptor).makeRef()
         }
         else -> {
             throw IllegalStateException("Can't get reference for $type")
@@ -144,9 +138,9 @@ fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpr
 }
 
 fun TranslationContext.addFunctionToPrototype(
-        classDescriptor: ClassDescriptor,
-        descriptor: FunctionDescriptor,
-        function: JsExpression
+    classDescriptor: ClassDescriptor,
+    descriptor: FunctionDescriptor,
+    function: JsExpression
 ): JsStatement {
     val prototypeRef = JsAstUtils.prototypeOf(getInnerReference(classDescriptor))
     val functionRef = JsNameRef(getNameForDescriptor(descriptor), prototypeRef)
@@ -154,9 +148,9 @@ fun TranslationContext.addFunctionToPrototype(
 }
 
 fun TranslationContext.addAccessorsToPrototype(
-        containingClass: ClassDescriptor,
-        propertyDescriptor: PropertyDescriptor,
-        literal: JsObjectLiteral
+    containingClass: ClassDescriptor,
+    propertyDescriptor: PropertyDescriptor,
+    literal: JsObjectLiteral
 ) {
     val prototypeRef = JsAstUtils.prototypeOf(getInnerReference(containingClass))
     val propertyName = getNameForDescriptor(propertyDescriptor)
@@ -164,38 +158,32 @@ fun TranslationContext.addAccessorsToPrototype(
     addDeclarationStatement(defineProperty.makeStmt())
 }
 
-fun FunctionDescriptor.requiresStateMachineTransformation(context: TranslationContext): Boolean =
-        this is AnonymousFunctionDescriptor ||
-        context.bindingContext()[BindingContext.CONTAINS_NON_TAIL_SUSPEND_CALLS, this] == true
-
 fun JsFunction.fillCoroutineMetadata(
-        context: TranslationContext,
-        descriptor: FunctionDescriptor,
-        hasController: Boolean
+    context: TranslationContext,
+    descriptor: FunctionDescriptor,
+    hasController: Boolean
 ) {
-    if (!descriptor.requiresStateMachineTransformation(context)) return
-
-    val suspendPropertyDescriptor = context.currentModule.getPackage(COROUTINES_INTRINSICS_PACKAGE_FQ_NAME)
-            .memberScope
-            .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND).first()
+    val suspendPropertyDescriptor = context.currentModule.getPackage(DescriptorUtils.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME)
+        .memberScope
+        .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND).first()
 
     val coroutineBaseClassRef = ReferenceTranslator.translateAsTypeReference(TranslationUtils.getCoroutineBaseClass(context), context)
 
     fun getCoroutinePropertyName(id: String) =
-            context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, id))
+        context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, id))
 
     coroutineMetadata = CoroutineMetadata(
-            doResumeName = context.getNameForDescriptor(TranslationUtils.getCoroutineDoResumeFunction(context)),
-            suspendObjectRef = ReferenceTranslator.translateAsValueReference(suspendPropertyDescriptor, context),
-            baseClassRef = coroutineBaseClassRef,
-            stateName = getCoroutinePropertyName("state"),
-            exceptionStateName = getCoroutinePropertyName("exceptionState"),
-            finallyPathName = getCoroutinePropertyName("finallyPath"),
-            resultName = getCoroutinePropertyName("result"),
-            exceptionName = getCoroutinePropertyName("exception"),
-            hasController = hasController,
-            hasReceiver = descriptor.dispatchReceiverParameter != null,
-            psiElement = descriptor.source.getPsi()
+        doResumeName = context.getNameForDescriptor(TranslationUtils.getCoroutineDoResumeFunction(context)),
+        suspendObjectRef = ReferenceTranslator.translateAsValueReference(suspendPropertyDescriptor, context),
+        baseClassRef = coroutineBaseClassRef,
+        stateName = getCoroutinePropertyName("state"),
+        exceptionStateName = getCoroutinePropertyName("exceptionState"),
+        finallyPathName = getCoroutinePropertyName("finallyPath"),
+        resultName = getCoroutinePropertyName("result"),
+        exceptionName = getCoroutinePropertyName("exception"),
+        hasController = hasController,
+        hasReceiver = descriptor.dispatchReceiverParameter != null,
+        psiElement = descriptor.source.getPsi()
     )
 }
 
@@ -215,7 +203,7 @@ val PsiElement.finalElement: PsiElement
     }
 
 fun TranslationContext.addFunctionButNotExport(descriptor: FunctionDescriptor, expression: JsExpression): JsName =
-        addFunctionButNotExport(getInnerNameForDescriptor(descriptor), expression)
+    addFunctionButNotExport(getInnerNameForDescriptor(descriptor), expression)
 
 fun TranslationContext.addFunctionButNotExport(name: JsName, expression: JsExpression): JsName {
     when (expression) {
@@ -243,4 +231,15 @@ fun createPrototypeStatements(superName: JsName, name: JsName): List<JsStatement
     val constructorStatement = JsAstUtils.assignment(constructorRef, classRef.deepCopy()).makeStmt()
 
     return listOf(prototypeStatement, constructorStatement)
+}
+
+fun TranslationContext.createCoroutineResult(resolvedCall: ResolvedCall<*>): JsExpression {
+    val callElement = resolvedCall.call.callElement
+    val coroutineRef = TranslationUtils.translateContinuationArgument(this).source(callElement)
+    return JsNameRef("\$\$coroutineResult\$\$", coroutineRef).apply {
+        sideEffects = SideEffectKind.DEPENDS_ON_STATE
+        source = callElement
+        coroutineResult = true
+        synthetic = true
+    }
 }

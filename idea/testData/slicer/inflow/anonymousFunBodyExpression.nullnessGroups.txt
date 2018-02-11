@@ -1,0 +1,3 @@
+[NotNull Values]
+8 	val <bold>x = foo(fun(n: Int) = n)</bold>
+8 		val <bold>x = foo(fun(n: Int) = n)</bold>

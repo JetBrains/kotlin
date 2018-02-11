@@ -81,7 +81,7 @@ public fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLaz
 public inline operator fun <T> Lazy<T>.getValue(thisRef: Any?, property: KProperty<*>): T = value
 
 /**
- * Specifies how a [Lazy] instance synchronizes access among multiple threads.
+ * Specifies how a [Lazy] instance synchronizes initialization among multiple threads.
  */
 public enum class LazyThreadSafetyMode {
 
@@ -92,14 +92,14 @@ public enum class LazyThreadSafetyMode {
 
     /**
      * Initializer function can be called several times on concurrent access to uninitialized [Lazy] instance value,
-     * but only first returned value will be used as the value of [Lazy] instance.
+     * but only the first returned value will be used as the value of [Lazy] instance.
      */
     PUBLICATION,
 
     /**
-     * No locks are used to synchronize the access to the [Lazy] instance value; if the instance is accessed from multiple threads, its behavior is undefined.
+     * No locks are used to synchronize an access to the [Lazy] instance value; if the instance is accessed from multiple threads, its behavior is undefined.
      *
-     * This mode should be used only when high performance is crucial and the [Lazy] instance is guaranteed never to be initialized from more than one thread.
+     * This mode should not be used unless the [Lazy] instance is guaranteed never to be initialized from more than one thread.
      */
     NONE,
 }
@@ -107,6 +107,7 @@ public enum class LazyThreadSafetyMode {
 
 private object UNINITIALIZED_VALUE
 
+@JvmVersion
 private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>, Serializable {
     private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
@@ -174,21 +175,26 @@ private class InitializedLazyImpl<out T>(override val value: T) : Lazy<T>, Seria
 
 @kotlin.jvm.JvmVersion
 private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
-    private var initializer: (() -> T)? = initializer
+    @Volatile private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
     // this final field is required to enable safe publication of constructed instance
     private val final: Any = UNINITIALIZED_VALUE
 
     override val value: T
         get() {
-            if (_value === UNINITIALIZED_VALUE) {
-                val initializerValue = initializer
-                // if we see null in initializer here, it means that the value is already set by another thread
-                if (initializerValue != null) {
-                    val newValue = initializerValue()
-                    if (valueUpdater.compareAndSet(this, UNINITIALIZED_VALUE, newValue)) {
-                        initializer = null
-                    }
+            val value = _value
+            if (value !== UNINITIALIZED_VALUE) {
+                @Suppress("UNCHECKED_CAST")
+                return value as T
+            }
+
+            val initializerValue = initializer
+            // if we see null in initializer here, it means that the value is already set by another thread
+            if (initializerValue != null) {
+                val newValue = initializerValue()
+                if (valueUpdater.compareAndSet(this, UNINITIALIZED_VALUE, newValue)) {
+                    initializer = null
+                    return newValue
                 }
             }
             @Suppress("UNCHECKED_CAST")

@@ -158,7 +158,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
         val factory = KtPsiFactory(klass)
         val constructorCommentSaver = CommentSaver(element)
         val constructorInClass = klass.createPrimaryConstructorIfAbsent()
-        val constructor = factory.createPrimaryConstructor(element.modifierList?.text?.replace("\n", " "))
+        val constructor = factory.createPrimaryConstructorWithModifiers(element.modifierList?.text?.replace("\n", " "))
 
         val parameterToPropertyMap = mutableMapOf<ValueParameterDescriptor, PropertyDescriptor>()
         val initializer = element.extractInitializer(parameterToPropertyMap, context, factory) ?: return

@@ -1,0 +1,10 @@
+package
+
+public fun </*0*/ Z> arrayInId(/*0*/ z: kotlin.Array<in Z>): kotlin.Array<in Z>
+public fun </*0*/ Z> arrayOutId(/*0*/ z: kotlin.Array<out Z>): kotlin.Array<out Z>
+public fun </*0*/ T> bar(): kotlin.Array<in T>
+public fun </*0*/ T> foo(): kotlin.Array<out T>
+public fun </*0*/ X> id(/*0*/ x: X): X
+public fun takeCovArray(/*0*/ a: kotlin.Array<out kotlin.Number>): kotlin.Unit
+public fun takeInArray(/*0*/ a: kotlin.Array<in kotlin.Number>): kotlin.Unit
+public fun test(): kotlin.Unit

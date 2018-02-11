@@ -30,27 +30,36 @@ import java.util.*
 
 
 object CallDiagnosticToDiagnostic {
-    private val diagnosticMap: MutableMap<Class<out KotlinCallDiagnostic>, KotlinCallDiagnostic.(PsiElement) -> ParametrizedDiagnostic<*>> = HashMap()
+    private val diagnosticMap: MutableMap<Class<out KotlinCallDiagnostic>, KotlinCallDiagnostic.(PsiElement) -> ParametrizedDiagnostic<*>> =
+        HashMap()
 
-    private fun <E: PsiElement, C: KotlinCallDiagnostic> checkPut(klass: Class<C>, factory: C.(PsiElement) -> ParametrizedDiagnostic<E>?) {
+    private fun <E : PsiElement, C : KotlinCallDiagnostic> checkPut(
+        klass: Class<C>,
+        factory: C.(PsiElement) -> ParametrizedDiagnostic<E>?
+    ) {
         @Suppress("UNCHECKED_CAST")
         diagnosticMap.put(klass, factory as KotlinCallDiagnostic.(PsiElement) -> ParametrizedDiagnostic<*>)
     }
 
-    private inline fun <reified E: PsiElement, C: KotlinCallDiagnostic> put(factory0: DiagnosticFactory0<E>, klass: Class<C>) {
+    private inline fun <reified E : PsiElement, C : KotlinCallDiagnostic> put(factory0: DiagnosticFactory0<E>, klass: Class<C>) {
         checkPut<E, C>(klass) {
             (it as? E)?.let { factory0.on(it) }
         }
     }
 
-    private inline fun <reified E: PsiElement, A, C: KotlinCallDiagnostic> put(factory1: DiagnosticFactory1<E, A>, klass: Class<C>, crossinline getA: C.() -> A) {
+    private inline fun <reified E : PsiElement, A, C : KotlinCallDiagnostic> put(
+        factory1: DiagnosticFactory1<E, A>,
+        klass: Class<C>,
+        crossinline getA: C.() -> A
+    ) {
         checkPut<E, C>(klass) {
             (it as? E)?.let { factory1.on(it, getA()) }
         }
     }
 
-    private inline fun <reified E: PsiElement, A, B, C: KotlinCallDiagnostic> put(
-            factory2: DiagnosticFactory2<E, A, B>, klass: Class<C>, crossinline getA: C.() -> A, crossinline getB: C.() -> B) {
+    private inline fun <reified E : PsiElement, A, B, C : KotlinCallDiagnostic> put(
+        factory2: DiagnosticFactory2<E, A, B>, klass: Class<C>, crossinline getA: C.() -> A, crossinline getB: C.() -> B
+    ) {
         checkPut<E, C>(klass) {
             (it as? E)?.let { factory2.on(it, getA(), getB()) }
         }
@@ -58,7 +67,12 @@ object CallDiagnosticToDiagnostic {
 
     init {
 //        put(Errors.UNSAFE_CALL, UnsafeCallDiagnostic::class.java, UnsafeCallDiagnostic::receiverType)
-        put(Errors.TYPE_MISMATCH, TypeMismatchDiagnostic::class.java, TypeMismatchDiagnostic::expectedType, TypeMismatchDiagnostic::actualType)
+        put(
+            Errors.TYPE_MISMATCH,
+            TypeMismatchDiagnostic::class.java,
+            TypeMismatchDiagnostic::expectedType,
+            TypeMismatchDiagnostic::actualType
+        )
     }
 
 
@@ -85,9 +99,9 @@ abstract class DiagnosticReporterImpl(private val bindingTrace: BindingTrace, pr
 }
 
 class TypeMismatchDiagnostic(
-        val callArgument: KotlinCallArgument,
-        val expectedType: KotlinType,
-        val actualType: KotlinType
+    val callArgument: KotlinCallArgument,
+    val expectedType: KotlinType,
+    val actualType: KotlinType
 ) : KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(callArgument, this)
 }

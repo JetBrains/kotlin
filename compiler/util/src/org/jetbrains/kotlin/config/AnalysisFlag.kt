@@ -53,5 +53,8 @@ class AnalysisFlag<out T> internal constructor(
 
         @JvmStatic
         val jsr305 by Flag.Jsr305StateWarnByDefault
+
+        @JvmStatic
+        val allowKotlinPackage by Flag.Boolean
     }
 }

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
  */
 interface ChainedCallGenerator {
     val receiver: KtExpression
+    val reformat: Boolean
 
     /**
      * @param pattern pattern string for generating the part of the call to the right from the dot
@@ -54,7 +55,7 @@ interface Transformation {
             presentation
     }
 
-    fun mergeWithPrevious(previousTransformation: SequenceTransformation): Transformation?
+    fun mergeWithPrevious(previousTransformation: SequenceTransformation, reformat: Boolean): Transformation?
 
     fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression
 
@@ -66,7 +67,7 @@ interface Transformation {
  * Represents a transformation of input sequence into another sequence
  */
 interface SequenceTransformation : Transformation {
-    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): SequenceTransformation? = null
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation, reformat: Boolean): SequenceTransformation? = null
 
     val affectsIndex: Boolean
 }
@@ -75,7 +76,7 @@ interface SequenceTransformation : Transformation {
  * Represents a final transformation of sequence which produces the result of the whole loop (for example, assigning a found value into a variable).
  */
 interface ResultTransformation : Transformation {
-    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? = null
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation, reformat: Boolean): ResultTransformation? = null
 
     val commentSavingRange: PsiChildRange
 
@@ -105,6 +106,7 @@ data class MatchingState(
         val indexVariable: KtCallableDeclaration?,
         val lazySequence: Boolean,
         val pseudocodeProvider: () -> Pseudocode,
+        val reformat: Boolean,
         val initializationStatementsToDelete: Collection<KtExpression> = emptyList(),
         val previousTransformations: MutableList<SequenceTransformation> = arrayListOf(),
         val incrementExpressions: Collection<KtUnaryExpression> = emptyList()

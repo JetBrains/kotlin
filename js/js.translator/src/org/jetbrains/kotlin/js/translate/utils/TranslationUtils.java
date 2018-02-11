@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -55,11 +56,16 @@ import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator.*;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.createDataDescriptor;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
 
 public final class TranslationUtils {
+    private static final Set<FqNameUnsafe> CLASSES_WITH_NON_BOXED_CHARS = new HashSet<>(Arrays.asList(
+            new FqNameUnsafe("kotlin.collections.CharIterator"),
+            new FqNameUnsafe("kotlin.ranges.CharProgression"),
+            new FqNameUnsafe("kotlin.js.internal.CharCompanionObject"),
+            new FqNameUnsafe("kotlin.Char.Companion"),
+            KotlinBuiltIns.FQ_NAMES.charSequence, KotlinBuiltIns.FQ_NAMES.number
+    ));
 
     private TranslationUtils() {
     }
@@ -173,15 +179,25 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsNameRef backingFieldReference(@NotNull TranslationContext context, @NotNull PropertyDescriptor descriptor) {
+    public static JsName getNameForBackingField(@NotNull TranslationContext context, @NotNull PropertyDescriptor descriptor) {
+        if (isReferenceToSyntheticBackingField(descriptor)) {
+            return context.getNameForBackingField(descriptor);
+        }
+
         DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
-        JsName backingFieldName = containingDescriptor instanceof PackageFragmentDescriptor ?
+        return containingDescriptor instanceof PackageFragmentDescriptor ?
                                   context.getInnerNameForDescriptor(descriptor) :
                                   context.getNameForDescriptor(descriptor);
+    }
 
-        if (!JsDescriptorUtils.isSimpleFinalProperty(descriptor) && !(containingDescriptor instanceof PackageFragmentDescriptor)) {
-            backingFieldName = context.getNameForBackingField(descriptor);
-        }
+    public static boolean isReferenceToSyntheticBackingField(@NotNull PropertyDescriptor descriptor) {
+        DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
+        return !JsDescriptorUtils.isSimpleFinalProperty(descriptor) && !(containingDescriptor instanceof PackageFragmentDescriptor);
+    }
+
+    @NotNull
+    public static JsNameRef backingFieldReference(@NotNull TranslationContext context, @NotNull PropertyDescriptor descriptor) {
+        DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
 
         JsExpression receiver;
         if (containingDescriptor instanceof PackageFragmentDescriptor) {
@@ -191,8 +207,8 @@ public final class TranslationUtils {
             receiver = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(containingDescriptor));
         }
 
-        JsNameRef result = new JsNameRef(backingFieldName, receiver);
-        MetadataProperties.setType(result, getReturnTypeForCoercion(descriptor));
+        JsNameRef result = new JsNameRef(getNameForBackingField(context, descriptor), receiver);
+        MetadataProperties.setType(result, getReturnTypeForCoercion(descriptor, true));
 
         return result;
     }
@@ -294,20 +310,8 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsConditional sure(@NotNull JsExpression expression, @NotNull TranslationContext context) {
-        JsInvocation throwNPE = new JsInvocation(context.getReferenceToIntrinsic(Namer.THROW_NPE_FUN_NAME));
-        JsConditional ensureNotNull = notNullConditional(expression, throwNPE, context);
-
-        JsExpression thenExpression = ensureNotNull.getThenExpression();
-        if (thenExpression instanceof JsNameRef) {
-            JsName name = ((JsNameRef) thenExpression).getName();
-            if (name != null) {
-                // associate(cache) ensureNotNull expression to new TemporaryConstVariable with same name.
-                context.associateExpressionToLazyValue(ensureNotNull, new TemporaryConstVariable(name, ensureNotNull));
-            }
-        }
-
-        return ensureNotNull;
+    public static JsExpression sure(@NotNull JsExpression expression, @NotNull TranslationContext context) {
+        return new JsInvocation(context.getReferenceToIntrinsic(Namer.NULL_CHECK_INTRINSIC_NAME), expression);
     }
 
     public static boolean isSimpleNameExpressionNotDelegatedLocalVar(@Nullable KtExpression expression, @NotNull TranslationContext context) {
@@ -350,7 +354,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    private static VariableDescriptor getEnclosingContinuationParameter(@NotNull TranslationContext context) {
+    public static VariableDescriptor getEnclosingContinuationParameter(@NotNull TranslationContext context) {
         VariableDescriptor result = context.getContinuationParameterDescriptor();
         if (result == null) {
             assert context.getParent() != null;
@@ -392,25 +396,50 @@ public final class TranslationUtils {
 
     @NotNull
     public static KotlinType getReturnTypeForCoercion(@NotNull CallableDescriptor descriptor) {
+        return getReturnTypeForCoercion(descriptor, false);
+    }
+
+    @NotNull
+    public static KotlinType getReturnTypeForCoercion(@NotNull CallableDescriptor descriptor, boolean forcePrivate) {
         descriptor = descriptor.getOriginal();
 
         if (FunctionTypesKt.getFunctionalClassKind(descriptor) != null || descriptor instanceof AnonymousFunctionDescriptor) {
-            return DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
+            return getAnyTypeFromSameModule(descriptor);
         }
 
         Collection<? extends CallableDescriptor> overridden = descriptor.getOverriddenDescriptors();
         if (overridden.isEmpty()) {
-            return descriptor.getReturnType() != null ?
-                   descriptor.getReturnType() :
-                   DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
+            KotlinType returnType = descriptor.getReturnType();
+            if (returnType == null) {
+                return getAnyTypeFromSameModule(descriptor);
+            }
+
+            DeclarationDescriptor container = descriptor.getContainingDeclaration();
+            boolean isPublic = descriptor.getVisibility().effectiveVisibility(descriptor, true).getPublicApi() && !forcePrivate;
+            if (KotlinBuiltIns.isCharOrNullableChar(returnType) && container instanceof ClassDescriptor && isPublic) {
+                ClassDescriptor containingClass = (ClassDescriptor) container;
+                FqNameUnsafe containingClassName = DescriptorUtilsKt.getFqNameUnsafe(containingClass);
+                if (!CLASSES_WITH_NON_BOXED_CHARS.contains(containingClassName) &&
+                    !KotlinBuiltIns.isPrimitiveType(containingClass.getDefaultType()) &&
+                    !KotlinBuiltIns.isPrimitiveArray(containingClassName)
+                ) {
+                    return getAnyTypeFromSameModule(descriptor);
+                }
+            }
+            return returnType;
         }
 
         Set<KotlinType> typesFromOverriddenCallables = overridden.stream()
-                .map(TranslationUtils::getReturnTypeForCoercion)
+                .map(o -> getReturnTypeForCoercion(o, forcePrivate))
                 .collect(Collectors.toSet());
         return typesFromOverriddenCallables.size() == 1
                ? typesFromOverriddenCallables.iterator().next()
-               : DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
+               : getAnyTypeFromSameModule(descriptor);
+    }
+
+    @NotNull
+    private static KotlinType getAnyTypeFromSameModule(@NotNull DeclarationDescriptor descriptor) {
+        return DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
     }
 
     @NotNull
@@ -431,7 +460,7 @@ public final class TranslationUtils {
                 .collect(Collectors.toSet());
         return typesFromOverriddenCallables.size() == 1
                ? typesFromOverriddenCallables.iterator().next()
-               : DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
+               : getAnyTypeFromSameModule(descriptor);
     }
 
     @NotNull

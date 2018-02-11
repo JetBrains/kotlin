@@ -1,0 +1,2 @@
+val a = 1    // RESULT: val a: Int
+a    // RESULT: 1

@@ -62,6 +62,18 @@ public annotation class JvmName(val name: String)
 @MustBeDocumented
 public annotation class JvmMultifileClass
 
+/**
+ * Changes the fully qualified name of the JVM package of the .class file generated from this file.
+ * This does not affect the way Kotlin clients will see the declarations in this file, but Java clients and other JVM language clients
+ * will see the class file as if it was declared in the specified package.
+ * If a file is annotated with this annotation, it can only have function, property and typealias declarations, but no classes.
+ */
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@SinceKotlin("1.2")
+internal annotation class JvmPackageName(val name: String)
+
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
 public annotation class JvmSynthetic

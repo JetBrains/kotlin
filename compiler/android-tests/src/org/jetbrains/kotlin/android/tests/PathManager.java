@@ -68,6 +68,10 @@ public class PathManager {
         return tmpFolder + "/src";
     }
 
+    public String getAndroidTmpFolder() {
+        return tmpFolder;
+    }
+
     public String getAndroidSdkRoot() {
         return getDependenciesRoot() + "/android-sdk";
     }

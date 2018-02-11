@@ -36,16 +36,22 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -293,7 +299,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                 val realDescriptor = realFunction.descriptor
 
                 log { "$descriptor -> $realDescriptor" }
-                val maskValues = Array(descriptor.valueParameters.size / 32 + 1, {0})
+                val maskValues = Array((descriptor.valueParameters.size + 31) / 32, {0})
                 val params = mutableListOf<Pair<ValueParameterDescriptor, IrExpression?>>()
                 params.addAll(descriptor.valueParameters.mapIndexed { i, _ ->
                     val valueArgument = expression.getValueArgument(i)
@@ -362,7 +368,7 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
             }
         }
 
-        val syntheticParameters = MutableList(valueParameters.size / 32 + 1) { i ->
+        val syntheticParameters = MutableList((valueParameters.size + 31) / 32) { i ->
             valueParameter(descriptor, valueParameters.size + i, parameterMaskName(i), descriptor.builtIns.intType)
         }
         if (this is ClassConstructorDescriptor) {

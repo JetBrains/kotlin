@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor;
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo;
@@ -62,7 +63,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private final BindingTrace trace;
     private final DeclarationProviderFactory declarationProviderFactory;
 
-    private final MemoizedFunctionToNullable<FqName, LazyPackageDescriptor> packages;
+    private final CacheWithNotNullValues<FqName, LazyPackageDescriptor> packages;
     private final PackageFragmentProvider packageFragmentProvider;
 
     private final MemoizedFunctionToNotNull<KtFile, LazyAnnotations> fileAnnotations;
@@ -82,6 +83,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private LanguageVersionSettings languageVersionSettings;
     private DelegationFilter delegationFilter;
     private WrappedTypeFactory wrappedTypeFactory;
+    private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
 
@@ -135,15 +137,19 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         this.languageVersionSettings = languageVersionSettings;
     }
 
-
     @Inject
-    public void setDelegationFilter(@NotNull  DelegationFilter delegationFilter) {
+    public void setDelegationFilter(@NotNull DelegationFilter delegationFilter) {
         this.delegationFilter = delegationFilter;
     }
 
     @Inject
-    public void setWrappedTypeFactory(WrappedTypeFactory wrappedTypeFactory) {
+    public void setWrappedTypeFactory(@NotNull WrappedTypeFactory wrappedTypeFactory) {
         this.wrappedTypeFactory = wrappedTypeFactory;
+    }
+
+    @Inject
+    public void setPlatformDiagnosticSuppressor(@NotNull PlatformDiagnosticSuppressor platformDiagnosticSuppressor) {
+        this.platformDiagnosticSuppressor = platformDiagnosticSuppressor;
     }
 
     // Only calls from injectors expected
@@ -163,7 +169,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         this.trace = lockBasedLazyResolveStorageManager.createSafeTrace(delegationTrace);
         this.module = rootDescriptor;
 
-        this.packages = storageManager.createMemoizedFunctionWithNullableValues(this::createPackage);
+        this.packages = storageManager.createCacheWithNotNullValues();
 
         this.declarationProviderFactory = declarationProviderFactory;
 
@@ -210,16 +216,27 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     @Nullable
     public LazyPackageDescriptor getPackageFragment(@NotNull FqName fqName) {
-        return packages.invoke(fqName);
-    }
-
-    @Nullable
-    private LazyPackageDescriptor createPackage(FqName fqName) {
         PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
         if (provider == null) {
             return null;
         }
-        return new LazyPackageDescriptor(module, fqName, this, provider);
+
+        return packages.computeIfAbsent(
+                fqName,
+                () -> new LazyPackageDescriptor(module, fqName, this, provider)
+        );
+    }
+
+
+    @NotNull
+    @Override
+    public LazyPackageDescriptor getPackageFragmentOrDiagnoseFailure(@NotNull FqName fqName, @Nullable KtFile from) {
+        LazyPackageDescriptor packageDescriptor = getPackageFragment(fqName);
+        if (packageDescriptor == null) {
+            declarationProviderFactory.diagnoseMissingPackageFragment(fqName, from);
+            assert false : "diagnoseMissingPackageFragment should throw!";
+        }
+        return packageDescriptor;
     }
 
     @NotNull
@@ -350,8 +367,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     ) {
         result.add(current);
         for (FqName subPackage : packageFragmentProvider.getSubPackagesOf(current.getFqName(), MemberScope.Companion.getALL_NAME_FILTER())) {
-            LazyPackageDescriptor fragment = getPackageFragment(subPackage);
-            assert fragment != null : "Couldn't find fragment for " + subPackage;
+            LazyPackageDescriptor fragment = getPackageFragmentOrDiagnoseFailure(subPackage, null);
             collectAllPackages(result, fragment);
         }
         return result;
@@ -449,6 +465,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public WrappedTypeFactory getWrappedTypeFactory() {
         return wrappedTypeFactory;
+    }
+
+    @NotNull
+    public PlatformDiagnosticSuppressor getPlatformDiagnosticSuppressor() {
+        return platformDiagnosticSuppressor;
     }
 
     @Override

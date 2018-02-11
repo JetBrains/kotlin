@@ -21,7 +21,6 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInsight.AnnotationUtil
 import com.intellij.codeInspection.reference.EntryPoint
 import com.intellij.codeInspection.reference.RefElement
-import com.intellij.execution.junit.JUnitUtil
 import com.intellij.openapi.util.DefaultJDOMExternalizer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
@@ -34,8 +33,8 @@ class KotlinJUnitStaticEntryPoint(@JvmField var wasSelected: Boolean = true) : E
 
     override fun isEntryPoint(refElement: RefElement, psiElement: PsiElement) = isEntryPoint(psiElement)
 
-    private val staticJUnitAnnotations = listOf(JUnitUtil.BEFORE_CLASS_ANNOTATION_NAME, JUnitUtil.AFTER_CLASS_ANNOTATION_NAME,
-                                                JUnitUtil.PARAMETRIZED_PARAMETERS_ANNOTATION_NAME)
+    private val staticJUnitAnnotations = listOf("org.junit.BeforeClass", "org.junit.AfterClass",
+                                                "org.junit.runners.Parameterized.Parameters")
 
     override fun isEntryPoint(psiElement: PsiElement) = psiElement is PsiMethod &&
             AnnotationUtil.isAnnotated(psiElement, staticJUnitAnnotations) &&

@@ -127,7 +127,7 @@ class BinaryJavaAnnotation private constructor(
     }
 
     override val classId: ClassId?
-        get() = classifierResolutionResult.classifier.safeAs<JavaClass>()?.classId()
+        get() = classifierResolutionResult.classifier.safeAs<JavaClass>()?.classId
                 ?: ClassId.topLevel(FqName(classifierResolutionResult.qualifiedName))
 
     override fun resolve() = classifierResolutionResult.classifier as? JavaClass
@@ -152,7 +152,7 @@ class BinaryJavaAnnotationVisitor(
     }
 
     override fun visitEnum(name: String?, desc: String, value: String) {
-         addArgument(PlainJavaEnumValueAnnotationArgument(name, desc, value, context))
+        addArgument(PlainJavaEnumValueAnnotationArgument(name, context.mapDescToClassId(desc), value))
     }
 
     override fun visit(name: String?, value: Any?) {
@@ -216,23 +216,8 @@ class PlainJavaAnnotationAsAnnotationArgument(
 
 class PlainJavaEnumValueAnnotationArgument(
         name: String?,
-        private val desc: String,
-        entryName: String,
-        private val context: ClassifierResolutionContext
+        override val enumClassId: ClassId,
+        entryName: String
 ) : PlainJavaAnnotationArgument(name), JavaEnumValueAnnotationArgument {
     override val entryName = Name.identifier(entryName)
-
-    override fun resolve(): JavaField? {
-        val javaClass = context.resolveByInternalName(Type.getType(desc).internalName).classifier as? JavaClass ?: return null
-        return javaClass.fields.singleOrNull { it.name == entryName }
-    }
-}
-
-private fun JavaClass.classId(): ClassId? {
-    val fqName = fqName ?: return null
-    if (outerClass == null) return ClassId.topLevel(fqName)
-
-    val outerClassId = outerClass!!.classId() ?: return null
-
-    return ClassId(outerClassId.packageFqName, outerClassId.relativeClassName.child(name), false)
 }

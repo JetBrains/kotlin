@@ -20,6 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
+import org.jetbrains.kotlin.contracts.EffectSystem;
+import org.jetbrains.kotlin.contracts.parsing.ContractParsingServices;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.*;
@@ -34,6 +37,7 @@ import javax.inject.Inject;
 
 public class ExpressionTypingComponents {
     /*package*/ GlobalContext globalContext;
+    /*package*/ ModuleDescriptor moduleDescriptor;
     /*package*/ ExpressionTypingServices expressionTypingServices;
     /*package*/ CallResolver callResolver;
     /*package*/ PlatformToKotlinClassMap platformToKotlinClassMap;
@@ -64,10 +68,17 @@ public class ExpressionTypingComponents {
     /*package*/ WrappedTypeFactory wrappedTypeFactory;
     /*package*/ CollectionLiteralResolver collectionLiteralResolver;
     /*package*/ DeprecationResolver deprecationResolver;
+    /*package*/ EffectSystem effectSystem;
+    /*package*/ ContractParsingServices contractParsingServices;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
         this.globalContext = globalContext;
+    }
+
+    @Inject
+    public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     @Inject
@@ -181,7 +192,7 @@ public class ExpressionTypingComponents {
     }
 
     @Inject
-    public void setLocalVariableResolver(@NotNull  LocalVariableResolver localVariableResolver) {
+    public void setLocalVariableResolver(@NotNull LocalVariableResolver localVariableResolver) {
         this.localVariableResolver = localVariableResolver;
     }
 
@@ -218,5 +229,15 @@ public class ExpressionTypingComponents {
     @Inject
     public void setDeprecationResolver(DeprecationResolver deprecationResolver) {
         this.deprecationResolver = deprecationResolver;
+    }
+
+    @Inject
+    public void setEffectSystem(@NotNull EffectSystem effectSystem) {
+        this.effectSystem = effectSystem;
+    }
+
+    @Inject
+    public void setContractParsingServices(@NotNull ContractParsingServices contractParsingServices) {
+        this.contractParsingServices = contractParsingServices;
     }
 }

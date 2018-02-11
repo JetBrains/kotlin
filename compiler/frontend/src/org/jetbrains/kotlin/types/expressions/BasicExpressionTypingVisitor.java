@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
-import org.jetbrains.kotlin.resolve.calls.KotlinResolutionConfigurationKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.checkers.*;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
@@ -209,13 +208,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         );
 
         if (!(compileTimeConstant instanceof IntegerValueTypeConstant)) {
-            CompileTimeConstantChecker constantChecker = new CompileTimeConstantChecker(context, components.builtIns, false);
+            CompileTimeConstantChecker constantChecker = new CompileTimeConstantChecker(context, components.moduleDescriptor, false);
             ConstantValue constantValue =
                     compileTimeConstant != null ? ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue() : null;
             boolean hasError = constantChecker.checkConstantExpressionType(constantValue, expression, context.expectedType);
             if (hasError) {
-                return TypeInfoFactoryKt.createTypeInfo(constantValue != null ? constantValue.getType() : getDefaultType(elementType),
-                                                        context);
+                return TypeInfoFactoryKt.createTypeInfo(
+                        constantValue != null ? constantValue.getType(components.moduleDescriptor) : getDefaultType(elementType),
+                        context
+                );
             }
         }
 
@@ -365,6 +366,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             ExpressionTypingContext context
     ) {
         if (actualType == null || noExpectedType(targetType) || KotlinTypeKt.isError(targetType)) return;
+
+        if (Boolean.TRUE.equals(context.trace.get(BindingContext.CAST_TYPE_USED_AS_EXPECTED_TYPE, expression))) return;
 
         if (DynamicTypesKt.isDynamic(targetType)) {
             KtTypeReference right = expression.getRight();
@@ -710,7 +713,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public KotlinTypeInfo visitCallExpression(@NotNull KtCallExpression expression, ExpressionTypingContext context) {
         CallExpressionResolver callExpressionResolver = components.callExpressionResolver;
-        return callExpressionResolver.getCallExpressionTypeInfo(expression, null, null, context);
+        return callExpressionResolver.getCallExpressionTypeInfo(expression, context);
     }
 
     @Override
@@ -855,7 +858,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.nullValue(components.builtIns),
                                                                                    components.languageVersionSettings));
         }
-        KotlinType resultingType = KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE()
+        KotlinType resultingType = components.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
                                    ? resolvedCall.getResultingDescriptor().getReturnType()
                                    : TypeUtils.makeNotNullable(baseType);
         if (context.contextDependency == DEPENDENT) {
@@ -935,8 +938,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (resolvedCall != null && trace.wantsDiagnostics()) {
                     // Call must be validated with the actual, not temporary trace in order to report operator diagnostic
                     // Only unary assignment expressions (++, --) and +=/... must be checked, normal assignments have the proper trace
-                    CallCheckerContext callCheckerContext =
-                            new CallCheckerContext(context, trace, components.languageVersionSettings, components.deprecationResolver);
+                    CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.deprecationResolver, trace);
                     for (CallChecker checker : components.callCheckers) {
                         checker.check(resolvedCall, expression, callCheckerContext);
                     }
@@ -1013,7 +1015,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @NotNull
     private CallCheckerContext createCallCheckerContext(@NotNull ExpressionTypingContext context) {
-        return new CallCheckerContext(context, components.languageVersionSettings, components.deprecationResolver);
+        return new CallCheckerContext(context, components.deprecationResolver);
     }
 
     @Override
@@ -1128,10 +1130,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         Call call = CallMaker.makeCallWithExpressions(
                 expression,
                 receiver,
-                // semantically, a call to `==` is a safe call
-                new KtPsiFactory(expression.getProject(), false).createSafeCallNode(),
+                null,
                 operationSign,
-                Collections.singletonList(right)
+                Collections.singletonList(right),
+                Call.CallType.DEFAULT,
+                // semantically, a call to `==` is a safe call
+                true
         );
 
         OverloadResolutionResults<FunctionDescriptor> resolutionResults =
@@ -1369,7 +1373,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 CallMaker.makeCall(callElement, receiver, null, operationSign, Collections.singletonList(leftArgument)),
                 operationSign,
                 OperatorNameConventions.CONTAINS);
-        KotlinType containsType = OverloadResolutionResultsUtil.getResultingType(resolutionResult, context.contextDependency);
+        KotlinType containsType = OverloadResolutionResultsUtil.getResultingType(resolutionResult, context);
         ensureBooleanResult(operationSign, OperatorNameConventions.CONTAINS, containsType, context);
 
         if (left != null) {
@@ -1515,7 +1519,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             typeInfo = typeInfo.replaceDataFlowInfo(resolutionResults.getResultingCall().getDataFlowInfoForArguments().getResultInfo());
         }
 
-        return typeInfo.replaceType(OverloadResolutionResultsUtil.getResultingType(resolutionResults, context.contextDependency));
+        return typeInfo.replaceType(OverloadResolutionResultsUtil.getResultingType(resolutionResults, context));
     }
 
     @Override

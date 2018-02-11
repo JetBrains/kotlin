@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.test;
@@ -101,6 +90,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("ComponentFunction.kt")
         public void testComponentFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ComponentFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("CoroutineContext.kt")
+        public void testCoroutineContext() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/CoroutineContext.kt");
             doTest(fileName);
         }
 
@@ -467,6 +462,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("InnerClass.kt")
         public void testInnerClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InnerClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InnerInBaseClass.kt")
+        public void testInnerInBaseClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InnerInBaseClass.kt");
             doTest(fileName);
         }
 
@@ -1561,6 +1562,30 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/fromSmart"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("ArrayLiteralAnnotationConstructorAsDefaultValueForArray.kt")
+            public void testArrayLiteralAnnotationConstructorAsDefaultValueForArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationConstructorAsDefaultValueForArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArrayLiteralAnnotationConstructorAsDefaultValueForVararg.kt")
+            public void testArrayLiteralAnnotationConstructorAsDefaultValueForVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationConstructorAsDefaultValueForVararg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArrayLiteralAnnotationUseForArray.kt")
+            public void testArrayLiteralAnnotationUseForArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationUseForArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArrayLiteralAnnotationUseForVararg.kt")
+            public void testArrayLiteralAnnotationUseForVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationUseForVararg.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("EnumEntries.kt")
             public void testEnumEntries() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/EnumEntries.kt");
@@ -1792,6 +1817,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("StringTemplateDot.kt")
             public void testStringTemplateDot() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/inStringLiterals/StringTemplateDot.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("StringTemplateDot2.kt")
+            public void testStringTemplateDot2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/inStringLiterals/StringTemplateDot2.kt");
                 doTest(fileName);
             }
 
@@ -2761,6 +2792,33 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("SecondTypeArg4.kt")
             public void testSecondTypeArg4() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/typeArgsOrNot/SecondTypeArg4.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/variableNameAndType")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class VariableNameAndType extends AbstractJvmBasicCompletionTest {
+            public void testAllFilesPresentInVariableNameAndType() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/variableNameAndType"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("Lateinit.kt")
+            public void testLateinit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/variableNameAndType/Lateinit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Local.kt")
+            public void testLocal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/variableNameAndType/Local.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevel.kt")
+            public void testTopLevel() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/variableNameAndType/TopLevel.kt");
                 doTest(fileName);
             }
         }

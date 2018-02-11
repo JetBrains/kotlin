@@ -30,7 +30,8 @@ import java.util.ArrayList
 
 val STUB_TO_STRING_PREFIX = "KotlinStub$"
 
-open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) : StubBase<T>(parent, elementType) {
+open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) :
+    StubBase<T>(parent, elementType) {
 
     override fun toString(): String {
         val stubInterface = this::class.java.interfaces.single { it.name.contains("Stub") }
@@ -62,8 +63,7 @@ open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?,
             val value = property.invoke(this)
             val name = getPropertyName(property)
             "$name=$value"
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             LOGGER.error(e)
             null
         }
@@ -80,6 +80,11 @@ open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?,
     companion object {
         private val LOGGER: Logger = Logger.getInstance(KotlinStubBaseImpl::class.java)
 
-        private val BASE_STUB_INTERFACES = listOf(KotlinStubWithFqName::class.java, KotlinClassOrObjectStub::class.java, NamedStub::class.java, KotlinCallableStubBase::class.java)
+        private val BASE_STUB_INTERFACES = listOf(
+            KotlinStubWithFqName::class.java,
+            KotlinClassOrObjectStub::class.java,
+            NamedStub::class.java,
+            KotlinCallableStubBase::class.java
+        )
     }
 }

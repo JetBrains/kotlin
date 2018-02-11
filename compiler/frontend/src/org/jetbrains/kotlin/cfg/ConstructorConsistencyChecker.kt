@@ -38,19 +38,19 @@ interface LeakingThisDescriptor {
 
     data class PropertyIsNull(val property: PropertyDescriptor, override val classOrObject: KtClassOrObject) : LeakingThisDescriptor
 
-    data class NonFinalClass(val klass: ClassDescriptor, override val classOrObject: KtClassOrObject): LeakingThisDescriptor
+    data class NonFinalClass(val klass: ClassDescriptor, override val classOrObject: KtClassOrObject) : LeakingThisDescriptor
 
-    data class NonFinalProperty(val property: PropertyDescriptor, override val classOrObject: KtClassOrObject): LeakingThisDescriptor
+    data class NonFinalProperty(val property: PropertyDescriptor, override val classOrObject: KtClassOrObject) : LeakingThisDescriptor
 
-    data class NonFinalFunction(val function: FunctionDescriptor, override val classOrObject: KtClassOrObject): LeakingThisDescriptor
+    data class NonFinalFunction(val function: FunctionDescriptor, override val classOrObject: KtClassOrObject) : LeakingThisDescriptor
 }
 
 class ConstructorConsistencyChecker private constructor(
-        private val classOrObject: KtClassOrObject,
-        private val classDescriptor: ClassDescriptor,
-        private val trace: BindingTrace,
-        private val pseudocode: Pseudocode,
-        private val variablesData: PseudocodeVariablesData
+    private val classOrObject: KtClassOrObject,
+    private val classDescriptor: ClassDescriptor,
+    private val trace: BindingTrace,
+    private val pseudocode: Pseudocode,
+    private val variablesData: PseudocodeVariablesData
 ) {
     private val finalClass = classDescriptor.isFinalClass
 
@@ -110,77 +110,79 @@ class ConstructorConsistencyChecker private constructor(
     fun check() {
         // List of properties to initialize
         val propertyDescriptors = variablesData.getDeclaredVariables(pseudocode, false)
-                .filterIsInstance<PropertyDescriptor>()
-                .filter { trace.get(BindingContext.BACKING_FIELD_REQUIRED, it) == true }
+            .filterIsInstance<PropertyDescriptor>()
+            .filter { trace.get(BindingContext.BACKING_FIELD_REQUIRED, it) == true }
         pseudocode.traverse(
-                TraversalOrder.FORWARD, variablesData.variableInitializers, { instruction, enterData, _ ->
+            TraversalOrder.FORWARD, variablesData.variableInitializers, { instruction, enterData, _ ->
 
-            fun firstUninitializedNotNullProperty() = propertyDescriptors.firstOrNull {
-                !it.type.isMarkedNullable && !KotlinBuiltIns.isPrimitiveType(it.type) &&
-                !it.isLateInit && !(enterData.getOrNull(it)?.definitelyInitialized() ?: false)
-            }
-
-            fun handleLeakingThis(expression: KtExpression) {
-                if (!finalClass) {
-                    trace.record(BindingContext.LEAKING_THIS, target(expression),
-                                 LeakingThisDescriptor.NonFinalClass(classDescriptor, classOrObject))
+                fun firstUninitializedNotNullProperty() = propertyDescriptors.firstOrNull {
+                    !it.type.isMarkedNullable && !KotlinBuiltIns.isPrimitiveType(it.type) &&
+                            !it.isLateInit && !(enterData.getOrNull(it)?.definitelyInitialized() ?: false)
                 }
-                else {
-                    val uninitializedProperty = firstUninitializedNotNullProperty()
-                    if (uninitializedProperty != null) {
-                        trace.record(BindingContext.LEAKING_THIS, target(expression),
-                                     LeakingThisDescriptor.PropertyIsNull(uninitializedProperty, classOrObject))
+
+                fun handleLeakingThis(expression: KtExpression) {
+                    if (!finalClass) {
+                        trace.record(
+                            BindingContext.LEAKING_THIS, target(expression),
+                            LeakingThisDescriptor.NonFinalClass(classDescriptor, classOrObject)
+                        )
+                    } else {
+                        val uninitializedProperty = firstUninitializedNotNullProperty()
+                        if (uninitializedProperty != null) {
+                            trace.record(
+                                BindingContext.LEAKING_THIS, target(expression),
+                                LeakingThisDescriptor.PropertyIsNull(uninitializedProperty, classOrObject)
+                            )
+                        }
                     }
                 }
-            }
 
-            if (instruction.owner != pseudocode) {
-                return@traverse
-            }
-
-            if (instruction is KtElementInstruction) {
-                val element = instruction.element
-                when (instruction) {
-                    is ReadValueInstruction ->
-                        if (element is KtThisExpression) {
-                            if (!safeThisUsage(element)) {
-                                handleLeakingThis(element)
-                            }
-                        }
-                    is MagicInstruction ->
-                        if (instruction.kind == MagicKind.IMPLICIT_RECEIVER) {
-                            if (element is KtCallExpression) {
-                                if (!safeCallUsage(element)) {
-                                    handleLeakingThis(element)
-                                }
-                            }
-                            else if (element is KtReferenceExpression) {
-                                if (!safeReferenceUsage(element)) {
-                                    handleLeakingThis(element)
-                                }
-                            }
-                        }
+                if (instruction.owner != pseudocode) {
+                    return@traverse
                 }
-            }
-        })
+
+                if (instruction is KtElementInstruction) {
+                    val element = instruction.element
+                    when (instruction) {
+                        is ReadValueInstruction ->
+                            if (element is KtThisExpression) {
+                                if (!safeThisUsage(element)) {
+                                    handleLeakingThis(element)
+                                }
+                            }
+                        is MagicInstruction ->
+                            if (instruction.kind == MagicKind.IMPLICIT_RECEIVER) {
+                                if (element is KtCallExpression) {
+                                    if (!safeCallUsage(element)) {
+                                        handleLeakingThis(element)
+                                    }
+                                } else if (element is KtReferenceExpression) {
+                                    if (!safeReferenceUsage(element)) {
+                                        handleLeakingThis(element)
+                                    }
+                                }
+                            }
+                    }
+                }
+            })
     }
 
     companion object {
 
         @JvmStatic
         fun check(
-                constructor: KtSecondaryConstructor,
-                trace: BindingTrace,
-                pseudocode: Pseudocode,
-                pseudocodeVariablesData: PseudocodeVariablesData
+            constructor: KtSecondaryConstructor,
+            trace: BindingTrace,
+            pseudocode: Pseudocode,
+            pseudocodeVariablesData: PseudocodeVariablesData
         ) = check(constructor.getContainingClassOrObject(), trace, pseudocode, pseudocodeVariablesData)
 
         @JvmStatic
         fun check(
-                classOrObject: KtClassOrObject,
-                trace: BindingTrace,
-                pseudocode: Pseudocode,
-                pseudocodeVariablesData: PseudocodeVariablesData
+            classOrObject: KtClassOrObject,
+            trace: BindingTrace,
+            pseudocode: Pseudocode,
+            pseudocodeVariablesData: PseudocodeVariablesData
         ) {
             val classDescriptor = trace.get(BindingContext.CLASS, classOrObject) ?: return
             ConstructorConsistencyChecker(classOrObject, classDescriptor, trace, pseudocode, pseudocodeVariablesData).check()

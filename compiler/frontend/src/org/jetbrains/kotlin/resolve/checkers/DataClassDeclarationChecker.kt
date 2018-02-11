@@ -18,39 +18,32 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.BindingContext
 
-class DataClassDeclarationChecker : SimpleDeclarationChecker {
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+class DataClassDeclarationChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
         if (declaration !is KtClassOrObject) return
 
         if (descriptor.isData) {
             if (descriptor.unsubstitutedPrimaryConstructor == null && descriptor.constructors.isNotEmpty()) {
-                declaration.nameIdentifier?.let { diagnosticHolder.report(Errors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS.on(it)) }
+                declaration.nameIdentifier?.let { context.trace.report(Errors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS.on(it)) }
             }
             val primaryConstructor = declaration.primaryConstructor
             val parameters = primaryConstructor?.valueParameters ?: emptyList()
             if (parameters.isEmpty()) {
                 (primaryConstructor?.valueParameterList ?: declaration.nameIdentifier)?.let {
-                    diagnosticHolder.report(Errors.DATA_CLASS_WITHOUT_PARAMETERS.on(it))
+                    context.trace.report(Errors.DATA_CLASS_WITHOUT_PARAMETERS.on(it))
                 }
             }
             for (parameter in parameters) {
                 if (parameter.isVarArg) {
-                    diagnosticHolder.report(Errors.DATA_CLASS_VARARG_PARAMETER.on(parameter))
+                    context.trace.report(Errors.DATA_CLASS_VARARG_PARAMETER.on(parameter))
                 }
                 if (!parameter.hasValOrVar()) {
-                    diagnosticHolder.report(Errors.DATA_CLASS_NOT_PROPERTY_PARAMETER.on(parameter))
+                    context.trace.report(Errors.DATA_CLASS_NOT_PROPERTY_PARAMETER.on(parameter))
                 }
             }
         }

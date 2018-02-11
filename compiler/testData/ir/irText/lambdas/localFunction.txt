@@ -1,13 +1,13 @@
-FILE /localFunction.kt
-  FUN public fun outer(): kotlin.Unit
+FILE fqName:<root> fileName:/localFunction.kt
+  FUN name:outer visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
-      VAR var x: kotlin.Int
-        CONST Int type=kotlin.Int value='0'
-      FUN local final fun local(): kotlin.Unit
+      VAR name:x type:kotlin.Int flags:var
+        CONST Int type=kotlin.Int value=0
+      FUN name:local visibility:local modality:FINAL <> () returnType:Unit flags:
         BLOCK_BODY
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
             BLOCK type=kotlin.Int origin=POSTFIX_INCR
-              VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
+              VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:val
                 GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
               SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
                 CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR

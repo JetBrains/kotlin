@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types.expressions
 import com.google.common.collect.Lists
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
-import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
@@ -60,10 +60,10 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     fun visitNamedFunction(
-            function: KtNamedFunction,
-            context: ExpressionTypingContext,
-            isDeclaration: Boolean,
-            statementScope: LexicalWritableScope? // must be not null if isDeclaration
+        function: KtNamedFunction,
+        context: ExpressionTypingContext,
+        isDeclaration: Boolean,
+        statementScope: LexicalWritableScope? // must be not null if isDeclaration
     ): KotlinTypeInfo {
         if (!isDeclaration) {
             // function expression
@@ -88,33 +88,33 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val functionDescriptor: SimpleFunctionDescriptor
         if (isDeclaration) {
             functionDescriptor = components.functionDescriptorResolver.resolveFunctionDescriptor(
-                    context.scope.ownerDescriptor, context.scope, function, context.trace, context.dataFlowInfo)
+                context.scope.ownerDescriptor, context.scope, function, context.trace, context.dataFlowInfo
+            )
             assert(statementScope != null) {
                 "statementScope must be not null for function: " + function.name + " at location " + DiagnosticUtils.atLocation(function)
             }
             statementScope!!.addFunctionDescriptor(functionDescriptor)
-        }
-        else {
+        } else {
             functionDescriptor = components.functionDescriptorResolver.resolveFunctionExpressionDescriptor(
-                    context.scope.ownerDescriptor, context.scope, function,
-                    context.trace, context.dataFlowInfo, context.expectedType
+                context.scope.ownerDescriptor, context.scope, function,
+                context.trace, context.dataFlowInfo, context.expectedType
             )
         }
         // Necessary for local functions
         ForceResolveUtil.forceResolveAllContents(functionDescriptor.annotations)
 
-        val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace, components.overloadChecker)
+        val functionInnerScope =
+            FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace, components.overloadChecker)
         if (!function.hasDeclaredReturnType() && !function.hasBlockBody()) {
             ForceResolveUtil.forceResolveAllContents(functionDescriptor.returnType)
-        }
-        else {
+        } else {
             components.expressionTypingServices.checkFunctionReturnType(
-                    functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace
+                functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace
             )
         }
 
         components.valueParameterResolver.resolveValueParameters(
-                function.valueParameters, functionDescriptor.valueParameters, functionInnerScope, context.dataFlowInfo, context.trace
+            function.valueParameters, functionDescriptor.valueParameters, functionInnerScope, context.dataFlowInfo, context.trace
         )
 
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor)
@@ -123,8 +123,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
         return if (isDeclaration) {
             createTypeInfo(components.dataFlowAnalyzer.checkStatementType(function, context), context)
-        }
-        else {
+        } else {
             val expectedType = context.expectedType
 
             val functionalTypeExpected = expectedType.isBuiltinFunctionalType()
@@ -132,7 +131,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
             val resultType = functionDescriptor.createFunctionType(suspendFunctionTypeExpected)
 
-            if (USE_NEW_INFERENCE && functionalTypeExpected)
+            if (components.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) && functionalTypeExpected)
                 createTypeInfo(resultType, context)
             else
                 components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, function)
@@ -141,13 +140,13 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
     private fun SimpleFunctionDescriptor.createFunctionType(suspendFunction: Boolean = false): KotlinType? {
         return createFunctionType(
-                components.builtIns,
-                Annotations.EMPTY,
-                extensionReceiverParameter?.type,
-                valueParameters.map { it.type },
-                null,
-                returnType ?: return null,
-                suspendFunction = suspendFunction
+            components.builtIns,
+            Annotations.EMPTY,
+            extensionReceiverParameter?.type,
+            valueParameters.map { it.type },
+            null,
+            returnType ?: return null,
+            suspendFunction = suspendFunction
         )
     }
 
@@ -181,19 +180,20 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun createFunctionLiteralDescriptor(
-            expression: KtLambdaExpression,
-            context: ExpressionTypingContext
+        expression: KtLambdaExpression,
+        context: ExpressionTypingContext
     ): AnonymousFunctionDescriptor {
         val functionLiteral = expression.functionLiteral
         val functionDescriptor = AnonymousFunctionDescriptor(
-                context.scope.ownerDescriptor,
-                components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
-                CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement(),
-                context.expectedType.isSuspendFunctionType()
+            context.scope.ownerDescriptor,
+            components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
+            CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement(),
+            context.expectedType.isSuspendFunctionType()
         )
-        components.functionDescriptorResolver.
-                initializeFunctionDescriptorAndExplicitReturnType(context.scope.ownerDescriptor, context.scope, functionLiteral,
-                                                                  functionDescriptor, context.trace, context.expectedType)
+        components.functionDescriptorResolver.initializeFunctionDescriptorAndExplicitReturnType(
+            context.scope.ownerDescriptor, context.scope, functionLiteral,
+            functionDescriptor, context.trace, context.expectedType, context.dataFlowInfo
+        )
         for (parameterDescriptor in functionDescriptor.valueParameters) {
             ForceResolveUtil.forceResolveAllContents(parameterDescriptor.annotations)
         }
@@ -202,16 +202,16 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun KotlinType.isBuiltinFunctionalType() =
-            !noExpectedType(this) && isBuiltinFunctionalType
+        !noExpectedType(this) && isBuiltinFunctionalType
 
     private fun KotlinType.isSuspendFunctionType() =
-            !noExpectedType(this) && isSuspendFunctionType
+        !noExpectedType(this) && isSuspendFunctionType
 
     private fun computeReturnType(
-            expression: KtLambdaExpression,
-            context: ExpressionTypingContext,
-            functionDescriptor: SimpleFunctionDescriptorImpl,
-            functionTypeExpected: Boolean
+        expression: KtLambdaExpression,
+        context: ExpressionTypingContext,
+        functionDescriptor: SimpleFunctionDescriptorImpl,
+        functionTypeExpected: Boolean
     ): KotlinType {
         val expectedReturnType = if (functionTypeExpected) context.expectedType.getReturnTypeFromFunctionType() else null
         val returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType)
@@ -225,15 +225,16 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun computeUnsafeReturnType(
-            expression: KtLambdaExpression,
-            context: ExpressionTypingContext,
-            functionDescriptor: SimpleFunctionDescriptorImpl,
-            expectedReturnType: KotlinType?
+        expression: KtLambdaExpression,
+        context: ExpressionTypingContext,
+        functionDescriptor: SimpleFunctionDescriptorImpl,
+        expectedReturnType: KotlinType?
     ): KotlinType? {
         val functionLiteral = expression.functionLiteral
 
         val expectedType = expectedReturnType ?: NO_EXPECTED_TYPE
-        val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace, components.overloadChecker)
+        val functionInnerScope =
+            FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace, components.overloadChecker)
         var newContext = context.replaceScope(functionInnerScope).replaceExpectedType(expectedType)
 
         // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
@@ -242,12 +243,13 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val newInferenceLambdaInfo = context.trace[BindingContext.NEW_INFERENCE_LAMBDA_INFO, expression.functionLiteral]
 
         // i.e. this lambda isn't call arguments
-        if (newInferenceLambdaInfo == null && USE_NEW_INFERENCE) {
+        if (newInferenceLambdaInfo == null && context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
             newContext = newContext.replaceContextDependency(ContextDependency.INDEPENDENT)
         }
 
         // Type-check the body
-        val blockReturnedType = components.expressionTypingServices.getBlockReturnedType(functionLiteral.bodyExpression!!, COERCION_TO_UNIT, newContext)
+        val blockReturnedType =
+            components.expressionTypingServices.getBlockReturnedType(functionLiteral.bodyExpression!!, COERCION_TO_UNIT, newContext)
         val typeOfBodyExpression = blockReturnedType.type
 
         newInferenceLambdaInfo?.let {
@@ -259,9 +261,9 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun computeReturnTypeBasedOnReturnExpressions(
-            functionLiteral: KtFunctionLiteral,
-            context: ExpressionTypingContext,
-            typeOfBodyExpression: KotlinType?
+        functionLiteral: KtFunctionLiteral,
+        context: ExpressionTypingContext,
+        typeOfBodyExpression: KotlinType?
     ): KotlinType? {
         val returnedExpressionTypes = Lists.newArrayList<KotlinType>()
 
@@ -271,8 +273,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             val returnedExpression = returnExpression.returnedExpression
             if (returnedExpression == null) {
                 hasEmptyReturn = true
-            }
-            else {
+            } else {
                 // the type should have been computed by getBlockReturnedType() above, but can be null, if returnExpression contains some error
                 returnedExpressionTypes.addIfNotNull(context.trace.getType(returnedExpression))
             }
@@ -300,7 +301,10 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val result = Lists.newArrayList<KtReturnExpression>()
         val bodyExpression = functionLiteral.bodyExpression
         bodyExpression?.accept(object : KtTreeVisitor<MutableList<KtReturnExpression>>() {
-            override fun visitReturnExpression(expression: KtReturnExpression, insideActualFunction: MutableList<KtReturnExpression>): Void? {
+            override fun visitReturnExpression(
+                expression: KtReturnExpression,
+                insideActualFunction: MutableList<KtReturnExpression>
+            ): Void? {
                 insideActualFunction.add(expression)
                 return null
             }

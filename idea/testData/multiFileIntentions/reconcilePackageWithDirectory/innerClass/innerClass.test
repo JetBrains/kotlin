@@ -1,5 +1,0 @@
-{
-    "intentionClass": "org.jetbrains.kotlin.idea.refactoring.move.changePackage.ChangePackageToMatchDirectoryIntention",
-    "isApplicable": "true",
-    "mainFile": "foo/test.kt"
-}

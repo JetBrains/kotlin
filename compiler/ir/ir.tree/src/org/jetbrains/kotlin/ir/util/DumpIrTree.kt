@@ -39,7 +39,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int): String {
     return sb.toString()
 }
 
-class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
+class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
     private val printer = Printer(out, "  ")
     private val elementRenderer = RenderIrElementVisitor()
 
@@ -218,14 +218,14 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
     }
 
     private fun String.withLabel(label: String) =
-            if (label.isEmpty()) this else "$label: $this"
+        if (label.isEmpty()) this else "$label: $this"
 }
 
 class DumpTreeFromSourceLineVisitor(
-        val fileEntry: SourceManager.FileEntry,
-        private val lineNumber: Int,
-        out: Appendable
-): IrElementVisitorVoid {
+    val fileEntry: SourceManager.FileEntry,
+    private val lineNumber: Int,
+    out: Appendable
+) : IrElementVisitorVoid {
     private val dumper = DumpIrTreeVisitor(out)
 
     override fun visitElement(element: IrElement) {

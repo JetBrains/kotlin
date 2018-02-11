@@ -1,0 +1,51 @@
+package
+
+public val jb: AnnotatedWithJB
+public val jbNullable: AnnotatedWithJB? = null
+public val jsr: AnnotatedWithJsr
+public val jsrNullable: AnnotatedWithJsr? = null
+public val platform: PlainJava
+public val platformNullable: PlainJava? = null
+
+public open class AnnotatedWithJB {
+    public constructor AnnotatedWithJB()
+    public open fun consumeString(/*0*/ @org.jetbrains.annotations.NotNull s: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @org.jetbrains.annotations.NotNull public open fun getString(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class AnnotatedWithJsr {
+    public constructor AnnotatedWithJsr()
+    public open fun consumeString(/*0*/ @MyNotNull s: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @MyNotNull public open fun getString(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Elvis {
+    private constructor Elvis()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun fromJava(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun toJava(/*0*/ nullableString: kotlin.String?): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.VALUE_PARAMETER}) @javax.annotation.Nonnull @javax.annotation.meta.TypeQualifierNickname @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class MyNotNull : kotlin.Annotation {
+    public constructor MyNotNull()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class PlainJava {
+    public constructor PlainJava()
+    public open fun consumeString(/*0*/ s: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun getString(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

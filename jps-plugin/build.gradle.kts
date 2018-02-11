@@ -4,28 +4,31 @@ val compilerModules: Array<String> by rootProject.extra
 
 dependencies {
     compile(project(":kotlin-build-common"))
-    compile(project(":core"))
+    compile(project(":core:descriptors"))
+    compile(project(":core:descriptors.jvm"))
     compile(project(":kotlin-compiler-runner"))
     compile(project(":compiler:daemon-common"))
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(project(":compiler:frontend.java"))
     compile(projectRuntimeJar(":kotlin-preloader"))
     compile(project(":idea:idea-jps-common"))
-    compile(ideaSdkDeps("jps-builders", "jps-builders-6", subdir = "jps"))
-    testCompile(project(":compiler.tests-common"))
+    compileOnly(intellijDep()) { includeJars("jdom", "trove4j", "jps-model", "openapi", "util", "asm-all") }
+    compileOnly(intellijDep("jps-standalone")) { includeJars("jps-builders", "jps-builders-6") }
+    testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(project(":compiler:incremental-compilation-impl"))
+    testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:incremental-compilation-impl"))
-    testCompileOnly(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":kotlin-build-common"))
+    testCompileOnly(intellijDep("jps-standalone")) { includeJars("jps-builders", "jps-builders-6") }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "log4j") }
+    testCompile(intellijDep("jps-build-test"))
     compilerModules.forEach {
         testRuntime(project(it))
     }
-    testRuntime(ideaSdkCoreDeps("*.jar"))
-    testRuntime(ideaSdkDeps("*.jar"))
-    testRuntime(ideaSdkDeps("*.jar", subdir = "jps/test"))
-    testRuntime(ideaSdkDeps("*.jar", subdir = "jps"))
+    testRuntime(intellijDep())
+    testRuntime(projectDist(":kotlin-reflect"))
 }
 
 sourceSets {
@@ -38,6 +41,7 @@ sourceSets {
 }
 
 projectTest {
+    dependsOn(":kotlin-compiler:dist")
     workingDir = rootDir
 }
 

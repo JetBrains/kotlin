@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpressio
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 
 class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker {
 
@@ -41,7 +42,8 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
             isStaticDeclaration(descriptor) &&
             isInterface(descriptor.containingDeclaration) &&
             descriptor is JavaCallableMemberDescriptor) {
-            context.trace.report(ErrorsJvm.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET.on(reportOn))
+            val diagnostic = if (isDefaultCallsProhibited(context)) INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR else INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET
+            context.trace.report(diagnostic.on(reportOn))
         }
 
         if (getSuperCallExpression(resolvedCall.call) == null) return
@@ -55,11 +57,15 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
             val classifier = DescriptorUtils.getParentOfType(context.scope.ownerDescriptor, ClassifierDescriptor::class.java)
             //is java interface default method called from trait
             if (classifier != null && DescriptorUtils.isInterface(classifier)) {
-                context.trace.report(ErrorsJvm.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(reportOn))
+                context.trace.report(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(reportOn))
             }
             else if (!supportDefaults) {
-                context.trace.report(ErrorsJvm.DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET.on(reportOn))
+                val diagnostic = if (isDefaultCallsProhibited(context)) DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR else DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET
+                context.trace.report(diagnostic.on(reportOn))
             }
         }
     }
+
+    private fun isDefaultCallsProhibited(context: CallCheckerContext) =
+            context.languageVersionSettings.supportsFeature(LanguageFeature.DefaultMethodsCallFromJava6TargetError)
 }

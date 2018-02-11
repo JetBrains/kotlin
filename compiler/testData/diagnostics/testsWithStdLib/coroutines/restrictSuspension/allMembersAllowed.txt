@@ -10,23 +10,23 @@ public fun kotlin.String.test(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final suspend fun memberFun(): kotlin.Unit
-    public open suspend override /*1*/ /*fake_override*/ fun superFun(): kotlin.Unit
+    public open override /*1*/ suspend /*fake_override*/ fun superFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     public final suspend fun kotlin.String.memberExtFun(): kotlin.Unit
-    public open suspend override /*1*/ /*fake_override*/ fun kotlin.String.superExtFun(): kotlin.Unit
+    public open override /*1*/ suspend /*fake_override*/ fun kotlin.String.superExtFun(): kotlin.Unit
 }
 
 public final class SubClass : RestrictedController {
     public constructor SubClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final suspend override /*1*/ /*fake_override*/ fun memberFun(): kotlin.Unit
+    public final override /*1*/ suspend /*fake_override*/ fun memberFun(): kotlin.Unit
     public final suspend fun subFun(): kotlin.Unit
-    public open suspend override /*1*/ /*fake_override*/ fun superFun(): kotlin.Unit
+    public open override /*1*/ suspend /*fake_override*/ fun superFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final suspend override /*1*/ /*fake_override*/ fun kotlin.String.memberExtFun(): kotlin.Unit
+    public final override /*1*/ suspend /*fake_override*/ fun kotlin.String.memberExtFun(): kotlin.Unit
     public final suspend fun kotlin.String.subExtFun(): kotlin.Unit
-    public open suspend override /*1*/ /*fake_override*/ fun kotlin.String.superExtFun(): kotlin.Unit
+    public open override /*1*/ suspend /*fake_override*/ fun kotlin.String.superExtFun(): kotlin.Unit
 }
 
 public interface SuperInterface {

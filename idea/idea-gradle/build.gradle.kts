@@ -1,10 +1,8 @@
+
 apply { plugin("kotlin") }
 
 dependencies {
-
-    compileOnly(ideaSdkDeps("openapi", "idea", "external-system-rt", "forms_rt"))
-    compileOnly(ideaPluginDeps("gradle-tooling-api", "gradle", "gradle-base-services", plugin = "gradle"))
-    compileOnly(ideaPluginDeps("Groovy", plugin = "Groovy"))
+    testRuntime(intellijDep())
 
     compileOnly(project(":idea"))
     compileOnly(project(":idea:idea-jvm"))
@@ -16,12 +14,19 @@ dependencies {
 
     compile(project(":js:js.frontend"))
 
+    compileOnly(intellijDep()) { includeJars("openapi", "idea", "external-system-rt", "forms_rt", "extensions", "jdom", "util") }
+    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api", "gradle", "gradle-base-services", rootProject = rootProject) }
+    compileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
+    compileOnly(intellijPluginDep("junit")) { includeJars("idea-junit") }
+
     testCompile(projectTests(":idea"))
     testCompile(project(":idea:idea-test-framework"))
-    testCompile(ideaPluginDeps("gradle-wrapper", "gradle-base-services", "gradle-tooling-extension-impl", "gradle-tooling-api", "gradle", plugin = "gradle"))
-    testCompile(ideaPluginDeps("Groovy", plugin = "Groovy"))
-    testCompile(ideaSdkDeps("groovy-all"))
 
+    testCompile(intellijPluginDep("gradle")) { includeJars("gradle-wrapper", "gradle-base-services", "gradle-tooling-extension-impl", "gradle-tooling-api", "gradle", rootProject = rootProject) }
+    testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
+    testCompileOnly(intellijDep()) { includeJars("groovy-all", "idea_rt", rootProject = rootProject) }
+
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":plugins:kapt3-idea"))
@@ -30,17 +35,15 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
-
-    testRuntime(ideaSdkDeps("*.jar"))
-
-    testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
-    testRuntime(ideaPluginDeps("jcommander", "resources_en", plugin = "testng"))
-    testRuntime(ideaPluginDeps("resources_en", plugin = "properties"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
-    testRuntime(ideaPluginDeps("jacocoant", plugin = "coverage"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    // TODO: the order of the plugins matters here, consider avoiding order-dependency
+    testRuntime(intellijPluginDep("junit"))
+    testRuntime(intellijPluginDep("testng")) { includeJars("jcommander", "resources_en") }
+    testRuntime(intellijPluginDep("properties")) { includeJars("resources_en") }
+    testRuntime(intellijPluginDep("gradle"))
+    testRuntime(intellijPluginDep("Groovy"))
+    testRuntime(intellijPluginDep("coverage")) { includeJars("jacocoant") }
+    testRuntime(intellijPluginDep("maven"))
+    testRuntime(intellijPluginDep("android"))
 }
 
 sourceSets {
@@ -55,6 +58,10 @@ testsJar()
 
 projectTest {
     workingDir = rootDir
+    useAndroidSdk()
+    doFirst {
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+    }
 }
 
 configureInstrumentation()

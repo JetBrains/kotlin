@@ -7,8 +7,10 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(projectDist(":kotlin-stdlib"))
-    compile(projectDist(":kotlin-reflect"))
-    compile(preloadedDeps("kotlinx-coroutines-core"))
+    compileOnly(project(":kotlin-reflect-api"))
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    runtime(project(":kotlin-reflect"))
 }
 
 sourceSets {

@@ -1,4 +1,4 @@
 package
 
 public fun box(): kotlin.String
-public infix tailrec fun kotlin.Int.foo(/*0*/ x: kotlin.Int): kotlin.Unit
+public tailrec infix fun kotlin.Int.foo(/*0*/ x: kotlin.Int): kotlin.Unit

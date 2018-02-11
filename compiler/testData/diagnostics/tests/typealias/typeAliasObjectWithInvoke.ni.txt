@@ -1,0 +1,33 @@
+package
+
+public val test1: ObjectWithInvoke
+public val test2: ObjectWithInvoke
+public val test3: CWI /* = ClassWithCompanionObjectWithInvoke */
+public val test4: kotlin.Any
+public val test5: kotlin.Any
+public val test5a: kotlin.Any
+
+public final class ClassWithCompanionObjectWithInvoke {
+    public constructor ClassWithCompanionObjectWithInvoke()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final operator fun invoke(/*0*/ x: kotlin.Any): kotlin.Any
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public object ObjectWithInvoke {
+    private constructor ObjectWithInvoke()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun invoke(): ObjectWithInvoke
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias CWI = ClassWithCompanionObjectWithInvoke
+public typealias WI = ObjectWithInvoke

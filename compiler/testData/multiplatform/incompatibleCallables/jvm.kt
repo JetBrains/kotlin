@@ -14,8 +14,7 @@ actual fun f6(p2: Int) {}
 actual fun <K, V> f7() {}
 
 public actual fun f8() {}
-internal actual fun f9() {}
-private actual fun f10() {}
+internal actual fun f10() {}
 
 actual fun <T : Annotation> f11() {}
 actual fun <U : MutableList<out String>> f12() {}

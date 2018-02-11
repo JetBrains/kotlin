@@ -17,4 +17,4 @@ public final class C</*0*/ T1, /*1*/ T2> {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
-public typealias C2</*0*/ T>  = C<T, T>
+public typealias C2</*0*/ T> = C<T, T>

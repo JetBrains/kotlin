@@ -17,7 +17,6 @@
 package test.coroutines
 
 import kotlin.test.*
-import org.junit.Test
 import kotlin.coroutines.experimental.*
 
 class CoroutineContextTest {

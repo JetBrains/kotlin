@@ -57,6 +57,10 @@ class TypeAliasConstructorDescriptorImpl private constructor(
 ) : TypeAliasConstructorDescriptor,
         FunctionDescriptorImpl(typeAliasDescriptor, original, annotations, Name.special("<init>"), kind, source)
 {
+    init {
+        isActual = typeAliasDescriptor.isActual
+    }
+
     // When resolution is ran for common calls, type aliases constructors are resolved as extensions
     // (i.e. after members, and with extension receiver)
     // But when resolving super-calls (with known set of candidates) constructors of inner classes are expected to have

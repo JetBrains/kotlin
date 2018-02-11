@@ -2,7 +2,7 @@
   <extensions defaultExtensionNs="com.intellij">
       <psi.referenceContributor language="kotlin" implementation="org.jetbrains.kotlin.idea.properties.KotlinPropertiesReferenceContributor"/>
 
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInvalidBundleOrPropertyInspection"
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.i18n.inspections.KotlinInvalidBundleOrPropertyInspection"
                        displayName="Invalid property key"
                        groupName="Kotlin"
                        enabledByDefault="true"

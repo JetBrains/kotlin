@@ -43,17 +43,16 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
         val containerClassId = (invoke.containingDeclaration as ClassDescriptor).classId
         val synthesized = if (containerClassId != null && isBuiltinFunctionClass(containerClassId)) {
             createSynthesizedFunctionWithFirstParameterAsReceiver(invoke)
-        }
-        else {
+        } else {
             val invokeDeclaration = invoke.overriddenDescriptors.singleOrNull()
-                                    ?: error("No single overridden invoke for $invoke: ${invoke.overriddenDescriptors}")
+                    ?: error("No single overridden invoke for $invoke: ${invoke.overriddenDescriptors}")
             val synthesizedSuperFun = createSynthesizedFunctionWithFirstParameterAsReceiver(invokeDeclaration)
             val fakeOverride = synthesizedSuperFun.copy(
-                    invoke.containingDeclaration,
-                    synthesizedSuperFun.modality,
-                    synthesizedSuperFun.visibility,
-                    CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
-                    /* copyOverrides = */ false
+                invoke.containingDeclaration,
+                synthesizedSuperFun.modality,
+                synthesizedSuperFun.visibility,
+                CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
+                /* copyOverrides = */ false
             )
             fakeOverride.setSingleOverridden(synthesizedSuperFun)
             fakeOverride
@@ -69,9 +68,9 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
     descriptor.original.newCopyBuilder().apply {
         setExtensionReceiverType(descriptor.original.valueParameters.first().type)
         setValueParameters(
-                descriptor.original.valueParameters
-                        .drop(1)
-                        .map { p -> p.copy(descriptor.original, Name.identifier("p${p.index + 1}"), p.index - 1) }
+            descriptor.original.valueParameters
+                .drop(1)
+                .map { p -> p.copy(descriptor.original, Name.identifier("p${p.index + 1}"), p.index - 1) }
         )
     }.build()!!
 
@@ -85,5 +84,5 @@ fun isSynthesizedInvoke(descriptor: DeclarationDescriptor): Boolean {
     }
 
     return real.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
-           real.containingDeclaration.getFunctionalClassKind() != null
+            real.containingDeclaration.getFunctionalClassKind() != null
 }

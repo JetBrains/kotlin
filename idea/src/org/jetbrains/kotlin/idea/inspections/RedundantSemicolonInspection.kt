@@ -25,9 +25,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
-import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -50,7 +48,7 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
         val isAtEndOfLine = nextLeaf == null || nextLeaf.isLineBreak()
         if (!isAtEndOfLine) {
             //when there is no imports parser generates empty import list with no spaces
-            if (semicolon.parent is KtPackageDirective && (nextLeaf as? KtImportList)?.imports?.isEmpty() ?: false) {
+            if (semicolon.parent is KtPackageDirective && (nextLeaf as? KtImportList)?.imports?.isEmpty() == true) {
                 return true
             }
             return false
@@ -76,6 +74,22 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
         if (nextLeaf?.nextLeaf { it !is PsiComment }?.node?.elementType == KtTokens.LBRACE) {
             return false // case with statement starting with '{' and call on the previous line
         }
+
+        if (isRequiredForCompanion(semicolon)) {
+            return false
+        }
+
+        return true
+    }
+
+    private fun isRequiredForCompanion(semicolon: PsiElement): Boolean {
+        val prev = semicolon.getPrevSiblingIgnoringWhitespaceAndComments() as? KtObjectDeclaration ?: return false
+        if (!prev.isCompanion()) return false
+        if (prev.nameIdentifier != null || prev.getChildOfType<KtClassBody>() != null) return false
+
+        val next = semicolon.getNextSiblingIgnoringWhitespaceAndComments() ?: return false
+        val firstChildNode = next.firstChild?.node ?: return false
+        if (KtTokens.KEYWORDS.contains(firstChildNode.elementType)) return false
 
         return true
     }

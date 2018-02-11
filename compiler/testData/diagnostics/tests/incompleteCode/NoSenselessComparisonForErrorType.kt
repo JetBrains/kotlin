@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package a
 
 fun foo() {

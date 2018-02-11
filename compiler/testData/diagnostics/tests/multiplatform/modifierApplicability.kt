@@ -22,7 +22,7 @@ fun foo() {
 // MODULE: m2-jvm
 // FILE: jvm.kt
 
-class Outer actual constructor() {
+class Outer <!ACTUAL_WITHOUT_EXPECT!>actual constructor()<!> {
     actual class <!ACTUAL_WITHOUT_EXPECT!>Nested<!>
 
     <!WRONG_MODIFIER_TARGET!>actual<!> init {}

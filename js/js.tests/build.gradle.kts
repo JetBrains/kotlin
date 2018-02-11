@@ -1,23 +1,46 @@
+import com.moowork.gradle.node.exec.ExecRunner
+import com.moowork.gradle.node.npm.NpmExecRunner
+import com.moowork.gradle.node.npm.NpmTask
+
+plugins {
+    id("com.moowork.node").version("1.2.0")
+}
+
+node {
+    download = true
+}
 
 apply { plugin("kotlin") }
 
+val antLauncherJar by configurations.creating
+
 dependencies {
-    testCompile(project(":compiler.tests-common"))
+    testRuntime(intellijDep())
+
+    testCompile(protobufFull())
+    testCompile(projectTests(":compiler:tests-common"))
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:util"))
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util") }
     testCompile(project(":js:js.translator"))
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.dce"))
-    testCompile(ideaSdkDeps("openapi", "idea"))
-    testRuntime(commonDep("junit:junit"))
-    testRuntime(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testRuntime(projectDist(":kotlin-test:kotlin-test-junit"))
+    testCompile(commonDep("junit:junit"))
+    testCompile(projectTests(":kotlin-build-common"))
+    testCompile(projectTests(":generators:test-generator"))
+
     testRuntime(projectDist(":kotlin-stdlib"))
+    testRuntime(projectDist(":kotlin-stdlib-js"))
+    testRuntime(projectDist(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned
     testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(projectDist(":kotlin-preloader")) // it's required for ant tests
     testRuntime(project(":compiler:backend-common"))
-//    testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
+
+    antLauncherJar(commonDep("org.apache.ant", "ant"))
+    antLauncherJar(files(toolsJar()))
 }
 
 sourceSets {
@@ -31,15 +54,16 @@ val testDistProjects = listOf(
         ":kotlin-compiler",
         ":kotlin-script-runtime",
         ":kotlin-stdlib",
-        ":kotlin-stdlib-js",
-        ":kotlin-test:kotlin-test-jvm",
-        ":kotlin-test:kotlin-test-junit",
         ":kotlin-daemon-client",
         ":kotlin-ant")
 
 projectTest {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
+    doFirst {
+        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
+        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
+    }
 }
 
 testsJar {}
@@ -48,4 +72,28 @@ projectTest("quickTest") {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
     systemProperty("kotlin.js.skipMinificationTest", "true")
+    doFirst {
+        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
+        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
+    }
+}
+
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
+val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
+
+val install by task<NpmTask> {
+    setWorkingDir(testDataDir)
+    setArgs(listOf("install"))
+}
+
+val runMocha by task<NpmTask> {
+    setWorkingDir(testDataDir)
+
+    val target = if (project.hasProperty("teamcity")) "runOnTeamcity" else "test"
+    setArgs(listOf("run", target))
+
+    dependsOn(install, "test")
+
+    val check by tasks
+    check.dependsOn(this)
 }

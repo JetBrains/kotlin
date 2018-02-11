@@ -28,7 +28,7 @@ abstract class AbstractOverloadResolutionResults<D : CallableDescriptor> : Overl
     override fun isIncomplete() = resultCode == OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE
 }
 
-class SingleOverloadResolutionResult<D: CallableDescriptor>(val result: ResolvedCall<D>) : AbstractOverloadResolutionResults<D>() {
+class SingleOverloadResolutionResult<D : CallableDescriptor>(val result: ResolvedCall<D>) : AbstractOverloadResolutionResults<D>() {
     override fun getAllCandidates(): Collection<ResolvedCall<D>>? = null
     override fun getResultingCalls(): Collection<ResolvedCall<D>> = listOf(result)
     override fun getResultingCall() = result
@@ -52,23 +52,22 @@ open class NameNotFoundResolutionResult<D : CallableDescriptor> : AbstractOverlo
 }
 
 class ManyCandidates<D : CallableDescriptor>(
-        val candidates: Collection<ResolvedCall<D>>
+    val candidates: Collection<ResolvedCall<D>>
 ) : AbstractOverloadResolutionResults<D>() {
     override fun getAllCandidates(): Collection<ResolvedCall<D>>? = null
     override fun getResultingCalls(): Collection<ResolvedCall<D>> = candidates
     override fun getResultingCall() = error("Many candidates")
     override fun getResultingDescriptor() = error("Many candidates")
     override fun getResultCode() =
-            when(candidates.first().status) {
-                ResolutionStatus.RECEIVER_TYPE_ERROR -> Code.CANDIDATES_WITH_WRONG_RECEIVER
-                ResolutionStatus.SUCCESS -> Code.AMBIGUITY
-                ResolutionStatus.INCOMPLETE_TYPE_INFERENCE -> Code.INCOMPLETE_TYPE_INFERENCE
-                else -> Code.MANY_FAILED_CANDIDATES
-            }
+        when (candidates.first().status) {
+            ResolutionStatus.RECEIVER_TYPE_ERROR -> Code.CANDIDATES_WITH_WRONG_RECEIVER
+            ResolutionStatus.SUCCESS -> Code.AMBIGUITY
+            ResolutionStatus.INCOMPLETE_TYPE_INFERENCE -> Code.INCOMPLETE_TYPE_INFERENCE
+            else -> Code.MANY_FAILED_CANDIDATES
+        }
 }
 
 
-
-class AllCandidates<D :  CallableDescriptor>(private val allCandidates: Collection<ResolvedCall<D>>): NameNotFoundResolutionResult<D>() {
+class AllCandidates<D : CallableDescriptor>(private val allCandidates: Collection<ResolvedCall<D>>) : NameNotFoundResolutionResult<D>() {
     override fun getAllCandidates() = allCandidates
 }

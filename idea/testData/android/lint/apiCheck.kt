@@ -424,7 +424,7 @@ class ApiCallTest: Activity() {
         val linear = layout as LinearLayout // OK API 1
     }
 
-    abstract class ErrorVectorDravable : <error descr="Class requires API level 21 (current min is 1): android.graphics.drawable.VectorDrawable">VectorDrawable</error>(), Parcelable
+    abstract class ErrorVectorDravable : <error descr="Call requires API level 21 (current min is 1): android.graphics.drawable.VectorDrawable#VectorDrawable"><error descr="Class requires API level 21 (current min is 1): android.graphics.drawable.VectorDrawable">VectorDrawable</error></error>(), Parcelable
 
     @TargetApi(21)
     class MyVectorDravable : VectorDrawable()

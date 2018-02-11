@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -29,22 +28,20 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 
-object InlineParameterChecker : SimpleDeclarationChecker {
-    override fun check(
-            declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
-    ) {
+object InlineParameterChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration is KtFunction) {
             val inline = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
             for (parameter in declaration.valueParameters) {
-                val parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, parameter)
+                val parameterDescriptor = context.trace.get(BindingContext.VALUE_PARAMETER, parameter)
                 if (!inline || (parameterDescriptor != null && !parameterDescriptor.type.isBuiltinFunctionalType)) {
-                    parameter.reportIncorrectInline(KtTokens.NOINLINE_KEYWORD, diagnosticHolder)
-                    parameter.reportIncorrectInline(KtTokens.CROSSINLINE_KEYWORD, diagnosticHolder)
+                    parameter.reportIncorrectInline(KtTokens.NOINLINE_KEYWORD, context.trace)
+                    parameter.reportIncorrectInline(KtTokens.CROSSINLINE_KEYWORD, context.trace)
                 }
 
                 if (inline && !parameter.hasModifier(KtTokens.NOINLINE_KEYWORD) &&
                     parameterDescriptor?.type?.isSuspendFunctionType == true) {
-                    diagnosticHolder.report(Errors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED.on(parameter))
+                    context.trace.report(Errors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED.on(parameter))
                 }
             }
         }

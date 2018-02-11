@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinClassHandler
 import org.jetbrains.kotlin.idea.search.projectScope
-import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -158,7 +157,7 @@ class MoveKotlinDeclarationsProcessor(
             val ktDeclaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return false
             if (ktDeclaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) return false
             val (oldContainer, newContainer) = descriptor.delegate.getContainerChangeInfo(ktDeclaration, descriptor.moveTarget)
-            val targetModule = descriptor.moveTarget.targetFile?.getModule(project) ?: return false
+            val targetModule = descriptor.moveTarget.getTargetModule(project) ?: return false
             return oldContainer == newContainer && ktDeclaration.module == targetModule
         }
 

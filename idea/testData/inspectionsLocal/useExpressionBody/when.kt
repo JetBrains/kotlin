@@ -1,3 +1,5 @@
+// HIGHLIGHT: INFORMATION
+
 fun sign(x: Int): Int {
     <caret>return when {
         x < 0 -> -1

@@ -56,7 +56,7 @@ fun main(args: Array<String>) {
     i = 1
     fun myLocalFun7() {
         // EXPRESSION: myLocalFun6() + 1
-        // RESULT: 3: I
+        // RESULT: Cannot find local variable: name = myLocalFun6
         //Breakpoint!
         myLocalFun6() + 1
     }

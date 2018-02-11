@@ -140,7 +140,7 @@ private fun KotlinType.isCollectionLikeOf(classPsiElement: PsiNamedElement): Boo
 
 
 open class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
-    override fun isApplicable(element: PsiElement) = element is KtClass
+    override fun isApplicable(element: PsiElement) = element is KtClass || element is KtTypeAlias
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
             AutomaticVariableRenamer(element as PsiNamedElement, newName, usages)

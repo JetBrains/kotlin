@@ -6,7 +6,7 @@ apply { plugin("kotlin") }
 jvmTarget = "1.6"
 
 dependencies {
-    compile(ideaSdkDeps("asm-all"))
+    compileOnly(intellijDep()) { includeJars("asm-all") }
 }
 
 sourceSets {

@@ -25,16 +25,16 @@ import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
 
 class KotlinPropertyStubImpl(
-        parent: StubElement<out PsiElement>?,
-        private val name: StringRef?,
-        private val isVar: Boolean,
-        private val isTopLevel: Boolean,
-        private val hasDelegate: Boolean,
-        private val hasDelegateExpression: Boolean,
-        private val hasInitializer: Boolean,
-        private val isExtension: Boolean,
-        private val hasReturnTypeRef: Boolean,
-        private val fqName: FqName?
+    parent: StubElement<out PsiElement>?,
+    private val name: StringRef?,
+    private val isVar: Boolean,
+    private val isTopLevel: Boolean,
+    private val hasDelegate: Boolean,
+    private val hasDelegateExpression: Boolean,
+    private val hasInitializer: Boolean,
+    private val isExtension: Boolean,
+    private val hasReturnTypeRef: Boolean,
+    private val fqName: FqName?
 ) : KotlinStubBaseImpl<KtProperty>(parent, KtStubElementTypes.PROPERTY), KotlinPropertyStub {
 
     init {

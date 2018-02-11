@@ -34,7 +34,8 @@ class MainFunctionDetector {
     /** Assumes that the function declaration is already resolved and the descriptor can be found in the `bindingContext`.  */
     constructor(bindingContext: BindingContext) {
         this.getFunctionDescriptor = { function ->
-            bindingContext.get(BindingContext.FUNCTION, function) ?: throw IllegalStateException("No descriptor resolved for " + function + " " + function.text)
+            bindingContext.get(BindingContext.FUNCTION, function)
+                    ?: throw IllegalStateException("No descriptor resolved for " + function + " " + function.text)
         }
     }
 
@@ -83,9 +84,9 @@ class MainFunctionDetector {
     private fun getMainFunction(module: ModuleDescriptor, packageView: PackageViewDescriptor): FunctionDescriptor? {
         for (packageFragment in packageView.fragments.filter { it.module == module }) {
             DescriptorUtils.getAllDescriptors(packageFragment.getMemberScope())
-                    .filterIsInstance<FunctionDescriptor>()
-                    .firstOrNull { isMain(it) }
-                    ?.let { return it }
+                .filterIsInstance<FunctionDescriptor>()
+                .firstOrNull { isMain(it) }
+                ?.let { return it }
         }
 
         for (subpackageName in module.getSubPackagesOf(packageView.fqName, MemberScope.ALL_NAME_FILTER)) {
@@ -108,7 +109,7 @@ class MainFunctionDetector {
             }
 
             val parameters = descriptor.valueParameters.mapTo(mutableListOf()) { it.type }
-            descriptor.extensionReceiverParameter?.type?.let {parameters += it}
+            descriptor.extensionReceiverParameter?.type?.let { parameters += it }
 
             if (parameters.size != 1 || !descriptor.typeParameters.isEmpty()) return false
 
@@ -127,14 +128,14 @@ class MainFunctionDetector {
             }
 
             val returnType = descriptor.returnType
-            if (returnType == null ||  !KotlinBuiltIns.isUnit(returnType)) return false
+            if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) return false
 
             if (DescriptorUtils.isTopLevelDeclaration(descriptor)) return true
 
             val containingDeclaration = descriptor.containingDeclaration
             return containingDeclaration is ClassDescriptor
-                   && containingDeclaration.kind.isSingleton
-                   && (descriptor.hasJvmStaticAnnotation() || !checkJvmStaticAnnotation)
+                    && containingDeclaration.kind.isSingleton
+                    && (descriptor.hasJvmStaticAnnotation() || !checkJvmStaticAnnotation)
         }
 
         private fun getJVMFunctionName(functionDescriptor: FunctionDescriptor): String {

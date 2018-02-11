@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.util.getCompilerMessageLocation
 
 fun CommonBackendContext.reportWarning(message: String, irFile: IrFile, irElement: IrElement) {
-    val location = irElement.getCompilerMessageLocation(irFile)
-    messageCollector.report(CompilerMessageSeverity.WARNING, message, location)
+    report(irElement, irFile, message, false)
 }
 
 fun <E> MutableList<E>.push(element: E) = this.add(element)

@@ -1,23 +1,13 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithFakeAnnotations;
@@ -66,6 +56,7 @@ import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROP
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.FIELD_FOR_PROPERTY;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY;
+import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PROPERTY_TYPE;
@@ -240,9 +231,11 @@ public class PropertyCodegen {
     }
 
     private static boolean areAccessorsNeededForPrimaryConstructorProperty(
-            @NotNull PropertyDescriptor descriptor
+            @NotNull PropertyDescriptor descriptor,
+            @NotNull OwnerKind kind
     ) {
         if (hasJvmFieldAnnotation(descriptor)) return false;
+        if (kind == OwnerKind.ERASED_INLINE_CLASS) return false;
 
         return !Visibilities.isPrivate(descriptor.getVisibility());
     }
@@ -250,24 +243,28 @@ public class PropertyCodegen {
     public void generatePrimaryConstructorProperty(@NotNull KtParameter p, @NotNull PropertyDescriptor descriptor) {
         genBackingFieldAndAnnotations(p, descriptor, true);
 
-        if (areAccessorsNeededForPrimaryConstructorProperty(descriptor)) {
+        if (areAccessorsNeededForPrimaryConstructorProperty(descriptor, context.getContextKind())) {
             generateGetter(p, descriptor, null);
             generateSetter(p, descriptor, null);
         }
     }
 
-    public void generateConstructorPropertyAsMethodForAnnotationClass(KtParameter p, PropertyDescriptor descriptor) {
+    public void generateConstructorPropertyAsMethodForAnnotationClass(
+            @NotNull KtParameter parameter,
+            @NotNull PropertyDescriptor descriptor,
+            @Nullable FunctionDescriptor expectedAnnotationConstructor
+    ) {
         JvmMethodGenericSignature signature = typeMapper.mapAnnotationParameterSignature(descriptor);
-        String name = p.getName();
+        String name = parameter.getName();
         if (name == null) return;
         MethodVisitor mv = v.newMethod(
-                JvmDeclarationOriginKt.OtherOrigin(p, descriptor), ACC_PUBLIC | ACC_ABSTRACT, name,
+                JvmDeclarationOriginKt.OtherOrigin(parameter, descriptor), ACC_PUBLIC | ACC_ABSTRACT, name,
                 signature.getAsmMethod().getDescriptor(),
                 signature.getGenericsSignature(),
                 null
         );
 
-        KtExpression defaultValue = p.getDefaultValue();
+        KtExpression defaultValue = loadAnnotationArgumentDefaultValue(parameter, descriptor, expectedAnnotationConstructor);
         if (defaultValue != null) {
             ConstantValue<?> constant = ExpressionCodegen.getCompileTimeConstant(
                     defaultValue, bindingContext, true, state.getShouldInlineConstVals());
@@ -280,6 +277,29 @@ public class PropertyCodegen {
         }
 
         mv.visitEnd();
+    }
+
+    private KtExpression loadAnnotationArgumentDefaultValue(
+            @NotNull KtParameter ktParameter,
+            @NotNull PropertyDescriptor descriptor,
+            @Nullable FunctionDescriptor expectedAnnotationConstructor
+    ) {
+        KtExpression value = ktParameter.getDefaultValue();
+        if (value != null) return value;
+
+        if (expectedAnnotationConstructor != null) {
+            ValueParameterDescriptor expectedParameter = CollectionsKt.single(
+                    expectedAnnotationConstructor.getValueParameters(), parameter -> parameter.getName().equals(descriptor.getName())
+            );
+            PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(expectedParameter);
+            if (!(element instanceof KtParameter)) {
+                state.getDiagnostics().report(EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND.on(ktParameter));
+                return null;
+            }
+            return ((KtParameter) element).getDefaultValue();
+        }
+
+        return null;
     }
 
     private boolean hasBackingField(@NotNull PropertyDescriptor descriptor) {

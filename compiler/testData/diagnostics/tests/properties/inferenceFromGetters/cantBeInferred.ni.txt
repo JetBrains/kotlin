@@ -1,0 +1,6 @@
+package
+
+public val x: kotlin.Nothing
+public val y: kotlin.collections.List<kotlin.Nothing>
+public fun </*0*/ E> bar(): kotlin.collections.List<E>
+public fun </*0*/ E> foo(): E

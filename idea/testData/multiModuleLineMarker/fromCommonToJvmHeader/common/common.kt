@@ -1,4 +1,8 @@
 expect class <lineMarker>Header</lineMarker> {
+    fun <lineMarker>foo</lineMarker>(): Int
+}
+
+expect class <lineMarker>Incomplete</lineMarker> {
     fun foo(): Int
 }
 

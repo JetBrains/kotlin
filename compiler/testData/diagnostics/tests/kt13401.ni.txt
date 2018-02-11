@@ -1,0 +1,32 @@
+package
+
+public final class Owner</*0*/ in T> {
+    public constructor Owner</*0*/ in T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ arg: Owner<T>.Inner<*>): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Inner</*0*/ U : T> /*captured type parameters: /*1*/ in T*/ {
+        public constructor Inner</*0*/ U : T>(/*0*/ u: U)
+        public final val u: U
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun getT(): U
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public interface Rec</*0*/ T : Rec<T>> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun t(): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Super</*0*/ out U> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ p: Rec<*>): Rec<out Rec<out Rec<out Rec<out Rec<out kotlin.Any?>>>>>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

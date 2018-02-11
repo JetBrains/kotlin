@@ -1,0 +1,3 @@
+[NotNull Values]
+9 	val <bold>y = b.foo()</bold>
+9 		val <bold>y = b.foo()</bold>

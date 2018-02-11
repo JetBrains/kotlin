@@ -13,10 +13,9 @@ val builtins by configurations.creating
 val serialize = task("serialize") {
     val outDir = builtinsSerialized
     val inDirs = arrayOf(builtinsSrc, builtinsNative)
-    outputs.file(outDir)
+    outputs.dir(outDir)
     inputs.files(*inDirs)
     doLast {
-        System.setProperty("kotlin.colors.enabled", "false")
         BuiltInsSerializer(dependOnOldBuiltIns = false)
                 .serialize(outDir, inDirs.asList(), listOf()) { totalSize, totalFiles ->
                     println("Total bytes written: $totalSize to $totalFiles files")

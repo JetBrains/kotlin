@@ -106,7 +106,7 @@ class ScriptTest : KtUsefulTestCase() {
                 configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, saveClassesDir)
             }
 
-            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             try {
                 return KotlinToJVMBytecodeCompiler.compileScript(environment, this::class.java.classLoader.takeUnless { runIsolated })

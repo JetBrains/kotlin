@@ -33,7 +33,10 @@ fun ConstraintStorage.buildResultingSubstitutor(): NewTypeSubstitutor {
         it.key to it.value
     }
     val uninferredSubstitutorMap = notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
-        freshTypeConstructor to ErrorUtils.createErrorTypeWithCustomConstructor("Uninferred type", typeVariable.typeVariable.freshTypeConstructor)
+        freshTypeConstructor to ErrorUtils.createErrorTypeWithCustomConstructor(
+            "Uninferred type",
+            typeVariable.typeVariable.freshTypeConstructor
+        )
     }
 
     return NewTypeSubstitutorByConstructorMap(currentSubstitutorMap + uninferredSubstitutorMap)
@@ -61,10 +64,10 @@ fun CallableDescriptor.substituteAndApproximateCapturedTypes(substitutor: NewTyp
         override fun get(key: KotlinType): TypeProjection? = null
 
         override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) =
-                substitutor.safeSubstitute(topLevelType.unwrap()).let { substitutedType ->
-                    TypeApproximator().approximateToSuperType(substitutedType, TypeApproximatorConfiguration.CapturedTypesApproximation) ?:
-                    substitutedType
-                }
+            substitutor.safeSubstitute(topLevelType.unwrap()).let { substitutedType ->
+                TypeApproximator().approximateToSuperType(substitutedType, TypeApproximatorConfiguration.CapturedTypesApproximation)
+                        ?: substitutedType
+            }
     }
 
     return substitute(TypeSubstitutor.create(wrappedSubstitution))

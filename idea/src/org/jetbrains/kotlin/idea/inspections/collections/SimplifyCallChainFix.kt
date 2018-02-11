@@ -31,20 +31,28 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         (descriptor.psiElement as? KtQualifiedExpression)?.let { secondQualifiedExpression ->
             val factory = KtPsiFactory(secondQualifiedExpression)
-            val firstQualifiedExpression = secondQualifiedExpression.receiverExpression as? KtQualifiedExpression ?: return
-            val operationSign = if (firstQualifiedExpression is KtSafeQualifiedExpression) "?." else "."
-            val firstCallExpression = firstQualifiedExpression.selectorExpression as? KtCallExpression ?: return
+            val firstExpression = secondQualifiedExpression.receiverExpression
+
+            val operationSign = when (firstExpression) {
+                is KtSafeQualifiedExpression -> "?."
+                is KtQualifiedExpression -> "."
+                else -> ""
+            }
+
+            val receiverExpression = (firstExpression as? KtQualifiedExpression)?.receiverExpression
+
+            val firstCallExpression = SimplifiableCallChainInspection.getCallExpression(firstExpression) ?: return
             val secondCallExpression = secondQualifiedExpression.selectorExpression as? KtCallExpression ?: return
 
             val lastArgumentPrefix = if (newName.startsWith("joinTo")) "transform = " else ""
             val arguments = secondCallExpression.valueArgumentList?.arguments.orEmpty().map { it.text } +
-                            firstCallExpression.valueArgumentList?.arguments.orEmpty().map { "$lastArgumentPrefix${it.text}"}
+                            firstCallExpression.valueArgumentList?.arguments.orEmpty().map { "$lastArgumentPrefix${it.text}" }
             val lambdaArgument = firstCallExpression.lambdaArguments.singleOrNull()
 
             val argumentsText = arguments.ifNotEmpty { joinToString(prefix = "(", postfix = ")") } ?: ""
             val newQualifiedExpression = if (lambdaArgument != null) factory.createExpressionByPattern(
                     "$0$1$2 $3 $4",
-                    firstQualifiedExpression.receiverExpression,
+                    receiverExpression ?: "",
                     operationSign,
                     newName,
                     argumentsText,
@@ -52,7 +60,7 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
             )
             else factory.createExpressionByPattern(
                     "$0$1$2 $3",
-                    firstQualifiedExpression.receiverExpression,
+                    receiverExpression ?: "",
                     operationSign,
                     newName,
                     argumentsText

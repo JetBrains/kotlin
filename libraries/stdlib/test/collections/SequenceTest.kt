@@ -1,6 +1,21 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package test.collections
 
-import org.junit.Test
 import kotlin.test.*
 import kotlin.comparisons.*
 
@@ -11,6 +26,22 @@ fun fibonacci(): Sequence<Int> {
 }
 
 public class SequenceTest {
+
+    private class TriggerSequence<out T>(val source: Sequence<T>) : Sequence<T> {
+        var iterated: Boolean = false
+            private set
+
+        override fun iterator(): Iterator<T> = source.iterator().also { iterated = true }
+    }
+
+    fun <T> ensureIsIntermediate(source: Sequence<T>, operation: (Sequence<T>) -> Sequence<*>) {
+        TriggerSequence(source).let { s ->
+            val result = operation(s)
+            assertFalse(s.iterated, "Source should not be iterated before the result is")
+            result.iterator().hasNext()
+            assertTrue(s.iterated, "Source should be iterated after the result is iterated")
+        }
+    }
 
     @Test fun filterEmptySequence() {
         for (sequence in listOf(emptySequence<String>(), sequenceOf<String>())) {
@@ -163,6 +194,111 @@ public class SequenceTest {
     @Test fun dropWhile() {
         assertEquals("233, 377, 610", fibonacci().dropWhile { it < 200 }.take(3).joinToString(limit = 10))
         assertEquals("", sequenceOf(1).dropWhile { it < 200 }.joinToString(limit = 10))
+    }
+
+    @Test fun zipWithNext() {
+        val deltas = fibonacci().zipWithNext { a: Int, b: Int -> b - a }
+        // deltas of 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, ...
+        // is the same sequence prepended by 1
+        assertEquals(listOf(1) + fibonacci().take(9), deltas.take(10).toList())
+
+        ensureIsIntermediate(source = sequenceOf(1, 2)) { it.zipWithNext { a: Int, b: Int -> b - a } }
+    }
+
+    @Test fun zipWithNextPairs() {
+        val pairs: Sequence<Pair<String, String>> = sequenceOf("a", "b", "c", "d").zipWithNext()
+        assertEquals(listOf("a" to "b", "b" to "c", "c" to "d"), pairs.toList())
+
+        assertTrue(emptySequence<String>().zipWithNext().toList().isEmpty())
+        assertTrue(sequenceOf(1).zipWithNext().toList().isEmpty())
+
+        ensureIsIntermediate(source = sequenceOf(1, 2)) { it.zipWithNext() }
+    }
+
+    @Test
+    fun chunked() {
+        val infiniteSeq = generateSequence(0) { it + 1 }
+        val result = infiniteSeq.chunked(4)
+        assertEquals(listOf(
+                listOf(0, 1, 2, 3),
+                listOf(4, 5, 6, 7)
+        ), result.take(2).toList())
+
+        val size = 7
+        val seq = infiniteSeq.take(7)
+
+        val result2 = seq.chunked(3) { it.joinToString("") }
+        assertEquals(listOf("012", "345", "6"), result2.toList())
+
+        seq.toList().let { expectedSingleChunk ->
+            assertEquals(expectedSingleChunk, seq.chunked(size).single())
+            assertEquals(expectedSingleChunk, seq.chunked(size + 3).single())
+        }
+
+        assertTrue(emptySequence<String>().chunked(3).none())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { infiniteSeq.chunked(illegalValue) }
+        }
+
+        ensureIsIntermediate(source = sequenceOf(1, 2, 3)) { it.chunked(2) }
+    }
+
+
+    @Test
+    fun windowed() {
+        val infiniteSeq = generateSequence(0) { it + 1 }
+        val result = infiniteSeq.windowed(5, 3)
+        result.take(10).forEachIndexed { windowIndex, window ->
+            val startElement = windowIndex * 3
+            assertEquals((startElement until startElement + 5).toList(), window)
+        }
+
+        val size = 7
+        val seq = infiniteSeq.take(7)
+
+        val result1 = seq.windowed(4, 2)
+        assertEquals(listOf(
+                listOf(0, 1, 2, 3),
+                listOf(2, 3, 4, 5)
+        ), result1.toList())
+
+        val result1partial = seq.windowed(4, 2, partialWindows = true)
+        assertEquals(listOf(
+                listOf(0, 1, 2, 3),
+                listOf(2, 3, 4, 5),
+                listOf(4, 5, 6),
+                listOf(6)
+        ), result1partial.toList())
+
+        val result2 = seq.windowed(2, 3) { it.joinToString("") }
+        assertEquals(listOf("01", "34"), result2.toList())
+
+        val result2partial = seq.windowed(2, 3, partialWindows = true) { it.joinToString("") }
+        assertEquals(listOf("01", "34", "6"), result2partial.toList())
+
+        assertEquals(seq.chunked(2).toList(), seq.windowed(2, 2, partialWindows = true).toList())
+
+        assertEquals(seq.take(2).toList(), seq.windowed(2, size).single())
+        assertEquals(seq.take(3).toList(), seq.windowed(3, size + 3).single())
+
+
+        assertEquals(seq.toList(), seq.windowed(size, 1).single())
+        assertTrue(seq.windowed(size + 1, 1).none())
+
+        val result3partial = seq.windowed(size, 1, partialWindows = true)
+        result3partial.forEachIndexed { index, window ->
+            assertEquals(size - index, window.size, "size of window#$index")
+        }
+
+        assertTrue(emptySequence<String>().windowed(3, 2).none())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { seq.windowed(illegalValue, 1) }
+            assertFailsWith<IllegalArgumentException>("step $illegalValue") { seq.windowed(1, illegalValue) }
+        }
+
+        ensureIsIntermediate(source = sequenceOf(1, 2, 3)) { it.windowed(2, 1) }
     }
 
     @Test fun zip() {

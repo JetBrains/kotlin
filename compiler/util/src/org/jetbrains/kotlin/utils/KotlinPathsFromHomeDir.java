@@ -113,12 +113,6 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
     }
 
     @NotNull
-    @Override
-    public File getBuildNumberFile() {
-        return new File(homePath, "build.txt");
-    }
-
-    @NotNull
     private File getLibraryFile(@NotNull String fileName) {
         return new File(getLibPath(), fileName);
     }

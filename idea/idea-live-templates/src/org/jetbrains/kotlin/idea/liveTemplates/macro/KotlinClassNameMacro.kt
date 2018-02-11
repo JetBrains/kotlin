@@ -20,6 +20,7 @@ import com.intellij.codeInsight.template.Expression
 import com.intellij.codeInsight.template.ExpressionContext
 import com.intellij.codeInsight.template.Result
 import com.intellij.codeInsight.template.TextResult
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
@@ -28,7 +29,9 @@ class KotlinClassNameMacro : KotlinMacro() {
     override fun getPresentableName() = "kotlinClassName()"
 
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
-        val element = context.psiElementAtStartOffset?.parentsWithSelf?.firstOrNull { it is KtClassOrObject && it.name != null } ?: return null
+        val element = context.psiElementAtStartOffset?.parentsWithSelf?.firstOrNull {
+            it is KtClassOrObject && it.name != null && !it.hasModifier(KtTokens.COMPANION_KEYWORD)
+        } ?: return null
         return TextResult((element as KtClassOrObject).name!!)
     }
 }

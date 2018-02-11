@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.SpecialNames;
 
 public class KtFunctionLiteral extends KtFunctionNotStubbed {
     public KtFunctionLiteral(@NotNull ASTNode node) {
@@ -37,7 +38,7 @@ public class KtFunctionLiteral extends KtFunctionNotStubbed {
 
     @Override
     public String getName() {
-        return "<anonymous>";
+        return SpecialNames.ANONYMOUS;
     }
 
     @Override

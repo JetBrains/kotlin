@@ -41,7 +41,6 @@ internal open class KotlinTasksProvider {
         this.sourceSetName = sourceSetName
         this.friendTaskName = taskToFriendTaskMapper[this]
         mapKotlinTaskProperties(project, this)
-        outputs.upToDateWhen { isCacheFormatUpToDate }
     }
 
     protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =

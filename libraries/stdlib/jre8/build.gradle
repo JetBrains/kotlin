@@ -1,10 +1,12 @@
-description = 'Kotlin Standard Library JRE 8 extension'
+description = 'Kotlin Standard Library JRE 8 extension (deprecated)'
 
 apply plugin: 'kotlin'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
 ext.javaHome = JDK_18
+ext.jvmTarget = "1.8"
 
 dependencies {
     compile project(':kotlin-stdlib')
@@ -51,13 +53,14 @@ compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
-            "-Xdump-declarations-to", "${buildDir}/stdlib-jre8-declarations.json",
+            "-Xnormalize-constructor-calls=enable",
+            "-Xdump-declarations-to=${buildDir}/stdlib-jre8-declarations.json",
             "-module-name", project.name
     ]
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable"]
 }
 
 kotlin.experimental.coroutines 'enable'

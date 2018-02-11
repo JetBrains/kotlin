@@ -10,11 +10,17 @@ dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.frontend"))
-    compileOnly(ideaSdkDeps("util"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("annotations", "asm-all", "trove4j", "util") }
+    compileOnly(project(":kotlin-reflect-api"))
+
+    testCompileOnly(project(":compiler:cli-common"))
+    testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
-    testCompile(project(":compiler.tests-common"))
     testCompile(protobufFull())
-    testRuntime(projectDist(":kotlin-stdlib"))
+    testCompile(projectDist(":kotlin-stdlib"))
+    testCompileOnly(intellijDep()) { includeJars("openapi") }
+
     testRuntime(projectDist(":kotlin-reflect"))
 }
 

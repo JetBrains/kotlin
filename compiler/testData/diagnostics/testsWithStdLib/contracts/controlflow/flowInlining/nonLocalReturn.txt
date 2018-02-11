@@ -1,0 +1,5 @@
+package
+
+public fun nonLocalReturnWithElvis(/*0*/ x: kotlin.Int?): kotlin.Int?
+public inline fun </*0*/ T, /*1*/ R> T.myLet(/*0*/ block: (T) -> R): R
+    CallsInPlace(block, EXACTLY_ONCE)

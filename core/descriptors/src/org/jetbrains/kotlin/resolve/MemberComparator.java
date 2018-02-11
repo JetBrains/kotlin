@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy;
@@ -49,52 +50,77 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
     private MemberComparator() {
     }
 
-    private static int getDeclarationPriority(DeclarationDescriptor descriptor) {
-        if (isEnumEntry(descriptor)) {
-            return 8;
+    public static class NameAndTypeMemberComparator implements Comparator<DeclarationDescriptor> {
+        public static final NameAndTypeMemberComparator INSTANCE = new NameAndTypeMemberComparator();
+
+        private NameAndTypeMemberComparator() {
         }
-        else if (descriptor instanceof ConstructorDescriptor) {
-            return 7;
-        }
-        else if (descriptor instanceof PropertyDescriptor) {
-            if (((PropertyDescriptor)descriptor).getExtensionReceiverParameter() == null) {
-                return 6;
+
+        private static int getDeclarationPriority(DeclarationDescriptor descriptor) {
+            if (isEnumEntry(descriptor)) {
+                return 8;
             }
-            else {
-                return 5;
+            else if (descriptor instanceof ConstructorDescriptor) {
+                return 7;
             }
-        }
-        else if (descriptor instanceof FunctionDescriptor) {
-            if (((FunctionDescriptor)descriptor).getExtensionReceiverParameter() == null) {
-                return 4;
+            else if (descriptor instanceof PropertyDescriptor) {
+                if (((PropertyDescriptor) descriptor).getExtensionReceiverParameter() == null) {
+                    return 6;
+                }
+                else {
+                    return 5;
+                }
             }
-            else {
-                return 3;
+            else if (descriptor instanceof FunctionDescriptor) {
+                if (((FunctionDescriptor) descriptor).getExtensionReceiverParameter() == null) {
+                    return 4;
+                }
+                else {
+                    return 3;
+                }
             }
+            else if (descriptor instanceof ClassDescriptor) {
+                return 2;
+            }
+            else if (descriptor instanceof TypeAliasDescriptor) {
+                return 1;
+            }
+            return 0;
         }
-        else if (descriptor instanceof ClassDescriptor) {
-            return 2;
+
+        @Override
+        public int compare(DeclarationDescriptor o1, DeclarationDescriptor o2) {
+            Integer compareInternal = compareInternal(o1, o2);
+            return compareInternal != null ? compareInternal : 0;
         }
-        else if (descriptor instanceof TypeAliasDescriptor) {
-            return 1;
+
+        @Nullable
+        private static Integer compareInternal(DeclarationDescriptor o1, DeclarationDescriptor o2) {
+            int prioritiesCompareTo = getDeclarationPriority(o2) - getDeclarationPriority(o1);
+            if (prioritiesCompareTo != 0) {
+                return prioritiesCompareTo;
+            }
+
+            if (isEnumEntry(o1) && isEnumEntry(o2)) {
+                //never reorder enum entries
+                return 0;
+            }
+
+            int namesCompareTo = o1.getName().compareTo(o2.getName());
+            if (namesCompareTo != 0) {
+                return namesCompareTo;
+            }
+
+            // Might be equal
+            return null;
         }
-        return 0;
     }
 
     @Override
     public int compare(DeclarationDescriptor o1, DeclarationDescriptor o2) {
-        int prioritiesCompareTo = getDeclarationPriority(o2) - getDeclarationPriority(o1);
-        if (prioritiesCompareTo != 0) {
-            return prioritiesCompareTo;
-        }
-        if (isEnumEntry(o1) && isEnumEntry(o2)) {
-            //never reorder enum entries
-            return 0;
-        }
-
-        int namesCompareTo = o1.getName().compareTo(o2.getName());
-        if (namesCompareTo != 0) {
-            return namesCompareTo;
+        Integer typeAndNameCompareResult = NameAndTypeMemberComparator.compareInternal(o1, o2);
+        if (typeAndNameCompareResult != null) {
+            return typeAndNameCompareResult;
         }
 
         if (o1 instanceof TypeAliasDescriptor && o2 instanceof TypeAliasDescriptor) {

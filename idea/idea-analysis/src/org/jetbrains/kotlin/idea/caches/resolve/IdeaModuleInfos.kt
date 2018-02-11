@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.resolve
@@ -36,7 +25,8 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
 import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.configuration.BuildSystemType
+import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -108,7 +98,7 @@ private fun ideaModelDependencies(module: Module, forProduction: Boolean): List<
     //NOTE: lib dependencies can be processed several times during recursive traversal
     val result = LinkedHashSet<IdeaModuleInfo>()
     val dependencyEnumerator = ModuleRootManager.getInstance(module).orderEntries().compileOnly().recursively().exportedOnly()
-    if (forProduction && !(KotlinPluginUtil.isMavenModule(module) || KotlinPluginUtil.isGradleModule(module))) {
+    if (forProduction && module.getBuildSystemType() == BuildSystemType.JPS) {
         dependencyEnumerator.productionOnly()
     }
     dependencyEnumerator.forEach { orderEntry ->
@@ -167,7 +157,7 @@ data class ModuleTestSourceInfo internal constructor(override val module: Module
         list.addIfNotNull(module.productionSourceInfo())
 
         TestModuleProperties.getInstance(module).productionModule?.let {
-            list.add(it.productionSourceInfo())
+            list.addIfNotNull(it.productionSourceInfo())
         }
 
         CachedValueProvider.Result(list, ProjectRootModificationTracker.getInstance(module.project))
@@ -231,9 +221,6 @@ class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo, 
 
     override fun contentScope(): GlobalSearchScope = LibraryWithoutSourceScope(project, library)
 
-    override val isLibrary: Boolean
-        get() = true
-
     override fun dependencies(): List<IdeaModuleInfo> {
         val result = LinkedHashSet<IdeaModuleInfo>()
         result.add(this)
@@ -270,9 +257,6 @@ data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaM
     override val name: Name = Name.special("<sources for library ${library.name}>")
 
     override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(LibrarySourceScope(project, library), project)
-
-    override val isLibrary: Boolean
-        get() = true
 
     override fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> {
         return listOf(LibraryInfo(project, library))

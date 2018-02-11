@@ -60,7 +60,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
                 myProject.baseDir.createChildData(null, "build.gradle")
 
                 val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
-                val moduleGroup = ModuleSourceRootMap(myProject).toModuleGroup(module)
+                val moduleGroup = module.toModuleGroup()
                 // We have a Kotlin runtime in build.gradle but not in the classpath, so it doesn't make sense
                 // to suggest configuring it
                 assertEquals(ConfigureKotlinStatus.BROKEN, findGradleModuleConfigurator().getStatus(moduleGroup))

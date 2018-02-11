@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi.synthetics
@@ -45,25 +34,27 @@ import org.jetbrains.kotlin.types.TypeConstructor
  * This class has its own synthetic declaration inside.
  */
 class SyntheticClassOrObjectDescriptor(
-        c: LazyClassContext,
-        parentClassOrObject: KtPureClassOrObject,
-        containingDeclaration: DeclarationDescriptor,
-        name: Name,
-        source: SourceElement,
-        outerScope: LexicalScope,
-        private val modality: Modality,
-        private val visibility: Visibility,
-        constructorVisibility: Visibility,
-        private val kind: ClassKind,
-        private val isCompanionObject: Boolean
+    c: LazyClassContext,
+    parentClassOrObject: KtPureClassOrObject,
+    containingDeclaration: DeclarationDescriptor,
+    name: Name,
+    source: SourceElement,
+    outerScope: LexicalScope,
+    private val modality: Modality,
+    private val visibility: Visibility,
+    constructorVisibility: Visibility,
+    private val kind: ClassKind,
+    private val isCompanionObject: Boolean
 ) : ClassDescriptorBase(c.storageManager, containingDeclaration, name, source, false), ClassDescriptorWithResolutionScopes {
     val syntheticDeclaration: KtPureClassOrObject = SyntheticDeclaration(parentClassOrObject, name.asString())
 
     private val thisDescriptor: SyntheticClassOrObjectDescriptor get() = this // code readability
     private val typeConstructor = SyntheticTypeConstructor(c.storageManager)
     private val resolutionScopesSupport = ClassResolutionScopesSupport(thisDescriptor, c.storageManager, { outerScope })
-    private val syntheticSupertypes = mutableListOf<KotlinType>().apply { c.syntheticResolveExtension.addSyntheticSupertypes(thisDescriptor, this) }
-    private val unsubstitutedMemberScope = LazyClassMemberScope(c, SyntheticClassMemberDeclarationProvider(syntheticDeclaration), this, c.trace)
+    private val syntheticSupertypes =
+        mutableListOf<KotlinType>().apply { c.syntheticResolveExtension.addSyntheticSupertypes(thisDescriptor, this) }
+    private val unsubstitutedMemberScope =
+        LazyClassMemberScope(c, SyntheticClassMemberDeclarationProvider(syntheticDeclaration), this, c.trace)
     private val unsubstitutedPrimaryConstructor = createUnsubstitutedPrimaryConstructor(constructorVisibility)
 
     override val annotations: Annotations get() = Annotations.EMPTY
@@ -74,6 +65,7 @@ class SyntheticClassOrObjectDescriptor(
     override fun isCompanionObject() = isCompanionObject
     override fun isInner() = false
     override fun isData() = false
+    override fun isInline() = false
     override fun isExpect() = false
     override fun isActual() = false
 
@@ -97,11 +89,15 @@ class SyntheticClassOrObjectDescriptor(
 
     override fun getScopeForClassHeaderResolution(): LexicalScope = resolutionScopesSupport.scopeForClassHeaderResolution()
     override fun getScopeForConstructorHeaderResolution(): LexicalScope = resolutionScopesSupport.scopeForConstructorHeaderResolution()
-    override fun getScopeForCompanionObjectHeaderResolution(): LexicalScope = resolutionScopesSupport.scopeForCompanionObjectHeaderResolution()
-    override fun getScopeForMemberDeclarationResolution(): LexicalScope = resolutionScopesSupport.scopeForMemberDeclarationResolution()
-    override fun getScopeForStaticMemberDeclarationResolution(): LexicalScope = resolutionScopesSupport.scopeForStaticMemberDeclarationResolution()
+    override fun getScopeForCompanionObjectHeaderResolution(): LexicalScope =
+        resolutionScopesSupport.scopeForCompanionObjectHeaderResolution()
 
-    override fun getScopeForInitializerResolution(): LexicalScope = throw UnsupportedOperationException("Not supported for synthetic class or object")
+    override fun getScopeForMemberDeclarationResolution(): LexicalScope = resolutionScopesSupport.scopeForMemberDeclarationResolution()
+    override fun getScopeForStaticMemberDeclarationResolution(): LexicalScope =
+        resolutionScopesSupport.scopeForStaticMemberDeclarationResolution()
+
+    override fun getScopeForInitializerResolution(): LexicalScope =
+        throw UnsupportedOperationException("Not supported for synthetic class or object")
 
     override fun toString(): String = "synthetic class " + name.toString() + " in " + containingDeclaration
 
@@ -114,15 +110,14 @@ class SyntheticClassOrObjectDescriptor(
 
     private inner class SyntheticTypeConstructor(storageManager: StorageManager) : AbstractClassTypeConstructor(storageManager) {
         override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
-        override fun isFinal(): Boolean = true
         override fun isDenotable(): Boolean = true
-        override fun getDeclarationDescriptor(): ClassifierDescriptor = thisDescriptor
+        override fun getDeclarationDescriptor(): ClassDescriptor = thisDescriptor
         override fun computeSupertypes(): Collection<KotlinType> = syntheticSupertypes
         override val supertypeLoopChecker: SupertypeLoopChecker = SupertypeLoopChecker.EMPTY
     }
 
     private class SyntheticClassMemberDeclarationProvider(
-            override val correspondingClassOrObject: KtPureClassOrObject
+        override val correspondingClassOrObject: KtPureClassOrObject
     ) : ClassMemberDeclarationProvider {
         override val ownerInfo: KtClassLikeInfo? = null
         override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration> = emptyList()
@@ -135,8 +130,8 @@ class SyntheticClassOrObjectDescriptor(
     }
 
     internal inner class SyntheticDeclaration(
-            private val _parent: KtPureElement,
-            private val _name: String
+        private val _parent: KtPureElement,
+        private val _name: String
     ) : KtPureClassOrObject {
         fun descriptor() = thisDescriptor
 

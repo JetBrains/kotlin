@@ -20,8 +20,8 @@ class MyActivity(): Activity() {
     val loginItem = Button(this)
 
     val entity = MyEntity(object : FrameLayout(this) {
-        override fun findViewById(id: Int) : View? = when(id) {
-            R.id.login -> loginItem
+        override fun <T : View> findViewById(id: Int): T? = when(id) {
+            R.id.login -> loginItem as T
             else -> null
         }
     })

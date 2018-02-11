@@ -1,0 +1,18 @@
+package
+
+public final class A {
+    public constructor A()
+    public final var a: kotlin.Nothing
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class MyProperty</*0*/ T, /*1*/ R> {
+    public constructor MyProperty</*0*/ T, /*1*/ R>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun getValue(/*0*/ thisRef: R, /*1*/ desc: kotlin.reflect.KProperty<*>): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun setValue(/*0*/ thisRef: R, /*1*/ desc: kotlin.reflect.KProperty<*>, /*2*/ t: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

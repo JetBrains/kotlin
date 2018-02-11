@@ -27,7 +27,6 @@ import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
-import com.intellij.openapi.util.text.StringUtil.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -99,7 +98,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)
 
         if (androidExtensionsExtension.isExperimental) {
-            return applyExperimental(androidExtension, androidExtensionsExtension,
+            return applyExperimental(kotlinCompile, androidExtension, androidExtensionsExtension,
                     project, variantData, androidProjectHandler)
         }
 
@@ -117,8 +116,14 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         pluginOptions += SubpluginOption("package", applicationPackage)
 
         fun addVariant(sourceSet: AndroidSourceSet) {
-            pluginOptions += SubpluginOption("variant", sourceSet.name + ';' +
-                    sourceSet.res.srcDirs.joinToString(";") { it.absolutePath })
+            val optionValue = sourceSet.name + ';' +
+                              sourceSet.res.srcDirs.joinToString(";") { it.absolutePath }
+            pluginOptions += CompositeSubpluginOption("variant", optionValue, listOf(
+                    SubpluginOption("sourceSetName", sourceSet.name),
+                    //use the INTERNAL option kind since the resources are tracked as sources (see below)
+                    FilesSubpluginOption("resDirs", sourceSet.res.srcDirs.toList())
+            ))
+            kotlinCompile.source(project.files(getLayoutDirectories(sourceSet.res.srcDirs)))
         }
 
         addVariant(mainSourceSet)
@@ -128,10 +133,19 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             addVariant(sourceSet)
         }
 
-        return pluginOptions
+        return wrapPluginOptions(pluginOptions, "configuration")
+    }
+
+    private fun getLayoutDirectories(resDirectories: Collection<File>): List<File> {
+        fun isLayoutDirectory(file: File) = file.name == "layout" || file.name.startsWith("layout-")
+
+        return resDirectories.flatMap { resDir ->
+            (resDir.listFiles(::isLayoutDirectory)).orEmpty().asList()
+        }
     }
 
     private fun applyExperimental(
+            kotlinCompile: KotlinCompile,
             androidExtension: BaseExtension,
             androidExtensionsExtension: AndroidExtensionsExtension,
             project: Project,
@@ -144,17 +158,24 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val pluginOptions = arrayListOf<SubpluginOption>()
 
         pluginOptions += SubpluginOption("experimental", "true")
-        pluginOptions += SubpluginOption("defaultCacheImplementation", androidExtensionsExtension.defaultCacheImplementation.optionName)
+        pluginOptions += SubpluginOption("defaultCacheImplementation",
+                androidExtensionsExtension.defaultCacheImplementation.optionName)
 
         val mainSourceSet = androidExtension.sourceSets.getByName("main")
         pluginOptions += SubpluginOption("package", getApplicationPackage(project, mainSourceSet))
 
         fun addVariant(name: String, resDirectories: List<File>) {
-            pluginOptions += SubpluginOption("variant", buildString {
+            val optionValue = buildString {
                 append(name)
                 append(';')
                 resDirectories.joinTo(this, separator = ";") { it.canonicalPath }
-            })
+            }
+            pluginOptions += CompositeSubpluginOption("variant", optionValue, listOf(
+                    SubpluginOption("variantName", name),
+                    // use INTERNAL option kind since the resources are tracked as sources (see below)
+                    FilesSubpluginOption("resDirs", resDirectories)))
+
+            kotlinCompile.source(project.files(getLayoutDirectories(resDirectories)))
         }
 
         fun addSourceSetAsVariant(name: String) {
@@ -186,7 +207,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             addSourceSetAsVariant(variantName)
         }
 
-        return pluginOptions
+        return wrapPluginOptions(pluginOptions, "configuration")
     }
 
     // Android25ProjectHandler.KaptVariant actually contains BaseVariant, not BaseVariantData

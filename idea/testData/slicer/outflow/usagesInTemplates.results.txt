@@ -1,0 +1,5 @@
+8 val <bold>hello = "Hello"</bold>
+9 	println("hello = $<bold>hello</bold>")
+10 	f1(<bold>hello</bold>)
+3 		fun f1(<bold>param: String</bold>){
+4 			val a = "param = $<bold>param</bold>"

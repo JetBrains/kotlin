@@ -31,4 +31,7 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
             description = "Paths where to find library .kotlin_metadata files"
     )
     var classpath: String? by FreezableVar(null)
+
+    @Argument(value = "-module-name", valueDescription = "<name>", description = "Name of the generated .kotlin_module file")
+    var moduleName: String? by FreezableVar(null)
 }

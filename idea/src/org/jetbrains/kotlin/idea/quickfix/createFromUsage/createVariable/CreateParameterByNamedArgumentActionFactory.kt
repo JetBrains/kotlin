@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinTypeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -58,11 +59,14 @@ object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFact
         } ?: anyType
         if (paramType.hasTypeParametersToAdd(functionDescriptor, context)) return null
 
+        val needVal = callable is KtPrimaryConstructor && ((callable.getContainingClassOrObject() as? KtClass)?.isData() ?: false)
+
         val parameterInfo = KotlinParameterInfo(
                 callableDescriptor = functionDescriptor,
                 name = name,
                 originalTypeInfo = KotlinTypeInfo(false, paramType),
-                defaultValueForCall = argumentExpression
+                defaultValueForCall = argumentExpression,
+                valOrVar = if (needVal) KotlinValVar.Val else KotlinValVar.None
         )
 
         return CreateParameterData(parameterInfo, element)

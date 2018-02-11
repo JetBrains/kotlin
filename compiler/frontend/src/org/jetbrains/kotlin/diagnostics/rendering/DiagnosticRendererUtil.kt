@@ -20,10 +20,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
-fun <P : Any> renderParameter(parameter: P, renderer: DiagnosticParameterRenderer<P>?, context: RenderingContext): Any
-        = renderer?.render(parameter, context) ?: parameter
+fun <P : Any> renderParameter(parameter: P, renderer: DiagnosticParameterRenderer<P>?, context: RenderingContext): Any =
+    renderer?.render(parameter, context) ?: parameter
 
-fun ClassifierDescriptorWithTypeParameters.renderKindWithName(): String = DescriptorRenderer.getClassifierKindPrefix(this) + " '" + name + "'"
+fun ClassifierDescriptorWithTypeParameters.renderKindWithName(): String =
+    DescriptorRenderer.getClassifierKindPrefix(this) + " '" + name + "'"
 
 fun ClassDescriptor.renderKind(): String = DescriptorRenderer.getClassifierKindPrefix(this)
 

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package bar
 
 fun main(args : Array<String>) {

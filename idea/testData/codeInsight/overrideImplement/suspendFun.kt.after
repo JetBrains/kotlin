@@ -1,0 +1,9 @@
+interface I {
+    suspend fun foo()
+}
+
+class C : I {
+    override suspend fun foo() {
+        <selection><caret>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
+    }
+}

@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClassPart
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
@@ -63,7 +64,7 @@ class MultifileClassCodegenImpl(
 ) : MultifileClassCodegen {
     private val facadeClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(facadeFqName)
 
-    private val packageFragment = getOnlyPackageFragment(facadeFqName.parent(), files, state.bindingContext)
+    private val packageFragment = getOnlyPackageFragment(facadeFqName.parent(), files, state.module)
 
     private val compiledPackageFragment = getCompiledPackageFragment(facadeFqName, state)
 
@@ -311,13 +312,20 @@ class MultifileClassCodegenImpl(
     }
 
     object DelegateToCompiledMemberGenerationStrategy : FunctionGenerationStrategy() {
+        override fun skipNotNullAssertionsForParameters(): kotlin.Boolean {
+            throw IllegalStateException("shouldn't be called")
+        }
+
         override fun generateBody(mv: MethodVisitor, frameMap: FrameMap, signature: JvmMethodSignature, context: MethodContext, parentCodegen: MemberCodegen<*>) {
             throw IllegalStateException("shouldn't be called")
         }
     }
 
     private fun writeKotlinMultifileFacadeAnnotationIfNeeded() {
-        if (!state.classBuilderMode.generateMetadata) return
+        if (!state.classBuilderMode.generateMetadata) {
+            classBuilder.ensureGenerated()
+            return
+        }
         if (files.any { it.isScript() }) return
 
         val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
@@ -349,10 +357,10 @@ class MultifileClassCodegenImpl(
         private val J_L_OBJECT = AsmTypes.OBJECT_TYPE.internalName
         private val FACADE_CLASS_ATTRIBUTES = Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL or Opcodes.ACC_SUPER
 
-        private fun getOnlyPackageFragment(packageFqName: FqName, files: Collection<KtFile>, bindingContext: BindingContext): PackageFragmentDescriptor? {
+        private fun getOnlyPackageFragment(packageFqName: FqName, files: Collection<KtFile>, moduleDescriptor: ModuleDescriptor): PackageFragmentDescriptor? {
             val fragments = SmartList<PackageFragmentDescriptor>()
             for (file in files) {
-                val fragment = bindingContext.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file)
+                val fragment = moduleDescriptor.findPackageFragmentForFile(file)
                                ?: throw AssertionError("package fragment is null for " + file + "\n" + file.text)
 
                 assert(packageFqName == fragment.fqName) { "expected package fq name: " + packageFqName + ", actual: " + fragment.fqName }

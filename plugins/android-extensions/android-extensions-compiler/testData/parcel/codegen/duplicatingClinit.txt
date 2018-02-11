@@ -15,11 +15,11 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
 
     public final java.lang.Object createFromParcel(android.os.Parcel p0)
 
-    public final User[] newArray(int p0)
+    public final java.lang.Object[] newArray(int p0)
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
-    public final static User$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     public final static User$Companion Companion
 
@@ -42,7 +42,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (User$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, LUser$Creator;)
+          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 

@@ -180,7 +180,7 @@ object JvmRuntimeVersionsConsistencyChecker {
         // The "Core" jar files should not be newer than the compiler. This behavior is reserved for the future if we realise that we're
         // going to break language/library compatibility in such a way that it's easier to make the old compiler just report an error
         // in the case the new runtime library is specified in the classpath, rather than employing any other compatibility breakage tools
-        // we have at our disposal (Deprecated, SinceKotlin, SinceKotlinInfo in metadata, etc.)
+        // we have at our disposal (Deprecated, SinceKotlin, VersionRequirement in metadata, etc.)
         if (runtimeJarsInfo.coreJars.map {
             checkNotNewerThanCompiler(messageCollector, it)
         }.any { it }) return ClasspathConsistency.InconsistentWithCompilerVersion

@@ -17,27 +17,39 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
 
 
 class IrFieldImpl(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val symbol: IrFieldSymbol
-): IrDeclarationBase(startOffset, endOffset, origin), IrField {
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrFieldSymbol,
+    override val name: Name,
+    override val type: KotlinType,
+    override val visibility: Visibility
+) : IrDeclarationBase(startOffset, endOffset, origin), IrField {
+    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrFieldSymbol) :
+            this(
+                startOffset, endOffset, origin, symbol,
+                symbol.descriptor.name, symbol.descriptor.type, symbol.descriptor.visibility
+            )
+
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor) :
             this(startOffset, endOffset, origin, IrFieldSymbolImpl(descriptor))
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor,
-                initializer: IrExpressionBody?
+    constructor(
+        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor,
+        initializer: IrExpressionBody?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.initializer = initializer
     }

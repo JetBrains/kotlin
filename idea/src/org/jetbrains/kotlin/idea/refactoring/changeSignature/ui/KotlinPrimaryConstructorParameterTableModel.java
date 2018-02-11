@@ -20,7 +20,6 @@ import com.intellij.openapi.ui.ComboBoxTableRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
-import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor;
@@ -73,7 +72,7 @@ public class KotlinPrimaryConstructorParameterTableModel extends KotlinCallableP
 
         @Override
         public TableCellEditor doCreateEditor(ParameterTableModelItemBase<KotlinParameterInfo> item) {
-            return new ComboBoxCellEditor(new JComboBox());
+            return new DefaultCellEditor(new JComboBox());
         }
 
         @Override

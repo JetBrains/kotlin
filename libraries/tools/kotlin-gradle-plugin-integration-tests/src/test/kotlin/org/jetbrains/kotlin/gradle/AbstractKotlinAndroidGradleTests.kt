@@ -1,8 +1,11 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.util.VersionNumber
 import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 
@@ -39,15 +42,13 @@ class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion =
     }
 }
 
-const val ANDROID_HOME_PATH = "../../../dependencies/androidSDK"
-
 abstract class AbstractKotlinAndroidGradleTests(
         protected val gradleVersion: String,
         private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = File(ANDROID_HOME_PATH),
+            super.defaultBuildOptions().copy(androidHome = KotlinTestUtils.findAndroidSdk(),
                                              androidGradlePluginVersion = androidGradlePluginVersion)
 
     @Test
@@ -213,6 +214,32 @@ fun getSomething() = 10
     }
 
     @Test
+    fun testAndroidExtensionsIncremental() {
+        val project = Project("AndroidExtensionsProject", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = true)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames(
+                    "MyActivity.kt", "noLayoutUsages.kt"
+            )
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths)
+        }
+
+        val activityLayout = File(project.projectDir, "app/src/main/res/layout/activity_main.xml")
+        activityLayout.modify { it.replace("textView", "newTextView") }
+
+        project.build("assembleDebug", options = options) {
+            assertFailed()
+            val affectedSources = project.projectDir.getFilesByNames("MyActivity.kt")
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths)
+        }
+    }
+
+
+    @Test
     fun testAndroidExtensionsManyVariants() {
         val project = Project("AndroidExtensionsManyVariants", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
@@ -231,6 +258,37 @@ fun getSomething() = 10
             assertNotContains("Changed dependencies of configuration .+ after it has been included in dependency resolution".toRegex())
         }
     }
+
+    @Test
+    fun testMultiplatformAndroidCompile() {
+        val project = Project("multiplatformAndroidProject", gradleVersion)
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains(
+                ":lib:compileKotlinCommon",
+                ":lib:compileTestKotlinCommon",
+                ":libJvm:compileKotlin",
+                ":libJvm:compileTestKotlin",
+                ":libAndroid:compileDebugKotlin",
+                ":libAndroid:compileReleaseKotlin",
+                ":libAndroid:compileDebugUnitTestKotlin",
+                ":libAndroid:compileReleaseUnitTestKotlin"
+            )
+
+            val kotlinFolder = if (VersionNumber.parse(gradleVersion).major > 3) "kotlin" else ""
+
+            assertFileExists("lib/build/classes/$kotlinFolder/main/foo/PlatformClass.kotlin_metadata")
+            assertFileExists("lib/build/classes/$kotlinFolder/test/foo/PlatformTest.kotlin_metadata")
+            assertFileExists("libJvm/build/classes/$kotlinFolder/main/foo/PlatformClass.class")
+            assertFileExists("libJvm/build/classes/$kotlinFolder/test/foo/PlatformTest.class")
+
+            assertFileExists("libAndroid/build/tmp/kotlin-classes/debug/foo/PlatformClass.class")
+            assertFileExists("libAndroid/build/tmp/kotlin-classes/release/foo/PlatformClass.class")
+            assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
+            assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
+        }
+    }
 }
 
 
@@ -242,7 +300,7 @@ abstract class AbstractKotlinAndroidWithJackGradleTests(
     fun getEnvJDK_18() = System.getenv()["JDK_18"]
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = File(ANDROID_HOME_PATH),
+            super.defaultBuildOptions().copy(androidHome = KotlinTestUtils.findAndroidSdk(),
                     androidGradlePluginVersion = androidGradlePluginVersion, javaHome = File(getEnvJDK_18()))
 
     @Test

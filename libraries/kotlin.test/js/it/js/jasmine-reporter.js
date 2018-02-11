@@ -1,5 +1,5 @@
 var Tester = require('./test-result-checker');
-var tester = new Tester(require('./expected-outcomes'));
+var tester = new Tester(require('./expected-outcomes'), 'jasmine');
 
 process.on('exit', function() {
     tester.end();

@@ -45,6 +45,13 @@ public data class MatchGroup(val value: String)
  */
 public class Regex(pattern: String, options: Set<RegexOption>) {
 
+    /** Creates a regular expression from the specified [pattern] string and the specified single [option].  */
+    public constructor(pattern: String, option: RegexOption) : this(pattern, setOf(option))
+
+    /** Creates a regular expression from the specified [pattern] string and the default options.  */
+    public constructor(pattern: String) : this(pattern, emptySet())
+
+
     /** The pattern string of this regular expression. */
     public val pattern: String = pattern
     /** The set of options that were used to create this regular expression. */
@@ -170,10 +177,14 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
 }
 
 /** Creates a regular expression from the specified [pattern] string and the specified single [option].  */
-public fun Regex(pattern: String, option: RegexOption): Regex = Regex(pattern, setOf(option))
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@JsName("Regex_sb3q2\$")
+public fun Regex_0(pattern: String, option: RegexOption): Regex = Regex(pattern, setOf(option))
 
 /** Creates a regular expression from the specified [pattern] string and the default options.  */
-public fun Regex(pattern: String): Regex = Regex(pattern, emptySet())
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@JsName("Regex_61zpoe\$")
+public fun Regex_1(pattern: String): Regex = Regex(pattern, emptySet())
 
 
 

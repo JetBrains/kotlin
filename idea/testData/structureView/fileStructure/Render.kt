@@ -15,7 +15,7 @@ val <T> Comparable<T>.a = "String"
 internal val b = object {}
 
 class A1
-class A2(val a: Int, var b = "some")
+class A2(val a: Int, var b: String = "some")
 class A3(val a: Int) {
     var b = "some"
 }

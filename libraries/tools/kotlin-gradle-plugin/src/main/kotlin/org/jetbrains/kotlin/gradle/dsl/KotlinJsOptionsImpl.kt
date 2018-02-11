@@ -23,8 +23,6 @@ internal class KotlinJsOptionsImpl : KotlinJsOptionsBase() {
 
     override fun updateArguments(args: K2JSCompilerArguments) {
         super.updateArguments(args)
-        // cast to List<Any> is important because in Groovy a GString can be inside of a list
-        val freeArgs = (freeCompilerArgs as List<Any>).map(Any::toString)
-        args.freeArgs.addAll(freeArgs)
+        copyFreeCompilerArgsToArgs(args)
     }
 }

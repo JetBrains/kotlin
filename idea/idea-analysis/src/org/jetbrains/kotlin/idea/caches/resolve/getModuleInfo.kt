@@ -33,12 +33,14 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.kotlin.utils.yieldIfNotNull
+import kotlin.coroutines.experimental.buildSequence
 
 fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.collectInfos(ModuleInfoCollector.NotNullTakeFirst)
 
 fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.collectInfos(ModuleInfoCollector.NullableTakeFirst)
 
-fun PsiElement.getModuleInfos(): List<IdeaModuleInfo> = this.collectInfos(ModuleInfoCollector.ToList)
+fun PsiElement.getModuleInfos(): Sequence<IdeaModuleInfo> = this.collectInfos(ModuleInfoCollector.ToSequence)
 
 fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile): IdeaModuleInfo? = collectInfosByVirtualFile(
         project, virtualFile,
@@ -80,17 +82,17 @@ private sealed class ModuleInfoCollector<out T>(
             }
     )
 
-    object ToList : ModuleInfoCollector<List<IdeaModuleInfo>>(
-            onResult = { it?.let(::listOf).orEmpty() },
-            onFailure = { reason ->
-                LOG.warn("Could not find correct module information.\nReason: $reason")
-                emptyList()
-            },
-            virtualFileProcessor = { project, virtualFile, isLibrarySource ->
-                val result = mutableListOf<IdeaModuleInfo>()
-                collectInfosByVirtualFile(project, virtualFile, isLibrarySource, { result.addIfNotNull(it) })
-                result
+    object ToSequence : ModuleInfoCollector<Sequence<IdeaModuleInfo>>(
+        onResult = { result -> result?.let { sequenceOf(it) } ?: emptySequence() },
+        onFailure = { reason ->
+            LOG.warn("Could not find correct module information.\nReason: $reason")
+            emptySequence()
+        },
+        virtualFileProcessor = { project, virtualFile, isLibrarySource ->
+            buildSequence {
+                collectInfosByVirtualFile(project, virtualFile, isLibrarySource, { yieldIfNotNull(it) })
             }
+        }
     )
 }
 
@@ -212,6 +214,7 @@ private fun OrderEntry.toIdeaModuleInfo(
         virtualFile: VirtualFile,
         treatAsLibrarySource: Boolean = false
 ): IdeaModuleInfo? {
+    if (this is ModuleOrderEntry) return null
     if (!isValid) return null
 
     when (this) {

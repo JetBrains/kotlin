@@ -33,6 +33,10 @@ annotation class Ann8(val p1: Array<String>,
                       val p3: Array<MyEnum>,
                       val p4: Array<Ann1>)
 
+annotation class Ann9(
+        val error: <!UNRESOLVED_REFERENCE!>Unresolved<!> = <!UNRESOLVED_REFERENCE!>Unresolved<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>VALUE<!>
+)
+
 
 // INCORRECT
 annotation class InAnn1(val p1: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Int?<!>,

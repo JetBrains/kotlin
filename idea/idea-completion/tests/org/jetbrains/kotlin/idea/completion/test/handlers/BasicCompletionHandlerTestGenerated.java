@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.test.handlers;
@@ -593,6 +582,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("Suspend.kt")
+        public void testSuspend() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/Suspend.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TypeFunctionName.kt")
         public void testTypeFunctionName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/TypeFunctionName.kt");
@@ -695,6 +690,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         @TestMetadata("TabReplace2.kt")
         public void testTabReplace2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/TabReplace2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TabReplace3.kt")
+        public void testTabReplace3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/TabReplace3.kt");
             doTest(fileName);
         }
 
@@ -826,6 +827,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         @TestMetadata("AfterDot3.kt")
         public void testAfterDot3() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/AfterDot3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterDot4.kt")
+        public void testAfterDot4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/AfterDot4.kt");
             doTest(fileName);
         }
 

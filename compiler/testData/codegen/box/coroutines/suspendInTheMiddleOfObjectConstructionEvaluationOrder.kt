@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// IGNORE_BACKEND: JS
 import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
@@ -49,7 +48,7 @@ fun box(): String {
         }
     }
 
-    if (logger.toString() != "A.<clinit>;args;A.<init>;") {
+    if (logger.toString() != "args;A.<clinit>;A.<init>;") {
         return "Fail: '$logger'"
     }
 

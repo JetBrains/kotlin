@@ -10,3 +10,7 @@ fun <T> foo()
         where T : NavigationItem,
               T : RustNamedElement {
 }
+
+interface Bound1
+interface Bound2
+class WhereClass1<T> where T : Bound1, T : Bound2

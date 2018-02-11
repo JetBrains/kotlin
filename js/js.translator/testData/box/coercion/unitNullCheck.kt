@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1027
+// EXPECTED_REACHABLE_NODES: 1132
 var log = ""
 
 fun box(): String {

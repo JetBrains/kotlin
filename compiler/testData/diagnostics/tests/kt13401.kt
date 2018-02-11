@@ -1,4 +1,7 @@
+// !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
 // See KT-13401: SOE in VarianceChecker
+
 interface Rec<T: Rec<T>> {
     fun t(): T
 }
@@ -11,5 +14,5 @@ class Owner<in T> {
         fun getT() = u
     }
 
-    fun foo(arg: Inner<*>) = arg.getT()
+    <!NI;TYPE_VARIANCE_CONFLICT!>fun foo(arg: Inner<*>)<!> = arg.getT()
 }

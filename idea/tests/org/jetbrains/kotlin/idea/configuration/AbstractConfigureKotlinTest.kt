@@ -181,7 +181,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
 
             val pathToJar = getPathToJar(runtimeState, jarFromDist, jarFromTemp)
             for (module in modules) {
-                configurator.configureModuleWithLibrary(module, pathToJar, pathToJar, collector, runtimeState)
+                configurator.configureModule(module, pathToJar, pathToJar, collector, runtimeState)
             }
             collector.showNotification()
         }

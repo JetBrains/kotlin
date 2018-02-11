@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.util.io.DataInputOutputUtil.readSeq
@@ -33,7 +33,7 @@ object ScriptDependenciesFileAttribute {
     private val VERSION = 1
     private val ID = "kotlin-script-dependencies"
 
-    private val fileAttributeService = service<FileAttributeService>()
+    private val fileAttributeService = ServiceManager.getService(FileAttributeService::class.java)
 
     init {
         fileAttributeService.register(ID, VERSION, false)

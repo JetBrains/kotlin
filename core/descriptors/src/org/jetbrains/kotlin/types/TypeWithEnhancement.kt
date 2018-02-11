@@ -38,7 +38,7 @@ class SimpleTypeWithEnhancement(
             = origin.replaceAnnotations(newAnnotations).wrapEnhancement(enhancement) as SimpleType
 
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
-            = origin.makeNullableAsSpecified(newNullability).wrapEnhancement(enhancement) as SimpleType
+            = origin.makeNullableAsSpecified(newNullability).wrapEnhancement(enhancement.unwrap().makeNullableAsSpecified(newNullability)) as SimpleType
 }
 
 class FlexibleTypeWithEnhancement(
@@ -51,7 +51,7 @@ class FlexibleTypeWithEnhancement(
             = origin.replaceAnnotations(newAnnotations).wrapEnhancement(enhancement)
 
     override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
-            = origin.makeNullableAsSpecified(newNullability).wrapEnhancement(enhancement)
+            = origin.makeNullableAsSpecified(newNullability).wrapEnhancement(enhancement.unwrap().makeNullableAsSpecified(newNullability))
 
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String
             = origin.render(renderer, options)

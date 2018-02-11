@@ -35,27 +35,16 @@ class NotNullableUserDataProperty<in R : UserDataHolder, T : Any>(val key: Key<T
     }
 }
 
-class CopyableUserDataProperty<in R : PsiElement, T : Any>(val key: Key<T>) {
+class CopyablePsiUserDataProperty<in R : PsiElement, T : Any>(val key: Key<T>) {
     operator fun getValue(thisRef: R, property: KProperty<*>) = thisRef.getCopyableUserData(key)
 
     operator fun setValue(thisRef: R, property: KProperty<*>, value: T?) = thisRef.putCopyableUserData(key, value)
 }
 
-class NotNullableCopyableUserDataProperty<in R : PsiElement, T : Any>(val key: Key<T>, val defaultValue: T) {
+class NotNullablePsiCopyableUserDataProperty<in R : PsiElement, T : Any>(val key: Key<T>, val defaultValue: T) {
     operator fun getValue(thisRef: R, property: KProperty<*>) = thisRef.getCopyableUserData(key) ?: defaultValue
 
     operator fun setValue(thisRef: R, property: KProperty<*>, value: T) {
         thisRef.putCopyableUserData(key, if (value != defaultValue) value else null)
     }
-}
-
-class NotNullableCopyableUserDataPropertyWithLazyDefault<in R : PsiElement, T : Any>(
-        val key: Key<T>,
-        val computeDefaultValue: () -> T
-) {
-    private val delegate by lazy { NotNullableCopyableUserDataProperty<R, T>(key, computeDefaultValue()) }
-
-    operator fun getValue(thisRef: R, property: KProperty<*>) = delegate.getValue(thisRef, property)
-
-    operator fun setValue(thisRef: R, property: KProperty<*>, value: T) = delegate.setValue(thisRef, property, value)
 }

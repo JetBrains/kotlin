@@ -1,0 +1,41 @@
+package
+
+public val test0: P<kotlin.Int, kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test0p2: P2<kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test0p2a: Pair<out kotlin.Any, out kotlin.Any>
+public val test0pr: PR<kotlin.String, kotlin.Int> /* = Pair<kotlin.Int, kotlin.String> */
+public val test1: P<kotlin.Int, kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test1p2: P2<kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test1pr: PR<kotlin.String, kotlin.Int> /* = Pair<kotlin.Int, kotlin.String> */
+public val test2: P<kotlin.Int, kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test2p2: P2<kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test2pr: PR<kotlin.Int, kotlin.String> /* = Pair<kotlin.String, kotlin.Int> */
+public val test2pra: PR<kotlin.String, kotlin.Int> /* = Pair<kotlin.Int, kotlin.String> */
+public val test3: P<kotlin.Int, kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test3p2: P2<kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test3pr: Pair<out kotlin.Any, out kotlin.Any>
+public val testN0: N<kotlin.String> /* = Num<kotlin.String> */
+public val testN1: N<kotlin.Int> /* = Num<kotlin.Int> */
+public val testN1a: N<kotlin.String> /* = Num<kotlin.String> */
+public val testN2: N<kotlin.Int> /* = Num<kotlin.Int> */
+
+public final class Num</*0*/ T : kotlin.Number> {
+    public constructor Num</*0*/ T : kotlin.Number>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Pair</*0*/ T1, /*1*/ T2> {
+    public constructor Pair</*0*/ T1, /*1*/ T2>(/*0*/ x1: T1, /*1*/ x2: T2)
+    public final val x1: T1
+    public final val x2: T2
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias N</*0*/ T>  = Num<T>
+public typealias P</*0*/ T1, /*1*/ T2>  = Pair<T1, T2>
+public typealias P2</*0*/ T>  = Pair<T, T>
+public typealias PR</*0*/ T1, /*1*/ T2>  = Pair<T2, T1>

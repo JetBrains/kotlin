@@ -33,11 +33,11 @@ import org.jetbrains.kotlin.types.upperIfFlexible
 
 
 fun checkSimpleArgument(
-        csBuilder: ConstraintSystemBuilder,
-        argument: SimpleKotlinCallArgument,
-        expectedType: UnwrappedType?,
-        diagnosticsHolder: KotlinDiagnosticsHolder,
-        isReceiver: Boolean
+    csBuilder: ConstraintSystemBuilder,
+    argument: SimpleKotlinCallArgument,
+    expectedType: UnwrappedType?,
+    diagnosticsHolder: KotlinDiagnosticsHolder,
+    isReceiver: Boolean
 ): ResolvedAtom = when (argument) {
     is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
     is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
@@ -45,11 +45,11 @@ fun checkSimpleArgument(
 }
 
 private fun checkExpressionArgument(
-        csBuilder: ConstraintSystemBuilder,
-        expressionArgument: ExpressionKotlinCallArgument,
-        expectedType: UnwrappedType?,
-        diagnosticsHolder: KotlinDiagnosticsHolder,
-        isReceiver: Boolean
+    csBuilder: ConstraintSystemBuilder,
+    expressionArgument: ExpressionKotlinCallArgument,
+    expectedType: UnwrappedType?,
+    diagnosticsHolder: KotlinDiagnosticsHolder,
+    isReceiver: Boolean
 ): ResolvedAtom {
     val resolvedKtExpression = ResolvedExpressionAtom(expressionArgument)
     if (expectedType == null) return resolvedKtExpression
@@ -58,7 +58,7 @@ private fun checkExpressionArgument(
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(expressionArgument.receiver.stableType, expectedType)
 
     fun unstableSmartCastOrSubtypeError(
-            unstableType: UnwrappedType?, actualExpectedType: UnwrappedType, position: ConstraintPosition
+        unstableType: UnwrappedType?, actualExpectedType: UnwrappedType, position: ConstraintPosition
     ): KotlinCallDiagnostic? {
         if (unstableType != null) {
             if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, actualExpectedType, position)) {
@@ -74,25 +74,30 @@ private fun checkExpressionArgument(
     if (expressionArgument.isSafeCall) {
         if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedNullableType, position)) {
             diagnosticsHolder.addDiagnosticIfNotNull(
-                    unstableSmartCastOrSubtypeError(expressionArgument.receiver.unstableType, expectedNullableType, position))
+                unstableSmartCastOrSubtypeError(expressionArgument.receiver.unstableType, expectedNullableType, position)
+            )
         }
         return resolvedKtExpression
     }
 
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
         if (!isReceiver) {
-            diagnosticsHolder.addDiagnosticIfNotNull(unstableSmartCastOrSubtypeError(expressionArgument.receiver.unstableType, expectedType, position))
+            diagnosticsHolder.addDiagnosticIfNotNull(
+                unstableSmartCastOrSubtypeError(
+                    expressionArgument.receiver.unstableType,
+                    expectedType,
+                    position
+                )
+            )
             return resolvedKtExpression
         }
 
         val unstableType = expressionArgument.receiver.unstableType
         if (unstableType != null && csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
             diagnosticsHolder.addDiagnostic(UnstableSmartCast(expressionArgument, unstableType))
-        }
-        else if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedNullableType, position)) {
+        } else if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedNullableType, position)) {
             diagnosticsHolder.addDiagnostic(UnsafeCallError(expressionArgument))
-        }
-        else {
+        } else {
             csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
         }
     }
@@ -122,7 +127,7 @@ private fun captureFromTypeParameterUpperBoundIfNeeded(argumentType: UnwrappedTy
     if (argumentType.lowerIfFlexible().constructor.declarationDescriptor is TypeParameterDescriptor) {
         val chosenSupertype = argumentType.lowerIfFlexible().supertypes().singleOrNull {
             it.constructor.declarationDescriptor is ClassifierDescriptorWithTypeParameters &&
-            it.unwrap().hasSupertypeWithGivenTypeConstructor(expectedTypeConstructor)
+                    it.unwrap().hasSupertypeWithGivenTypeConstructor(expectedTypeConstructor)
         }
         if (chosenSupertype != null) {
             return captureFromExpression(chosenSupertype.unwrap()) ?: argumentType
@@ -133,11 +138,11 @@ private fun captureFromTypeParameterUpperBoundIfNeeded(argumentType: UnwrappedTy
 }
 
 private fun checkSubCallArgument(
-        csBuilder: ConstraintSystemBuilder,
-        subCallArgument: SubKotlinCallArgument,
-        expectedType: UnwrappedType?,
-        diagnosticsHolder: KotlinDiagnosticsHolder,
-        isReceiver: Boolean
+    csBuilder: ConstraintSystemBuilder,
+    subCallArgument: SubKotlinCallArgument,
+    expectedType: UnwrappedType?,
+    diagnosticsHolder: KotlinDiagnosticsHolder,
+    isReceiver: Boolean
 ): ResolvedAtom {
     val subCallResult = subCallArgument.callResult
 
@@ -156,7 +161,7 @@ private fun checkSubCallArgument(
 
     if (isReceiver && !csBuilder.addSubtypeConstraintIfCompatible(currentReturnType, expectedType, position) &&
         csBuilder.addSubtypeConstraintIfCompatible(currentReturnType, expectedNullableType, position)
-            ) {
+    ) {
         diagnosticsHolder.addDiagnostic(UnsafeCallError(subCallArgument))
         return subCallResult
     }

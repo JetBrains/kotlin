@@ -1,4 +1,3 @@
-
 apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
@@ -8,6 +7,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend-common"))
     compile(project(":compiler:ir.tree"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {

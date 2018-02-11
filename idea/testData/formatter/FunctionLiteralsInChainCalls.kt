@@ -33,6 +33,14 @@ val abc = ArrayList<Int>().map {
 }
 }
 
+fun test4() {
+    val abc = ArrayList<Int>().mapTo(
+        LinkedHashSet()
+    ) {
+        it * 2
+    }
+}
+
 fun testWithComments() {
     val abc = ArrayList<Int>()
 //  .map {

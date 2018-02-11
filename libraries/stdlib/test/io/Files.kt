@@ -3,7 +3,6 @@ package test.io
 
 import java.io.*
 import java.util.*
-import org.junit.Test
 import kotlin.io.walkTopDown
 import kotlin.test.*
 

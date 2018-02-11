@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 open class KtExpressionWithLabel(node: ASTNode) : KtExpressionImpl(node) {
 
     fun getTargetLabel(): KtSimpleNameExpression? =
-            labelQualifier?.findChildByType(KtNodeTypes.LABEL) as? KtSimpleNameExpression
+        labelQualifier?.findChildByType(KtNodeTypes.LABEL) as? KtSimpleNameExpression
 
     val labelQualifier: KtContainerNode?
         get() = findChildByType(KtNodeTypes.LABEL_QUALIFIER)

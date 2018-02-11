@@ -27,31 +27,35 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrReturnImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val returnTargetSymbol: IrFunctionSymbol,
-        override var value: IrExpression
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    override val returnTargetSymbol: IrFunctionSymbol,
+    override var value: IrExpression
 ) : IrExpressionBase(startOffset, endOffset, type), IrReturn {
     constructor(startOffset: Int, endOffset: Int, returnTargetSymbol: IrFunctionSymbol, value: IrExpression) :
             this(startOffset, endOffset, returnTargetSymbol.descriptor.builtIns.nothingType, returnTargetSymbol, value)
 
     @Deprecated("Creates unbound symbol")
     constructor(startOffset: Int, endOffset: Int, type: KotlinType, returnTargetDescriptor: FunctionDescriptor, value: IrExpression) :
-            this(startOffset, endOffset, type,
-                 createFunctionSymbol(returnTargetDescriptor),
-                 value)
+            this(
+                startOffset, endOffset, type,
+                createFunctionSymbol(returnTargetDescriptor),
+                value
+            )
 
     @Deprecated("Creates unbound symbol")
     constructor(startOffset: Int, endOffset: Int, returnTargetDescriptor: FunctionDescriptor, value: IrExpression) :
-            this(startOffset, endOffset, returnTargetDescriptor.builtIns.nothingType,
-                 createFunctionSymbol(returnTargetDescriptor),
-                 value)
+            this(
+                startOffset, endOffset, returnTargetDescriptor.builtIns.nothingType,
+                createFunctionSymbol(returnTargetDescriptor),
+                value
+            )
 
     override val returnTarget: FunctionDescriptor get() = returnTargetSymbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitReturn(this, data)
+        visitor.visitReturn(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         value.accept(visitor, data)

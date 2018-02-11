@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.NameSuggestionKt;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
+import org.jetbrains.kotlin.js.resolve.diagnostics.JsBuiltinNameClashChecker;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
@@ -42,6 +45,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -54,6 +58,7 @@ import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.descriptors.FindClassInModuleKt.findClassAcrossModuleDependencies;
 import static org.jetbrains.kotlin.js.config.JsConfig.UNKNOWN_EXTERNAL_MODULE_NAME;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
@@ -141,6 +146,15 @@ public final class StaticContext {
     @NotNull
     private final SourceFilePathResolver sourceFilePathResolver;
 
+    private final Map<VariableDescriptorWithAccessors, JsName> propertyMetadataVariables = new HashMap<>();
+
+    private final boolean isStdlib;
+
+    private static final Set<String> BUILTIN_JS_PROPERTIES = Sets.union(
+            JsBuiltinNameClashChecker.PROHIBITED_MEMBER_NAMES,
+            JsBuiltinNameClashChecker.PROHIBITED_STATIC_NAMES
+    );
+
     public StaticContext(
             @NotNull BindingTrace bindingTrace,
             @NotNull JsConfig config,
@@ -163,6 +177,10 @@ public final class StaticContext {
 
         classModelGenerator = new ClassModelGenerator(TranslationContext.rootContext(this));
         this.sourceFilePathResolver = sourceFilePathResolver;
+
+        ClassDescriptor exceptionClass = findClassAcrossModuleDependencies(
+                moduleDescriptor, ClassId.topLevel(new FqName("kotlin.Exception")));
+        isStdlib = exceptionClass != null && DescriptorUtils.getContainingModule(exceptionClass) == moduleDescriptor;
     }
 
     @NotNull
@@ -238,7 +256,11 @@ public final class StaticContext {
 
     @NotNull
     private JsExpression getQualifiedExpression(@NotNull DeclarationDescriptor descriptor) {
-        JsExpression fqn = fqnCache.computeIfAbsent(descriptor, this::buildQualifiedExpression);
+        JsExpression fqn = fqnCache.get(descriptor);
+        if (fqn == null) {
+            fqn = buildQualifiedExpression(descriptor);
+            fqnCache.put(descriptor, fqn);
+        }
         return fqn.deepCopy();
     }
 
@@ -602,7 +624,6 @@ public final class StaticContext {
     }
 
     private final class ScopeGenerator extends Generator<JsScope> {
-
         public ScopeGenerator() {
             Rule<JsScope> generateNewScopesForClassesWithNoAncestors = descriptor -> {
                 if (!(descriptor instanceof ClassDescriptor)) {
@@ -610,6 +631,9 @@ public final class StaticContext {
                 }
                 if (getSuperclass((ClassDescriptor) descriptor) == null) {
                     JsFunction function = new JsFunction(new JsRootScope(program), new JsBlock(), descriptor.toString());
+                    for (String builtinName : BUILTIN_JS_PROPERTIES) {
+                        function.getScope().declareName(builtinName);
+                    }
                     scopeToFunction.put(function.getScope(), function);
                     return function.getScope();
                 }
@@ -801,12 +825,12 @@ public final class StaticContext {
 
     @NotNull
     public JsExpression exportModuleForInline(@NotNull String moduleId, @NotNull JsName moduleName) {
-        return modulesImportedForInline.computeIfAbsent(moduleId, k -> {
+        JsExpression moduleRef = modulesImportedForInline.get(moduleId);
+        if (moduleRef == null) {
             JsExpression currentModuleRef = pureFqn(getInnerNameForDescriptor(getCurrentModule()), null);
             JsExpression importsRef = pureFqn(Namer.IMPORTS_FOR_INLINE_PROPERTY, currentModuleRef);
             JsExpression currentImports = pureFqn(getNameForImportsForInline(), null);
 
-            JsExpression moduleRef;
             JsExpression lhsModuleRef;
             if (NameSuggestionKt.isValidES5Identifier(moduleId)) {
                 moduleRef = pureFqn(moduleId, importsRef);
@@ -823,8 +847,10 @@ public final class StaticContext {
             MetadataProperties.setExportedTag(importStmt, "imports:" + moduleId);
             getFragment().getExportBlock().getStatements().add(importStmt);
 
-            return moduleRef;
-        }).deepCopy();
+            modulesImportedForInline.put(moduleId, moduleRef);
+        }
+
+        return moduleRef.deepCopy();
     }
 
     @NotNull
@@ -840,9 +866,49 @@ public final class StaticContext {
 
     @NotNull
     public JsExpression getReferenceToIntrinsic(@NotNull String name) {
-        JsName resultName = intrinsicNames.computeIfAbsent(name, k ->
-                importDeclaration(NameSuggestion.sanitizeName(name), "intrinsic:" + name, TranslationUtils.getIntrinsicFqn(name)));
+        JsName resultName = intrinsicNames.computeIfAbsent(name, k -> {
+            if (isStdlib) {
+                DeclarationDescriptor descriptor = findDescriptorForIntrinsic(name);
+                if (descriptor != null) {
+                    return getInnerNameForDescriptor(descriptor);
+                }
+            }
+            return importDeclaration(NameSuggestion.sanitizeName(name), "intrinsic:" + name, TranslationUtils.getIntrinsicFqn(name));
+        });
 
         return pureFqn(resultName, null);
+    }
+
+    @Nullable
+    private DeclarationDescriptor findDescriptorForIntrinsic(@NotNull String name) {
+        PackageViewDescriptor rootPackage = currentModule.getPackage(FqName.ROOT);
+        FunctionDescriptor functionDescriptor = DescriptorUtils.getFunctionByNameOrNull(
+                rootPackage.getMemberScope(), Name.identifier(name));
+        if (functionDescriptor != null) return functionDescriptor;
+
+        ClassifierDescriptor cls = rootPackage.getMemberScope().getContributedClassifier(
+                Name.identifier(name), NoLookupLocation.FROM_BACKEND);
+        if (cls != null) return cls;
+
+        return null;
+    }
+
+    @NotNull
+    public JsName getVariableForPropertyMetadata(@NotNull VariableDescriptorWithAccessors property) {
+        return propertyMetadataVariables.computeIfAbsent(property, p -> {
+            String id = getSuggestedName(property) + "_metadata";
+            JsName name = JsScope.declareTemporaryName(NameSuggestion.sanitizeName(id));
+
+            // Unexpectedly! However, the only thing, for which 'imported' property is relevant, is a import clener.
+            // We want similar cleanup to be performed for unused MetadataProperty instances.
+            // TODO: consider a different name for 'imported' property
+            MetadataProperties.setImported(name, true);
+
+            JsStringLiteral propertyNameLiteral = new JsStringLiteral(property.getName().asString());
+            JsExpression construction = new JsNew(getReferenceToIntrinsic("PropertyMetadata"),
+                                                  Collections.singletonList(propertyNameLiteral));
+            fragment.getDeclarationBlock().getStatements().add(JsAstUtils.newVar(name, construction));
+            return name;
+        });
     }
 }

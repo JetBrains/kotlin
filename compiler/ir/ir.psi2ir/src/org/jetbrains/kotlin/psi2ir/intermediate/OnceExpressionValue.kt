@@ -23,15 +23,15 @@ import org.jetbrains.kotlin.types.KotlinType
 abstract class ExpressionValue(override val type: KotlinType) : IntermediateValue
 
 inline fun generateExpressionValue(type: KotlinType, crossinline generate: () -> IrExpression) =
-        object : ExpressionValue(type) {
-            override fun load(): IrExpression = generate()
-        }
+    object : ExpressionValue(type) {
+        override fun load(): IrExpression = generate()
+    }
 
 inline fun generateDelegatedValue(type: KotlinType, crossinline generateValue: () -> IntermediateValue) =
-        object : ExpressionValue(type) {
-            val lazyDelegate by lazy { generateValue() }
-            override fun load(): IrExpression = lazyDelegate.load()
-        }
+    object : ExpressionValue(type) {
+        val lazyDelegate by lazy { generateValue() }
+        override fun load(): IrExpression = lazyDelegate.load()
+    }
 
 class OnceExpressionValue(val irExpression: IrExpression) : LValue, AssignmentReceiver {
     private var instantiated = false
@@ -49,5 +49,5 @@ class OnceExpressionValue(val irExpression: IrExpression) : LValue, AssignmentRe
     }
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
-            withLValue(this)
+        withLValue(this)
 }

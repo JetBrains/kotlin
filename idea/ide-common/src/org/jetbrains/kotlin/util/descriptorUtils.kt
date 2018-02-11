@@ -28,10 +28,14 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl
 import org.jetbrains.kotlin.types.typeUtil.equalTypesOrNulls
 
-fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?, descriptor2: DeclarationDescriptor?): Boolean {
+fun descriptorsEqualWithSubstitution(
+        descriptor1: DeclarationDescriptor?,
+        descriptor2: DeclarationDescriptor?,
+        checkOriginals: Boolean = true
+): Boolean {
     if (descriptor1 == descriptor2) return true
     if (descriptor1 == null || descriptor2 == null) return false
-    if (descriptor1.original != descriptor2.original) return false
+    if (checkOriginals && descriptor1.original != descriptor2.original) return false
     if (descriptor1 !is CallableDescriptor) return true
     descriptor2 as CallableDescriptor
 

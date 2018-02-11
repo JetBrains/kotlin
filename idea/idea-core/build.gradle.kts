@@ -1,8 +1,11 @@
+
 apply { plugin("kotlin") }
 
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
-    compile(project(":core"))
+    compileOnly(project(":kotlin-reflect-api"))
+    compile(project(":core:descriptors"))
+    compile(project(":core:descriptors.jvm"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:frontend.script"))
@@ -12,10 +15,11 @@ dependencies {
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":plugins:android-extensions-compiler"))
-    compile(ideaSdkCoreDeps("intellij-core", "util"))
-    compile(ideaSdkDeps("openapi", "idea"))
-    compile(ideaPluginDeps("gradle-tooling-api", "gradle", plugin = "gradle"))
-    compile(preloadedDeps("kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("util", "openapi", "idea", "asm-all", "jdom", "annotations", "trove4j", "guava", rootProject = rootProject) }
+    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api", "gradle", rootProject = rootProject) }
 }
 
 sourceSets {

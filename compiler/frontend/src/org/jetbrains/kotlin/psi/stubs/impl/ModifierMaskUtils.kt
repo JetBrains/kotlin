@@ -26,9 +26,11 @@ object ModifierMaskUtils {
         assert(MODIFIER_KEYWORDS_ARRAY.size <= 32) { "Current implementation depends on the ability to represent modifier list as bit mask" }
     }
 
-    @JvmStatic fun computeMaskFromModifierList(modifierList: KtModifierList): Int = computeMask { modifierList.hasModifier(it) }
+    @JvmStatic
+    fun computeMaskFromModifierList(modifierList: KtModifierList): Int = computeMask { modifierList.hasModifier(it) }
 
-    @JvmStatic fun computeMask(hasModifier: (KtModifierKeywordToken) -> Boolean): Int {
+    @JvmStatic
+    fun computeMask(hasModifier: (KtModifierKeywordToken) -> Boolean): Int {
         var mask = 0
         for ((index, modifierKeywordToken) in MODIFIER_KEYWORDS_ARRAY.withIndex()) {
             if (hasModifier(modifierKeywordToken)) {
@@ -38,13 +40,15 @@ object ModifierMaskUtils {
         return mask
     }
 
-    @JvmStatic fun maskHasModifier(mask: Int, modifierToken: KtModifierKeywordToken): Boolean {
+    @JvmStatic
+    fun maskHasModifier(mask: Int, modifierToken: KtModifierKeywordToken): Boolean {
         val index = MODIFIER_KEYWORDS_ARRAY.indexOf(modifierToken)
         assert(index >= 0) { "All JetModifierKeywordTokens should be present in MODIFIER_KEYWORDS_ARRAY" }
         return (mask and (1 shl index)) != 0
     }
 
-    @JvmStatic fun maskToString(mask: Int): String {
+    @JvmStatic
+    fun maskToString(mask: Int): String {
         val sb = StringBuilder()
         sb.append("[")
         var first = true

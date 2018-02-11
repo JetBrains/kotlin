@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.Cr
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByRefActionFactory
-import org.jetbrains.kotlin.idea.quickfix.createImpl.CreateActualFix
+import org.jetbrains.kotlin.idea.quickfix.expectactual.AddActualFix
+import org.jetbrains.kotlin.idea.quickfix.expectactual.CreateActualFix
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrateExternalExtensionFix
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrateTypeParameterListFix
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
@@ -151,8 +152,6 @@ class QuickFixRegistrar : QuickFixContributor {
         NAMED_PARAMETER_NOT_FOUND.registerFactory(ImportForMismatchingArgumentsFix)
         NONE_APPLICABLE.registerFactory(ImportForMismatchingArgumentsFix)
 
-        UNRESOLVED_REFERENCE.registerFactory(AddTestLibQuickFix)
-
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(ImportFix)
 
         FUNCTION_EXPECTED.registerFactory(InvokeImportFix)
@@ -252,7 +251,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS.registerFactory(AddWhenRemainingBranchesFix)
         BREAK_OR_CONTINUE_IN_WHEN.registerFactory(AddLoopLabelFix)
 
-        NO_TYPE_ARGUMENTS_ON_RHS.registerFactory(AddStarProjectionsFix.IsExpressionFactory)
+        NO_TYPE_ARGUMENTS_ON_RHS.registerFactory(AddStarProjectionsFixFactory)
 
         TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.registerFactory(RemovePsiElementSimpleFix.RemoveTypeArgumentsFactory)
 
@@ -403,8 +402,6 @@ class QuickFixRegistrar : QuickFixContributor {
 
         POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION.registerFactory(ReplaceJavaAnnotationPositionedArgumentsFix)
 
-        NO_REFLECTION_IN_CLASS_PATH.registerFactory(AddReflectionQuickFix)
-
         ErrorsJvm.JAVA_TYPE_MISMATCH.registerFactory(CastExpressionFix.GenericVarianceConversion)
 
         UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
@@ -480,6 +477,8 @@ class QuickFixRegistrar : QuickFixContributor {
         OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.registerFactory(RemoveAnnotationFix.JvmOverloads)
 
         NO_ACTUAL_FOR_EXPECT.registerFactory(CreateActualFix)
+        NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS.registerFactory(AddActualFix)
+
         ACTUAL_MISSING.registerFactory(AddModifierFix.createFactory(KtTokens.ACTUAL_KEYWORD))
 
         CAST_NEVER_SUCCEEDS.registerFactory(ReplacePrimitiveCastWithNumberConversionFix)
@@ -491,11 +490,6 @@ class QuickFixRegistrar : QuickFixContributor {
 
         UNRESOLVED_REFERENCE.registerFactory(AddSuspendModifierFix.UnresolvedReferenceFactory)
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(AddSuspendModifierFix.UnresolvedReferenceFactory)
-
-        UNSUPPORTED_FEATURE.registerFactory(EnableUnsupportedFeatureFix)
-
-        EXPERIMENTAL_FEATURE_ERROR.registerFactory(ChangeCoroutineSupportFix)
-        EXPERIMENTAL_FEATURE_WARNING.registerFactory(ChangeCoroutineSupportFix)
 
         UNRESOLVED_REFERENCE.registerFactory(CreateLabelFix)
         YIELD_IS_RESERVED.registerFactory(UnsupportedYieldFix)
@@ -511,6 +505,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         RETURN_NOT_ALLOWED.registerFactory(ChangeToLabeledReturnFix)
 
+        WRONG_ANNOTATION_TARGET.registerFactory(AddAnnotationTargetFix)
         WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.registerFactory(MoveReceiverAnnotationFix)
 
         NO_CONSTRUCTOR.registerFactory(RemoveNoConstructorFix)

@@ -124,7 +124,7 @@ public class ErrorUtils {
 
             @Override
             public void assertValid() {
-                throw new IllegalStateException("ERROR_MODULE is not a valid module");
+                throw new InvalidModuleException("ERROR_MODULE is not a valid module");
             }
         };
     }
@@ -366,11 +366,6 @@ public class ErrorUtils {
     @NotNull
     public static ClassDescriptor createErrorClass(@NotNull String debugMessage) {
         return new ErrorClassDescriptor(Name.special("<ERROR CLASS: " + debugMessage + ">"));
-    }
-
-    @NotNull
-    public static ClassDescriptor createErrorClassWithExactName(@NotNull Name name) {
-        return new ErrorClassDescriptor(name);
     }
 
     @NotNull

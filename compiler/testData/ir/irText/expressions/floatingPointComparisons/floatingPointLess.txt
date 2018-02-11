@@ -1,0 +1,147 @@
+FILE fqName:<root> fileName:/floatingPointLess.kt
+  FUN name:test1d visibility:public modality:FINAL <> (x:kotlin.Double, y:kotlin.Double) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Double flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test1d(Double, Double): Boolean'
+        CALL 'less(Double, Double): Boolean' type=kotlin.Boolean origin=LT
+          arg0: GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
+          arg1: GET_VAR 'value-parameter y: Double' type=kotlin.Double origin=null
+  FUN name:test2d visibility:public modality:FINAL <> (x:kotlin.Double, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test2d(Double, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+              GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+            then: CALL 'less(Double, Double): Boolean' type=kotlin.Boolean origin=LT
+              arg0: GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
+              arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:test3d visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test3d(Any, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CALL 'less(Double, Double): Boolean' type=kotlin.Boolean origin=LT
+              arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+              arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:test1f visibility:public modality:FINAL <> (x:kotlin.Float, y:kotlin.Float) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Float flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Float flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test1f(Float, Float): Boolean'
+        CALL 'less(Float, Float): Boolean' type=kotlin.Boolean origin=LT
+          arg0: GET_VAR 'value-parameter x: Float' type=kotlin.Float origin=null
+          arg1: GET_VAR 'value-parameter y: Float' type=kotlin.Float origin=null
+  FUN name:test2f visibility:public modality:FINAL <> (x:kotlin.Float, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Float flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test2f(Float, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+              GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+            then: CALL 'less(Float, Float): Boolean' type=kotlin.Boolean origin=LT
+              arg0: GET_VAR 'value-parameter x: Float' type=kotlin.Float origin=null
+              arg1: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:test3f visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test3f(Any, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CALL 'less(Float, Float): Boolean' type=kotlin.Boolean origin=LT
+              arg0: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+              arg1: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:testFD visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testFD(Any, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CALL 'less(Double, Double): Boolean' type=kotlin.Boolean origin=LT
+              arg0: CALL 'toDouble(): Double' type=kotlin.Double origin=null
+                $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+              arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:testDF visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:Boolean flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testDF(Any, Any): Boolean'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: CALL 'less(Double, Double): Boolean' type=kotlin.Boolean origin=LT
+              arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+              arg1: CALL 'toDouble(): Double' type=kotlin.Double origin=null
+                $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                  GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false

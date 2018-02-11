@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.util.slicedMap
 
 
 open class SetSlice<K> @JvmOverloads constructor(rewritePolicy: RewritePolicy, isCollective: Boolean = false) :
-        BasicWritableSlice<K, Boolean>(rewritePolicy, isCollective) {
+    BasicWritableSlice<K, Boolean>(rewritePolicy, isCollective) {
     companion object {
         @JvmField
         val DEFAULT = false

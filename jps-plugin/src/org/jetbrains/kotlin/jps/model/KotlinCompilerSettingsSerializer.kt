@@ -16,24 +16,15 @@
 
 package org.jetbrains.kotlin.jps.model
 
-import com.intellij.util.xmlb.XmlSerializer
-import org.jdom.Element
 import org.jetbrains.jps.model.JpsProject
-import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer
 import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 
-import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE
-import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION
-
-internal class KotlinCompilerSettingsSerializer : JpsProjectExtensionSerializer(KOTLIN_COMPILER_SETTINGS_FILE,
-                                                                                KOTLIN_COMPILER_SETTINGS_SECTION) {
-
-    override fun loadExtension(project: JpsProject, componentTag: Element) {
-        val settings = XmlSerializer.deserialize(componentTag, CompilerSettings::class.java)
+internal class KotlinCompilerSettingsSerializer : BaseJpsCompilerSettingsSerializer<CompilerSettings>(
+        KOTLIN_COMPILER_SETTINGS_SECTION, ::CompilerSettings
+) {
+    override fun onLoad(project: JpsProject, settings: CompilerSettings) {
         JpsKotlinCompilerSettings.setCompilerSettings(project, settings)
-    }
-
-    override fun saveExtension(project: JpsProject, componentTag: Element) {
     }
 }

@@ -24,21 +24,21 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 interface DeclarationAttributeAltererExtension {
     companion object : ProjectExtensionDescriptor<DeclarationAttributeAltererExtension>(
-            "org.jetbrains.kotlin.declarationAttributeAltererExtension",
-            DeclarationAttributeAltererExtension::class.java
+        "org.jetbrains.kotlin.declarationAttributeAltererExtension",
+        DeclarationAttributeAltererExtension::class.java
     )
 
     /**
      * Returns the new modality for the [declaration], or null if the [currentModality] is good enough.
      */
     fun refineDeclarationModality(
-            modifierListOwner: KtModifierListOwner,
-            declaration: DeclarationDescriptor?,
-            containingDeclaration: DeclarationDescriptor?,
-            currentModality: Modality,
-            bindingContext: BindingContext,
-            isImplicitModality: Boolean
+        modifierListOwner: KtModifierListOwner,
+        declaration: DeclarationDescriptor?,
+        containingDeclaration: DeclarationDescriptor?,
+        currentModality: Modality,
+        bindingContext: BindingContext,
+        isImplicitModality: Boolean
     ): Modality? = null
 
-    fun shouldConvertFirstSAMParameterToReceiver(function: FunctionDescriptor) : Boolean = false
+    fun shouldConvertFirstSAMParameterToReceiver(function: FunctionDescriptor): Boolean = false
 }

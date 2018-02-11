@@ -1,4 +1,4 @@
-class A {
+open class A {
     private val i = 0
 
 }

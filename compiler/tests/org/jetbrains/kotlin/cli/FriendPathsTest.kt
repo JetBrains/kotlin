@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.junit.Assert
 import java.io.File
@@ -37,8 +38,7 @@ class FriendPathsTest : TestCaseWithTmpdir() {
     fun testArchive() {
         val libSrc = File(getTestDataDirectory(), "lib.kt")
         val libDest = File(tmpdir, "lib.jar")
-        val (output, libExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
-        Assert.assertEquals(output, ExitCode.OK, libExitCode)
+        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
 
         Assert.assertEquals(ExitCode.OK, invokeCompiler(libDest.path))
     }
@@ -46,8 +46,7 @@ class FriendPathsTest : TestCaseWithTmpdir() {
     fun testDirectory() {
         val libSrc = File(getTestDataDirectory(), "lib.kt")
         val libDest = File(tmpdir, "lib")
-        val (output, libExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
-        Assert.assertEquals(output, ExitCode.OK, libExitCode)
+        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
 
         Assert.assertEquals(ExitCode.OK, invokeCompiler(libDest.path))
     }

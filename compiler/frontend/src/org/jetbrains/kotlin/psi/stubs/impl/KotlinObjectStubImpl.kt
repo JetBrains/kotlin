@@ -26,14 +26,14 @@ import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
 
 class KotlinObjectStubImpl(
-        parent: StubElement<out PsiElement>?,
-        private val name: StringRef?,
-        private val fqName: FqName?,
-        private val superNames: Array<StringRef>,
-        private val isTopLevel: Boolean,
-        private val isDefault: Boolean,
-        private val isLocal: Boolean,
-        private val isObjectLiteral: Boolean
+    parent: StubElement<out PsiElement>?,
+    private val name: StringRef?,
+    private val fqName: FqName?,
+    private val superNames: Array<StringRef>,
+    private val isTopLevel: Boolean,
+    private val isDefault: Boolean,
+    private val isLocal: Boolean,
+    private val isObjectLiteral: Boolean
 ) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {
     override fun getFqName() = fqName
     override fun getName() = StringRef.toString(name)

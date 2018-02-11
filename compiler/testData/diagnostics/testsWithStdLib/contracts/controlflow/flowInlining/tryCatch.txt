@@ -1,0 +1,9 @@
+package
+
+public fun </*0*/ T> myRun(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun possibleReassignmentInTryCatch(): kotlin.Unit
+public fun someComputation(): kotlin.Int
+public fun tryCatchInlined(): kotlin.Unit
+public fun tryCatchOuter(): kotlin.Unit

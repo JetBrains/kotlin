@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 // FILE: J.java
@@ -10,14 +11,14 @@ open class A<T> : J() {
     init {
         foo()
         bar()
-        val a: Int = <!TYPE_MISMATCH!><!DEBUG_INFO_LEAKING_THIS!>baz<!>()<!>
+        val a: Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!><!DEBUG_INFO_LEAKING_THIS!>baz<!>()<!>
         val b: T = <!DEBUG_INFO_LEAKING_THIS!>baz<!>()
     }
 
     fun test1() {
         foo()
         bar()
-        val a: Int = <!TYPE_MISMATCH!>baz()<!>
+        val a: Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>baz()<!>
         val b: T = baz()
     }
 

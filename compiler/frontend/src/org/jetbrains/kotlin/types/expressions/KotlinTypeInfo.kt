@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.types.KotlinType
  * Both break and continue are counted as possible jump outside of a loop, but return is not.
  */
 class KotlinTypeInfo @JvmOverloads constructor(
-        val type: KotlinType?,
-        val dataFlowInfo: DataFlowInfo,
-        val jumpOutPossible: Boolean = false,
-        val jumpFlowInfo: DataFlowInfo = dataFlowInfo
+    val type: KotlinType?,
+    val dataFlowInfo: DataFlowInfo,
+    val jumpOutPossible: Boolean = false,
+    val jumpFlowInfo: DataFlowInfo = dataFlowInfo
 ) {
 
     fun clearType() = replaceType(null)
@@ -43,17 +43,17 @@ class KotlinTypeInfo @JvmOverloads constructor(
     fun replaceType(type: KotlinType?) = KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
 
     fun replaceJumpOutPossible(jumpOutPossible: Boolean) =
-            if (jumpOutPossible == this.jumpOutPossible) this else KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
+        if (jumpOutPossible == this.jumpOutPossible) this else KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
 
     fun replaceJumpFlowInfo(jumpFlowInfo: DataFlowInfo) =
-            if (jumpFlowInfo == this.jumpFlowInfo) this else KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
+        if (jumpFlowInfo == this.jumpFlowInfo) this else KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
 
     fun replaceDataFlowInfo(dataFlowInfo: DataFlowInfo) = when (this.dataFlowInfo) {
-        // Nothing changed
+    // Nothing changed
         dataFlowInfo -> this
-        // Jump info is the same as data flow info: change both
+    // Jump info is the same as data flow info: change both
         jumpFlowInfo -> KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, dataFlowInfo)
-        // Jump info is not the same: change data flow info only
+    // Jump info is not the same: change data flow info only
         else -> KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
     }
 }

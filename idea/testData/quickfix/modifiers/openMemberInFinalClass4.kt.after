@@ -1,4 +1,5 @@
 // "Make 'A' open" "true"
-@Deprecated("") open class A() {
+@Deprecated("")
+open class A() {
     open fun foo() {}
 }

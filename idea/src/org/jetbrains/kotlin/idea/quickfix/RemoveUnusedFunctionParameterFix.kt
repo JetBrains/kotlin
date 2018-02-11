@@ -21,11 +21,13 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.RemoveEmptyPrimaryConstructorIntention
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
 
 class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixAction<KtParameter>(parameter) {
     override fun getFamilyName() = ChangeFunctionSignatureFix.FAMILY_NAME
@@ -36,8 +38,24 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val parameterDescriptor = element.unsafeResolveToDescriptor() as ValueParameterDescriptor
+        val primaryConstructor = element.parent?.parent as? KtPrimaryConstructor
+        val parameterList = element.parent as? KtParameterList
+        val context = element.analyze()
+        val parameterDescriptor = context[BindingContext.VALUE_PARAMETER, element] as? ValueParameterDescriptor ?: return
         ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
+        val nextParameter = parameterList?.parameters?.getOrNull(parameterDescriptor.index)
+        if (nextParameter != null) {
+            editor?.caretModel?.moveToOffset(nextParameter.startOffset)
+        }
+        if (primaryConstructor != null) {
+            val removeConstructorIntention = RemoveEmptyPrimaryConstructorIntention()
+            if (removeConstructorIntention.isApplicableTo(primaryConstructor)) {
+                editor?.caretModel?.moveToOffset(primaryConstructor.endOffset)
+                runWriteAction {
+                    removeConstructorIntention.applyTo(primaryConstructor, editor = null)
+                }
+            }
+        }
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
@@ -45,7 +63,7 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
             val parameter = Errors.UNUSED_PARAMETER.cast(diagnostic).psiElement
             val parameterOwner = parameter.parent.parent
             if (parameterOwner is KtFunctionLiteral ||
-                    (parameterOwner is KtNamedFunction && parameterOwner.name == null)) return null
+                (parameterOwner is KtNamedFunction && parameterOwner.name == null)) return null
             return RemoveUnusedFunctionParameterFix(parameter)
         }
     }

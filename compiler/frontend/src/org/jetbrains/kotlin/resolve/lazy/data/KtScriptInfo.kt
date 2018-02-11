@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtScript
 
 class KtScriptInfo(
-        val script: KtScript
+    val script: KtScript
 ) : KtClassLikeInfo {
     override fun getContainingPackageFqName() = script.fqName.parent()
     override fun getModifierList() = null

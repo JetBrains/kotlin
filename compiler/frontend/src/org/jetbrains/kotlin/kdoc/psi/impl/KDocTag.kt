@@ -67,9 +67,9 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
     }
 
     private fun childrenAfterTagName(): List<ASTNode> =
-            node.getChildren(null)
-                    .dropWhile { it.elementType == KDocTokens.TAG_NAME }
-                    .dropWhile { it.elementType == TokenType.WHITE_SPACE }
+        node.getChildren(null)
+            .dropWhile { it.elementType == KDocTokens.TAG_NAME }
+            .dropWhile { it.elementType == TokenType.WHITE_SPACE }
 
     /**
      * Returns the content of this tag (all text following the tag name and the subject if present,
@@ -109,8 +109,7 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
                 if (!isCodeBlock())
                     indentedCodeBlock = indentedCodeBlock || node.text.startsWith(indentationWhiteSpaces) || node.text.startsWith("\t")
                 startCodeBlock()
-            }
-            else if (KDocTokens.CONTENT_TOKENS.contains(type)) {
+            } else if (KDocTokens.CONTENT_TOKENS.contains(type)) {
                 flushCodeBlock()
                 indentedCodeBlock = false
             }

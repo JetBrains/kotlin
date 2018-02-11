@@ -16,14 +16,10 @@
 
 package org.jetbrains.kotlin.generators.mockJDK;
 
-import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -296,7 +292,7 @@ public class GenerateMockJdk {
         JarFile sourceJar = new JarFile(source);
         JarOutputStream targetJar = new JarOutputStream(new FileOutputStream(target));
 
-        Set<String> foundEntries = Sets.newHashSet();
+        Set<String> foundEntries = new HashSet<>();
 
         List<JarEntry> sourceList = Collections.list(sourceJar.entries());
         for (JarEntry entry : sourceList) {
@@ -313,7 +309,7 @@ public class GenerateMockJdk {
         sourceJar.close();
 
         if (assertAllFound) {
-            Set<String> notFound = Sets.newHashSet(entryNamesToInclude);
+            Set<String> notFound = new HashSet<>(entryNamesToInclude);
             notFound.removeAll(foundEntries);
             if (!notFound.isEmpty()) {
                 System.err.println("Not found:");
@@ -326,7 +322,7 @@ public class GenerateMockJdk {
     }
 
     private static Set<String> getSourceFileEntries() {
-        Set<String> entrySet = Sets.newHashSet();
+        Set<String> entrySet = new HashSet<>();
         for (String entry : ENTRIES) {
             String javaFile = // "src/" + (in jdk 1.7 under Mac there is no src folder in src.zip)
                     entry.replaceAll(".class$", ".java");
@@ -336,7 +332,7 @@ public class GenerateMockJdk {
     }
 
     private static Set<String> getClassFileEntries() {
-        return Sets.newHashSet(Arrays.asList(ENTRIES));
+        return new HashSet<>(Arrays.asList(ENTRIES));
     }
 
     public static void main(String[] args) throws IOException {

@@ -74,13 +74,14 @@ open class KotlinFunctionPattern : PsiElementPattern<KtFunction, KotlinFunctionP
         }
     }
 
-    fun definedInClass(fqName: String): KotlinFunctionPattern {
-        return withPatternCondition("kotlinFunctionPattern-definedInClass") { function, _ ->
-            if (function.parent is KtFile) return@withPatternCondition false
-
-            function.containingClassOrObject?.fqName?.asString() == fqName
+    class DefinedInClassCondition(val fqName: String) : PatternCondition<KtFunction>("kotlinFunctionPattern-definedInClass") {
+        override fun accepts(element: KtFunction, context: ProcessingContext?): Boolean {
+            if (element.parent is KtFile) return false
+            return element.containingClassOrObject?.fqName?.asString() == fqName
         }
     }
+
+    fun definedInClass(fqName: String): KotlinFunctionPattern = with(DefinedInClassCondition(fqName))
 
     fun definedInPackage(packageFqName: String): KotlinFunctionPattern {
         return withPatternCondition("kotlinFunctionPattern-definedInPackage") { function, _ ->

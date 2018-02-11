@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1018
+// EXPECTED_REACHABLE_NODES: 1124
 // MODULE: lib
 // FILE: lib.kt
 inline fun foo(x: String = "x", y: String = "y") = x + y

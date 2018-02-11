@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cfg;
@@ -140,6 +129,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
         public static class Bugs extends AbstractPseudoValueTest {
             public void testAllFilesPresentInBugs() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/bugs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("functionalCallInEnumEntry.kt")
+            public void testFunctionalCallInEnumEntry() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/bugs/functionalCallInEnumEntry.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("jumpToOuterScope.kt")
@@ -804,6 +799,54 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
         }
     }
 
+    @TestMetadata("compiler/testData/cfgWithStdLib")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CfgWithStdLib extends AbstractPseudoValueTest {
+        public void testAllFilesPresentInCfgWithStdLib() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfgWithStdLib"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("compiler/testData/cfgWithStdLib/contracts")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Contracts extends AbstractPseudoValueTest {
+            public void testAllFilesPresentInContracts() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfgWithStdLib/contracts"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("labeledReturns.kt")
+            public void testLabeledReturns() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgWithStdLib/contracts/labeledReturns.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("nonReturningInlinedLambda.kt")
+            public void testNonReturningInlinedLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgWithStdLib/contracts/nonReturningInlinedLambda.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("returnsAndCalls.kt")
+            public void testReturnsAndCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgWithStdLib/contracts/returnsAndCalls.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("throwIfNotCalled.kt")
+            public void testThrowIfNotCalled() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgWithStdLib/contracts/throwIfNotCalled.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("tryCatchFinally.kt")
+            public void testTryCatchFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgWithStdLib/contracts/tryCatchFinally.kt");
+                doTestWithStdLib(fileName);
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/cfg-variables")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1016,6 +1059,84 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             public void testWhileScope() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/whileScope.kt");
                 doTest(fileName);
+            }
+        }
+    }
+
+    @TestMetadata("compiler/testData/cfgVariablesWithStdLib")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CfgVariablesWithStdLib extends AbstractPseudoValueTest {
+        public void testAllFilesPresentInCfgVariablesWithStdLib() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfgVariablesWithStdLib"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("compiler/testData/cfgVariablesWithStdLib/contracts")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Contracts extends AbstractPseudoValueTest {
+            public void testAllFilesPresentInContracts() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfgVariablesWithStdLib/contracts"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("breakContinuesInInlinedLambda.kt")
+            public void testBreakContinuesInInlinedLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/breakContinuesInInlinedLambda.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("inlinedLambdaAlwaysThrows.kt")
+            public void testInlinedLambdaAlwaysThrows() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/inlinedLambdaAlwaysThrows.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("irrelevantUnknownClosure.kt")
+            public void testIrrelevantUnknownClosure() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/irrelevantUnknownClosure.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("nestedTryCatchFinally.kt")
+            public void testNestedTryCatchFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/nestedTryCatchFinally.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("nestedTryCatchs.kt")
+            public void testNestedTryCatchs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/nestedTryCatchs.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("nonReturningInlinedLambda.kt")
+            public void testNonReturningInlinedLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/nonReturningInlinedLambda.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("returnsAndCalls.kt")
+            public void testReturnsAndCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/returnsAndCalls.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("throwIfNotCalled.kt")
+            public void testThrowIfNotCalled() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/throwIfNotCalled.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("tryCatch.kt")
+            public void testTryCatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/tryCatch.kt");
+                doTestWithStdLib(fileName);
+            }
+
+            @TestMetadata("tryCatchFinally.kt")
+            public void testTryCatchFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/tryCatchFinally.kt");
+                doTestWithStdLib(fileName);
             }
         }
     }

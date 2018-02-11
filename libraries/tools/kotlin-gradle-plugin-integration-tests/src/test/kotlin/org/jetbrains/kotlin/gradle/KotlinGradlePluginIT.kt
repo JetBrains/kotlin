@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.CopyClassesToJavaOutputStatus
 import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
-import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
@@ -63,7 +61,7 @@ class KotlinGradleIT: BaseGradleIT() {
             assertSuccessful()
         }
 
-        val wd2 = FileUtil.createTempDirectory("testRunningInDifferentDir", null)
+        val wd2 = createTempDir("testRunningInDifferentDir")
         wd1.copyRecursively(wd2)
         wd1.deleteRecursively()
         assert(!wd1.exists())
@@ -385,47 +383,6 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-
-    @Test
-    fun testMultiplatformCompile() {
-        val project = Project("multiplatformProject", GRADLE_VERSION)
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains(":lib:compileKotlinCommon",
-                    ":lib:compileTestKotlinCommon",
-                    ":libJvm:compileKotlin",
-                    ":libJvm:compileTestKotlin",
-                    ":libJs:compileKotlin2Js",
-                    ":libJs:compileTestKotlin2Js")
-            assertFileExists("lib/build/classes/main/foo/PlatformClass.kotlin_metadata")
-            assertFileExists("lib/build/classes/test/foo/PlatformTest.kotlin_metadata")
-            assertFileExists("libJvm/build/classes/main/foo/PlatformClass.class")
-            assertFileExists("libJvm/build/classes/test/foo/PlatformTest.class")
-            assertFileExists("libJs/build/classes/main/libJs.js")
-            assertFileExists("libJs/build/classes/test/libJs_test.js")
-        }
-    }
-
-    @Test
-    fun testDeprecatedImplementWarning() {
-        val project = Project("multiplatformProject", GRADLE_VERSION)
-
-        project.build("build") {
-            assertSuccessful()
-            assertNotContains(IMPLEMENT_DEPRECATION_WARNING)
-        }
-
-        project.projectDir.walk().filter { it.name == "build.gradle" }.forEach { buildGradle ->
-            buildGradle.modify { it.replace(EXPECTED_BY_CONFIG_NAME, IMPLEMENT_CONFIG_NAME) }
-        }
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains(IMPLEMENT_DEPRECATION_WARNING)
-        }
-    }
-
     @Test
     fun testFreeCompilerArgs() {
         val project = Project("kotlinProject", GRADLE_VERSION)
@@ -498,15 +455,22 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testOmittedStdlibVersion() {
-        val project = Project("kotlinProject", "2.3")
+        val project = Project("kotlinProject", "4.4")
         project.setupWorkingDir()
         File(project.projectDir, "build.gradle").modify {
-            it.replace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib").apply { check(!equals(it)) }
+            it.replace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib").apply { check(!equals(it)) } + "\n" + """
+            apply plugin: 'maven'
+            install.repositories { maven { url "file://${'$'}buildDir/repo" } }
+            """.trimIndent()
         }
 
-        project.build("build") {
+        project.build("build", "install") {
             assertSuccessful()
             assertContains(":compileKotlin", ":compileTestKotlin")
+            val pomLines = File(project.projectDir, "build/poms/pom-default.xml").readLines()
+            val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
+            val versionLine = pomLines[stdlibVersionLineNumber]
+            assertTrue { "<version>${defaultBuildOptions().kotlinVersion}</version>" in versionLine }
         }
     }
 

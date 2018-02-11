@@ -1,0 +1,7 @@
+annotation class Inject
+annotation class VisibleForTesting
+
+class Example {
+    <caret>@set:[Inject VisibleForTesting]
+    public var x: String = ""
+}

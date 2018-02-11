@@ -7,6 +7,7 @@ interface IBase {
 }
 
 // FILE: Kotlin.kt
+// JVM_TARGET: 1.8
 open class Base {
     fun foo() = "OK"
 }

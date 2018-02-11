@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir;
@@ -260,6 +249,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("delegatedProperties.kt")
         public void testDelegatedProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/delegatedProperties.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionProperties.kt")
+        public void testExtensionProperties() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/extensionProperties.kt");
             doTest(fileName);
         }
 
@@ -893,12 +888,6 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
-        @TestMetadata("smoke.kt")
-        public void testSmoke() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/smoke.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("stringComparisons.kt")
         public void testStringComparisons() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/stringComparisons.kt");
@@ -1005,6 +994,75 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         public void testWhileDoWhile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/whileDoWhile.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FloatingPointComparisons extends AbstractIrTextTestCase {
+            public void testAllFilesPresentInFloatingPointComparisons() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/expressions/floatingPointComparisons"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("comparableWithDoubleOrFloat.kt")
+            public void testComparableWithDoubleOrFloat() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/comparableWithDoubleOrFloat.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("eqeqRhsConditionPossiblyAffectingLhs.kt")
+            public void testEqeqRhsConditionPossiblyAffectingLhs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/eqeqRhsConditionPossiblyAffectingLhs.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("floatingPointCompareTo.kt")
+            public void testFloatingPointCompareTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/floatingPointCompareTo.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("floatingPointEqeq.kt")
+            public void testFloatingPointEqeq() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/floatingPointEqeq.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("floatingPointEquals.kt")
+            public void testFloatingPointEquals() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/floatingPointEquals.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("floatingPointExcleq.kt")
+            public void testFloatingPointExcleq() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/floatingPointExcleq.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("floatingPointLess.kt")
+            public void testFloatingPointLess() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/floatingPointLess.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullableAnyAsIntToDouble.kt")
+            public void testNullableAnyAsIntToDouble() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/nullableAnyAsIntToDouble.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullableFloatingPointEqeq.kt")
+            public void testNullableFloatingPointEqeq() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/nullableFloatingPointEqeq.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenByFloatingPoint.kt")
+            public void testWhenByFloatingPoint() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons/whenByFloatingPoint.kt");
+                doTest(fileName);
+            }
         }
     }
 

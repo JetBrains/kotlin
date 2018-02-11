@@ -42,4 +42,5 @@ var a : Int
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual
+// EXIST:  lateinit var
 // NOTHING_ELSE

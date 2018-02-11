@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isArrayOrArrayLiteral
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isParameterOfAnnotation
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
 
 class AssigningNamedArgumentToVarargChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -38,9 +38,9 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
     }
 
     private fun checkAssignmentOfSingleElementToVararg(
-            argument: ValueArgument,
-            parameterDescriptor: ValueParameterDescriptor,
-            context: ResolutionContext<*>
+        argument: ValueArgument,
+        parameterDescriptor: ValueParameterDescriptor,
+        context: ResolutionContext<*>
     ) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return
 
@@ -51,35 +51,38 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
 
         if (isParameterOfAnnotation(parameterDescriptor)) {
             checkAssignmentOfSingleElementInAnnotation(argument, argumentExpression, context)
-        }
-        else {
+        } else {
             checkAssignmentOfSingleElementInFunction(argument, argumentExpression, context, parameterDescriptor)
         }
     }
 
     private fun checkAssignmentOfSingleElementInAnnotation(
-            argument: ValueArgument,
-            argumentExpression: KtExpression,
-            context: ResolutionContext<*>
+        argument: ValueArgument,
+        argumentExpression: KtExpression,
+        context: ResolutionContext<*>
     ) {
         if (isArrayOrArrayLiteral(argument, context)) {
             if (argument.hasSpread()) {
                 context.trace.report(Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION.on(argumentExpression))
             }
-        }
-        else {
+        } else {
             context.trace.report(Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION.on(argumentExpression))
         }
     }
 
     private fun checkAssignmentOfSingleElementInFunction(
-            argument: ValueArgument,
-            argumentExpression: KtExpression,
-            context: ResolutionContext<*>,
-            parameterDescriptor: ValueParameterDescriptor
+        argument: ValueArgument,
+        argumentExpression: KtExpression,
+        context: ResolutionContext<*>,
+        parameterDescriptor: ValueParameterDescriptor
     ) {
         if (!argument.hasSpread()) {
-            context.trace.report(Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION.on(argumentExpression, parameterDescriptor.type))
+            context.trace.report(
+                Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION.on(
+                    argumentExpression,
+                    parameterDescriptor.type
+                )
+            )
         }
     }
 

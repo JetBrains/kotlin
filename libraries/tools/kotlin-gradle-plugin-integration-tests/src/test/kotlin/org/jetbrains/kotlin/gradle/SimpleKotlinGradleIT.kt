@@ -184,8 +184,6 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         val project = Project("kotlinProject", GRADLE_VERSION)
         project.setupWorkingDir()
 
-        File(project.projectDir, "build").writeText("This file prevents Gradle from using 'build' as a directory")
-
         // Change the build directory in the end of the build script:
         val customBuildDirName = "customBuild"
         File(project.projectDir, "build.gradle").modify {
@@ -195,6 +193,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertFileExists("$customBuildDirName/classes")
+            assertNoSuchFile("build")
         }
     }
 }

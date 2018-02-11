@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
 
 class KotlinParameterStubImpl(
-        parent: StubElement<out PsiElement>?,
-        private val fqName: StringRef?,
-        private val name: StringRef?,
-        private val isMutable: Boolean,
-        private val hasValOrVar: Boolean,
-        private val hasDefaultValue: Boolean
+    parent: StubElement<out PsiElement>?,
+    private val fqName: StringRef?,
+    private val name: StringRef?,
+    private val isMutable: Boolean,
+    private val hasValOrVar: Boolean,
+    private val hasDefaultValue: Boolean
 ) : KotlinStubBaseImpl<KtParameter>(parent, KtStubElementTypes.VALUE_PARAMETER), KotlinParameterStub {
     override fun getName(): String? {
         return StringRef.toString(name)

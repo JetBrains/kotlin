@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,35 +21,33 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import java.util.*
 
 class ArgumentsToParametersMapper {
 
     data class ArgumentMapping(
-            // This map should be ordered by arguments as written, e.g.:
-            //      fun foo(a: Int, b: Int) {}
-            //      foo(b = bar(), a = qux())
-            // parameterToCallArgumentMap.values() should be [ 'bar()', 'foo()' ]
-            val parameterToCallArgumentMap: Map<ValueParameterDescriptor, ResolvedCallArgument>,
-            val diagnostics: List<KotlinCallDiagnostic>
+        // This map should be ordered by arguments as written, e.g.:
+        //      fun foo(a: Int, b: Int) {}
+        //      foo(b = bar(), a = qux())
+        // parameterToCallArgumentMap.values() should be [ 'bar()', 'foo()' ]
+        val parameterToCallArgumentMap: Map<ValueParameterDescriptor, ResolvedCallArgument>,
+        val diagnostics: List<KotlinCallDiagnostic>
     )
 
     val EmptyArgumentMapping = ArgumentMapping(emptyMap(), emptyList())
 
     fun mapArguments(call: KotlinCall, descriptor: CallableDescriptor): ArgumentMapping =
-            mapArguments(call.argumentsInParenthesis, call.externalArgument, descriptor)
+        mapArguments(call.argumentsInParenthesis, call.externalArgument, descriptor)
 
     fun mapArguments(
-            argumentsInParenthesis: List<KotlinCallArgument>,
-            externalArgument: KotlinCallArgument?,
-            descriptor: CallableDescriptor
+        argumentsInParenthesis: List<KotlinCallArgument>,
+        externalArgument: KotlinCallArgument?,
+        descriptor: CallableDescriptor
     ): ArgumentMapping {
         // optimization for case of variable
         if (argumentsInParenthesis.isEmpty() && externalArgument == null && descriptor.valueParameters.isEmpty()) {
             return EmptyArgumentMapping
-        }
-        else {
+        } else {
             val processor = CallArgumentProcessor(descriptor)
             processor.processArgumentsInParenthesis(argumentsInParenthesis)
 
@@ -171,8 +169,7 @@ class ArgumentsToParametersMapper {
                             return valueParameter
                         }
                     }
-                }
-                else {
+                } else {
                     parameter.getOverriddenParameterWithOtherName()?.let {
                         addDiagnostic(NameForAmbiguousParameter(argument, parameter, it))
                     }
@@ -200,7 +197,7 @@ class ArgumentsToParametersMapper {
                     if (state == State.VARARG_POSITION) {
                         completeVarargPositionArguments()
                     }
-                    state = State.POSITION_ARGUMENTS
+                    state = State.NAMED_ARGUMENT
 
                     processNamedArgument(argument, argumentName)
                 }
@@ -209,7 +206,7 @@ class ArgumentsToParametersMapper {
                 completeVarargPositionArguments()
             }
         }
-        
+
         fun processExternalArgument(externalArgument: KotlinCallArgument) {
             val lastParameter = parameters.lastOrNull()
             if (lastParameter == null) {
@@ -237,10 +234,9 @@ class ArgumentsToParametersMapper {
                 if (!parameter.isVararg) {
                     if (resolvedArgument !is ResolvedCallArgument.SimpleArgument) {
                         error("Incorrect resolved argument for parameter $parameter :$resolvedArgument")
-                    }
-                    else {
+                    } else {
                         if (resolvedArgument.callArgument.isSpread) {
-                            addDiagnostic(NonVarargSpread(resolvedArgument.callArgument, parameter))
+                            addDiagnostic(NonVarargSpread(resolvedArgument.callArgument))
                         }
                     }
                 }
@@ -250,11 +246,9 @@ class ArgumentsToParametersMapper {
                 if (!result.containsKey(parameter.original)) {
                     if (parameter.hasDefaultValue()) {
                         result[parameter.original] = ResolvedCallArgument.DefaultArgument
-                    }
-                    else if (parameter.isVararg) {
+                    } else if (parameter.isVararg) {
                         result[parameter.original] = ResolvedCallArgument.VarargArgument(emptyList())
-                    }
-                    else {
+                    } else {
                         addDiagnostic(NoValueForParameter(parameter, descriptor))
                     }
                 }

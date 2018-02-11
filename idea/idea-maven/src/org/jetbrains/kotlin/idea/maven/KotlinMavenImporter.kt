@@ -28,6 +28,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.AsyncResult
 import org.jdom.Element
+import org.jdom.Text
 import org.jetbrains.idea.maven.importing.MavenImporter
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter
 import org.jetbrains.idea.maven.model.MavenPlugin
@@ -39,22 +40,21 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.*
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.framework.libraryKind
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
+import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.util.*
 
 interface MavenProjectImportHandler {
     companion object : ProjectExtensionDescriptor<MavenProjectImportHandler>(
-            "org.jetbrains.kotlin.mavenProjectImportHandler",
-            MavenProjectImportHandler::class.java
+        "org.jetbrains.kotlin.mavenProjectImportHandler",
+        MavenProjectImportHandler::class.java
     )
 
     operator fun invoke(facet: KotlinFacet, mavenProject: MavenProject)
@@ -62,30 +62,42 @@ interface MavenProjectImportHandler {
 
 class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_ARTIFACT_ID) {
     companion object {
-        val KOTLIN_PLUGIN_GROUP_ID = "org.jetbrains.kotlin"
-        val KOTLIN_PLUGIN_ARTIFACT_ID = "kotlin-maven-plugin"
+        const val KOTLIN_PLUGIN_GROUP_ID = "org.jetbrains.kotlin"
+        const val KOTLIN_PLUGIN_ARTIFACT_ID = "kotlin-maven-plugin"
 
-        val KOTLIN_PLUGIN_SOURCE_DIRS_CONFIG = "sourceDirs"
+        const val KOTLIN_PLUGIN_SOURCE_DIRS_CONFIG = "sourceDirs"
     }
 
-    override fun preProcess(module: Module, mavenProject: MavenProject, changes: MavenProjectChanges, modifiableModelsProvider: IdeModifiableModelsProvider) {
+    override fun preProcess(
+        module: Module,
+        mavenProject: MavenProject,
+        changes: MavenProjectChanges,
+        modifiableModelsProvider: IdeModifiableModelsProvider
+    ) {
     }
 
-    override fun process(modifiableModelsProvider: IdeModifiableModelsProvider,
-                         module: Module,
-                         rootModel: MavenRootModelAdapter,
-                         mavenModel: MavenProjectsTree,
-                         mavenProject: MavenProject,
-                         changes: MavenProjectChanges,
-                         mavenProjectToModuleName: MutableMap<MavenProject, String>,
-                         postTasks: MutableList<MavenProjectsProcessorTask>) {
+    override fun process(
+        modifiableModelsProvider: IdeModifiableModelsProvider,
+        module: Module,
+        rootModel: MavenRootModelAdapter,
+        mavenModel: MavenProjectsTree,
+        mavenProject: MavenProject,
+        changes: MavenProjectChanges,
+        mavenProjectToModuleName: MutableMap<MavenProject, String>,
+        postTasks: MutableList<MavenProjectsProcessorTask>
+    ) {
 
         if (changes.plugins) {
             contributeSourceDirectories(mavenProject, module, rootModel)
         }
     }
 
-    override fun postProcess(module: Module, mavenProject: MavenProject, changes: MavenProjectChanges, modifiableModelsProvider: IdeModifiableModelsProvider) {
+    override fun postProcess(
+        module: Module,
+        mavenProject: MavenProject,
+        changes: MavenProjectChanges,
+        modifiableModelsProvider: IdeModifiableModelsProvider
+    ) {
         super.postProcess(module, mavenProject, changes, modifiableModelsProvider)
 
         if (changes.dependencies) {
@@ -108,7 +120,8 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
 
     private fun scheduleDownloadStdlibSources(mavenProject: MavenProject, module: Module) {
         // TODO: here we have to process all kotlin libraries but for now we only handle standard libraries
-        val artifacts = mavenProject.dependencyArtifactIndex.data[KOTLIN_PLUGIN_GROUP_ID]?.values?.flatMap { it.filter { it.isResolved } } ?: emptyList()
+        val artifacts = mavenProject.dependencyArtifactIndex.data[KOTLIN_PLUGIN_GROUP_ID]?.values?.flatMap { it.filter { it.isResolved } }
+                ?: emptyList()
 
         val librariesWithNoSources = ArrayList<Library>()
         OrderEnumerator.orderEntries(module).forEachLibrary { library ->
@@ -121,21 +134,26 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val toBeDownloaded = artifacts.filter { it.libraryName in libraryNames }
 
         if (toBeDownloaded.isNotEmpty()) {
-            MavenProjectsManager.getInstance(module.project).scheduleArtifactsDownloading(listOf(mavenProject), toBeDownloaded, true, false, AsyncResult())
+            MavenProjectsManager.getInstance(module.project)
+                .scheduleArtifactsDownloading(listOf(mavenProject), toBeDownloaded, true, false, AsyncResult())
         }
     }
 
-    private fun getCompilerArgumentsByConfigurationElement(mavenProject: MavenProject,
-                                                           configuration: Element?,
-                                                           platform: TargetPlatformKind<*>): List<String> {
+    private fun getCompilerArgumentsByConfigurationElement(
+        mavenProject: MavenProject,
+        configuration: Element?,
+        platform: TargetPlatformKind<*>
+    ): List<String> {
         val arguments = when (platform) {
             is TargetPlatformKind.Jvm -> K2JVMCompilerArguments()
-            is TargetPlatformKind.JavaScript -> K2JSCompilerArguments()
-            is TargetPlatformKind.Common -> K2MetadataCompilerArguments()
+            TargetPlatformKind.JavaScript -> K2JSCompilerArguments()
+            TargetPlatformKind.Common -> K2MetadataCompilerArguments()
         }
 
-        arguments.apiVersion = configuration?.getChild("apiVersion")?.text ?: mavenProject.properties["kotlin.compiler.apiVersion"]?.toString()
-        arguments.languageVersion = configuration?.getChild("languageVersion")?.text ?: mavenProject.properties["kotlin.compiler.languageVersion"]?.toString()
+        arguments.apiVersion = configuration?.getChild("apiVersion")?.text ?:
+                mavenProject.properties["kotlin.compiler.apiVersion"]?.toString()
+        arguments.languageVersion = configuration?.getChild("languageVersion")?.text ?:
+                mavenProject.properties["kotlin.compiler.languageVersion"]?.toString()
         arguments.multiPlatform = configuration?.getChild("multiPlatform")?.text?.trim()?.toBoolean() ?: false
         arguments.suppressWarnings = configuration?.getChild("nowarn")?.text?.trim()?.toBoolean() ?: false
 
@@ -147,7 +165,8 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             is K2JVMCompilerArguments -> {
                 arguments.classpath = configuration?.getChild("classpath")?.text
                 arguments.jdkHome = configuration?.getChild("jdkHome")?.text
-                arguments.jvmTarget = configuration?.getChild("jvmTarget")?.text ?: mavenProject.properties["kotlin.compiler.jvmTarget"]?.toString()
+                arguments.jvmTarget = configuration?.getChild("jvmTarget")?.text ?:
+                        mavenProject.properties["kotlin.compiler.jvmTarget"]?.toString()
             }
             is K2JSCompilerArguments -> {
                 arguments.sourceMap = configuration?.getChild("sourceMap")?.text?.trim()?.toBoolean() ?: false
@@ -160,47 +179,70 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             }
         }
 
-        val additionalArgs = configuration?.getChild("args")?.getChildren("arg")?.mapNotNull { it.text }.orEmpty()
+        val additionalArgs = SmartList<String>().apply {
+            val argsElement = configuration?.getChild("args")
+
+            argsElement?.content?.forEach { argElement ->
+                when (argElement) {
+                    is Text -> {
+                        argElement.text?.let { addAll(splitArgumentString(it)) }
+                    }
+                    is Element -> {
+                        if (argElement.name == "arg") {
+                            addIfNotNull(argElement.text)
+                        }
+                    }
+                }
+            }
+        }
         parseCommandLineArguments(additionalArgs, arguments)
 
         return ArgumentUtils.convertArgumentsToStringList(arguments)
     }
 
-    private val compilationGoals = listOf(PomFile.KotlinGoals.Compile,
-                                          PomFile.KotlinGoals.TestCompile,
-                                          PomFile.KotlinGoals.Js,
-                                          PomFile.KotlinGoals.TestJs,
-                                          PomFile.KotlinGoals.MetaData)
+    private val compilationGoals = listOf(
+        PomFile.KotlinGoals.Compile,
+        PomFile.KotlinGoals.TestCompile,
+        PomFile.KotlinGoals.Js,
+        PomFile.KotlinGoals.TestJs,
+        PomFile.KotlinGoals.MetaData
+    )
 
     private fun configureFacet(mavenProject: MavenProject, modifiableModelsProvider: IdeModifiableModelsProvider, module: Module) {
         val mavenPlugin = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID) ?: return
         val compilerVersion = mavenPlugin.version ?: LanguageVersion.LATEST_STABLE.versionString
         val kotlinFacet = module.getOrCreateFacet(modifiableModelsProvider, false)
-        val platform = detectPlatformByExecutions(mavenProject) ?: detectPlatformByLibraries(mavenProject)
+        val platform = detectPlatform(mavenProject)
 
         kotlinFacet.configureFacet(compilerVersion, LanguageFeature.Coroutines.defaultState, platform, modifiableModelsProvider)
         val configuredPlatform = kotlinFacet.configuration.settings.targetPlatformKind!!
         val configuration = mavenPlugin.configurationElement
         val sharedArguments = getCompilerArgumentsByConfigurationElement(mavenProject, configuration, configuredPlatform)
-        val executionArguments = mavenPlugin.executions?.filter { it.goals.any { it in compilationGoals } }
-                                         ?.firstOrNull()
-                                         ?.configurationElement?.let { getCompilerArgumentsByConfigurationElement(mavenProject, it, configuredPlatform) }
+        val executionArguments = mavenPlugin.executions
+            ?.firstOrNull { it.goals.any { it in compilationGoals } }
+            ?.configurationElement?.let { getCompilerArgumentsByConfigurationElement(mavenProject, it, configuredPlatform) }
         parseCompilerArgumentsToFacet(sharedArguments, emptyList(), kotlinFacet, modifiableModelsProvider)
         if (executionArguments != null) {
             parseCompilerArgumentsToFacet(executionArguments, emptyList(), kotlinFacet, modifiableModelsProvider)
         }
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
+        setImplementedModuleName(kotlinFacet, mavenProject, module)
+        kotlinFacet.noVersionAutoAdvance()
     }
 
+    private fun detectPlatform(mavenProject: MavenProject) =
+        detectPlatformByExecutions(mavenProject) ?: detectPlatformByLibraries(mavenProject)
+
     private fun detectPlatformByExecutions(mavenProject: MavenProject): TargetPlatformKind<*>? {
-        return mavenProject.findPlugin(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_ARTIFACT_ID)?.executions?.flatMap { it.goals }?.mapNotNull { goal ->
-            when (goal) {
-                PomFile.KotlinGoals.Compile, PomFile.KotlinGoals.TestCompile -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
-                PomFile.KotlinGoals.Js, PomFile.KotlinGoals.TestJs -> TargetPlatformKind.JavaScript
-                PomFile.KotlinGoals.MetaData -> TargetPlatformKind.Common
-                else -> null
-            }
-        }?.distinct()?.singleOrNull()
+        return mavenProject.findPlugin(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_ARTIFACT_ID)?.executions?.flatMap { it.goals }
+            ?.mapNotNull { goal ->
+                when (goal) {
+                    PomFile.KotlinGoals.Compile, PomFile.KotlinGoals.TestCompile -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+                    PomFile.KotlinGoals.Js, PomFile.KotlinGoals.TestJs -> TargetPlatformKind.JavaScript
+                    PomFile.KotlinGoals.MetaData -> TargetPlatformKind.Common
+                    else -> null
+                }
+            }?.distinct()?.singleOrNull()
     }
 
     private fun detectPlatformByLibraries(mavenProject: MavenProject): TargetPlatformKind<*>? {
@@ -250,18 +292,37 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
     }
 
     private fun collectSourceDirectories(mavenProject: MavenProject): List<Pair<SourceType, String>> =
-            mavenProject.plugins.filter { it.isKotlinPlugin() }.flatMap { plugin ->
-                plugin.configurationElement.sourceDirectories().map { SourceType.PROD to it } +
-                plugin.executions.flatMap { execution -> execution.configurationElement.sourceDirectories().map { execution.sourceType() to it } }
-            }.distinct()
+        mavenProject.plugins.filter { it.isKotlinPlugin() }.flatMap { plugin ->
+            plugin.configurationElement.sourceDirectories().map { SourceType.PROD to it } +
+                    plugin.executions.flatMap { execution ->
+                        execution.configurationElement.sourceDirectories().map { execution.sourceType() to it }
+                    }
+        }.distinct()
+
+    private fun setImplementedModuleName(kotlinFacet: KotlinFacet, mavenProject: MavenProject, module: Module) {
+        if (kotlinFacet.configuration.settings.targetPlatformKind == TargetPlatformKind.Common) {
+            kotlinFacet.configuration.settings.implementedModuleName = null
+        } else {
+            val manager = MavenProjectsManager.getInstance(module.project)
+            val mavenDependencies = mavenProject.dependencies.mapNotNull { manager?.findProject(it) }
+            val implemented = mavenDependencies.singleOrNull { detectPlatformByExecutions(it) == TargetPlatformKind.Common }
+
+            kotlinFacet.configuration.settings.implementedModuleName = implemented?.let { manager.findModule(it)?.name ?: it.displayName }
+        }
+    }
 }
 
-private fun MavenPlugin.isKotlinPlugin() = groupId == KotlinMavenImporter.KOTLIN_PLUGIN_GROUP_ID && artifactId == KotlinMavenImporter.KOTLIN_PLUGIN_ARTIFACT_ID
-private fun Element?.sourceDirectories(): List<String> = this?.getChildren(KotlinMavenImporter.KOTLIN_PLUGIN_SOURCE_DIRS_CONFIG)?.flatMap { it.children ?: emptyList() }?.map { it.textTrim } ?: emptyList()
+private fun MavenPlugin.isKotlinPlugin() =
+    groupId == KotlinMavenImporter.KOTLIN_PLUGIN_GROUP_ID && artifactId == KotlinMavenImporter.KOTLIN_PLUGIN_ARTIFACT_ID
+
+private fun Element?.sourceDirectories(): List<String> =
+    this?.getChildren(KotlinMavenImporter.KOTLIN_PLUGIN_SOURCE_DIRS_CONFIG)?.flatMap { it.children ?: emptyList() }?.map { it.textTrim }
+            ?: emptyList()
+
 private fun MavenPlugin.Execution.sourceType() =
-        goals.map { if (isTestGoalName(it)) SourceType.TEST else SourceType.PROD }
-                .distinct()
-                .singleOrNull() ?: SourceType.PROD
+    goals.map { if (isTestGoalName(it)) SourceType.TEST else SourceType.PROD }
+        .distinct()
+        .singleOrNull() ?: SourceType.PROD
 
 private fun isTestGoalName(goalName: String) = goalName.startsWith("test-")
 
@@ -269,14 +330,14 @@ private enum class SourceType {
     PROD, TEST
 }
 
-@State(name = "AutoImportedSourceRoots",
-       storages = arrayOf(
-               Storage(id = "other", file = StoragePathMacros.MODULE_FILE)
-       ))
+@State(
+    name = "AutoImportedSourceRoots",
+    storages = [(Storage(id = "other", file = StoragePathMacros.MODULE_FILE))]
+)
 class KotlinImporterComponent : PersistentStateComponent<KotlinImporterComponent.State> {
     class State(var directories: List<String> = ArrayList())
 
-    val addedSources = Collections.synchronizedSet(HashSet<String>())
+    val addedSources: MutableSet<String> = Collections.synchronizedSet(HashSet<String>())
 
     override fun loadState(state: State?) {
         addedSources.clear()

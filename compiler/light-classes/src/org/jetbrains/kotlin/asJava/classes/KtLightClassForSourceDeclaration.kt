@@ -31,7 +31,9 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
@@ -91,7 +93,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassDataHolder().javaFileStub
 
-    protected fun getDescriptor(): ClassDescriptor? {
+    fun getDescriptor(): ClassDescriptor? {
         return LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
     }
 
@@ -331,7 +333,13 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                 FINAL_KEYWORD to PsiModifier.FINAL)
 
 
-        fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
+        fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? =
+                CachedValuesManager.getCachedValue(classOrObject) {
+                    CachedValueProvider.Result
+                            .create(createNoCache(classOrObject), OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                }
+
+        fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
             if (classOrObject.hasExpectModifier()) {
                 return null
             }
@@ -481,13 +489,13 @@ fun getOutermostClassOrObject(classOrObject: KtClassOrObject): KtClassOrObject {
 
 interface LightClassInheritanceHelper {
     fun isInheritor(
-            lightClass: KtLightClassForSourceDeclaration,
+            lightClass: KtLightClass,
             baseClass: PsiClass,
             checkDeep: Boolean
     ): ImpreciseResolveResult
 
     object NoHelp : LightClassInheritanceHelper {
-        override fun isInheritor(lightClass: KtLightClassForSourceDeclaration, baseClass: PsiClass, checkDeep: Boolean) = UNSURE
+        override fun isInheritor(lightClass: KtLightClass, baseClass: PsiClass, checkDeep: Boolean) = UNSURE
     }
 
     companion object {

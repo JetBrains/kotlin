@@ -16,24 +16,15 @@
 
 package org.jetbrains.kotlin.jps.model
 
-import com.intellij.util.xmlb.XmlSerializer
-import org.jdom.Element
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.jps.model.JpsProject
-import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 
-import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE
-import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION
-
-internal class Kotlin2JvmCompilerArgumentsSerializer : JpsProjectExtensionSerializer(KOTLIN_COMPILER_SETTINGS_FILE,
-                                                                                     KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION) {
-
-    override fun loadExtension(project: JpsProject, componentTag: Element) {
-        val settings = XmlSerializer.deserialize(componentTag, K2JVMCompilerArguments::class.java)
+internal class Kotlin2JvmCompilerArgumentsSerializer : BaseJpsCompilerSettingsSerializer<K2JVMCompilerArguments>(
+        KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION, ::K2JVMCompilerArguments
+) {
+    override fun onLoad(project: JpsProject, settings: K2JVMCompilerArguments) {
         JpsKotlinCompilerSettings.setK2JvmCompilerArguments(project, settings)
-    }
-
-    override fun saveExtension(project: JpsProject, componentTag: Element) {
     }
 }

@@ -125,6 +125,7 @@ class ClassCodegen private constructor(
 
 
     private fun generateField(field: IrField) {
+        if (field.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
         val fieldType = typeMapper.mapType(field.descriptor)
         val fieldSignature = typeMapper.mapFieldSignature(field.descriptor.type, field.descriptor)
         val fv = visitor.newField(field.OtherOrigin, field.descriptor.calculateCommonFlags(), field.descriptor.name.asString(), fieldType.descriptor,
@@ -187,7 +188,7 @@ class ClassCodegen private constructor(
 
 fun ClassDescriptor.calculateClassFlags(): Int {
     var flags = 0
-    flags = flags or if (DescriptorUtils.isInterface(this) || DescriptorUtils.isAnnotationClass(this)) Opcodes.ACC_INTERFACE else Opcodes.ACC_SUPER
+    flags = flags or if (JvmCodegenUtil.isJvmInterface(this)) Opcodes.ACC_INTERFACE else Opcodes.ACC_SUPER
     flags = flags or calcModalityFlag()
     flags = flags or AsmUtil.getVisibilityAccessFlagForClass(this)
     flags = flags or if (kind == ClassKind.ENUM_CLASS) Opcodes.ACC_ENUM else 0

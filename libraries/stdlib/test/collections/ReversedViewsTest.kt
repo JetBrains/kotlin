@@ -18,10 +18,7 @@ package test.collections
 
 import test.collections.behaviors.listBehavior
 import test.collections.compare
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import org.junit.Test
+import kotlin.test.*
 
 class ReversedViewsTest {
 

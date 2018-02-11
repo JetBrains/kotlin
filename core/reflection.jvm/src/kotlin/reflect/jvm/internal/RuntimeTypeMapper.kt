@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
-import org.jetbrains.kotlin.load.java.structure.reflect.*
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -46,6 +46,7 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Member
 import java.lang.reflect.Method
+import kotlin.reflect.jvm.internal.structure.*
 
 internal sealed class JvmFunctionSignature {
     abstract fun asString(): String
@@ -156,6 +157,8 @@ private val Method.signature: String
             returnType.desc
 
 internal object RuntimeTypeMapper {
+    private val JAVA_LANG_VOID = ClassId.topLevel(FqName("java.lang.Void"))
+
     fun mapSignature(possiblySubstitutedFunction: FunctionDescriptor): JvmFunctionSignature {
         // Fake overrides don't have a source element, so we need to take a declaration.
         // TODO: support the case when a fake override overrides several declarations with different signatures
@@ -262,6 +265,8 @@ internal object RuntimeTypeMapper {
             }
             return ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.array.toSafe())
         }
+
+        if (klass == Void.TYPE) return JAVA_LANG_VOID
 
         klass.primitiveType?.let {
             return ClassId(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, it.typeName)

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModifiableRootModel
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*
+import kotlin.test.assertNotNull
 
 /**
  * Helper for configuring kotlin runtime in tested project.
@@ -87,6 +89,13 @@ object ConfigLibraryUtil {
         ApplicationManager.getApplication().runWriteAction {
             val rootManager = ModuleRootManager.getInstance(module)
             val rootModel = rootManager.modifiableModel
+
+            assertNotNull(
+                ProjectJdkTable.getInstance().findJdk(sdk.name),
+                "Cannot find sdk in ProjectJdkTable. This may cause sdk leak.\n" +
+                        "You can use ProjectPluginTestBase.addJdk(Disposable ...) to register sdk in ProjectJdkTable.\n" +
+                        "Then sdk will be removed in tearDown"
+            )
 
             rootModel.sdk = sdk
             rootModel.commit()
@@ -159,11 +168,12 @@ object ConfigLibraryUtil {
         }
     }
 
-    fun addLibrary(module: Module, libraryName: String, rootPath: String, jarPaths: Array<String>) {
+    fun addLibrary(module: Module, libraryName: String, rootPath: String?, jarPaths: Array<String>) {
         val editor = NewLibraryEditor()
         editor.name = libraryName
         for (jarPath in jarPaths) {
-            editor.addRoot(VfsUtil.getUrlForLibraryRoot(File(rootPath, jarPath)), OrderRootType.CLASSES)
+            val jarFile = if (rootPath == null) File(jarPath) else File(rootPath, jarPath)
+            editor.addRoot(VfsUtil.getUrlForLibraryRoot(jarFile), OrderRootType.CLASSES)
         }
 
         addLibrary(editor, module)

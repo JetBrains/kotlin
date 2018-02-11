@@ -149,7 +149,7 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
 
         assert(!closestModifiableDescriptors.isEmpty()) { "Should contain original declaration or some of its super declarations" }
         val deepestSuperDeclarations =
-                (callableDescriptor as? CallableMemberDescriptor)?.let(CallableMemberDescriptor::getDeepestSuperDeclarations)
+                (callableDescriptor as? CallableMemberDescriptor)?.getDeepestSuperDeclarations()
                 ?: listOf(callableDescriptor)
         if (ApplicationManager.getApplication()!!.isUnitTestMode) {
             performRefactoring(deepestSuperDeclarations)

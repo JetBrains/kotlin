@@ -1,0 +1,20 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate standard library sources" type="GradleRunConfiguration" factoryName="Gradle">
+    <ExternalSystemSettings>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/libraries/tools/kotlin-stdlib-gen" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="--configure-on-demand" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list>
+          <option value="run" />
+        </list>
+      </option>
+      <option name="vmOptions" value="" />
+    </ExternalSystemSettings>
+    <method />
+  </configuration>
+</component>

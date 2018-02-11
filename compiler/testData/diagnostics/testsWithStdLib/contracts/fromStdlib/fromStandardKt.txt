@@ -1,0 +1,15 @@
+package
+
+public fun testAlso(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun testApply(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun testLet(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun testRepeatOnInitializedVar(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun testRepeatOnVal(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun testRepeatOnVar(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun testRunWithCoercionToUnit(): kotlin.Unit
+public fun testRunWithReceiver(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun testRunWithReturnValue(): kotlin.Unit
+public fun testRunWithUnitReturn(): kotlin.Unit
+public fun testTakeIf(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun testTakeUnless(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun testWith(/*0*/ x: kotlin.Int): kotlin.Unit

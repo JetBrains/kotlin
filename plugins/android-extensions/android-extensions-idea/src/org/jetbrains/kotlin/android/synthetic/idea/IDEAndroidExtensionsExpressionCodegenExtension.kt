@@ -25,6 +25,9 @@ class IDEAndroidExtensionsExpressionCodegenExtension : AbstractAndroidExtensions
     override fun isExperimental(element: KtElement?) =
             element?.getModuleInfo()?.androidExtensionsIsExperimental ?: false
 
+    override fun isEnabled(element: KtElement?) =
+            element?.getModuleInfo()?.androidExtensionsIsEnabled ?: false
+
     override fun getGlobalCacheImpl(element: KtElement?) =
             element?.getModuleInfo()?.androidExtensionsGlobalCacheImpl ?: CacheImplementation.DEFAULT
 }

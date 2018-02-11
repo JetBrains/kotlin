@@ -1,0 +1,39 @@
+package
+
+public fun test1(/*0*/ x: Outer): OI /* = Outer.Inner */
+public fun test2(/*0*/ x: Generic<kotlin.Int>): GI<kotlin.Int> /* = Generic<kotlin.Int>.Inner */
+public fun </*0*/ T> test3(/*0*/ x: Generic<T>): GI<T> /* = Generic<T>.Inner */
+public fun </*0*/ T> test4(/*0*/ x: Generic<kotlin.collections.List<T>>): GI<kotlin.collections.List<T>> /* = Generic<kotlin.collections.List<T>>.Inner */
+public fun </*0*/ T> test5(/*0*/ x: Generic<T>): [ERROR : Error function type]
+public fun Generic<kotlin.Int>.test6(): GIntI /* = Generic<kotlin.Int>.Inner */
+
+public final class Generic</*0*/ T> {
+    public constructor Generic</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Inner /*captured type parameters: /*0*/ T*/ {
+        public constructor Inner()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class Outer {
+    public constructor Outer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Inner {
+        public constructor Inner()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+public typealias GI</*0*/ T>  = Generic<T>.Inner
+public typealias GIntI = Generic<kotlin.Int>.Inner
+public typealias OI = Outer.Inner

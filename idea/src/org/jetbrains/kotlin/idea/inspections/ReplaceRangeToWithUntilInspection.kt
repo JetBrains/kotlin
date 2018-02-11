@@ -35,7 +35,7 @@ class ReplaceRangeToWithUntilInspection : AbstractPrimitiveRangeToInspection() {
 
         holder.registerProblem(
                 expression,
-                "'rangeTo' or the '..' call can be replaced with 'until'",
+                "'rangeTo' or the '..' call should be replaced with 'until'",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 ReplaceWithUntilQuickFix()
         )

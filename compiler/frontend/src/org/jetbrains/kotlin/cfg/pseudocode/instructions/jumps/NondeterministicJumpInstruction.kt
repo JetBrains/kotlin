@@ -27,17 +27,17 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 
 class NondeterministicJumpInstruction(
-        element: KtElement,
-        targetLabels: List<Label>,
-        blockScope: BlockScope,
-        private val inputValue: PseudoValue?
+    element: KtElement,
+    targetLabels: List<Label>,
+    blockScope: BlockScope,
+    private val inputValue: PseudoValue?
 ) : KtElementInstructionImpl(element, blockScope), JumpInstruction {
     private var _next: Instruction? = null
     private val _resolvedTargets: MutableMap<Label, Instruction> = linkedMapOf()
 
     val targetLabels: List<Label> = ArrayList(targetLabels)
     private val resolvedTargets: Map<Label, Instruction>
-            get() = _resolvedTargets
+        get() = _resolvedTargets
 
     fun setResolvedTarget(label: Label, resolvedTarget: Instruction) {
         _resolvedTargets[label] = outgoingEdgeTo(resolvedTarget)!!
@@ -76,5 +76,5 @@ class NondeterministicJumpInstruction(
     fun copy(newTargetLabels: MutableList<Label>): Instruction = updateCopyInfo(createCopy(newTargetLabels))
 
     private fun createCopy(newTargetLabels: List<Label>): InstructionImpl =
-            NondeterministicJumpInstruction(element, newTargetLabels, blockScope, inputValue)
+        NondeterministicJumpInstruction(element, newTargetLabels, blockScope, inputValue)
 }

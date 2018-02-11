@@ -15,4 +15,4 @@ public final class Pair</*0*/ T1, /*1*/ T2> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias P2</*0*/ T>  = Pair<T, T>
+public typealias P2</*0*/ T> = Pair<T, T>

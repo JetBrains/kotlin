@@ -1,54 +1,27 @@
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.zip.ZipOutputStream
-import org.gradle.language.assembler.tasks.Assemble
 
-buildscript {
-    repositories {
-        jcenter()
-    }
+val relocatedProtobuf by configurations.creating
+val relocatedProtobufSources by configurations.creating
 
-    dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    }
-}
-
-apply { plugin("com.github.johnrengelman.shadow") }
-
-val mainCfg = configurations.create("default")
-val relocatedCfg = configurations.create("relocated")
+val resultsCfg = configurations.create("default")
 
 val protobufVersion = rootProject.extra["versions.protobuf-java"]
 val protobufJarPrefix = "protobuf-$protobufVersion"
-val renamedOutputJarPath = "$buildDir/jars/$protobufJarPrefix-relocated.jar"
 val outputJarPath = "$buildDir/libs/$protobufJarPrefix-lite.jar"
 
-artifacts.add(mainCfg.name, File(outputJarPath))
-artifacts.add(relocatedCfg.name, File(renamedOutputJarPath))
-
 dependencies {
-    mainCfg("com.google.protobuf:protobuf-java:$protobufVersion")
+    relocatedProtobuf(project(":custom-dependencies:protobuf-relocated", configuration = "default"))
+    relocatedProtobufSources(project(":custom-dependencies:protobuf-relocated", configuration = "sources"))
 }
 
-val relocateTask = task<ShadowJar>("prepare-relocated-protobuf") {
-    archiveName = renamedOutputJarPath
-    this.configurations = listOf(relocatedCfg)
-    from(mainCfg.files.find { it.name.startsWith("protobuf-java") }?.canonicalPath)
-    relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" ) {
-        // TODO: remove "it." after #KT-12848 get addressed
-        exclude("META-INF/maven/com.google.protobuf/protobuf-java/pom.properties")
-    }
-}
-
-val mainTask = task("prepare") {
-    dependsOn(relocateTask)
-    val inputJar = renamedOutputJarPath
-    inputs.files(inputJar)
+task("prepare") {
+    inputs.files(relocatedProtobuf) // this also adds a dependency
     outputs.file(outputJarPath)
     doFirst {
         File(outputJarPath).parentFile.mkdirs()
@@ -73,7 +46,7 @@ val mainTask = task("prepare") {
             return result
         }
 
-        val allFiles = loadAllFromJar(File(inputJar))
+        val allFiles = loadAllFromJar(File(relocatedProtobuf.singleFile))
 
         val keepClasses = arrayListOf<String>()
 
@@ -112,10 +85,18 @@ val mainTask = task("prepare") {
             }
         }
     }
+    addArtifact("archives", this, outputs.files.singleFile) {
+        classifier = ""
+    }
+    addArtifact(resultsCfg, this, outputs.files.singleFile) {
+        classifier = ""
+    }
 }
 
-defaultTasks(mainTask.name)
+val clean by task<Delete> {
+    delete(buildDir)
+}
 
-tasks.withType<Assemble>() {
-    dependsOn(mainCfg)
+artifacts.add("archives", relocatedProtobufSources.files.single()) {
+    classifier = "sources"
 }

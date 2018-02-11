@@ -1,0 +1,2 @@
+public final class AllPrivate {
+}

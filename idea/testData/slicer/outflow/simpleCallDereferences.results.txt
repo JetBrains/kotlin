@@ -1,6 +1,11 @@
 13 val <bold>x = A()</bold>
 15 	DEREFERENCE: <bold>x</bold>.foo()
 16 	DEREFERENCE: <bold>x</bold>.bar
-20 	val <bold>y: A? = x</bold>
-22 		DEREFERENCE: <bold>y</bold>?.foo()
-23 		DEREFERENCE: <bold>y</bold>?.bar
+17 	<bold>x</bold>.fooExt()
+18 	<bold>x</bold>.barExt
+20 	val y: A? = <bold>x</bold>
+20 		val <bold>y: A? = x</bold>
+22 			DEREFERENCE: <bold>y</bold>?.foo()
+23 			DEREFERENCE: <bold>y</bold>?.bar
+24 			<bold>y</bold>?.fooExt()
+25 			<bold>y</bold>?.barExt

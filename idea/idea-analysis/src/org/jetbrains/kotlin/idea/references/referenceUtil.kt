@@ -220,7 +220,9 @@ enum class ReferenceAccess(val isRead: Boolean, val isWrite: Boolean) {
     READ(true, false), WRITE(false, true), READ_WRITE(true, true)
 }
 
-fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean): ReferenceAccess {
+fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean) = readWriteAccessWithFullExpression(useResolveForReadWrite).first
+
+fun KtExpression.readWriteAccessWithFullExpression(useResolveForReadWrite: Boolean): Pair<ReferenceAccess, KtExpression> {
     var expression = getQualifiedExpressionForSelectorOrThis()
     loop@ while (true) {
         val parent = expression.parent
@@ -233,26 +235,27 @@ fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean): ReferenceAcce
     val assignment = expression.getAssignmentByLHS()
     if (assignment != null) {
         when (assignment.operationToken) {
-            KtTokens.EQ -> return ReferenceAccess.WRITE
+            KtTokens.EQ -> return ReferenceAccess.WRITE to assignment
 
             else -> {
-                if (!useResolveForReadWrite) return ReferenceAccess.READ_WRITE
+                if (!useResolveForReadWrite) return ReferenceAccess.READ_WRITE to assignment
 
                 val bindingContext = assignment.analyze(BodyResolveMode.PARTIAL)
-                val resolvedCall = assignment.getResolvedCall(bindingContext) ?: return ReferenceAccess.READ_WRITE
-                if (!resolvedCall.isReallySuccess()) return ReferenceAccess.READ_WRITE
+                val resolvedCall = assignment.getResolvedCall(bindingContext) ?: return ReferenceAccess.READ_WRITE to assignment
+                if (!resolvedCall.isReallySuccess()) return ReferenceAccess.READ_WRITE to assignment
                 return if (resolvedCall.resultingDescriptor.name in OperatorConventions.ASSIGNMENT_OPERATIONS.values)
-                    ReferenceAccess.READ
+                    ReferenceAccess.READ to assignment
                 else
-                    ReferenceAccess.READ_WRITE
+                    ReferenceAccess.READ_WRITE to assignment
             }
         }
     }
 
-    return if ((expression.parent as? KtUnaryExpression)?.operationToken in constant { setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) })
-        ReferenceAccess.READ_WRITE
+    val unaryExpression = expression.parent as? KtUnaryExpression
+    return if (unaryExpression != null && unaryExpression.operationToken in constant { setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) })
+        ReferenceAccess.READ_WRITE to unaryExpression
     else
-        ReferenceAccess.READ
+        ReferenceAccess.READ to expression
 }
 
 fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor, bindingContext: BindingContext): Boolean {

@@ -5,7 +5,6 @@ configureJvmProject(project)
 repositories {
     mavenLocal()
     jcenter()
-    maven { url 'http://repository.jetbrains.com/utils/' }
 }
 
 dependencies {
@@ -16,15 +15,23 @@ dependencies {
     testCompile project(':kotlin-test:kotlin-test-jvm')
 
     testCompile project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+    // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
+    // testRuntime on shaded artifact is needed for running tests with shaded compiler
+    testCompileOnly (project(path: ':kotlin-gradle-plugin-test-utils-embeddable', configuration: 'compile'))
+    testRuntime (project(path: ':kotlin-gradle-plugin-test-utils-embeddable', configuration: 'runtimeJar'))
+
     testCompile project(path: ':examples:annotation-processor-example')
     testCompile project(':kotlin-stdlib-jre8')
     testCompile project(':kotlin-reflect')
     testCompile project(':kotlin-android-extensions')
-    testCompile project(path: ':kotlin-build-common', configuration: 'tests-jar')
-    testCompile project(path: ':compiler:incremental-compilation-impl', configuration: 'tests-jar')
 
-    testCompile 'org.jetbrains.kotlin:gradle-api:2.2'
+    testCompile gradleApi()
+
+    testRuntime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
 }
+
+// Include Gradle task properties validation into the testing procedure:
+test.dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
 
 test.dependsOn(":kotlin-allopen:install",
                ":kotlin-android-extensions:install",
@@ -32,10 +39,12 @@ test.dependsOn(":kotlin-allopen:install",
                ":kotlin-compiler-embeddable:install",
                ":kotlin-gradle-plugin:install",
                ":kotlin-reflect:install",
+               ":kotlin-annotation-processing-gradle:install",
                ":kotlin-test:kotlin-test-jvm:install",
                ":kotlin-gradle-subplugin-example:install",
                ":kotlin-stdlib-jre8:install",
                ":examples:annotation-processor-example:install")
+
 
 // Validate that all dependencies 'install' tasks are added to 'test' dependencies
 // Test dependencies are specified as paths to avoid forcing dependency resolution
@@ -75,6 +84,8 @@ tasks.withType(Test) {
     if (mavenLocalRepo != null) {
         systemProperty("maven.repo.local", mavenLocalRepo)
     }
+
+    TasksKt.useAndroidSdk(it)
 
     testLogging {
         // set options for log level LIFECYCLE

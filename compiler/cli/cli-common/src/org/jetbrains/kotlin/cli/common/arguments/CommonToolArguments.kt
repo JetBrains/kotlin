@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.utils.SmartList
 import java.io.Serializable
 
 abstract class CommonToolArguments : Freezable(), Serializable {
@@ -24,7 +23,7 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         @JvmStatic private val serialVersionUID = 0L
     }
 
-    var freeArgs: MutableList<String> = SmartList()
+    var freeArgs: List<String> by FreezableVar(emptyList())
 
     @Transient var errors: ArgumentParseErrors = ArgumentParseErrors()
 
@@ -44,4 +43,8 @@ abstract class CommonToolArguments : Freezable(), Serializable {
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-nowarn", description = "Generate no warnings")
     var suppressWarnings: Boolean by FreezableVar(false)
+
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @Argument(value = "-Werror", description = "Report an error if there are any warnings")
+    var allWarningsAsErrors: Boolean by FreezableVar(false)
 }

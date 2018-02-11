@@ -104,7 +104,7 @@ internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: Com
             DiagnosticUtils.throwIfRunningOnServer(e)
             LOG.error(e)
 
-            return AnalysisResult.error(BindingContext.EMPTY, e)
+            return AnalysisResult.internalError(BindingContext.EMPTY, e)
         }
     }
 }
@@ -188,7 +188,7 @@ private object KotlinResolveDataProvider {
             DiagnosticUtils.throwIfRunningOnServer(e)
             LOG.error(e)
 
-            return AnalysisResult.error(BindingContext.EMPTY, e)
+            return AnalysisResult.internalError(BindingContext.EMPTY, e)
         }
     }
 

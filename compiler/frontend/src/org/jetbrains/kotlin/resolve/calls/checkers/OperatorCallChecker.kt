@@ -49,9 +49,11 @@ class OperatorCallChecker : CallChecker {
             call is CallTransformer.CallForImplicitInvoke && call.itIsVariableAsFunctionCall) {
             val outerCall = call.outerCall
             if (isConventionCall(outerCall) || isWrongCallWithExplicitTypeArguments(resolvedCall, outerCall)) {
-                throw AssertionError("Illegal resolved call to variable with invoke for $outerCall. " +
-                                     "Variable: ${resolvedCall.variableCall.resultingDescriptor}" +
-                                     "Invoke: ${resolvedCall.functionCall.resultingDescriptor}")
+                throw AssertionError(
+                    "Illegal resolved call to variable with invoke for $outerCall. " +
+                            "Variable: ${resolvedCall.variableCall.resultingDescriptor}" +
+                            "Invoke: ${resolvedCall.functionCall.resultingDescriptor}"
+                )
             }
         }
 
@@ -89,11 +91,11 @@ class OperatorCallChecker : CallChecker {
         }
 
         private fun isWrongCallWithExplicitTypeArguments(
-                resolvedCall: VariableAsFunctionResolvedCall,
-                outerCall: Call
+            resolvedCall: VariableAsFunctionResolvedCall,
+            outerCall: Call
         ): Boolean {
             val passedTypeArgumentsToInvoke = outerCall.typeArguments.isNotEmpty() &&
-                                              resolvedCall.functionCall.candidateDescriptor.typeParameters.isNotEmpty()
+                    resolvedCall.functionCall.candidateDescriptor.typeParameters.isNotEmpty()
             return passedTypeArgumentsToInvoke && resolvedCall.variableCall.candidateDescriptor.typeParameters.isNotEmpty()
         }
     }
@@ -108,8 +110,8 @@ fun shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings: LanguageVe
 }
 
 private fun checkModConvention(
-        descriptor: FunctionDescriptor, languageVersionSettings: LanguageVersionSettings,
-        diagnosticHolder: DiagnosticSink, modifier: PsiElement
+    descriptor: FunctionDescriptor, languageVersionSettings: LanguageVersionSettings,
+    diagnosticHolder: DiagnosticSink, modifier: PsiElement
 ) {
     if (!descriptor.isOperatorMod()) return
 
@@ -117,8 +119,7 @@ private fun checkModConvention(
         if (shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
             addWarningAboutDeprecatedMod(descriptor, diagnosticHolder, modifier)
         }
-    }
-    else {
+    } else {
         if (languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)) {
             addWarningAboutDeprecatedMod(descriptor, diagnosticHolder, modifier)
         }

@@ -1,0 +1,96 @@
+== myRun ==
+inline fun myRun(block: () -> Unit) {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    block()
+}
+---------------------
+                                                                            <v0>: {<: () -> Unit}                   NEW: magic[FAKE_INITIALIZER](block: () -> Unit) -> <v0>
+{ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                        <v1>: {<: ContractBuilder.() -> Unit}   NEW: r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }               <v2>: *                                 NEW: call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+block                                                                       <v3>: {<: () -> Unit}                   NEW: r(block) -> <v3>
+block()                                                                     <v4>: *                                 NEW: call(block(), invoke|<v3>) -> <v4>
+{ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } block() }   <v4>: *                                 COPY
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+                                                   <v0>: {<: ContractBuilder}   NEW: magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+block                                              <v1>: {<: Function<Unit>}    NEW: r(block) -> <v1>
+EXACTLY_ONCE                                       <v2>: {<: InvocationKind}    NEW: r(EXACTLY_ONCE) -> <v2>
+InvocationKind.EXACTLY_ONCE                        <v2>: {<: InvocationKind}    COPY
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      NEW: call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      COPY
+=====================
+== unknownRun ==
+inline fun <T> unknownRun(block: () -> T): T = block()
+---------------------
+          <v0>: {<: () -> T}   NEW: magic[FAKE_INITIALIZER](block: () -> T) -> <v0>
+block     <v1>: {<: () -> T}   NEW: r(block) -> <v1>
+block()   <v2>: {<: T}         NEW: call(block(), invoke|<v1>) -> <v2>
+=====================
+== throwIfNotCalled ==
+fun throwIfNotCalled() {
+    val x: Int
+    myRun outer@ {
+        unknownRun {
+            myRun {
+                x = 42
+                return@outer
+            }
+        }
+        throw java.lang.IllegalArgumentException()
+    }
+    println(<!UNINITIALIZED_VARIABLE!>x<!>)
+}
+---------------------
+{ unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() }                                                                       <v0>: {<: () -> Unit}   NEW: r({ unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() }) -> <v0>
+outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() }                                                                <v0>: {<: () -> Unit}   COPY
+myRun outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() }                                                          <v1>: *                 NEW: call(myRun outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() }, myRun|<v0>) -> <v1>
+println                                                                                                                                                           !<v2>: *
+println(<                                                                                                                                                         <v3>: *                 NEW: magic[UNRESOLVED_CALL](println(<|!<v2>) -> <v3>
+{ val x: Int myRun outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() } println(<!UNINITIALIZED_VARIABLE!>x<!>) }   <v3>: *                 COPY
+=====================
+== inlined anonymous_1 ==
+{
+        unknownRun {
+            myRun {
+                x = 42
+                return@outer
+            }
+        }
+        throw java.lang.IllegalArgumentException()
+    }
+---------------------
+{ myRun { x = 42 return@outer } }                                                         <v0>: {<: () -> Unit}   NEW: r({ myRun { x = 42 return@outer } }) -> <v0>
+unknownRun { myRun { x = 42 return@outer } }                                              <v1>: *                 NEW: call(unknownRun { myRun { x = 42 return@outer } }, unknownRun|<v0>) -> <v1>
+IllegalArgumentException()                                                                <v2>: {<: Throwable}    NEW: call(IllegalArgumentException(), <init>) -> <v2>
+java.lang.IllegalArgumentException()                                                      <v2>: {<: Throwable}    COPY
+throw java.lang.IllegalArgumentException()                                                !<v3>: *
+unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException()   !<v3>: *                COPY
+=====================
+== anonymous_2 ==
+{
+            myRun {
+                x = 42
+                return@outer
+            }
+        }
+---------------------
+{ x = 42 return@outer }         <v0>: {<: () -> Unit}   NEW: r({ x = 42 return@outer }) -> <v0>
+myRun { x = 42 return@outer }   <v1>: *                 NEW: call(myRun { x = 42 return@outer }, myRun|<v0>) -> <v1>
+myRun { x = 42 return@outer }   <v1>: *                 COPY
+=====================
+== inlined anonymous_3 ==
+{
+                x = 42
+                return@outer
+            }
+---------------------
+42                    <v0>: Int   NEW: r(42) -> <v0>
+return@outer          !<v1>: *
+x = 42 return@outer   !<v1>: *    COPY
+=====================

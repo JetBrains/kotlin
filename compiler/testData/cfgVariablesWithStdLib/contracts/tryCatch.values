@@ -1,0 +1,200 @@
+== myRun ==
+inline fun <T> myRun(block: () -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+                                                                                   <v0>: {<: () -> T}                      NEW: magic[FAKE_INITIALIZER](block: () -> T) -> <v0>
+{ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                               <v1>: {<: ContractBuilder.() -> Unit}   NEW: r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                      <v2>: *                                 NEW: call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+block                                                                              <v3>: {<: () -> T}                      NEW: r(block) -> <v3>
+block()                                                                            <v4>: {<: T}                            NEW: call(block(), invoke|<v3>) -> <v4>
+return block()                                                                     !<v5>: *
+{ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() }   !<v5>: *                                COPY
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+                                                   <v0>: {<: ContractBuilder}   NEW: magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+block                                              <v1>: {<: Function<T>}       NEW: r(block) -> <v1>
+EXACTLY_ONCE                                       <v2>: {<: InvocationKind}    NEW: r(EXACTLY_ONCE) -> <v2>
+InvocationKind.EXACTLY_ONCE                        <v2>: {<: InvocationKind}    COPY
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      NEW: call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      COPY
+=====================
+== someComputation ==
+fun someComputation(): Int = 42
+---------------------
+42   <v0>: Int   NEW: r(42) -> <v0>
+=====================
+== tryCatchInlined ==
+fun tryCatchInlined() {
+    val x: Int
+
+    myRun {
+        try {
+            x = someComputation()
+            x.inc()
+        }
+        catch (e: java.lang.Exception) {
+            // I?
+            x.inc()
+        }
+    }
+
+    // I?
+    x.inc()
+}
+---------------------
+{ try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() } }                                      <v0>: {<: () -> Int}   NEW: r({ try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() } }) -> <v0>
+myRun { try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() } }                                <v1>: *                NEW: call(myRun { try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() } }, myRun|<v0>) -> <v1>
+x                                                                                                                               <v2>: Int              NEW: r(x) -> <v2>
+inc()                                                                                                                           <v3>: *                NEW: call(inc(), inc|<v2>) -> <v3>
+x.inc()                                                                                                                         <v3>: *                COPY
+{ val x: Int myRun { try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() } } // I? x.inc() }   <v3>: *                COPY
+=====================
+== inlined anonymous_1 ==
+{
+        try {
+            x = someComputation()
+            x.inc()
+        }
+        catch (e: java.lang.Exception) {
+            // I?
+            x.inc()
+        }
+    }
+---------------------
+                                                                                         <v3>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v3>
+someComputation()                                                                        <v0>: Int              NEW: call(someComputation(), someComputation) -> <v0>
+x                                                                                        <v1>: Int              NEW: r(x) -> <v1>
+inc()                                                                                    <v2>: Int              NEW: call(inc(), inc|<v1>) -> <v2>
+x.inc()                                                                                  <v2>: Int              COPY
+{ x = someComputation() x.inc() }                                                        <v2>: Int              COPY
+x                                                                                        <v4>: Int              NEW: r(x) -> <v4>
+inc()                                                                                    <v5>: Int              NEW: call(inc(), inc|<v4>) -> <v5>
+x.inc()                                                                                  <v5>: Int              COPY
+{ // I? x.inc() }                                                                        <v5>: Int              COPY
+try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() }   <v6>: Int              NEW: merge(try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() }|<v2>, <v5>) -> <v6>
+try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() }   <v6>: Int              COPY
+=====================
+== possibleReassignmentInTryCatch ==
+fun possibleReassignmentInTryCatch() {
+    val x: Int
+
+    myRun {
+        x = 42
+        try {
+            x = someComputation()
+            x.inc()
+        }
+        catch (e: java.lang.Exception) {
+            // Possible reassignment
+            x = 42
+            x.inc()
+        }
+        // Initialized
+        x.inc()
+    }
+    // Initialized
+    x.inc()
+}
+---------------------
+{ x = 42 try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() } // Initialized x.inc() }                                               <v0>: {<: () -> Int}   NEW: r({ x = 42 try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() } // Initialized x.inc() }) -> <v0>
+myRun { x = 42 try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() } // Initialized x.inc() }                                         <v1>: *                NEW: call(myRun { x = 42 try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() } // Initialized x.inc() }, myRun|<v0>) -> <v1>
+x                                                                                                                                                                                                <v2>: Int              NEW: r(x) -> <v2>
+inc()                                                                                                                                                                                            <v3>: *                NEW: call(inc(), inc|<v2>) -> <v3>
+x.inc()                                                                                                                                                                                          <v3>: *                COPY
+{ val x: Int myRun { x = 42 try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() } // Initialized x.inc() } // Initialized x.inc() }   <v3>: *                COPY
+=====================
+== inlined anonymous_2 ==
+{
+        x = 42
+        try {
+            x = someComputation()
+            x.inc()
+        }
+        catch (e: java.lang.Exception) {
+            // Possible reassignment
+            x = 42
+            x.inc()
+        }
+        // Initialized
+        x.inc()
+    }
+---------------------
+                                                                                                                                                 <v4>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v4>
+42                                                                                                                                               <v0>: Int              NEW: r(42) -> <v0>
+someComputation()                                                                                                                                <v1>: Int              NEW: call(someComputation(), someComputation) -> <v1>
+x                                                                                                                                                <v2>: Int              NEW: r(x) -> <v2>
+inc()                                                                                                                                            <v3>: *                NEW: call(inc(), inc|<v2>) -> <v3>
+x.inc()                                                                                                                                          <v3>: *                COPY
+{ x = someComputation() x.inc() }                                                                                                                <v3>: *                COPY
+42                                                                                                                                               <v5>: Int              NEW: r(42) -> <v5>
+x                                                                                                                                                <v6>: Int              NEW: r(x) -> <v6>
+inc()                                                                                                                                            <v7>: *                NEW: call(inc(), inc|<v6>) -> <v7>
+x.inc()                                                                                                                                          <v7>: *                COPY
+{ // Possible reassignment x = 42 x.inc() }                                                                                                      <v7>: *                COPY
+try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() }                                 <v8>: *                NEW: merge(try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() }|<v3>, <v7>) -> <v8>
+x                                                                                                                                                <v9>: Int              NEW: r(x) -> <v9>
+inc()                                                                                                                                            <v10>: Int             NEW: call(inc(), inc|<v9>) -> <v10>
+x.inc()                                                                                                                                          <v10>: Int             COPY
+x = 42 try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() } // Initialized x.inc()   <v10>: Int             COPY
+=====================
+== tryCatchOuter ==
+fun tryCatchOuter() {
+    var x: Int
+    try {
+        myRun {
+            x = someComputation()
+            x.inc()
+        }
+    }
+    catch (e: java.lang.UnsupportedOperationException) {
+        myRun { x = 42 }
+    }
+    catch (e: java.lang.Exception) {
+        // do nothing
+    }
+    // I? because we can leave with last catch-clause which doesn't initialize x
+    x.inc()
+}
+---------------------
+                                                                                                                                                                                                                                                                               <v2>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: java.lang.UnsupportedOperationException) -> <v2>
+                                                                                                                                                                                                                                                                               <v5>: {<: Exception}                       NEW: magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v5>
+{ x = someComputation() x.inc() }                                                                                                                                                                                                                                              <v0>: {<: () -> Int}                       NEW: r({ x = someComputation() x.inc() }) -> <v0>
+myRun { x = someComputation() x.inc() }                                                                                                                                                                                                                                        <v1>: *                                    NEW: call(myRun { x = someComputation() x.inc() }, myRun|<v0>) -> <v1>
+{ myRun { x = someComputation() x.inc() } }                                                                                                                                                                                                                                    <v1>: *                                    COPY
+{ x = 42 }                                                                                                                                                                                                                                                                     <v3>: {<: () -> Unit}                      NEW: r({ x = 42 }) -> <v3>
+myRun { x = 42 }                                                                                                                                                                                                                                                               <v4>: *                                    NEW: call(myRun { x = 42 }, myRun|<v3>) -> <v4>
+{ myRun { x = 42 } }                                                                                                                                                                                                                                                           <v4>: *                                    COPY
+{ // do nothing }                                                                                                                                                                                                                                                              !<v6>: *
+try { myRun { x = someComputation() x.inc() } } catch (e: java.lang.UnsupportedOperationException) { myRun { x = 42 } } catch (e: java.lang.Exception) { // do nothing }                                                                                                       <v7>: *                                    NEW: merge(try { myRun { x = someComputation() x.inc() } } catch (e: java.lang.UnsupportedOperationException) { myRun { x = 42 } } catch (e: java.lang.Exception) { // do nothing }|<v1>, <v4>, !<v6>) -> <v7>
+x                                                                                                                                                                                                                                                                              <v8>: Int                                  NEW: r(x) -> <v8>
+inc()                                                                                                                                                                                                                                                                          <v9>: *                                    NEW: call(inc(), inc|<v8>) -> <v9>
+x.inc()                                                                                                                                                                                                                                                                        <v9>: *                                    COPY
+{ var x: Int try { myRun { x = someComputation() x.inc() } } catch (e: java.lang.UnsupportedOperationException) { myRun { x = 42 } } catch (e: java.lang.Exception) { // do nothing } // I? because we can leave with last catch-clause which doesn't initialize x x.inc() }   <v9>: *                                    COPY
+=====================
+== inlined anonymous_3 ==
+{
+            x = someComputation()
+            x.inc()
+        }
+---------------------
+someComputation()               <v0>: Int   NEW: call(someComputation(), someComputation) -> <v0>
+x                               <v1>: Int   NEW: r(x) -> <v1>
+inc()                           <v2>: Int   NEW: call(inc(), inc|<v1>) -> <v2>
+x.inc()                         <v2>: Int   COPY
+x = someComputation() x.inc()   <v2>: Int   COPY
+=====================
+== inlined anonymous_4 ==
+{ x = 42 }
+---------------------
+42       <v0>: Int   NEW: r(42) -> <v0>
+x = 42   !<v1>: *
+x = 42   !<v1>: *    COPY
+=====================

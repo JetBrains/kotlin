@@ -92,7 +92,7 @@ private fun addCreatePropertyTemplate(
             builder.appendVariableTemplate(currentProperty, candidateBeanClasses) {
                 val existingNames = currentProperty.containingClassOrObject!!.declarations
                         .mapNotNull { if (it != currentProperty) (it as? KtProperty)?.name else null }
-                getSuggestedNames(candidateBean, currentProperty, existingNames) { returnType }
+                getSuggestedNames(candidateBean, currentProperty, existingNames = existingNames) { returnType }
             }
             builder.buildInlineTemplate()
         }

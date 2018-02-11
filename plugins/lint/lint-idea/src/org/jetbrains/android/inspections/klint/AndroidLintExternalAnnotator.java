@@ -28,14 +28,19 @@ import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
@@ -75,7 +80,7 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
     }
 
     final AndroidFacet facet = AndroidFacet.getInstance(module);
-    if (facet == null && !IntellijLintProject.hasAndroidModule(module.getProject())) {
+    if (facet == null && !isDependencyOfAnyAndroidModule(module)) {
       return null;
     }
 
@@ -101,6 +106,30 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
       return null;
     }
     return new State(module, vFile, file.getText(), issues);
+  }
+
+  private static boolean isDependencyOfAnyAndroidModule(@NotNull Module module) {
+    return CachedValuesManager
+            .getManager(module.getProject())
+            .getCachedValue(module,
+                            () -> new CachedValueProvider.Result<>(
+                                    computeIsDependencyOfAnyAndroidModule(module),
+                                    ProjectRootModificationTracker.getInstance(module.getProject())));
+  }
+
+  private static boolean computeIsDependencyOfAnyAndroidModule(@NotNull Module dependency) {
+    Module[] allModules = ModuleManager.getInstance(dependency.getProject()).getModules();
+    for (Module module : allModules) {
+      if (AndroidFacet.getInstance(module) == null) {
+        continue;
+      }
+
+      if (ModuleRootManager.getInstance(module).isDependsOn(dependency)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   @Override

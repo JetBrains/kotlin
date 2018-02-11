@@ -24,7 +24,7 @@ interface IrExpression : IrStatement, IrVarargElement {
     val type: KotlinType
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression =
-            accept(transformer, data) as IrExpression
+        accept(transformer, data) as IrExpression
 }
 
 interface IrExpressionWithCopy : IrExpression {

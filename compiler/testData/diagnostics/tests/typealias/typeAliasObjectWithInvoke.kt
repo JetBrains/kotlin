@@ -1,3 +1,6 @@
+// !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
+
 object ObjectWithInvoke {
     operator fun invoke() = this
 }

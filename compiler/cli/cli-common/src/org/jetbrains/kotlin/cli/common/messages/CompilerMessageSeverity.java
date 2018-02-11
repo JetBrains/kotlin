@@ -35,11 +35,14 @@ public enum CompilerMessageSeverity {
      */
     OUTPUT;
 
-    public static final EnumSet<CompilerMessageSeverity> ERRORS = EnumSet.of(ERROR, EXCEPTION);
     public static final EnumSet<CompilerMessageSeverity> VERBOSE = EnumSet.of(LOGGING);
 
     public boolean isError() {
-        return ERRORS.contains(this);
+        return this == EXCEPTION || this == ERROR;
+    }
+
+    public boolean isWarning() {
+        return this == STRONG_WARNING || this == WARNING;
     }
 
     @NotNull

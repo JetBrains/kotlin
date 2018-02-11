@@ -22,12 +22,16 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasRestrictsSuspensionAnnotation
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
@@ -40,19 +44,28 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+val COROUTINE_CONTEXT_1_2_20_FQ_NAME = DescriptorUtils.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.child(Name.identifier("coroutineContext"))
+val COROUTINE_CONTEXT_FQ_NAME = DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("coroutineContext"))
+
 object CoroutineSuspendCallChecker : CallChecker {
     private val ALLOWED_SCOPE_KINDS = setOf(LexicalScopeKind.FUNCTION_INNER_SCOPE, LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING)
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
-        if (!descriptor.isSuspend) return
+        val descriptor = resolvedCall.candidateDescriptor
+        when (descriptor) {
+            is FunctionDescriptor -> if (!descriptor.isSuspend) return
+            is PropertyDescriptor -> when (descriptor.fqNameSafe) {
+                COROUTINE_CONTEXT_1_2_20_FQ_NAME, COROUTINE_CONTEXT_FQ_NAME -> {}
+                else -> return
+            }
+            else -> return
+        }
 
-        val enclosingSuspendFunction =
-                context.scope
-                        .parentsWithSelf.firstOrNull {
-                                it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS &&
-                                    it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
-                        }?.cast<LexicalScope>()?.ownerDescriptor?.cast<FunctionDescriptor>()
+        val enclosingSuspendFunction = context.scope
+            .parentsWithSelf.firstOrNull {
+            it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS &&
+                    it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
+        }?.cast<LexicalScope>()?.ownerDescriptor?.cast<FunctionDescriptor>()
 
         when {
             enclosingSuspendFunction != null -> {
@@ -60,24 +73,40 @@ object CoroutineSuspendCallChecker : CallChecker {
 
                 if (!InlineUtil.checkNonLocalReturnUsage(enclosingSuspendFunction, callElement, context.resolutionContext)) {
                     context.trace.report(Errors.NON_LOCAL_SUSPENSION_POINT.on(reportOn))
-                }
-                else if (context.scope.parentsWithSelf.any { it.isScopeForDefaultParameterValuesOf(enclosingSuspendFunction) }) {
+                } else if (context.scope.parentsWithSelf.any { it.isScopeForDefaultParameterValuesOf(enclosingSuspendFunction) }) {
                     context.trace.report(Errors.UNSUPPORTED.on(reportOn, "suspend function calls in a context of default parameter value"))
                 }
 
-                context.trace.record(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call, enclosingSuspendFunction)
+                context.trace.record(
+                    BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL,
+                    resolvedCall.call,
+                    enclosingSuspendFunction
+                )
 
                 checkRestrictsSuspension(enclosingSuspendFunction, resolvedCall, reportOn, context)
             }
             else -> {
-                context.trace.report(Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(reportOn, resolvedCall.candidateDescriptor))
+                when (descriptor) {
+                    is FunctionDescriptor -> context.trace.report(
+                        Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(
+                            reportOn,
+                            resolvedCall.candidateDescriptor
+                        )
+                    )
+                    is PropertyDescriptor -> context.trace.report(
+                        Errors.ILLEGAL_SUSPEND_PROPERTY_ACCESS.on(
+                            reportOn,
+                            resolvedCall.candidateDescriptor
+                        )
+                    )
+                }
             }
         }
     }
 }
 
 private fun HierarchicalScope.isScopeForDefaultParameterValuesOf(enclosingSuspendFunction: FunctionDescriptor) =
-        this is LexicalScope && this.kind == LexicalScopeKind.DEFAULT_VALUE && this.ownerDescriptor == enclosingSuspendFunction
+    this is LexicalScope && this.kind == LexicalScopeKind.DEFAULT_VALUE && this.ownerDescriptor == enclosingSuspendFunction
 
 object BuilderFunctionsCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -106,10 +135,10 @@ fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, dia
 }
 
 private fun checkRestrictsSuspension(
-        enclosingCallableDescriptor: CallableDescriptor,
-        resolvedCall: ResolvedCall<*>,
-        reportOn: PsiElement,
-        context: CallCheckerContext
+    enclosingCallableDescriptor: CallableDescriptor,
+    resolvedCall: ResolvedCall<*>,
+    reportOn: PsiElement,
+    context: CallCheckerContext
 ) {
     val enclosingSuspendReceiverValue = enclosingCallableDescriptor.extensionReceiverParameter?.value ?: return
 

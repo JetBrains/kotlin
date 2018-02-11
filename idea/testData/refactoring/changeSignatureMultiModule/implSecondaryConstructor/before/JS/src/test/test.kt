@@ -1,7 +1,7 @@
 package test
 
 actual class C(s: String) {
-    <caret>constructor(n: Int): this("")
+    actual <caret>constructor(n: Int): this("")
 }
 
 fun test() {

@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
@@ -42,10 +40,6 @@ public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl impleme
         this.declarationProvider = declarationProvider;
 
         this.memberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
-
-        for (KtFile file : declarationProvider.getPackageFiles()) {
-            resolveSession.getTrace().record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, this);
-        }
     }
 
     @NotNull

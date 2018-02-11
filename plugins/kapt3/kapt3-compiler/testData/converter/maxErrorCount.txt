@@ -1,0 +1,14 @@
+import kotlin.reflect.KClass;
+
+@kotlin.Metadata()
+public final class Test {
+
+    public final void a(@org.jetbrains.annotations.NotNull()
+    ABC a, @org.jetbrains.annotations.NotNull()
+    BCD b) {
+    }
+
+    public Test() {
+        super();
+    }
+}

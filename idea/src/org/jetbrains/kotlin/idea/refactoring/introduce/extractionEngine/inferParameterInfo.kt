@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.*
@@ -325,8 +326,12 @@ private fun suggestParameterType(
 
                receiverToExtract is ImplicitReceiver -> {
                    val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
-                       val dataFlowInfo = bindingContext.getDataFlowInfoAfter(resolvedCall!!.call.callElement)
-                       val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract))
+                       val callElement = resolvedCall!!.call.callElement
+                       val dataFlowInfo = bindingContext.getDataFlowInfoAfter(callElement)
+                       val possibleTypes = dataFlowInfo.getCollectedTypes(
+                               DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract),
+                               callElement.languageVersionSettings
+                       )
                        if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
                    } else null
                    typeByDataFlowInfo ?: receiverToExtract.type

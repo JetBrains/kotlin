@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 interface IrBody : IrElement {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBody =
-            accept(transformer, data) as IrBody
+        accept(transformer, data) as IrBody
 }
 
 interface IrExpressionBody : IrBody {
     var expression: IrExpression
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpressionBody =
-            accept(transformer, data) as IrExpressionBody
+        accept(transformer, data) as IrExpressionBody
 }
 
 interface IrBlockBody : IrBody, IrStatementContainer

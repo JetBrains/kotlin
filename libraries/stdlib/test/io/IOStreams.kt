@@ -1,7 +1,6 @@
 @file:kotlin.jvm.JvmVersion
 package test.io
 
-import org.junit.Test
 import kotlin.test.*
 import java.io.Writer
 import java.io.BufferedReader

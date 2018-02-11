@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -107,9 +106,8 @@ class ChangeFunctionLiteralReturnTypeFix(
 
     override fun getFamilyName() = KotlinBundle.message("change.type.family")
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return super.isAvailable(project, editor, file)
-               && (functionLiteralReturnTypeRef != null || appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor!!, file))
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
+        return functionLiteralReturnTypeRef != null || appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor!!, file)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

@@ -31,6 +31,11 @@ public class KtConstructorDelegationCall extends KtElementImpl implements KtCall
     }
 
     @Override
+    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
+        return visitor.visitConstructorDelegationCall(this, data);
+    }
+
+    @Override
     @Nullable
     public KtValueArgumentList getValueArgumentList() {
         return (KtValueArgumentList) findChildByType(KtNodeTypes.VALUE_ARGUMENT_LIST);

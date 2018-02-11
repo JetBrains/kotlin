@@ -31,14 +31,15 @@ fun Module.getSpecialAnnotations(prefix: String): List<String> {
     ?: emptyList()
 }
 
-internal class AnnotationBasedCompilerPluginSetup(val annotationFqNames: List<String>, val classpath: List<String>)
+class AnnotationBasedCompilerPluginSetup(val options: List<PluginOption>, val classpath: List<String>) {
+    class PluginOption(val key: String, val value: String)
+}
 
 internal fun modifyCompilerArgumentsForPlugin(
         facet: KotlinFacet,
         setup: AnnotationBasedCompilerPluginSetup?,
         compilerPluginId: String,
-        pluginName: String,
-        annotationOptionName: String
+        pluginName: String
 ) {
     val facetSettings = facet.configuration.settings
 
@@ -46,10 +47,10 @@ internal fun modifyCompilerArgumentsForPlugin(
     val commonArguments = facetSettings.compilerArguments ?: CommonCompilerArguments.DummyImpl()
 
     /** See [CommonCompilerArguments.PLUGIN_OPTION_FORMAT] **/
-    val annotationOptions = setup?.annotationFqNames?.map { "plugin:$compilerPluginId:$annotationOptionName=$it" } ?: emptyList()
+    val newOptionsForPlugin = setup?.options?.map { "plugin:$compilerPluginId:${it.key}=${it.value}" } ?: emptyList()
 
-    val oldPluginOptions = (commonArguments.pluginOptions ?: emptyArray()).filterTo(mutableListOf()) { !it.startsWith("plugin:$compilerPluginId:") }
-    val newPluginOptions = oldPluginOptions + annotationOptions
+    val oldAllPluginOptions = (commonArguments.pluginOptions ?: emptyArray()).filterTo(mutableListOf()) { !it.startsWith("plugin:$compilerPluginId:") }
+    val newAllPluginOptions = oldAllPluginOptions + newOptionsForPlugin
 
     val oldPluginClasspaths = (commonArguments.pluginClasspaths ?: emptyArray()).filterTo(mutableListOf()) {
         val lastIndexOfFile = it.lastIndexOfAny(charArrayOf('/', File.separatorChar))
@@ -61,7 +62,7 @@ internal fun modifyCompilerArgumentsForPlugin(
 
     val newPluginClasspaths = oldPluginClasspaths + (setup?.classpath ?: emptyList())
 
-    commonArguments.pluginOptions = newPluginOptions.toTypedArray()
+    commonArguments.pluginOptions = newAllPluginOptions.toTypedArray()
     commonArguments.pluginClasspaths = newPluginClasspaths.toTypedArray()
 
     facetSettings.compilerArguments = commonArguments

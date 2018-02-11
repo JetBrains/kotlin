@@ -19,14 +19,14 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
-import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
-import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
+import kotlin.reflect.jvm.internal.components.RuntimeModuleData
+import kotlin.reflect.jvm.internal.structure.createArrayType
+import kotlin.reflect.jvm.internal.structure.safeClassLoader
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
     abstract inner class Data {

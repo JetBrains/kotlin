@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package uninitialized_reassigned_variables
 
 fun doSmth(<!UNUSED_PARAMETER!>s<!>: String) {}
@@ -240,7 +241,7 @@ class Outer() {
 }
 
 class ForwardAccessToBackingField() { //kt-147
-    val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>a<!> // error
+    val a = <!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;UNINITIALIZED_VARIABLE, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>a<!> // error
     val b = <!UNINITIALIZED_VARIABLE!>c<!> // error
     val c = 1
 }

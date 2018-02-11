@@ -87,6 +87,21 @@ public class MockUpdateParameterInfoContext implements UpdateParameterInfoContex
     }
 
     @Override
+    public boolean isPreservedOnHintHidden() {
+        return false;
+    }
+
+    @Override
+    public void setPreservedOnHintHidden(boolean value) {
+
+    }
+
+    @Override
+    public boolean isInnermostContext() {
+        return false;
+    }
+
+    @Override
     public Project getProject() {
         return null;
     }

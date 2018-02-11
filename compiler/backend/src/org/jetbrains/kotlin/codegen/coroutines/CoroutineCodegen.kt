@@ -145,6 +145,8 @@ class CoroutineCodegenForLambda private constructor(
 ) {
     private val builtIns = funDescriptor.builtIns
 
+    private val constructorCallNormalizationMode = outerExpressionCodegen.state.constructorCallNormalizationMode
+
     private lateinit var constructorToUseFromInvoke: Method
 
     private val createCoroutineDescriptor =
@@ -313,6 +315,7 @@ class CoroutineCodegenForLambda private constructor(
                                 mv, access, name, desc, null, null,
                                 obtainClassBuilderForCoroutineState = { v },
                                 element = element,
+                                shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                                 containingClassInternalName = v.thisName,
                                 isForNamedFunction = false
                         )
@@ -528,6 +531,10 @@ class CoroutineCodegenForNamedFunction private constructor(
 private const val COROUTINE_LAMBDA_PARAMETER_PREFIX = "p$"
 
 private object FailingFunctionGenerationStrategy : FunctionGenerationStrategy() {
+    override fun skipNotNullAssertionsForParameters(): kotlin.Boolean {
+        error("This functions must not be called")
+    }
+
     override fun generateBody(
             mv: MethodVisitor,
             frameMap: FrameMap,

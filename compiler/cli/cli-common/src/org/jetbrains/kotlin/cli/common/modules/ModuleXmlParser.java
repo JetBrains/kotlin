@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
-import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil;
 import org.jetbrains.kotlin.modules.JavaRootPath;
 import org.jetbrains.kotlin.modules.Module;
 import org.xml.sax.Attributes;
@@ -55,7 +54,7 @@ public class ModuleXmlParser {
     public static final String MODULAR_JDK_ROOT = "modularJdkRoot";
 
     @NotNull
-    public static ModuleScriptData parseModuleScript(
+    public static ModuleChunk parseModuleScript(
             @NotNull String xmlFile,
             @NotNull MessageCollector messageCollector
     ) {
@@ -67,7 +66,7 @@ public class ModuleXmlParser {
         }
         catch (FileNotFoundException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
-            return ModuleScriptData.EMPTY;
+            return ModuleChunk.EMPTY;
         }
         finally {
             StreamUtil.closeStream(stream);
@@ -86,7 +85,7 @@ public class ModuleXmlParser {
         this.currentState = currentState;
     }
 
-    private ModuleScriptData parse(@NotNull InputStream xml) {
+    private ModuleChunk parse(@NotNull InputStream xml) {
         try {
             setCurrentState(initial);
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -97,7 +96,7 @@ public class ModuleXmlParser {
                     return currentState;
                 }
             });
-            return new ModuleScriptData(modules);
+            return new ModuleChunk(modules);
         }
         catch (ParserConfigurationException | IOException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
@@ -105,7 +104,7 @@ public class ModuleXmlParser {
         catch (SAXException e) {
             messageCollector.report(ERROR, "Build file does not have a valid XML: " + e, null);
         }
-        return ModuleScriptData.EMPTY;
+        return ModuleChunk.EMPTY;
     }
 
     private final DefaultHandler initial = new DefaultHandler() {

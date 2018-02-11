@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class A() {
     operator infix fun plus(<!UNUSED_PARAMETER!>i<!> : Int) {}
     operator fun unaryMinus() {}

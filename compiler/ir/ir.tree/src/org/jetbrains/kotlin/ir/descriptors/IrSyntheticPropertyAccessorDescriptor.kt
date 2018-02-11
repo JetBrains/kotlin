@@ -39,19 +39,19 @@ interface IrSyntheticPropertyGetterDescriptor : IrSyntheticPropertyAccessorDescr
 interface IrSyntheticPropertySetterDescriptor : IrSyntheticPropertyAccessorDescriptor
 
 class IrSyntheticPropertyGetterDescriptorImpl(
-        correspondingProperty: PropertyDescriptor,
-        override val kind: IrSyntheticPropertyAccessorDescriptor.Kind
+    correspondingProperty: PropertyDescriptor,
+    override val kind: IrSyntheticPropertyAccessorDescriptor.Kind
 ) : PropertyGetterDescriptorImpl(
-        correspondingProperty,
-        Annotations.EMPTY,
-        Modality.FINAL,
-        correspondingProperty.visibility,
-        true, // isDefault
-        false, // isExternal
-        false, // isInline
-        CallableMemberDescriptor.Kind.SYNTHESIZED,
-        null,
-        correspondingProperty.source
+    correspondingProperty,
+    Annotations.EMPTY,
+    Modality.FINAL,
+    correspondingProperty.visibility,
+    true, // isDefault
+    false, // isExternal
+    false, // isInline
+    CallableMemberDescriptor.Kind.SYNTHESIZED,
+    null,
+    correspondingProperty.source
 ), IrSyntheticPropertyGetterDescriptor {
     init {
         initialize(correspondingProperty.type)
@@ -59,19 +59,19 @@ class IrSyntheticPropertyGetterDescriptorImpl(
 }
 
 class IrSyntheticPropertySetterDescriptorImpl(
-        correspondingProperty: PropertyDescriptor,
-        override val kind: IrSyntheticPropertyAccessorDescriptor.Kind
+    correspondingProperty: PropertyDescriptor,
+    override val kind: IrSyntheticPropertyAccessorDescriptor.Kind
 ) : PropertySetterDescriptorImpl(
-        correspondingProperty,
-        Annotations.EMPTY,
-        Modality.FINAL,
-        correspondingProperty.visibility,
-        true, // isDefault
-        false, // isExternal
-        false, // isInline
-        CallableMemberDescriptor.Kind.SYNTHESIZED,
-        null,
-        correspondingProperty.source
+    correspondingProperty,
+    Annotations.EMPTY,
+    Modality.FINAL,
+    correspondingProperty.visibility,
+    true, // isDefault
+    false, // isExternal
+    false, // isInline
+    CallableMemberDescriptor.Kind.SYNTHESIZED,
+    null,
+    correspondingProperty.source
 ), IrSyntheticPropertySetterDescriptor {
     init {
         initializeDefault()

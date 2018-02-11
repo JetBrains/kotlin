@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.container.get
@@ -25,8 +23,8 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -39,28 +37,28 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 
 class JvmPlatformParameters(
-        val moduleByJavaClass: (JavaClass) -> ModuleInfo?
+    val moduleByJavaClass: (JavaClass) -> ModuleInfo?
 ) : PlatformAnalysisParameters
 
 
 object JvmAnalyzerFacade : AnalyzerFacade() {
     override fun <M : ModuleInfo> createResolverForModule(
-            moduleInfo: M,
-            moduleDescriptor: ModuleDescriptorImpl,
-            moduleContext: ModuleContext,
-            moduleContent: ModuleContent,
-            platformParameters: PlatformAnalysisParameters,
-            targetEnvironment: TargetEnvironment,
-            resolverForProject: ResolverForProject<M>,
-            languageSettingsProvider: LanguageSettingsProvider,
-            packagePartProvider: PackagePartProvider
+        moduleInfo: M,
+        moduleDescriptor: ModuleDescriptorImpl,
+        moduleContext: ModuleContext,
+        moduleContent: ModuleContent,
+        platformParameters: PlatformAnalysisParameters,
+        targetEnvironment: TargetEnvironment,
+        resolverForProject: ResolverForProject<M>,
+        languageSettingsProvider: LanguageSettingsProvider,
+        packagePartProvider: PackagePartProvider
     ): ResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
-                project, moduleContext.storageManager, syntheticFiles,
-                if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope,
-                moduleInfo
+            project, moduleContext.storageManager, syntheticFiles,
+            moduleContentScope,
+            moduleInfo
         )
 
         val moduleClassResolver = ModuleClassResolverImpl { javaClass ->
@@ -72,8 +70,9 @@ object JvmAnalyzerFacade : AnalyzerFacade() {
             @Suppress("UNCHECKED_CAST")
             val resolverForReferencedModule = referencedClassModule?.let { resolverForProject.tryGetResolverForModule(it as M) }
 
-            val resolverForModule = resolverForReferencedModule ?: run {
-                LOG.warn("Java referenced $referencedClassModule from $moduleInfo\nReferenced class was: $javaClass\n")
+            val resolverForModule = resolverForReferencedModule?.takeIf {
+                referencedClassModule.platform == JvmPlatform || referencedClassModule.platform == null
+            } ?: run {
                 // in case referenced class lies outside of our resolver, resolve the class as if it is inside our module
                 // this leads to java class being resolved several times
                 resolverForProject.resolverForModule(moduleInfo)
@@ -86,35 +85,41 @@ object JvmAnalyzerFacade : AnalyzerFacade() {
 
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
 
+        val lookupTracker = LookupTracker.DO_NOTHING
         val container = createContainerForLazyResolveWithJava(
-                moduleContext,
-                trace,
-                declarationProviderFactory,
-                moduleContentScope,
-                moduleClassResolver,
-                targetEnvironment,
-                LookupTracker.DO_NOTHING,
-                packagePartProvider,
-                jvmTarget,
-                languageVersionSettings,
-                useBuiltInsProvider = false // TODO: load built-ins from module dependencies in IDE
+            moduleContext,
+            trace,
+            declarationProviderFactory,
+            moduleContentScope,
+            moduleClassResolver,
+            targetEnvironment,
+            lookupTracker,
+            ExpectActualTracker.DoNothing,
+            packagePartProvider,
+            jvmTarget,
+            languageVersionSettings,
+            useBuiltInsProvider = false // TODO: load built-ins from module dependencies in IDE
         )
 
         val resolveSession = container.get<ResolveSession>()
         val javaDescriptorResolver = container.get<JavaDescriptorResolver>()
 
         val providersForModule = arrayListOf(
-                resolveSession.packageFragmentProvider,
-                javaDescriptorResolver.packageFragmentProvider)
+            resolveSession.packageFragmentProvider,
+            javaDescriptorResolver.packageFragmentProvider
+        )
 
-        providersForModule += PackageFragmentProviderExtension.getInstances(project)
-                .mapNotNull { it.getPackageFragmentProvider(project, moduleDescriptor, moduleContext.storageManager, trace, moduleInfo) }
+        providersForModule +=
+                PackageFragmentProviderExtension.getInstances(project)
+                    .mapNotNull {
+                        it.getPackageFragmentProvider(
+                            project, moduleDescriptor, moduleContext.storageManager, trace, moduleInfo, lookupTracker
+                        )
+                    }
 
         return ResolverForModule(CompositePackageFragmentProvider(providersForModule), container)
     }
 
     override val targetPlatform: TargetPlatform
         get() = JvmPlatform
-
-    private val LOG = Logger.getInstance(JvmAnalyzerFacade::class.java)
 }

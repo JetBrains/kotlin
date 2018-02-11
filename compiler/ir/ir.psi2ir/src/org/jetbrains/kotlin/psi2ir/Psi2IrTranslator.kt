@@ -43,7 +43,7 @@ class Psi2IrTranslator(val configuration: Psi2IrConfiguration = Psi2IrConfigurat
     }
 
     fun createGeneratorContext(moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext) =
-            GeneratorContext(configuration, moduleDescriptor, bindingContext)
+        GeneratorContext(configuration, moduleDescriptor, bindingContext)
 
     fun generateModuleFragment(context: GeneratorContext, ktFiles: Collection<KtFile>): IrModuleFragment {
         val irModule = ModuleGenerator(context).generateModuleFragment(ktFiles)

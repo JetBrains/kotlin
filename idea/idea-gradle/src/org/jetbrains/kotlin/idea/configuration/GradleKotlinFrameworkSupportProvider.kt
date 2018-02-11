@@ -134,15 +134,17 @@ open class GradleKotlinJSFrameworkSupportProvider(frameworkTypeId: String = "KOT
 
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_JS_STDLIB_ID)
 
+    override fun getTestDependencies() = listOf(MAVEN_JS_TEST_ID)
+
     override fun getDescription() = "A Kotlin library or application targeting JavaScript"
 }
 
 open class GradleKotlinMPPCommonFrameworkSupportProvider :
-        GradleKotlinFrameworkSupportProvider("KOTLIN_MPP_COMMON", "Kotlin (Multiplatform Common - Experimental)", KotlinIcons.SMALL_LOGO) {
+        GradleKotlinFrameworkSupportProvider("KOTLIN_MPP_COMMON", "Kotlin (Multiplatform Common - Experimental)", KotlinIcons.MPP) {
     override fun getPluginId() = "kotlin-platform-common"
 
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_COMMON_STDLIB_ID)
-    override fun getTestDependencies() = listOf(MAVEN_COMMON_TEST_ID)
+    override fun getTestDependencies() = listOf(MAVEN_COMMON_TEST_ID, MAVEN_COMMON_TEST_ANNOTATIONS_ID)
 
     override fun getDescription() = "Shared code for a Kotlin multiplatform project (targeting JVM and JS)"
 }

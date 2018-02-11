@@ -354,7 +354,7 @@ public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Sequence<Pair<K,V>>): Uni
  *
  * The returned map preserves the entry iteration order of the original map.
  *
- * @sample samples.collections.Maps.Transforms.mapValues
+ * @sample samples.collections.Maps.Transformations.mapValues
  */
 public inline fun <K, V, R> Map<out K, V>.mapValues(transform: (Map.Entry<K, V>) -> R): Map<K, R> {
     return mapValuesTo(LinkedHashMap<K, R>(mapCapacity(size)), transform) // .optimizeReadOnlyMap()
@@ -369,7 +369,7 @@ public inline fun <K, V, R> Map<out K, V>.mapValues(transform: (Map.Entry<K, V>)
  *
  * The returned map preserves the entry iteration order of the original map.
  *
- * @sample samples.collections.Maps.Transforms.mapKeys
+ * @sample samples.collections.Maps.Transformations.mapKeys
  */
 public inline fun <K, V, R> Map<out K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R): Map<R, V> {
     return mapKeysTo(LinkedHashMap<R, V>(mapCapacity(size)), transform) // .optimizeReadOnlyMap()
@@ -379,6 +379,7 @@ public inline fun <K, V, R> Map<out K, V>.mapKeys(transform: (Map.Entry<K, V>) -
  * Returns a map containing all key-value pairs with keys matching the given [predicate].
  *
  * The returned map preserves the entry iteration order of the original map.
+ * @sample samples.collections.Maps.Filtering.filterKeys
  */
 public inline fun <K, V> Map<out K, V>.filterKeys(predicate: (K) -> Boolean): Map<K, V> {
     val result = LinkedHashMap<K, V>()
@@ -394,6 +395,7 @@ public inline fun <K, V> Map<out K, V>.filterKeys(predicate: (K) -> Boolean): Ma
  * Returns a map containing all key-value pairs with values matching the given [predicate].
  *
  * The returned map preserves the entry iteration order of the original map.
+ *  @sample samples.collections.Maps.Filtering.filterValues
  */
 public inline fun <K, V> Map<out K, V>.filterValues(predicate: (V) -> Boolean): Map<K, V> {
     val result = LinkedHashMap<K, V>()
@@ -410,6 +412,7 @@ public inline fun <K, V> Map<out K, V>.filterValues(predicate: (V) -> Boolean): 
  * Appends all entries matching the given [predicate] into the mutable map given as [destination] parameter.
  *
  * @return the destination map.
+ * @sample samples.collections.Maps.Filtering.filterTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.filterTo(destination: M, predicate: (Map.Entry<K, V>) -> Boolean): M {
     for (element in this) {
@@ -424,6 +427,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.filterTo(dest
  * Returns a new map containing all key-value pairs matching the given [predicate].
  *
  * The returned map preserves the entry iteration order of the original map.
+ * @sample samples.collections.Maps.Filtering.filter
  */
 public inline fun <K, V> Map<out K, V>.filter(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
     return filterTo(LinkedHashMap<K, V>(), predicate)
@@ -433,6 +437,7 @@ public inline fun <K, V> Map<out K, V>.filter(predicate: (Map.Entry<K, V>) -> Bo
  * Appends all entries not matching the given [predicate] into the given [destination].
  *
  * @return the destination map.
+ * @sample samples.collections.Maps.Filtering.filterNotTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.filterNotTo(destination: M, predicate: (Map.Entry<K, V>) -> Boolean): M {
     for (element in this) {
@@ -447,6 +452,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.filterNotTo(d
  * Returns a new map containing all key-value pairs not matching the given [predicate].
  *
  * The returned map preserves the entry iteration order of the original map.
+ * @sample samples.collections.Maps.Filtering.filterNot
  */
 public inline fun <K, V> Map<out K, V>.filterNot(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
     return filterNotTo(LinkedHashMap<K, V>(), predicate)

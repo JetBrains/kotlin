@@ -1,0 +1,13 @@
+class Test { // TARGET_BLOCK:
+    fun method() = 1
+
+    fun foo() {
+        O()
+    }
+
+    inner class O : Runnable {
+        override fun run() {
+            method()
+        }
+    }
+}

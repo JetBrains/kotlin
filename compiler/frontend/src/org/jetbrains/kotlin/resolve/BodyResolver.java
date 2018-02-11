@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.*;
@@ -304,7 +304,11 @@ public class BodyResolver {
                     KotlinType expectedType = supertype != null ? supertype : NO_EXPECTED_TYPE;
                     typeInferrer.getType(scope, delegateExpression, expectedType, outerDataFlowInfo, trace);
                 }
-                if (primaryConstructor == null) {
+
+                if (descriptor.isExpect()) {
+                    trace.report(IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS.on(specifier));
+                }
+                else if (primaryConstructor == null) {
                     trace.report(UNSUPPORTED.on(specifier, "Delegation without primary constructor is not supported"));
                 }
             }
@@ -385,7 +389,10 @@ public class BodyResolver {
 
         if (ktClass instanceof KtEnumEntry && DescriptorUtils.isEnumEntry(descriptor) && ktClass.getSuperTypeListEntries().isEmpty()) {
             assert scopeForConstructor != null : "Scope for enum class constructor should be non-null: " + descriptor;
-            resolveConstructorCallForEnumEntryWithoutInitializer((KtEnumEntry) ktClass, descriptor, scopeForConstructor, outerDataFlowInfo);
+            resolveConstructorCallForEnumEntryWithoutInitializer(
+                    (KtEnumEntry) ktClass, descriptor,
+                    scopeForConstructor, outerDataFlowInfo, primaryConstructorDelegationCall
+            );
         }
 
         for (KtSuperTypeListEntry delegationSpecifier : ktClass.getSuperTypeListEntries()) {
@@ -426,14 +433,15 @@ public class BodyResolver {
             @NotNull KtEnumEntry ktEnumEntry,
             @NotNull ClassDescriptor enumEntryDescriptor,
             @NotNull LexicalScope scopeForConstructor,
-            @NotNull DataFlowInfo outerDataFlowInfo
+            @NotNull DataFlowInfo outerDataFlowInfo,
+            @NotNull ResolvedCall<?>[] primaryConstructorDelegationCall
     ) {
         assert enumEntryDescriptor.getKind() == ClassKind.ENUM_ENTRY : "Enum entry expected: " + enumEntryDescriptor;
         ClassDescriptor enumClassDescriptor = (ClassDescriptor) enumEntryDescriptor.getContainingDeclaration();
         if (enumClassDescriptor.getKind() != ClassKind.ENUM_CLASS) return;
         if (enumClassDescriptor.isExpect()) return;
 
-        List<ClassConstructorDescriptor> applicableConstructors = DescriptorUtilsKt.getConstructorForEmptyArgumentsList(enumClassDescriptor);
+        List<ClassConstructorDescriptor> applicableConstructors = getConstructorForEmptyArgumentsList(enumClassDescriptor);
         if (applicableConstructors.size() != 1) {
             trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(ktEnumEntry));
             return;
@@ -444,7 +452,22 @@ public class BodyResolver {
         Call call = CallMaker.makeConstructorCallWithoutTypeArguments(ktCallEntry);
         trace.record(BindingContext.TYPE, ktCallEntry.getTypeReference(), enumClassDescriptor.getDefaultType());
         trace.record(BindingContext.CALL, ktEnumEntry, call);
-        callResolver.resolveFunctionCall(trace, scopeForConstructor, call, NO_EXPECTED_TYPE, outerDataFlowInfo, false);
+        OverloadResolutionResults<FunctionDescriptor> results =
+                callResolver.resolveFunctionCall(trace, scopeForConstructor, call, NO_EXPECTED_TYPE, outerDataFlowInfo, false);
+        if (primaryConstructorDelegationCall[0] == null) {
+            primaryConstructorDelegationCall[0] = results.getResultingCall();
+        }
+    }
+
+    @NotNull
+    private static List<ClassConstructorDescriptor> getConstructorForEmptyArgumentsList(@NotNull ClassDescriptor descriptor) {
+        return CollectionsKt.filter(
+                descriptor.getConstructors(),
+                (constructor) -> CollectionsKt.all(
+                        constructor.getValueParameters(),
+                        (parameter) -> parameter.declaresDefaultValue() || parameter.getVarargElementType() != null
+                )
+        );
     }
 
     // Returns a set of enum or sealed types of which supertypeOwner is an entry or a member

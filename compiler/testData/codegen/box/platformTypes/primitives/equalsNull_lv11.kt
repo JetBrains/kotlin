@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.1
+// !LANGUAGE: -ThrowNpeOnExplicitEqualsForBoxedNull
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FILE: test.kt

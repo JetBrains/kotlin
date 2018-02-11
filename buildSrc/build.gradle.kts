@@ -1,11 +1,14 @@
 
 buildscript {
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
-    extra["buildSrcKotlinRepo"] = findProperty("buildSrc.kotlin.repo")
+    val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
+    extra["versions.shadow"] = "2.0.1"
+    extra["versions.intellij-plugin"] = "0.3.0-SNAPSHOT"
+    extra["versions.native-platform"] = "0.14"
 
     repositories {
-        extra["buildSrcKotlinRepo"]?.let {
-            maven { setUrl(it) }
+        buildSrcKotlinRepo?.let {
+            maven(url = it)
         }
     }
 
@@ -28,18 +31,45 @@ plugins {
     `kotlin-dsl`
 }
 
+fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
+    val v = it.toString()
+    if (v.isBlank()) true
+    else v.toBoolean()
+}
+
+rootProject.apply {
+    from(rootProject.file("../versions.gradle.kts"))
+}
+
+val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
+val intellijUltimateEnabled by extra(project.getBooleanProperty("intellijUltimateEnabled") ?: isTeamcityBuild)
+val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
+
+extra["intellijRepo"] = "https://www.jetbrains.com/intellij-repository"
+extra["intellijReleaseType"] = "releases" // or "snapshots"
+extra["versions.androidDxSources"] = "5.0.0_r2"
+
+extra["customDepsOrg"] = "kotlin.build.custom.deps"
+
 repositories {
     extra["buildSrcKotlinRepo"]?.let {
-        maven { setUrl(it) }
+        maven(url = it)
     }
-//    maven { setUrl("https://repo.gradle.org/gradle/libs-releases-local") }
+    maven(url = "https://dl.bintray.com/kotlin/kotlin-dev") // for dex-method-list
+    maven(url = "https://repo.gradle.org/gradle/libs-releases-local") // for native-platform
+    jcenter()
 }
 
 dependencies {
-    compile(files("../dependencies/native-platform-uberjar.jar"))
-//    compile("net.rubygrapefruit:native-platform:0.14")
+    compile("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
+    compile("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
+    compile("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
+    compile("com.jakewharton.dex:dex-method-list:2.0.0-alpha")
     // TODO: adding the dep to the plugin breaks the build unexpectedly, resolve and uncomment
 //    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.extra["bootstrap_kotlin_version"]}")
+    // Shadow plugin is used in many projects of the main build. Once it's no longer used in buildSrc, please move this dependency to the root project
+    compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
+    compile("org.ow2.asm:asm-all:6.0_BETA")
 }
 
 samWithReceiver {
@@ -48,3 +78,5 @@ samWithReceiver {
 
 fun Project.`samWithReceiver`(configure: org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension.() -> Unit): Unit =
         extensions.configure("samWithReceiver", configure)
+
+tasks["build"].dependsOn(":prepare-deps:android-dx:build", ":prepare-deps:intellij-sdk:build")

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FULL_JDK
 
 import java.util.concurrent.*

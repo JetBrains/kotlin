@@ -24,7 +24,7 @@ interface IdentifierChecker {
     fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink)
     fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink)
 
-    object DEFAULT : IdentifierChecker {
+    object Default : IdentifierChecker {
         override fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {}
         override fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {}
     }

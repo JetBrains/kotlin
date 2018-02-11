@@ -227,7 +227,7 @@ public class FileTreeWalk private constructor(
      * Sets a callback [function], that is called on any left directory after its files are visited and after it is visited itself.
      */
     public fun onLeave(function: (File) -> Unit): FileTreeWalk {
-        return FileTreeWalk(start, direction, onEnter, function, onFail, maxDepth)
+        return FileTreeWalk(start, direction, onEnter = onEnter, onLeave = function, onFail = onFail, maxDepth = maxDepth)
     }
 
     /**
@@ -236,7 +236,7 @@ public class FileTreeWalk private constructor(
      * [onEnter] and [onLeave] callback functions are called even in this case.
      */
     public fun onFail(function: (File, IOException) -> Unit): FileTreeWalk {
-        return FileTreeWalk(start, direction, onEnter, onLeave, function, maxDepth)
+        return FileTreeWalk(start, direction, onEnter = onEnter, onLeave = onLeave, onFail = function, maxDepth = maxDepth)
     }
 
     /**

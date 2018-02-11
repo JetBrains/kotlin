@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.idea.inspections.PluginVersionDependentInspection
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
-class DifferentKotlinMavenVersionInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java), PluginVersionDependentInspection {
+class DifferentKotlinMavenVersionInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java),
+    PluginVersionDependentInspection {
     private val idePluginVersion by lazy { bundledRuntimeVersion() }
 
     override var testVersionMessage: String? = null
@@ -53,8 +54,11 @@ class DifferentKotlinMavenVersionInspection : DomElementsInspection<MavenDomProj
     }
 
     private fun createProblem(holder: DomElementAnnotationHolder, plugin: MavenDomPlugin) {
-        holder.createProblem(plugin.version,
-                             HighlightSeverity.WARNING,
-                             "Kotlin version that is used for building with Maven (${plugin.version.stringValue}) differs from the one bundled into the IDE plugin (${testVersionMessage ?: idePluginVersion})")
+        holder.createProblem(
+            plugin.version,
+            HighlightSeverity.WARNING,
+            "Kotlin version that is used for building with Maven (${plugin.version.stringValue}) differs from the one bundled into the IDE plugin (${testVersionMessage
+                    ?: idePluginVersion})"
+        )
     }
 }

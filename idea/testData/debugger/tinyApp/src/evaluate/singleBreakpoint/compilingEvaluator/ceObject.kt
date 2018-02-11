@@ -16,4 +16,4 @@ interface T {
 // RESULT: 1: I
 
 // EXPRESSION: object: T {}
-// RESULT: instance of ceObject.DebugFileKt$generated_for_debugger_kotlin_rulezzzz$1(id=ID): LceObject/DebugFileKt$generated_for_debugger_kotlin_rulezzzz$1;
+// RESULT: instance of ceObject.Generated_for_debugger_class$generated_for_debugger_fun$1(id=ID): LceObject/Generated_for_debugger_class$generated_for_debugger_fun$1;

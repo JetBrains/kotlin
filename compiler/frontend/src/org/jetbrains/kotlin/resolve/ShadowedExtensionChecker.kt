@@ -51,7 +51,9 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
     private fun checkShadowedExtensionFunction(declaration: KtDeclaration, extensionFunction: FunctionDescriptor, trace: DiagnosticSink) {
         val memberScope = extensionFunction.extensionReceiverParameter?.type?.memberScope ?: return
 
-        for (memberFunction in memberScope.getContributedFunctions(extensionFunction.name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)) {
+        val contributedFunctions =
+            memberScope.getContributedFunctions(extensionFunction.name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
+        for (memberFunction in contributedFunctions) {
             if (memberFunction.isPublic() && isExtensionFunctionShadowedByMemberFunction(extensionFunction, memberFunction)) {
                 trace.report(Errors.EXTENSION_SHADOWED_BY_MEMBER.on(declaration, memberFunction))
                 return
@@ -68,19 +70,27 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
             }
         }
 
-        for (memberProperty in memberScope.getContributedVariables(extensionFunction.name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)) {
+        val contributedVariables =
+            memberScope.getContributedVariables(extensionFunction.name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
+        for (memberProperty in contributedVariables) {
             if (!memberProperty.isPublic()) continue
 
             val invokeOperator = getInvokeOperatorShadowingExtensionFunction(extensionFunction, memberProperty)
             if (invokeOperator != null) {
-                trace.report(Errors.EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE.on(declaration, memberProperty, invokeOperator))
+                trace.report(
+                    Errors.EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE.on(
+                        declaration,
+                        memberProperty,
+                        invokeOperator
+                    )
+                )
                 return
             }
         }
     }
 
     private fun DeclarationDescriptorWithVisibility.isPublic() =
-            visibility.normalize() == Visibilities.PUBLIC
+        visibility.normalize() == Visibilities.PUBLIC
 
     private fun isExtensionFunctionShadowedByMemberFunction(extension: FunctionDescriptor, member: FunctionDescriptor): Boolean {
         // Permissive check:
@@ -99,26 +109,32 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
         return isSignatureNotLessSpecific(extensionSignature, memberSignature)
     }
 
-    private fun getInvokeOperatorShadowingExtensionFunction(extension: FunctionDescriptor, member: PropertyDescriptor): FunctionDescriptor? =
-            member.type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
-                    .firstOrNull { it.isPublic() && it.isOperator && isExtensionFunctionShadowedByMemberFunction(extension, it) }
+    private fun getInvokeOperatorShadowingExtensionFunction(
+        extension: FunctionDescriptor,
+        member: PropertyDescriptor
+    ): FunctionDescriptor? =
+        member.type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
+            .firstOrNull { it.isPublic() && it.isOperator && isExtensionFunctionShadowedByMemberFunction(extension, it) }
 
-    private fun isSignatureNotLessSpecific(extensionSignature: FlatSignature<FunctionDescriptor>, memberSignature: FlatSignature<FunctionDescriptor>): Boolean =
-            ConstraintSystemBuilderImpl.forSpecificity().isSignatureNotLessSpecific(
-                    extensionSignature,
-                    memberSignature,
-                    OverloadabilitySpecificityCallbacks,
-                    typeSpecificityComparator
-            )
+    private fun isSignatureNotLessSpecific(
+        extensionSignature: FlatSignature<FunctionDescriptor>,
+        memberSignature: FlatSignature<FunctionDescriptor>
+    ): Boolean =
+        ConstraintSystemBuilderImpl.forSpecificity().isSignatureNotLessSpecific(
+            extensionSignature,
+            memberSignature,
+            OverloadabilitySpecificityCallbacks,
+            typeSpecificityComparator
+        )
 
     private fun checkShadowedExtensionProperty(declaration: KtDeclaration, extensionProperty: PropertyDescriptor, trace: DiagnosticSink) {
         val memberScope = extensionProperty.extensionReceiverParameter?.type?.memberScope ?: return
 
         memberScope.getContributedVariables(extensionProperty.name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
-                .firstOrNull { it.isPublic() && !it.isExtension }
-                ?.let { memberProperty ->
-                    trace.report(Errors.EXTENSION_SHADOWED_BY_MEMBER.on(declaration, memberProperty))
-                }
+            .firstOrNull { it.isPublic() && !it.isExtension }
+            ?.let { memberProperty ->
+                trace.report(Errors.EXTENSION_SHADOWED_BY_MEMBER.on(declaration, memberProperty))
+            }
     }
 
 }

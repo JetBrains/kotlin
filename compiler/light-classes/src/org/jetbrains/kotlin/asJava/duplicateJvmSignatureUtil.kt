@@ -51,7 +51,7 @@ fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostic
 
     fun doGetDiagnostics(): Diagnostics? {
         //TODO: enable this diagnostic when light classes for scripts are ready
-        if ((element.containingFile as? KtFile)?.isScript() ?: false) return null
+        if ((element.containingFile as? KtFile)?.isScript() == true) return null
 
         var parent = element.parent
         if (element is KtPropertyAccessor) {

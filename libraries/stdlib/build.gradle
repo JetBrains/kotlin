@@ -3,6 +3,7 @@ description = 'Kotlin Standard Library'
 apply plugin: 'kotlin'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
 
 sourceSets {
@@ -109,25 +110,33 @@ dist {
     }
 }
 
+task dexMethodCount(type: DexMethodCount) {
+    from jar
+    ownPackages = ['kotlin']
+}
+check.dependsOn(dexMethodCount)
+
 compileBuiltinsKotlin {
     dependsOn ":core:builtins:serialize"
     kotlinOptions {
         freeCompilerArgs = [
                 "-version",
                 "-Xallow-kotlin-package",
-                "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
+                "-Xdump-declarations-to=${buildDir}/runtime-declarations.json",
                 "-cp", "${rootDir}/dist/builtins",
                 "-module-name", "kotlin-runtime"
         ]
     }
 }
 compileKotlin {
+    dependsOn(":prepare:build.version:writeStdlibVersion")
     kotlinOptions {
         freeCompilerArgs = [
                 "-version",
                 "-Xallow-kotlin-package",
                 "-Xmultifile-parts-inherit",
-                "-Xdump-declarations-to", "${buildDir}/stdlib-declarations.json",
+                "-Xnormalize-constructor-calls=enable",
+                "-Xdump-declarations-to=${buildDir}/stdlib-declarations.json",
                 "-module-name", project.name
         ]
     }

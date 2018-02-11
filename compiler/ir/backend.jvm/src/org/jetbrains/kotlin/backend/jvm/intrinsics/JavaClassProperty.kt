@@ -21,13 +21,9 @@ import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.boxType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -40,12 +36,16 @@ object JavaClassProperty : IntrinsicMethod() {
             override fun invoke(v: InstructionAdapter, codegen: org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen, data: BlockInfo): StackValue {
                 val value = codegen.gen(expression.extensionReceiver!!, data)
                 val type = value.type
-                if (isPrimitive(type)) {
-                    AsmUtil.pop(v, type)
-                    v.getstatic(boxType(type).internalName, "TYPE", "Ljava/lang/Class;")
-                }
-                else {
-                    v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
+                when {
+                    type == Type.VOID_TYPE -> {
+                        StackValue.unit().put(AsmTypes.UNIT_TYPE, v)
+                        v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
+                    }
+                    isPrimitive(type) -> {
+                        AsmUtil.pop(v, type)
+                        v.getstatic(boxType(type).internalName, "TYPE", "Ljava/lang/Class;")
+                    }
+                    else -> v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
                 }
 
                 return with(codegen) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -57,9 +58,10 @@ fun SmartCastManager.getSmartCastVariantsWithLessSpecificExcluded(
         receiverToCast: ReceiverValue,
         bindingContext: BindingContext,
         containingDeclarationOrModule: DeclarationDescriptor,
-        dataFlowInfo: DataFlowInfo
+        dataFlowInfo: DataFlowInfo,
+        languageVersionSettings: LanguageVersionSettings
 ): List<KotlinType> {
-    val variants = getSmartCastVariants(receiverToCast, bindingContext, containingDeclarationOrModule, dataFlowInfo)
+    val variants = getSmartCastVariants(receiverToCast, bindingContext, containingDeclarationOrModule, dataFlowInfo, languageVersionSettings)
     return variants.filter { type ->
         variants.all { another -> another === type || chooseMoreSpecific(type, another).let { it == null || it === type } }
     }

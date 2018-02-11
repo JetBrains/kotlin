@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
 fun resolveQualifierAsReceiverInExpression(
-        qualifier: Qualifier, selector: DeclarationDescriptor?, context: ExpressionTypingContext
+    qualifier: Qualifier, selector: DeclarationDescriptor?, context: ExpressionTypingContext
 ): DeclarationDescriptor {
     val referenceTarget = resolveQualifierReferenceTarget(qualifier, selector, context)
 
@@ -37,7 +37,7 @@ fun resolveQualifierAsReceiverInExpression(
 }
 
 fun resolveQualifierAsStandaloneExpression(
-        qualifier: Qualifier, context: ExpressionTypingContext
+    qualifier: Qualifier, context: ExpressionTypingContext
 ): DeclarationDescriptor {
     val referenceTarget = resolveQualifierReferenceTarget(qualifier, null, context)
 
@@ -66,9 +66,9 @@ fun resolveQualifierAsStandaloneExpression(
 }
 
 private fun resolveQualifierReferenceTarget(
-        qualifier: Qualifier,
-        selector: DeclarationDescriptor?,
-        context: ExpressionTypingContext
+    qualifier: Qualifier,
+    selector: DeclarationDescriptor?,
+    context: ExpressionTypingContext
 ): DeclarationDescriptor {
     if (qualifier is TypeParameterQualifier) {
         return qualifier.descriptor
@@ -92,7 +92,7 @@ private fun resolveQualifierReferenceTarget(
     if (qualifier is ClassifierQualifier) {
         val classifier = qualifier.descriptor
         val selectorIsCallable = selector is CallableDescriptor &&
-                                 (selector.dispatchReceiverParameter != null || selector.extensionReceiverParameter != null)
+                (selector.dispatchReceiverParameter != null || selector.extensionReceiverParameter != null)
         // TODO simplify this code.
         // Given a class qualifier in expression position,
         // it should provide a proper REFERENCE_TARGET (with type),

@@ -3,6 +3,7 @@ description 'Kotlin Script Runtime'
 apply plugin: 'kotlin'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
 
 dependencies {
@@ -38,6 +39,7 @@ dist {
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
+            "-Xnormalize-constructor-calls=enable",
             "-module-name", project.name
     ]
 }

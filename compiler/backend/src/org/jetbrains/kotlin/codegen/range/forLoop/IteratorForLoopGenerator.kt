@@ -28,9 +28,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
-class IteratorForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression)
-    : AbstractForLoopGenerator(codegen, forExpression)
-{
+class IteratorForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) :
+    AbstractForLoopGenerator(codegen, forExpression) {
     private var iteratorVarIndex: Int = 0
     private val iteratorCall: ResolvedCall<FunctionDescriptor>
     private val nextCall: ResolvedCall<FunctionDescriptor>
@@ -38,16 +37,20 @@ class IteratorForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForE
 
     init {
         val loopRange = forExpression.loopRange!!
-        this.iteratorCall = getNotNull(bindingContext,
-                                       LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange,
-                                       "No .iterator() function " + DiagnosticUtils.atLocation(loopRange))
+        this.iteratorCall = getNotNull(
+            bindingContext,
+            LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange,
+            "No .iterator() function " + DiagnosticUtils.atLocation(loopRange)
+        )
 
         val iteratorType = iteratorCall.resultingDescriptor.returnType!!
         this.asmTypeForIterator = codegen.asmType(iteratorType)
 
-        this.nextCall = getNotNull(bindingContext,
-                                   LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange,
-                                   "No next() function " + DiagnosticUtils.atLocation(loopRange))
+        this.nextCall = getNotNull(
+            bindingContext,
+            LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange,
+            "No next() function " + DiagnosticUtils.atLocation(loopRange)
+        )
     }
 
     override fun beforeLoop() {
@@ -65,9 +68,9 @@ class IteratorForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForE
 
         val loopRange = forExpression.loopRange
         val hasNextCall = getNotNull(
-                codegen.bindingContext, LOOP_RANGE_HAS_NEXT_RESOLVED_CALL,
-                loopRange!!,
-                "No hasNext() function " + DiagnosticUtils.atLocation(loopRange)
+            codegen.bindingContext, LOOP_RANGE_HAS_NEXT_RESOLVED_CALL,
+            loopRange!!,
+            "No hasNext() function " + DiagnosticUtils.atLocation(loopRange)
         )
         val fakeCall = codegen.makeFakeCall(TransientReceiver(iteratorCall.resultingDescriptor.returnType!!))
         val result = codegen.invokeFunction(fakeCall, hasNextCall, StackValue.local(iteratorVarIndex, asmTypeForIterator))

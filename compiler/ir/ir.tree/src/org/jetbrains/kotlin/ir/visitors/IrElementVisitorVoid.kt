@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitElement(element: IrElement)
     override fun visitElement(element: IrElement, data: Nothing?) = visitElement(element)
-    
+
     fun visitModuleFragment(declaration: IrModuleFragment) = visitElement(declaration)
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?) = visitModuleFragment(declaration)
 
@@ -31,7 +31,8 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     override fun visitPackageFragment(declaration: IrPackageFragment, data: Nothing?) = visitPackageFragment(declaration)
 
     fun visitExternalPackageFragment(declaration: IrExternalPackageFragment) = visitPackageFragment(declaration)
-    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: Nothing?) = visitExternalPackageFragment(declaration)
+    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: Nothing?) =
+        visitExternalPackageFragment(declaration)
 
     fun visitFile(declaration: IrFile) = visitPackageFragment(declaration)
     override fun visitFile(declaration: IrFile, data: Nothing?) = visitFile(declaration)
@@ -61,7 +62,8 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     override fun visitField(declaration: IrField, data: Nothing?) = visitField(declaration)
 
     fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) = visitDeclaration(declaration)
-    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?) = visitLocalDelegatedProperty(declaration)
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?) =
+        visitLocalDelegatedProperty(declaration)
 
     fun visitVariable(declaration: IrVariable) = visitDeclaration(declaration)
     override fun visitVariable(declaration: IrVariable, data: Nothing?) = visitVariable(declaration)
@@ -149,12 +151,13 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
 
     fun visitFunctionAccess(expression: IrFunctionAccessExpression) = visitMemberAccess(expression)
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: Nothing?) = visitFunctionAccess(expression)
-    
+
     fun visitCall(expression: IrCall) = visitFunctionAccess(expression)
     override fun visitCall(expression: IrCall, data: Nothing?) = visitCall(expression)
 
     fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitFunctionAccess(expression)
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?) = visitDelegatingConstructorCall(expression)
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?) =
+        visitDelegatingConstructorCall(expression)
 
     fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = visitFunctionAccess(expression)
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?) = visitEnumConstructorCall(expression)
@@ -172,13 +175,15 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?) = visitPropertyReference(expression)
 
     fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) = visitCallableReference(expression)
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?) = visitLocalDelegatedPropertyReference(expression)
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?) =
+        visitLocalDelegatedPropertyReference(expression)
 
     fun visitClassReference(expression: IrClassReference) = visitDeclarationReference(expression)
     override fun visitClassReference(expression: IrClassReference, data: Nothing?) = visitClassReference(expression)
 
     fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = visitExpression(expression)
-    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?) = visitInstanceInitializerCall(expression)
+    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?) =
+        visitInstanceInitializerCall(expression)
 
     fun visitTypeOperator(expression: IrTypeOperatorCall) = visitExpression(expression)
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?) = visitTypeOperator(expression)

@@ -37,7 +37,8 @@ import com.intellij.spring.model.SpringModelSearchParameters
 import com.intellij.spring.model.actions.generate.GenerateSpringBeanDependenciesUtil
 import com.intellij.spring.model.actions.generate.GenerateSpringBeanDependenciesUtil.*
 import com.intellij.spring.model.actions.generate.SpringBeanClassMember
-import com.intellij.spring.model.highlighting.SpringConstructorArgResolveUtil
+import com.intellij.spring.model.highlighting.xml.SpringConstructorArgResolveUtil
+
 import com.intellij.spring.model.utils.SpringBeanCoreUtils
 import com.intellij.spring.model.utils.SpringBeanUtils
 import com.intellij.spring.model.utils.SpringModelSearchers
@@ -180,13 +181,14 @@ private fun createSettable(
 internal fun getSuggestedNames(
         beanPointer: SpringBeanPointer<CommonSpringBean>,
         declaration: KtCallableDeclaration,
+        excludedInValidator: List<KtDeclaration> = listOf(declaration),
         existingNames: Collection<String> = emptyList(),
         getType: CallableDescriptor.() -> KotlinType?
 ): Collection<String> {
     val names = LinkedHashSet<String>()
 
     val newDeclarationNameValidator =
-            NewDeclarationNameValidator(declaration.parent, null, NewDeclarationNameValidator.Target.VARIABLES, listOf(declaration))
+            NewDeclarationNameValidator(declaration.parent, null, NewDeclarationNameValidator.Target.VARIABLES, excludedInValidator)
     fun validate(name: String) = name !in existingNames && newDeclarationNameValidator(name)
 
     SpringBeanUtils.getInstance()
@@ -252,7 +254,9 @@ private fun BatchTemplateRunner.addCreateFunctionTemplate(
     addTemplateFactory(parameterList) {
         for ((paramIndex, candidateBeanClassesForParam) in candidateBeanClasses) {
             builder.appendVariableTemplate(function.valueParameters[paramIndex], candidateBeanClassesForParam) {
-                getSuggestedNames(dependency, function) { valueParameters[paramIndex].type }
+                getSuggestedNames(dependency, function, listOf(function.valueParameters[paramIndex], function)) {
+                    valueParameters[paramIndex].type
+                }
             }
         }
 

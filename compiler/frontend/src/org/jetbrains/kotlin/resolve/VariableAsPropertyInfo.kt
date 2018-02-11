@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.types.KotlinType
 
 class VariableAsPropertyInfo(
-        val propertyGetter: KtPropertyAccessor?,
-        val propertySetter: KtPropertyAccessor?,
-        val variableType: KotlinType?,
-        val hasBody: Boolean,
-        val hasDelegate: Boolean
+    val propertyGetter: KtPropertyAccessor?,
+    val propertySetter: KtPropertyAccessor?,
+    val variableType: KotlinType?,
+    val hasBody: Boolean,
+    val hasDelegate: Boolean
 ) {
     companion object {
         fun createFromDestructuringDeclarationEntry(type: KotlinType): VariableAsPropertyInfo {

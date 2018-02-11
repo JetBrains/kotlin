@@ -16,22 +16,15 @@
 
 package org.jetbrains.kotlin.jps.model
 
-import com.intellij.util.xmlb.XmlSerializer
-import org.jdom.Element
 import org.jetbrains.jps.model.JpsProject
-import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE
 import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 
-internal class Kotlin2JsCompilerArgumentsSerializer : JpsProjectExtensionSerializer(KOTLIN_COMPILER_SETTINGS_FILE,
-                                                                                    KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION) {
-    override fun loadExtension(project: JpsProject, componentTag: Element) {
-        val settings = XmlSerializer.deserialize(componentTag, K2JSCompilerArguments::class.java)
+internal class Kotlin2JsCompilerArgumentsSerializer : BaseJpsCompilerSettingsSerializer<K2JSCompilerArguments>(
+        KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION, ::K2JSCompilerArguments
+) {
+    override fun onLoad(project: JpsProject, settings: K2JSCompilerArguments) {
         JpsKotlinCompilerSettings.setK2JsCompilerArguments(project, settings)
-    }
-
-    override fun saveExtension(project: JpsProject, componentTag: Element) {
     }
 }

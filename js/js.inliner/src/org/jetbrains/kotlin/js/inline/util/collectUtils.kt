@@ -19,13 +19,9 @@ package org.jetbrains.kotlin.js.inline.util
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.imported
-import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-
-fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
-        collectReferencedNames(scope).filter { it.staticRef is JsFunction }
 
 fun collectReferencedNames(scope: JsNode): Set<JsName> {
     val references = mutableSetOf<JsName>()

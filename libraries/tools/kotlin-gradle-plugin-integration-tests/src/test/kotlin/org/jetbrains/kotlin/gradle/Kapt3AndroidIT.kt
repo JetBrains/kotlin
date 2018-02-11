@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 
@@ -19,9 +20,9 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     private fun androidBuildOptions() =
             BuildOptions(withDaemon = true,
-                    androidHome = File(ANDROID_HOME_PATH),
-                    androidGradlePluginVersion = androidGradlePluginVersion,
-                    freeCommandLineArgs = listOf("-Pkapt.verbose=true"))
+                         androidHome = KotlinTestUtils.findAndroidSdk(),
+                         androidGradlePluginVersion = androidGradlePluginVersion,
+                         freeCommandLineArgs = listOf("-Pkapt.verbose=true"))
 
     override fun defaultBuildOptions() = androidBuildOptions()
 

@@ -38,6 +38,10 @@ public class SourceFilePathResolver {
     @NotNull
     private final Map<File, String> cache = new HashMap<>();
 
+    public SourceFilePathResolver(@NotNull List<File> sourceRoots) {
+        this(sourceRoots, null);
+    }
+
     public SourceFilePathResolver(@NotNull List<File> sourceRoots, @Nullable File outputDir) {
         this.sourceRoots = new HashSet<>();
         for (File sourceRoot : sourceRoots) {

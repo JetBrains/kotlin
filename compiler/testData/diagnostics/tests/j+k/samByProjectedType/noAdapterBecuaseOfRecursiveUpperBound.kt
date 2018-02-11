@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // FILE: Function.java
 public interface Function<E extends CharSequence, F extends java.util.Map<String, E>> {
@@ -16,12 +17,12 @@ public class A {
 // FILE: main.kt
 fun main() {
     A().foo <!TYPE_MISMATCH!>{
-        <!CANNOT_INFER_PARAMETER_TYPE, UNUSED_ANONYMOUS_PARAMETER!>x<!> ->
+        <!OI;CANNOT_INFER_PARAMETER_TYPE, UNUSED_ANONYMOUS_PARAMETER!>x<!> ->
         ""
     }<!>
 
     A.bar <!TYPE_MISMATCH!>{
-        <!CANNOT_INFER_PARAMETER_TYPE, UNUSED_ANONYMOUS_PARAMETER!>x<!> ->
+        <!OI;CANNOT_INFER_PARAMETER_TYPE, UNUSED_ANONYMOUS_PARAMETER!>x<!> ->
         ""
     }<!>
 }

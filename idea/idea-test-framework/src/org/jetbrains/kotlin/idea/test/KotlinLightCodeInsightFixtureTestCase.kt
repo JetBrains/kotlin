@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.test
@@ -32,13 +21,18 @@ import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.psi.PsiManager
+import com.intellij.psi.search.FileTypeIndex
+import com.intellij.psi.search.ProjectScope
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
@@ -120,7 +114,11 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
                 val withLibraryDirective = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "WITH_LIBRARY:")
                 if (!withLibraryDirective.isEmpty()) {
-                    return JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/" + withLibraryDirective.get(0), true)
+                    return SdkAndMockLibraryProjectDescriptor(
+                        PluginTestCaseBase.getTestDataPathBase() + "/" + withLibraryDirective.get(
+                            0
+                        ), true
+                    )
                 }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_SOURCES")) {
                     return ProjectDescriptorWithStdlibSources.INSTANCE
@@ -130,6 +128,9 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
                 }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_FULL_JDK")) {
                     return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
+                }
+                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_REFLECT")) {
+                    return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_WITH_REFLECT
                 }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME") ||
                          InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_RUNTIME")) {
@@ -192,4 +193,11 @@ fun configureLanguageVersion(fileText: String, project: Project, module: Module)
             accessToken.finish()
         }
     }
+}
+
+fun Project.allKotlinFiles(): List<KtFile> {
+    val virtualFiles = FileTypeIndex.getFiles(KotlinFileType.INSTANCE, ProjectScope.getProjectScope(this))
+    return virtualFiles
+        .map { PsiManager.getInstance(this).findFile(it) }
+        .filterIsInstance<KtFile>()
 }

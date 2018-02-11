@@ -1,6 +1,7 @@
 
 import java.io.File
 import org.gradle.api.tasks.bundling.Jar
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 apply { plugin("kotlin") }
 
@@ -9,11 +10,23 @@ jvmTarget = "1.6"
 val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
 
+val effectSystemEnabled: Boolean by rootProject.extra
+if (effectSystemEnabled) {
+    allprojects {
+        tasks.withType<KotlinCompile<*>> {
+            kotlinOptions {
+                freeCompilerArgs += listOf("-Xeffect-system")
+            }
+        }
+    }
+}
+
+
 val depDistProjects = listOf(
         ":kotlin-script-runtime",
         ":kotlin-stdlib",
-        ":kotlin-reflect",
-        ":kotlin-test:kotlin-test-jvm")
+        ":kotlin-test:kotlin-test-jvm"
+)
 
 // TODO: it seems incomplete, find and add missing dependencies
 val testDistProjects = listOf(
@@ -29,29 +42,46 @@ val testDistProjects = listOf(
         ":kotlin-test:kotlin-test-jvm",
         ":kotlin-test:kotlin-test-junit",
         ":kotlin-test:kotlin-test-js",
-        ":kotlin-daemon-client",
         ":kotlin-preloader",
         ":plugins:android-extensions-compiler",
         ":kotlin-ant",
-        ":kotlin-annotations-jvm")
+        ":kotlin-annotations-jvm",
+        ":kotlin-annotations-android"
+)
+
+val testJvm6ServerRuntime by configurations.creating
+val antLauncherJar by configurations.creating
 
 dependencies {
+    testRuntime(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
+
     depDistProjects.forEach {
         testCompile(projectDist(it))
     }
     testCompile(commonDep("junit:junit"))
     testCompileOnly(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(projectDist(":kotlin-test:kotlin-test-junit"))
-    testCompile(project(":compiler.tests-common"))
-    testCompile(project(":compiler:tests-common-jvm6"))
+    testCompile(projectTests(":compiler:tests-common"))
+    testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
+    testCompileOnly(project(":kotlin-daemon-client"))
+    testCompileOnly(project(":kotlin-reflect-api"))
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
     }
-    testCompile(ideaSdkDeps("openapi", "idea", "util", "asm-all", "commons-httpclient-3.1-patched"))
-    testRuntime(ideaSdkCoreDeps("*.jar"))
-    testRuntime(ideaSdkDeps("*.jar"))
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all") }
+
+    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(projectDist(":kotlin-daemon-client"))
+    testRuntime(androidDxJar())
+    testRuntime(files(toolsJar()))
+
+    testJvm6ServerRuntime(projectTests(":compiler:tests-common-jvm6"))
+
+    antLauncherJar(commonDep("org.apache.ant", "ant"))
+    antLauncherJar(files(toolsJar()))
 }
 
 sourceSets {
@@ -63,27 +93,20 @@ sourceSets {
     }
 }
 
-val jar: Jar by tasks
-jar.apply {
-    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
-    from("../idea/src").apply {
-        include("META-INF/extensions/common.xml",
-                "META-INF/extensions/kotlin2jvm.xml",
-                "META-INF/extensions/kotlin2js.xml")
-    }
-}
-
-testsJar {}
-
 projectTest {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
+    doFirst {
+        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
+        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+    }
 }
 
-evaluationDependsOn(":compiler:tests-common-jvm6")
-
-fun Project.codegenTest(taskName: String, jdk: String, body: Test.() -> Unit): Test = projectTest(taskName) {
+fun Project.codegenTest(target: Int, jvm: Int,
+                        jdk: String = "JDK_${if (jvm <= 8) "1" else ""}$jvm",
+                        body: Test.() -> Unit): Test = projectTest("codegenTarget${target}Jvm${jvm}Test") {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
 
@@ -98,34 +121,25 @@ fun Project.codegenTest(taskName: String, jdk: String, body: Test.() -> Unit): T
     }
     body()
     doFirst {
-        val jdkPath = project.property(jdk) ?: error("$jdk is not optional to run this test")
+        val jdkPath = project.findProperty(jdk) ?: error("$jdk is not optional to run this test")
         executable = "$jdkPath/bin/java"
         println("Running test with $executable")
     }
-}.also {
-    task(taskName.replace(Regex("-[a-z]"), { it.value.takeLast(1).toUpperCase() })) {
-        dependsOn(it)
-        group = "verification"
-    }
+    group = "verification"
 }
 
-codegenTest("codegen-target6-jvm6-test", "JDK_18") {
-    dependsOn(":compiler:tests-common-jvm6:build")
+codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
+    dependsOn(testJvm6ServerRuntime)
 
-    //TODO make port flexible
-    val port = "5100"
+    val port = project.findProperty("kotlin.compiler.codegen.tests.port")?.toString() ?: "5100"
     var jdkProcess: Process? = null
 
     doFirst {
         logger.info("Configuring JDK 6 server...")
-        val jdkPath = project.property("JDK_16") ?: error("JDK_16 is not optional to run this test")
+        val jdkPath = project.findProperty("JDK_16") ?: error("JDK_16 is not optional to run this test")
         val executable = "$jdkPath/bin/java"
         val main = "org.jetbrains.kotlin.test.clientserver.TestProcessServer"
-
-        val classpath = getSourceSetsFrom(":compiler:tests-common-jvm6")["main"].output.asPath + ":" +
-                getSourceSetsFrom(":kotlin-stdlib")["main"].output.asPath + ":" +
-                getSourceSetsFrom(":kotlin-stdlib")["builtins"].output.asPath + ":" +
-                getSourceSetsFrom(":kotlin-test:kotlin-test-jvm")["main"].output.asPath
+        val classpath = testJvm6ServerRuntime.asPath
 
         logger.debug("Server classpath: $classpath")
 
@@ -149,19 +163,21 @@ codegenTest("codegen-target6-jvm6-test", "JDK_18") {
     }
 }
 
-codegenTest("codegen-target6-jvm9-test", "JDK_9") {
+codegenTest(target = 6, jvm = 9) {
     systemProperty("kotlin.test.default.jvm.target", "1.6")
 }
 
-codegenTest("codegen-target8-jvm8-test", "JDK_18") {
+codegenTest(target = 8, jvm = 8) {
     systemProperty("kotlin.test.default.jvm.target", "1.8")
 }
 
-codegenTest("codegen-target8-jvm9-test", "JDK_9") {
+codegenTest(target = 8, jvm = 9) {
     systemProperty("kotlin.test.default.jvm.target", "1.8")
 }
 
-codegenTest("codegen-target9-jvm9-test", "JDK_9") {
+codegenTest(target = 9, jvm = 9) {
     systemProperty("kotlin.test.default.jvm.target", "1.8")
     systemProperty("kotlin.test.substitute.bytecode.1.8.to.1.9", "true")
 }
+
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt")

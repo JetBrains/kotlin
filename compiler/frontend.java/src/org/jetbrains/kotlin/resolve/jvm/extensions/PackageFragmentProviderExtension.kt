@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.resolve.jvm.extensions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -34,6 +36,7 @@ interface PackageFragmentProviderExtension {
             module: ModuleDescriptor,
             storageManager: StorageManager,
             trace: BindingTrace,
-            moduleInfo: ModuleInfo?
+            moduleInfo: ModuleInfo?,
+            lookupTracker: LookupTracker
     ): PackageFragmentProvider?
 }

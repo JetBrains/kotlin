@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 //KT-352 Function variable declaration type isn't checked inside a function body
 
 package kt352
@@ -14,7 +15,7 @@ class A() {
 
 //more tests
 val g : () -> Unit = { <!UNUSED_EXPRESSION!>42<!> }
-val gFunction : () -> Unit = <!TYPE_MISMATCH!>fun(): Int = 1<!>
+val gFunction : () -> Unit = <!OI;TYPE_MISMATCH!>fun(): Int = 1<!>
 
 val h : () -> Unit = { doSmth() }
 

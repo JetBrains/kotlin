@@ -6,7 +6,6 @@ expect annotation class PAnnotationClass
 
 internal expect object InternalObject
 public expect object PublicObject
-private expect object PrivateObject
 
 open expect class OpenClass
 abstract expect class AbstractClass

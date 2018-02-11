@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirementTable
 
 class ClassDeserializer(private val components: DeserializationComponents) {
     private val classes: (ClassKey) -> ClassDescriptor? =
@@ -61,7 +61,7 @@ class ClassDeserializer(private val components: DeserializationComponents) {
             components.createContext(
                     fragment, nameResolver,
                     TypeTable(classProto.typeTable),
-                    SinceKotlinInfoTable.create(classProto.sinceKotlinInfoTable),
+                    VersionRequirementTable.create(classProto.versionRequirementTable),
                     containerSource = null
             )
         }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.google.common.collect.Lists
 import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -75,7 +76,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         return Class.forName(className).newInstance() as AbstractKotlinInspection
     }
 
-    protected fun doTest(path: String) {
+    protected open fun doTest(path: String) {
         val mainFile = File(path)
         val inspection = createInspection(mainFile)
 
@@ -91,7 +92,21 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
             DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
         }
 
-        val psiFile = myFixture.configureByFiles(mainFile.name).first()
+        var i = 1
+        val extraFileNames = mutableListOf<String>()
+        extraFileLoop@ while (true) {
+            for (extension in EXTENSIONS) {
+                val extraFile = File(mainFile.parent, FileUtil.getNameWithoutExtension(mainFile) + "." + i + extension)
+                if (extraFile.exists()) {
+                    extraFileNames += extraFile.name
+                    i++
+                    continue@extraFileLoop
+                }
+            }
+            break
+        }
+
+        val psiFile = myFixture.configureByFiles(*(listOf(mainFile.name) + extraFileNames).toTypedArray()).first()
 
         doTestFor(mainFile.name, psiFile.virtualFile!!, inspection, fileText)
 
@@ -100,13 +115,14 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         }
     }
 
-    private fun doTestFor(mainFilePath: String, file: VirtualFile, inspection: AbstractKotlinInspection, fileText: String) {
-        val problemExpectedString = InTextDirectivesUtils.findStringWithPrefixes(
-                fileText, "// $expectedProblemDirectiveName: ")
+    protected fun runInspectionWithFixesAndCheck(
+            file: VirtualFile,
+            inspection: AbstractKotlinInspection,
+            problemExpectedString: String?,
+            highlightExpectedString: String?,
+            localFixTextString: String?
+    ): Boolean {
         val problemExpected = problemExpectedString == null || problemExpectedString != "none"
-        val highlightExpectedString = InTextDirectivesUtils.findStringWithPrefixes(
-                fileText, "// $expectedProblemHighlightType: ")
-
         val presentation = runInspection(inspection, project, listOf(file))
         val problemDescriptors = presentation.problemDescriptors
                 .filterIsInstance<ProblemDescriptor>()
@@ -121,7 +137,13 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
                 else
                     "Expected at least one problem at caret",
                 problemExpected == problemDescriptors.isNotEmpty())
-        if (!problemExpected) return
+        if (!problemExpected) return false
+        problemDescriptors
+                .filter { it.highlightType != ProblemHighlightType.INFORMATION }
+                .forEach {
+                    Assert.assertTrue("Problem description should not contain 'can': ${it.descriptionTemplate}",
+                                      " can " !in it.descriptionTemplate)
+                }
         if (problemExpectedString != null) {
             Assert.assertTrue("Expected the following problem at caret: $problemExpectedString\n" +
                               "Active problems: ${problemDescriptors.joinToString { it.descriptionTemplate }}",
@@ -133,14 +155,12 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
                               problemDescriptors.all { it.highlightType.toString() == highlightExpectedString })
         }
 
-        val localFixTextString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $fixTextDirectiveName: ")
-        val localFixActions = problemDescriptors.flatMap {
-            problem ->
+        val allLocalFixActions = problemDescriptors.flatMap { problem ->
             val fixes = problem.fixes
             fixes?.toList() ?: emptyList()
-        }.filter { fix -> localFixTextString == null || fix.name == localFixTextString }
-
-        val availableDescription = localFixActions.joinToString { it.name }
+        }
+        val localFixActions = allLocalFixActions.filter { fix -> localFixTextString == null || fix.name == localFixTextString }
+        val availableDescription = allLocalFixActions.joinToString { it.name }
 
         val fixDescription = localFixTextString?.let { "with specified text '$localFixTextString'"} ?: ""
         TestCase.assertTrue("No fix action $fixDescription\n" +
@@ -157,6 +177,21 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         project.executeWriteCommand(localFixAction!!.name, null) {
             localFixAction.applyFix(project, problemDescriptor)
         }
+        return true
+    }
+
+    private fun doTestFor(mainFilePath: String, file: VirtualFile, inspection: AbstractKotlinInspection, fileText: String) {
+        val problemExpectedString = InTextDirectivesUtils.findStringWithPrefixes(
+                fileText, "// $expectedProblemDirectiveName: ")
+        val highlightExpectedString = InTextDirectivesUtils.findStringWithPrefixes(
+                fileText, "// $expectedProblemHighlightType: ")
+        val localFixTextString = InTextDirectivesUtils.findStringWithPrefixes(
+                fileText, "// $fixTextDirectiveName: ")
+
+        if (!runInspectionWithFixesAndCheck(file, inspection, problemExpectedString, highlightExpectedString, localFixTextString)) {
+            return
+        }
+
         val canonicalPathToExpectedFile = mainFilePath + afterFileNameSuffix
         try {
             myFixture.checkResultByFile(canonicalPathToExpectedFile)
@@ -169,4 +204,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         }
     }
 
+    companion object {
+        private val EXTENSIONS = arrayOf(".kt", ".kts", ".java", ".groovy")
+    }
 }

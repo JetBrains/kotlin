@@ -4,6 +4,7 @@
 /confluence/target
 /dependencies
 /dist
+/local
 /gh-pages
 /ideaSDK
 /clionSDK
@@ -18,14 +19,16 @@ workspace.xml
 /ultimate/ideaSDK
 /ultimate/out
 /ultimate/tmp
-/js/js.translator/testData/**/out/
+/js/js.translator/testData/out/
+/js/js.translator/testData/out-min/
 .gradle/
 build/
 !**/src/**/build
-*.iml
 !**/test/**/build
-.idea/modules.xml
+*.iml
+!**/testData/**/*.iml
 .idea/libraries/Gradle*.xml
+.idea/libraries/Maven*.xml
 .idea/modules
 .idea/modules.xml
 .idea/gradle.xml

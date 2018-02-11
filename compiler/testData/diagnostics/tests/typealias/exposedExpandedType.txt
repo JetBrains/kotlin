@@ -59,7 +59,7 @@ private final class Private {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias L</*0*/ T>  = kotlin.collections.List<T>
+public typealias L</*0*/ T> = kotlin.collections.List<T>
 public typealias TestInternal1 = Internal
 internal typealias TestInternal2 = Internal
 private typealias TestInternal3 = Internal

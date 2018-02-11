@@ -54,8 +54,8 @@ object JsLibraryStdDetectionUtil {
 
             val name = root.url.substringBefore("!/").substringAfterLast('/')
             if (name == PathUtil.JS_LIB_JAR_NAME || name == PathUtil.JS_LIB_10_JAR_NAME ||
-                    PathUtil.KOTLIN_STDLIB_JS_JAR_PATTERN.matcher(name).matches() ||
-                    PathUtil.KOTLIN_JS_LIBRARY_JAR_PATTERN.matcher(name).matches()) {
+                PathUtil.KOTLIN_STDLIB_JS_JAR_PATTERN.matcher(name).matches() ||
+                PathUtil.KOTLIN_JS_LIBRARY_JAR_PATTERN.matcher(name).matches()) {
 
                 val jar = VfsUtilCore.getVirtualFileForJar(root) ?: continue
                 var isJSStdLib = jar.getUserData(IS_JS_LIBRARY_STD_LIB)

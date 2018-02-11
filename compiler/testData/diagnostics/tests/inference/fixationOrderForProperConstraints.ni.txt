@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ X, /*1*/ Y, /*2*/ Z> foo(/*0*/ f: (Y) -> Z, /*1*/ g: (X) -> Y, /*2*/ x: X): Z
+public fun test(): kotlin.Int

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.*;
@@ -41,8 +42,10 @@ import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -55,6 +58,7 @@ import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_CALL;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 
 public class JvmCodegenUtil {
@@ -62,15 +66,12 @@ public class JvmCodegenUtil {
     private JvmCodegenUtil() {
     }
 
-    public static boolean isAnnotationOrJvmInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
+    public static boolean isInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        return isInterfaceWithoutDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
     }
 
-    private static boolean isAnnotationOrJvmInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
-        if (!isJvmInterface(descriptor)) {
-            return false;
-        }
-        if (ANNOTATION_CLASS == ((ClassDescriptor) descriptor).getKind()) return true;
+    private static boolean isInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
+        if (!DescriptorUtils.isInterface(descriptor)) return false;
 
         if (descriptor instanceof DeserializedClassDescriptor) {
             SourceElement source = ((DeserializedClassDescriptor) descriptor).getSource();
@@ -90,7 +91,7 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isJvm8InterfaceWithDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
-        return DescriptorUtils.isInterface(descriptor) && !isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, isJvm8Target, isJvm8TargetWithDefaults);
+        return DescriptorUtils.isInterface(descriptor) && !isInterfaceWithoutDefaults(descriptor, isJvm8Target, isJvm8TargetWithDefaults);
     }
 
     public static boolean isJvm8InterfaceWithDefaultsMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
@@ -294,8 +295,7 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isInlinedJavaConstProperty(VariableDescriptor descriptor) {
-        if (!(descriptor instanceof JavaPropertyDescriptor)) return false;
-        return descriptor.isConst();
+        return descriptor instanceof JavaPropertyDescriptor && descriptor.isConst();
     }
 
     @Nullable
@@ -316,5 +316,26 @@ public class JvmCodegenUtil {
 
     public static boolean isDelegatedLocalVariable(@NotNull DeclarationDescriptor descriptor) {
         return descriptor instanceof LocalVariableDescriptor && ((LocalVariableDescriptor) descriptor).isDelegated();
+    }
+
+    @Nullable
+    public static ReceiverValue getBoundCallableReferenceReceiver(@NotNull ResolvedCall<?> resolvedCall) {
+        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+        if (descriptor.getExtensionReceiverParameter() == null && descriptor.getDispatchReceiverParameter() == null) return null;
+
+        ReceiverValue dispatchReceiver = resolvedCall.getDispatchReceiver();
+        ReceiverValue extensionReceiver = resolvedCall.getExtensionReceiver();
+        assert dispatchReceiver == null || extensionReceiver == null : "Cannot generate reference with both receivers: " + descriptor;
+        ReceiverValue receiver = dispatchReceiver != null ? dispatchReceiver : extensionReceiver;
+
+        if (receiver instanceof TransientReceiver) return null;
+
+        return receiver;
+    }
+
+    public static boolean isCompanionObjectInInterfaceNotIntrinsic(@NotNull DeclarationDescriptor companionObject) {
+        return isCompanionObject(companionObject) &&
+               isJvmInterface(companionObject.getContainingDeclaration()) &&
+               !JvmAbi.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
     }
 }

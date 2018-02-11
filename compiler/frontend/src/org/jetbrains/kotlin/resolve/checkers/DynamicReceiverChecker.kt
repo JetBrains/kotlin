@@ -18,29 +18,22 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
 import org.jetbrains.kotlin.types.isDynamic
 
-object DynamicReceiverChecker : SimpleDeclarationChecker {
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+object DynamicReceiverChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is CallableDescriptor || declaration !is KtCallableDeclaration || descriptor.hasDynamicExtensionAnnotation()) return
 
         // function expression
         if (declaration is KtNamedFunction && declaration.name == null) return
 
         if (descriptor.extensionReceiverParameter?.value?.type?.isDynamic() == true) {
-            diagnosticHolder.report(Errors.DYNAMIC_RECEIVER_NOT_ALLOWED.on(declaration))
+            context.trace.report(Errors.DYNAMIC_RECEIVER_NOT_ALLOWED.on(declaration))
         }
     }
 }

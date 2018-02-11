@@ -1,0 +1,10 @@
+package
+
+public fun notNullWhenNotNull(/*0*/ x: kotlin.Int?): kotlin.Int?
+    Returns(NULL) -> x == null
+
+public fun nullWhenNull(/*0*/ x: kotlin.Int?): kotlin.Int?
+    Returns(NOT_NULL) -> x != null
+
+public fun testNotNullWhenNotNull(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun testNullWhenNull(/*0*/ x: kotlin.Int?): kotlin.Unit

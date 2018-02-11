@@ -25,14 +25,17 @@ import org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression
 import org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntrySuperclassReferenceExpressionStubImpl
 
-class KtEnumEntrySuperClassReferenceExpressionElementType(@NonNls debugName: String)
-    : KtStubElementType<KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>(
+class KtEnumEntrySuperClassReferenceExpressionElementType(@NonNls debugName: String) :
+    KtStubElementType<KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>(
         debugName,
         KtEnumEntrySuperclassReferenceExpression::class.java,
         KotlinEnumEntrySuperclassReferenceExpressionStub::class.java
     ) {
 
-    override fun createStub(psi: KtEnumEntrySuperclassReferenceExpression, parentStub: StubElement<*>): KotlinEnumEntrySuperclassReferenceExpressionStub {
+    override fun createStub(
+        psi: KtEnumEntrySuperclassReferenceExpression,
+        parentStub: StubElement<*>
+    ): KotlinEnumEntrySuperclassReferenceExpressionStub {
         return KotlinEnumEntrySuperclassReferenceExpressionStubImpl(parentStub, StringRef.fromString(psi.getReferencedName())!!)
     }
 

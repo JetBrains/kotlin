@@ -4,5 +4,5 @@ public const val a1: kotlin.Int
 public const val a2: kotlin.Int = -1
 public const val b1: kotlin.Int
 public const val b2: kotlin.Int = 2
-public operator infix fun kotlin.Int.minus(/*0*/ other: kotlin.Int): kotlin.Int
+public infix operator fun kotlin.Int.minus(/*0*/ other: kotlin.Int): kotlin.Int
 public infix fun kotlin.Int.rem(/*0*/ other: kotlin.Int): kotlin.Int

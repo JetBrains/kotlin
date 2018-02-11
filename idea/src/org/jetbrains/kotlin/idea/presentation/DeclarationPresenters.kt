@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.presentation
@@ -44,15 +33,20 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
             val containerName = containingDeclaration.fqName ?: containingDeclaration.name
             return "(in $containerName)"
         }
-        val name = declaration.fqName ?: return null
-        val qualifiedContainer = name.parent().toString()
+
+        val name = declaration.fqName
         val parent = declaration.parent
-        val containerText = if (parent is KtFile && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
-            "${parent.name} in $qualifiedContainer"
+        val containerText = if (name != null) {
+            val qualifiedContainer = name.parent().toString()
+            if (parent is KtFile && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
+                "${parent.name} in $qualifiedContainer"
+            } else {
+                qualifiedContainer
+            }
+        } else {
+            getNameForContainingObjectLiteral() ?: return null
         }
-        else {
-            qualifiedContainer
-        }
+
         val receiverTypeRef = (declaration as? KtCallableDeclaration)?.receiverTypeReference
         return when {
             receiverTypeRef != null -> "(for " + receiverTypeRef.text + " in " + containerText + ")"
@@ -61,8 +55,15 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
         }
     }
 
-    override fun getIcon(unused: Boolean)
-            = KotlinIconProvider.INSTANCE.getIcon(declaration, Iconable.ICON_FLAG_VISIBILITY or Iconable.ICON_FLAG_READ_STATUS)
+    private fun getNameForContainingObjectLiteral(): String? {
+        val objectLiteral = declaration.getStrictParentOfType<KtObjectLiteralExpression>() ?: return null
+        val container = objectLiteral.getStrictParentOfType<KtNamedDeclaration>() ?: return null
+        val containerFqName = container.fqName?.asString() ?: return null
+        return "object in $containerFqName"
+    }
+
+    override fun getIcon(unused: Boolean) =
+        KotlinIconProvider.INSTANCE.getIcon(declaration, Iconable.ICON_FLAG_VISIBILITY or Iconable.ICON_FLAG_READ_STATUS)
 }
 
 class KtDefaultDeclarationPresenter : ItemPresentationProvider<KtNamedDeclaration> {

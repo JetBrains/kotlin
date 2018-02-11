@@ -1,41 +1,30 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.diagnostics.rendering;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.util.io.FileUtil;
 import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
-import org.jetbrains.kotlin.util.MappedExtensionProvider;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
+import org.jetbrains.kotlin.utils.addToStdlib.AddToStdlibKt;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
@@ -44,47 +33,30 @@ import static org.jetbrains.kotlin.diagnostics.rendering.RenderingContext.of;
 public class DefaultErrorMessages {
 
     public interface Extension {
-        ExtensionPointName<Extension> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.defaultErrorMessages");
-
         @NotNull
         DiagnosticFactoryToRendererMap getMap();
     }
 
     private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("Default");
-    private static final MappedExtensionProvider<Extension, List<DiagnosticFactoryToRendererMap>> RENDERER_MAPS = MappedExtensionProvider.create(
-            Extension.EP_NAME,
-            extensions -> {
-                List<DiagnosticFactoryToRendererMap> result = new ArrayList<>(extensions.size() + 1);
-                for (Extension extension : extensions) {
-                    result.add(extension.getMap());
-                }
-                result.add(MAP);
-                return result;
-            });
+    private static final List<DiagnosticFactoryToRendererMap> RENDERER_MAPS =
+            CollectionsKt.plus(
+                    Collections.singletonList(MAP),
+                    CollectionsKt.map(ServiceLoader.load(Extension.class, DefaultErrorMessages.class.getClassLoader()), Extension::getMap)
+            );
 
     @NotNull
+    @SuppressWarnings("unchecked")
     public static String render(@NotNull Diagnostic diagnostic) {
-        for (DiagnosticFactoryToRendererMap map : RENDERER_MAPS.get()) {
-            DiagnosticRenderer renderer = map.get(diagnostic.getFactory());
-            if (renderer != null) {
-                //noinspection unchecked
-                return renderer.render(diagnostic);
-            }
+        DiagnosticRenderer renderer = getRendererForDiagnostic(diagnostic);
+        if (renderer != null) {
+            return renderer.render(diagnostic);
         }
-        throw new IllegalArgumentException("Don't know how to render diagnostic of type " + diagnostic.getFactory().getName() +
-                                           " with the following renderer maps: " + RENDERER_MAPS.get());
+        return diagnostic.toString() + " (error: could not render message)";
     }
 
-    @TestOnly
     @Nullable
     public static DiagnosticRenderer getRendererForDiagnostic(@NotNull Diagnostic diagnostic) {
-        for (DiagnosticFactoryToRendererMap map : RENDERER_MAPS.get()) {
-            DiagnosticRenderer renderer = map.get(diagnostic.getFactory());
-
-            if (renderer != null) return renderer;
-        }
-
-        return null;
+        return AddToStdlibKt.firstNotNullResult(RENDERER_MAPS, map -> map.get(diagnostic.getFactory()));
     }
 
     static {
@@ -163,7 +135,7 @@ public class DefaultErrorMessages {
         MAP.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", STRING);
         MAP.put(INAPPLICABLE_FILE_TARGET, "'@file:' annotations can only be applied before package declaration");
 
-        MAP.put(ILLEGAL_SINCE_KOTLIN_VALUE, "Invalid @SinceKotlin annotation value (should be 'major.minor' or 'major.minor.patch')");
+        MAP.put(ILLEGAL_KOTLIN_VERSION_STRING_VALUE, "Invalid @{0} annotation value (should be ''major.minor'' or ''major.minor.patch'')", TO_STRING);
         MAP.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}", STRING);
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
@@ -264,7 +236,6 @@ public class DefaultErrorMessages {
         MAP.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Forbidden vararg parameter type: {0}", RENDER_TYPE);
 
         MAP.put(EXPECTED_DECLARATION_WITH_BODY, "Expected declaration must not have a body");
-        MAP.put(EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER, "Expected declaration cannot have parameters with default values");
         MAP.put(EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, "Explicit delegation call for constructor of an expected class is not allowed");
         MAP.put(EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "Expected class constructor cannot have a property parameter");
         MAP.put(EXPECTED_ENUM_CONSTRUCTOR, "Expected enum class cannot have a constructor");
@@ -273,20 +244,29 @@ public class DefaultErrorMessages {
         MAP.put(EXPECTED_DELEGATED_PROPERTY, "Expected property cannot be delegated");
         MAP.put(EXPECTED_LATEINIT_PROPERTY, "Expected property cannot be lateinit");
         MAP.put(SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, "Expected classes cannot initialize supertypes");
+        MAP.put(EXPECTED_PRIVATE_DECLARATION, "Expected declaration cannot be private");
+
+        MAP.put(IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS, "Implementation by delegation in expected classes is prohibited");
 
         MAP.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of actual type alias should be a class, not another type alias");
         MAP.put(ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE, "Aliased class should not have type parameters with declaration-site variance");
         MAP.put(ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE, "Right-hand side of actual type alias cannot contain use-site variance or star projections");
         MAP.put(ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION, "Type arguments in the right-hand side of actual type alias should be its type parameters in the same order, e.g. 'actual typealias Foo<A, B> = Bar<A, B>'");
+        MAP.put(ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, "Actual function cannot have default argument values, they should be declared in the expected function");
+        MAP.put(ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE, "Parameter ''{0}'' has conflicting values in the expected and actual annotation", NAME);
+
+        MAP.put(EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND,
+                "Expected function source is not found, therefore it's impossible to generate default argument values declared there. " +
+                "Please add the corresponding file to compilation sources");
 
         MAP.put(NO_ACTUAL_FOR_EXPECT, "Expected {0} has no actual declaration in module{1}{2}", DECLARATION_NAME_WITH_KIND,
                 PLATFORM, PlatformIncompatibilityDiagnosticRenderer.TEXT);
-        MAP.put(ACTUAL_WITHOUT_EXPECT, "Actual {0} has no corresponding expected declaration{1}", DECLARATION_NAME_WITH_KIND,
+        MAP.put(ACTUAL_WITHOUT_EXPECT, "{0} has no corresponding expected declaration{1}", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
                 PlatformIncompatibilityDiagnosticRenderer.TEXT);
 
         MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "Actual class ''{0}'' has no corresponding members for expected class members:{1}",
                 NAME, IncompatibleExpectedActualClassScopesRenderer.TEXT);
-        MAP.put(ACTUAL_MISSING, "Declaration should be marked with 'actual' (suppress with -Xno-check-actual)");
+        MAP.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'");
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");
@@ -344,16 +324,16 @@ public class DefaultErrorMessages {
         MAP.put(TYPEALIAS_EXPANSION_DEPRECATION, "''{0}'' uses ''{1}'', which is deprecated. {2}", DEPRECATION_RENDERER, DEPRECATION_RENDERER, STRING);
         MAP.put(TYPEALIAS_EXPANSION_DEPRECATION_ERROR, "''{0}'' uses ''{1}'', which is an error. {2}", DEPRECATION_RENDERER, DEPRECATION_RENDERER, STRING);
 
-        DiagnosticParameterRenderer<Pair<LanguageVersion, String>> sinceKotlinInfoMessage = (pair, renderingContext) -> {
+        DiagnosticParameterRenderer<Pair<LanguageVersion, String>> versionRequirementMessage = (pair, renderingContext) -> {
             String message = pair.getSecond();
             return pair.getFirst().getVersionString() + (message != null ? ". " + message : "");
         };
-        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION, "''{0}''{1} should not be used in Kotlin {2}", DEPRECATION_RENDERER,
-                (obj, renderingContext) -> obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only supported since Kotlin " + obj.asString() + " and",
-                sinceKotlinInfoMessage);
-        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION_ERROR, "''{0}''{1} cannot be used in Kotlin {2}", DEPRECATION_RENDERER,
-                (obj, renderingContext) -> obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only available since Kotlin " + obj.asString() + " and",
-                sinceKotlinInfoMessage);
+        MAP.put(VERSION_REQUIREMENT_DEPRECATION, "''{0}''{1} should not be used in Kotlin {2}", DEPRECATION_RENDERER,
+                (obj, renderingContext) -> obj.equals(VersionRequirement.Version.INFINITY) ? "" : " is only supported since Kotlin " + obj.asString() + " and",
+                versionRequirementMessage);
+        MAP.put(VERSION_REQUIREMENT_DEPRECATION_ERROR, "''{0}''{1} cannot be used in Kotlin {2}", DEPRECATION_RENDERER,
+                (obj, renderingContext) -> obj.equals(VersionRequirement.Version.INFINITY) ? "" : " is only available since Kotlin " + obj.asString() + " and",
+                versionRequirementMessage);
 
         MAP.put(API_NOT_AVAILABLE, "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}", STRING, STRING);
 
@@ -552,6 +532,8 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_MISMATCH_IN_RANGE, "Type mismatch: incompatible types of range and element checked in it");
         MAP.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type");
         MAP.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds");
+        MAP.put(CYCLIC_SCOPES_WITH_COMPANION, "There's a cycle in scopes for that type. Most probably, there's a companion object that inherits some nested class (see KT-21515).\n" +
+                                              "Such code is currently unstable, and its behavior may change in future releases");
 
         MAP.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list");
         MAP.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Only classes and interfaces may serve as supertypes");
@@ -625,6 +607,12 @@ public class DefaultErrorMessages {
 
         MAP.put(NON_PRIVATE_CONSTRUCTOR_IN_ENUM, "Constructor must be private in enum class");
         MAP.put(NON_PRIVATE_CONSTRUCTOR_IN_SEALED, "Constructor must be private in sealed class");
+
+        MAP.put(INLINE_CLASS_NOT_TOP_LEVEL, "Inline classes are only allowed on top level");
+        MAP.put(INLINE_CLASS_NOT_FINAL, "Inline classes can be only final");
+        MAP.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, "Primary constructor is required for inline class");
+        MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter");
+        MAP.put(INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, "Inline class primary constructor must have only final read-only (val) property parameter");
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED, "Variance annotations are only allowed for type parameters of classes and interfaces");
         MAP.put(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, "Bounds are not allowed on type alias parameters");
@@ -802,7 +790,7 @@ public class DefaultErrorMessages {
         MAP.put(VAR_ANNOTATION_PARAMETER, "An annotation parameter cannot be 'var'");
         MAP.put(ANNOTATION_CLASS_CONSTRUCTOR_CALL, "Annotation class cannot be instantiated");
         MAP.put(NOT_AN_ANNOTATION_CLASS, "''{0}'' is not an annotation class", NAME);
-        MAP.put(ANNOTATION_CLASS_WITH_BODY, "Body is not allowed for annotation class");
+        MAP.put(ANNOTATION_CLASS_MEMBER, "Members are not allowed in annotation class");
         MAP.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member");
         MAP.put(NULLABLE_TYPE_OF_ANNOTATION_MEMBER, "An annotation parameter cannot be nullable");
         MAP.put(ANNOTATION_PARAMETER_MUST_BE_CONST, "An annotation parameter must be a compile-time constant");
@@ -883,11 +871,17 @@ public class DefaultErrorMessages {
         MAP.put(NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled");
         MAP.put(NON_LOCAL_SUSPENSION_POINT, "Suspension functions can be called only within coroutine body");
         MAP.put(ILLEGAL_SUSPEND_FUNCTION_CALL, "Suspend function ''{0}'' should be called only from a coroutine or another suspend function", NAME);
+        MAP.put(ILLEGAL_SUSPEND_PROPERTY_ACCESS, "Suspend property ''{0}'' should be accessed only from a coroutine or suspend function", NAME);
         MAP.put(ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL, "Restricted suspending functions can only invoke member or extension suspending functions on their restricted coroutine scope");
+        MAP.put(NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND, "''suspend'' function can only be called in a form of modifier of a lambda: suspend { ... }");
+        MAP.put(MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND, "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Add empty argument list to the call: ''suspend() { ... }''");
 
-        MAP.put(PLUGIN_ERROR, "{0}: {1}", TO_STRING, TO_STRING);
-        MAP.put(PLUGIN_WARNING, "{0}: {1}", TO_STRING, TO_STRING);
-        MAP.put(PLUGIN_INFO, "{0}: {1}", TO_STRING, TO_STRING);
+        MAP.put(PLUGIN_ERROR, "{0}", (d, c) -> d.getText());
+        MAP.put(PLUGIN_WARNING, "{0}", (d, c) -> d.getText());
+        MAP.put(PLUGIN_INFO, "{0}", (d, c) -> d.getText());
+
+        MAP.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description: {0}", TO_STRING);
+        MAP.put(CONTRACT_NOT_ALLOWED, "Contract is not allowed here");
 
         MAP.setImmutable();
 

@@ -19,12 +19,11 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTypeParameter
@@ -45,9 +44,8 @@ class AddGenericUpperBoundFix(
     override fun getText() = element?.let { "Add '$renderedUpperBound' as upper bound for ${it.name}" } ?: ""
     override fun getFamilyName() = "Add generic upper bound"
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
-        if (!super.isAvailable(project, editor, file)) return false
         // TODO: replacing existing upper bounds
         return (element.name != null && element.extendsBound == null)
     }

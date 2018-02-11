@@ -49,4 +49,14 @@ public class MyJavaClass {
     public static class RawADerived extends RawA {
 
     }
+
+    // Method with sam conversion for step into test
+    public void other(Runnable runnable) {
+        runnable.run();
+    }
+
+    public MyJavaClass() {}
+
+    // Constructor with sam conversion for step into test
+    public MyJavaClass(Runnable runnable) {}
 }

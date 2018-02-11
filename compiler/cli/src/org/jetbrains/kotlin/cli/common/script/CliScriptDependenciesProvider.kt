@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.cli.common.script
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
-import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.ScriptContentLoader
+import org.jetbrains.kotlin.script.ScriptDefinitionProvider
+import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -30,7 +30,7 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class CliScriptDependenciesProvider(
         project: Project,
-        private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
+        private val scriptDefinitionProvider: ScriptDefinitionProvider
 ) : ScriptDependenciesProvider {
 
     private val cacheLock = ReentrantReadWriteLock()

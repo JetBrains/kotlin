@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getContainingClass
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -42,6 +43,8 @@ import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
+
+private val RETENTION_PARAMETER_NAME = Name.identifier("value")
 
 fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = companionObjectDescriptor ?: this
 
@@ -186,16 +189,11 @@ fun CallableDescriptor.getOwnerForEffectiveDispatchReceiverParameter(): Declarat
     return dispatchReceiverParameter?.containingDeclaration
 }
 
-/**
- * @return `true` iff the parameter has a default value, i.e. declares it or inherits by overriding a parameter which has a default value.
- */
-fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
+fun ValueParameterDescriptor.declaresOrInheritsDefaultValue(): Boolean {
     return DFS.ifAny(
-            listOf(this),
-            DFS.Neighbors<ValueParameterDescriptor> { current ->
-                current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal)
-            },
-            ValueParameterDescriptor::declaresDefaultValue
+        listOf(this),
+        { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
+        ValueParameterDescriptor::declaresDefaultValue
     )
 }
 
@@ -214,11 +212,10 @@ fun Annotated.isDocumentedAnnotation(): Boolean =
         annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) != null
 
 fun Annotated.getAnnotationRetention(): KotlinRetention? {
-    val retentionArgumentValue = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention)
-                                         ?.allValueArguments
-                                         ?.get(Name.identifier("value"))
-                                         as? EnumValue ?: return null
-    return KotlinRetention.valueOf(retentionArgumentValue.value.name.asString())
+    val retentionArgumentValue =
+            annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention)?.allValueArguments?.get(RETENTION_PARAMETER_NAME)
+                    as? EnumValue ?: return null
+    return KotlinRetention.valueOf(retentionArgumentValue.enumEntryName.asString())
 }
 
 val DeclarationDescriptor.parentsWithSelf: Sequence<DeclarationDescriptor>
@@ -394,12 +391,6 @@ fun computeSealedSubclasses(sealedClass: ClassDescriptor): Collection<ClassDescr
     return result
 }
 
-fun ClassDescriptor.getNoArgsConstructor(): ClassConstructorDescriptor? =
-        constructors.find { it.valueParameters.isEmpty() }
-
-fun ClassDescriptor.getConstructorForEmptyArgumentsList(): List<ClassConstructorDescriptor> =
-        constructors.filter { it.valueParameters.all { it.hasDefaultValue() || it.varargElementType != null } }
-
 fun DeclarationDescriptor.isPublishedApi(): Boolean {
     val descriptor = if (this is CallableMemberDescriptor) DescriptorUtils.getDirectMember(this) else this
     return descriptor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)
@@ -415,7 +406,7 @@ fun ClassDescriptor.isSubclassOf(superclass: ClassDescriptor): Boolean = Descrip
 val AnnotationDescriptor.annotationClass: ClassDescriptor?
     get() = type.constructor.declarationDescriptor as? ClassDescriptor
 
-fun AnnotationDescriptor.firstArgumentValue() = allValueArguments.values.firstOrNull()?.value
+fun AnnotationDescriptor.firstArgument(): ConstantValue<*>? = allValueArguments.values.firstOrNull()
 
 fun MemberDescriptor.isEffectivelyExternal(): Boolean {
     if (isExternal) return true
@@ -433,3 +424,9 @@ fun MemberDescriptor.isEffectivelyExternal(): Boolean {
     val containingClass = getContainingClass(this)
     return containingClass != null && containingClass.isEffectivelyExternal()
 }
+
+fun isParameterOfAnnotation(parameterDescriptor: ParameterDescriptor): Boolean =
+    parameterDescriptor.containingDeclaration.isAnnotationConstructor()
+
+fun DeclarationDescriptor.isAnnotationConstructor(): Boolean =
+    this is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(this.constructedClass)

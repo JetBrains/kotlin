@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // WITH_RUNTIME
 
 fun Runnable.test(f: Runnable.(Int) -> Unit) {

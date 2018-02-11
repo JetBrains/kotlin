@@ -133,7 +133,7 @@ fun prepareDelayedRequests(project: Project) {
     }
 }
 
-var KtElement.isToBeShortened: Boolean? by CopyableUserDataProperty(Key.create("IS_TO_BE_SHORTENED"))
+var KtElement.isToBeShortened: Boolean? by CopyablePsiUserDataProperty(Key.create("IS_TO_BE_SHORTENED"))
 
 fun KtElement.addToBeShortenedDescendantsToWaitingSet() {
     forEachDescendantOfType<KtElement> {

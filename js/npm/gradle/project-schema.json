@@ -1,0 +1,16 @@
+{
+    ":": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention"
+        },
+        "configurations": [
+            "archives",
+            "default"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "node": "com.moowork.gradle.node.NodeExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet"
+        }
+    }
+}

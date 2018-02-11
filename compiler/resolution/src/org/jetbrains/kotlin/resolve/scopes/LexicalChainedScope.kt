@@ -26,31 +26,36 @@ import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 
 class LexicalChainedScope @JvmOverloads constructor(
-        parent: LexicalScope,
-        override val ownerDescriptor: DeclarationDescriptor,
-        override val isOwnerDescriptorAccessibleByLabel: Boolean,
-        override val implicitReceiver: ReceiverParameterDescriptor?,
-        override val kind: LexicalScopeKind,
-        private val memberScopes: List<MemberScope>,
-        @Deprecated("This value is temporary hack for resolve -- don't use it!")
-        val isStaticScope: Boolean = false
-): LexicalScope {
+    parent: LexicalScope,
+    override val ownerDescriptor: DeclarationDescriptor,
+    override val isOwnerDescriptorAccessibleByLabel: Boolean,
+    override val implicitReceiver: ReceiverParameterDescriptor?,
+    override val kind: LexicalScopeKind,
+    private val memberScopes: List<MemberScope>,
+    @Deprecated("This value is temporary hack for resolve -- don't use it!")
+    val isStaticScope: Boolean = false
+) : LexicalScope {
     override val parent = parent.takeSnapshot()
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = getFromAllScopes(memberScopes) { it.getContributedDescriptors() }
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) =
+        getFromAllScopes(memberScopes) { it.getContributedDescriptors() }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = getFirstClassifierDiscriminateHeaders(memberScopes) { it.getContributedClassifier(name, location) }
+    override fun getContributedClassifier(name: Name, location: LookupLocation) =
+        getFirstClassifierDiscriminateHeaders(memberScopes) { it.getContributedClassifier(name, location) }
 
-    override fun getContributedVariables(name: Name, location: LookupLocation) = getFromAllScopes(memberScopes) { it.getContributedVariables(name, location) }
+    override fun getContributedVariables(name: Name, location: LookupLocation) =
+        getFromAllScopes(memberScopes) { it.getContributedVariables(name, location) }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation) = getFromAllScopes(memberScopes) { it.getContributedFunctions(name, location) }
+    override fun getContributedFunctions(name: Name, location: LookupLocation) =
+        getFromAllScopes(memberScopes) { it.getContributedFunctions(name, location) }
 
     override fun toString(): String = kind.toString()
 
     override fun printStructure(p: Printer) {
-        p.println(this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
-                  " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {")
+        p.println(
+            this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
+            " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {"
+        )
         p.pushIndent()
 
         for (scope in memberScopes) {

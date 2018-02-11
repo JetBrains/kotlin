@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeAlias
 
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -41,6 +43,7 @@ object CreateTypeAliasFromTypeReferenceActionFactory : KotlinSingleIntentionActi
 
         val classInfo = CreateClassFromTypeReferenceActionFactory.extractFixData(element, diagnostic) ?: return null
         val targetParent = classInfo.applicableParents.singleOrNull { it !is KtDeclaration && it !is PsiPackage } ?: return null
+        if ((targetParent as? PsiClass)?.language == JavaLanguage.INSTANCE) return null
 
         val expectedType = getTypeConstraintInfo(element)?.upperBound
         if (expectedType != null && expectedType.containsError()) return null

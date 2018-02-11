@@ -54,7 +54,8 @@ class CodeToInlineBuilder(
     fun prepareCodeToInline(
             mainExpression: KtExpression?,
             statementsBefore: List<KtExpression>,
-            analyze: () -> BindingContext
+            analyze: () -> BindingContext,
+            reformat: Boolean
     ): CodeToInline {
         var bindingContext = analyze()
 
@@ -62,7 +63,7 @@ class CodeToInlineBuilder(
 
         bindingContext = insertExplicitTypeArguments(codeToInline, bindingContext, analyze)
 
-        processReferences(codeToInline, bindingContext)
+        processReferences(codeToInline, bindingContext, reformat)
 
         if (mainExpression != null) {
             val functionLiteralExpression = mainExpression.unpackFunctionLiteral(true)
@@ -134,7 +135,7 @@ class CodeToInlineBuilder(
         return analyze()
     }
 
-    private fun processReferences(codeToInline: MutableCodeToInline, bindingContext: BindingContext) {
+    private fun processReferences(codeToInline: MutableCodeToInline, bindingContext: BindingContext, reformat: Boolean) {
         val receiversToAdd = ArrayList<Pair<KtExpression, KtExpression>>()
 
         codeToInline.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
@@ -174,7 +175,8 @@ class CodeToInlineBuilder(
         for ((expr, receiverExpression) in receiversToAdd.asReversed()) {
             val expressionToReplace = expr.parent as? KtCallExpression ?: expr
             codeToInline.replaceExpression(expressionToReplace,
-                                           psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace))
+                                           psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace,
+                                                                                reformat = reformat))
         }
     }
 }

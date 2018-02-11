@@ -292,9 +292,11 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
 private fun StringBuilder.appendInn(target: Any?, prefix: String = "", suffix: String = "") {
     if (target == null) return
     append(prefix)
-    append(when (target) {
-               is KtElement -> target.getDebugText()
-               else -> target.toString()
-           })
+    append(
+        when (target) {
+            is KtElement -> target.getDebugText()
+            else -> target.toString()
+        }
+    )
     append(suffix)
 }

@@ -54,9 +54,6 @@ class C {
 // EXIST: { itemText: "memberFunInA", attributes: "" }
 // EXIST: { itemText: "memberValInA", attributes: "" }
 
-/*TODO!*/
-// ABSENT: { itemText: "InnerInA", attributes: "" }
-
 // ABSENT: NestedInA
 // EXIST: { itemText: "extensionFun", attributes: "" }
 // EXIST: { itemText: "extensionVal", attributes: "" }
@@ -74,5 +71,6 @@ class C {
 // EXIST: { itemText: "memberFunInB", attributes: "bold" }
 // EXIST: { itemText: "memberValInB", attributes: "bold" }
 // EXIST: { itemText: "InnerInB", attributes: "bold" }
+// EXIST: { itemText: "InnerInA", attributes: "" }
 // ABSENT: NestedInB
 // EXIST: { itemText: "extensionFunForB", attributes: "bold" }

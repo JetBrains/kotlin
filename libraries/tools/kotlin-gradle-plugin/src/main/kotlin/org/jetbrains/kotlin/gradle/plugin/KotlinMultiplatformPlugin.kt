@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import com.android.build.gradle.BaseExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -81,6 +82,16 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
                 }
             }
         }
+
+        val incrementalMultiplatform = PropertiesProvider(project).incrementalMultiplatform ?: true
+        project.afterEvaluate {
+            project.tasks.withType(AbstractKotlinCompile::class.java).all {
+                if (it.incremental && !incrementalMultiplatform) {
+                    project.logger.debug("IC is turned off for task '${it.path}' because multiplatform IC is not enabled")
+                }
+                it.incremental = it.incremental && incrementalMultiplatform
+            }
+        }
     }
 
     private var implementConfigurationIsUsed = false
@@ -95,7 +106,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         }
 
         commonProject.whenEvaluated {
-            if ((!commonProject.plugins.hasPlugin(KotlinPlatformCommonPlugin::class.java))) {
+            if (!commonProject.pluginManager.hasPlugin("kotlin-platform-common")) {
                 throw GradleException(
                         "Platform project $platformProject has an " +
                         "'$EXPECTED_BY_CONFIG_NAME'${if (implementConfigurationIsUsed) "/'$IMPLEMENT_CONFIG_NAME'" else ""} " +
@@ -104,18 +115,25 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
 
             commonProject.sourceSets.all { commonSourceSet ->
                 // todo: warn if not found
-                addCommonSourceSetToPlatformSourceSet(commonSourceSet)
+                addCommonSourceSetToPlatformSourceSet(commonSourceSet, platformProject)
             }
         }
     }
 
-    protected fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet) {
+    protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet, platformProject: Project) {
         val platformTask = platformKotlinTasksBySourceSetName[commonSourceSet.name]
         commonSourceSet.kotlin!!.srcDirs.forEach { platformTask?.source(it) }
     }
 
     protected val SourceSet.kotlin: SourceDirectorySet?
-            get() = ((getConvention("kotlin") ?: getConvention("kotlin2js")) as? KotlinSourceSet)?.kotlin
+        get() {
+            // Access through reflection, because another project's KotlinSourceSet might be loaded
+            // by a different class loader:
+            val convention = (getConvention("kotlin") ?: getConvention("kotlin2js")) ?: return null
+            val kotlinSourceSetIface = convention.javaClass.interfaces.find { it.name == KotlinSourceSet::class.qualifiedName }
+            val getKotlin = kotlinSourceSetIface?.methods?.find { it.name == "getKotlin" } ?: return null
+            return getKotlin(convention) as? SourceDirectorySet
+        }
 
     companion object {
         @JvmStatic
@@ -128,7 +146,20 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
             }
         }
     }
+}
 
+open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase("android") {
+    override fun apply(project: Project) {
+        project.applyPlugin<KotlinAndroidPluginWrapper>()
+        super.apply(project)
+    }
+
+    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet, platformProject: Project) {
+        val androidExtension = platformProject.extensions.getByName("android") as BaseExtension
+        val androidSourceSet = androidExtension.sourceSets.findByName(commonSourceSet.name) ?: return
+        val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: return
+        kotlinSourceSet.kotlin.source(commonSourceSet.kotlin!!)
+    }
 }
 
 open class KotlinPlatformJvmPlugin : KotlinPlatformImplementationPluginBase("jvm") {

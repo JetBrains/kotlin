@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun test() {
     run {<!RETURN_NOT_ALLOWED!>return<!>}
     run {}

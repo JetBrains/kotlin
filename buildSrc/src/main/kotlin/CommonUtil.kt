@@ -1,35 +1,23 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
-import org.gradle.api.*
-import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.*
-import org.gradle.api.plugins.JavaPluginConvention
+import groovy.lang.Closure
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.AbstractTask
-import org.gradle.jvm.tasks.Jar
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.SourceSetOutput
+import org.gradle.kotlin.dsl.creating
+import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.the
 import java.io.File
 
 inline fun <reified T : Task> Project.task(noinline configuration: T.() -> Unit) = tasks.creating(T::class, configuration)
 
-
-fun AbstractTask.dependsOnTaskIfExists(task: String, project: Project?, parentProject: Project?) {
-    val thisTask = this
-    val p = project ?: this.project
-    p.afterEvaluate {
-        p.tasks.firstOrNull { it.name == task }?.also {
-            if (parentProject != null) {
-                parentProject.evaluationDependsOn(p.path)
-            }
-            thisTask.dependsOn(it)
-        }
-    }
-}
-
-fun AbstractTask.dependsOnTaskIfExistsRec(task: String, project: Project? = null, parentProject: Project? = null) {
-    dependsOnTaskIfExists(task, project, parentProject)
-    (project ?: this.project).subprojects.forEach {
-        dependsOnTaskIfExistsRec(task, it, this.project)
-    }
+fun Project.callGroovy(name: String, vararg args: Any?): Any? {
+    return (property(name) as Closure<*>).call(*args)
 }
 
 inline fun<T: Any> Project.withJavaPlugin(crossinline body: () -> T?): T? {
@@ -62,3 +50,9 @@ var Project.jvmTarget: String?
 var Project.javaHome: String?
     get() = extra.takeIf { it.has("javaHome") }?.get("javaHome") as? String
     set(v) { extra["javaHome"] = v }
+
+fun Project.generator(fqName: String) = task<JavaExec> {
+    classpath = the<JavaPluginConvention>().sourceSets["test"].runtimeClasspath
+    main = fqName
+    workingDir = rootDir
+}

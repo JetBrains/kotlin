@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers;
@@ -45,6 +34,12 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
     @TestMetadata("aosp.kt")
     public void testAosp() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/aosp.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("checkerFramework.kt")
+    public void testCheckerFramework() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/checkerFramework.kt");
         doTest(fileName);
     }
 
@@ -133,6 +128,18 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("elvis.kt")
+            public void testElvis() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/elvis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localInference.kt")
+            public void testLocalInference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/localInference.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nullabilityGenerics.kt")
             public void testNullabilityGenerics() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/nullabilityGenerics.kt");
@@ -142,6 +149,12 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
             @TestMetadata("nullabilityNicknames.kt")
             public void testNullabilityNicknames() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/nullabilityNicknames.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("safeCalls.kt")
+            public void testSafeCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/safeCalls.kt");
                 doTest(fileName);
             }
 
@@ -292,6 +305,12 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
             public static class TypeQualifierDefault extends AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
                 public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("equalsOnNonNull.kt")
+                public void testEqualsOnNonNull() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault/equalsOnNonNull.kt");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("fieldsAreNullable.kt")

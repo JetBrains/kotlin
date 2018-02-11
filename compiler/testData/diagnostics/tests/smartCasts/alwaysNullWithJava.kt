@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FILE: My.java
 
 public class My {
@@ -10,7 +11,7 @@ public class My {
 fun test() {
     val my = My.create()
     if (my == null) {
-        <!DEBUG_INFO_CONSTANT!>my<!><!UNSAFE_CALL!>.<!>foo()
+        <!OI;DEBUG_INFO_CONSTANT!>my<!><!OI;UNSAFE_CALL!>.<!>foo()
     }
 }
 

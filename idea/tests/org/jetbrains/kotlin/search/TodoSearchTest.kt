@@ -33,9 +33,10 @@ class TodoSearchTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testTodoCall() {
         val file = myFixture.configureByFile("todoCall.kt")
         val todoItems = PsiTodoSearchHelper.SERVICE.getInstance(myFixture.project).findTodoItems(file)
-        assertEquals(2, todoItems.size)
+        assertEquals(3, todoItems.size)
         verifyTodoItemText(todoItems[0], "TODO(\"Fix me\")")
         verifyTodoItemText(todoItems[1], "TODO()")
+        verifyTodoItemText(todoItems[2], "TODO(\"Fix me in lambda\")")
     }
 
     private fun verifyTodoItemText(todoItem: TodoItem, s: String) {

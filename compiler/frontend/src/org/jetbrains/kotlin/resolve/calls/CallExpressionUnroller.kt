@@ -38,7 +38,7 @@ fun unrollToLeftMostQualifiedExpression(expression: KtQualifiedExpression): List
     return unrolled.asReversed()
 }
 
-data class CallExpressionElement internal constructor (val qualified: KtQualifiedExpression) {
+data class CallExpressionElement internal constructor(val qualified: KtQualifiedExpression) {
 
     val receiver: KtExpression
         get() = qualified.receiverExpression

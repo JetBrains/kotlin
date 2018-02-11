@@ -24,10 +24,10 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 abstract class AbstractBoundedValue(
-        protected val codegen: ExpressionCodegen,
-        protected val rangeCall: ResolvedCall<out CallableDescriptor>,
-        override val isLowInclusive: Boolean = true,
-        override val isHighInclusive: Boolean = true
+    protected val codegen: ExpressionCodegen,
+    protected val rangeCall: ResolvedCall<out CallableDescriptor>,
+    override val isLowInclusive: Boolean = true,
+    override val isHighInclusive: Boolean = true
 ) : BoundedValue {
     override val instanceType: Type = codegen.asmType(rangeCall.resultingDescriptor.returnType!!)
 

@@ -92,7 +92,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
         }
         else {
             val chain: Array<MutableEntry<K, V>> = chainOrEntry
-            for (index in 0..chain.size - 1) {
+            for (index in chain.indices) {
                 val entry = chain[index]
                 if (equality.equals(key, entry.key)) {
                     if (chain.size == 1) {

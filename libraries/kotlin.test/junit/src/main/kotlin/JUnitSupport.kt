@@ -27,6 +27,14 @@ object JUnitAsserter : Asserter {
         Assert.assertNotEquals(message, illegal, actual)
     }
 
+    override fun assertSame(message : String?, expected : Any?, actual : Any?) {
+        Assert.assertSame(message, expected, actual)
+    }
+
+    override fun assertNotSame(message : String?, illegal : Any?, actual : Any?) {
+        Assert.assertNotSame(message, illegal, actual)
+    }
+
     override fun assertNotNull(message : String?, actual : Any?) {
         Assert.assertNotNull(message ?: "actual value is null", actual)
     }

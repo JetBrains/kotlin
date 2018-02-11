@@ -40,8 +40,7 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/confluence-highlighting/pom.xml" />
-        <option value="$PROJECT_DIR$/confluence/pom.xml" />
+        <option value="$PROJECT_DIR$/libraries/pom.xml" />
       </list>
     </option>
   </component>

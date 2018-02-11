@@ -1,0 +1,32 @@
+================ Step #1 =================
+
+Compiling files:
+  src/AChild.kt
+  src/APartF.kt
+  src/APartG.kt
+  src/getA.kt
+  src/getAChild.kt
+  src/useF.kt
+  src/useG.kt
+  src/useH.kt
+  src/useJ.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Unresolved reference: A
+Unresolved reference: A
+Unresolved reference: A
+Unresolved reference: A
+
+================ Step #2 =================
+
+Compiling files:
+  src/AChild.kt
+  src/getAChild.kt
+  src/useF.kt
+  src/useG.kt
+  src/useJ.kt
+End of files
+Exit code: OK
+

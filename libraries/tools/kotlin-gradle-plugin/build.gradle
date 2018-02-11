@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 apply plugin: 'groovy'
 apply plugin: 'org.jetbrains.dokka'
@@ -18,7 +19,6 @@ configurePublishing(project)
 repositories {
     jcenter()
     mavenLocal()
-    maven { url 'http://repository.jetbrains.com/utils/' }
     maven { url 'https://maven.google.com' }
 }
 
@@ -32,29 +32,43 @@ dependencies {
     compileOnly project(':compiler:incremental-compilation-impl')
 
     compile project(':kotlin-stdlib')
-    compile project(':kotlin-android-extensions')
-    compile project(':kotlin-build-common')
-    compile project(':kotlin-compiler-runner')
+    compileOnly project(':kotlin-reflect-api')
+    compileOnly project(':kotlin-android-extensions')
+    compileOnly project(':kotlin-build-common')
+    compileOnly project(':kotlin-compiler-runner')
     compileOnly project(':kotlin-annotation-processing')
     compileOnly project(':kotlin-annotation-processing-gradle')
 
     compileOnly 'com.android.tools.build:gradle:2.0.0'
-    compileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
-    compileOnly 'org.jetbrains.kotlin:gradle-api:2.2'
+    compileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
+    compileOnly gradleApi()
+
+    compileOnly("kotlin.build.custom.deps:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
+        artifact {
+            name = 'intellij-core'
+            type = 'jar'
+            extension = 'jar'
+        }
+    }
 
     runtime project(path: ':kotlin-compiler-embeddable', configuration: "runtimeJar")
     runtime project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
+    runtime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
+    runtime project(path: ':kotlin-compiler-runner', configuration: 'runtimeJar')
 
     agp25CompileOnly 'com.android.tools.build:gradle:3.0.0-alpha1'
-    agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
+    agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
     agp25CompileOnly gradleApi()
     agp25CompileOnly project(':kotlin-annotation-processing')
     agp25CompileOnly project(':kotlin-annotation-processing-gradle')
 
     testCompileOnly project(':compiler')
     testCompile project (path: ':kotlin-build-common', configuration: 'tests-jar')
+    testCompile project(':kotlin-android-extensions')
+    testCompile project(':kotlin-compiler-runner')
     testCompile project(':kotlin-test::kotlin-test-junit')
     testCompile "junit:junit:4.12"
+    testCompileOnly project(':kotlin-reflect-api')
     testCompileOnly project(':kotlin-annotation-processing')
     testCompileOnly project(':kotlin-annotation-processing-gradle')
 }
@@ -93,12 +107,16 @@ jar {
     manifestAttributes(manifest, project)
 }
 
+ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
+
 artifacts {
     archives sourcesJar
     archives javadocJar
 }
 
 test.executable = "${JDK_18}/bin/java"
+
+validateTaskProperties.failOnWarning = true
 
 dokka {
     outputFormat = 'markdown'

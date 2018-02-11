@@ -56,16 +56,16 @@ class SyntheticDescriptorsFactory {
     }
 
     private fun isStaticPropertyInClass(propertyDescriptor: PropertyDescriptor): Boolean =
-            propertyDescriptor.containingDeclaration is ClassDescriptor &&
-            propertyDescriptor.dispatchReceiverParameter == null &&
-            propertyDescriptor.extensionReceiverParameter == null
+        propertyDescriptor.containingDeclaration is ClassDescriptor &&
+                propertyDescriptor.dispatchReceiverParameter == null &&
+                propertyDescriptor.extensionReceiverParameter == null
 
     private fun isPropertyInClass(propertyDescriptor: PropertyDescriptor): Boolean =
-            propertyDescriptor.containingDeclaration is ClassDescriptor
+        propertyDescriptor.containingDeclaration is ClassDescriptor
 
     fun getOrCreatePropertyGetter(propertyDescriptor: PropertyDescriptor): PropertyGetterDescriptor =
-            propertyGetters.getOrPut(propertyDescriptor) { generateGetter(propertyDescriptor) }
+        propertyGetters.getOrPut(propertyDescriptor) { generateGetter(propertyDescriptor) }
 
     fun getOrCreatePropertySetter(propertyDescriptor: PropertyDescriptor): PropertySetterDescriptor =
-            propertySetters.getOrPut(propertyDescriptor) { generateSetter(propertyDescriptor) }
+        propertySetters.getOrPut(propertyDescriptor) { generateSetter(propertyDescriptor) }
 }

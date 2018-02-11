@@ -1,7 +1,7 @@
 
 apply { plugin("kotlin") }
 
-jvmTarget = "1.6"
+jvmTarget = "1.8"
 
 dependencies {
     compile(project(":compiler:util"))
@@ -17,10 +17,17 @@ dependencies {
     compile(project(":js:js.translator"))
     compile(project(":js:js.serializer"))
     compile(project(":js:js.dce"))
-    compile(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
+
+    testCompile(project(":compiler:backend"))
+    testCompile(project(":compiler:cli"))
+    testCompile(project(":compiler:tests-common"))
+    testCompile(projectTests(":compiler:tests-common"))
+    testCompile(commonDep("junit:junit"))
 }
 
 sourceSets {
@@ -30,5 +37,13 @@ sourceSets {
                      "../builtins-serializer/src",
                      "../javac-wrapper/src")
     }
-    "test" {}
+    "test" {
+        java.srcDirs("../../plugins/annotation-collector/test")
+    }
+}
+
+testsJar {}
+
+projectTest {
+    workingDir = rootDir
 }

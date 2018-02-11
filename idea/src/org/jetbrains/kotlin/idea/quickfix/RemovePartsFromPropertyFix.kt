@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -48,8 +47,7 @@ open class RemovePartsFromPropertyFix(
 
     override fun getFamilyName(): String = "Remove parts from property"
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (!super.isAvailable(project, editor, file)) return false
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val type = QuickFixUtil.getDeclarationReturnType(element) ?: return false
         return !type.isError
     }

@@ -26,9 +26,9 @@ fun box(): String {
     check<Float>("float")
     check<Long>("long")
     check<Double>("double")
+    check<Void>("void")
 
     checkNull<String>()
-    checkNull<Void>()
 
     return "OK"
 }

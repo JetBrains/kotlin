@@ -1,0 +1,8 @@
+package
+
+public fun exitOnlyThroughLocalReturns(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun exitOnlyThroughNonLocalReturns(/*0*/ b: kotlin.Boolean?): kotlin.Unit
+public inline fun </*0*/ T> myRun(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun nonLocalReturnAndOrdinaryExit(/*0*/ b: kotlin.Boolean): kotlin.Unit

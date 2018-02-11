@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FILE: b.kt
 
 
@@ -19,7 +20,7 @@ abstract class Foo<T>() {
 package foobar.a
     import java.util.*
 
-    val b : List<Int>? = <!TYPE_MISMATCH!>a<!>
+    val b : List<Int>? = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>a<!>
     val b1 : <!UNRESOLVED_REFERENCE!>util<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>List<!><Int>? = a
 
 // FILE: b.kt

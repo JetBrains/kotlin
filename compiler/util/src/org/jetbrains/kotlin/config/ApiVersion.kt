@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.config
 
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 class ApiVersion private constructor(
@@ -60,8 +60,8 @@ class ApiVersion private constructor(
         fun createByLanguageVersion(version: LanguageVersion): ApiVersion = parse(version.versionString)!!
 
         @JvmStatic
-        fun createBySinceKotlinInfo(sinceKotlinInfo: SinceKotlinInfo): ApiVersion =
-                sinceKotlinInfo.version.let { version -> parse(version.asString()) ?: error("Could not parse version: $version") }
+        fun createByVersionRequirement(versionRequirement: VersionRequirement): ApiVersion =
+                versionRequirement.version.let { version -> parse(version.asString()) ?: error("Could not parse version: $version") }
 
         fun parse(versionString: String): ApiVersion? = try {
             ApiVersion(MavenComparableVersion(versionString), versionString)
