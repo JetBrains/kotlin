@@ -1648,6 +1648,8 @@ public fun <T, R> Sequence<T>.zipWithNext(transform: (a: T, b: T) -> R): Sequenc
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  *
  * The operation is _terminal_.
  */
@@ -1674,8 +1676,6 @@ public fun <T, A : Appendable> Sequence<T>.joinTo(buffer: A, separator: CharSequ
  * @sample samples.collections.Collections.Transformations.joinToString
  *
  * The operation is _terminal_.
- *
- * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun <T> Sequence<T>.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
