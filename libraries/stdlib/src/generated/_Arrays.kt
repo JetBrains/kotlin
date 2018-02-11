@@ -13298,6 +13298,8 @@ public inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Ch
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ *
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -13318,6 +13320,8 @@ public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSeq
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ *
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Byte) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -13341,6 +13345,8 @@ public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence 
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ *
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Short) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -13364,8 +13370,10 @@ public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ *
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
-public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Int) -> CharSequence)? = null): A {
+ublic fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Int) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -13387,6 +13395,8 @@ public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence =
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ *
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Long) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -13410,6 +13420,8 @@ public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence 
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ *
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Float) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -13433,6 +13445,8 @@ public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ *
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Double) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -13456,6 +13470,8 @@ public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequenc
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ *
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Boolean) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -13479,6 +13495,8 @@ public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequen
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ *
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Char) -> CharSequence)? = null): A {
     buffer.append(prefix)
