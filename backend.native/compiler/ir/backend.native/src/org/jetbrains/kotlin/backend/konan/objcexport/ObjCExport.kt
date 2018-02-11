@@ -93,6 +93,7 @@ internal class ObjCExport(val context: Context) {
         }
 
         val file = directory.child("Info.plist")
+        val bundleExecutable = name
         val pkg = context.moduleDescriptor.guessMainPackage() // TODO: consider showing warning if it is root.
         val bundleId = pkg.child(Name.identifier(name)).asString()
 
@@ -103,7 +104,7 @@ internal class ObjCExport(val context: Context) {
             else -> error(target)
         }
         val properties = context.config.platform.configurables as AppleConfigurables
-        val minimumOsVersion = properties.osVersionMin
+        val minimumOsVersion = properties.osVersionMin!!
 
         val contents = StringBuilder()
         contents.append("""
@@ -112,7 +113,7 @@ internal class ObjCExport(val context: Context) {
             <plist version="1.0">
             <dict>
                 <key>CFBundleExecutable</key>
-                <string>$name</string>
+                <string>$bundleExecutable</string>
                 <key>CFBundleIdentifier</key>
                 <string>$bundleId</string>
                 <key>CFBundleInfoDictionaryVersion</key>

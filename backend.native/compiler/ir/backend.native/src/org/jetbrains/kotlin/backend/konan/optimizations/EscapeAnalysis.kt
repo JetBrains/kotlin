@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
+import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 
@@ -161,7 +162,6 @@ internal object EscapeAnalysis {
                                 assignRole(value.node, Role.FIELD_WRITTEN, RoleInfoEntry(node))
                             }
                         }
-                        else -> TODO()
                     }
                 }
                 FunctionAnalysisResult(function, nodesRoles)

@@ -67,7 +67,6 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
         // Translate AST to high level IR.
         val translator = Psi2IrTranslator(Psi2IrConfiguration(false))
         val generatorContext = translator.createGeneratorContext(context.moduleDescriptor, bindingContext)
-        @Suppress("DEPRECATION")
         context.psi2IrGeneratorContext = generatorContext
 
         val symbols = KonanSymbols(context, generatorContext.symbolTable)

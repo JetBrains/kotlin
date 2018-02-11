@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrMemberAccessExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -348,7 +347,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             val getVal = IrGetValueImpl(                                                    // Create new expression, representing access the new variable.
                 startOffset = currentScope.irElement.startOffset,
                 endOffset   = currentScope.irElement.endOffset,
-                symbol      = createValueSymbol(newVariable.descriptor)
+                descriptor  = newVariable.descriptor
             )
             substituteMap[parameterDescriptor] = getVal                                     // Parameter will be replaced with the new variable.
         }

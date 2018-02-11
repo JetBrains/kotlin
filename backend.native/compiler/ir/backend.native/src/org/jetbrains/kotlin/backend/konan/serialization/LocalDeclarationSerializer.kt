@@ -97,9 +97,8 @@ internal class LocalDeclarationSerializer(val context: Context, val rootFunction
     // serialization to serialize variables for now.
     // Need to introduce an extension protobuf message
     // and serialize variables directly.
-    private fun variableAsProperty(variable: VariableDescriptor): PropertyDescriptor {
+    fun variableAsProperty(variable: VariableDescriptor): PropertyDescriptor {
 
-        @Suppress("DEPRECATION")
         val isDelegated = when (variable) {
             is LocalVariableDescriptor -> variable.isDelegated
             is IrTemporaryVariableDescriptor -> false
