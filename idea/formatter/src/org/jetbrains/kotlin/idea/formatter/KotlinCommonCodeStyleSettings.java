@@ -160,7 +160,7 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
             return false;
         }
 
-        return arrangementSettingsEqual(other);
+        return true;
     }
     //</editor-fold>
 
