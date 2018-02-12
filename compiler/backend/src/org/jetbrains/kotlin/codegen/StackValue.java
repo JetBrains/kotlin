@@ -279,8 +279,8 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static StackValue arrayElement(@NotNull Type type, StackValue array, StackValue index) {
-        return new ArrayElement(type, array, index);
+    public static StackValue arrayElement(@NotNull Type type, @Nullable KotlinType kotlinType, StackValue array, StackValue index) {
+        return new ArrayElement(type, kotlinType, array, index);
     }
 
     @NotNull
@@ -1004,8 +1004,8 @@ public abstract class StackValue {
     private static class ArrayElement extends StackValueWithSimpleReceiver {
         private final Type type;
 
-        public ArrayElement(Type type, StackValue array, StackValue index) {
-            super(type, null, false, false, new Receiver(Type.LONG_TYPE, array, index), true);
+        public ArrayElement(Type type, KotlinType kotlinType, StackValue array, StackValue index) {
+            super(type, kotlinType, false, false, new Receiver(Type.LONG_TYPE, array, index), true);
             this.type = type;
         }
 

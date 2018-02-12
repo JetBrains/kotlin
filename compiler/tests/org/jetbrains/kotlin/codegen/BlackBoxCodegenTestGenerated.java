@@ -10491,6 +10491,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("passInlineClassAsVararg.kt")
+        public void testPassInlineClassAsVararg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVararg.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("referToPropertyInCompanionObjectOfInlineClass.kt")
         public void testReferToPropertyInCompanionObjectOfInlineClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClass.kt");

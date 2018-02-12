@@ -584,7 +584,7 @@ public class PropertyCodegen {
         StackValue.Field array = StackValue.field(
                 Type.getType("[" + K_PROPERTY_TYPE), owner, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, true, StackValue.none()
         );
-        return StackValue.arrayElement(K_PROPERTY_TYPE, array, StackValue.constant(index, Type.INT_TYPE));
+        return StackValue.arrayElement(K_PROPERTY_TYPE, null, array, StackValue.constant(index, Type.INT_TYPE));
     }
 
     private static class DelegatedPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
