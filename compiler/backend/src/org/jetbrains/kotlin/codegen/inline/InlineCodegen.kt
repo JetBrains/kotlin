@@ -728,7 +728,10 @@ class PsiInlineCodegen(
             val receiverValue = getBoundCallableReferenceReceiver(argumentExpression)
             if (receiverValue != null) {
                 val receiver = codegen.generateReceiverValue(receiverValue, false)
-                putClosureParametersOnStack(lambdaInfo, StackValue.coercion(receiver, receiver.type.boxReceiverForBoundReference()))
+                putClosureParametersOnStack(
+                    lambdaInfo,
+                    StackValue.coercion(receiver, receiver.type.boxReceiverForBoundReference(), null)
+                )
             }
         }
         else {

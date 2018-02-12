@@ -566,11 +566,11 @@ public abstract class StackValue {
         return new FieldForSharedVar(field.type, field.owner, field.name, newSharedVarReceiver, field.isLateinit, field.variableName);
     }
 
-    public static StackValue coercion(@NotNull StackValue value, @NotNull Type castType) {
+    public static StackValue coercion(@NotNull StackValue value, @NotNull Type castType, @Nullable KotlinType castKotlinType) {
         if (value.type.equals(castType)) {
             return value;
         }
-        return new CoercionValue(value, castType);
+        return new CoercionValue(value, castType, castKotlinType);
     }
 
     @NotNull
@@ -683,7 +683,7 @@ public abstract class StackValue {
     private static StackValue platformStaticCallIfPresent(@NotNull StackValue resultReceiver, @NotNull CallableDescriptor descriptor) {
         if (CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(descriptor)) {
             if (resultReceiver.canHaveSideEffects()) {
-                return coercion(resultReceiver, Type.VOID_TYPE);
+                return coercion(resultReceiver, Type.VOID_TYPE, null);
             }
             else {
                 return none();

@@ -22,13 +22,14 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class CoercionValue(
         val value: StackValue,
-        private val castType: Type
+        private val castType: Type,
+        private val castKotlinType: KotlinType?
 ) : StackValue(castType, value.canHaveSideEffects()) {
 
     override fun putSelector(type: Type, kotlinType: KotlinType?, v: InstructionAdapter) {
         value.putSelector(value.type, value.kotlinType, v)
-        StackValue.coerce(value.type, castType, v)
-        StackValue.coerce(castType, type, v)
+        StackValue.coerce(value.type, value.kotlinType, castType, castKotlinType, v)
+        StackValue.coerce(castType, castKotlinType, type, kotlinType, v)
     }
 
     override fun storeSelector(topOfStackType: Type, topOfStackKotlinType: KotlinType?, v: InstructionAdapter) {
@@ -110,7 +111,7 @@ fun ValueParameterDescriptor.findJavaDefaultArgumentValue(targetType: Type, type
         is EnumEntry -> enumEntry(castResult.descriptor, typeMapper)
         is Constant -> {
             val unboxedType = unboxPrimitiveTypeOrNull(targetType) ?: targetType
-            return coercion(constant(castResult.value, unboxedType), targetType)
+            return coercion(constant(castResult.value, unboxedType), targetType, null)
         }
     }
 }
