@@ -33,13 +33,22 @@ val checkoutIncrementalBeforeChanges by tasks.creating {
         val version = changes?.lastOrNull()?.version ?: vcsTargetVersion
         println("Worktree Checkout $version")
 
-        val process = ProcessBuilder()
-                .command("git", "worktree", "add", "../incremental", "$version^")
+        val worktreeProcess = ProcessBuilder()
+                .command("git", "worktree", "add", "../incremental")
                 .directory(File("../clean"))
                 .inheritIO()
                 .start()
-        if (process.waitFor() != 0) {
-            throw GradleException("Git exited with non-zero code")
+        if (worktreeProcess.waitFor() != 0) {
+            throw GradleException("Git worktree exited with non-zero code")
+        }
+
+        val checkoutProcess = ProcessBuilder()
+                .command("git", "checkout", "$version^")
+                .directory(File("../clean"))
+                .inheritIO()
+                .start()
+        if (checkoutProcess.waitFor() != 0) {
+            throw GradleException("Git checkout exited with non-zero code")
         }
 
         Unit
