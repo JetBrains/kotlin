@@ -35,6 +35,11 @@ sourceSets {
             srcDir 'src'
         }
     }
+    experimental {
+        kotlin {
+            srcDir "experimental"
+        }
+    }
     test {
         kotlin {
             srcDir 'test'
@@ -64,6 +69,7 @@ jar {
     manifestAttributes(manifest, project, 'Main')
     from("${rootDir}/dist/builtins")
     from sourceSets.builtins.output
+    from sourceSets.experimental.output
 }
 
 task distJar(type: Jar) {
@@ -74,6 +80,7 @@ task distJar(type: Jar) {
     from sourceSets.annotations.output
     from sourceSets.builtins.output
     from sourceSets.main.output
+    from sourceSets.experimental.output
 }
 
 task builtinsJar(type: Jar) {
@@ -138,6 +145,20 @@ compileKotlin {
                 "-Xnormalize-constructor-calls=enable",
                 "-Xdump-declarations-to=${buildDir}/stdlib-declarations.json",
                 "-module-name", project.name
+        ]
+    }
+}
+
+compileExperimentalKotlin {
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        freeCompilerArgs = [
+                "-version",
+                "-Xallow-kotlin-package",
+                "-Xmultifile-parts-inherit",
+                "-Xdump-declarations-to=${buildDir}/stdlib-experimental-declarations.json",
+                "-module-name", "kotlin-stdlib-experimental"
         ]
     }
 }

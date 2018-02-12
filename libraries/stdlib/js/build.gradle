@@ -16,6 +16,7 @@ def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
 def commonSrcDir = "${buildDir}/common-sources"
 def commonTestSrcDir = "${buildDir}/common-test-sources"
 def builtinsDir = "${rootDir}/core/builtins"
+def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
 def jsLibrariesDir = "${rootDir}/js/js.libraries"
 def jsSrcDir = "${jsLibrariesDir}/src"
 def jsTestSrcDir = "${jsLibrariesDir}/test"
@@ -43,6 +44,12 @@ sourceSets {
             srcDir jsSrcDir
             exclude "builtins"
             srcDir commonSrcDir
+        }
+    }
+
+    experimental {
+        kotlin {
+            srcDir experimentalSrcDir
         }
     }
 
@@ -140,6 +147,18 @@ compileKotlin2Js {
     }
 }
 
+compileExperimentalKotlin2Js {
+    dependsOn compileKotlin2Js
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        outputFile = "${buildDir}/classes/main/kotlin-experimental.js"
+        sourceMap = true
+        sourceMapPrefix = "./"
+        freeCompilerArgs += [ "-source-map-base-dirs", [experimentalSrcDir].join(File.pathSeparator) ]
+    }
+}
+
 compileTestKotlin2Js {
     dependsOn preprocessSourcesTest
     kotlinOptions {
@@ -148,21 +167,26 @@ compileTestKotlin2Js {
 }
 
 task compileJs(type: JavaExec) {
-    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js
+    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js, compileExperimentalKotlin2Js
     inputs.files(compileBuiltinsKotlin2Js.outputs.files)
     inputs.files(compileKotlin2Js.outputs.files)
+    inputs.files(compileExperimentalKotlin2Js.outputs.files)
     inputs.dir(jsSrcDir)
     outputs.file(jsOutputFile)
     outputs.file("${jsOutputFile}.map")
 
-    def inputFiles = fileTree("${jsSrcJsDir}") {
+    def inputFiles = fileTree(jsSrcJsDir) {
         include '**/*.js'
     }
 
     main = "org.jetbrains.kotlin.js.FileMergerKt"
     doFirst {
         args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path } +
-               ["$buildDir/classes/builtins/kotlin.js", "$buildDir/classes/main/kotlin.js"]
+               (compileBuiltinsKotlin2Js.outputs.files.collect { it.path } +
+               compileKotlin2Js.outputs.files.collect { it.path } +
+               compileExperimentalKotlin2Js.outputs.files.collect { it.path }).findAll {
+                   it.endsWith(".js") && !it.endsWith(".meta.js")
+               }
     }
     classpath = configurations.merger
 
@@ -240,6 +264,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
         into 'kotlin'
         exclude '**/*.java'
         exclude 'js/**'
+    }
+    from (sourceSets.experimental.allSource) {
+        into 'kotlin'
     }
 }
 
