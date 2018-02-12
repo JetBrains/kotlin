@@ -341,6 +341,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.util.ProjectJob"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.util.ProjectJob"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptModificationListener"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptModificationListener"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>

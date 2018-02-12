@@ -62,6 +62,16 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
         updateDefinitions()
     }
 
+    fun getDefinitionsBy(contributor: ScriptDefinitionContributor): List<KotlinScriptDefinition> = lock.write {
+        val notLoadedYet = definitions.isEmpty()
+        if (notLoadedYet) return emptyList()
+
+        if (contributor !in definitionsByContributor) error("Unknown contributor: ${contributor.id}")
+
+        if (contributor.isError()) return emptyList()
+        return definitionsByContributor[contributor] ?: emptyList()
+    }
+
     private fun currentDefinitions(): List<KotlinScriptDefinition> {
         val hasDefinitions = definitions.isNotEmpty()
         when {

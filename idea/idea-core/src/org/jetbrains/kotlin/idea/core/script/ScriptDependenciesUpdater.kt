@@ -107,7 +107,7 @@ class ScriptDependenciesUpdater(
         }
     }
 
-   private fun requestUpdate(files: Iterable<VirtualFile>) {
+    fun requestUpdate(files: Iterable<VirtualFile>) {
         files.forEach { file ->
             if (!file.isValid) {
                 cache.delete(file)

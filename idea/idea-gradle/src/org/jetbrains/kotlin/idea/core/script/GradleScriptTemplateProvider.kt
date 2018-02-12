@@ -71,6 +71,8 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
             }
         }
         project.messageBus.connect(project).subscribe(GradleSettingsListener.TOPIC, listener)
+
+        ServiceManager.getService(project, ScriptModificationListener::class.java)
     }
 
     override fun getDefinitions(): List<KotlinScriptDefinition> {
