@@ -103,7 +103,7 @@ private val ClassDescriptor.isValueType
 
 
 private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
-    if (!descriptor.isEffectivelyPublicApi || !descriptor.kind.isReal)
+    if (!descriptor.isEffectivelyPublicApi || !descriptor.kind.isReal || descriptor.isExpect)
         return false
     descriptor.allParameters.forEach {
         if (it.type.isGeneric()) return false
@@ -117,6 +117,8 @@ private fun isExportedClass(descriptor: ClassDescriptor): Boolean {
     if (!descriptor.isEffectivelyPublicApi) return false
     // No sense to export annotations.
     if (DescriptorUtils.isAnnotationClass(descriptor)) return false
+    // Do not export expect classes.
+    if (descriptor.isExpect) return false
     // Do not export types with type parameters.
     // TODO: is it correct?
     if (!descriptor.declaredTypeParameters.isEmpty()) return false
