@@ -42,7 +42,7 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) {
-        includeJars("annotations", "openapi", "platform-api", "platform-impl", "java-api", "java-impl", "idea", "velocity", "boot", "gson", "log4j", "asm-all",
+        includeJars("annotations", "openapi", "platform-api", "platform-impl", "java-api", "java-impl", "idea", "velocity", "bootstrap", "gson", "log4j", "asm-all",
                     "swingx-core", "forms_rt", "util", "jdom", "trove4j", "guava", rootProject = rootProject)
     }
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
