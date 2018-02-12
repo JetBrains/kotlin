@@ -9,7 +9,8 @@ public class IncrementalCompilationIT extends MavenITBase {
         MavenProject project = new MavenProject("kotlinSimple");
         project.exec("package")
                .succeeded()
-               .compiledKotlin("src/A.kt", "src/useA.kt", "src/Dummy.kt");
+               .fileExists("target/classes/test.properties")
+               .compiledKotlin("src/main/kotlin/A.kt", "src/main/kotlin/useA.kt", "src/main/kotlin/Dummy.kt");
     }
 
     @Test
@@ -27,7 +28,7 @@ public class IncrementalCompilationIT extends MavenITBase {
         MavenProject project = new MavenProject("kotlinSimple");
         project.exec("package");
 
-        File aKt = project.file("src/A.kt");
+        File aKt = project.file("src/main/kotlin/A.kt");
         String original = "class A";
         String replacement = "private class A";
         MavenTestUtils.replaceFirstInFile(aKt, original, replacement);
@@ -39,7 +40,7 @@ public class IncrementalCompilationIT extends MavenITBase {
         MavenTestUtils.replaceFirstInFile(aKt, replacement, original);
         project.exec("package")
                .succeeded()
-               .compiledKotlin("src/A.kt", "src/useA.kt");
+               .compiledKotlin("src/main/kotlin/A.kt", "src/main/kotlin/useA.kt");
 
     }
 
@@ -48,12 +49,12 @@ public class IncrementalCompilationIT extends MavenITBase {
         MavenProject project = new MavenProject("kotlinSimple");
         project.exec("package");
 
-        File aKt = project.file("src/A.kt");
+        File aKt = project.file("src/main/kotlin/A.kt");
         MavenTestUtils.replaceFirstInFile(aKt, "fun foo", "internal fun foo");
 
         project.exec("package")
                .succeeded()
-               .compiledKotlin("src/A.kt", "src/useA.kt");
+               .compiledKotlin("src/main/kotlin/A.kt", "src/main/kotlin/useA.kt");
 
         // todo rebuild and compare output
     }
