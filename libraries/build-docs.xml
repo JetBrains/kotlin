@@ -91,6 +91,7 @@
             <sourceRoot path="kotlin.test/common/src/main/kotlin" platforms="JVM,JS"/>
             <sourceRoot path="kotlin.test/jvm/src/main/kotlin" platforms="JVM"/>
             <sourceRoot path="kotlin.test/junit/src/main/kotlin" platforms="JVM"/>
+            <sourceRoot path="kotlin.test/testng/src/main/kotlin" platforms="JVM"/>
             <sourceRoot path="kotlin.test/js/src/main/kotlin" platforms="JS"/>
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
