@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.cli.klib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializerProtocol
 import org.jetbrains.kotlin.backend.konan.serialization.parseModuleHeader
 import org.jetbrains.kotlin.backend.konan.serialization.parsePackageFragment
-import org.jetbrains.kotlin.codegen.mapSupertypesNames
-import org.jetbrains.kotlin.renderer.renderFqName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.Flags.*
 import org.jetbrains.kotlin.serialization.KonanLinkData
@@ -57,10 +56,42 @@ class PrettyPrinter(library: ByteArray, val packageLoader: (String) -> ByteArray
 
 //-----------------------------------------------------------------------------//
 
+class CachedNameResolver(private val nameResolver: NameResolver): NameResolver by nameResolver {
+
+    private val fqNameToClassId = mutableMapOf<Int, ClassId>()
+
+    override fun getClassId(fqName: Int): ClassId = fqNameToClassId.getOrPut(fqName) {
+        nameResolver.getClassId(fqName)
+    }
+}
+
+//-----------------------------------------------------------------------------//
+
 class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment, out: Appendable) {
     private val printer            = Printer(out, "    ")
     private val stringTable        = packageFragment.stringTable!!
     private val qualifiedNameTable = packageFragment.nameTable!!
+
+    private val nameResolver = CachedNameResolver(NameResolverImpl(stringTable, qualifiedNameTable))
+
+    private val classIdToProtoBuf  = packageFragment.classes.classesList.map {
+        it.classId to it
+    }.toMap()
+
+    private val enumToEntries = mutableMapOf<ClassId, MutableList<ProtoBuf.Class>>().apply {
+        packageFragment.classes.classesList
+                .filter { it.isEnumEntry }
+                .forEach { entryProto ->
+                    val enumClassId = entryProto.supertypes(TypeTable(entryProto.typeTable))
+                        .map { nameResolver.getClassId(it.className) }
+                        .single {classIdToProtoBuf.getValue(it).isEnumClass }
+                    val entryList = getOrPut(enumClassId) { mutableListOf() }
+                    entryList.add(entryProto)
+                }
+    }
+
+    private val ProtoBuf.Class.classId: ClassId
+        get() = nameResolver.getClassId(this.fqName)
 
     //-------------------------------------------------------------------------//
 
@@ -83,10 +114,13 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
+    val ProtoBuf.Class.isTopLevel: Boolean
+        get() = !isEnumEntry && !classId.let { it.isLocal || it.isNestedClass }
+
     fun print() {
         TypeTables.push(packageFragment.`package`.typeTable)
         // if (packageFragment.hasFqName()) printer.print("package ${packageFragment.fqName}\n")
-        packageFragment.classes.classesList.forEach { printer.println(it.asString(packageFragment.classes)) }
+        packageFragment.classes.classesList.forEach {if (it.isTopLevel) printer.println(it.asString()) }
         packageFragment.`package`.functionList.forEach { printer.println(it.asString()) }
         packageFragment.`package`.propertyList.forEach { printer.println(it.asString()) }
         TypeTables.pop()
@@ -103,23 +137,11 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
-    private fun ProtoBuf.EnumEntry.asString(): String = "$Indent${stringTable.getString(name)}"
-
-    //-------------------------------------------------------------------------//
-
-    private fun StringBuilder.appendClassBody(clazz: ProtoBuf.Class) = with(clazz) {
-        secondaryConstructors().forEach { append(it.asString(clazz.isEnumClass)) }
-        functionList.forEach { append(it.asString()) }
-        propertyList.forEach { append(it.asString()) }
-        nestedClassNameList.forEach { append(nestedClassAsString(it)) }
-    }
-
-    // TODO: Support nested/inner and sealed classes
-    private fun ProtoBuf.Class.asString(classes: KonanLinkData.Classes): String {
-        if (isEnumEntry) return "" // TODO: Make better
+    private fun ProtoBuf.Class.asString(): String {
         if (hasTypeTable()) TypeTables.push(typeTable)
         val result = buildString {
-            val className   = if (!isCompanionObject) getName(fqName) else ""
+            val classId     = nameResolver.getClassId(fqName)
+            val className   = if (!isCompanionObject) classId.shortClassName else ""
             val classKind   = Flags.CLASS_KIND.get(flags).asString()
             val modality    = Flags.MODALITY  .get(flags).asString()
             val visibility  = Flags.VISIBILITY.get(flags).asString()
@@ -130,34 +152,27 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val supertypes = supertypesToString(supertypes(TypeTables.peek()))
             val annotations = annotationsToString(getExtension(KonanSerializerProtocol.classAnnotation), "\n")
 
-            val primaryConstructor = if (!isObject && !isCompanionObject) {
-                primaryConstructor()?.asString(isEnumClass, true) ?: ""
-            } else {
-                ""
+            val primaryConstructor = when {
+                isObject || isCompanionObject -> ""
+                // Constructors of an enum class are always private so we don't print their visibility.
+                else -> primaryConstructor()?.asString(!isEnumClass, true) ?: ""
             }
 
-            append("$annotations$Indent$modality$visibility$classKind$className$typeParameters$primaryConstructor$supertypes")
+            when {
+                isEnumEntry -> append("$annotations$Indent$className")
+                else -> append("$annotations$Indent$modality$visibility$classKind$className$typeParameters$primaryConstructor$supertypes")
+            }
 
             buildBody {
-                appendClassBody(this@asString)
+                secondaryConstructors().forEach { append(it.asString(!isEnumClass)) }
+                functionList.forEach { append(it.asString()) }
+                propertyList.forEach { append(it.asString()) }
 
-                if (isEnumClass) {
-                    val enumClasses = classes.classesList.filter { clazz ->
-                        clazz.isEnumEntry &&
-                        clazz.hasTypeTable() &&
-                        clazz.supertypeIdList.map { clazz.typeTable.getType(it).className }.contains(fqName)
-                    }
+                nestedClassNameList.asSequence()
+                        .map { classIdToProtoBuf.getValue(classId.createNestedClassId(nameResolver.getName(it))) }
+                        .forEach { append(it.asString()) }
 
-                    enumClasses.forEach { entry ->
-                        append(Indent)
-                        append(getName(entry.fqName))
-                        TypeTables.push(entry.typeTable)
-                        buildBody {
-                            appendClassBody(entry)
-                        }
-                        TypeTables.pop()
-                    }
-                }
+                enumToEntries[classId]?.forEach { append(it.asString()) }
             }
         }
         if (hasTypeTable()) TypeTables.pop()
@@ -177,11 +192,12 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
-    private fun ProtoBuf.Constructor.asString(isEnumClass: Boolean = false, isPrimary: Boolean = false): String {
-        // Enum class constructors are always private.
-        val visibility  = if (!isEnumClass) Flags.VISIBILITY.get(flags).asString() else ""
-        // TODO: '\n' was used here as a separator (see annotationsToString code). Return it?
-        val annotations = annotationsToString(getExtension(KonanSerializerProtocol.constructorAnnotation))
+    private fun ProtoBuf.Constructor.asString(printVisibility: Boolean = true, isPrimary: Boolean = false): String {
+        val visibility  = if (printVisibility) Flags.VISIBILITY.get(flags).asString() else ""
+        val annotations = annotationsToString(
+                getExtension(KonanSerializerProtocol.constructorAnnotation),
+                if (isPrimary) " " else "\n"
+        )
         val parameters  = valueParameterList.joinToString(", ", prefix = "(", postfix = ")") { it.asString() }
 
         val header = "$visibility$annotations"
@@ -230,13 +246,6 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val annotations = annotationsToString(getExtension(KonanSerializerProtocol.propertyAnnotation), "\n")
             append("$annotations$Indent$modality$visibility$isVar$name: $returnType\n")
         }
-
-    //-------------------------------------------------------------------------//
-
-    private fun nestedClassAsString(nestedClass: Int): String {
-        val nestedClassName = stringTable.getString(nestedClass)
-        return "${Indent}class $nestedClassName\n"
-    }
 
     //-------------------------------------------------------------------------//
 
@@ -350,7 +359,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
-    private fun ProtoBuf.Type.isCallable() = name().contains("Function")
+    private fun ProtoBuf.Type.isCallable() = name().contains("Function") // TODO: Use FQ name here.
 
     //-------------------------------------------------------------------------//
 
@@ -375,6 +384,9 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     private val ProtoBuf.Class.isEnumEntry: Boolean
         get() = Flags.CLASS_KIND.get(flags) == ProtoBuf.Class.Kind.ENUM_ENTRY
+
+    private val ProtoBuf.Class.isSealed: Boolean
+        get() = Flags.MODALITY.get(flags) == ProtoBuf.Modality.SEALED
 
     //-------------------------------------------------------------------------//
 
@@ -420,7 +432,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             ProtoBuf.Class.Kind.CLASS            -> "class "
             ProtoBuf.Class.Kind.INTERFACE        -> "interface "
             ProtoBuf.Class.Kind.ENUM_CLASS       -> "enum class "
-            ProtoBuf.Class.Kind.ENUM_ENTRY       -> "enum " // TODO: remove/never happen
+            ProtoBuf.Class.Kind.ENUM_ENTRY       -> "enum "
             ProtoBuf.Class.Kind.ANNOTATION_CLASS -> "annotation class "
             ProtoBuf.Class.Kind.OBJECT           -> "object "
             ProtoBuf.Class.Kind.COMPANION_OBJECT -> "companion object "
