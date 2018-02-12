@@ -843,7 +843,7 @@ object Aggregates : TemplateGroupBase() {
 
         specialFor(Sequences) {
             returns("SELF")
-            doc { "Returns a sequence which performs the given [action] on each ${f.element} of the original sequence as they pass though it." }
+            doc { "Returns a sequence which performs the given [action] on each ${f.element} of the original sequence as they pass through it." }
             sequenceClassification(intermediate, stateless)
             body {
                 """
