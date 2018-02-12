@@ -294,7 +294,10 @@ static inline id KSet_getElement(KRef set, id object) {
     ObjHolder requestHolder, resultHolder;
     KRef request = Kotlin_ObjCExport_refFromObjC(object, requestHolder.slot());
     KRef result = Kotlin_Set_getElement(set, request, resultHolder.slot());
-    return refToObjCOrNSNull(result);
+
+    // Note: if result is nullptr, then it can't be a null element of the set, because request != nullptr;
+    // so map nullptr to nullptr:
+    return Kotlin_ObjCExport_refToObjC(result);
   }
 }
 
