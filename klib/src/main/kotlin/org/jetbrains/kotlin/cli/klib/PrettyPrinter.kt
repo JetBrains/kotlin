@@ -246,9 +246,10 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val modality   = Flags.MODALITY.get(flags).asString(isInterface)
             val visibility = Flags.VISIBILITY.get(flags).asString()
             val isExternal = Flags.IS_EXTERNAL_PROPERTY.asString(flags)
+            val isConst    = Flags.IS_CONST.asString(flags)
             val returnType = returnType(TypeTables.peek()).asString()
             val annotations = annotationsToString(getExtension(KonanSerializerProtocol.propertyAnnotation), "\n")
-            append("$annotations$Indent$isExternal$modality$visibility$isVar$name: $returnType\n")
+            append("$annotations$Indent$isExternal$modality$visibility$isConst$isVar$name: $returnType\n")
         }
 
     //-------------------------------------------------------------------------//
@@ -465,6 +466,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             IS_INNER              -> if (Flags.IS_INNER            .get(flags)) "inner "       else ""
             IS_EXTERNAL_FUNCTION  -> if (Flags.IS_EXTERNAL_FUNCTION.get(flags)) "external "    else ""
             IS_EXTERNAL_PROPERTY  -> if (Flags.IS_EXTERNAL_PROPERTY.get(flags)) "external "    else ""
+            IS_CONST              -> if (Flags.IS_CONST            .get(flags)) "const "       else ""
             else -> "unknown flag"
         }
 
