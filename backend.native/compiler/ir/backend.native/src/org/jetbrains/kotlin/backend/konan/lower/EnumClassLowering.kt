@@ -599,6 +599,12 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
         private inner class EnumClassBodyTransformer : IrElementTransformerVoid() {
             private var enumConstructorCallTransformer: EnumConstructorCallTransformer? = null
 
+            override fun visitClass(declaration: IrClass): IrStatement {
+                if (declaration.descriptor.kind == ClassKind.ENUM_CLASS)
+                    return declaration
+                return super.visitClass(declaration)
+            }
+
             override fun visitEnumEntry(declaration: IrEnumEntry): IrStatement {
                 assert(enumConstructorCallTransformer == null) { "Nested enum entry initialization:\n${declaration.dump()}" }
 
