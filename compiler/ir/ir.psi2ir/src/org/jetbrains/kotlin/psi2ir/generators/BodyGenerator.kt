@@ -232,7 +232,9 @@ class BodyGenerator(
                 // If we are here, we didn't find a superclass entry in super types.
                 // Thus, super class should be Any.
                 val superClass = classDescriptor.getSuperClassOrAny()
-                assert(KotlinBuiltIns.isAny(superClass)) { "$classDescriptor: Super class should be any: $superClass" }
+                assert(KotlinBuiltIns.isAny(superClass)) {
+                    "$classDescriptor: Super class should be any: $superClass"
+                }
                 generateAnySuperConstructorCall(irBlockBody, ktClassOrObject)
             }
         }

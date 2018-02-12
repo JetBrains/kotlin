@@ -318,6 +318,21 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Multiplatform extends AbstractIrTextTestCase {
+            public void testAllFilesPresentInMultiplatform() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("expectClassInherited.kt")
+            public void testExpectClassInherited() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/multiplatform/expectClassInherited.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/ir/irText/declarations/parameters")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

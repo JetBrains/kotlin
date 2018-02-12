@@ -121,7 +121,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             mapConstructorDeclaration(declaration.descriptor),
-            declaration.body!!.transform()
+            declaration.body?.transform()
         ).transformParameters(declaration)
 
     protected fun <T : IrTypeParametersContainer> T.transformTypeParameters(

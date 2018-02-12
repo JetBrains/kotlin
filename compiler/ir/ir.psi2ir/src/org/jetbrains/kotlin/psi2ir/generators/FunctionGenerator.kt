@@ -196,7 +196,10 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktClassOrObject: KtClassOrObject
     ): IrConstructor =
         declareConstructor(ktClassOrObject, ktClassOrObject.primaryConstructor ?: ktClassOrObject, primaryConstructorDescriptor) {
-            generatePrimaryConstructorBody(ktClassOrObject)
+            if (primaryConstructorDescriptor.isExpect)
+                null
+            else
+                generatePrimaryConstructorBody(ktClassOrObject)
         }
 
     fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor): IrConstructor =
@@ -215,7 +218,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktConstructorElement: KtElement,
         ktParametersElement: KtElement,
         constructorDescriptor: ClassConstructorDescriptor,
-        generateBody: BodyGenerator.() -> IrBody
+        generateBody: BodyGenerator.() -> IrBody?
     ): IrConstructor =
         context.symbolTable.declareConstructor(
             ktConstructorElement.startOffset, ktConstructorElement.endOffset, IrDeclarationOrigin.DEFINED, constructorDescriptor
