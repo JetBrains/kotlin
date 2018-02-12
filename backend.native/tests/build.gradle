@@ -64,6 +64,8 @@ ext.externalTestsDir = project.file("external")
 ext.externalStdlibTestsDir = project.file("stdlib_external")
 externalTestsDir.mkdirs()
 
+ext.platformManager = project.rootProject.platformManager
+ext.target = platformManager.targetManager(project.testTarget).target
 project.convention.plugins.remoteExec = new org.jetbrains.kotlin.ExecRemote(project)
 
 allprojects {
@@ -2424,7 +2426,7 @@ if (isMac()) {
         interop = 'objcSmoke'
 
         doFirst {
-            execKonanClang(project.testTarget) {
+            execKonanClang(project.target) {
                 args "$projectDir/interop/objc/smoke.m"
                 args "-lobjc", '-fobjc-arc'
                 args '-fPIC', '-shared', '-o', "$buildDir/libobjcsmoke.dylib"

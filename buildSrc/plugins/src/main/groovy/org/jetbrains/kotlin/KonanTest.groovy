@@ -551,7 +551,7 @@ class DynamicKonanTest extends KonanTest {
 
     void runClang(List<String> cSources, String output, List<String> moreArgs) {
         def log = new ByteArrayOutputStream()
-        project.execKonanClang(project.testTarget) {
+        project.execKonanClang(project.target) {
             workingDir outputDirectory
 
             executable "clang"
