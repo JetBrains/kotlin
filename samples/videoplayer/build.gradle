@@ -45,7 +45,8 @@ konanArtifacts {
         }
 
         target 'macbook', {
-            linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -F /Library/Frameworks -L/opt/local/lib"
+            linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks", "-F /Library/Frameworks",
+                    "-L/opt/local/lib", "-L/usr/local/lib"
         }
 
         target 'linux', {

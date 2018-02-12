@@ -5,6 +5,7 @@ Almost any video file supported by ffmpeg could be played with it.
 ffmpeg and SDL2 is needed for that to work, i.e.
 
      port install ffmpeg-devel
+     brew install ffmpeg sdl2
      apt install libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
                  libavresample-dev
      apt install libsdl2-dev
