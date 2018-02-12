@@ -2808,12 +2808,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     for (int i = 0; i != size; ++i) {
                         v.dup();
                         ValueArgument argument = arguments.get(i);
+                        KtExpression argumentExpression = argument.getArgumentExpression();
+                        KotlinType argumentKotlinType = kotlinType(argumentExpression);
                         if (argument.getSpreadElement() != null) {
-                            gen(argument.getArgumentExpression(), OBJECT_TYPE);
+                            gen(argumentExpression, OBJECT_TYPE, argumentKotlinType);
                             v.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V", false);
                         }
                         else {
-                            gen(argument.getArgumentExpression(), elementType);
+                            gen(argumentExpression, elementType, argumentKotlinType);
                             v.invokevirtual(owner, "add", addDescriptor, false);
                         }
                     }
