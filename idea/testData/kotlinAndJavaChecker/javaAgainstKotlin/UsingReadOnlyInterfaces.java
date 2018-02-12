@@ -8,7 +8,7 @@ public class UsingReadOnlyInterfaces {
             iCollection.clear();
             // this is not an error when analyzing against kotlin sources (which is a bug), this inconsistency is hard to fix with the current approach
             // KT-22594
-            // iCollection.<error>getSize</error>();
+            // iCollection.getSize();
             iCollection.size();
         }
 
