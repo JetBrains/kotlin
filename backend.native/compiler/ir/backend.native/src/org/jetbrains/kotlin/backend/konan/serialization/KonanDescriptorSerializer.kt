@@ -74,7 +74,7 @@ class KonanDescriptorSerializer private constructor(
         val flags = Flags.getClassFlags(
                 hasAnnotations(classDescriptor), classDescriptor.visibility, classDescriptor.modality, classDescriptor.kind,
                 classDescriptor.isInner, classDescriptor.isCompanionObject, classDescriptor.isData, classDescriptor.isExternal,
-                classDescriptor.isExpect
+                classDescriptor.isExpect, classDescriptor.isInline
         )
         if (flags != builder.flags) {
             builder.flags = flags

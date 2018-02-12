@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.markBackingFields
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.kotlinSourceRoots
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 
@@ -46,7 +47,8 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
 
     val context = Context(konanConfig)
 
-    val analyzerWithCompilerReport = AnalyzerWithCompilerReport(context.messageCollector)
+    val analyzerWithCompilerReport = AnalyzerWithCompilerReport(context.messageCollector,
+            environment.configuration.languageVersionSettings)
 
     val phaser = PhaseManager(context)
 
