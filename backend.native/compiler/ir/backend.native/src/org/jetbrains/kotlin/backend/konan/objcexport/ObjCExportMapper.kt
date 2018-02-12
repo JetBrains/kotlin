@@ -34,14 +34,11 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 internal interface ObjCExportMapper {
     fun getCategoryMembersFor(descriptor: ClassDescriptor): List<CallableMemberDescriptor>
     val maxFunctionTypeParameterCount get() = 22
-    val specialMappedTypes: Set<ClassDescriptor>
+    fun isSpecialMapped(descriptor: ClassDescriptor): Boolean
 }
 
 private fun ObjCExportMapper.isRepresentedAsObjCInterface(descriptor: ClassDescriptor): Boolean =
         !descriptor.isInterface && !isSpecialMapped(descriptor)
-
-private fun ObjCExportMapper.isSpecialMapped(descriptor: ClassDescriptor): Boolean =
-        descriptor.getAllSuperClassifiers().any { it in specialMappedTypes }
 
 internal fun ObjCExportMapper.getClassIfCategory(descriptor: CallableMemberDescriptor): ClassDescriptor? {
     if (descriptor.dispatchReceiverParameter != null) return null

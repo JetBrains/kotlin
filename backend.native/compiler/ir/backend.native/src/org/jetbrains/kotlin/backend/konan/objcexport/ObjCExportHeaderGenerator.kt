@@ -41,7 +41,11 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
         override fun getCategoryMembersFor(descriptor: ClassDescriptor) =
                 extensions[descriptor].orEmpty()
 
-        override val specialMappedTypes get() = customTypeMappers.keys
+        override fun isSpecialMapped(descriptor: ClassDescriptor): Boolean {
+            // TODO: this method duplicates some of the [mapReferenceType] logic.
+            return descriptor == context.builtIns.any ||
+                    descriptor.getAllSuperClassifiers().any { it in customTypeMappers }
+        }
     }
 
     val namer = ObjCExportNamer(context, mapper)
