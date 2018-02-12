@@ -145,6 +145,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val classKind   = Flags.CLASS_KIND.get(flags).asString()
             val modality    = Flags.MODALITY.get(flags).asString(isInterface)
             val visibility  = Flags.VISIBILITY.get(flags).asString()
+            val inner       = Flags.IS_INNER.asString(flags)
             val typeParameters = typeParameterList
                     .joinToString("<", "> ") { it.asString() }
                     .let { if (it.isEmpty()) " " else it }
@@ -160,7 +161,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
             when {
                 isEnumEntry -> append("$annotations$Indent$className")
-                else -> append("$annotations$Indent$modality$visibility$classKind$className$typeParameters$primaryConstructor$supertypes")
+                else -> append("$annotations$Indent$modality$visibility$inner$classKind$className$typeParameters$primaryConstructor$supertypes")
             }
 
             buildBody {
@@ -459,6 +460,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             IS_VAR         -> if (Flags.IS_VAR        .get(flags)) "var "         else "val "
             IS_CROSSINLINE -> if (Flags.IS_CROSSINLINE.get(flags)) "crossinline " else ""
             IS_NOINLINE    -> if (Flags.IS_NOINLINE   .get(flags)) "noinline "    else ""
+            IS_INNER       -> if (Flags.IS_INNER      .get(flags)) "inner "       else ""
             else -> "unknown flag"
         }
 
