@@ -118,21 +118,29 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         get() = !isEnumEntry && !classId.let { it.isLocal || it.isNestedClass }
 
     fun print() {
+        if (packageFragment.isEmpty) {
+            return
+        }
+
         TypeTables.push(packageFragment.`package`.typeTable)
-        // if (packageFragment.hasFqName()) printer.print("package ${packageFragment.fqName}\n")
-        packageFragment.classes.classesList.forEach {if (it.isTopLevel) printer.println(it.asString()) }
-        packageFragment.`package`.functionList.forEach { printer.println(it.asString()) }
-        packageFragment.`package`.propertyList.forEach { printer.println(it.asString()) }
+        if (packageFragment.hasFqName()) printer.print("package ${packageFragment.fqName}")
+        val packageBody = StringBuilder().buildBody {
+            packageFragment.classes.classesList.forEach {if (it.isTopLevel) appendln(it.asString()) }
+            packageFragment.`package`.functionList.forEach { appendln(it.asString()) }
+            packageFragment.`package`.propertyList.forEach { appendln(it.asString()) }
+        }
+        printer.print(packageBody.toString())
         TypeTables.pop()
     }
 
     //-------------------------------------------------------------------------//
 
-    private fun StringBuilder.buildBody(body: StringBuilder.() -> Unit) {
+    private fun StringBuilder.buildBody(body: StringBuilder.() -> Unit): StringBuilder {
         Indent.push()
         val result = StringBuilder().apply(body).toString()
         Indent.pop()
         append(if (result.isEmpty()) "\n" else " {\n$result$Indent}\n")
+        return this
     }
 
     //-------------------------------------------------------------------------//
@@ -295,9 +303,8 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
-    private fun annotationsToString(annotations: List<ProtoBuf.Annotation>, separator: String = " "): String {
-        return buildString { annotations.forEach { append(it.asString() + separator) } }
-    }
+    private fun annotationsToString(annotations: List<ProtoBuf.Annotation>, separator: String = " ") =
+            buildString { annotations.forEach { append(it.asString() + separator) } }
 
     //-------------------------------------------------------------------------//
 
