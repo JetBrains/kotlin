@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.idea.core.util.cancelOnDisposal
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
@@ -60,6 +59,8 @@ class ScriptDependenciesUpdater(
             (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
         ).asCoroutineDispatcher()
 
+    private val modifiedScripts = mutableSetOf<VirtualFile>()
+
     init {
         listenToVfsChanges()
     }
@@ -78,21 +79,17 @@ class ScriptDependenciesUpdater(
     fun getCurrentDependencies(file: VirtualFile): ScriptDependencies {
         cache[file]?.let { return it }
 
-        val loaded = tryLoadingFromDisk(file)
-
-        if (!loaded) {
-            tryUsingDefault(file)
-        }
-
+        tryLoadingFromDisk(file)
         performUpdate(file)
 
         return cache[file] ?: ScriptDependencies.Empty
     }
 
-    private fun tryUsingDefault(file: VirtualFile) {
-        val defaults =
-            DefaultScriptDependenciesProvider.getInstances(project).firstNotNullResult { it.defaultDependenciesFor(file) } ?: return
-        saveToCache(defaults, file)
+    fun reloadModifiedScripts() {
+        for (it in modifiedScripts) {
+            performUpdate(it)
+        }
+        modifiedScripts.clear()
     }
 
     private fun tryLoadingFromDisk(file: VirtualFile): Boolean {
@@ -109,24 +106,21 @@ class ScriptDependenciesUpdater(
         }
     }
 
-    private fun requestUpdate(files: Iterable<VirtualFile>) =
-        files.map { file ->
+   private fun requestUpdate(files: Iterable<VirtualFile>) {
+        files.forEach { file ->
             if (!file.isValid) {
-                return cache.delete(file)
+                cache.delete(file)
             } else if (cache[file] != null) { // only update dependencies for scripts that were touched recently
-                performUpdate(file)
-            } else {
-                false
+                modifiedScripts.add(file)
             }
-        }.contains(true)
+        }
+    }
 
-    private fun performUpdate(file: VirtualFile): Boolean {
-        val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return false
-
-        return when (scriptDef.dependencyResolver) {
+    private fun performUpdate(file: VirtualFile) {
+        val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
+        when (scriptDef.dependencyResolver) {
             is AsyncDependenciesResolver, is LegacyResolverWrapper -> {
                 updateAsync(file, scriptDef)
-                return false
             }
             else -> updateSync(file, scriptDef)
         }
@@ -262,16 +256,16 @@ class ScriptDependenciesUpdater(
                     return
                 }
 
-                if (requestUpdate(events.mapNotNull {
-                        // The check is partly taken from the BuildManager.java
-                        it.file?.takeIf {
-                            // the isUnitTestMode check fixes ScriptConfigurationHighlighting & Navigation tests, since they are not trigger proper update mechanims
-                            // TODO: find out the reason, then consider to fix tests and remove this check
-                            (application.isUnitTestMode || projectFileIndex.isInContent(it)) && !isProjectOrWorkspaceFile(it)
-                        }
-                    })) {
-                    notifyRootsChanged()
+                val modifiedScripts = events.mapNotNull {
+                    // The check is partly taken from the BuildManager.java
+                    it.file?.takeIf {
+                        // the isUnitTestMode check fixes ScriptConfigurationHighlighting & Navigation tests, since they are not trigger proper update mechanims
+                        // TODO: find out the reason, then consider to fix tests and remove this check
+                        (application.isUnitTestMode ||
+                                scriptDefinitionProvider.isScript(it.name) && projectFileIndex.isInContent(it)) && !isProjectOrWorkspaceFile(it)
+                    }
                 }
+                requestUpdate(modifiedScripts)
             }
         })
     }
