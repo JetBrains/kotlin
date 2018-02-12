@@ -1914,6 +1914,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("asCastForInlineClass.kt")
+        public void testAsCastForInlineClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/asCastForInlineClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("boxResultAfterConstructorCall.kt")
         public void testBoxResultAfterConstructorCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/boxResultAfterConstructorCall.kt");

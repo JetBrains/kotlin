@@ -10449,6 +10449,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("checkCastToInlineClass.kt")
+        public void testCheckCastToInlineClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("checkForInstanceOfInlineClass.kt")
         public void testCheckForInstanceOfInlineClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClass.kt");

@@ -4322,29 +4322,29 @@ The "returned" value of try expression with no finally is either the last expres
         KtExpression left = expression.getLeft();
         IElementType opToken = expression.getOperationReference().getReferencedNameElementType();
 
-        KotlinType rightType = bindingContext.get(TYPE, expression.getRight());
-        assert rightType != null;
+        KotlinType rightKotlinType = bindingContext.get(TYPE, expression.getRight());
+        assert rightKotlinType != null;
 
         StackValue value = genQualified(receiver, left);
 
-        return StackValue.operation(boxType(asmType(rightType)), v -> {
-            value.put(boxType(value.type), null, v);
+        Type boxedRightType = boxType(typeMapper.mapTypeAsDeclaration(rightKotlinType));
+        return StackValue.operation(boxedRightType, rightKotlinType, v -> {
+            value.put(boxType(value.type), value.kotlinType, v);
 
             if (value.type == Type.VOID_TYPE) {
                 StackValue.putUnitInstance(v);
             }
 
             boolean safeAs = opToken == KtTokens.AS_SAFE;
-            Type type = boxType(asmType(rightType));
-            if (TypeUtils.isReifiedTypeParameter(rightType)) {
-                putReifiedOperationMarkerIfTypeIsReifiedParameter(rightType,
+            if (TypeUtils.isReifiedTypeParameter(rightKotlinType)) {
+                putReifiedOperationMarkerIfTypeIsReifiedParameter(rightKotlinType,
                                                                   safeAs ? ReifiedTypeInliner.OperationKind.SAFE_AS
                                                                          : ReifiedTypeInliner.OperationKind.AS);
-                v.checkcast(type);
+                v.checkcast(boxedRightType);
                 return Unit.INSTANCE;
             }
 
-            CodegenUtilKt.generateAsCast(v, rightType, type, safeAs);
+            CodegenUtilKt.generateAsCast(v, rightKotlinType, boxedRightType, safeAs);
 
             return Unit.INSTANCE;
         });
