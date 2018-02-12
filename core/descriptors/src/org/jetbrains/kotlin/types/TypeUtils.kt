@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewCapturedType
@@ -170,21 +171,24 @@ fun KotlinType.getImmediateSuperclassNotAny(): KotlinType? {
 fun KotlinType.asTypeProjection(): TypeProjection = TypeProjectionImpl(this)
 fun KotlinType.contains(predicate: (UnwrappedType) -> Boolean) = TypeUtils.contains(this, predicate)
 
-fun KotlinType.replaceArgumentsWithStarProjections(): KotlinType {
+fun KotlinType.replaceArgumentsWithStarProjections() = replaceArgumentsWith(::StarProjectionImpl)
+fun KotlinType.replaceArgumentsWithNothing() = replaceArgumentsWith { it.builtIns.nothingType.asTypeProjection() }
+
+private inline fun KotlinType.replaceArgumentsWith(replacement: (TypeParameterDescriptor) -> TypeProjection): KotlinType {
     val unwrapped = unwrap()
     return when (unwrapped) {
         is FlexibleType -> KotlinTypeFactory.flexibleType(
-            unwrapped.lowerBound.replaceArgumentsWithStarProjections(),
-            unwrapped.upperBound.replaceArgumentsWithStarProjections()
+            unwrapped.lowerBound.replaceArgumentsWith(replacement),
+            unwrapped.upperBound.replaceArgumentsWith(replacement)
         )
-        is SimpleType -> unwrapped.replaceArgumentsWithStarProjections()
+        is SimpleType -> unwrapped.replaceArgumentsWith(replacement)
     }.inheritEnhancement(unwrapped)
 }
 
-private fun SimpleType.replaceArgumentsWithStarProjections(): SimpleType {
+private inline fun SimpleType.replaceArgumentsWith(replacement: (TypeParameterDescriptor) -> TypeProjection): SimpleType {
     if (constructor.parameters.isEmpty() || constructor.declarationDescriptor == null) return this
 
-    val newArguments = constructor.parameters.map(::StarProjectionImpl)
+    val newArguments = constructor.parameters.map(replacement)
 
     return replace(newArguments)
 }
