@@ -6,8 +6,8 @@ dependencies {
     compile(project(":idea"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:frontend.java"))
-    compileOnly(intellijDep()) { includeJars("annotations", "openapi", "idea", "platform-api", "platform-impl", "java-api", "java-impl", 
-                                             "extensions", "util", "velocity", "boot", "gson",
+    compileOnly(intellijDep()) { includeJars("annotations", "openapi", "idea", "platform-api", "platform-impl", "java-api",
+                                             "java-impl", "extensions", "util", "velocity", "bootstrap", "gson",
                                              "swingx-core", "forms_rt", "jdom", "log4j", "guava", "asm-all", "picocontainer",
                                              rootProject = rootProject) }
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
