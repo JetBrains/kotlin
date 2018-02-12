@@ -1228,7 +1228,7 @@ public inline fun <T> Sequence<T>.none(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns a sequence which performs the given [action] on each element of the original sequence as they pass though it.
+ * Returns a sequence which performs the given [action] on each element of the original sequence as they pass through it.
  *
  * The operation is _intermediate_ and _stateless_.
  */
