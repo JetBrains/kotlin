@@ -16,15 +16,18 @@
 
 
 import groovy.transform.stc.ClosureParams
-import groovy.transform.stc.ClosureSignatureHint
-import groovy.transform.stc.FirstParam
 import groovy.transform.stc.FromString
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import static org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.Named
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
-import org.jetbrains.kotlin.konan.properties.*
+import org.jetbrains.kotlin.konan.target.ConfigurablesImplKt
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
+
+import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.getVisibleName
 
 buildscript {
     apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
@@ -34,78 +37,8 @@ buildscript {
     }
 }
 
-configurations {
-    kotlin_compiler_jar
-    kotlin_compiler_pom
-    kotlin_compiler_src
-    kotlin_compiler_doc
-
-    kotlin_gradle_plugin_jar
-    kotlin_gradle_plugin_pom
-    kotlin_gradle_plugin_src
-    kotlin_gradle_plugin_doc
-
-    kotlin_stdlib_jdk8_jar
-    kotlin_stdlib_jdk8_pom
-    kotlin_stdlib_jdk8_src
-    kotlin_stdlib_jdk8_doc
-
-    kotlin_stdlib_jar
-    kotlin_stdlib_pom
-    kotlin_stdlib_src
-    kotlin_stdlib_doc
-
-    kotlin_reflect_jar
-    kotlin_reflect_pom
-    kotlin_reflect_src
-    kotlin_reflect_doc
-
-    kotlin_script_runtime_jar
-    kotlin_script_runtime_pom
-    kotlin_script_runtime_src
-    kotlin_script_runtime_doc
-
-}
-
 def kotlinGradleModule = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinGradlePluginVersion"
 def kotlinStdLibJdk8Module = "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinStdLibJdk8Version"
-
-// TODO: Check if we really need the our bintray mirror and delete the uploading code below if we don't.
-repositories {
-    maven { url kotlinCompilerRepo }
-}
-
-dependencies {
-    kotlin_compiler_jar "$kotlinCompilerModule@jar"
-    kotlin_compiler_pom "$kotlinCompilerModule@pom"
-    kotlin_compiler_src "$kotlinCompilerModule:sources@jar"
-    kotlin_compiler_doc "$kotlinCompilerModule:javadoc@jar"
-
-    kotlin_gradle_plugin_jar "$kotlinGradleModule@jar"
-    kotlin_gradle_plugin_pom "$kotlinGradleModule@pom"
-    kotlin_gradle_plugin_src "$kotlinGradleModule:sources@jar"
-    kotlin_gradle_plugin_doc "$kotlinGradleModule:javadoc@jar"
-
-    kotlin_stdlib_jdk8_jar "$kotlinStdLibJdk8Module@jar"
-    kotlin_stdlib_jdk8_pom "$kotlinStdLibJdk8Module@pom"
-    kotlin_stdlib_jdk8_src "$kotlinStdLibJdk8Module:sources@jar"
-    kotlin_stdlib_jdk8_doc "$kotlinStdLibJdk8Module:javadoc@jar"
-
-    kotlin_stdlib_jar "$kotlinStdLibModule@jar"
-    kotlin_stdlib_pom "$kotlinStdLibModule@pom"
-    kotlin_stdlib_src "$kotlinStdLibModule:sources@jar"
-    kotlin_stdlib_doc "$kotlinStdLibModule:javadoc@jar"
-
-    kotlin_reflect_jar "$kotlinReflectModule@jar"
-    kotlin_reflect_pom "$kotlinReflectModule@pom"
-    kotlin_reflect_src "$kotlinReflectModule:sources@jar"
-    kotlin_reflect_doc "$kotlinReflectModule:javadoc@jar"
-
-    kotlin_script_runtime_jar "$kotlinScriptRuntimeModule@jar"
-    kotlin_script_runtime_pom "$kotlinScriptRuntimeModule@pom"
-    kotlin_script_runtime_src "$kotlinScriptRuntimeModule:sources@jar"
-    kotlin_script_runtime_doc "$kotlinScriptRuntimeModule:javadoc@jar"
-}
 
 def modules = ['compiler'      : kotlinCompilerModule,
                'gradle_plugin' : kotlinGradleModule,
@@ -114,6 +47,53 @@ def modules = ['compiler'      : kotlinCompilerModule,
                'reflect'       : kotlinReflectModule,
                'script_runtime': kotlinScriptRuntimeModule
 ]
+
+Map.metaClass.moduleEntry = { key, version ->
+    delegate[key] = "org.jetbrains.kotlin:kotlin-${key.replace('_', '-')}:$version"
+}
+
+modules.moduleEntry('gradle_plugin_api', kotlinGradlePluginApiVersion)
+modules.moduleEntry('compiler_embeddable', kotlinCompilerEmbeddableVersion)
+modules.moduleEntry('annotation_processing_gradle', kotlinAnnotationProcessingGradleVersion)
+modules.moduleEntry('android_extensions', kotlinAndroidExtensionsVersion)
+modules.moduleEntry('compiler_runner', kotlinCompilerRunnerVersion)
+modules.moduleEntry('stdlib_jre7', kotlinStdLibJdk7Version)
+
+private static String configurationJar(x) {
+    "kotlin_${x}_jar".toString()
+}
+
+private static String configurationPom(x) {
+    "kotlin_${x}_pom".toString()
+}
+
+private static String configurationSrc(x) {
+    "kotlin_${x}_src".toString()
+}
+
+private static String configurationDoc(x) {
+    "kotlin_${x}_doc".toString()
+}
+
+modules.forEach{ x, _ ->
+    configurations.create(configurationJar(x))
+    configurations.create(configurationPom(x))
+    configurations.create(configurationSrc(x))
+    configurations.create(configurationDoc(x))
+}
+
+modules.forEach { k, v ->
+    dependencies.add(configurationJar(k), "${v}@jar")
+    dependencies.add(configurationPom(k), "${v}@pom")
+    dependencies.add(configurationSrc(k), "${v}:sources@jar")
+    dependencies.add(configurationDoc(k), "${v}:javadoc@jar")
+}
+
+// TODO: Check if we really need the our bintray mirror and delete the uploading code below if we don't.
+repositories {
+    maven { url kotlinCompilerRepo }
+}
+
 def uploads = modules.keySet()
 uploads.each { target ->
     task("${target}Upload", type:GradleBuild) {
@@ -124,10 +104,10 @@ uploads.each { target ->
                 'user'    :  "${project.hasProperty('bintrayUser') ? project['bintrayUser'] : System.getenv('BINTRAY_USER')}",
                 'key'     : "${ project.hasProperty('bintrayKey') ? project.property('bintrayKey') : System.getenv('BINTRAY_KEY')}",
                 'module'  : modules["${target}"],
-                'jar'     : project.configurations.getByName("kotlin_${target}_jar").files.collect {it.path},
-                'src'     : project.configurations.getByName("kotlin_${target}_src").files.collect {it.path},
-                'doc'     : project.configurations.getByName("kotlin_${target}_doc").files.collect {it.path},
-                'pom'     : project.configurations.getByName("kotlin_${target}_pom").files.collect {it.path},
+                'jar'     : project.configurations.getByName(configurationJar(target)).files.collect {it.path},
+                'src'     : project.configurations.getByName(configurationSrc(target)).files.collect {it.path},
+                'doc'     : project.configurations.getByName(configurationDoc(target)).files.collect {it.path},
+                'pom'     : project.configurations.getByName(configurationPom(target)).files.collect {it.path},
                 'override': project.hasProperty("override") && project["override"]
         ]
         startParameter.useEmptySettings()
