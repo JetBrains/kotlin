@@ -58,6 +58,8 @@ modules.moduleEntry('annotation_processing_gradle', kotlinAnnotationProcessingGr
 modules.moduleEntry('android_extensions', kotlinAndroidExtensionsVersion)
 modules.moduleEntry('compiler_runner', kotlinCompilerRunnerVersion)
 modules.moduleEntry('stdlib_jre7', kotlinStdLibJdk7Version)
+modules.moduleEntry('build_common', kotlinBuildCommonVersion)
+modules.moduleEntry('daemon_client', kotlinDaemonClientVersion)
 
 private static String configurationJar(x) {
     "kotlin_${x}_jar".toString()
