@@ -97,6 +97,7 @@ val zipFromClean by tasks.creating(Zip::class) {
     destinationDir = buildDir
     archiveName = "orig.zip"
 
+    isZip64 = true
     dependsOn(buildClassesInClean)
 }
 
@@ -107,6 +108,7 @@ val zipFromIncremental by tasks.creating(Zip::class) {
     destinationDir = buildDir
     archiveName = "inc.zip"
 
+    isZip64 = true
     dependsOn(buildClassesInIncrementalSecond)
 }
 
