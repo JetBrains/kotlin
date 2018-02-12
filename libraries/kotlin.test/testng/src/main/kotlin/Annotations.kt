@@ -5,7 +5,7 @@
 
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-@file:JvmPackageName("kotlin.test.annotations")
+@file:JvmPackageName("kotlin.test.testng.annotations")
 package kotlin.test
 
 public actual typealias Test = org.testng.annotations.Test
