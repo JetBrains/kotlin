@@ -70,7 +70,6 @@ val buildClassesInIncrementalFirst by tasks.creating(GradleBuild::class) {
     dir = file("../incremental")
     buildFile = file("$dir/build.gradle.kts")
     tasks = listOf("dist", "classes", "testClasses")
-    dependsOn(checkoutIncrementalBeforeChanges)
 }
 
 val checkoutIncrementalOriginal by tasks.creating {
@@ -127,7 +126,7 @@ val runCompare by tasks.creating(JavaExec::class) {
     args("-Dcompare.methods=false")
     classpath("$buildDir/cc-all.jar")
     main = "cc.CcKt"
-    dependsOn(zipFromClean, zipFromIncremental, downloadCC)
+    dependsOn(zipFromClean, zipFromIncremental)
 }
 
 val prepare by tasks.creating {
