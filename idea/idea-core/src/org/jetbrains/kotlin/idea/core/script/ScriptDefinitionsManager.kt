@@ -46,6 +46,9 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     private var definitionsByContributor = mutableMapOf<ScriptDefinitionContributor, List<KotlinScriptDefinition>>()
     private var definitions: List<KotlinScriptDefinition> = emptyList()
 
+    var hasFailedDefinitions = false
+        private set
+
     fun reloadDefinitionsBy(contributor: ScriptDefinitionContributor) = lock.write {
         val notLoadedYet = definitions.isEmpty()
         if (notLoadedYet) return
@@ -53,6 +56,9 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
         if (contributor !in definitionsByContributor) error("Unknown contributor: ${contributor.id}")
 
         definitionsByContributor[contributor] = contributor.safeGetDefinitions()
+
+        hasFailedDefinitions = getContributors().any { it.isError() }
+
         updateDefinitions()
     }
 
@@ -84,7 +90,13 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     }
 
     fun reloadScriptDefinitions() = lock.write {
-        definitionsByContributor = getContributors().associateByTo(mutableMapOf(), { it }, { it.safeGetDefinitions() })
+        for (contributor in getContributors()) {
+            val definitions = contributor.safeGetDefinitions()
+            definitionsByContributor[contributor] = definitions
+        }
+
+        hasFailedDefinitions = getContributors().any { it.isError() }
+
         updateDefinitions()
     }
 
@@ -147,6 +159,8 @@ interface ScriptDefinitionContributor {
     val id: String
 
     fun getDefinitions(): List<KotlinScriptDefinition>
+
+    fun isError(): Boolean = false
 
     companion object {
         val EP_NAME: ExtensionPointName<ScriptDefinitionContributor> =

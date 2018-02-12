@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.execution.configurations.CommandLineTokenizer
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
@@ -34,6 +33,7 @@ import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettingsListener
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
@@ -74,16 +74,18 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
     }
 
     override fun getDefinitions(): List<KotlinScriptDefinition> {
-        val definitions = loadDefinitions()
-        failedToLoad.set(definitions.isEmpty())
-        return definitions
+        return loadDefinitions()
     }
+
+    override fun isError() = failedToLoad.get()
 
     // NOTE: control flow here depends on suppressing exceptions from loadGradleTemplates calls
     // TODO: possibly combine exceptions from every loadGradleTemplates call, be mindful of KT-19276
     private fun loadDefinitions(): List<KotlinScriptDefinition> {
         val kotlinDslDependencySelector = Regex("^gradle-(?:kotlin-dsl|core).*\\.jar\$")
         val kotlinDslAdditionalResolverCp = ::kotlinStdlibAndCompiler
+
+        failedToLoad.set(false)
 
         // KotlinBuildScript should be last because it has wide scriptFilePattern
         val kotlinDslTemplates = loadGradleTemplates(
@@ -104,12 +106,18 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
         if (kotlinDslTemplates.isNotEmpty()) {
             return kotlinDslTemplates
         }
-        val gradleScriptKotlinLegacyTemplates = loadGradleTemplates(
-                templateClass = "org.gradle.script.lang.kotlin.KotlinBuildScript",
-                dependencySelector = Regex("^gradle-(?:script-kotlin|core).*\\.jar\$"),
-                additionalResolverClasspath = { emptyList() }
+
+        return tryToLoadOldBuildScriptDefinition()
+    }
+
+    private fun tryToLoadOldBuildScriptDefinition(): List<KotlinScriptDefinition> {
+        failedToLoad.set(false)
+
+        return loadGradleTemplates(
+            templateClass = "org.gradle.script.lang.kotlin.KotlinBuildScript",
+            dependencySelector = Regex("^gradle-(?:script-kotlin|core).*\\.jar\$"),
+            additionalResolverClasspath = { emptyList() }
         )
-        return gradleScriptKotlinLegacyTemplates
     }
 
     // TODO: check this against kotlin-dsl branch that uses daemon
@@ -127,6 +135,7 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
     }
     catch (t: Throwable) {
         // TODO: review exception handling
+        failedToLoad.set(true)
         emptyList()
     }
 
@@ -157,9 +166,14 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
 
         }
 
+        val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
+        if (gradleSettings.getLinkedProjectsSettings().isEmpty()) return emptyList()
+
+        val projectSettings = gradleSettings.getLinkedProjectsSettings().filterIsInstance<GradleProjectSettings>().firstOrNull() ?: return emptyList()
+
         val gradleExeSettings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
                 project,
-                ExternalSystemApiUtil.toCanonicalPath(project.basePath!!),
+                projectSettings.externalProjectPath,
                 GradleConstants.SYSTEM_ID)
 
         val gradleHome = gradleExeSettings.gradleHome ?: error("Unable to get Gradle home directory")
@@ -200,7 +214,7 @@ class ReloadGradleTemplatesOnSync : ExternalSystemTaskNotificationListenerAdapte
             val gradleDefinitionsContributor = ScriptDefinitionContributor.find<GradleScriptDefinitionsContributor>(project)
             gradleDefinitionsContributor?.reloadIfNeccessary()
 
-            project.service<ScriptDependenciesUpdater>().reloadModifiedScripts()
+            ServiceManager.getService(project, ScriptDependenciesUpdater::class.java).reloadModifiedScripts()
         }
     }
 }

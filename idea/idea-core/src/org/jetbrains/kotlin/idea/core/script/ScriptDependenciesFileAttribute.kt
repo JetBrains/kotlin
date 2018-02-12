@@ -16,72 +16,58 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
+import com.intellij.openapi.vfs.newvfs.FileAttribute
 import com.intellij.util.io.DataInputOutputUtil.readSeq
 import com.intellij.util.io.DataInputOutputUtil.writeSeq
 import com.intellij.util.io.IOUtil.readUTF
 import com.intellij.util.io.IOUtil.writeUTF
-import org.jetbrains.kotlin.idea.caches.FileAttributeService
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
+import kotlin.reflect.KProperty
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
-object ScriptDependenciesFileAttribute {
-    private val VERSION = 1
-    private val ID = "kotlin-script-dependencies"
+var VirtualFile.scriptDependencies: ScriptDependencies? by ScriptDependenciesProperty()
+private val scriptDependencies = FileAttribute("kotlin-script-dependencies", 2, false)
 
-    private val fileAttributeService = ServiceManager.getService(FileAttributeService::class.java)
+private class ScriptDependenciesProperty {
 
-    init {
-        fileAttributeService.register(ID, VERSION, false)
-    }
+    operator fun setValue(file: VirtualFile, property: KProperty<*>, newValue: ScriptDependencies?) {
+        if (file !is VirtualFileWithId) return
 
-    fun write(virtualFile: VirtualFile, dependencies: ScriptDependencies) {
-        if (virtualFile !is VirtualFileWithId) return
-        fileAttributeService.write(virtualFile, ID, dependencies) { output, dep ->
-            with(dep) {
-                output.writeInt(VERSION)
+        if (newValue != null) {
+            val output = scriptDependencies.writeAttribute(file)
+            output.use {
+                with(newValue) {
+                    with(output) {
+                        writeFileList(classpath)
+                        writeStringList(imports)
+                        writeNullable(javaHome, DataOutput::writeFile)
+                        writeFileList(scripts)
+                        writeFileList(sources)
 
-                writeDependencies(this, output)
+                    }
+                }
             }
         }
     }
 
-    fun read(virtualFile: VirtualFile): ScriptDependencies? {
-        if (virtualFile !is VirtualFileWithId) return null
+    operator fun getValue(file: VirtualFile, property: KProperty<*>): ScriptDependencies? {
+        if (file !is VirtualFileWithId) return null
 
-        return fileAttributeService.read(virtualFile, ID) { input ->
-            val version = input.readInt()
-            if (version != VERSION) null
-            else readDependencies(input)
-        }?.value
-    }
-
-    private fun writeDependencies(scriptDependencies: ScriptDependencies, output: DataOutput) {
-        with(scriptDependencies) {
-            with(output) {
-                writeFileList(classpath)
-                writeStringList(imports)
-                writeNullable(javaHome, DataOutput::writeFile)
-                writeFileList(scripts)
-                writeFileList(sources)
-
-            }
-        }
-    }
-
-    private fun readDependencies(input: DataInput): ScriptDependencies {
-        with(input) {
-            return ScriptDependencies(
+        val input = scriptDependencies.readAttribute(file)
+        return input?.use {
+            with(input) {
+                return ScriptDependencies(
                     classpath = readFileList(),
                     imports = readStringList(),
                     javaHome = readNullable(DataInput::readFile),
                     scripts = readFileList(),
                     sources = readFileList()
-            )
+                )
+            }
         }
     }
 }

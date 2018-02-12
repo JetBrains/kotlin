@@ -37,6 +37,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.core.util.cancelOnDisposal
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.*
@@ -93,7 +94,7 @@ class ScriptDependenciesUpdater(
     }
 
     private fun tryLoadingFromDisk(file: VirtualFile): Boolean {
-        val deserializedDependencies = ScriptDependenciesFileAttribute.read(file) ?: return false
+        val deserializedDependencies = file.scriptDependencies ?: return false
         saveToCache(deserializedDependencies, file)
         return true
     }
@@ -117,6 +118,10 @@ class ScriptDependenciesUpdater(
     }
 
     private fun performUpdate(file: VirtualFile) {
+        if (ScriptDefinitionsManager.getInstance(project).hasFailedDefinitions && !ProjectRootsUtil.isProjectSourceFile(project, file)) {
+            return
+        }
+
         val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
         when (scriptDef.dependencyResolver) {
             is AsyncDependenciesResolver, is LegacyResolverWrapper -> {
@@ -221,7 +226,7 @@ class ScriptDependenciesUpdater(
     ): Boolean {
         val rootsChanged = cache.hasNotCachedRoots(new)
         if (cache.save(file, new)) {
-            ScriptDependenciesFileAttribute.write(file, new)
+            file.scriptDependencies = new
         }
         return rootsChanged
     }
