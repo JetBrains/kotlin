@@ -143,7 +143,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val classId     = nameResolver.getClassId(fqName)
             val className   = if (!isCompanionObject) classId.shortClassName else ""
             val classKind   = Flags.CLASS_KIND.get(flags).asString()
-            val modality    = Flags.MODALITY  .get(flags).asString()
+            val modality    = Flags.MODALITY.get(flags).asString(isInterface)
             val visibility  = Flags.VISIBILITY.get(flags).asString()
             val typeParameters = typeParameterList
                     .joinToString("<", "> ") { it.asString() }
@@ -165,8 +165,8 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
             buildBody {
                 secondaryConstructors().forEach { append(it.asString(!isEnumClass)) }
-                functionList.forEach { append(it.asString()) }
-                propertyList.forEach { append(it.asString()) }
+                functionList.forEach { append(it.asString(isInterface)) }
+                propertyList.forEach { append(it.asString(isInterface)) }
 
                 nestedClassNameList.asSequence()
                         .map { classIdToProtoBuf.getValue(classId.createNestedClassId(nameResolver.getName(it))) }
@@ -218,18 +218,19 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
-    private fun ProtoBuf.Function.asString(): String {
+    private fun ProtoBuf.Function.asString(isInterface: Boolean = false): String {
         if (hasTypeTable()) TypeTables.push(typeTable)
         val result = buildString {
             val name            = stringTable.getString(name)
             val visibility      = Flags.VISIBILITY.get(flags).asString()
+            val modality        = Flags.MODALITY.get(flags).asString(isInterface)
             val isInline        = Flags.IS_INLINE.asString(flags)
             val receiverType    = receiverType()
             val annotations     = annotationsToString(getExtension(KonanSerializerProtocol.functionAnnotation), "\n")
             val typeParameters  = typeParameterList.joinToString("<", "> ") { it.asString() }
             val valueParameters = valueParameterList.joinToString(", ", "(", ")") { it.asString() }
             val returnType      = returnType()
-            append("$annotations$Indent$visibility${isInline}fun $typeParameters$receiverType$name$valueParameters$returnType\n")
+            append("$annotations$Indent$modality$visibility${isInline}fun $typeParameters$receiverType$name$valueParameters$returnType\n")
         }
         if (hasTypeTable()) TypeTables.pop()
         return result
@@ -237,10 +238,10 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
-    private fun ProtoBuf.Property.asString() = buildString {
+    private fun ProtoBuf.Property.asString(isInterface: Boolean = false) = buildString {
             val name       = stringTable.getString(name)
             val isVar      = Flags.IS_VAR.asString(flags)
-            val modality   = Flags.MODALITY.get(flags).asString()
+            val modality   = Flags.MODALITY.get(flags).asString(isInterface)
             val visibility = Flags.VISIBILITY.get(flags).asString()
             val returnType = returnType(TypeTables.peek()).asString()
             val annotations = annotationsToString(getExtension(KonanSerializerProtocol.propertyAnnotation), "\n")
@@ -379,11 +380,16 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     private fun ProtoBuf.Class.primaryConstructor()    = constructorList.firstOrNull  { !Flags.IS_SECONDARY.get(it.flags) }
     private fun ProtoBuf.Class.secondaryConstructors() = constructorList.filter {  Flags.IS_SECONDARY.get(it.flags) }
 
+    //-------------------------------------------------------------------------//
+
     private val ProtoBuf.Class.isEnumClass: Boolean
         get() = Flags.CLASS_KIND.get(flags) == ProtoBuf.Class.Kind.ENUM_CLASS
 
     private val ProtoBuf.Class.isEnumEntry: Boolean
         get() = Flags.CLASS_KIND.get(flags) == ProtoBuf.Class.Kind.ENUM_ENTRY
+
+    private val ProtoBuf.Class.isInterface: Boolean
+        get() = Flags.CLASS_KIND.get(flags) == ProtoBuf.Class.Kind.INTERFACE
 
     private val ProtoBuf.Class.isSealed: Boolean
         get() = Flags.MODALITY.get(flags) == ProtoBuf.Modality.SEALED
@@ -397,13 +403,19 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
-    private fun ProtoBuf.Modality.asString() =
-        when (this) {
+    private fun ProtoBuf.Modality.asString(isInterface: Boolean = false): String {
+        if (isInterface) {
+            return ""
+        }
+
+        return when (this) {
             ProtoBuf.Modality.FINAL    -> ""
             ProtoBuf.Modality.OPEN     -> "open "
             ProtoBuf.Modality.ABSTRACT -> "abstract "
             ProtoBuf.Modality.SEALED   -> "sealed "
         }
+    }
+
 
     //-------------------------------------------------------------------------//
 
