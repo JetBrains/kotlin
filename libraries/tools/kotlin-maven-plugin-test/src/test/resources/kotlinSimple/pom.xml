@@ -21,6 +21,8 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -40,7 +42,6 @@
             </plugins>
         </pluginManagement>
 
-        <sourceDirectory>${project.basedir}/src</sourceDirectory>
         <plugins>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
