@@ -2061,6 +2061,11 @@ task mpp2(type: LinkKonanTest) {
     flags = ['-Xmulti-platform']
 }
 
+task mpp_default_args(type: RunStandaloneKonanTest) {
+    source = "codegen/mpp/mpp_default_args.kt"
+    flags = ['-tr', '-Xmulti-platform']
+}
+
 task unit1(type: RunKonanTest) {
     goldValue = "First\nkotlin.Unit\n"
     source = "codegen/basics/unit1.kt"
