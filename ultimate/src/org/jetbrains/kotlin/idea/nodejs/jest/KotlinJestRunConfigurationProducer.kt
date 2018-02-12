@@ -14,8 +14,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
-import org.jetbrains.kotlin.idea.js.jsOrJsImpl
-import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
+import org.jetbrains.kotlin.idea.js.getJsOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.TestElementInfo
 import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
@@ -25,9 +24,9 @@ private typealias JestTestElementInfo = TestElementInfo<JestRunSettings>
 
 class KotlinJestRunConfigurationProducer : JestRunConfigurationProducer() {
     private fun createTestElementRunInfo(element: PsiElement, originalSettings: JestRunSettings): JestTestElementInfo? {
-        val module = element.module?.jsOrJsImpl() ?: return null
+        val module = element.module ?: return null
         val project = module.project
-        val testFilePath = module.jsTestOutputFilePath ?: return null
+        val testFilePath = getJsOutputFilePath(module, true, false) ?: return null
         val settings = if (originalSettings.workingDirSystemDependentPath.isBlank()) {
             val workingDir = FileUtil.toSystemDependentName(project.baseDir.path)
             originalSettings.toBuilder().setWorkingDir(workingDir).build()
@@ -80,7 +79,7 @@ class KotlinJestRunConfigurationProducer : JestRunConfigurationProducer() {
     ): Boolean {
         val element = context.psiLocation ?: return false
         val module = element.module
-        val jsModule = module?.jsOrJsImpl() ?: return false
+        val jsModule = module ?: return false
         val file = if (jsModule != module) {
             jsModule.moduleFile
         } else {
