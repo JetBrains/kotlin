@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 BOARD=stm32f4_disco
-#export ZEPHYR_BASE="PLEASE_SET_ZEPHYR_BASE"
-export ZEPHYR_BASE=~/kotlin-native/zephyr
+export ZEPHYR_BASE="PLEASE_SET_ZEPHYR_BASE"
 
 if [ "$ZEPHYR_BASE" == "PLEASE_SET_ZEPHYR_BASE" ] ; then
     echo "Please set ZEPHYR_BASE in this build.sh."
