@@ -159,7 +159,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
                     .let { if (it.isEmpty()) " " else it }
 
             val supertypes = supertypesToString(supertypes(TypeTables.peek()))
-            val annotations = annotationsToString(getExtension(KonanSerializerProtocol.classAnnotation), "\n")
+            val annotations = annotationsToString(getExtension(KonanSerializerProtocol.classAnnotation))
 
             val primaryConstructor = when {
                 isObject || isCompanionObject -> ""
@@ -203,10 +203,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     private fun ProtoBuf.Constructor.asString(printVisibility: Boolean = true, isPrimary: Boolean = false): String {
         val visibility  = if (printVisibility) Flags.VISIBILITY.get(flags).asString() else ""
-        val annotations = annotationsToString(
-                getExtension(KonanSerializerProtocol.constructorAnnotation),
-                if (isPrimary) " " else "\n"
-        )
+        val annotations = annotationsToString(getExtension(KonanSerializerProtocol.constructorAnnotation), true)
         val parameters  = valueParameterList.joinToString(", ", prefix = "(", postfix = ")") { it.asString() }
 
         val header = "$visibility$annotations"
@@ -236,7 +233,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val isInline        = Flags.IS_INLINE.asString(flags)
             val isExternal      = Flags.IS_EXTERNAL_FUNCTION.asString(flags)
             val receiverType    = receiverType()
-            val annotations     = annotationsToString(getExtension(KonanSerializerProtocol.functionAnnotation), "\n")
+            val annotations     = annotationsToString(getExtension(KonanSerializerProtocol.functionAnnotation))
             val typeParameters  = typeParameterList.joinToString("<", "> ") { it.asString() }
             val valueParameters = valueParameterList.joinToString(", ", "(", ")") { it.asString() }
             val returnType      = returnType()
@@ -256,7 +253,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val isExternal = Flags.IS_EXTERNAL_PROPERTY.asString(flags)
             val isConst    = Flags.IS_CONST.asString(flags)
             val returnType = returnType(TypeTables.peek()).asString()
-            val annotations = annotationsToString(getExtension(KonanSerializerProtocol.propertyAnnotation), "\n")
+            val annotations = annotationsToString(getExtension(KonanSerializerProtocol.propertyAnnotation))
             append("$annotations$Indent$isExternal$modality$visibility$isConst$isVar$name: $returnType\n")
         }
 
@@ -280,7 +277,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         val upperBounds   = upperBoundsToString(upperBounds(TypeTables.peek()))
         val isReified     = if (reified) "reified " else ""
         val variance      = variance.asString()
-        val annotations = annotationsToString(getExtension(KonanSerializerProtocol.typeParameterAnnotation))
+        val annotations = annotationsToString(getExtension(KonanSerializerProtocol.typeParameterAnnotation), true)
         return "$annotations$isReified$variance$parameterName$upperBounds"
     }
 
@@ -296,20 +293,30 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         val type = type(TypeTables.peek()).asString()
 
         val isCrossInline = Flags.IS_CROSSINLINE.asString(flags)
-        val annotations = annotationsToString(getExtension(KonanSerializerProtocol.parameterAnnotation))
+        val annotations = annotationsToString(getExtension(KonanSerializerProtocol.parameterAnnotation), true)
 
         return "$annotations$isCrossInline$parameterName: $type"
     }
 
     //-------------------------------------------------------------------------//
 
-    private fun annotationsToString(annotations: List<ProtoBuf.Annotation>, separator: String = " ") =
-            buildString { annotations.forEach { append(it.asString() + separator) } }
+    private fun annotationsToString(annotations: List<ProtoBuf.Annotation>, oneline: Boolean = false): String {
+        if (annotations.isEmpty()) {
+            return ""
+        }
+
+        val prefix    = if (oneline) ""  else "$Indent"
+        val separator = if (oneline) " " else "\n$Indent"
+        val postfix   = if (oneline) " " else "\n"
+        return annotations.joinToString(prefix = prefix, separator = separator, postfix = postfix) {
+            it.asString()
+        }
+    }
 
     //-------------------------------------------------------------------------//
 
     private fun ProtoBuf.Annotation.asString(): String {
-        val builder = StringBuilder("$Indent@${getName(id)}")
+        val builder = StringBuilder("@${getName(id)}")
         argumentList.joinTo(builder, prefix = "(", postfix = ")") { it.value.asString() }
         return builder.toString()
     }
