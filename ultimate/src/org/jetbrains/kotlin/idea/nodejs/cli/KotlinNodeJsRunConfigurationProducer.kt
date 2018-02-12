@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.idea.js.jsOrJsImpl
 import org.jetbrains.kotlin.idea.js.jsProductionOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
-import org.jetbrains.kotlin.idea.run.addBuildTask
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
@@ -57,7 +56,6 @@ private class KotlinNodeJsRunConfigurationProducer :
         configuration.inputPath = jsFilePath
         configuration.envs = jsModule.getNodeJsEnvironmentVars().envs
         configuration.setGeneratedName()
-        configuration.addBuildTask()
 
         return true
     }

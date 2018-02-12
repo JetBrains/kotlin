@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.TestElementInfo
 import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
-import org.jetbrains.kotlin.idea.run.addBuildTask
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 
 private typealias JestTestElementInfo = TestElementInfo<JestRunSettings>
@@ -95,7 +94,6 @@ class KotlinJestRunConfigurationProducer : JestRunConfigurationProducer() {
         configuration.runSettings = runSettings
         sourceElement.set(enclosingTestElement)
         configuration.setGeneratedName()
-        configuration.addBuildTask()
         return true
     }
 }
