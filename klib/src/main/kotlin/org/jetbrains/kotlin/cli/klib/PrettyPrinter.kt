@@ -226,12 +226,13 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val visibility      = Flags.VISIBILITY.get(flags).asString()
             val modality        = Flags.MODALITY.get(flags).asString(isInterface)
             val isInline        = Flags.IS_INLINE.asString(flags)
+            val isExternal      = Flags.IS_EXTERNAL_FUNCTION.asString(flags)
             val receiverType    = receiverType()
             val annotations     = annotationsToString(getExtension(KonanSerializerProtocol.functionAnnotation), "\n")
             val typeParameters  = typeParameterList.joinToString("<", "> ") { it.asString() }
             val valueParameters = valueParameterList.joinToString(", ", "(", ")") { it.asString() }
             val returnType      = returnType()
-            append("$annotations$Indent$modality$visibility${isInline}fun $typeParameters$receiverType$name$valueParameters$returnType\n")
+            append("$annotations$Indent$isExternal$modality$visibility${isInline}fun $typeParameters$receiverType$name$valueParameters$returnType\n")
         }
         if (hasTypeTable()) TypeTables.pop()
         return result
@@ -244,9 +245,10 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val isVar      = Flags.IS_VAR.asString(flags)
             val modality   = Flags.MODALITY.get(flags).asString(isInterface)
             val visibility = Flags.VISIBILITY.get(flags).asString()
+            val isExternal = Flags.IS_EXTERNAL_PROPERTY.asString(flags)
             val returnType = returnType(TypeTables.peek()).asString()
             val annotations = annotationsToString(getExtension(KonanSerializerProtocol.propertyAnnotation), "\n")
-            append("$annotations$Indent$modality$visibility$isVar$name: $returnType\n")
+            append("$annotations$Indent$isExternal$modality$visibility$isVar$name: $returnType\n")
         }
 
     //-------------------------------------------------------------------------//
@@ -456,11 +458,13 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     private fun Flags.BooleanFlagField.asString(flags: Int) =
         when(this) {
-            IS_INLINE      -> if (Flags.IS_INLINE     .get(flags)) "inline "      else ""
-            IS_VAR         -> if (Flags.IS_VAR        .get(flags)) "var "         else "val "
-            IS_CROSSINLINE -> if (Flags.IS_CROSSINLINE.get(flags)) "crossinline " else ""
-            IS_NOINLINE    -> if (Flags.IS_NOINLINE   .get(flags)) "noinline "    else ""
-            IS_INNER       -> if (Flags.IS_INNER      .get(flags)) "inner "       else ""
+            IS_INLINE             -> if (Flags.IS_INLINE           .get(flags)) "inline "      else ""
+            IS_VAR                -> if (Flags.IS_VAR              .get(flags)) "var "         else "val "
+            IS_CROSSINLINE        -> if (Flags.IS_CROSSINLINE      .get(flags)) "crossinline " else ""
+            IS_NOINLINE           -> if (Flags.IS_NOINLINE         .get(flags)) "noinline "    else ""
+            IS_INNER              -> if (Flags.IS_INNER            .get(flags)) "inner "       else ""
+            IS_EXTERNAL_FUNCTION  -> if (Flags.IS_EXTERNAL_FUNCTION.get(flags)) "external "    else ""
+            IS_EXTERNAL_PROPERTY  -> if (Flags.IS_EXTERNAL_PROPERTY.get(flags)) "external "    else ""
             else -> "unknown flag"
         }
 
