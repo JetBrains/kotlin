@@ -355,18 +355,24 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
         include 'samples/**'
         exclude 'samples/gradle.properties'
         exclude 'samples/settings.gradle'
+        exclude 'samples/androidNativeActivity/settings.gradle'
+        exclude 'samples/androidNativeActivity/gradle.properties'
         exclude '**/build'
         exclude '**/.gradle'
         exclude 'samples/**/*.kt.bc-build'
         into baseName
     }
 
-    from(project.file("samples/settings.gradle")) {
+    from(project.file("samples")) {
+        include 'settings.gradle'
+        include 'androidNativeActivity/settings.gradle'
         into "$baseName/samples"
         filter { it.startsWith("includeBuild") ? null : it }
     }
 
-    from(project.file("samples/gradle.properties")) {
+    from(project.file("samples")) {
+        include 'gradle.properties'
+        include 'androidNativeActivity/gradle.properties'
         into "$baseName/samples"
         filter { it.startsWith("konan.home=") ? "konan.home=../.." : it }
     }
