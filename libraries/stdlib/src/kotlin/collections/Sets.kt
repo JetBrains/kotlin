@@ -88,13 +88,13 @@ public fun <T> setOf(element: T): Set<T> = java.util.Collections.singleton(eleme
 
 
 /**
- * Returns a new [SortedSet] with the given elements.
+ * Returns a new [java.util.SortedSet] with the given elements.
  */
 @JvmVersion
 public fun <T> sortedSetOf(vararg elements: T): java.util.TreeSet<T> = elements.toCollection(java.util.TreeSet<T>())
 
 /**
- * Returns a new [SortedSet] with the given [comparator] and elements.
+ * Returns a new [java.util.SortedSet] with the given [comparator] and elements.
  */
 @JvmVersion
 public fun <T> sortedSetOf(comparator: Comparator<in T>, vararg elements: T): java.util.TreeSet<T> = elements.toCollection(java.util.TreeSet<T>(comparator))

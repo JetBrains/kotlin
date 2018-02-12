@@ -696,7 +696,7 @@ public fun <T> Sequence<T>.toSet(): Set<T> {
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  *
  * The operation is _terminal_.
  */
@@ -705,7 +705,7 @@ public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): java.util.SortedSet<T> 
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  * 
  * Elements in the set returned are sorted according to the given [comparator].
  *

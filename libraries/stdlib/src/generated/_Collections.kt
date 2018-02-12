@@ -1115,14 +1115,14 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): java.util.SortedSet<T> {
     return toCollection(java.util.TreeSet<T>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  * 
  * Elements in the set returned are sorted according to the given [comparator].
  */
