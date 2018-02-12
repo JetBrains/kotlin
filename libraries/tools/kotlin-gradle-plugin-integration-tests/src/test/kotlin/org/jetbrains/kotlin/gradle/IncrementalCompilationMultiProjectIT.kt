@@ -90,13 +90,13 @@ open class A {
 
     @Test
     fun testCleanBuildLib() {
-        val project = Project("incrementalMultiproject")
+        // Test with Gradle 3.4, since Gradle 3.5+ uses classpath hash normalization for JARs
+        val project = Project("incrementalMultiproject", GradleVersionRequired.Exact("3.4"))
+
+        project.setupWorkingDir()
+
         project.build("build") {
             assertSuccessful()
-        }
-
-        if (project.testGradleVersionAtLeast("4.0")) {
-            File(project.projectDir, "lib/build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
         }
 
         project.build(":lib:clean", ":lib:build") {
