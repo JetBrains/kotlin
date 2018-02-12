@@ -1959,6 +1959,13 @@ task mpp1(type: RunStandaloneKonanTest) {
     flags = ['-tr', '-Xmulti-platform']
 }
 
+task mpp2(type: LinkKonanTest) {
+    goldValue = "C(arg=42)\ntrue\n1\nh\n"
+    source = "codegen/mpp/mpp2.kt"
+    lib = "codegen/mpp/libmpp2.kt"
+    flags = ['-Xmulti-platform']
+}
+
 task unit1(type: RunKonanTest) {
     goldValue = "First\nkotlin.Unit\n"
     source = "codegen/basics/unit1.kt"

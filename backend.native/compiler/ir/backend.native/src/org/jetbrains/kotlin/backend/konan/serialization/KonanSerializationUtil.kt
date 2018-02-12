@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.DeserializedKonanModule
 import org.jetbrains.kotlin.backend.konan.descriptors.createKonanModuleDescriptor
+import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
@@ -206,12 +207,12 @@ internal class KonanSerializationUtil(val context: Context) {
         val classifierDescriptors = KonanDescriptorSerializer.sort(
                 fragments.flatMap {
                     it.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)
-                }
+                }.filter { !it.isExpectMember }
         )
 
         val members = fragments.flatMap { fragment ->
             DescriptorUtils.getAllDescriptors(fragment.getMemberScope())
-        }
+        }.filter { !it.isExpectMember }
 
         val classesBuilder = KonanLinkData.Classes.newBuilder()
 
