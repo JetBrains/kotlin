@@ -31,11 +31,11 @@ val checkoutIncrementalBeforeChanges by tasks.creating {
     doFirst {
 
         val version = changes?.lastOrNull()?.version ?: vcsTargetVersion
-        println("Checkout $version")
+        println("Worktree Checkout $version")
 
         val process = ProcessBuilder()
-                .command("git", "checkout", "$version^")
-                .directory(File("../incremental"))
+                .command("git", "worktree", "../incremental", "$version^")
+                .directory(File("../clean"))
                 .inheritIO()
                 .start()
         if (process.waitFor() != 0) {
@@ -118,5 +118,9 @@ val runCompare by tasks.creating(JavaExec::class) {
     args("-Dcompare.methods=false")
     classpath("$buildDir/cc-all.jar")
     main = "cc.CcKt"
-    dependsOn(zipFromClean, zipFromIncremental)
+    dependsOn(zipFromClean, zipFromIncremental, downloadCC)
+}
+
+val prepare by tasks.creating {
+    dependsOn(downloadCC, checkoutIncrementalBeforeChanges)
 }
