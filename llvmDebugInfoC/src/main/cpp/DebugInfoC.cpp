@@ -209,7 +209,7 @@ void DIFunctionAddSubprogram(LLVMValueRef fn, DISubprogramRef sp) {
   auto dsp = llvm::cast<llvm::DISubprogram>(llvm::unwrap(sp));
   f->setSubprogram(dsp);
   if (!dsp->describes(f)) {
-    fprintf(stderr, "error!!! f:%s, sp:%s\n", f->getName(), dsp->getLinkageName());
+    fprintf(stderr, "error!!! f:%s, sp:%s\n", f->getName().str().c_str(), dsp->getLinkageName().str().c_str());
   }
 }
 
