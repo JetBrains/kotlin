@@ -21,7 +21,9 @@ public class IncrementalCompilationIT extends MavenITBase {
             "target/classes/test.properties",
             "target/classes/A.class",
             "target/classes/UseAKt.class",
-            "target/classes/Dummy.class"
+            "target/classes/Dummy.class",
+            "target/classes/JavaUtil.class",
+            "target/classes/JavaAUser.class"
         };
     }
 
@@ -72,5 +74,19 @@ public class IncrementalCompilationIT extends MavenITBase {
                .compiledKotlin("src/main/kotlin/A.kt", "src/main/kotlin/useA.kt");
 
         // todo rebuild and compare output
+    }
+
+    @Test
+    public void testJavaChanged() throws Exception {
+        MavenProject project = new MavenProject("kotlinSimple");
+        project.exec("package");
+
+        File aKt = project.file("src/main/java/JavaUtil.java");
+        MavenTestUtils.replaceFirstInFile(aKt, "CONST = 0", "CONST = 1");
+
+        project.exec("package")
+                .succeeded()
+                .filesExist(kotlinSimpleOutputPaths())
+                .compiledKotlin("src/main/kotlin/A.kt");
     }
 }
