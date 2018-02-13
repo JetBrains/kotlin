@@ -120,13 +120,27 @@ val zipFromIncremental by tasks.creating(Zip::class) {
     dependsOn(buildClassesInIncrementalSecond)
 }
 
+val unzipFromIncremental by tasks.creating(Copy::class) {
+    dependsOn(zipFromIncremental)
+
+    from(zipTree(zipFromIncremental.outputs.files.singleFile))
+    into("$buildDir/inc")
+}
+
+val unzipFromClean by tasks.creating(Copy::class) {
+    dependsOn(zipFromClean)
+
+    from(zipTree(zipFromClean.outputs.files.singleFile))
+    into("$buildDir/orig")
+}
+
 val runCompare by tasks.creating(JavaExec::class) {
     workingDir = buildDir
     maxHeapSize = "4g"
     args("-Dcompare.methods=false")
     classpath("$buildDir/cc-all.jar")
     main = "cc.CcKt"
-    dependsOn(zipFromClean, zipFromIncremental)
+    dependsOn(unzipFromClean, unzipFromIncremental)
 }
 
 val prepare by tasks.creating {
