@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -259,6 +260,35 @@ class QualifiableMoveRenameUsageInfo(
     }
 }
 
+interface DeferredKotlinMoveUsage : KotlinMoveUsage {
+    fun resolve(newElement: PsiElement): UsageInfo?
+}
+
+class CallableReferenceMoveRenameUsageInfo(
+    element: PsiElement,
+    reference: PsiReference,
+    referencedElement: PsiElement,
+    val originalFile: PsiFile,
+    val addImportToOriginalFile: Boolean,
+    override val isInternal: Boolean
+) : MoveRenameUsageInfo(element, reference, reference.rangeInElement.startOffset, reference.rangeInElement.endOffset, referencedElement, false), DeferredKotlinMoveUsage {
+    override fun refresh(refExpr: KtSimpleNameExpression, referencedElement: PsiElement): UsageInfo? {
+        return CallableReferenceMoveRenameUsageInfo(refExpr, refExpr.mainReference, referencedElement, originalFile, addImportToOriginalFile, isInternal)
+    }
+
+    override fun resolve(newElement: PsiElement): UsageInfo? {
+        val target = newElement.unwrapped
+        val element = element ?: return null
+        val reference = reference ?: return null
+        val referencedElement = referencedElement ?: return null
+        if (target is KtDeclaration && target.parent is KtFile) {
+            element.getStrictParentOfType<KtCallableReferenceExpression>()?.receiverExpression?.delete()
+            return UnqualifiableMoveRenameUsageInfo(element, reference, referencedElement, element.containingFile!!, addImportToOriginalFile, isInternal)
+        }
+        return QualifiableMoveRenameUsageInfo(element, reference, referencedElement, isInternal)
+    }
+}
+
 fun createMoveUsageInfoIfPossible(
         reference: PsiReference,
         referencedElement: PsiElement,
@@ -273,6 +303,9 @@ fun createMoveUsageInfoIfPossible(
         ReferenceKind.UNQUALIFIABLE -> UnqualifiableMoveRenameUsageInfo(
                 element, reference, referencedElement, element.containingFile!!, addImportToOriginalFile, isInternal
         )
+        ReferenceKind.CALLABLE_REFERENCE -> CallableReferenceMoveRenameUsageInfo(
+                element, reference, referencedElement, element.containingFile!!, addImportToOriginalFile, isInternal
+        )
         else -> null
     }
 }
@@ -280,6 +313,7 @@ fun createMoveUsageInfoIfPossible(
 private enum class ReferenceKind {
     QUALIFIABLE,
     UNQUALIFIABLE,
+    CALLABLE_REFERENCE,
     IRRELEVANT
 }
 
@@ -300,7 +334,11 @@ private fun getReferenceKind(reference: PsiReference, referencedElement: PsiElem
     if (element.isExtensionRef() && reference.element.getNonStrictParentOfType<KtImportDirective>() == null) return ReferenceKind.UNQUALIFIABLE
 
     element.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference }?.let {
-        if (it.receiverExpression != null) return ReferenceKind.IRRELEVANT
+        val receiverExpression = it.receiverExpression
+        if (receiverExpression != null) {
+            val lhs = it.analyze(BodyResolveMode.PARTIAL)[BindingContext.DOUBLE_COLON_LHS, receiverExpression]
+            return if (lhs is DoubleColonLHS.Type) ReferenceKind.CALLABLE_REFERENCE else ReferenceKind.IRRELEVANT
+        }
         if (target is KtDeclaration && target.parent is KtFile) return ReferenceKind.UNQUALIFIABLE
         if (target is PsiMember && target.containingClass == null) return ReferenceKind.UNQUALIFIABLE
     }
@@ -364,20 +402,28 @@ private fun postProcessMoveUsage(
         nonCodeUsages: ArrayList<NonCodeUsageInfo>,
         shorteningMode: ShorteningMode
 ) {
+    if (usage is NonCodeUsageInfo) {
+        nonCodeUsages.add(usage)
+        return
+    }
+
+    if (usage !is MoveRenameUsageInfo) return
+
+    val oldElement = usage.referencedElement!!
+    val newElement = mapToNewOrThis(oldElement, oldToNewElementsMapping)
+
     when (usage) {
-        is NonCodeUsageInfo -> {
-            nonCodeUsages.add(usage)
+        is DeferredKotlinMoveUsage -> {
+            val newUsage = usage.resolve(newElement)  ?: return
+            postProcessMoveUsage(newUsage, oldToNewElementsMapping, nonCodeUsages, shorteningMode)
         }
 
         is UnqualifiableMoveRenameUsageInfo -> {
             val file = with(usage) { if (addImportToOriginalFile) originalFile else mapToNewOrThis(originalFile, oldToNewElementsMapping) } as KtFile
-            val declaration = mapToNewOrThis(usage.referencedElement!!, oldToNewElementsMapping)
-            addDelayedImportRequest(declaration, file)
+            addDelayedImportRequest(newElement, file)
         }
 
-        is MoveRenameUsageInfo -> {
-            val oldElement = usage.referencedElement!!
-            val newElement = mapToNewOrThis(oldElement, oldToNewElementsMapping)
+        else -> {
             val reference = (usage.element as? KtSimpleNameExpression)?.mainReference ?: usage.reference
             processReference(reference, newElement, shorteningMode, oldElement)
         }

@@ -209,6 +209,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
             parent is KtCallableReferenceExpression && parent.callableReference == this -> {
                 parentDelimiter = ""
                 val callableRefCopy = parent.copied()
+                callableRefCopy.receiverExpression?.delete()
                 callableRefCopy.callableReference.replace(psiFactory.createSimpleName(shortName)).parent!!.text
             }
             else -> shortName

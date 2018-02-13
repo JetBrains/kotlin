@@ -319,6 +319,18 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveNestedClass/callableReferences/nestedToAnotherClass/nestedToAnotherClass.test")
+    public void testKotlin_moveNestedClass_callableReferences_nestedToAnotherClass_NestedToAnotherClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/callableReferences/nestedToAnotherClass/nestedToAnotherClass.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/callableReferences/nestedToTopLevel/nestedToTopLevel.test")
+    public void testKotlin_moveNestedClass_callableReferences_nestedToTopLevel_NestedToTopLevel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/callableReferences/nestedToTopLevel/nestedToTopLevel.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveNestedClass/deepInnerToTopLevelWithOuterOuterThis/deepInnerToTopLevelWithOuterOuterThis.test")
     public void testKotlin_moveNestedClass_deepInnerToTopLevelWithOuterOuterThis_DeepInnerToTopLevelWithOuterOuterThis() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/deepInnerToTopLevelWithOuterOuterThis/deepInnerToTopLevelWithOuterOuterThis.test");
