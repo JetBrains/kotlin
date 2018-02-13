@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializerProtocol
 import org.jetbrains.kotlin.backend.konan.serialization.parseModuleHeader
 import org.jetbrains.kotlin.backend.konan.serialization.parsePackageFragment
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.Flags.*
 import org.jetbrains.kotlin.serialization.KonanLinkData
@@ -93,6 +94,9 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     private val ProtoBuf.Class.classId: ClassId
         get() = nameResolver.getClassId(this.fqName)
 
+    private val ProtoBuf.TypeParameter.resolvedName: String
+        get() = nameResolver.getName(name).asString()
+
     //-------------------------------------------------------------------------//
 
     object Indent {
@@ -104,12 +108,30 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
+    // TODO: Replace with one context
     object TypeTables {
         val tables = mutableListOf<TypeTable>()
         fun push(table: ProtoBuf.TypeTable) { tables.add(TypeTable(table)) }
         fun pop() = tables.removeAt(tables.lastIndex)
         fun peek() = tables.last()
         fun type(typeId: Int) = tables.last().get(typeId)
+    }
+
+    object TypeParameterNames {
+        val typeParameters = mutableListOf<Map<Int, ProtoBuf.TypeParameter>>()
+        fun push(list: List<ProtoBuf.TypeParameter>) {
+            typeParameters.add(list.map { it.id to it }.toMap())
+        }
+        fun pop() = typeParameters.removeAt(typeParameters.lastIndex)
+        fun typeParameter(parameterId: Int): ProtoBuf.TypeParameter? {
+            typeParameters.asReversed().forEach {
+                val typeParameter = it[parameterId]
+                if (typeParameter != null) {
+                    return typeParameter
+                }
+            }
+            return null
+        }
     }
 
     //-------------------------------------------------------------------------//
@@ -147,6 +169,8 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     private fun ProtoBuf.Class.asString(): String {
         if (hasTypeTable()) TypeTables.push(typeTable)
+        TypeParameterNames.push(typeParameterList)
+
         val result = buildString {
             val classId     = nameResolver.getClassId(fqName)
             val className   = if (!isCompanionObject) classId.shortClassName else ""
@@ -184,6 +208,8 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
                 enumToEntries[classId]?.forEach { append(it.asString()) }
             }
         }
+
+        TypeParameterNames.pop()
         if (hasTypeTable()) TypeTables.pop()
         return result
     }
@@ -226,6 +252,8 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     private fun ProtoBuf.Function.asString(isInterface: Boolean = false): String {
         if (hasTypeTable()) TypeTables.push(typeTable)
+        TypeParameterNames.push(typeParameterList)
+
         val result = buildString {
             val name            = stringTable.getString(name)
             val visibility      = Flags.VISIBILITY.get(flags).asString()
@@ -239,6 +267,8 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             val returnType      = returnType()
             append("$annotations$Indent$isExternal$modality$visibility${isInline}fun $typeParameters$receiverType$name$valueParameters$returnType\n")
         }
+
+        TypeParameterNames.pop()
         if (hasTypeTable()) TypeTables.pop()
         return result
     }
@@ -370,9 +400,10 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     //-------------------------------------------------------------------------//
 
     private fun ProtoBuf.Type.name() = when {
-            hasClassName() -> getName(className)
+            hasClassName()         -> getName(className)
+            hasTypeParameter()     -> TypeParameterNames.typeParameter(typeParameter)?.resolvedName ?: "undefined"
             hasTypeParameterName() -> stringTable.getString(typeParameterName)
-            hasTypeAliasName() -> stringTable.getString(typeAliasName)
+            hasTypeAliasName()     -> stringTable.getString(typeAliasName)
             else -> "undefined"
         }
 
