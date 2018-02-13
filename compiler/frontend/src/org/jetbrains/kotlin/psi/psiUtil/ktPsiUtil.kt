@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.psi.psiUtil
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiParameter
-import com.intellij.psi.PsiParameterList
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
@@ -597,3 +594,11 @@ fun String?.isIdentifier(): Boolean {
 }
 
 fun String.quoteIfNeeded(): String = if (this.isIdentifier()) this else "`$this`"
+
+fun PsiElement.isTopLevelKtOrJavaMember(): Boolean {
+    return when (this) {
+        is KtDeclaration -> parent is KtFile
+        is PsiClass -> containingClass == null && this.qualifiedName != null
+        else -> false
+    }
+}

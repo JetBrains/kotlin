@@ -25,6 +25,30 @@ public class MoveTestGenerated extends AbstractMoveTest {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/move"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
+    @TestMetadata("java/moveClass/callableReferences/nestedToAnotherClass/nestedToAnotherClass.test")
+    public void testJava_moveClass_callableReferences_nestedToAnotherClass_NestedToAnotherClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/java/moveClass/callableReferences/nestedToAnotherClass/nestedToAnotherClass.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("java/moveClass/callableReferences/nestedToAnotherClassAndAnotherPackage/nestedToAnotherClassAndAnotherPackage.test")
+    public void testJava_moveClass_callableReferences_nestedToAnotherClassAndAnotherPackage_NestedToAnotherClassAndAnotherPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/java/moveClass/callableReferences/nestedToAnotherClassAndAnotherPackage/nestedToAnotherClassAndAnotherPackage.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("java/moveClass/callableReferences/nestedToTopLevel/nestedToTopLevel.test")
+    public void testJava_moveClass_callableReferences_nestedToTopLevel_NestedToTopLevel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/java/moveClass/callableReferences/nestedToTopLevel/nestedToTopLevel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("java/moveClass/callableReferences/nestedToTopLevelAndAnotherPackage/nestedToTopLevelAndAnotherPackage.test")
+    public void testJava_moveClass_callableReferences_nestedToTopLevelAndAnotherPackage_NestedToTopLevelAndAnotherPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/java/moveClass/callableReferences/nestedToTopLevelAndAnotherPackage/nestedToTopLevelAndAnotherPackage.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("java/moveClass/moveAsMember/moveClassToExternalNestedClass/moveClassToExternalNestedClass.test")
     public void testJava_moveClass_moveAsMember_moveClassToExternalNestedClass_MoveClassToExternalNestedClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/java/moveClass/moveAsMember/moveClassToExternalNestedClass/moveClassToExternalNestedClass.test");
@@ -154,6 +178,18 @@ public class MoveTestGenerated extends AbstractMoveTest {
     @TestMetadata("java/moveFile/moveFileToAnotherPackage/moveFileToAnotherPackage.test")
     public void testJava_moveFile_moveFileToAnotherPackage_MoveFileToAnotherPackage() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/java/moveFile/moveFileToAnotherPackage/moveFileToAnotherPackage.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("java/moveMethod/callableReferences/staticMethodToTopLevelClass/staticMethodToTopLevelClass.test")
+    public void testJava_moveMethod_callableReferences_staticMethodToTopLevelClass_StaticMethodToTopLevelClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/java/moveMethod/callableReferences/staticMethodToTopLevelClass/staticMethodToTopLevelClass.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("java/moveMethod/callableReferences/staticMethodToTopLevelClassInAnotherPackage/staticMethodToTopLevelClassInAnotherPackage.test")
+    public void testJava_moveMethod_callableReferences_staticMethodToTopLevelClassInAnotherPackage_StaticMethodToTopLevelClassInAnotherPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/java/moveMethod/callableReferences/staticMethodToTopLevelClassInAnotherPackage/staticMethodToTopLevelClassInAnotherPackage.test");
         doTest(fileName);
     }
 

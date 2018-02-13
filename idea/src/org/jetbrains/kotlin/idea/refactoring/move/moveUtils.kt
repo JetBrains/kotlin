@@ -281,7 +281,7 @@ class CallableReferenceMoveRenameUsageInfo(
         val element = element ?: return null
         val reference = reference ?: return null
         val referencedElement = referencedElement ?: return null
-        if (target is KtDeclaration && target.parent is KtFile) {
+        if (target != null && target.isTopLevelKtOrJavaMember()) {
             element.getStrictParentOfType<KtCallableReferenceExpression>()?.receiverExpression?.delete()
             return UnqualifiableMoveRenameUsageInfo(element, reference, referencedElement, element.containingFile!!, addImportToOriginalFile, isInternal)
         }
