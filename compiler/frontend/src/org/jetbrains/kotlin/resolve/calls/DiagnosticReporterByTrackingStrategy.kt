@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class DiagnosticReporterByTrackingStrategy(
     val constantExpressionEvaluator: ConstantExpressionEvaluator,
     val context: BasicCallResolutionContext,
-    val psiKotlinCall: PSIKotlinCall
+    val psiKotlinCall: PSIKotlinCall,
+    val dataFlowValueFactory: DataFlowValueFactory
 ) : DiagnosticReporter {
     private val trace = context.trace as TrackingBindingTrace
     private val tracingStrategy: TracingStrategy get() = psiKotlinCall.tracingStrategy
@@ -162,7 +163,7 @@ class DiagnosticReporterByTrackingStrategy(
                     expressionArgument.valueArgument.getArgumentExpression(),
                     context.statementFilter
                 )
-                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
+                val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
                 SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
                     recordExpressionType = true
@@ -171,7 +172,7 @@ class DiagnosticReporterByTrackingStrategy(
             is ReceiverExpressionKotlinCallArgument -> {
                 trace.markAsReported()
                 val receiverValue = expressionArgument.receiver.receiverValue
-                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, context)
+                val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverValue, context)
                 SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, (receiverValue as? ExpressionReceiver)?.expression, context, call,
                     recordExpressionType = true

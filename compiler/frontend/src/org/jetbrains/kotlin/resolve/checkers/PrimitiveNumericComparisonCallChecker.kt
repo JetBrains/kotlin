@@ -83,7 +83,7 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
 
     private fun CallCheckerContext.getStableTypesForExpression(expression: KtExpression): List<KotlinType> {
         val type = trace.bindingContext.getType(expression) ?: return emptyList()
-        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(
+        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(
             expression, type, trace.bindingContext, resolutionContext.scope.ownerDescriptor
         )
         val dataFlowInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)?.dataFlowInfo ?: return emptyList()

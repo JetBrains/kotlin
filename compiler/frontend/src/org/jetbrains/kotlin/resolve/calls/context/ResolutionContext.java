@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -64,6 +65,9 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public final LanguageVersionSettings languageVersionSettings;
 
+    @NotNull
+    public final DataFlowValueFactory dataFlowValueFactory;
+
     /**
      * Used for analyzing expression in the given context.
      * Should be used for going through parents to find containing function, loop etc.
@@ -89,7 +93,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition,
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory factory
     ) {
         this.trace = trace;
         this.scope = scope;
@@ -104,6 +109,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.callPosition = callPosition;
         this.expressionContextProvider = expressionContextProvider;
         this.languageVersionSettings = languageVersionSettings;
+        this.dataFlowValueFactory = factory;
     }
 
     protected abstract Context create(
@@ -117,7 +123,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition,
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory
     );
 
     @NotNull
@@ -130,14 +137,14 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     public Context replaceBindingTrace(@NotNull BindingTrace trace) {
         if (this.trace == trace) return self();
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings);
+                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory);
     }
 
     @NotNull
     public Context replaceDataFlowInfo(@NotNull DataFlowInfo newDataFlowInfo) {
         if (newDataFlowInfo == dataFlowInfo) return self();
         return create(trace, scope, newDataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings);
+                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory);
     }
 
     @NotNull
@@ -145,28 +152,28 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return self();
         return create(trace, scope, dataFlowInfo, newExpectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings);
+                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory);
     }
 
     @NotNull
     public Context replaceScope(@NotNull LexicalScope newScope) {
         if (newScope == scope) return self();
         return create(trace, newScope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings);
+                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory);
     }
 
     @NotNull
     public Context replaceContextDependency(@NotNull ContextDependency newContextDependency) {
         if (newContextDependency == contextDependency) return self();
         return create(trace, scope, dataFlowInfo, expectedType, newContextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings);
+                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory);
     }
 
     @NotNull
     public Context replaceResolutionResultsCache(@NotNull ResolutionResultsCache newResolutionResultsCache) {
         if (newResolutionResultsCache == resolutionResultsCache) return self();
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, newResolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings);
+                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory);
     }
 
     @NotNull
@@ -177,25 +184,25 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public Context replaceCollectAllCandidates(boolean newCollectAllCandidates) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      newCollectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings);
+                      newCollectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory);
     }
 
     @NotNull
     public Context replaceStatementFilter(@NotNull StatementFilter statementFilter) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings);
+                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory);
     }
 
     @NotNull
     public Context replaceCallPosition(@NotNull CallPosition callPosition) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings);
+                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory);
     }
 
     @NotNull
     public Context replaceExpressionContextProvider(@NotNull Function1<KtExpression, KtExpression> expressionContextProvider) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings);
+                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory);
     }
 
     @Nullable

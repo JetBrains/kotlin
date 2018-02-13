@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.TypeUtils
@@ -163,7 +163,7 @@ fun KtExpression.isStable(context: BindingContext = this.analyze()): Boolean {
     if (this is KtConstantExpression || this is KtThisExpression) return true
     val descriptor = BindingContextUtils.extractVariableDescriptorFromReference(context, this)
     return descriptor is VariableDescriptor &&
-            DataFlowValueFactory.isStableValue(descriptor, DescriptorUtils.getContainingModule(descriptor))
+            DataFlowValueFactoryImpl.isStableValue(descriptor, DescriptorUtils.getContainingModule(descriptor))
 }
 
 data class IfThenToSelectData(

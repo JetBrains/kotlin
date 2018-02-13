@@ -185,10 +185,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             DataFlowInfo thenDataFlowInfo = thenTypeInfo.getDataFlowInfo();
             DataFlowInfo elseDataFlowInfo = elseTypeInfo.getDataFlowInfo();
             if (resultType != null && thenType != null && elseType != null) {
-                DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(ifExpression, resultType, context);
-                DataFlowValue thenValue = DataFlowValueFactory.createDataFlowValue(thenBranch, thenType, context);
+                DataFlowValue resultValue = components.dataFlowValueFactory.createDataFlowValue(ifExpression, resultType, context);
+                DataFlowValue thenValue = components.dataFlowValueFactory.createDataFlowValue(thenBranch, thenType, context);
                 thenDataFlowInfo = thenDataFlowInfo.assign(resultValue, thenValue, components.languageVersionSettings);
-                DataFlowValue elseValue = DataFlowValueFactory.createDataFlowValue(elseBranch, elseType, context);
+                DataFlowValue elseValue = components.dataFlowValueFactory.createDataFlowValue(elseBranch, elseType, context);
                 elseDataFlowInfo = elseDataFlowInfo.assign(resultValue, elseValue, components.languageVersionSettings);
             }
 

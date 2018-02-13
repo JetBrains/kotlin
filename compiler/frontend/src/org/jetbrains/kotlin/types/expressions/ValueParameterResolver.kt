@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -35,7 +36,8 @@ import org.jetbrains.kotlin.types.isError
 class ValueParameterResolver(
     private val expressionTypingServices: ExpressionTypingServices,
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
     fun resolveValueParameters(
         valueParameters: List<KtParameter>,
@@ -49,7 +51,7 @@ class ValueParameterResolver(
 
         val contextForDefaultValue = ExpressionTypingContext.newContext(
             trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE,
-            languageVersionSettings
+            languageVersionSettings, dataFlowValueFactory
         )
 
         for ((descriptor, parameter) in valueParameterDescriptors.zip(valueParameters)) {

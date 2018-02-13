@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
@@ -44,7 +45,8 @@ class ResolvedAtomCompleter(
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
     deprecationResolver: DeprecationResolver,
-    moduleDescriptor: ModuleDescriptor
+    moduleDescriptor: ModuleDescriptor,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
     private val callCheckerContext = CallCheckerContext(topLevelCallContext, deprecationResolver, moduleDescriptor)
 

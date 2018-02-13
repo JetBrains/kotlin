@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSaf
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -61,7 +62,8 @@ class CallCompleter(
     private val callCheckers: Iterable<CallChecker>,
     private val moduleDescriptor: ModuleDescriptor,
     private val deprecationResolver: DeprecationResolver,
-    private val effectSystem: EffectSystem
+    private val effectSystem: EffectSystem,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
     fun <D : CallableDescriptor> completeCall(
         context: BasicCallResolutionContext,

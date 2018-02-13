@@ -73,7 +73,8 @@ class CallExpressionResolver(
     private val dataFlowAnalyzer: DataFlowAnalyzer,
     private val builtIns: KotlinBuiltIns,
     private val qualifiedExpressionResolver: QualifiedExpressionResolver,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -343,7 +344,7 @@ class CallExpressionResolver(
     private fun getSafeOrUnsafeSelectorTypeInfo(receiver: Receiver, element: CallExpressionElement, context: ExpressionTypingContext):
             KotlinTypeInfo {
         var initialDataFlowInfoForArguments = context.dataFlowInfo
-        val receiverDataFlowValue = (receiver as? ReceiverValue)?.let { DataFlowValueFactory.createDataFlowValue(it, context) }
+        val receiverDataFlowValue = (receiver as? ReceiverValue)?.let { dataFlowValueFactory.createDataFlowValue(it, context) }
         val receiverCanBeNull = receiverDataFlowValue != null &&
                 initialDataFlowInfoForArguments.getStableNullability(receiverDataFlowValue).canBeNull()
         if (receiverDataFlowValue != null && element.safe) {

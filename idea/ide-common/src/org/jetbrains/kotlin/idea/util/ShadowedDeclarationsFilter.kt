@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -207,7 +208,8 @@ class ShadowedDeclarationsFilter(
         val dataFlowInfo = bindingContext.getDataFlowInfoBefore(context)
         val context = BasicCallResolutionContext.create(bindingTrace, scope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                        false, /* languageVersionSettings */ resolutionFacade.frontendService())
+                                                        false, /* languageVersionSettings */ resolutionFacade.frontendService(),
+                                                        resolutionFacade.frontendService<DataFlowValueFactory>())
         val callResolver = resolutionFacade.frontendService<CallResolver>()
         val results = if (isFunction) callResolver.resolveFunctionCall(context) else callResolver.resolveSimpleProperty(context)
         val resultingDescriptors = results.resultingCalls.map { it.resultingDescriptor }

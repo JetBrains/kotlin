@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
@@ -92,7 +91,7 @@ class RuntimeAssertionsDataFlowExtras(
         private val expression: KtExpression
 ) : RuntimeAssertionInfo.DataFlowExtras {
     private val dataFlowValue by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        DataFlowValueFactory.createDataFlowValue(expression, expressionType, c)
+        c.dataFlowValueFactory.createDataFlowValue(expression, expressionType, c)
     }
 
     override val canBeNull: Boolean

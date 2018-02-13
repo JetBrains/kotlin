@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
@@ -115,7 +114,8 @@ public class ExpressionTypingServices {
             @NotNull ContextDependency contextDependency
     ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter, getLanguageVersionSettings()
+                trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter, getLanguageVersionSettings(),
+                expressionTypingComponents.dataFlowValueFactory
         );
         if (contextExpression != expression) {
             context = context.replaceExpressionContextProvider(arg -> arg == expression ? contextExpression : null);
@@ -157,7 +157,8 @@ public class ExpressionTypingServices {
         }
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
                 trace,
-                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, getLanguageVersionSettings()
+                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, getLanguageVersionSettings(),
+                expressionTypingComponents.dataFlowValueFactory
         ));
     }
 
@@ -225,7 +226,8 @@ public class ExpressionTypingServices {
                                                                                        expressionTypingComponents.overloadChecker);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, getLanguageVersionSettings()
+                trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, getLanguageVersionSettings(),
+                expressionTypingComponents.dataFlowValueFactory
         );
         KotlinTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 
@@ -285,9 +287,9 @@ public class ExpressionTypingServices {
                         statementExpression, newContext.replaceExpectedType(context.expectedType), coercionStrategyForLastExpression,
                         blockLevelVisitor);
                 if (result.getType() != null && statementExpression.getParent() instanceof KtBlockExpression) {
-                    DataFlowValue lastExpressionValue = DataFlowValueFactory.createDataFlowValue(
+                    DataFlowValue lastExpressionValue = expressionTypingComponents.dataFlowValueFactory.createDataFlowValue(
                             statementExpression, result.getType(), context);
-                    DataFlowValue blockExpressionValue = DataFlowValueFactory.createDataFlowValue(
+                    DataFlowValue blockExpressionValue = expressionTypingComponents.dataFlowValueFactory.createDataFlowValue(
                             (KtBlockExpression) statementExpression.getParent(), result.getType(), context);
                     result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(blockExpressionValue, lastExpressionValue,
                                                                                         expressionTypingComponents.languageVersionSettings));

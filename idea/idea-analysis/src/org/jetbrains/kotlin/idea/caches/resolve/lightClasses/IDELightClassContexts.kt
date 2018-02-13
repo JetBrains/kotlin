@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
@@ -338,6 +339,7 @@ object IDELightClassContexts {
             private val codegenAffectingAnnotations: CodegenAffectingAnnotations,
             private val callResolver: CallResolver,
             private val languageVersionSettings: LanguageVersionSettings,
+            private val dataFlowValueFactory: DataFlowValueFactory,
             constantExpressionEvaluator: ConstantExpressionEvaluator,
             storageManager: StorageManager
     ) : AnnotationResolverImpl(callResolver, constantExpressionEvaluator, storageManager) {
@@ -361,7 +363,8 @@ object IDELightClassContexts {
                     BasicCallResolutionContext.create(
                             trace, scope, CallMaker.makeCall(null, null, annotationEntry), TypeUtils.NO_EXPECTED_TYPE,
                             DataFlowInfoFactory.EMPTY, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                            true, languageVersionSettings
+                            true, languageVersionSettings,
+                            dataFlowValueFactory
                     ),
                     annotationEntry.calleeExpression!!.constructorReferenceExpression!!,
                     annotationConstructor.returnType

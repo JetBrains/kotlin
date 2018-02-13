@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -112,7 +112,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             val descriptor = context.declarationDescriptor ?: context.currentModule
             val ktType = bindingContext.getType(expression) ?: return null
 
-            val dataFlow = DataFlowValueFactory.createDataFlowValue(expression, ktType, bindingContext, descriptor)
+            val dataFlow = DataFlowValueFactoryImpl().createDataFlowValue(expression, ktType, bindingContext, descriptor)
             val isPrimitiveFn = KotlinBuiltIns::isPrimitiveTypeOrNullablePrimitiveType
 
             val languageVersionSettings = context.config.configuration.languageVersionSettings

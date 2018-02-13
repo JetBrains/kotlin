@@ -20,9 +20,11 @@ import com.intellij.refactoring.psi.SearchUtils
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -150,8 +152,10 @@ fun KtExpression.guessTypes(
     val theType1 = context.getType(this)
     if (theType1 != null && isAcceptable(theType1)) {
         val dataFlowInfo = context.getDataFlowInfoAfter(this)
-        val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module),
-                                                           languageVersionSettings)
+        val dataFlowValueFactory = this.getResolutionFacade().frontendService<DataFlowValueFactory>()
+        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(this, theType1, context, module)
+
+        val possibleTypes = dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings)
         return if (possibleTypes.isNotEmpty()) possibleTypes.toTypedArray() else arrayOf(theType1)
     }
 

@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSafeReceiver
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
@@ -66,7 +67,8 @@ class KotlinToResolvedCallTransformer(
     private val expressionTypingServices: ExpressionTypingServices,
     private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
     private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
-    private val moduleDescriptor: ModuleDescriptor
+    private val moduleDescriptor: ModuleDescriptor,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
     companion object {
         private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
@@ -99,7 +101,7 @@ class KotlinToResolvedCallTransformer(
                 val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
                     resultSubstitutor, context.trace, context, this, expressionTypingServices, argumentTypeResolver,
-                    doubleColonExpressionResolver, deprecationResolver, moduleDescriptor
+                    doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, dataFlowValueFactory
                 )
 
                 for (subKtPrimitive in candidate.subResolvedAtoms) {
@@ -347,7 +349,7 @@ class KotlinToResolvedCallTransformer(
         val trackingTrace = TrackingBindingTrace(trace)
         val newContext = context.replaceBindingTrace(trackingTrace)
         val diagnosticReporter =
-            DiagnosticReporterByTrackingStrategy(constantExpressionEvaluator, newContext, completedCallAtom.atom.psiKotlinCall)
+            DiagnosticReporterByTrackingStrategy(constantExpressionEvaluator, newContext, completedCallAtom.atom.psiKotlinCall, context.dataFlowValueFactory)
 
         val diagnosticHolder = KotlinDiagnosticsHolder.SimpleHolder()
         additionalDiagnosticReporter.reportAdditionalDiagnostics(completedCallAtom, resultingDescriptor, diagnosticHolder, diagnostics)

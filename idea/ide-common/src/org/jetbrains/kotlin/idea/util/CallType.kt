@@ -246,7 +246,8 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
                     is DoubleColonLHS.Expression -> {
                         val receiverValue = ExpressionReceiver.create(receiver, lhs.type, bindingContext)
                         return receiverValueTypes(receiverValue, lhs.dataFlowInfo, bindingContext,
-                                                  moduleDescriptor, stableSmartCastsOnly, languageVersionSettings)
+                                                  moduleDescriptor, stableSmartCastsOnly, languageVersionSettings,
+                                                  resolutionFacade.frontendService<DataFlowValueFactory>())
                                 .map { ReceiverType(it, 0) }
                     }
                 }
@@ -304,7 +305,8 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
     var receiverIndex = 0
 
     fun addReceiverType(receiverValue: ReceiverValue, implicit: Boolean) {
-        val types = receiverValueTypes(receiverValue, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly, languageVersionSettings)
+        val types = receiverValueTypes(receiverValue, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly, languageVersionSettings,
+                                       resolutionFacade.frontendService<DataFlowValueFactory>())
         types.mapTo(result) { ReceiverType(it, receiverIndex, implicit) }
         receiverIndex++
     }
@@ -323,16 +325,18 @@ private fun receiverValueTypes(
         bindingContext: BindingContext,
         moduleDescriptor: ModuleDescriptor,
         stableSmartCastsOnly: Boolean,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        dataFlowValueFactory: DataFlowValueFactory
 ): List<KotlinType> {
-    val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
+    val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
     return if (dataFlowValue.isStable || !stableSmartCastsOnly) { // we don't include smart cast receiver types for "unstable" receiver value to mark members grayed
         SmartCastManager().getSmartCastVariantsWithLessSpecificExcluded(
                 receiverValue,
                 bindingContext,
                 moduleDescriptor,
                 dataFlowInfo,
-                languageVersionSettings
+                languageVersionSettings,
+                dataFlowValueFactory
         )
     }
     else {

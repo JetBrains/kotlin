@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ReceiverKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -61,7 +62,8 @@ class KotlinResolutionCallbacksImpl(
     val argumentTypeResolver: ArgumentTypeResolver,
     val languageVersionSettings: LanguageVersionSettings,
     val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
-    val constantExpressionEvaluator: ConstantExpressionEvaluator
+    val constantExpressionEvaluator: ConstantExpressionEvaluator,
+    val dataFlowValueFactory: DataFlowValueFactory
 ) : KotlinResolutionCallbacks {
     val trace: BindingTrace = topLevelCallContext.trace
 
@@ -87,7 +89,8 @@ class KotlinResolutionCallbacksImpl(
         fun createCallArgument(ktExpression: KtExpression, typeInfo: KotlinTypeInfo) =
             createSimplePSICallArgument(
                 trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
-                CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo, languageVersionSettings
+                CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo, languageVersionSettings,
+                dataFlowValueFactory
             )
 
         val lambdaInfo = LambdaInfo(
@@ -168,7 +171,7 @@ class KotlinResolutionCallbacksImpl(
             trace.bindingContext,
             psiKotlinCall.resultDataFlowInfo,
             ExpressionReceiver.create(expression, returnType, trace.bindingContext),
-            languageVersionSettings
+            languageVersionSettings, dataFlowValueFactory
         )
     }
 

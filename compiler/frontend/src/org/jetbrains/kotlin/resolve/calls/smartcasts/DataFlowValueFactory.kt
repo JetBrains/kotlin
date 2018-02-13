@@ -50,10 +50,44 @@ import org.jetbrains.kotlin.types.isError
  * This class is intended to create data flow values for different kind of expressions.
  * Then data flow values serve as keys to obtain data flow information for these expressions.
  */
-object DataFlowValueFactory {
-
-    @JvmStatic
+interface DataFlowValueFactory {
     fun createDataFlowValue(
+        expression: KtExpression,
+        type: KotlinType,
+        resolutionContext: ResolutionContext<*>
+    ): DataFlowValue
+
+    fun createDataFlowValue(
+        expression: KtExpression,
+        type: KotlinType,
+        bindingContext: BindingContext,
+        containingDeclarationOrModule: DeclarationDescriptor
+    ): DataFlowValue
+
+    fun createDataFlowValueForStableReceiver(receiver: ReceiverValue): DataFlowValue
+
+    fun createDataFlowValue(
+        receiverValue: ReceiverValue,
+        resolutionContext: ResolutionContext<*>
+    ): DataFlowValue
+
+    fun createDataFlowValue(
+        receiverValue: ReceiverValue,
+        bindingContext: BindingContext,
+        containingDeclarationOrModule: DeclarationDescriptor
+    ): DataFlowValue
+
+    fun createDataFlowValueForProperty(
+        property: KtProperty,
+        variableDescriptor: VariableDescriptor,
+        bindingContext: BindingContext,
+        usageContainingModule: ModuleDescriptor?
+    ): DataFlowValue
+
+}
+class DataFlowValueFactoryImpl : DataFlowValueFactory {
+
+    override fun createDataFlowValue(
         expression: KtExpression,
         type: KotlinType,
         resolutionContext: ResolutionContext<*>
@@ -69,8 +103,7 @@ object DataFlowValueFactory {
         else -> false
     }
 
-    @JvmStatic
-    fun createDataFlowValue(
+    override fun createDataFlowValue(
         expression: KtExpression,
         type: KotlinType,
         bindingContext: BindingContext,
@@ -107,17 +140,14 @@ object DataFlowValueFactory {
         return DataFlowValue(if (result === IdentifierInfo.NO) ExpressionIdentifierInfo(expression) else result, type)
     }
 
-    @JvmStatic
-    fun createDataFlowValueForStableReceiver(receiver: ReceiverValue) = DataFlowValue(IdentifierInfo.Receiver(receiver), receiver.type)
+    override fun createDataFlowValueForStableReceiver(receiver: ReceiverValue) = DataFlowValue(IdentifierInfo.Receiver(receiver), receiver.type)
 
-    @JvmStatic
-    fun createDataFlowValue(
+    override fun createDataFlowValue(
         receiverValue: ReceiverValue,
         resolutionContext: ResolutionContext<*>
     ) = createDataFlowValue(receiverValue, resolutionContext.trace.bindingContext, resolutionContext.scope.ownerDescriptor)
 
-    @JvmStatic
-    fun createDataFlowValue(
+    override fun createDataFlowValue(
         receiverValue: ReceiverValue,
         bindingContext: BindingContext,
         containingDeclarationOrModule: DeclarationDescriptor
@@ -132,8 +162,7 @@ object DataFlowValueFactory {
         else -> throw UnsupportedOperationException("Unsupported receiver value: " + receiverValue::class.java.name)
     }
 
-    @JvmStatic
-    fun createDataFlowValueForProperty(
+    override fun createDataFlowValueForProperty(
         property: KtProperty,
         variableDescriptor: VariableDescriptor,
         bindingContext: BindingContext,
@@ -351,19 +380,6 @@ object DataFlowValueFactory {
         return true
     }
 
-    private fun propertyKind(propertyDescriptor: PropertyDescriptor, usageModule: ModuleDescriptor?): Kind {
-        if (propertyDescriptor.isVar) return MUTABLE_PROPERTY
-        if (propertyDescriptor.isOverridable) return PROPERTY_WITH_GETTER
-        if (!hasDefaultGetter(propertyDescriptor)) return PROPERTY_WITH_GETTER
-        if (!invisibleFromOtherModules(propertyDescriptor)) {
-            val declarationModule = DescriptorUtils.getContainingModule(propertyDescriptor)
-            if (usageModule == null || usageModule != declarationModule) {
-                return ALIEN_PUBLIC_PROPERTY
-            }
-        }
-        return STABLE_VALUE
-    }
-
     private fun variableKind(
         variableDescriptor: VariableDescriptor,
         usageModule: ModuleDescriptor?,
@@ -407,41 +423,56 @@ object DataFlowValueFactory {
             CAPTURED_VARIABLE
     }
 
-    /**
-     * Determines whether a variable with a given descriptor is stable or not at the given usage place.
-     *
-     *
-     * Stable means that the variable value cannot change. The simple (non-property) variable is considered stable if it's immutable (val).
-     *
-     *
-     * If the variable is a property, it's considered stable if it's immutable (val) AND it's final (not open) AND
-     * the default getter is in use (otherwise nobody can guarantee that a getter is consistent) AND
-     * (it's private OR internal OR used at the same module where it's defined).
-     * The last check corresponds to a risk of changing property definition in another module, e.g. from "val" to "var".
+    companion object {
+        /**
+         * Determines whether a variable with a given descriptor is stable or not at the given usage place.
+         *
+         *
+         * Stable means that the variable value cannot change. The simple (non-property) variable is considered stable if it's immutable (val).
+         *
+         *
+         * If the variable is a property, it's considered stable if it's immutable (val) AND it's final (not open) AND
+         * the default getter is in use (otherwise nobody can guarantee that a getter is consistent) AND
+         * (it's private OR internal OR used at the same module where it's defined).
+         * The last check corresponds to a risk of changing property definition in another module, e.g. from "val" to "var".
 
-     * @param variableDescriptor    descriptor of a considered variable
-     * *
-     * @param usageModule a module with a considered usage place, or null if it's not known (not recommended)
-     * *
-     * @return true if variable is stable, false otherwise
-     */
-    fun isStableValue(
-        variableDescriptor: VariableDescriptor,
-        usageModule: ModuleDescriptor?
-    ): Boolean {
-        if (variableDescriptor.isVar) return false
-        return variableDescriptor !is PropertyDescriptor || propertyKind(variableDescriptor, usageModule) === STABLE_VALUE
-    }
+         * @param variableDescriptor    descriptor of a considered variable
+         * *
+         * @param usageModule a module with a considered usage place, or null if it's not known (not recommended)
+         * *
+         * @return true if variable is stable, false otherwise
+         */
+        fun isStableValue(
+            variableDescriptor: VariableDescriptor,
+            usageModule: ModuleDescriptor?
+        ): Boolean {
+            if (variableDescriptor.isVar) return false
+            return variableDescriptor !is PropertyDescriptor || propertyKind(variableDescriptor, usageModule) === STABLE_VALUE
+        }
 
-    private fun invisibleFromOtherModules(descriptor: DeclarationDescriptorWithVisibility): Boolean {
-        if (Visibilities.INVISIBLE_FROM_OTHER_MODULES.contains(descriptor.visibility)) return true
+        private fun propertyKind(propertyDescriptor: PropertyDescriptor, usageModule: ModuleDescriptor?): Kind {
+            if (propertyDescriptor.isVar) return MUTABLE_PROPERTY
+            if (propertyDescriptor.isOverridable) return PROPERTY_WITH_GETTER
+            if (!hasDefaultGetter(propertyDescriptor)) return PROPERTY_WITH_GETTER
+            if (!invisibleFromOtherModules(propertyDescriptor)) {
+                val declarationModule = DescriptorUtils.getContainingModule(propertyDescriptor)
+                if (usageModule == null || usageModule != declarationModule) {
+                    return ALIEN_PUBLIC_PROPERTY
+                }
+            }
+            return STABLE_VALUE
+        }
 
-        val containingDeclaration = descriptor.containingDeclaration
-        return containingDeclaration is DeclarationDescriptorWithVisibility && invisibleFromOtherModules(containingDeclaration)
-    }
+        private fun hasDefaultGetter(propertyDescriptor: PropertyDescriptor): Boolean {
+            val getter = propertyDescriptor.getter
+            return getter == null || getter.isDefault
+        }
 
-    private fun hasDefaultGetter(propertyDescriptor: PropertyDescriptor): Boolean {
-        val getter = propertyDescriptor.getter
-        return getter == null || getter.isDefault
+        private fun invisibleFromOtherModules(descriptor: DeclarationDescriptorWithVisibility): Boolean {
+            if (Visibilities.INVISIBLE_FROM_OTHER_MODULES.contains(descriptor.visibility)) return true
+
+            val containingDeclaration = descriptor.containingDeclaration
+            return containingDeclaration is DeclarationDescriptorWithVisibility && invisibleFromOtherModules(containingDeclaration)
+        }
     }
 }

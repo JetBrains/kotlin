@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
@@ -87,7 +86,6 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory.createDataFlowValue;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
@@ -139,14 +137,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return false;
     }
 
-    private static void checkNull(
+    private void checkNull(
             @NotNull KtSimpleNameExpression expression,
             @NotNull ExpressionTypingContext context,
             @Nullable KotlinType type
     ) {
         // Receivers are normally analyzed at resolve, with an exception of KT-10175
         if (type != null && !KotlinTypeKt.isError(type) && !isLValueOrUnsafeReceiver(expression)) {
-            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context);
+            DataFlowValue dataFlowValue = components.dataFlowValueFactory.createDataFlowValue(expression, type, context);
             Nullability nullability = context.dataFlowInfo.getStableNullability(dataFlowValue);
             if (!nullability.canBeNonNull() && nullability.canBeNull()) {
                 if (isDangerousWithNull(expression, context)) {
@@ -182,8 +180,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinTypeInfo result = facade.getTypeInfo(innerExpression, context);
         KotlinType resultType = result.getType();
         if (resultType != null) {
-            DataFlowValue innerValue = DataFlowValueFactory.createDataFlowValue(innerExpression, resultType, context);
-            DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, resultType, context);
+            DataFlowValue innerValue = components.dataFlowValueFactory.createDataFlowValue(innerExpression, resultType, context);
+            DataFlowValue resultValue = components.dataFlowValueFactory.createDataFlowValue(expression, resultType, context);
             result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(resultValue, innerValue,
                                                                                 components.languageVersionSettings));
         }
@@ -321,7 +319,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             checkBinaryWithTypeRHS(expression, context, targetType, subjectType);
             DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
             if (operationType == AS_KEYWORD) {
-                DataFlowValue value = createDataFlowValue(left, subjectType, context);
+                DataFlowValue value = components.dataFlowValueFactory.createDataFlowValue(left, subjectType, context);
                 typeInfo = typeInfo.replaceDataFlowInfo(dataFlowInfo.establishSubtyping(value, targetType,
                                                                                         components.languageVersionSettings));
             }
@@ -789,7 +787,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     checkLValue(context.trace, context, baseExpression, stubExpression, expression);
                 }
                 // x++ type is x type, but ++x type is x.inc() type
-                DataFlowValue receiverValue = DataFlowValueFactory.createDataFlowValue(
+                DataFlowValue receiverValue = components.dataFlowValueFactory.createDataFlowValue(
                         (ReceiverValue) call.getExplicitReceiver(), contextWithExpectedType);
                 if (expression instanceof KtPrefixExpression) {
                     result = returnType;
@@ -797,7 +795,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 else {
                     result = receiverType;
                     // Also record data flow information for x++ value (= x)
-                    DataFlowValue returnValue = DataFlowValueFactory.createDataFlowValue(expression, receiverType, contextWithExpectedType);
+                    DataFlowValue returnValue = components.dataFlowValueFactory.createDataFlowValue(expression, receiverType, contextWithExpectedType);
                     typeInfo = typeInfo.replaceDataFlowInfo(typeInfo.getDataFlowInfo().assign(returnValue, receiverValue,
                                                                                               components.languageVersionSettings));
                 }
@@ -854,7 +852,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, TypeUtils.makeNotNullable(baseType)));
         }
         else {
-            DataFlowValue value = createDataFlowValue(baseExpression, baseType, context);
+            DataFlowValue value = components.dataFlowValueFactory.createDataFlowValue(baseExpression, baseType, context);
             baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.nullValue(components.builtIns),
                                                                                    components.languageVersionSettings));
         }
@@ -896,7 +894,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     // Returns `true` if warnings should be reported for left-hand side of elvis and not-null (!!) assertion
-    private static boolean isKnownToBeNotNull(
+    private boolean isKnownToBeNotNull(
             @NotNull KtExpression expression,
             @Nullable KotlinType ktType,
             @NotNull ExpressionTypingContext context
@@ -907,7 +905,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         if (!TypeUtils.isNullableType(ktType)) return true;
 
-        DataFlowValue dataFlowValue = createDataFlowValue(expression, ktType, context);
+        DataFlowValue dataFlowValue = components.dataFlowValueFactory.createDataFlowValue(expression, ktType, context);
         return context.dataFlowInfo.getStableNullability(dataFlowValue) == Nullability.NOT_NULL;
     }
 
@@ -1287,7 +1285,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             leftType == null && KotlinBuiltIns.isNothing(rightType)) return TypeInfoFactoryKt.noTypeInfo(dataFlowInfo);
 
         if (leftType != null) {
-            DataFlowValue leftValue = createDataFlowValue(left, leftType, context);
+            DataFlowValue leftValue = components.dataFlowValueFactory.createDataFlowValue(left, leftType, context);
             DataFlowInfo rightDataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
             boolean jumpInRight = KotlinBuiltIns.isNothing(rightType);
             DataFlowValue nullValue = DataFlowValue.nullValue(components.builtIns);
@@ -1299,12 +1297,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                                 components.languageVersionSettings);
                 }
             }
-            DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, type, context);
+            DataFlowValue resultValue = components.dataFlowValueFactory.createDataFlowValue(expression, type, context);
             dataFlowInfo =
                     dataFlowInfo.assign(resultValue, leftValue, components.languageVersionSettings)
                     .disequate(resultValue, nullValue, components.languageVersionSettings);
             if (!jumpInRight) {
-                DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context);
+                DataFlowValue rightValue = components.dataFlowValueFactory.createDataFlowValue(right, rightType, context);
                 rightDataFlowInfo = rightDataFlowInfo.assign(resultValue, rightValue, components.languageVersionSettings);
                 dataFlowInfo = dataFlowInfo.or(rightDataFlowInfo);
             }
@@ -1327,7 +1325,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private static DataFlowInfo establishSubtypingForTypeRHS(
+    private DataFlowInfo establishSubtypingForTypeRHS(
             @NotNull KtBinaryExpressionWithTypeRHS left,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ExpressionTypingContext context,
@@ -1338,7 +1336,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             KtExpression underSafeAs = left.getLeft();
             KotlinType underSafeAsType = context.trace.getType(underSafeAs);
             if (underSafeAsType != null) {
-                DataFlowValue underSafeAsValue = createDataFlowValue(underSafeAs, underSafeAsType, context);
+                DataFlowValue underSafeAsValue = components.dataFlowValueFactory.createDataFlowValue(underSafeAs, underSafeAsType, context);
                 KotlinType targetType = context.trace.get(BindingContext.TYPE, left.getRight());
                 if (targetType != null) {
                     return dataFlowInfo.establishSubtyping(underSafeAsValue, targetType, languageVersionSettings);

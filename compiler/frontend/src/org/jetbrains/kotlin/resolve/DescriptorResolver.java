@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
@@ -88,6 +89,7 @@ public class DescriptorResolver {
     private final SyntheticResolveExtension syntheticResolveExtension;
     private final TypeApproximator typeApproximator;
     private final DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer;
+    private final DataFlowValueFactory dataFlowValueFactory;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -105,7 +107,8 @@ public class DescriptorResolver {
             @NotNull WrappedTypeFactory wrappedTypeFactory,
             @NotNull Project project,
             @NotNull TypeApproximator approximator,
-            @NotNull DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer
+            @NotNull DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer,
+            @NotNull DataFlowValueFactory dataFlowValueFactory
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -123,6 +126,7 @@ public class DescriptorResolver {
         this.syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
         typeApproximator = approximator;
         this.declarationReturnTypeSanitizer = declarationReturnTypeSanitizer;
+        this.dataFlowValueFactory = dataFlowValueFactory;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -340,7 +344,8 @@ public class DescriptorResolver {
                                 scope,
                                 destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
                                 ExpressionTypingContext.newContext(
-                                        trace, scopeForDestructuring, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings
+                                        trace, scopeForDestructuring, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE,
+                                        languageVersionSettings, dataFlowValueFactory
                                 )
                         );
 
@@ -785,7 +790,7 @@ public class DescriptorResolver {
         KtExpression initializer = destructuringDeclaration.getInitializer();
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scopeForDeclarationResolution, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings
+                trace, scopeForDeclarationResolution, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, dataFlowValueFactory
         );
 
         ExpressionReceiver receiver = createReceiverForDestructuringDeclaration(destructuringDeclaration, context);

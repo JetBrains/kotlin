@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbacksImpl
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.lazy.*
@@ -64,6 +65,7 @@ fun StorageComponentContainer.configureModule(
 private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<SupertypeLoopCheckerImpl>()
     useImpl<KotlinResolutionStatelessCallbacksImpl>()
+    useImpl<DataFlowValueFactoryImpl>()
 
     useImpl<ExperimentalUsageChecker>()
     useImpl<ExperimentalUsageChecker.Overrides>()
