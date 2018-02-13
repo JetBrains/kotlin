@@ -163,6 +163,43 @@ class MultiplatformSpecification extends BaseKonanSpecification {
         project.createRunner().withArguments(":build").build()
     }
 
+    def 'Plugin should allow setting several common source sets'() {
+        expect:
+        def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
+            def commonDirectory = createCommonProject(it)
+            Paths.get(commonDirectory.absolutePath, "build.gradle").append("""
+                sourceSets {
+                    common.kotlin.srcDir 'src/common/kotlin'
+                }
+                """.stripIndent())
+
+            createCommonSource(commonDirectory,
+                    ["src", "common", "kotlin"],
+                    "common.kt",
+                    "expect fun bar(): Int")
+
+            createCommonSource(commonDirectory,
+                    ["src", "main", "kotlin"],
+                    "main.kt",
+                    "expect fun foo() : Int")
+
+            it.generateSrcFile("platform.kt", "actual fun bar() = 42\nactual fun foo() = 43")
+            it.buildFile.append("""
+                konanArtifacts {
+                    library('foo') {
+                        enableMultiplatform true
+                        commonSourceSets 'common', 'main'
+                    }
+                }
+
+                dependencies {
+                    expectedBy project(':common')
+                }
+                """.stripIndent())
+        }
+        project.createRunner().withArguments(":build").build()
+    }
+
     def 'Build should fail if the expectedBy dependency is not a project one'() {
         when:
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->

@@ -242,12 +242,12 @@ project to a common project:
     }
 
 When a common project is added as an `expectedBy` dependency, all the artifacts with the multiplatform support enabled
-will use it's `main` source set as a common module. One may specify a custom source set for each artifact using the
-`commonSourceSet` DSL method. In this case the multiplatform support will be also enabled for this artifact.
+will use it's `main` source set as a common module. One may specify custom source sets for each artifact using the
+`commonSourceSets` DSL method. In this case the multiplatform support will be also enabled for this artifact.
 
     konanArtifacts {
         program('foo') {
-            commonSourceSet 'customSourceSet'
+            commonSourceSets 'customSourceSet', 'anotherCustomSourceSet'
         }
     }
 
@@ -279,7 +279,7 @@ for each an artifact defined in a `konanArtifacts` block. Such a task may have d
     |`enableAssertions   `|`boolean`                   |Is the assertion support enabled                          |
     |`measureTime        `|`boolean`                   |Does the compiler print phase time                        |
     |`enableMultiplatform`|`boolean`                   |Is multiplatform support enabled for this artifact        |
-    |`commonSourceSet`    |`String`                    |Name of a source set used as a common module              |
+    |`commonSourceSets`   |`Collection<String>`        |Names of source sets used as a common module              |
 
     ##### Properties available for a cinterop task (task building an interoperability library):
 
@@ -573,7 +573,7 @@ tables below.
 
     apply plugin: 'konan'
     
-    // In this example common code is located in 'bar' source set of ':common' project.
+    // In this example common code is located in 'foo' and 'bar' source sets of ':common' project.
 
     konanArtifacts {
         // All the artifact types except interop libraries may use common modules.
@@ -583,8 +583,9 @@ tables below.
             // Enable multiplatform support for this artifact.
             enableMultiplatform true
             
-            // Set a custom name for a source set used as a common module.
-            commonSourceSet 'bar'
+            // Set a custom names for source sets used as a common module.
+            // The default source set is 'main'
+            commonSourceSets 'foo', 'bar'
         }
     }
 

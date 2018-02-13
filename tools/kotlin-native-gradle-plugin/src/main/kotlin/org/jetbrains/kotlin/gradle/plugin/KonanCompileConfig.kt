@@ -52,6 +52,7 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     override fun nativeLibraries(libs: FileCollection) = forEach { it.nativeLibraries(libs) }
 
     override fun commonSourceSet(sourceSetName: String) = forEach { it.commonSourceSet(sourceSetName) }
+    override fun commonSourceSets(vararg sourceSetNames: String) = forEach { it.commonSourceSets(*sourceSetNames) }
     override fun enableMultiplatform(flag: Boolean) = forEach { it.enableMultiplatform(flag) }
 
     override fun linkerOpts(values: List<String>) = forEach { it.linkerOpts(values) }

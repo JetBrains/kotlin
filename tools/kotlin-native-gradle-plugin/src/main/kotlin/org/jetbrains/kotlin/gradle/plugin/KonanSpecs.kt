@@ -55,6 +55,7 @@ interface KonanCompileSpec: KonanBuildingSpec {
     // DSL. Multiplatform projects
     fun enableMultiplatform(flag: Boolean)
     fun commonSourceSet(sourceSetName: String)
+    fun commonSourceSets(vararg sourceSetNames: String)
 
     // DSL. Other parameters.
 

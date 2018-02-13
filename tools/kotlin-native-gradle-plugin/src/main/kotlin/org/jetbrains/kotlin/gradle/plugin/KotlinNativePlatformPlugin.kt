@@ -40,15 +40,17 @@ open class KotlinNativePlatformPlugin: KotlinPlatformImplementationPluginBase("n
                     .withType(KonanCompileTask::class.java)
                     .filter { it.enableMultiplatform }
                     .forEach { task: KonanCompileTask ->
-                val commonSourceSet = commonProject.sourceSets.findByName(task.commonSourceSet) ?:
-                        throw GradleException("Cannot find a source set with name '${task.commonSourceSet}' " +
-                                "in a common project '${commonProject.path}' " +
-                                "for an artifact '${task.artifactName}' " +
-                                "in a platform project '${platformProject.path}'")
+                        task.commonSourceSets.forEach { commonSourceSetName ->
+                            val commonSourceSet = commonProject.sourceSets.findByName(commonSourceSetName) ?:
+                            throw GradleException("Cannot find a source set with name '${commonSourceSetName}' " +
+                                    "in a common project '${commonProject.path}' " +
+                                    "for an artifact '${task.artifactName}' " +
+                                    "in a platform project '${platformProject.path}'")
 
-                commonSourceSet.kotlin!!.srcDirs.forEach {
-                    task.commonSrcDir(it)
-                }
+                            commonSourceSet.kotlin!!.srcDirs.forEach {
+                                task.commonSrcDir(it)
+                            }
+                        }
             }
         }
     }

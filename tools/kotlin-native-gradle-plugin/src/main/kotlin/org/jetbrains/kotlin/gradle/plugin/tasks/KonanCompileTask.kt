@@ -51,7 +51,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     // Multiplatform support --------------------------------------------------
 
-    @Input var commonSourceSet = "main"
+    @Input var commonSourceSets = listOf("main")
 
     @Internal var enableMultiplatform = false
 
@@ -158,7 +158,12 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     }
 
     override fun commonSourceSet(sourceSetName: String) {
-        commonSourceSet = sourceSetName
+        commonSourceSets = listOf(sourceSetName)
+        enableMultiplatform(true)
+    }
+
+    override fun commonSourceSets(vararg sourceSetNames: String) {
+        commonSourceSets = sourceSetNames.toList()
         enableMultiplatform(true)
     }
 
