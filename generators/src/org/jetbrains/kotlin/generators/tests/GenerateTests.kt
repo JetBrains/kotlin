@@ -139,9 +139,6 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
-import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
-import org.jetbrains.kotlin.jps.incremental.AbstractJsProtoComparisonTest
-import org.jetbrains.kotlin.jps.incremental.AbstractJvmProtoComparisonTest
 import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
