@@ -29,10 +29,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isError
 
-class SpecifyExplicitLambdaSignatureIntention :
-    SelfTargetingIntention<KtLambdaExpression>(KtLambdaExpression::class.java, "Specify explicit lambda signature"), LowPriorityAction {
+class SpecifyExplicitLambdaSignatureIntention : SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(
+    KtLambdaExpression::class.java, "Specify explicit lambda signature"
+), LowPriorityAction {
 
-    override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
+    override fun isApplicableTo(element: KtLambdaExpression): Boolean {
         if (element.functionLiteral.arrow != null && element.valueParameters.all { it.typeReference != null }) return false
         val functionDescriptor = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.FUNCTION, element.functionLiteral] ?: return false
         return functionDescriptor.valueParameters.none { it.type.isError }
