@@ -113,7 +113,8 @@ private fun ExpressionCodegen.isArraySizeAccess(expression: KtExpression): Boole
     return when {
         expression is KtDotQualifiedExpression -> {
             val selector = expression.selectorExpression
-            asmType(bindingContext.getType(expression.receiverExpression)!!).sort == Type.ARRAY &&
+            val type = bindingContext.getType(expression.receiverExpression) ?: return false
+            asmType(type).sort == Type.ARRAY &&
                     selector is KtNameReferenceExpression &&
                     selector.text == "size"
         }

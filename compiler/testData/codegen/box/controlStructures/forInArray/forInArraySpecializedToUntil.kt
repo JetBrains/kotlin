@@ -124,6 +124,17 @@ fun checkReversedIntArray(): Boolean {
     return true
 }
 
+fun checkIntArrayMethodCallBound(): Boolean {
+    val intArray = intArrayOf(1, 2, 3)
+    var start = 0
+    var sum = 0
+    for (i in 0..Math.min(intArray.size, 10) - 1) {
+        sum += intArray[i]
+    }
+    if (sum != 6) return false
+    return true
+}
+
 fun box(): String {
     // Check that the specialization of 'for (i in 0..array.size-1)' to 'for (i in 0 until array.size)' does not fail on
     // any kind of arrays.
@@ -139,6 +150,7 @@ fun box(): String {
     if (!checkWithArrayUpdate()) return "Failure"
     if (!checkIntArrayMinusArbitraryConstant()) return "Failure"
     if (!checkReversedIntArray()) return "Failure"
+    if (!checkIntArrayMethodCallBound()) return "Failure"
 
     return "OK"
 }
