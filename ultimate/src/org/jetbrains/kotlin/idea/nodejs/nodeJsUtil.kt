@@ -10,7 +10,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.idea.js.shouldUseJpsOutput
+import org.jetbrains.kotlin.idea.framework.isGradleModule
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.util.*
@@ -32,7 +32,7 @@ private fun addSingleModulePaths(target: Module, result: MutableList<String>) {
 }
 
 private fun getNodeJsClasspath(module: Module): List<String> {
-    if (!module.shouldUseJpsOutput) return emptyList()
+    if (module.isGradleModule()) return emptyList()
 
     val result = ArrayList<String>()
     ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule {
