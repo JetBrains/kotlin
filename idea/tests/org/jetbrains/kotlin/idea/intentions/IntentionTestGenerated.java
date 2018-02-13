@@ -14682,6 +14682,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("cursorOnRightBrace.kt")
+        public void testCursorOnRightBrace() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/cursorOnRightBrace.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("delegate.kt")
         public void testDelegate() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/delegate.kt");
@@ -14715,12 +14721,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("emptyParamListWithoutItWithArrow.kt")
         public void testEmptyParamListWithoutItWithArrow() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/emptyParamListWithoutItWithArrow.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("invalidCursorPosition.kt")
-        public void testInvalidCursorPosition() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/invalidCursorPosition.kt");
             doTest(fileName);
         }
 
