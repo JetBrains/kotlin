@@ -55,6 +55,7 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: Context) {
 
     // Generate missing external stubs:
     // TODO: ModuleGenerator::generateUnboundSymbolsAsDependencies(IRModuleFragment) is private function :/
+    @Suppress("DEPRECATION")
     ExternalDependenciesGenerator(symbolTable = context.psi2IrGeneratorContext.symbolTable, irBuiltIns = context.irBuiltIns).generateUnboundSymbolsAsDependencies(this)
 
     // Merge duplicated module and package declarations:

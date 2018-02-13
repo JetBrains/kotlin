@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -195,7 +197,7 @@ private class ExpressionValuesExtractor(val returnableBlockValues: Map<IrReturna
             else -> {
                 if ((expression.type.isUnit() || expression.type.isNothing())) {
                     block(IrGetObjectValueImpl(expression.startOffset, expression.endOffset,
-                            expression.type, (expression.type.constructor.declarationDescriptor as ClassDescriptor)))
+                            expression.type, IrClassSymbolImpl(expression.type.constructor.declarationDescriptor as ClassDescriptor)))
                 }
                 else TODO(ir2stringWhole(expression))
             }
@@ -560,7 +562,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                             is IrDelegatingConstructorCall -> {
                                 val thiz = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                        (descriptor as ConstructorDescriptor).constructedClass.thisAsReceiverParameter)
+                                        createValueSymbol((descriptor as ConstructorDescriptor).constructedClass.thisAsReceiverParameter))
                                 val arguments = listOf(thiz) + value.getArguments().map { it.second }
                                 DataFlowIR.Node.StaticCall(
                                         symbolTable.mapFunction(value.descriptor),

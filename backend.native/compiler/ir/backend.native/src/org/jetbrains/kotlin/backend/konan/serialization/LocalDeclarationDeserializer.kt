@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirementTable
-import org.jetbrains.kotlin.types.KotlinType
 
 // This class knows how to construct contexts for 
 // MemberDeserializer to deserialize descriptors declared in IR.
@@ -101,12 +100,7 @@ class LocalDeclarationDeserializer(val rootDescriptor: DeclarationDescriptor) {
         contextStack.pop()
     }
 
-    fun deserializeInlineType(type: ProtoBuf.Type): KotlinType {
-
-        val result = typeDeserializer.type(type)
-
-        return result
-    }
+    fun deserializeInlineType(type: ProtoBuf.Type) = typeDeserializer.type(type)
 
     fun deserializeClass(irProto: KonanIr.KotlinDescriptor): ClassDescriptor {
         return DeserializedClassDescriptor(parentContext, irProto.irLocalDeclaration.descriptor.clazz, nameResolver, SourceElement.NO_SOURCE)
@@ -121,9 +115,8 @@ class LocalDeclarationDeserializer(val rootDescriptor: DeclarationDescriptor) {
 
        val proto = irProto.irLocalDeclaration.descriptor.constructor
        val isPrimary = !Flags.IS_SECONDARY.get(proto.flags)
-       val constructor = memberDeserializer.loadConstructor(proto, isPrimary)
 
-       return constructor
+        return memberDeserializer.loadConstructor(proto, isPrimary)
     }
 
     fun deserializeProperty(irProto: KonanIr.KotlinDescriptor): VariableDescriptor {
@@ -138,18 +131,17 @@ class LocalDeclarationDeserializer(val rootDescriptor: DeclarationDescriptor) {
         }
     }
 
-    fun propertyToVariable(property: PropertyDescriptor): LocalVariableDescriptor {
-        val variable = LocalVariableDescriptor(
+    private fun propertyToVariable(property: PropertyDescriptor): LocalVariableDescriptor {
+        // TODO: Should we transform the getter and the setter too?
+        @Suppress("DEPRECATION")
+        return LocalVariableDescriptor(
             property.containingDeclaration,
             property.annotations,
             property.name,
             property.type,
-            property.isVar, 
+            property.isVar,
             property.isDelegated,
             SourceElement.NO_SOURCE)
-
-        // TODO: Should we transform the getter and the setter too?
-        return variable
     }
 }
 

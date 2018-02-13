@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -100,7 +102,7 @@ internal class InlineConstructorsTransformation(val context: Context): IrElement
         val newThisGetValue = IrGetValueImpl(                                                       // Create new expression, representing access the new variable.
             startOffset = 0,
             endOffset   = 0,
-            descriptor  = thisVariable.descriptor
+            symbol      = createValueSymbol(thisVariable.descriptor)
         )
 
         val classDescriptor = delegatingCall.descriptor.constructedClass
@@ -119,7 +121,7 @@ internal class InlineConstructorsTransformation(val context: Context): IrElement
             statements  = newStatements
         )
 
-        val returnThis = IrReturnImpl(0, 0, functionDescriptor, block)
+        val returnThis = IrReturnImpl(0, 0, createFunctionSymbol(functionDescriptor), block)
 
         statements.clear()
         statements += returnThis
@@ -127,12 +129,13 @@ internal class InlineConstructorsTransformation(val context: Context): IrElement
 
     //-------------------------------------------------------------------------//
 
-    fun generateIrCall(expression: IrDelegatingConstructorCallImpl): IrVariable {
+    private fun generateIrCall(expression: IrDelegatingConstructorCallImpl): IrVariable {
 
         val newExpression = IrCallImpl(
             expression.startOffset,
             expression.endOffset,
             expression.descriptor.returnType,
+            expression.symbol,
             expression.descriptor,
             expression.typeArguments,
             expression.origin
@@ -143,12 +146,10 @@ internal class InlineConstructorsTransformation(val context: Context): IrElement
             }
         }
 
-        val newVariable = currentScope!!.scope.createTemporaryVariable(                      // Create new variable and init it with constructor call.
+        return currentScope!!.scope.createTemporaryVariable(                      // Create new variable and init it with constructor call.
             irExpression = newExpression,
             nameHint     = newExpression.descriptor.fqNameSafe.toString() + ".this",
             isMutable    = false)
-
-        return newVariable
     }
 
     //-------------------------------------------------------------------------//
