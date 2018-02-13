@@ -613,6 +613,24 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/sealedClassWithAllSubclasses/sealedClassWithAllSubclasses.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_sealedClassWithAllSubclasses_SealedClassWithAllSubclasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/sealedClassWithAllSubclasses/sealedClassWithAllSubclasses.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/sealedClassWithSkippedSubclasses/sealedClassWithSkippedSubclasses.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_sealedClassWithSkippedSubclasses_SealedClassWithSkippedSubclasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/sealedClassWithSkippedSubclasses/sealedClassWithSkippedSubclasses.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/sealedSubclassWithSkippedRoot/sealedSubclassWithSkippedRoot.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_sealedSubclassWithSkippedRoot_SealedSubclassWithSkippedRoot() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/sealedSubclassWithSkippedRoot/sealedSubclassWithSkippedRoot.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/selfReferences/selfReferences.test")
     public void testKotlin_moveTopLevelDeclarations_misc_selfReferences_SelfReferences() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/selfReferences/selfReferences.test");
