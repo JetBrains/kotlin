@@ -29,16 +29,21 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
     protected open val projectName = "kaptIncrementalCompilationProject"
 
     private fun getProject() =
-            Project(projectName).apply {
-                setupWorkingDir()
-                val buildGradle = projectDir.parentFile.getFileByName("build.gradle")
-                buildGradle.modify { it.replace(GENERATE_STUBS_PLACEHOLDER, shouldUseStubs.toString()) }
+        Project(
+            projectName,
+            // When running with original kapt, use Gradle 3.5, because separate classes dirs (4.0+) are not supported
+            if (useKapt3) GradleVersionRequired.None else GradleVersionRequired.Exact("3.5")
+        ).apply {
+            setupWorkingDir()
+            val buildGradle = projectDir.parentFile.getFileByName("build.gradle")
+            buildGradle.modify { it.replace(GENERATE_STUBS_PLACEHOLDER, shouldUseStubs.toString()) }
 
-                if (useKapt3) {
-                    buildGradle.modify { it.replace(APPLY_KAPT3_PLUGIN_PLACEHOLDER, APPLY_KAPT3_PLUGIN) }
-                    allowOriginalKapt()
-                }
+            if (useKapt3) {
+                buildGradle.modify { it.replace(APPLY_KAPT3_PLUGIN_PLACEHOLDER, APPLY_KAPT3_PLUGIN) }
+            } else {
+                allowOriginalKapt()
             }
+        }
 
     private val annotatedElements =
             arrayOf("A", "funA", "valA", "funUtil", "valUtil", "B", "funB", "valB", "useB")

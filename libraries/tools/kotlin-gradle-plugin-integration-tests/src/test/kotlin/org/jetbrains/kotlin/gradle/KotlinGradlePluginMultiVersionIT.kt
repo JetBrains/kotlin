@@ -11,6 +11,7 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
     @Test
     fun testKaptProcessorPath() {
         val project = Project("kaptSimple", gradleVersion)
+        project.allowOriginalKapt()
 
         project.build("build") {
             assertSuccessful()
