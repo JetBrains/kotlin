@@ -238,7 +238,7 @@ fun configureFacetByCompilerArguments(kotlinFacet: KotlinFacet, argsInfo: ArgsIn
 
 private fun getExplicitTestOutputPath(moduleNode: DataNode<ModuleData>, platformKind: TargetPlatformKind<*>?): String? {
     if (platformKind !is TargetPlatformKind.JavaScript) return null
-    val k2jsArgumentList = moduleNode.compilerArgumentsBySourceSet?.get(sourceSet)?.currentArguments ?: return null
+    val k2jsArgumentList = moduleNode.compilerArgumentsBySourceSet?.get("test")?.currentArguments ?: return null
     return K2JSCompilerArguments().apply { parseCommandLineArguments(k2jsArgumentList, this) }.outputFile
 }
 
