@@ -112,7 +112,7 @@ private class TargetManagerImpl(val userRequest: String?, val hostManager: HostM
     override val targetSuffix get() = target.detailedName
 }
 
-open class HostManager internal constructor(protected val distribution: Distribution = Distribution()) {
+open class HostManager(protected val distribution: Distribution = Distribution()) {
 
     fun targetManager(userRequest: String? = null): TargetManager = TargetManagerImpl(userRequest, this)
 

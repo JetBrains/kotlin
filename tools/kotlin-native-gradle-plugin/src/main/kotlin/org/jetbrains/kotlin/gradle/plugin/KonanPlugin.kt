@@ -23,8 +23,8 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.customerDistribution
 import java.io.File
 import java.util.*
@@ -74,13 +74,13 @@ internal val Project.konanArtifactsContainer: NamedDomainObjectContainer<KonanBu
     get() = extensions.getByName(KonanPlugin.ARTIFACTS_CONTAINER_NAME)
             as NamedDomainObjectContainer<KonanBuildingConfig<*>>
 
-internal val Project.platformManager: PlatformManager
-    get() = findProperty("platformManager") as PlatformManager? ?:
-            PlatformManager(customerDistribution(konanHome))
+internal val Project.hostManager: HostManager
+    get() = findProperty("hostManager") as HostManager? ?:
+        HostManager(customerDistribution(konanHome))
 
 internal val Project.konanTargets: List<KonanTarget>
-    get() = platformManager.toKonanTargets(konanExtension.targets)
-                .filter{ platformManager.isEnabled(it) }
+    get() = hostManager.toKonanTargets(konanExtension.targets)
+                .filter{ hostManager.isEnabled(it) }
                 .distinct()
 
 @Suppress("UNCHECKED_CAST")

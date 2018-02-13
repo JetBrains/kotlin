@@ -46,11 +46,11 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     internal val aggregateBuildTask: Task
 
     private val konanTargets: Iterable<KonanTarget>
-        get() = project.platformManager.toKonanTargets(targets).distinct()
+        get() = project.hostManager.toKonanTargets(targets).distinct()
 
     init {
         for (target in konanTargets) {
-            if (!project.platformManager.isEnabled(target)) {
+            if (!project.hostManager.isEnabled(target)) {
                 project.logger.warn("The target is not enabled on the current host: ${target.visibleName}")
                 continue
             }
@@ -119,7 +119,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     internal operator fun get(target: KonanTarget) = targetToTask[target]
 
     fun getByTarget(target: String) = findByTarget(target) ?: throw NoSuchElementException("No such target for artifact $name: ${target}")
-    fun findByTarget(target: String) = this[project.platformManager.targetByName(target)]
+    fun findByTarget(target: String) = this[project.hostManager.targetByName(target)]
 
     fun getArtifactByTarget(target: String) = getByTarget(target).artifact
     fun findArtifactByTarget(target: String) = findByTarget(target)?.artifact
@@ -144,9 +144,9 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     fun dependsOn(vararg dependencies: Any?) = forEach { it.dependsOn(*dependencies) }
 
     fun target(targetString: String, configureAction: T.() -> Unit) {
-        val target = project.platformManager.targetByName(targetString)
+        val target = project.hostManager.targetByName(targetString)
 
-        if (!project.platformManager.isEnabled(target)) {
+        if (!project.hostManager.isEnabled(target)) {
             project.logger.warn("Target '$targetString' of artifact '$name' is not supported on the current host")
             return
         }

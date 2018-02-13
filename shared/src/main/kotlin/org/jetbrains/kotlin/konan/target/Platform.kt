@@ -39,9 +39,9 @@ class PlatformManager(distribution: Distribution = Distribution()) : HostManager
         it.key to Platform(it.value)
     }.toMap()
 
-    fun platform(target: KonanTarget) = platforms[target]!!
-    val hostPlatform = platforms[host]!!
+    fun platform(target: KonanTarget) = platforms.getValue(target)
+    val hostPlatform = platforms.getValue(host)
 
-    fun loader(target: KonanTarget) = loaders[target]!!
+    fun loader(target: KonanTarget) = loaders.getValue(target)
 }
 
