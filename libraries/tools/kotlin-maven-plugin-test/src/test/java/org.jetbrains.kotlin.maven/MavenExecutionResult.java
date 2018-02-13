@@ -111,12 +111,14 @@ class MavenExecutionResult {
         });
     }
 
-    MavenExecutionResult fileExists(@NotNull final String path) throws Exception {
+    MavenExecutionResult filesExist(@NotNull final String... paths) throws Exception {
         return check(new Action<MavenExecutionResult>() {
             @Override
             public void run(MavenExecutionResult execResult) {
-                File file = new File(workingDir, path);
-                Assert.assertTrue(file + " does not exist", file.exists());
+                for (String path : paths) {
+                    File file = new File(workingDir, path);
+                    Assert.assertTrue(file + " does not exist", file.exists());
+                }
             }
         });
     }
