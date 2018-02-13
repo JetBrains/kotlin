@@ -9,7 +9,7 @@ expect open class BaseAImpl() : BaseA
 
 class DerivedA1 : BaseAImpl()
 class DerivedA2 : BaseAImpl() {
-    <!OVERRIDING_FINAL_MEMBER!>override<!> fun foo() = super.foo()
+    override fun foo() = super.foo()
 }
 
 
@@ -21,7 +21,7 @@ expect open class BaseBImpl() : BaseB
 
 class DerivedB1 : BaseBImpl()
 class DerivedB2 : BaseBImpl() {
-    <!OVERRIDING_FINAL_MEMBER!>override<!> fun foo() = super.foo()
+    override fun foo() = super.foo()
 }
 
 
@@ -53,3 +53,10 @@ expect interface BaseE {
 sealed class BaseEImpl() : BaseE {
     fun bar() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
 }
+
+
+
+expect interface BaseF {
+    fun foo()
+}
+expect class BaseFImpl() : BaseF
