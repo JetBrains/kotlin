@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 
 object JvmResolveUtil {
@@ -51,13 +52,14 @@ object JvmResolveUtil {
         project: Project,
         files: Collection<KtFile>,
         configuration: CompilerConfiguration,
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
+        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+        trace: BindingTrace = CliLightClassGenerationSupport.CliBindingTrace()
     ): AnalysisResult {
         for (file in files) {
             AnalyzingUtils.checkForSyntacticErrors(file)
         }
 
-        return analyze(project, files, configuration, packagePartProvider).apply {
+        return analyze(project, files, configuration, packagePartProvider, trace).apply {
             AnalyzingUtils.throwExceptionOnErrors(bindingContext)
         }
     }
@@ -82,10 +84,11 @@ object JvmResolveUtil {
         project: Project,
         files: Collection<KtFile>,
         configuration: CompilerConfiguration,
-        packagePartProviderFactory: (GlobalSearchScope) -> PackagePartProvider
+        packagePartProviderFactory: (GlobalSearchScope) -> PackagePartProvider,
+        trace: BindingTrace = CliLightClassGenerationSupport.CliBindingTrace()
     ): AnalysisResult {
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-            project, files, CliLightClassGenerationSupport.CliBindingTrace(), configuration, packagePartProviderFactory
+            project, files, trace, configuration, packagePartProviderFactory
         )
     }
 }

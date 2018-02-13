@@ -1,5 +1,4 @@
-// !LANGUAGE: -ProperIeee754Comparisons
-// IGNORE_BACKEND: JS
+// !LANGUAGE: +ProperIeee754Comparisons
 
 fun greater1(a: Float, b: Float) = a > b
 
@@ -18,8 +17,7 @@ fun box(): String {
     if (greater3(0.0F, -0.0F)) return "fail 3"
     if (greater4(0.0F, -0.0F)) return "fail 4"
 
-    // Smart casts behavior in 1.2
-    if (!greater5(0.0F, -0.0F)) return "fail 5"
+    if (greater5(0.0F, -0.0F)) return "fail 5"
 
     return "OK"
 }

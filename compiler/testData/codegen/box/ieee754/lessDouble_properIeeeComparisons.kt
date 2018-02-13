@@ -1,5 +1,4 @@
-// !LANGUAGE: -ProperIeee754Comparisons
-// IGNORE_BACKEND: JS
+// !LANGUAGE: +ProperIeee754Comparisons
 
 fun less1(a: Double, b: Double) = a < b
 
@@ -18,8 +17,7 @@ fun box(): String {
     if (less3(-0.0, 0.0)) return "fail 3"
     if (less4(-0.0, 0.0)) return "fail 4"
 
-    // Smart casts behavior in 1.2
-    if (!less5(-0.0, 0.0)) return "fail 5"
+    if (less5(-0.0, 0.0)) return "fail 5"
 
     return "OK"
 }

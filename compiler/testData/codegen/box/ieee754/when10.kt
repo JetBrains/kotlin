@@ -1,4 +1,6 @@
 // LANGUAGE_VERSION: 1.0
+// IGNORE_BACKEND: JS
+
 fun box(): String {
     val plusZero: Any = 0.0
     val minusZero: Any = -0.0
@@ -9,8 +11,9 @@ fun box(): String {
                 return "fail 1"
             }
             -0.0 -> {
+                return "fail 2"
             }
-            else -> return "fail 2"
+            else -> {}
         }
 
         if (minusZero is Double) {
@@ -19,8 +22,9 @@ fun box(): String {
                     return "fail 3"
                 }
                 minusZero -> {
+                    return "fail 4"
                 }
-                else -> return "fail 4"
+                else -> {}
             }
         }
     }

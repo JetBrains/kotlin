@@ -1,5 +1,4 @@
-// !LANGUAGE: -ProperIeee754Comparisons
-// IGNORE_BACKEND: JS
+// !LANGUAGE: +ProperIeee754Comparisons
 
 fun equals1(a: Float, b: Float?) = a == b
 
@@ -24,14 +23,12 @@ fun box(): String {
     if (!equals3(-0.0F, 0.0F)) return "fail 3"
     if (!equals4(-0.0F, 0.0F)) return "fail 4"
 
-    // Smart casts behavior in 1.2
-    if (equals5(-0.0F, 0.0F)) return "fail 5"
-    if (equals6(-0.0F, 0.0F)) return "fail 6"
+    if (!equals5(-0.0F, 0.0F)) return "fail 5"
+    if (!equals6(-0.0F, 0.0F)) return "fail 6"
 
     if (!equals7(-0.0F, 0.0F)) return "fail 7"
 
-    // Smart casts behavior in 1.2
-    if (equals8(-0.0F, 0.0F)) return "fail 8"
+    if (!equals8(-0.0F, 0.0F)) return "fail 8"
 
     if (!equals8(null, null)) return "fail 9"
     if (equals8(null, 0.0F)) return "fail 10"

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
+import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import java.io.File
 
@@ -45,18 +47,21 @@ object GenerationUtils {
     fun compileFiles(
         files: List<KtFile>,
         environment: KotlinCoreEnvironment,
-        classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST
+        classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST,
+        trace: BindingTrace = CliLightClassGenerationSupport.CliBindingTrace()
     ): GenerationState =
-        compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider)
+        compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace)
 
     @JvmStatic
     fun compileFiles(
         files: List<KtFile>,
         configuration: CompilerConfiguration,
         classBuilderFactory: ClassBuilderFactory,
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
+        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+        trace: BindingTrace = CliLightClassGenerationSupport.CliBindingTrace()
     ): GenerationState {
-        val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files.first().project, files, configuration, packagePartProvider)
+        val analysisResult =
+            JvmResolveUtil.analyzeAndCheckForErrors(files.first().project, files, configuration, packagePartProvider, trace)
         analysisResult.throwIfError()
 
         val state = GenerationState.Builder(

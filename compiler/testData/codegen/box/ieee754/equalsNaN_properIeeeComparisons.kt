@@ -1,6 +1,5 @@
-// !LANGUAGE: -ProperIeee754Comparisons
+// !LANGUAGE: +ProperIeee754Comparisons
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS
 
 import kotlin.test.*
 
@@ -119,14 +118,14 @@ fun box(): String {
     assertFalse(adnq != dnq, "Double: (Any?)NaN != NaN?")
     assertFalse(adnq != adnq, "Double: (Any?)NaN != (Any?)NaN")
 
-    // Stable smart-casts -- effectively not takein into account in 1.2
+    // Stable smart-casts
     if (adn is Double) {
-        assertTrue(adn == adn, "Double smart-cast: NaN == NaN")
-        assertFalse(adn != adn, "Double smart-cast: NaN == NaN")
+        assertFalse(adn == adn, "Double smart-cast: NaN == NaN")
+        assertTrue(adn != adn, "Double smart-cast: NaN == NaN")
     }
     if (adnq is Double?) {
-        assertTrue(adnq == adnq, "Double? smart-cast: NaN? == NaN?")
-        assertFalse(adnq != adnq, "Double? smart-cast: NaN? == NaN?")
+        assertFalse(adnq == adnq, "Double? smart-cast: NaN? == NaN?")
+        assertTrue(adnq != adnq, "Double? smart-cast: NaN? == NaN?")
     }
     // Unstable smart-casts
     if (gdn is Double) {
@@ -194,14 +193,14 @@ fun box(): String {
     assertFalse(afnq != fnq, "Float: (Any?)NaN != NaN?")
     assertFalse(afnq != afnq, "Float: (Any?)NaN != (Any?)NaN")
 
-    // Stable smart-casts -- effectively not takein into account in 1.2
+    // Stable smart-casts
     if (afn is Float) {
-        assertTrue(afn == afn, "Float smart-cast: NaN == NaN")
-        assertFalse(afn != afn, "Float smart-cast: NaN == NaN")
+        assertFalse(afn == afn, "Float smart-cast: NaN == NaN")
+        assertTrue(afn != afn, "Float smart-cast: NaN == NaN")
     }
     if (afnq is Float?) {
-        assertTrue(afnq == afnq, "Float? smart-cast: NaN? == NaN?")
-        assertFalse(afnq != afnq, "Float? smart-cast: NaN? == NaN?")
+        assertFalse(afnq == afnq, "Float? smart-cast: NaN? == NaN?")
+        assertTrue(afnq != afnq, "Float? smart-cast: NaN? == NaN?")
     }
     // Unstable smart-casts
     if (gfn is Float) {
