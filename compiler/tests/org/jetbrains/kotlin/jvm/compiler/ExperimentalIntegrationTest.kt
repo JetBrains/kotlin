@@ -20,7 +20,7 @@ class ExperimentalIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
                 "1.3",
                 "-Xexperimental=lib.ExperimentalAPI"
             ),
-            checkKotlinOutput = { output -> output.trimEnd().endsWith("OK") }
+            checkKotlinOutput = { output -> assertTrue(output, output.trimEnd().endsWith("OK")) }
         )
         compileKotlin("usage.kt", tmpdir, listOf(lib), additionalOptions = listOf("-Xskip-metadata-version-check"))
     }
@@ -33,7 +33,7 @@ class ExperimentalIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
                 "1.3",
                 "-Xexperimental=lib.ExperimentalAPI"
             ),
-            checkKotlinOutput = { output -> output.trimEnd().endsWith("OK") }
+            checkKotlinOutput = { output -> assertTrue(output, output.trimEnd().endsWith("OK")) }
         )
         compileKotlin(
             "usage.kt", File(tmpdir, "usage.js"), listOf(lib), K2JSCompiler(),
