@@ -63,10 +63,12 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVer
     val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST_STABLE)
                      ?: error("Unknown API version: $apiVersionString")
 
+    val languageVersion = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
+
     val languageFeatures = languageFeaturesString?.let(::collectLanguageFeatureMap).orEmpty()
 
     return CompilerTestLanguageVersionSettings(
-        languageFeatures, apiVersion, LanguageVersion.LATEST_STABLE,
+        languageFeatures, apiVersion, languageVersion,
         mapOf(*listOfNotNull(experimental, useExperimental).toTypedArray())
     )
 }
