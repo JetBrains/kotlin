@@ -32,38 +32,38 @@ import java.io.File
 object GenerationUtils {
     @JvmStatic
     fun compileFileTo(ktFile: KtFile, environment: KotlinCoreEnvironment, output: File): ClassFileFactory =
-            compileFile(ktFile, environment).apply {
-                writeAllTo(output)
-            }
+        compileFile(ktFile, environment).apply {
+            writeAllTo(output)
+        }
 
     @JvmStatic
     fun compileFile(ktFile: KtFile, environment: KotlinCoreEnvironment): ClassFileFactory =
-            compileFiles(listOf(ktFile), environment).factory
+        compileFiles(listOf(ktFile), environment).factory
 
     @JvmStatic
     @JvmOverloads
     fun compileFiles(
-            files: List<KtFile>,
-            environment: KotlinCoreEnvironment,
-            classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST
+        files: List<KtFile>,
+        environment: KotlinCoreEnvironment,
+        classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST
     ): GenerationState =
-            compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider)
+        compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider)
 
     @JvmStatic
     fun compileFiles(
-            files: List<KtFile>,
-            configuration: CompilerConfiguration,
-            classBuilderFactory: ClassBuilderFactory,
-            packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
+        files: List<KtFile>,
+        configuration: CompilerConfiguration,
+        classBuilderFactory: ClassBuilderFactory,
+        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
     ): GenerationState {
         val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files.first().project, files, configuration, packagePartProvider)
         analysisResult.throwIfError()
 
         val state = GenerationState.Builder(
-                files.first().project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
-                files, configuration
+            files.first().project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
+            files, configuration
         ).codegenFactory(
-                if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory
+            if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory
         ).build()
         if (analysisResult.shouldGenerateCode) {
             KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
