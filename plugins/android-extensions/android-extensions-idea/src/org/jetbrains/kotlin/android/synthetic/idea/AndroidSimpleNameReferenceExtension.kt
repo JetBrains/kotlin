@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import org.jetbrains.android.facet.AndroidFacet
+import org.jetbrains.android.facet.ResourceFolderManager
 import org.jetbrains.android.util.AndroidResourceUtil
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.androidIdToName
@@ -67,7 +68,8 @@ class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
             return false
         }
 
-        val resourceDirectories = AndroidFacet.getInstance(element)?.resourceFolderManager?.folders ?: return false
+        val androidFacet = AndroidFacet.getInstance(element) ?: return false
+        val resourceDirectories = ResourceFolderManager.getInstance(androidFacet).folders
         val resourceDirectory = virtualFile.parent?.parent ?: return false
         return resourceDirectories.any { it == resourceDirectory }
     }
