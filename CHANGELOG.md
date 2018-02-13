@@ -4,7 +4,6 @@
   * Support Kotlin 1.2.20
   * Support Java 9
   * Support Gradle 4.5
-  * Support kotlin.math on WebAssembly target
   * Transparent Objective-C/Kotlin container classes interoperability
   * Produce optimized WebAssembly binaries (10x smaller than it used to be)
   * Improved APIs for object transfer between threads and workers
