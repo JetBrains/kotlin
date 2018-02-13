@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithDeclarations
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -45,7 +45,7 @@ class NoErrorsInStdlibTest : KotlinLightCodeInsightFixtureTestCase() {
                 val psiFile = psiManager.findFile(file)
                 if (psiFile is KtFile) {
                     hasAtLeastOneFile = true
-                    val bindingContext = psiFile.analyzeFully()
+                    val bindingContext = psiFile.analyzeWithDeclarations()
                     val errors = bindingContext.diagnostics.all().filter { it.severity == Severity.ERROR }
 
                     if (errors.isNotEmpty()) {

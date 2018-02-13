@@ -44,7 +44,7 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
     private val importList = file.importList!!
     private val psiElementFactory = PsiElementFactory.SERVICE.getInstance(project)
 
-    private val bindingContext by lazy { targetFile.analyzeFully() }
+    private val bindingContext by lazy { targetFile.analyzeWithDeclarations() }
     private val resolutionFacade = targetFile.getResolutionFacade()
 
     private val shortNameCache = PsiShortNamesCache.getInstance(project)

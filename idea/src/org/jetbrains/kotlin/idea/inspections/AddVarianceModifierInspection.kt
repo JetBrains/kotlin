@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithDeclarations
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
@@ -50,7 +50,7 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return classOrObjectVisitor { klass ->
-            val context = klass.analyzeFully()
+            val context = klass.analyzeWithDeclarations()
             for (typeParameter in klass.typeParameters) {
                 if (typeParameter.variance != Variance.INVARIANT) continue
                 val parameterDescriptor =

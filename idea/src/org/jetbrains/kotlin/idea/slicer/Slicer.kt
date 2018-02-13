@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
@@ -140,7 +141,7 @@ abstract class Slicer(
         operator fun get(element: KtElement): Pseudocode? {
             val container = element.containingDeclarationForPseudocode ?: return null
             return computedPseudocodes.getOrPut(container) {
-                container.getContainingPseudocode(container.analyzeFully())?.apply { computedPseudocodes[container] = this } ?: return null
+                container.getContainingPseudocode(container.analyzeWithContent())?.apply { computedPseudocodes[container] = this } ?: return null
             }
         }
     }
@@ -213,7 +214,7 @@ class InflowSlicer(
     }
 
     private fun KtProperty.processProperty() {
-        val bindingContext by lazy { analyzeFully() }
+        val bindingContext by lazy { analyzeWithContent() }
 
         if (hasDelegateExpression()) {
             val getter = (unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter

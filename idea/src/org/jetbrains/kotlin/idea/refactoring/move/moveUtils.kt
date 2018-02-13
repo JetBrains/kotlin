@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addDelayedImportRequest
@@ -490,7 +491,7 @@ sealed class OuterInstanceReferenceUsageInfo(element: PsiElement, private val is
 fun traverseOuterInstanceReferences(member: KtNamedDeclaration, stopAtFirst: Boolean, body: (OuterInstanceReferenceUsageInfo) -> Unit = {}): Boolean {
     if (member is KtObjectDeclaration || member is KtClass && !member.isInner()) return false
 
-    val context = member.analyzeFully()
+    val context = member.analyzeWithContent()
     val containingClassOrObject = member.containingClassOrObject ?: return false
     val outerClassDescriptor = containingClassOrObject.unsafeResolveToDescriptor() as ClassDescriptor
     var found = false

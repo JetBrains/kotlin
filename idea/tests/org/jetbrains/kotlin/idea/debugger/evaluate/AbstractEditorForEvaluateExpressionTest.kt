@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithDeclarations
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
@@ -127,7 +127,7 @@ private fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String)
     if (typeStr != null) {
         file.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR, {
             val codeFragment = KtPsiFactory(project).createBlockCodeFragment("val xxx: $typeStr", PsiTreeUtil.getParentOfType(elementAt, KtElement::class.java))
-            val context = codeFragment.analyzeFully()
+            val context = codeFragment.analyzeWithDeclarations()
             val typeReference: KtTypeReference = PsiTreeUtil.getChildOfType(codeFragment.getContentElement().firstChild, KtTypeReference::class.java)!!
             context[BindingContext.TYPE, typeReference]
         })

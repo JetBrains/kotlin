@@ -712,7 +712,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             callable: PsiElement,
             newReceiverInfo: KotlinParameterInfo?) {
         if (newReceiverInfo != null && (callable is KtNamedFunction) && callable.bodyExpression != null) {
-            val originalContext = callable.analyzeFully()
+            val originalContext = callable.analyzeWithContent()
 
             val noReceiverRefs = ArrayList<KtSimpleNameExpression>()
             callable.forEachDescendantOfType<KtSimpleNameExpression> {

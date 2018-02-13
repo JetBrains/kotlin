@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithDeclarations
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
@@ -22,7 +22,7 @@ object DirectiveBasedActionUtils {
 
         val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.text, "// ERROR:").sorted()
 
-        val actualErrors = file.analyzeFully().getDiagnostics()
+        val actualErrors = file.analyzeWithDeclarations().diagnostics
                 .filter { it.getSeverity() == Severity.ERROR }
                 .map { DefaultErrorMessages.render(it).replace("\n", "<br>") }
                 .sorted()
