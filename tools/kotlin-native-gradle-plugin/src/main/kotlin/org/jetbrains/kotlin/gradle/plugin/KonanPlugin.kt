@@ -74,6 +74,11 @@ internal val Project.konanArtifactsContainer: NamedDomainObjectContainer<KonanBu
     get() = extensions.getByName(KonanPlugin.ARTIFACTS_CONTAINER_NAME)
             as NamedDomainObjectContainer<KonanBuildingConfig<*>>
 
+// TODO: The Kotlin/Native compiler is downloaded manually by a special task so the compilation tasks
+// are configured without the compile distribution. After target management refactoring
+// we need .properties files from the distribution to configure targets. This is worked around here
+// by using HostManager instead of PlatformManager. But we need to download the compiler at the configuration
+// stage (e.g. by getting it from maven as a plugin dependency) and bring back the PlatformManager here.
 internal val Project.hostManager: HostManager
     get() = findProperty("hostManager") as HostManager? ?:
         HostManager(customerDistribution(konanHome))
