@@ -560,10 +560,7 @@ public class KotlinTestUtils {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(jdk6));
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_9) {
-            File home = getJdk9HomeIfPossible();
-            if (home != null) {
-                configuration.put(JVMConfigurationKeys.JDK_HOME, home);
-            }
+            configuration.put(JVMConfigurationKeys.JDK_HOME, getJdk9Home());
         }
         else if (SystemInfo.IS_AT_LEAST_JAVA9) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
@@ -587,24 +584,16 @@ public class KotlinTestUtils {
         return configuration;
     }
 
-    @Nullable
-    public static File getJdk9HomeIfPossible() {
-        String jdk9 = System.getenv("JDK_19");
+    @NotNull
+    public static File getJdk9Home() {
+        String jdk9 = System.getenv("JDK_9");
         if (jdk9 == null) {
-            jdk9 = System.getenv("JDK_9");
-        }
-        if (jdk9 == null) {
-            // TODO: replace this with a failure as soon as Java 9 is installed on all TeamCity agents
-            System.err.println("Environment variable JDK_19 is not set, the test will be skipped");
-            return null;
+            jdk9 = System.getenv("JDK_19");
+            if (jdk9 == null) {
+                throw new AssertionError("Environment variable JDK_9 is not set!");
+            }
         }
         return new File(jdk9);
-    }
-
-    @NotNull
-    private static String getJreHome(@NotNull String jdkHome) {
-        File jre = new File(jdkHome, "jre");
-        return jre.isDirectory() ? jre.getPath() : jdkHome;
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
@@ -982,11 +971,8 @@ public class KotlinTestUtils {
     }
 
     public static boolean compileJavaFilesExternallyWithJava9(@NotNull Collection<File> files, @NotNull List<String> options) {
-        File jdk9 = getJdk9HomeIfPossible();
-        assert jdk9 != null : "Environment variable JDK_19 is not set";
-
         List<String> command = new ArrayList<>();
-        command.add(new File(jdk9, "bin/javac").getPath());
+        command.add(new File(getJdk9Home(), "bin/javac").getPath());
         command.addAll(options);
         for (File file : files) {
             command.add(file.getPath());
