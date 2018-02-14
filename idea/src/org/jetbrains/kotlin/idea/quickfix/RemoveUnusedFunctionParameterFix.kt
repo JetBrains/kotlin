@@ -40,7 +40,7 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
         val element = element ?: return
         val primaryConstructor = element.parent?.parent as? KtPrimaryConstructor
         val parameterList = element.parent as? KtParameterList
-        val parameterDescriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? ValueParameterDescriptor ?: return
+        val parameterDescriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return
         ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
         val nextParameter = parameterList?.parameters?.getOrNull(parameterDescriptor.index)
         if (nextParameter != null) {

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -56,14 +57,23 @@ fun KtDeclaration.unsafeResolveToDescriptor(bodyResolveMode: BodyResolveMode = B
  * and then takes the relevant descriptor from binding context.
  * The exact set of declarations to resolve depends on bodyResolveMode
  */
-fun KtDeclaration.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): DeclarationDescriptor? {
+inline fun <reified D : DeclarationDescriptor> KtDeclaration.resolveToDescriptorIfAny(
+    bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL,
+    klass: Class<D> = D::class.java
+): D? {
     //TODO: BodyResolveMode.PARTIAL is not quite safe!
     val context = analyze(bodyResolveMode)
-    if (this is KtParameter && this.hasValOrVar()) {
-        return context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
+    if (this is KtParameter && this.hasValOrVar() && klass != ValueParameterDescriptor::class.java) {
+        return context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this) as? D
     }
-    return context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
+    return context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this) as? D
 }
+
+fun KtDeclaration.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL) =
+    resolveToDescriptorIfAny<DeclarationDescriptor>(bodyResolveMode)
+
+fun KtParameter.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL) =
+    resolveToDescriptorIfAny<ValueParameterDescriptor>(bodyResolveMode)
 
 fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
     val facade = getResolutionFacade()

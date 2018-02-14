@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 val KtDeclaration.descriptor: DeclarationDescriptor?
-    get() = this.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+    get() = if (this is KtParameter) this.descriptor else this.resolveToDescriptorIfAny(BodyResolveMode.FULL)
 
 val KtDeclaration.constructor: ConstructorDescriptor?
     get() {
@@ -59,8 +59,11 @@ val KtDeclaration.constructor: ConstructorDescriptor?
         }
     }
 
+val KtParameter.descriptor: ValueParameterDescriptor?
+    get() = this.resolveToDescriptorIfAny<ValueParameterDescriptor>(BodyResolveMode.FULL)
+
 val KtParameter.propertyDescriptor: PropertyDescriptor?
-    get() = this.analyze().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
+    get() = this.resolveToDescriptorIfAny<PropertyDescriptor>(BodyResolveMode.FULL)
 
 fun PsiReference.checkUsageVsOriginalDescriptor(
         targetDescriptor: DeclarationDescriptor,
