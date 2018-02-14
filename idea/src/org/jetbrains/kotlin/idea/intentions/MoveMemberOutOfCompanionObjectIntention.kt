@@ -47,22 +47,22 @@ class MoveMemberOutOfCompanionObjectIntention : MoveMemberOutOfObjectIntention("
         val refsRequiringClassInstance = element.project.runSynchronouslyWithProgress("Searching for ${element.name}", true) {
             runReadAction {
                 ReferencesSearch
-                        .search(element)
-                        .mapNotNull { it.element }
-                        .filter {
-                            if (it !is KtElement) return@filter true
-                            val resolvedCall = it.getResolvedCall(it.analyze()) ?: return@filter false
-                            val dispatchReceiver = resolvedCall.dispatchReceiver ?: return@filter false
-                            if (dispatchReceiver !is ImplicitClassReceiver) return@filter true
-                            it.parents
-                                    .filterIsInstance<KtClassOrObject>()
-                                    .none {
-                                        val classDescriptor = it.resolveToDescriptorIfAny() as? ClassDescriptor
-                                        if (classDescriptor != null && classDescriptor.isSubclassOf(targetClassDescriptor)) return@none true
-                                        if (it.isTopLevel() || it is KtObjectDeclaration || (it is KtClass && !it.isInner())) return@filter true
-                                        false
-                                    }
-                        }
+                    .search(element)
+                    .mapNotNull { it.element }
+                    .filter {
+                        if (it !is KtElement) return@filter true
+                        val resolvedCall = it.getResolvedCall(it.analyze()) ?: return@filter false
+                        val dispatchReceiver = resolvedCall.dispatchReceiver ?: return@filter false
+                        if (dispatchReceiver !is ImplicitClassReceiver) return@filter true
+                        it.parents
+                            .filterIsInstance<KtClassOrObject>()
+                            .none {
+                                val classDescriptor = it.resolveToDescriptorIfAny() as? ClassDescriptor
+                                if (classDescriptor != null && classDescriptor.isSubclassOf(targetClassDescriptor)) return@none true
+                                if (it.isTopLevel() || it is KtObjectDeclaration || (it is KtClass && !it.isInner())) return@filter true
+                                false
+                            }
+                    }
             }
         } ?: return
 
