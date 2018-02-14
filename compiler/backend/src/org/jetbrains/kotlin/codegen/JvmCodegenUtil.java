@@ -118,11 +118,19 @@ public class JvmCodegenUtil {
                     !closure.isSuspend();
     }
 
-    private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {
+    private static boolean isCallInsideSameClassAsFieldRepresentingProperty(
+            @NotNull PropertyDescriptor descriptor,
+            @NotNull CodegenContext context
+    ) {
         boolean isFakeOverride = descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         boolean isDelegate = descriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration().getOriginal();
+        if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) {
+            // For property with backed field, check if the access is done in the same class containing the backed field and
+            // not the class that declared the field.
+            containingDeclaration = containingDeclaration.getContainingDeclaration();
+        }
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
@@ -188,12 +196,12 @@ public class JvmCodegenUtil {
         if (KotlinTypeMapper.isAccessor(property)) return false;
 
         CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
-        // Inline functions can't use direct access because a field may not be visible at the call site
-        if (context.isInlineMethodContext()) {
+        // Inline functions or inline classes can't use direct access because a field may not be visible at the call site
+        if (context.isInlineMethodContext() || (context.getEnclosingClass() != null && context.getEnclosingClass().isInline())) {
             return false;
         }
 
-        if (!isCallInsideSameClassAsDeclared(property, context)) {
+        if (!isCallInsideSameClassAsFieldRepresentingProperty(property, context)) {
             if (!isDebuggerContext(context)) {
                 // Unless we are evaluating expression in debugger context, only properties of the same class can be directly accessed
                 return false;
@@ -217,9 +225,6 @@ public class JvmCodegenUtil {
 
         // Delegated and extension properties have no backing fields
         if (isDelegated || property.getExtensionReceiverParameter() != null) return false;
-
-        // Companion object properties cannot be accessed directly because their backing fields are stored in the containing class
-        if (DescriptorUtils.isCompanionObject(property.getContainingDeclaration())) return false;
 
         PropertyAccessorDescriptor accessor = forGetter ? property.getGetter() : property.getSetter();
 

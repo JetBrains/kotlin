@@ -130,12 +130,18 @@ public class PropertyCodegen {
 
         genBackingFieldAndAnnotations(declaration, descriptor, false);
 
-        if (isAccessorNeeded(declaration, descriptor, getter)) {
+        boolean isDefaultGetterAndSetter = isDefaultAccessor(getter) && isDefaultAccessor(setter);
+
+        if (isAccessorNeeded(declaration, descriptor, getter, isDefaultGetterAndSetter)) {
             generateGetter(declaration, descriptor, getter);
         }
-        if (isAccessorNeeded(declaration, descriptor, setter)) {
+        if (isAccessorNeeded(declaration, descriptor, setter, isDefaultGetterAndSetter)) {
             generateSetter(declaration, descriptor, setter);
         }
+    }
+
+    private static boolean isDefaultAccessor(@Nullable KtPropertyAccessor accessor) {
+        return accessor == null || !accessor.hasBody();
     }
 
     private void genDestructuringDeclaration(
@@ -194,11 +200,12 @@ public class PropertyCodegen {
     private boolean isAccessorNeeded(
             @Nullable KtProperty declaration,
             @NotNull PropertyDescriptor descriptor,
-            @Nullable KtPropertyAccessor accessor
+            @Nullable KtPropertyAccessor accessor,
+            boolean isDefaultGetterAndSetter
     ) {
         if (isConstOrHasJvmFieldAnnotation(descriptor)) return false;
 
-        boolean isDefaultAccessor = accessor == null || !accessor.hasBody();
+        boolean isDefaultAccessor = isDefaultAccessor(accessor);
 
         // Don't generate accessors for interface properties with default accessors in DefaultImpls
         if (kind == OwnerKind.DEFAULT_IMPLS && isDefaultAccessor) return false;
@@ -208,8 +215,16 @@ public class PropertyCodegen {
         // Delegated or extension properties can only be referenced via accessors
         if (declaration.hasDelegate() || declaration.getReceiverTypeReference() != null) return true;
 
-        // Companion object properties always should have accessors, because their backing fields are moved/copied to the outer class
-        if (isCompanionObject(descriptor.getContainingDeclaration())) return true;
+        // Companion object properties should have accessors for non-private properties because these properties can be referenced
+        // via getter/setter. But these accessors getter/setter are not required for private properties that have a default getter
+        // and setter, in this case, the property can always be accessed through the accessor 'access<property name>$cp' and avoid some
+        // useless indirection by using others accessors.
+        if (isCompanionObject(descriptor.getContainingDeclaration())) {
+            if (Visibilities.isPrivate(descriptor.getVisibility()) && isDefaultGetterAndSetter) {
+                return false;
+            }
+            return true;
+        }
 
         // Non-const properties from multifile classes have accessors regardless of visibility
         if (isNonConstTopLevelPropertyInMultifileClass(declaration, descriptor)) return true;
