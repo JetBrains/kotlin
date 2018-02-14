@@ -20,7 +20,7 @@ import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import com.intellij.psi.xml.XmlAttributeValue
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -32,7 +32,7 @@ abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
         myFixture.configureFromExistingVirtualFile(virtualFile)
 
         val expression = TargetElementUtil.findReference(myFixture.editor, myFixture.caretOffset)!!.element as KtElement
-        val bindingContext = expression.analyzeFully()
+        val bindingContext = expression.analyze()
         val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, bindingContext[BindingContext.CALL, expression]]!!
         val property = resolvedCall.resultingDescriptor as? PropertyDescriptor ?: throw AssertionError("PropertyDescriptor expected")
 
