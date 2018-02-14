@@ -29,7 +29,8 @@ void consoleInit();
 void consolePrintf(const char* format, ...);
 void consoleWriteUtf8(const void* utf8, uint32_t sizeBytes);
 void consoleErrorUtf8(const void* utf8, uint32_t sizeBytes);
-uint32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes);
+// Negative return value denotes that read wasn't successful.
+int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes);
 
 // Process control.
 void abort(void);

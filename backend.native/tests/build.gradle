@@ -478,13 +478,13 @@ task hello0(type: RunKonanTest) {
 }
 
 task hello1(type: RunStandaloneKonanTest) {
-    goldValue = "Hello World\n"
+    goldValue = "Hello World"
     testData = "Hello World\n"
     source = "runtime/basic/hello1.kt"
 }
 
 task hello2(type: RunStandaloneKonanTest) {
-    goldValue = "you entered 'Hello World\n'"
+    goldValue = "you entered 'Hello World'"
     testData = "Hello World\n"
     source = "runtime/basic/hello2.kt"
 }
@@ -516,6 +516,18 @@ task entry2(type: LinkKonanTest) {
     source = "runtime/basic/entry2.kt"
     lib = "runtime/basic/libentry2.kt"
     flags = ["-entry", "foo"] 
+}
+
+task readline0(type: RunStandaloneKonanTest) {
+    goldValue = "41"
+    testData = "41\r\n"
+    source = "runtime/basic/readline0.kt"
+}
+
+task readline1(type: RunStandaloneKonanTest) {
+    goldValue = ""
+    testData = "\n"
+    source = "runtime/basic/readline1.kt"
 }
 
 task tostring0(type: RunKonanTest) {
