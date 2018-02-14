@@ -254,6 +254,7 @@ fun getSomething() = 10
     @Test
     fun testAndroidKaptChangingDependencies() {
         val project = Project("AndroidKaptChangingDependencies", gradleVersion)
+        project.allowOriginalKapt()
 
         project.build("assembleDebug") {
             assertSuccessful()
