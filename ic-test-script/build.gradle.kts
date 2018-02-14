@@ -18,19 +18,20 @@ plugins {
 
 val buildId = findProperty("teamcity.build.id") as? String
 val vcsTargetVersion = findProperty("build.vcs.number") as? String
-
-val changes = buildId?.let {
-    TeamCityInstanceFactory
-            .guestAuth("https://teamcity.jetbrains.com")
-            .build(BuildId(buildId))
-            .fetchChanges()
-}
+val vcsStartVersion = (findProperty("first.build.from.revision") as? String)?.takeIf { it.isNotBlank() }
 
 
 val checkoutIncrementalBeforeChanges by tasks.creating {
     doFirst {
 
-        val version = changes?.lastOrNull()?.version ?: vcsTargetVersion
+        val changes = buildId?.let {
+            TeamCityInstanceFactory
+                    .guestAuth("https://teamcity.jetbrains.com")
+                    .build(BuildId(buildId))
+                    .fetchChanges()
+        }
+
+        val version = vcsStartVersion ?: changes?.lastOrNull()?.version ?: vcsTargetVersion
         println("Worktree Checkout $version^")
 
         val worktreeProcess = ProcessBuilder()
