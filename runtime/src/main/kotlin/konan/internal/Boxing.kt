@@ -16,8 +16,6 @@
 
 package konan.internal
 
-// TODO: cache some boxes.
-
 class BooleanBox(val value: Boolean) : Comparable<Boolean> {
     override fun equals(other: Any?): Boolean {
         if (other !is BooleanBox) {
@@ -54,7 +52,11 @@ class CharBox(val value: Char) : Comparable<Char> {
 }
 
 @ExportForCppRuntime("Kotlin_boxChar")
-fun boxChar(value: Char) = CharBox(value)
+fun boxChar(value: Char) = if (inCharBoxCache(value)) {
+    getCachedCharBox(value)
+} else {
+    CharBox(value)
+}
 
 class ByteBox(val value: Byte) : Number(), Comparable<Byte> {
     override fun equals(other: Any?): Boolean {
@@ -81,7 +83,11 @@ class ByteBox(val value: Byte) : Number(), Comparable<Byte> {
 }
 
 @ExportForCppRuntime("Kotlin_boxByte")
-fun boxByte(value: Byte) = ByteBox(value)
+fun boxByte(value: Byte) = if (inByteBoxCache(value)) {
+    getCachedByteBox(value)
+} else {
+    ByteBox(value)
+}
 
 class ShortBox(val value: Short) : Number(), Comparable<Short> {
     override fun equals(other: Any?): Boolean {
@@ -108,7 +114,11 @@ class ShortBox(val value: Short) : Number(), Comparable<Short> {
 }
 
 @ExportForCppRuntime("Kotlin_boxShort")
-fun boxShort(value: Short) = ShortBox(value)
+fun boxShort(value: Short) = if (inShortBoxCache(value)) {
+    getCachedShortBox(value)
+} else {
+    ShortBox(value)
+}
 
 class IntBox(val value: Int) : Number(), Comparable<Int> {
     override fun equals(other: Any?): Boolean {
@@ -135,7 +145,11 @@ class IntBox(val value: Int) : Number(), Comparable<Int> {
 }
 
 @ExportForCppRuntime("Kotlin_boxInt")
-fun boxInt(value: Int) = IntBox(value)
+fun boxInt(value: Int) = if (inIntBoxCache(value)) {
+    getCachedIntBox(value)
+} else {
+    IntBox(value)
+}
 
 class LongBox(val value: Long) : Number(), Comparable<Long> {
     override fun equals(other: Any?): Boolean {
@@ -162,7 +176,11 @@ class LongBox(val value: Long) : Number(), Comparable<Long> {
 }
 
 @ExportForCppRuntime("Kotlin_boxLong")
-fun boxLong(value: Long) = LongBox(value)
+fun boxLong(value: Long) = if (inLongBoxCache(value)) {
+    getCachedLongBox(value)
+} else {
+    LongBox(value)
+}
 
 class FloatBox(val value: Float) : Number(), Comparable<Float> {
     override fun equals(other: Any?): Boolean {

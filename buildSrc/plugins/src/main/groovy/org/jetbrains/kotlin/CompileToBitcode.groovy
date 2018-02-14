@@ -116,7 +116,6 @@ class CompileCppToBitcode extends DefaultTask {
             args compilerArgs
 
             args "-I$headersDir"
-
             args '-c', '-emit-llvm'
             args project.fileTree(srcDir) {
                 include('**/*.cpp')
