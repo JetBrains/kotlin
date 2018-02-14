@@ -61,9 +61,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     fun inline(irModule: IrModuleFragment): IrElement {
         val transformedModule = irModule.accept(this, null)
-        transformedModule.transformChildrenVoid(
-                DescriptorSubstitutorForExternalScope(globalSubstituteMap)                  // Transform calls to object that might be returned from inline function call.
-        )
+        DescriptorSubstitutorForExternalScope(globalSubstituteMap).run(transformedModule)   // Transform calls to object that might be returned from inline function call.
         return transformedModule
     }
 
