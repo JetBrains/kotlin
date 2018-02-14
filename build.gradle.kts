@@ -57,7 +57,7 @@ dependencies {
     }
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
+    testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(projectTests(":compiler:tests-common"))
