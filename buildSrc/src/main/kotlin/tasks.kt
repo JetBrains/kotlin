@@ -67,8 +67,8 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
 
     dependsOn(":test-instrumenter:jar")
 
-    jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1100m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
-    maxHeapSize = "1100m"
+    jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1600m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
+    maxHeapSize = "1600m"
     systemProperty("idea.is.unit.test", "true")
     systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
