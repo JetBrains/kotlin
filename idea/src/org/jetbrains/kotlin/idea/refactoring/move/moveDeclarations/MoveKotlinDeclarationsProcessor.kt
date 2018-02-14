@@ -293,7 +293,12 @@ class MoveKotlinDeclarationsProcessor(
                 }
             }
 
-            newDeclarations.forEach { newInternalUsages += restoreInternalUsages(it, oldToNewElementsMapping) }
+            val internalUsageScopes: List<KtElement> = if (descriptor.scanEntireFile) {
+                newDeclarations.map { it.containingKtFile }.distinct()
+            } else {
+                newDeclarations
+            }
+            internalUsageScopes.forEach { newInternalUsages += restoreInternalUsages(it, oldToNewElementsMapping) }
 
             usagesToProcess += newInternalUsages
 
