@@ -199,15 +199,27 @@ public class JvmCodegenUtil {
         if (KotlinTypeMapper.isAccessor(property)) return false;
 
         CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
-        // Inline functions can't use direct access because a field may not be visible at the call site
-        if (context.isInlineMethodContext()) {
+        // Inline functions or inline classes can't use direct access because a field may not be visible at the call site
+        if (context.isInlineMethodContext() || (context.getEnclosingClass() != null && context.getEnclosingClass().isInline())) {
             return false;
         }
 
+        DeclarationDescriptor propertyContainingDeclaration = property.getContainingDeclaration();
+        boolean isCompanionPropBackedInOuter = DescriptorUtils.isCompanionObject(propertyContainingDeclaration) &&
+                                               JvmAbi.isPropertyWithBackingFieldInOuterClass(property);
         if (!isCallInsideSameClassAsDeclared(property, context)) {
             if (!isDebuggerContext(context)) {
-                // Unless we are evaluating expression in debugger context, only properties of the same class can be directly accessed
-                return false;
+                // Property with backing field into an outer class could be used directly when access is done into the context of the outer
+                // class if the conditions further afield are respected, otherwise accessors must be used.
+                if (isCompanionPropBackedInOuter) {
+                    if (propertyContainingDeclaration.getContainingDeclaration() !=
+                        context.getContextDescriptor().getContainingDeclaration()) {
+                        return false;
+                    }
+                }
+                else {
+                    return false;
+                }
             }
             else {
                 // In debugger we want to access through accessors if they are generated
@@ -224,13 +236,13 @@ public class JvmCodegenUtil {
                 // If property overrides something, accessors must be generated too
                 if (!property.getOverriddenDescriptors().isEmpty()) return false;
             }
+        } else {
+            // Companion object properties with backing field into outer class cannot be accessed directly from companion
+            if (isCompanionPropBackedInOuter) return false;
         }
 
         // Delegated and extension properties have no backing fields
         if (isDelegated || property.getExtensionReceiverParameter() != null) return false;
-
-        // Companion object properties cannot be accessed directly because their backing fields are stored in the containing class
-        if (DescriptorUtils.isCompanionObject(property.getContainingDeclaration())) return false;
 
         PropertyAccessorDescriptor accessor = forGetter ? property.getGetter() : property.getSetter();
 
