@@ -30,6 +30,7 @@ build/
 .idea/libraries/Gradle*.xml
 .idea/libraries/Maven*.xml
 .idea/modules
+.idea/libraries
 .idea/modules.xml
 .idea/gradle.xml
 .idea/compiler.xml
