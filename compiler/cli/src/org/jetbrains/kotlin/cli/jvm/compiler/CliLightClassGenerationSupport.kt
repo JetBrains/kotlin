@@ -162,7 +162,7 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
 
     override fun analyze(element: KtElement) = bindingContext
 
-    override fun analyzeFully(element: KtElement) = bindingContext
+    override fun analyzeWithDeclarations(element: KtClassOrObject) = bindingContext
 
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         val filesForFacade = findFilesForFacade(facadeFqName, scope)
