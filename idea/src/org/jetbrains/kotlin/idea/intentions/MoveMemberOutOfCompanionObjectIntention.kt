@@ -23,7 +23,7 @@ import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -51,7 +51,7 @@ class MoveMemberOutOfCompanionObjectIntention : MoveMemberOutOfObjectIntention("
                         .mapNotNull { it.element }
                         .filter {
                             if (it !is KtElement) return@filter true
-                            val resolvedCall = it.getResolvedCall(it.analyzeFully()) ?: return@filter false
+                            val resolvedCall = it.getResolvedCall(it.analyze()) ?: return@filter false
                             val dispatchReceiver = resolvedCall.dispatchReceiver ?: return@filter false
                             if (dispatchReceiver !is ImplicitClassReceiver) return@filter true
                             it.parents
