@@ -21,7 +21,7 @@ dependencies {
 
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":idea:idea-test-framework"))
+    testCompile(projectTests(":idea:idea-test-framework"))
 
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "gson", "idea_rt", rootProject = rootProject) }
     testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }

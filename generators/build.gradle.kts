@@ -24,7 +24,7 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" { }
     "test" { projectDefault() }
 }
 

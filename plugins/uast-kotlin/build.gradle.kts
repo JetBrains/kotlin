@@ -17,7 +17,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
-    testCompile(project(":idea:idea-test-framework"))
+    testCompile(projectTests(":idea:idea-test-framework"))
     testCompileOnly(intellijDep()) { includeJars("idea_rt") }
 
     testRuntime(projectDist(":kotlin-reflect"))

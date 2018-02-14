@@ -21,7 +21,7 @@ dependencies {
     compileOnly(intellijPluginDep("junit")) { includeJars("idea-junit") }
 
     testCompile(projectTests(":idea"))
-    testCompile(project(":idea:idea-test-framework"))
+    testCompile(projectTests(":idea:idea-test-framework"))
 
     testCompile(intellijPluginDep("gradle")) { includeJars("gradle-wrapper", "gradle-base-services", "gradle-tooling-extension-impl", "gradle-tooling-api", "gradle", rootProject = rootProject) }
     testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
