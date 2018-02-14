@@ -102,12 +102,13 @@ fun KtElement.findModuleDescriptor(): ModuleDescriptor = getResolutionFacade().m
 
 // This function is used on declarations to make analysis not only declaration itself but also it content:
 // body for declaration with body, initializer & accessors for properties
-fun KtDeclaration.analyzeWithContent(): BindingContext = analyzeFullyAndGetResult().bindingContext
+fun KtDeclaration.analyzeWithContent(): BindingContext =
+    getResolutionFacade().analyzeFullyAndGetResult(listOf(this)).bindingContext
 
 // This function is used to make full analysis of declaration container.
 // All its declarations, including their content (see above), are analyzed.
 inline fun <reified T> T.analyzeWithDeclarations(): BindingContext where T : KtDeclarationContainer, T : KtElement =
-    analyzeFullyAndGetResult().bindingContext
+    getResolutionFacade().analyzeFullyAndGetResult(listOf(this)).bindingContext
 
 // NB: for statements / expressions, usually should be replaced with analyze(),
 // for declarations, analyzeWithContent() will do what you want.
@@ -115,7 +116,7 @@ inline fun <reified T> T.analyzeWithDeclarations(): BindingContext where T : KtD
     "Use either analyzeWithContent() or analyzeWithDeclarations() instead, or use just analyze()",
     ReplaceWith("analyze()")
 )
-fun KtElement.analyzeFully(): BindingContext = analyzeFullyAndGetResult().bindingContext
+fun KtElement.analyzeFully(): BindingContext = getResolutionFacade().analyzeFullyAndGetResult(listOf(this)).bindingContext
 
 // This and next function are expected to produce the same result as compiler
 // for the given element and its children (including diagnostics, trace slices, descriptors, etc.)
@@ -124,8 +125,11 @@ fun KtElement.analyzeFully(): BindingContext = analyzeFullyAndGetResult().bindin
 fun KtFile.analyzeFullyAndGetResult(vararg extraFiles: KtFile): AnalysisResult =
     KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this) + extraFiles.toList()).analyzeFullyAndGetResult(listOf(this))
 
-fun KtElement.analyzeFullyAndGetResult(): AnalysisResult =
-    KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this)).analyzeFullyAndGetResult(listOf(this))
+@Deprecated(
+    "Use either KtFile.analyzeFullyAndGetResult() or KtElement.analyzeAndGetResult()",
+    ReplaceWith("analyzeAndGetResult()")
+)
+fun KtElement.analyzeFullyAndGetResult(): AnalysisResult = getResolutionFacade().analyzeFullyAndGetResult(listOf(this))
 
 // this method don't check visibility and collect all descriptors with given fqName
 fun ResolutionFacade.resolveImportReference(
