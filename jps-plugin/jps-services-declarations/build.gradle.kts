@@ -10,6 +10,7 @@
  */
 
 plugins { java }
+apply { plugin("jps-compatible") }
 
 dependencies {
     compileOnly(intellijDep()) { includeJars("annotations", "util") }

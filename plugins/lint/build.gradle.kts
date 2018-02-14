@@ -2,6 +2,7 @@
 apply {
     plugin("kotlin")
     plugin("java")
+    plugin("jps-compatible")
 }
 
 dependencies {

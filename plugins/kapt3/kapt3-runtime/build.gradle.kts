@@ -1,6 +1,11 @@
 description = "Kotlin Annotation Processing Runtime"
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
+
+dependencies {
+    compile(projectDist(":kotlin-stdlib"))
+}
 
 jvmTarget = "1.6"
 

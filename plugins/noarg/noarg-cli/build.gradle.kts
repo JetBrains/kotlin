@@ -2,6 +2,7 @@
 description = "Kotlin NoArg Compiler Plugin"
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 dependencies {
     testRuntime(intellijDep())

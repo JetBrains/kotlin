@@ -4,6 +4,7 @@ import org.gradle.jvm.tasks.Jar
 description = "Compiler runner + daemon client"
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 jvmTarget = "1.6"
 

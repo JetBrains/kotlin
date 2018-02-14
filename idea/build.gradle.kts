@@ -1,6 +1,7 @@
 import org.gradle.jvm.tasks.Jar
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 dependencies {
     testRuntime(intellijDep())

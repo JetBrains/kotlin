@@ -11,6 +11,7 @@ node {
 }
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 val antLauncherJar by configurations.creating
 

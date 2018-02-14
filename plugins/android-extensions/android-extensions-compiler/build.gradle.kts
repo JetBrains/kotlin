@@ -2,6 +2,7 @@
 description = "Kotlin Android Extensions Compiler"
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 val robolectricClasspath by configurations.creating
 

@@ -1,4 +1,5 @@
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 val compilerModules: Array<String> by rootProject.extra
 
