@@ -370,6 +370,9 @@ Note that some function types are not supported currently. For example,
 it is not possible to get pointer to function that receives or returns structs
 by value.
 
+If the callback doesn't run in the main thread it is mandatory to init the konan runtime
+by calling `konan.initRuntimeIfNeeded()`.
+
 #### Passing user data to callbacks ####
 
 Often C APIs allow passing some user data to callbacks. Such data is usually
