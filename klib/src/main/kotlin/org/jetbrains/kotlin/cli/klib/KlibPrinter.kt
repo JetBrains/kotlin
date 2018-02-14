@@ -1,0 +1,117 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.cli.klib
+
+import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
+import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
+import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
+import org.jetbrains.kotlin.utils.Printer
+
+class KlibPrinter(out: Appendable) {
+
+    val printer = Printer(out, 1, "    ")
+    val renderer = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
+        modifiers = DescriptorRendererModifier.ALL
+        overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
+        annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
+        excludedAnnotationClasses += setOf(KotlinBuiltIns.FQ_NAMES.suppress)
+
+        classWithPrimaryConstructor = true
+        renderConstructorKeyword = true
+        includePropertyConstant = true
+
+        unitReturnType = false
+        withDefinedIn = false
+        renderDefaultVisibility = false
+        secondaryConstructorsAsPrimary = false
+    }
+
+    val DeclarationDescriptorWithVisibility.isPublicOrProtected: Boolean
+        get() = visibility == Visibilities.PUBLIC || visibility == Visibilities.PROTECTED
+
+    val CallableMemberDescriptor.isFakeOverride: Boolean
+        get() = kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+
+    val DeclarationDescriptor.shouldBePrinted: Boolean
+        get() = this is ClassDescriptor && isPublicOrProtected || this is CallableMemberDescriptor && isPublicOrProtected && !isFakeOverride
+
+    private fun Printer.printBody(header: CharSequence, block: () -> Unit) {
+        println()
+        println("$header {")
+        pushIndent()
+        block()
+        popIndent()
+        println("}")
+        println()
+    }
+
+    fun print(module: ModuleDescriptor) {
+        module.accept(PrinterVisitor(), Unit)
+    }
+
+    private inner class PrinterVisitor : DeclarationDescriptorVisitorEmptyBodies<Unit, Unit>() {
+        override fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: Unit) {
+            descriptor.getPackageFragments().forEach {
+                it.accept(this, data)
+            }
+        }
+
+        override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: Unit) {
+            val children = descriptor.getMemberScope().getContributedDescriptors().filter { it.shouldBePrinted }
+            if (children.isNotEmpty()) {
+                val pacakgeName = descriptor.fqName.let { if (it.isRoot) "<root>" else it.asString() }
+                val header = "package $pacakgeName"
+                printer.printBody(header) {
+                    children.forEach { it.accept(this, data) }
+                }
+            }
+        }
+
+        override fun visitClassDescriptor(descriptor: ClassDescriptor, data: Unit) {
+            val children = descriptor.unsubstitutedMemberScope.getContributedDescriptors().filter { it.shouldBePrinted }
+            val constructors = descriptor.constructors.filter { !it.isPrimary && it.shouldBePrinted }
+            val header = renderer.render(descriptor)
+            if (children.isNotEmpty() || constructors.isNotEmpty()) {
+                printer.printBody(header) {
+                    constructors.forEach { it.accept(this, data) }
+                    children.forEach { it.accept(this, data) }
+                }
+            } else {
+                printer.println(header)
+            }
+
+        }
+
+        override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit) {
+            printer.println(renderer.render(descriptor))
+        }
+
+        override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit) {
+            printer.println(renderer.render(descriptor))
+        }
+
+        override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: Unit) {
+            printer.println(renderer.render(constructorDescriptor))
+        }
+    }
+
+}

@@ -16,11 +16,38 @@
 
 buildscript {
     apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin"
+    }
+
+    if (!hasProperty("konan.home")) {
+        ext.setProperty("konan.home", distDir.absolutePath)
+    }
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'konan'
+
+konanArtifacts {
+    def testFiles = fileTree('src/test/testData') {
+        include "*.kt"
+    }
+    testFiles.files.each { file ->
+        def name = file.name
+        library(name.take(name.lastIndexOf('.'))) { srcFiles file.absolutePath }
+    }
+}
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile project(path: ':backend.native', configuration: 'cli_bc')
+    testCompile "junit:junit:4.12"
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$buildKotlinVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-test:$buildKotlinVersion"
+}
+
+test {
+    dependsOn 'cleanTest'
+    systemProperty('konan.home', getProperty("konan.home"))
+    dependsOn konanArtifacts.collect { it.getByTarget('host') }
 }
