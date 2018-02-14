@@ -32,11 +32,11 @@ We usually mark 0.X releases as pre-releases.
 
 ### Upload builds ###
 
- Upload build to CDN at upload.cds.intellij.net/builds/releases/<version>/<macos|linux|windows>:
+ Upload build to CDN at `upload.cds.intellij.net/builds/releases/<version>/<macos|linux|windows>`:
  
     CDN_URL=upload.cds.intellij.net CDN_USER=... CDN_PASS=... ./gradlew :uploadBundle
  
-Bundles are available at http://download.jetbrains.com/kotlin/native/releases/<version>/<platform>/<build>
+Bundles are available at `http://download.jetbrains.com/kotlin/native/releases/<version>/<platform>/<build>`
 in few minutes after upload.
 
  Upload Gradle plugin to BinTray
@@ -47,7 +47,7 @@ in few minutes after upload.
  
  Notify #kotlin-native channel on public Slack.
  
- Write a meaningfully sized blog post describing new release at https://blog.jetbrains.com.
-Login at https://blog.jetbrains.com/kotlin/wp-login.php. Synchronize with @abreslav and @yole.
+ Write a meaningfully sized blog post describing new release at `https://blog.jetbrains.com`.
+Login at `https://blog.jetbrains.com/kotlin/wp-login.php`. Synchronize with @abreslav and @yole.
 Publish and enjoy!
  
