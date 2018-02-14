@@ -1613,47 +1613,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    /**
-     * Tries to evaluate given expression with given (already evaluated) arguments in compile time.
-     * Returns `null` on failure.
-     */
-    private fun compileTimeEvaluate(expression: IrMemberAccessExpression, args: List<LLVMValueRef>): LLVMValueRef? {
-        if (!args.all { it.isConst }) {
-            return null
-        }
-
-        val function = expression.descriptor
-
-        if (function.fqNameSafe.asString() == "kotlin.collections.listOf" && function.valueParameters.size == 1) {
-            val varargExpression = expression.getValueArgument(0) as? IrVararg
-
-            if (varargExpression != null) {
-                // The function is kotlin.collections.listOf<T>(vararg args: T).
-                // TODO: refer functions more reliably.
-
-                val vararg = args.single()
-
-                if (varargExpression.elements.any { it is IrSpreadElement }) {
-                    return null // not supported yet, see `length` calculation below.
-                }
-                val length = varargExpression.elements.size
-                // TODO: store length in `vararg` itself when more abstract types will be used for values.
-
-                // `elementType` is type argument of function return type:
-                val elementType = function.returnType!!.arguments.single()
-
-                val array = constPointer(vararg)
-                // Note: dirty hack here: `vararg` has type `Array<out E>`, but `createArrayList` expects `Array<E>`;
-                // however `vararg` is immutable, and in current implementation it has type `Array<E>`,
-                // so let's ignore this mismatch currently for simplicity.
-
-                return context.llvm.staticData.createArrayList(elementType, array, length).llvm
-            }
-        }
-
-        return null
-    }
-
     private fun evaluateSpecialIntrinsicCall(expression: IrFunctionAccessExpression): LLVMValueRef? {
         if (expression.descriptor.isIntrinsic) {
             when (expression.descriptor.original) {
@@ -1693,8 +1652,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         evaluateSpecialIntrinsicCall(value)?.let { return it }
 
         val args = evaluateExplicitArgs(value)
-
-        compileTimeEvaluate(value, args)?.let { return it }
 
         updateBuilderDebugLocation(value)
         when {
@@ -2126,6 +2083,24 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 val enumClass = callee.getTypeArgument(typeParameterT)!!
                 val enumClassDescriptor = enumClass.constructor.declarationDescriptor as ClassDescriptor
                 functionGenerationContext.allocInstance(enumClassDescriptor, resultLifetime(callee))
+            }
+
+            context.ir.symbols.listOfInternal.descriptor -> {
+                val varargExpression = callee.getValueArgument(0) as IrVararg
+                val vararg = args.single()
+
+                val length = varargExpression.elements.size
+                // TODO: store length in `vararg` itself when more abstract types will be used for values.
+
+                // `elementType` is type argument of function return type:
+                val elementType = callee.descriptor.returnType!!.arguments.single()
+
+                val array = constPointer(vararg)
+                // Note: dirty hack here: `vararg` has type `Array<out E>`, but `createArrayList` expects `Array<E>`;
+                // however `vararg` is immutable, and in current implementation it has type `Array<E>`,
+                // so let's ignore this mismatch currently for simplicity.
+
+                return context.llvm.staticData.createArrayList(elementType, array, length).llvm
             }
 
             else -> TODO(callee.descriptor.original.toString())

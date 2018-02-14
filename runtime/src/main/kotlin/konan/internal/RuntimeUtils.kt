@@ -110,15 +110,10 @@ fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T>
 }
 
 @Intrinsic
-internal fun <T> createUninitializedInstance(): T {
-    throw Exception("Call to this function should've been lowered")
-}
+internal external fun <T> createUninitializedInstance(): T
 
 @Intrinsic
-@Suppress("UNUSED_PARAMETER")
-internal fun initInstance(thiz: Any, constructorCall: Any): Unit {
-    throw Exception("Call to this function should've been lowered")
-}
+internal external fun initInstance(thiz: Any, constructorCall: Any): Unit
 
 fun checkProgressionStep(step: Int)  = if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
 fun checkProgressionStep(step: Long) = if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
@@ -145,4 +140,13 @@ fun KonanObjectToUtf8Array(value: Any?): ByteArray {
         else -> value.toString()
     }
     return string.toUtf8()
+}
+
+@Intrinsic
+@PublishedApi
+internal fun <T> listOfInternal(vararg elements: T): List<T> {
+    val result = ArrayList<T>(elements.size)
+    for (i in 0 until elements.size)
+        result.add(elements[i])
+    return result
 }

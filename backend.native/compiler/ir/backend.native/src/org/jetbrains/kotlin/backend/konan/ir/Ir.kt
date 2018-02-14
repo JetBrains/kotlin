@@ -206,6 +206,8 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val kClassImpl = internalClass("KClassImpl")
     val kClassImplConstructor by lazy { kClassImpl.constructors.single() }
 
+    val listOfInternal = internalFunction("listOfInternal")
+
     private fun internalFunction(name: String): IrSimpleFunctionSymbol =
             symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())
 

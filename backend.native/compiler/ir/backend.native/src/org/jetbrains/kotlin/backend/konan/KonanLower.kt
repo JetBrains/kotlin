@@ -134,6 +134,9 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_VARARG) {
             VarargInjectionLowering(context).runOnFilePostfix(irFile)
         }
+        phaser.phase(KonanPhase.LOWER_COMPILE_TIME_EVAL) {
+            CompileTimeEvaluateLowering(context).lower(irFile)
+        }
         phaser.phase(KonanPhase.LOWER_COROUTINES) {
             SuspendFunctionsLowering(context).runOnFilePostfix(irFile)
         }
