@@ -120,7 +120,7 @@ abstract class BaseGradleIT {
         }
 
         private fun createNewWrapperDir(version: String): File =
-            createTempDir("GradleWrapper-$version")
+            createTempDir("GradleWrapper-$version-")
                         .apply {
                             File(BaseGradleIT.resourcesRootFile, "GradleWrapper").copyRecursively(this)
                             val wrapperProperties = File(this, "gradle/wrapper/gradle-wrapper.properties")
