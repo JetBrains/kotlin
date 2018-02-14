@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.module.Module
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -41,9 +42,10 @@ class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testSimpleLibraryExportsPackage() = doTest {
         val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return
+        // -Xallow-kotlin-package to avoid "require kotlin.stdlib" in module-info.java
         val library = MockLibraryUtil.compileJvmLibraryToJar(
                 testDataPath + "${getTestName(true)}/library", "library",
-                extraOptions = listOf("-jdk-home", jdk9Home.path),
+                extraOptions = listOf("-jdk-home", jdk9Home.path, "-Xallow-kotlin-package"),
                 useJava9 = true
         )
 
