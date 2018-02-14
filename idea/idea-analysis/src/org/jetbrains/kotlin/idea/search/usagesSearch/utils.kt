@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.unwrappedTargets
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
@@ -43,9 +44,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 val KtDeclaration.descriptor: DeclarationDescriptor?
-    get() = this.analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
+    get() = this.resolveToDescriptorIfAny(BodyResolveMode.FULL)
 
 val KtDeclaration.constructor: ConstructorDescriptor?
     get() {

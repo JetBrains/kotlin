@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.unblockDocument
@@ -37,9 +38,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 
@@ -197,7 +198,7 @@ class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeIntention<Kt
         if (!hasBlockBody()) return body
         val block = body as? KtBlockExpression ?: return null
         val statement = block.statements.singleOrNull() ?: return null
-        val returnsUnit = (analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? FunctionDescriptor)?.returnType?.isUnit() ?: return null
+        val returnsUnit = (resolveToDescriptorIfAny(BodyResolveMode.FULL) as? FunctionDescriptor)?.returnType?.isUnit() ?: return null
         return when (statement) {
             is KtReturnExpression -> statement.returnedExpression
             else -> if (returnsUnit) statement else null

@@ -45,10 +45,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
@@ -69,6 +66,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -260,7 +258,7 @@ class InflowSlicer(
                     .forEach { (it.element?.parent as? KtProperty)?.processPropertyAssignments() }
         }
 
-        val parameterDescriptor = analyze()[BindingContext.VALUE_PARAMETER, this] ?: return
+        val parameterDescriptor = resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
         (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope()) body@ {
             val refElement = it.element ?: return@body

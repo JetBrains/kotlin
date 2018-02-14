@@ -21,25 +21,21 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.psi.NavigatablePsiElement
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
 class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {
     override fun provideNodes(node: TreeElement): Collection<TreeElement> {
         if (node !is KotlinStructureViewElement) return listOf()
 
-        val element = node.element
-        if (element !is KtClassOrObject) return listOf()
+        val element = node.element as? KtClassOrObject ?: return listOf()
 
         val project = element.project
 
-        val context = element.analyze()
-        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element]
-
-        if (descriptor !is ClassifierDescriptor) return listOf()
+        val descriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? ClassifierDescriptor ?: return listOf()
 
         val children = ArrayList<TreeElement>()
 

@@ -72,14 +72,26 @@ fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescrip
 
 
 // This and next function are used for 'normal' element analysis
-// Their exact semantics is a bit unclear and depends on 'bodyResolveMode'
-// They are expected to provide correct descriptors for the element
-// but not diagnostics, trace slices are provided only partially
-// Element body analysis, if any, is not guaranteed
-// For compiler-compatible analysis, analyzeFully is recommended
-// See ResolveSessionForBodies, ResolveElementCache
-@JvmOverloads fun KtElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext =
-        getResolutionFacade().analyze(this, bodyResolveMode)
+// This analysis *should* provide all information extractable from this KtElement except:
+// - it does not analyze bodies of functions
+// - it does not analyze content of classes
+// - it does not analyze initializers / accessors for member / top-level properties
+// This information includes related descriptors, resolved calls (but not inside body, see above!)
+// and many other binding context slices.
+// Normally, the function is used on local declarations or statements / expressions
+// Any usage on non-local declaration is a bit suspicious,
+// consider replacing it with resolveToDescriptorIfAny and
+// remember that body / content is not analyzed;
+// if it's necessary, use analyzeWithContent() / analyzeWithDeclarations().
+//
+// If you need diagnostics in result context, use BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS.
+// BodyResolveMode.FULL analyzes all statements on the level of KtElement and above.
+// BodyResolveMode.PARTIAL analyzes only statements necessary for this KtElement precise analysis.
+//
+// See also: ResolveSessionForBodies, ResolveElementCache
+@JvmOverloads
+fun KtElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext =
+    getResolutionFacade().analyze(this, bodyResolveMode)
 
 fun KtElement.analyzeAndGetResult(): AnalysisResult {
     val resolutionFacade = getResolutionFacade()

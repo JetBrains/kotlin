@@ -37,6 +37,7 @@ import org.jetbrains.android.util.AndroidUtils
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
@@ -231,8 +232,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
     }
 
     private fun KtClassOrObject.isSubclassOfAny(baseClasses: Collection<String>): Boolean {
-        val bindingContext = analyze(BodyResolveMode.PARTIAL)
-        val declarationDescriptor = bindingContext.get(BindingContext.CLASS, this)
+        val declarationDescriptor = resolveToDescriptorIfAny() as? ClassDescriptor
         return baseClasses.any { declarationDescriptor?.isSubclassOf(it) ?: false }
     }
 
