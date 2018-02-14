@@ -11365,6 +11365,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("reportUnresolvedReferenceWrongReceiverForManyCandidates.kt")
+                public void testReportUnresolvedReferenceWrongReceiverForManyCandidates() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements/reportUnresolvedReferenceWrongReceiverForManyCandidates.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("subtypeForInvariantWithErrorGenerics.kt")
                 public void testSubtypeForInvariantWithErrorGenerics() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements/subtypeForInvariantWithErrorGenerics.kt");
