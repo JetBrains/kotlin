@@ -45,9 +45,8 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertContains(":compileKotlin")
             assertContains(":compileJava")
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
-            val javaClassesDir = javaClassesDir()
-            assertFileExists(javaClassesDir + "example/TestClass.class")
-            assertFileExists(javaClassesDir + "example/TestClassGenerated.class")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
         }
     }
 
