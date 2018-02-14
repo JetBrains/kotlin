@@ -31,7 +31,7 @@ val checkoutIncrementalBeforeChanges by tasks.creating {
     doFirst {
 
         val version = changes?.lastOrNull()?.version ?: vcsTargetVersion
-        println("Worktree Checkout $version")
+        println("Worktree Checkout $version^")
 
         val worktreeProcess = ProcessBuilder()
                 .command("git", "worktree", "add", "../incremental")
@@ -44,7 +44,7 @@ val checkoutIncrementalBeforeChanges by tasks.creating {
 
         val checkoutProcess = ProcessBuilder()
                 .command("git", "checkout", "$version^")
-                .directory(File("../clean"))
+                .directory(File("../incremental"))
                 .inheritIO()
                 .start()
         if (checkoutProcess.waitFor() != 0) {
