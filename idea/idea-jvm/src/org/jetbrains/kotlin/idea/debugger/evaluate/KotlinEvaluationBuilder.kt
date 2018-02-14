@@ -280,7 +280,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                             .zip(argumentTypes)
                             .map { (value, type) ->
                                 // Make argument type classes prepared for sure
-                                eval.loadClass(type, classLoader)
+                                eval.loadClassByName(type.className, classLoader)
                                 boxOrUnboxArgumentIfNeeded(eval, value, type).asJdiValue(vm, type)
                             }
 

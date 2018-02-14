@@ -14,3 +14,6 @@ fun foo(p: () -> Int) = p()
 // EXPRESSION: foo { a }
 // RESULT: 1: I
 
+// EXPRESSION: foo { args.size }
+// RESULT: 0: I
+
