@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.PluginId;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +19,7 @@ public class KotlinPluginUtil {
 
     static {
         PluginId pluginId = PluginManagerCore.getPluginByClassName(KotlinPluginUtil.class.getName());
-        if (pluginId == null && ApplicationManager.getApplication().isUnitTestMode()) {
+        if (pluginId == null) {
             pluginId = PluginId.getId("org.jetbrains.kotlin");
         }
         KOTLIN_PLUGIN_ID = pluginId;
