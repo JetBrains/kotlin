@@ -36,7 +36,8 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.org.objectweb.asm.commons.RemappingMethodAdapter
+import org.jetbrains.org.objectweb.asm.commons.LocalVariablesSorter
+import org.jetbrains.org.objectweb.asm.commons.MethodRemapper
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.*
 import org.jetbrains.org.objectweb.asm.util.Printer
@@ -147,11 +148,15 @@ class MethodInliner(
         val iterator = transformations.iterator()
 
         val remapper = TypeRemapper.createFrom(currentTypeMapping)
-        val remappingMethodAdapter = RemappingMethodAdapter(
+
+        // MethodRemapper doesn't extends LocalVariablesSorter, but RemappingMethodAdapter does.
+        // So wrapping with LocalVariablesSorter to keep old behavior
+        val remappingMethodAdapter = MethodRemapper(
+            LocalVariablesSorter(
                 resultNode.access,
                 resultNode.desc,
-                resultNode,
-                AsmTypeRemapper(remapper, result)
+                resultNode
+            ), AsmTypeRemapper(remapper, result)
         )
 
         val markerShift = calcMarkerShift(parameters, node)
