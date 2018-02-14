@@ -94,6 +94,11 @@ sourceSets {
     }
 }
 
+val jar: Jar by tasks
+jar.from("../idea/src") {
+    include("META-INF/extensions/compiler.xml")
+}
+
 projectTest {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
