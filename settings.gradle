@@ -151,6 +151,10 @@ include ":kotlin-build-common",
         ":kotlin-annotations-jvm",
         ":kotlin-annotations-android",
         ":kotlin-scripting-common",
+        ":kotlin-scripting-jvm",
+        ":kotlin-scripting-jvm-host",
+        ":examples:scripting-jvm-simple-script",
+        ":examples:scripting-jvm-maven-deps",
         ":pill:generate-all-tests",
         ":include:kotlin-compiler",
 
@@ -245,6 +249,10 @@ project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$root
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
 project(':kotlin-annotations-android').projectDir = "$rootDir/libraries/tools/kotlin-annotations-android" as File
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
+project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
+project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
+project(':examples:scripting-jvm-simple-script').projectDir = "$rootDir/libraries/examples/scripting/jvm-simple-script" as File
+project(':examples:scripting-jvm-maven-deps').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps" as File
 project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate-all-tests" as File
 
 // plugin markers:
