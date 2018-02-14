@@ -12,15 +12,6 @@ The subplugin modules are `:kotlin-allopen`, `:kotlin-noarg`, `:kotlin-sam-with-
 
 To find more details about the plugins provided by this artifact and their tasks refer to [Module.md](Module.md).
 
-### Gradle integration tests
+### Gradle Plugin Integration Tests
 
-Gradle integration tests can be found at the [kotlin-gradle-plugin-integration-tests](../kotlin-gradle-plugin-integration-tests) module.
-
-Run the integration tests from the root project:
-
-    ./gradlew :kotlin-gradle-plugin-integration-tests:test
-    
-The tests that use the Gradle plugins DSL ([`PluginsDslIT`](../kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt)) also require the Gradle plugin marker artifacts to be installed:
-
-    ./gradlew -Pdeploy_version=1.2-test :kotlin-gradle-plugin:plugin-marker:install :kotlin-noarg:plugin-marker:install :kotlin-allopen:plugin-marker:install
-    ./gradlew -Pdeploy_version=1.2-test :kotlin-gradle-plugin-integration-tests:test
+See the module [`libraries/tools/kotlin-gradle-plugin-integration-tests`](https://github.com/JetBrains/kotlin/tree/master/libraries/tools/kotlin-gradle-plugin-integration-tests)
