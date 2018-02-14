@@ -288,7 +288,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     mainClass.invokeMethod(thread, mainClass.methods().single(), args, invokePolicy)
                 }
             } catch (e: Throwable) {
-                LOG.debug("Unable to evaluate expression with compilation", e)
+                LOG.error("Unable to evaluate expression with compilation", e)
                 return null
             }
         }
