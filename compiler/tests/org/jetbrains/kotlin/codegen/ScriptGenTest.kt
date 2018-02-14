@@ -43,7 +43,7 @@ class ScriptGenTest : CodegenTestCase() {
         super.setUp()
         additionalDependencies =
                 System.getenv("PROJECT_CLASSES_DIRS")?.split(File.pathSeparator)?.map { File(it) }
-                ?: listOf("compiler/build/classes/kotlin/test", "build/compiler/classes/kotlin/test")
+                ?: listOf("compiler/build/classes/kotlin/test", "build/compiler/classes/kotlin/test", "out/test/compiler.test")
                         .mapNotNull { File(it).canonicalFile.takeIf { it.isDirectory } }
                         .takeIf { it.isNotEmpty() }
                 ?: throw IllegalStateException("Unable to get classes output dirs, set PROJECT_CLASSES_DIRS environment variable")

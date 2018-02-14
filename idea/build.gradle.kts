@@ -37,6 +37,8 @@ dependencies {
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     compile("teamcity:markdown")
 
+    compileOnly(project(":kotlin-daemon-client"))
+
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) {
         includeJars("annotations", "openapi", "idea", "velocity", "boot", "gson", "log4j", "asm-all",
