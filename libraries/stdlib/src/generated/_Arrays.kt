@@ -9927,6 +9927,8 @@ public infix fun CharArray.union(other: Iterable<Char>): Set<Char> {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -9935,6 +9937,8 @@ public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -9943,6 +9947,8 @@ public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -9951,6 +9957,8 @@ public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -9959,6 +9967,8 @@ public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -9967,6 +9977,8 @@ public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -9975,6 +9987,8 @@ public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -9983,6 +9997,8 @@ public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -9991,6 +10007,8 @@ public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -9999,6 +10017,8 @@ public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun <T> Array<out T>.any(): Boolean {
     return !isEmpty()
@@ -10006,6 +10026,8 @@ public fun <T> Array<out T>.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun ByteArray.any(): Boolean {
     return !isEmpty()
@@ -10013,6 +10035,8 @@ public fun ByteArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun ShortArray.any(): Boolean {
     return !isEmpty()
@@ -10020,6 +10044,8 @@ public fun ShortArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun IntArray.any(): Boolean {
     return !isEmpty()
@@ -10027,6 +10053,8 @@ public fun IntArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun LongArray.any(): Boolean {
     return !isEmpty()
@@ -10034,6 +10062,8 @@ public fun LongArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun FloatArray.any(): Boolean {
     return !isEmpty()
@@ -10041,6 +10071,8 @@ public fun FloatArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun DoubleArray.any(): Boolean {
     return !isEmpty()
@@ -10048,6 +10080,8 @@ public fun DoubleArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun BooleanArray.any(): Boolean {
     return !isEmpty()
@@ -10055,6 +10089,8 @@ public fun BooleanArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun CharArray.any(): Boolean {
     return !isEmpty()
@@ -10062,6 +10098,8 @@ public fun CharArray.any(): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -10070,6 +10108,8 @@ public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -10078,6 +10118,8 @@ public inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -10086,6 +10128,8 @@ public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -10094,6 +10138,8 @@ public inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -10102,6 +10148,8 @@ public inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -10110,6 +10158,8 @@ public inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -10118,6 +10168,8 @@ public inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -10126,6 +10178,8 @@ public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun CharArray.any(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -11744,6 +11798,8 @@ public fun CharArray.minWith(comparator: Comparator<in Char>): Char? {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun <T> Array<out T>.none(): Boolean {
     return isEmpty()
@@ -11751,6 +11807,8 @@ public fun <T> Array<out T>.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun ByteArray.none(): Boolean {
     return isEmpty()
@@ -11758,6 +11816,8 @@ public fun ByteArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun ShortArray.none(): Boolean {
     return isEmpty()
@@ -11765,6 +11825,8 @@ public fun ShortArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun IntArray.none(): Boolean {
     return isEmpty()
@@ -11772,6 +11834,8 @@ public fun IntArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun LongArray.none(): Boolean {
     return isEmpty()
@@ -11779,6 +11843,8 @@ public fun LongArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun FloatArray.none(): Boolean {
     return isEmpty()
@@ -11786,6 +11852,8 @@ public fun FloatArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun DoubleArray.none(): Boolean {
     return isEmpty()
@@ -11793,6 +11861,8 @@ public fun DoubleArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun BooleanArray.none(): Boolean {
     return isEmpty()
@@ -11800,6 +11870,8 @@ public fun BooleanArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun CharArray.none(): Boolean {
     return isEmpty()
@@ -11807,6 +11879,8 @@ public fun CharArray.none(): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun <T> Array<out T>.none(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -11815,6 +11889,8 @@ public inline fun <T> Array<out T>.none(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun ByteArray.none(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -11823,6 +11899,8 @@ public inline fun ByteArray.none(predicate: (Byte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun ShortArray.none(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -11831,6 +11909,8 @@ public inline fun ShortArray.none(predicate: (Short) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun IntArray.none(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -11839,6 +11919,8 @@ public inline fun IntArray.none(predicate: (Int) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun LongArray.none(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -11847,6 +11929,8 @@ public inline fun LongArray.none(predicate: (Long) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun FloatArray.none(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -11855,6 +11939,8 @@ public inline fun FloatArray.none(predicate: (Float) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun DoubleArray.none(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -11863,6 +11949,8 @@ public inline fun DoubleArray.none(predicate: (Double) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun BooleanArray.none(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -11871,6 +11959,8 @@ public inline fun BooleanArray.none(predicate: (Boolean) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false

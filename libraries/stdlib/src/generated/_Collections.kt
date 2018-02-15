@@ -1383,6 +1383,8 @@ public infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
     if (this is Collection && isEmpty()) return true
@@ -1392,6 +1394,8 @@ public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if collection has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun <T> Iterable<T>.any(): Boolean {
     if (this is Collection) return !isEmpty()
@@ -1400,6 +1404,8 @@ public fun <T> Iterable<T>.any(): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
     if (this is Collection && isEmpty()) return false
@@ -1679,6 +1685,8 @@ public fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T? {
 
 /**
  * Returns `true` if the collection has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun <T> Iterable<T>.none(): Boolean {
     if (this is Collection) return isEmpty()
@@ -1687,6 +1695,8 @@ public fun <T> Iterable<T>.none(): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean {
     if (this is Collection && isEmpty()) return true

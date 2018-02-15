@@ -86,6 +86,8 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.mapTo(des
 
 /**
  * Returns `true` if all entries match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <K, V> Map<out K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     if (isEmpty()) return true
@@ -95,6 +97,8 @@ public inline fun <K, V> Map<out K, V>.all(predicate: (Map.Entry<K, V>) -> Boole
 
 /**
  * Returns `true` if map has at least one entry.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun <K, V> Map<out K, V>.any(): Boolean {
     return !isEmpty()
@@ -102,6 +106,8 @@ public fun <K, V> Map<out K, V>.any(): Boolean {
 
 /**
  * Returns `true` if at least one entry matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun <K, V> Map<out K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     if (isEmpty()) return false
@@ -167,6 +173,8 @@ public fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Entry<K, V
 
 /**
  * Returns `true` if the map has no entries.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun <K, V> Map<out K, V>.none(): Boolean {
     return isEmpty()
@@ -174,6 +182,8 @@ public fun <K, V> Map<out K, V>.none(): Boolean {
 
 /**
  * Returns `true` if no entries match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun <K, V> Map<out K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     if (isEmpty()) return true

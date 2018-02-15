@@ -706,16 +706,22 @@ public expect infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T>
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean
 
 /**
  * Returns `true` if collection has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun <T> Iterable<T>.any(): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean
 
@@ -838,11 +844,15 @@ public expect fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T?
 
 /**
  * Returns `true` if the collection has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun <T> Iterable<T>.none(): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean
 

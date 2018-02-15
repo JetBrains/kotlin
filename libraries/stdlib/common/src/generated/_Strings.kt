@@ -494,16 +494,22 @@ public expect fun CharSequence.withIndex(): Iterable<IndexedValue<Char>>
 
 /**
  * Returns `true` if all characters match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean
 
 /**
  * Returns `true` if char sequence has at least one character.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun CharSequence.any(): Boolean
 
 /**
  * Returns `true` if at least one character matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun CharSequence.any(predicate: (Char) -> Boolean): Boolean
 
@@ -588,11 +594,15 @@ public expect fun CharSequence.minWith(comparator: Comparator<in Char>): Char?
 
 /**
  * Returns `true` if the char sequence has no characters.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun CharSequence.none(): Boolean
 
 /**
  * Returns `true` if no characters match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean
 
