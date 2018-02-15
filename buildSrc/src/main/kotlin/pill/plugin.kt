@@ -79,24 +79,37 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
+        if (project != project.rootProject) {
+            error("JpsCompatible root plugin can be applied only to the root project")
+        }
+
         project.tasks.create("pill") {
             this.doLast { pill(project) }
         }
     }
 
+    private lateinit var projectDir: File
     private lateinit var platformVersion: String
     private lateinit var platformDir: File
 
     private fun pill(project: Project) {
-        platformVersion = project.rootProject.extensions.extraProperties.get("versions.intellijSdk").toString()
-        platformDir = File(project.projectDir, "buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/$platformVersion")
+        projectDir = project.projectDir
+        platformVersion = project.extensions.extraProperties.get("versions.intellijSdk").toString()
+        platformDir = File(projectDir, "buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/$platformVersion")
 
         val jpsProject = parse(project, ParserContext(dependencyMappers))
             .mapLibraries(attachPlatformSources(platformVersion))
 
         val files = render(jpsProject, getProjectLibraries(jpsProject))
 
-        File(project.rootProject.projectDir, ".idea/libraries").deleteRecursively()
+        File(projectDir, ".idea/libraries").deleteRecursively()
+
+        File(projectDir, ".idea/runConfigurations")
+            .walk()
+            .filter { it.name.startsWith("JPS_") && it.extension.toLowerCase() == "xml" }
+            .forEach { it.delete() }
+
+        copyRunConfigurations()
 
         for (file in files) {
             val stubFile = file.path
@@ -105,7 +118,20 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
         }
     }
 
-    fun attachPlatformSources(platformVersion: String) = fun(library: PLibrary): PLibrary {
+    private fun copyRunConfigurations() {
+        val runConfigurationsDir = File(projectDir, "buildSrc/src/main/kotlin/pill/runConfigurations")
+        val targetDir = File(projectDir, ".idea/runConfigurations")
+        val platformDirProjectRelative = "\$PROJECT_DIR\$/" + platformDir.toRelativeString(projectDir)
+
+        targetDir.mkdirs()
+
+        runConfigurationsDir.listFiles()
+            .filter { it.extension == "xml" }
+            .map { it.name to it.readText().replace("\$IDEA_HOME_PATH\$", platformDirProjectRelative) }
+            .forEach { File(targetDir, it.first).writeText(it.second) }
+    }
+
+    private fun attachPlatformSources(platformVersion: String) = fun(library: PLibrary): PLibrary {
         val platformSourcesJar = File(platformDir, "sources/ideaIC-$platformVersion-sources.jar")
 
         if (library.classes.any { it.startsWith(platformDir) }) {
