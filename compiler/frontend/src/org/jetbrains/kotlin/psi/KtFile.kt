@@ -162,7 +162,12 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     }
 
     override fun getStub(): KotlinFileStub? {
-        return super.getStub() as KotlinFileStub?
+        val stub = super.getStub()
+        if (stub is KotlinFileStub?) {
+            return stub
+        }
+
+        throw error("Illegal stub for KtFile: type=${this.javaClass}, stub=${stub?.javaClass} name=$name")
     }
 
     override fun getClasses(): Array<PsiClass> {
