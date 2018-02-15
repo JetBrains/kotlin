@@ -200,6 +200,8 @@ extra["compilerModules"] = arrayOf(
         ":js:js.dce",
         ":compiler",
         ":kotlin-build-common",
+        ":core:metadata",
+        ":core:metadata.jvm",
         ":core:descriptors",
         ":core:descriptors.jvm",
         ":core:deserialization",

@@ -16,6 +16,8 @@ val projectsToShadow by extra(listOf(
         ":compiler:cli-common",
         ":compiler:container",
         ":compiler:daemon-common",
+        ":core:metadata",
+        ":core:metadata.jvm",
         ":core:descriptors",
         ":core:descriptors.jvm",
         ":core:deserialization",
