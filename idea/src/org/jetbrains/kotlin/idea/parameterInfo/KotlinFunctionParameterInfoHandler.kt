@@ -83,7 +83,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
     }
 
     private fun findCall(argumentList: TArgumentList, bindingContext: BindingContext): Call? {
-        return (argumentList.parent as KtElement).getCall(bindingContext)
+        return (argumentList.parent as? KtElement)?.getCall(bindingContext)
     }
 
     override fun getActualParameterDelimiterType() = KtTokens.COMMA
