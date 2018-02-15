@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
+val CALLBACK_SERVER_PORTS_RANGE_START: Int = 14997
+val CALLBACK_SERVER_PORTS_RANGE_END: Int = 15998
 
-interface CompileServiceServerSide : CompileServiceAsync, Server<CompileServiceServerSide>
+val RESULTS_SERVER_PORTS_RANGE_START: Int = 15999
+val RESULTS_SERVER_PORTS_RANGE_END: Int = 17000

@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerCallbackServicesFacade
-import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.experimental.Profiler
+import org.jetbrains.kotlin.daemon.common.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSide
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
 
-class RemoteIncrementalCacheClient(val facade: CompilerCallbackServicesFacade, val target: TargetId, val profiler: Profiler = DummyProfiler()): IncrementalCache {
+class RemoteIncrementalCacheClient(val facade: CompilerServicesFacadeBaseClientSide, val target: TargetId, val profiler: Profiler = DummyProfiler()):
+    IncrementalCache {
 
     override fun getObsoletePackageParts(): Collection<String> = profiler.withMeasure(this) { facade.incrementalCache_getObsoletePackageParts(target) }
 

@@ -7,19 +7,14 @@ package org.jetbrains.kotlin.daemon.common.experimental
 
 import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.runBlocking
+import org.jetbrains.kotlin.daemon.common.*
 import java.io.IOException
 import java.io.Serializable
 import java.net.*
 import java.rmi.RemoteException
-import java.rmi.registry.LocateRegistry
-import java.rmi.registry.Registry
 import java.rmi.server.RMIClientSocketFactory
 import java.rmi.server.RMIServerSocketFactory
 import java.util.*
-
-
-
-
 
 
 // copyed from original(org.jetbrains.kotlin.daemon.common.NetworkUtils) TODO
@@ -27,20 +22,6 @@ import java.util.*
 // - AbstractClientLoopbackSocketFactory / ServerLoopbackSocketFactoryRMI / ServerLoopbackSocketFactoryKtor - Ktor-Sockets instead of java sockets
 // - findPortAndCreateSocket
 // TODO: get rid of copy-paste here
-
-
-
-
-
-
-const val SOCKET_ANY_FREE_PORT = 0
-const val JAVA_RMI_SERVER_HOSTNAME = "java.rmi.server.hostname"
-const val DAEMON_RMI_SOCKET_BACKLOG_SIZE_PROPERTY = "kotlin.daemon.socket.backlog.size"
-const val DAEMON_RMI_SOCKET_CONNECT_ATTEMPTS_PROPERTY = "kotlin.daemon.socket.connect.attempts"
-const val DAEMON_RMI_SOCKET_CONNECT_INTERVAL_PROPERTY = "kotlin.daemon.socket.connect.interval"
-const val DEFAULT_SERVER_SOCKET_BACKLOG_SIZE = 50
-const val DEFAULT_SOCKET_CONNECT_ATTEMPTS = 3
-const val DEFAULT_SOCKET_CONNECT_INTERVAL_MS = 10L
 
 object LoopbackNetworkInterface {
 
@@ -130,21 +111,18 @@ object LoopbackNetworkInterface {
 
 private val portSelectionRng = Random()
 
-fun findPortAndCreateSocket(attempts: Int, portRangeStart: Int, portRangeEnd: Int): Pair<io.ktor.network.sockets.ServerSocket, Int> {
+fun findPortForSocket(attempts: Int, portRangeStart: Int, portRangeEnd: Int): Int {
     var i = 0
     var lastException: RemoteException? = null
 
     while (i++ < attempts) {
         val port = portSelectionRng.nextInt(portRangeEnd - portRangeStart) + portRangeStart
         try {
-            return Pair(
-                LoopbackNetworkInterface.serverLoopbackSocketFactoryKtor.createServerSocket(port),
-                port
-            )
+            return port
         } catch (e: RemoteException) {
-            // assuming that the port is already taken
+            // assuming that the socketPort is already taken
             lastException = e
         }
     }
-    throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
+    throw IllegalStateException("Cannot find free socketPort in $attempts attempts", lastException)
 }

@@ -1,3 +1,4 @@
+import com.sun.javafx.scene.CameraHelper.project
 
 apply { plugin("kotlin") }
 
@@ -18,13 +19,11 @@ dependencies {
     compile(project(":kotlin-stdlib"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
-    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22")
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
     compile("io.ktor:ktor-network:0.9.1-alpha-10")
-
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-

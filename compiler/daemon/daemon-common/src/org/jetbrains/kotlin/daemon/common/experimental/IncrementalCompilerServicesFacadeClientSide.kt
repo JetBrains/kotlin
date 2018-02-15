@@ -3,60 +3,65 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
-
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import io.ktor.network.sockets.aSocket
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteReadChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openAndWrapReadChannel
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openAndWrapWriteChannel
+import java.beans.Transient
 import java.io.File
-import io.ktor.network.sockets.Socket
 import java.io.Serializable
-import org.jetbrains.kotlin.daemon.common.experimental.IncrementalCompilerServicesFacadeServerSide.*
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseServerSide.*
+import java.net.InetSocketAddress
 
-class IncrementalCompilerServicesFacadeClientSide(socketOfServer: Socket): IncrementalCompilerServicesFacadeAsync, CompilerServicesFacadeBaseClientSide {
+interface IncrementalCompilerServicesFacadeClientSide : IncrementalCompilerServicesFacadeAsync, CompilerServicesFacadeBaseClientSide
 
-    lateinit var socketToServer: Socket
-    val input: ByteReadChannelWrapper by lazy { socketToServer.openAndWrapReadChannel() }
-    val output: ByteWriteChannelWrapper by lazy { socketToServer.openAndWrapWriteChannel() }
+class IncrementalCompilerServicesFacadeClientSideImpl(val serverPort: Int) : IncrementalCompilerServicesFacadeClientSide {
 
-    suspend override fun hasAnnotationsFileUpdater(): Boolean {
-        output.writeObject(HasAnnotationsFileUpdaterMessage())
-        return input.nextObject() as Boolean
+    @Transient
+    lateinit var input: ByteReadChannelWrapper
+    @Transient
+    lateinit var output: ByteWriteChannelWrapper
+
+    override suspend fun hasAnnotationsFileUpdater(): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    suspend override fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) {
-        output.writeObject(UpdateAnnotationsMessage(outdatedClassesJvmNames))
+    override suspend fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    suspend override fun revert() {
-        output.writeObject(RevertMessage())
+    override suspend fun revert() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    suspend override fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) {
-        output.writeObject(RegisterChangesMessage(timestamp, dirtyData))
+    override suspend fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    suspend override fun unknownChanges(timestamp: Long) {
-        output.writeObject(UnknownChangesMessage(timestamp))
+    override suspend fun unknownChanges(timestamp: Long) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    suspend override fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>? {
-        output.writeObject(GetChangesMessage(artifact, sinceTS))
-        return input.nextObject() as Iterable<SimpleDirtyData>?
+    override suspend fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    suspend override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
-        output.writeObject(ReportMessage(category, severity, message, attachment))
+    override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun attachToServer(socket: Socket) {
-        socketToServer = socket
-    }
 
-    init {
-        attachToServer(socketOfServer)
+    override fun connectToServer() {
+        async {
+            aSocket().tcp().connect(InetSocketAddress(serverPort)).let {
+                input = it.openAndWrapReadChannel()
+                output = it.openAndWrapWriteChannel()
+            }
+        }
     }
 
 }

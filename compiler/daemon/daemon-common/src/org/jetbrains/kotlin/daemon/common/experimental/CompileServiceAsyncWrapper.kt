@@ -6,117 +6,111 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 import kotlinx.coroutines.experimental.runBlocking
-import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
-import org.jetbrains.kotlin.daemon.common.CompilationResults
-import org.jetbrains.kotlin.daemon.common.CompileService
-import org.jetbrains.kotlin.daemon.common.CompilerId
+
+import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
+import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
+import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
+import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
+import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 
-class CompileServiceRMIAsyncWrapper(val rmiCompileService: CompileService) : CompileServiceAsync {
+class CompileServiceAsyncWrapper(val rmiCompileService: CompileService) : CompileServiceClientSide {
 
-    suspend override fun getUsedMemory() = runBlocking {
-        rmiCompileService.getUsedMemory()
-    }
-
-    suspend override fun getDaemonOptions() = runBlocking {
-        rmiCompileService.getDaemonOptions()
-    }
-
-    suspend override fun getDaemonInfo() = runBlocking {
-        rmiCompileService.getDaemonInfo()
-    }
-
-    suspend override fun getDaemonJVMOptions() = runBlocking {
-        rmiCompileService.getDaemonJVMOptions()
-    }
-
-    suspend override fun registerClient(aliveFlagPath: String?) = runBlocking {
-        rmiCompileService.registerClient(aliveFlagPath)
-    }
-
-    suspend override fun getClients() = runBlocking {
-        rmiCompileService.getClients()
-    }
-
-    suspend override fun leaseCompileSession(aliveFlagPath: String?) = runBlocking {
-        rmiCompileService.leaseCompileSession(aliveFlagPath)
-    }
-
-    suspend override fun releaseCompileSession(sessionId: Int) = runBlocking {
-        rmiCompileService.releaseCompileSession(sessionId)
-    }
-
-    suspend override fun shutdown() = runBlocking {
-        rmiCompileService.shutdown()
-    }
-
-    suspend override fun scheduleShutdown(graceful: Boolean) = runBlocking {
-        rmiCompileService.scheduleShutdown(graceful)
-    }
-
-    suspend override fun compile(
+    override suspend fun compile(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseAsync,
-        compilationResults: CompilationResults?
-    ) = runBlocking {
-        rmiCompileService.compile(
-            sessionId,
-            compilerArguments,
-            compilationOptions,
-            (servicesFacade as CompilerServicesFacadeBaseAsyncWrapper).rmiImpl,
-            compilationResults
-        )
-    }
+        servicesFacade: CompilerServicesFacadeBaseClientSide,
+        compilationResults: CompilationResultsClientSide?
+    ) = rmiCompileService.compile(
+        sessionId,
+        compilerArguments,
+        compilationOptions,
+        servicesFacade.toRMI(),
+        compilationResults?.toRMI()
+    )
 
-    suspend override fun clearJarCache() = runBlocking {
-        rmiCompileService.clearJarCache()
-    }
-
-    suspend override fun releaseReplSession(sessionId: Int) = runBlocking {
-        rmiCompileService.releaseReplSession(sessionId)
-    }
-
-    suspend override fun leaseReplSession(
+    override suspend fun leaseReplSession(
         aliveFlagPath: String?,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseAsync,
+        servicesFacade: CompilerServicesFacadeBaseClientSide,
         templateClasspath: List<File>,
         templateClassName: String
-    ) = runBlocking {
-        rmiCompileService.leaseReplSession(
-            aliveFlagPath,
-            compilerArguments,
-            compilationOptions,
-            (servicesFacade as CompilerServicesFacadeBaseAsyncWrapper).rmiImpl,
-            templateClasspath,
-            templateClassName
-        )
-    }
+    ) = rmiCompileService.leaseReplSession(
+        aliveFlagPath,
+        compilerArguments,
+        compilationOptions,
+        servicesFacade.toRMI(),
+        templateClasspath,
+        templateClassName
+    )
 
-    suspend override fun replCreateState(sessionId: Int) = runBlocking {
-        rmiCompileService.replCreateState(sessionId).toWrapper()
-    }
+    override suspend fun replCreateState(sessionId: Int) = rmiCompileService.replCreateState(sessionId).toClient()
 
-    suspend override fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) = runBlocking {
+    override fun connectToServer() {} // is done by RMI
+
+    override suspend fun getUsedMemory() =
+        rmiCompileService.getUsedMemory()
+
+
+    override suspend fun getDaemonOptions() =
+        rmiCompileService.getDaemonOptions()
+
+
+    override suspend fun getDaemonInfo() =
+        rmiCompileService.getDaemonInfo()
+
+
+    override suspend fun getDaemonJVMOptions() =
+        rmiCompileService.getDaemonJVMOptions()
+
+    override suspend fun registerClient(aliveFlagPath: String?) =
+        rmiCompileService.registerClient(aliveFlagPath)
+
+    override suspend fun getClients() =
+        rmiCompileService.getClients()
+
+
+    override suspend fun leaseCompileSession(aliveFlagPath: String?) =
+        rmiCompileService.leaseCompileSession(aliveFlagPath)
+
+
+    override suspend fun releaseCompileSession(sessionId: Int) =
+        rmiCompileService.releaseCompileSession(sessionId)
+
+
+    override suspend fun shutdown() =
+        rmiCompileService.shutdown()
+
+
+    override suspend fun scheduleShutdown(graceful: Boolean) =
+        rmiCompileService.scheduleShutdown(graceful)
+
+    override suspend fun clearJarCache() =
+        rmiCompileService.clearJarCache()
+
+
+    override suspend fun releaseReplSession(sessionId: Int) =
+        rmiCompileService.releaseReplSession(sessionId)
+
+
+    override suspend fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) =
         rmiCompileService.replCheck(sessionId, replStateId, codeLine)
-    }
 
-    suspend override fun replCompile(
+
+    override suspend fun replCompile(
         sessionId: Int,
         replStateId: Int,
         codeLine: ReplCodeLine
-    ) = runBlocking {
+    ) =
         rmiCompileService.replCompile(sessionId, replStateId, codeLine)
-    }
 
-    suspend override fun checkCompilerId(expectedCompilerId: CompilerId)= runBlocking {
+
+    override suspend fun checkCompilerId(expectedCompilerId: CompilerId) =
         rmiCompileService.checkCompilerId(expectedCompilerId)
-    }
 
 }
 
-fun CompileService.toWrapper() = CompileServiceRMIAsyncWrapper(this)
+fun CompileService.toClient() = CompileServiceAsyncWrapper(this)

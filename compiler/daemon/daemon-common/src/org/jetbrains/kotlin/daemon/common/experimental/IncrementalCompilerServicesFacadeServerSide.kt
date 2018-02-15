@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import java.io.File
-import java.io.Serializable
 
 
 interface IncrementalCompilerServicesFacadeServerSide : IncrementalCompilerServicesFacadeAsync, CompilerServicesFacadeBaseServerSide {
@@ -27,7 +26,7 @@ interface IncrementalCompilerServicesFacadeServerSide : IncrementalCompilerServi
             output.writeObject(server.updateAnnotations(outdatedClassesJvmNames))
     }
 
-    class RevertMessage : Server.Message<IncrementalCompilerServicesFacadeServerSide> {
+    class RevertMessage(val outdatedClassesJvmNames: Iterable<String>) : Server.Message<IncrementalCompilerServicesFacadeServerSide> {
         override suspend fun process(server: IncrementalCompilerServicesFacadeServerSide, output: ByteWriteChannelWrapper) =
             server.revert()
     }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.RemoteOperationsTracer
+import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeClientSide
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil
@@ -26,11 +27,10 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
-import kotlin.concurrent.write
 
 interface KotlinJvmReplServiceAsync : ReplCompileAction, ReplCheckAction, CreateReplStageStateAction {
 
-    suspend fun createRemoteState(port: Int = portForServers): RemoteReplStateFacadeClientSideImpl
+    suspend fun createRemoteState(port: Int = portForServers): ReplStateFacadeClientSide
 
     val portForServers: Int
 

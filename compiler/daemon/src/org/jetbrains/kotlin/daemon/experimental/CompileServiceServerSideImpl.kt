@@ -9,8 +9,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import io.ktor.network.sockets.ServerSocket
-import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.build.JvmSourceRoot
@@ -33,26 +31,20 @@ import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.KotlinJvmReplService
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceServerSide
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseAsync
-import org.jetbrains.kotlin.daemon.common.experimental.IncrementalCompilerServicesFacadeAsync
-import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeAsync
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openIO
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteAnnotationsFileUpdaterAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteArtifactChangesProviderAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteChangesRegistryAsync
 import org.jetbrains.kotlin.daemon.report.experimental.CompileServicesFacadeMessageCollector
 import org.jetbrains.kotlin.daemon.report.experimental.DaemonMessageReporterAsync
-import org.jetbrains.kotlin.daemon.report.experimental.DaemonMessageReporterAsyncPrintStreamAdapter
 import org.jetbrains.kotlin.daemon.report.experimental.RemoteICReporterAsync
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -67,9 +59,6 @@ import java.util.logging.Logger
 import kotlin.concurrent.read
 import kotlin.concurrent.schedule
 import kotlin.concurrent.write
-
-
-const val REMOTE_STREAM_BUFFER_SIZE = 4096
 
 fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
 
@@ -94,8 +83,12 @@ private class EventManagerImpl : EventManager {
     }
 }
 
+typealias AnyMessage = Server.AnyMessage<CompileServiceServerSide>
+typealias Message = Server.Message<CompileServiceServerSide>
+typealias EndConnectionMessage = Server.EndConnectionMessage<CompileServiceServerSide>
+
 class CompileServiceServerSideImpl(
-    val socket: ServerSocket,
+    val serverPort: Int,
     val compiler: CompilerSelector,
     val compilerId: CompilerId,
     val daemonOptions: DaemonOptions,
@@ -103,21 +96,7 @@ class CompileServiceServerSideImpl(
     val port: Int,
     val timer: Timer,
     val onShutdown: () -> Unit
-) : CompileServiceServerSide {
-
-    suspend override fun processMessage(msg: Server.AnyMessage, output: ByteWriteChannelWrapper) = when (msg) {
-        is Server.EndConnectionMessage -> Server.State.CLOSED
-        is Server.Message<*> -> Server.State.WORKING
-            .also { (msg as Server.Message<CompileServiceServerSide>).process(this, output) }
-        else -> Server.State.ERROR
-    }
-
-    suspend override fun attachClient(client: Socket) {
-        async {
-            val (input, output) = client.openIO()
-            while (processMessage(input.nextObject() as Server.Message<*>, output) != Server.State.CLOSED);
-        }
-    }
+) : CompileServiceServerSide, Server<CompileServiceServerSide> by DefaultServer(serverPort) {
 
     private val log by lazy { Logger.getLogger("compiler") }
 
@@ -125,7 +104,7 @@ class CompileServiceServerSideImpl(
         // assuming logically synchronized
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
-        //  : bindToSocket() - already done
+        this.toRMIServer() // also create RMI server in order to support old clients
 
         timer.schedule(10) {
             exceptionLoggingTimerThread { initiateElections() }
@@ -138,13 +117,7 @@ class CompileServiceServerSideImpl(
         }
 
         // server stuff :
-        runBlocking {
-            socket.use {
-                while (true) {
-                    attachClient(it.accept())
-                }
-            }
-        }
+        runServer()
 
     }
 
@@ -287,7 +260,7 @@ class CompileServiceServerSideImpl(
         try {
             if (!runFile.createNewFile()) throw Exception("createNewFile returned false")
         } catch (e: Throwable) {
-            throw IllegalStateException("Unable to create run file '${runFile.absolutePath}'", e)
+            throw IllegalStateException("Unable to create runServer file '${runFile.absolutePath}'", e)
         }
         runFile.deleteOnExit()
     }
@@ -295,7 +268,7 @@ class CompileServiceServerSideImpl(
     // RMI-exposed API
 
     override suspend fun getDaemonInfo(): CompileService.CallResult<String> = ifAlive(minAliveness = Aliveness.Dying) {
-        CompileService.CallResult.Good("Kotlin daemon on port $port")
+        CompileService.CallResult.Good("Kotlin daemon on socketPort $port")
     }
 
     override suspend fun getDaemonOptions(): CompileService.CallResult<DaemonOptions> = ifAlive {
@@ -372,8 +345,8 @@ class CompileServiceServerSideImpl(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseAsync,
-        compilationResults: CompilationResults?
+        servicesFacade: CompilerServicesFacadeBaseClientSide,
+        compilationResults: CompilationResultsClientSide?
     ): CompileService.CallResult<Int> = ifAlive {
         val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = DaemonMessageReporterAsync(servicesFacade, compilationOptions)
@@ -454,7 +427,7 @@ class CompileServiceServerSideImpl(
         args: K2JSCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         servicesFacade: IncrementalCompilerServicesFacadeAsync,
-        compilationResults: CompilationResults,
+        compilationResults: CompilationResultsClientSide,
         compilerMessageCollector: MessageCollector
     ): ExitCode {
         val allKotlinFiles = arrayListOf<File>()
@@ -493,7 +466,7 @@ class CompileServiceServerSideImpl(
         k2jvmArgs: K2JVMCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         servicesFacade: IncrementalCompilerServicesFacadeAsync,
-        compilationResults: CompilationResults,
+        compilationResults: CompilationResultsClientSide,
         compilerMessageCollector: MessageCollector,
         daemonMessageReporterAsync: DaemonMessageReporterAsync
     ): ExitCode {
@@ -559,7 +532,7 @@ class CompileServiceServerSideImpl(
         aliveFlagPath: String?,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseAsync,
+        servicesFacade: CompilerServicesFacadeBaseClientSide,
         templateClasspath: List<File>,
         templateClassName: String
     ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
@@ -582,7 +555,7 @@ class CompileServiceServerSideImpl(
     // TODO: add more checks (e.g. is it a repl session)
     override suspend fun releaseReplSession(sessionId: Int): CompileService.CallResult<Nothing> = releaseCompileSession(sessionId)
 
-    override suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeAsync> =
+    override suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeClientSide> =
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
                 CompileService.CallResult.Good(createRemoteState(port))
@@ -722,7 +695,8 @@ class CompileServiceServerSideImpl(
                 if (fattestOpts memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(
                         bestDaemonWithMetadata.runFile,
                         runFile
-                    ) < 0) {
+                    ) < 0
+                ) {
                     runBlocking {
                         // all others are smaller that me, take overs' clients and shut them down
                         log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
@@ -762,7 +736,8 @@ class CompileServiceServerSideImpl(
                 else if (daemonJVMOptions memorywiseFitsInto fattestOpts && FileAgeComparator().compare(
                         bestDaemonWithMetadata.runFile,
                         runFile
-                    ) > 0) {
+                    ) > 0
+                ) {
                     runBlocking {
                         // there is at least one bigger, handover my clients to it and shutdown
                         log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
@@ -776,7 +751,7 @@ class CompileServiceServerSideImpl(
                     log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} equal prio, continue: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                     // TODO: implement some behaviour here, e.g.:
                     //   - shutdown/takeover smaller daemon
-                    //   - run (or better persuade client to run) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)
+                    //   - runServer (or better persuade client to runServer) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)
                 }
             }
         }
@@ -843,50 +818,6 @@ class CompileServiceServerSideImpl(
         }
         return true
     }
-
-    // todo: remove after remoteIncrementalCompile is removed
-    private fun doCompile(
-        sessionId: Int,
-        args: Array<out String>,
-        compilerMessagesStreamProxy: RemoteOutputStream,
-        serviceOutputStreamProxy: RemoteOutputStream,
-        operationsTracer: RemoteOperationsTracer?,
-        body: (PrintStream, EventManager, Profiler) -> ExitCode
-    ): CompileService.CallResult<Int> =
-        ifAlive {
-            withValidClientOrSessionProxy(sessionId) {
-                operationsTracer?.before("compile")
-                val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
-                val eventManger = EventManagerImpl()
-                val compilerMessagesStream = PrintStream(
-                    BufferedOutputStream(
-                        RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler),
-                        REMOTE_STREAM_BUFFER_SIZE
-                    )
-                )
-                val serviceOutputStream = PrintStream(
-                    BufferedOutputStream(
-                        RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler),
-                        REMOTE_STREAM_BUFFER_SIZE
-                    )
-                )
-                try {
-                    val compileServiceReporter = DaemonMessageReporterAsyncPrintStreamAdapter(serviceOutputStream)
-                    if (args.none())
-                        throw IllegalArgumentException("Error: empty arguments list.")
-                    log.info("Starting compilation with args: " + args.joinToString(" "))
-                    val exitCode = checkedCompile(compileServiceReporter, rpcProfiler) {
-                        body(compilerMessagesStream, eventManger, rpcProfiler).code
-                    }
-                    CompileService.CallResult.Good(exitCode)
-                } finally {
-                    serviceOutputStream.flush()
-                    compilerMessagesStream.flush()
-                    eventManger.fireCompilationFinished()
-                    operationsTracer?.after("compile")
-                }
-            }
-        }
 
     private fun doCompile(
         sessionId: Int,

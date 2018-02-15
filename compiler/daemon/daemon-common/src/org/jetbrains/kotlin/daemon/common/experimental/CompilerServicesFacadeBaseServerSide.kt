@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import java.io.Serializable
 
-interface CompilerServicesFacadeBaseServerSide : CompilerServicesFacadeBaseAsync, Server {
+interface CompilerServicesFacadeBaseServerSide : CompilerServicesFacadeBaseAsync, Server<CompilerServicesFacadeBaseServerSide> {
+
     class ReportMessage(
         val category: Int,
         val severity: Int,

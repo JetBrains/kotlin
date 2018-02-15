@@ -5,42 +5,37 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import kotlinx.coroutines.experimental.runBlocking
-import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.common.RemoteInputStream
 import org.jetbrains.kotlin.daemon.common.RemoteOutputStream
 
-class RemoteOutputStreamAsyncWrapper(val rmiOutput: RemoteOutputStream) : RemoteOutputStreamAsync {
+class RemoteOutputStreamAsyncWrapper(val rmiOutput: RemoteOutputStream) : RemoteOutputStreamAsyncClientSide {
 
-    suspend override fun close() = runBlocking {
+    override fun connectToServer() {}
+
+    override suspend fun close() =
         rmiOutput.close()
-    }
 
-    suspend override fun write(data: ByteArray, offset: Int, length: Int) = runBlocking {
+    override suspend fun write(data: ByteArray, offset: Int, length: Int) =
         rmiOutput.write(data, offset, length)
-    }
 
-    suspend override fun write(dataByte: Int) = runBlocking {
+    override suspend fun write(dataByte: Int) =
         rmiOutput.write(dataByte)
-    }
 
 }
 
-class RemoteInputStreamAsyncWrapper(private val rmiInput: RemoteInputStream) : RemoteInputStreamAsync {
+class RemoteInputStreamAsyncWrapper(private val rmiInput: RemoteInputStream) : RemoteInputStreamClientSide {
 
-    suspend override fun close() = runBlocking {
+    override fun connectToServer() {}
+
+    override suspend fun close() =
         rmiInput.close()
-    }
 
-    suspend override fun read() = runBlocking {
+    override suspend fun read() =
         rmiInput.read()
-    }
 
-    suspend override fun read(length: Int) = runBlocking {
+    override suspend fun read(length: Int) =
         rmiInput.read(length)
-    }
-
 }
 
-fun RemoteOutputStream.toWrapper() = RemoteOutputStreamAsyncWrapper(this)
-fun RemoteInputStream.toWrapper() = RemoteInputStreamAsyncWrapper(this)
+fun RemoteOutputStream.toClient() = RemoteOutputStreamAsyncWrapper(this)
+fun RemoteInputStream.toClient() = RemoteInputStreamAsyncWrapper(this)

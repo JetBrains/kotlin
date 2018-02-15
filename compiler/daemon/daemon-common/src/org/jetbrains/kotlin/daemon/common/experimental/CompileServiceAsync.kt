@@ -25,7 +25,8 @@ interface CompileServiceAsync {
 
     suspend fun registerClient(aliveFlagPath: String?): CompileService.CallResult<Nothing>
 
-    // TODO: (-old-) consider adding another client alive checking mechanism, e.g. socket/port
+    // TODO: (-old-) consider adding another client alive checking mechanism, e.g. socket/socketPort
+
     suspend fun getClients(): CompileService.CallResult<List<String>>
 
     suspend fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int>
@@ -40,8 +41,8 @@ interface CompileServiceAsync {
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseAsync,
-        compilationResults: CompilationResults?
+        servicesFacade: CompilerServicesFacadeBaseClientSide,
+        compilationResults: CompilationResultsClientSide?
     ): CompileService.CallResult<Int>
 
     suspend fun clearJarCache()
@@ -52,12 +53,12 @@ interface CompileServiceAsync {
         aliveFlagPath: String?,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseAsync,
+        servicesFacade: CompilerServicesFacadeBaseClientSide,
         templateClasspath: List<File>,
         templateClassName: String
     ): CompileService.CallResult<Int>
 
-    suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeAsync>
+    suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeClientSide>
 
     suspend fun replCheck(
         sessionId: Int,

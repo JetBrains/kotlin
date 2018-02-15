@@ -7,47 +7,59 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import io.ktor.network.sockets.Socket
+import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
+import java.beans.Transient
 import java.io.File
 
+interface CompileServiceClientSide : CompileServiceAsync, Client
 
-class CompileServiceClientSide(
-    host: String,
-    port: Int,
-    socketFactory: LoopbackNetworkInterface.ClientLoopbackSocketFactoryKtor
-) : CompileServiceAsync, Client {
+class CompileServiceClientSideImpl(
+    val serverHost: String,
+    val serverPort: Int,
+    val socketFactory: LoopbackNetworkInterface.ClientLoopbackSocketFactoryKtor
+) : CompileServiceClientSide {
 
-    suspend override fun compile(
+    override suspend fun compile(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseAsync,
-        compilationResults: CompilationResults?
+        servicesFacade: CompilerServicesFacadeBaseClientSide,
+        compilationResults: CompilationResultsClientSide?
     ): CompileService.CallResult<Int> {
         output.writeObject(CompileMessage(sessionId, compilerArguments, compilationOptions, servicesFacade, compilationResults))
         return input.nextObject() as CompileService.CallResult<Int>
     }
 
-    suspend override fun leaseReplSession(
+    override suspend fun leaseReplSession(
         aliveFlagPath: String?,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseAsync,
+        servicesFacade: CompilerServicesFacadeBaseClientSide,
         templateClasspath: List<File>,
         templateClassName: String
     ): CompileService.CallResult<Int> {
-        output.writeObject(LeaseReplSessionMessage(aliveFlagPath, compilerArguments, compilationOptions, servicesFacade, templateClasspath, templateClassName))
+        output.writeObject(
+            LeaseReplSessionMessage(
+                aliveFlagPath,
+                compilerArguments,
+                compilationOptions,
+                servicesFacade,
+                templateClasspath,
+                templateClassName
+            )
+        )
         return input.nextObject() as CompileService.CallResult<Int>
     }
 
-    lateinit var socketToServer: Socket
-    val input: ByteReadChannelWrapper by lazy { socketToServer.openAndWrapReadChannel() }
-    val output: ByteWriteChannelWrapper by lazy { socketToServer.openAndWrapWriteChannel() }
+    @Transient
+    lateinit var input: ByteReadChannelWrapper
+    @Transient
+    lateinit var output: ByteWriteChannelWrapper
 
     // CompileService methods:
 
@@ -128,9 +140,9 @@ class CompileServiceClientSide(
         return input.nextObject() as CompileService.CallResult<Nothing>
     }
 
-    override suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeAsync> {
+    override suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeClientSide> {
         output.writeObject(ReplCreateStateMessage(sessionId))
-        return input.nextObject() as CompileService.CallResult<ReplStateFacadeAsync>
+        return input.nextObject() as CompileService.CallResult<ReplStateFacadeClientSide>
     }
 
     override suspend fun replCheck(
@@ -165,8 +177,13 @@ class CompileServiceClientSide(
 
 
     // Client methods:
-    override fun attachToServer(socket: Socket) {
-        socketToServer = socket
+    override fun connectToServer() {
+        runBlocking {
+            socketFactory.createSocket(serverHost, serverPort).let {
+                input = it.openAndWrapReadChannel()
+                output = it.openAndWrapWriteChannel()
+            }
+        }
     }
 
 
@@ -232,8 +249,8 @@ class CompileServiceClientSide(
         val sessionId: Int,
         val compilerArguments: Array<out String>,
         val compilationOptions: CompilationOptions,
-        val servicesFacade: CompilerServicesFacadeBaseAsync,
-        val compilationResults: CompilationResults?
+        val servicesFacade: CompilerServicesFacadeBaseClientSide,
+        val compilationResults: CompilationResultsClientSide?
     ) : Server.Message<CompileServiceServerSide> {
         override suspend fun process(server: CompileServiceServerSide, output: ByteWriteChannelWrapper) =
             output.writeObject(
@@ -256,7 +273,7 @@ class CompileServiceClientSide(
         val aliveFlagPath: String?,
         val compilerArguments: Array<out String>,
         val compilationOptions: CompilationOptions,
-        val servicesFacade: CompilerServicesFacadeBaseAsync,
+        val servicesFacade: CompilerServicesFacadeBaseClientSide,
         val templateClasspath: List<File>,
         val templateClassName: String
     ) : Server.Message<CompileServiceServerSide> {
@@ -292,7 +309,7 @@ class CompileServiceClientSide(
                     aliveFlagPath,
                     compilerArguments,
                     compilationOptions,
-                    servicesFacade.toWrapper(),
+                    servicesFacade.toClient(),
                     templateClasspath,
                     templateClassName
                 )
@@ -320,10 +337,6 @@ class CompileServiceClientSide(
     ) : Server.Message<CompileServiceServerSide> {
         override suspend fun process(server: CompileServiceServerSide, output: ByteWriteChannelWrapper) =
             output.writeObject(server.replCompile(sessionId, replStateId, codeLine))
-    }
-
-    init {
-        attachToServer(socketFactory.createSocket(host, port))
     }
 
 }

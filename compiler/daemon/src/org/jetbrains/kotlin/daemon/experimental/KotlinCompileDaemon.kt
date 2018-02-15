@@ -5,22 +5,19 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
-import com.sun.jdi.connect.Connector
-import io.ktor.network.sockets.ServerSocket
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
-import java.rmi.registry.Registry
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.jar.Manifest
@@ -130,9 +127,9 @@ object KotlinCompileDaemonSockets {
             //            if (System.getSecurityManager() == null)
             //                System.setSecurityManager (RMISecurityManager())
             //
-            //            setDaemonPermissions(daemonOptions.port)
+            //            setDaemonPermissions(daemonOptions.socketPort)
 
-            val (socket, port) = findPortAndCreateSocket(
+            val port = findPortForSocket(
                 COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
                 COMPILE_DAEMON_PORTS_RANGE_START,
                 COMPILE_DAEMON_PORTS_RANGE_END
@@ -151,7 +148,7 @@ object KotlinCompileDaemonSockets {
             // timer with a daemon thread, meaning it should not prevent JVM to exit normally
             val timer = Timer(true)
             val compilerService = CompileServiceServerSideImpl(
-                socket,
+                port,
                 compilerSelector,
                 compilerId,
                 daemonOptions,
@@ -172,7 +169,7 @@ object KotlinCompileDaemonSockets {
                 })
 
             println(COMPILE_DAEMON_IS_READY_MESSAGE)
-            log.info("daemon is listening on port: $port")
+            log.info("daemon is listening on socketPort: $port")
 
             // this supposed to stop redirected streams reader(s) on the client side and prevent some situations with hanging threads, but doesn't work reliably
             // TODO: implement more reliable scheme

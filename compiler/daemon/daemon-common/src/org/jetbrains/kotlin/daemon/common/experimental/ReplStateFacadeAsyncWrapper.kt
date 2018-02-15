@@ -5,38 +5,29 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.ReplStateFacade
 
-class ReplStateFacadeAsyncWrapper(val rmiReplStateFacade: ReplStateFacade): ReplStateFacadeAsync {
+class ReplStateFacadeAsyncWrapper(val rmiReplStateFacade: ReplStateFacade): ReplStateFacadeClientSide {
 
-    suspend override fun getId() = runBlocking {
-        rmiReplStateFacade.getId()
-    }
+    override fun connectToServer() {} // done by rmi
 
-    suspend override fun getHistorySize() = runBlocking {
-        rmiReplStateFacade.getHistorySize()
-    }
+    override suspend fun getId() = rmiReplStateFacade.getId()
 
-    suspend override fun historyGet(index: Int) = runBlocking {
-        rmiReplStateFacade.historyGet(index)
-    }
+    override suspend fun getHistorySize() = rmiReplStateFacade.getHistorySize()
 
-    suspend override fun historyReset() = runBlocking {
-        rmiReplStateFacade.historyReset()
-    }
+    override suspend fun historyGet(index: Int) = rmiReplStateFacade.historyGet(index)
 
-    suspend override fun historyResetTo(id: ILineId) = runBlocking {
-        rmiReplStateFacade.historyResetTo(id)
-    }
+    override suspend fun historyReset() = rmiReplStateFacade.historyReset()
+
+    override suspend fun historyResetTo(id: ILineId) = rmiReplStateFacade.historyResetTo(id)
 
 }
 
-fun ReplStateFacade.toWrapper() = ReplStateFacadeAsyncWrapper(this)
-fun CompileService.CallResult<ReplStateFacade>.toWrapper()= when (this) {
-    is CompileService.CallResult.Good -> CompileService.CallResult.Good(this.result.toWrapper())
+fun ReplStateFacade.toClient() = ReplStateFacadeAsyncWrapper(this)
+fun CompileService.CallResult<ReplStateFacade>.toClient()= when (this) {
+    is CompileService.CallResult.Good -> CompileService.CallResult.Good(this.result.toClient())
     is CompileService.CallResult.Dying -> this
     is CompileService.CallResult.Error -> this
     is CompileService.CallResult.Ok -> this

@@ -21,6 +21,8 @@ dependencies {
     nativePlatformVariants.forEach {
         fatJarContents(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
     }
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
+    compile("io.ktor:ktor-network:0.9.1-alpha-10")
 }
 
 sourceSets {

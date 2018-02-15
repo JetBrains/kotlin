@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 
-interface ReplStateFacadeServerSide: ReplStateFacadeAsync, Server {
+interface ReplStateFacadeServerSide: ReplStateFacadeAsync, Server<ReplStateFacadeServerSide> {
 
     // Query messages:
     class GetIdMessage : Server.Message<ReplStateFacadeServerSide> {

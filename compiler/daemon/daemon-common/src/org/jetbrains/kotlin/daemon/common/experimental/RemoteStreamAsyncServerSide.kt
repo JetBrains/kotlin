@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Byte
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 
 
-interface RemoteOutputStreamAsyncServerSide : RemoteOutputStreamAsync, Server {
+interface RemoteOutputStreamAsyncServerSide : RemoteOutputStreamAsync, Server<RemoteOutputStreamAsyncServerSide> {
     // Query messages:
     class CloseMessage : Server.Message<RemoteOutputStreamAsyncServerSide> {
         override suspend fun process(server: RemoteOutputStreamAsyncServerSide, output: ByteWriteChannelWrapper) =
@@ -29,7 +29,7 @@ interface RemoteOutputStreamAsyncServerSide : RemoteOutputStreamAsync, Server {
 }
 
 
-interface RemoteInputStreamServerSide : RemoteInputStreamAsync, Server {
+interface RemoteInputStreamServerSide : RemoteInputStreamAsync, Server<RemoteInputStreamServerSide> {
     // Query messages:
     class CloseMessage : Server.Message<RemoteInputStreamServerSide> {
         override suspend fun process(server: RemoteInputStreamServerSide, output: ByteWriteChannelWrapper) =

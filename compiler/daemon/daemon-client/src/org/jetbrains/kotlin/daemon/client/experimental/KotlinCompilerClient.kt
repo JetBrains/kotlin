@@ -5,18 +5,27 @@
 
 package org.jetbrains.kotlin.daemon.client.experimental
 
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
-import org.jetbrains.kotlin.daemon.client.CompilerCallbackServicesFacadeServer
+import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
-import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
+import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
-import java.io.OutputStream
 import java.io.PrintStream
+import java.io.Serializable
 import java.net.SocketException
 import java.rmi.ConnectException
 import java.rmi.ConnectIOException
 import java.rmi.UnmarshalException
-import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -27,7 +36,8 @@ class CompilationServices(
     val compilationCanceledStatus: CompilationCanceledStatus? = null
 )
 
-data class CompileServiceSession(val compileService: CompileService, val sessionId: Int)
+data class CompileServiceSession(val compileService: CompileServiceClientSide, val sessionId: Int)
+
 
 object KotlinCompilerClient {
 
@@ -52,7 +62,7 @@ object KotlinCompilerClient {
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean = true,
         checkId: Boolean = true
-    ): CompileService? {
+    ): CompileServiceClientSide? {
         val flagFile = getOrCreateClientFlagFile(daemonOptions)
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
@@ -64,7 +74,7 @@ object KotlinCompilerClient {
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean = true
-    ): CompileService? =
+    ): CompileServiceClientSide? =
         connectAndLease(
             compilerId,
             clientAliveFlagFile,
@@ -88,25 +98,27 @@ object KotlinCompilerClient {
         sessionAliveFlagFile: File? = null
     ): CompileServiceSession? = connectLoop(reportingTargets, autostart) { isLastAttempt ->
 
-        fun CompileService.leaseImpl(): CompileServiceSession? {
+        fun CompileServiceClientSide.leaseImpl(): CompileServiceSession? = runBlocking {
             // the newJVMOptions could be checked here for additional parameters, if needed
             registerClient(clientAliveFlagFile.absolutePath)
             reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
-
-            if (!leaseSession) return CompileServiceSession(this, CompileService.NO_SESSION)
-
-            return leaseCompileSession(sessionAliveFlagFile?.absolutePath).takeUnless { it is CompileService.CallResult.Dying }?.let {
-                CompileServiceSession(this, it.get())
-            }
+            if (!leaseSession)
+                CompileServiceSession(this@leaseImpl, CompileService.NO_SESSION)
+            else
+                leaseCompileSession(sessionAliveFlagFile?.absolutePath)
+                    .takeUnless { it is CompileService.CallResult.Dying }
+                    ?.let {
+                        CompileServiceSession(this@leaseImpl, it.get())
+                    }
         }
 
-        ensureServerHostnameIsSetUp()
-        val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(
-            File(daemonOptions.runFilesPath),
-            compilerId,
-            daemonJVMOptions,
-            { cat, msg -> reportingTargets.report(cat, msg) })
-
+        val (service, newJVMOptions) = runBlocking {
+            tryFindSuitableDaemonOrNewOpts(
+                File(daemonOptions.runFilesPath),
+                compilerId,
+                daemonJVMOptions,
+                { cat, msg -> reportingTargets.report(cat, msg) })
+        }
         if (service != null) {
             service.leaseImpl()
         } else {
@@ -119,7 +131,7 @@ object KotlinCompilerClient {
         }
     }
 
-    fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions): Unit {
+    suspend fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions): Unit {
         connectToCompileService(
             compilerId,
             DaemonJVMOptions(),
@@ -127,12 +139,11 @@ object KotlinCompilerClient {
             DaemonReportingTargets(out = System.out),
             autostart = false,
             checkId = false
-        )
-            ?.shutdown()
+        )?.shutdown()
     }
 
 
-    fun shutdownCompileService(compilerId: CompilerId): Unit {
+    suspend fun shutdownCompileService(compilerId: CompilerId): Unit {
         shutdownCompileService(compilerId, DaemonOptions())
     }
 
@@ -142,60 +153,6 @@ object KotlinCompilerClient {
 
     fun releaseCompileSession(compilerService: CompileService, sessionId: Int): Unit {
         compilerService.releaseCompileSession(sessionId)
-    }
-
-    @Deprecated("Use other compile method", ReplaceWith("compile"))
-    fun compile(
-        compilerService: CompileService,
-        sessionId: Int,
-        targetPlatform: CompileService.TargetPlatform,
-        args: Array<out String>,
-        out: OutputStream,
-        port: Int = SOCKET_ANY_FREE_PORT,
-        operationsTracer: RemoteOperationsTracer? = null
-    ): Int {
-        val outStrm = RemoteOutputStreamServer(out, port = port)
-        return compilerService.remoteCompile(
-            sessionId,
-            targetPlatform,
-            args,
-            CompilerCallbackServicesFacadeServer(port = port),
-            outStrm,
-            CompileService.OutputFormat.PLAIN,
-            outStrm,
-            operationsTracer
-        ).get()
-    }
-
-
-    @Deprecated("Use non-deprecated compile method", ReplaceWith("compile"))
-    fun incrementalCompile(
-        compileService: CompileService,
-        sessionId: Int,
-        targetPlatform: CompileService.TargetPlatform,
-        args: Array<out String>,
-        callbackServices: CompilationServices,
-        compilerOut: OutputStream,
-        daemonOut: OutputStream,
-        port: Int = SOCKET_ANY_FREE_PORT,
-        profiler: Profiler = DummyProfiler(),
-        operationsTracer: RemoteOperationsTracer? = null
-    ): Int = profiler.withMeasure(this) {
-        compileService.remoteIncrementalCompile(
-            sessionId,
-            targetPlatform,
-            args,
-            CompilerCallbackServicesFacadeServer(
-                incrementalCompilationComponents = callbackServices.incrementalCompilationComponents,
-                lookupTracker = callbackServices.lookupTracker,
-                compilationCanceledStatus = callbackServices.compilationCanceledStatus,
-                port = port
-            ),
-            RemoteOutputStreamServer(compilerOut, port),
-            CompileService.OutputFormat.XML,
-            RemoteOutputStreamServer(daemonOut, port),
-            operationsTracer
-        ).get()
     }
 
     fun compile(
@@ -259,8 +216,12 @@ object KotlinCompilerClient {
     fun main(vararg args: String) {
         val compilerId = CompilerId()
         val daemonOptions = configureDaemonOptions()
-        val daemonLaunchingOptions =
-            configureDaemonJVMOptions(inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true)
+        val daemonLaunchingOptions = configureDaemonJVMOptions(
+            inheritMemoryLimits = true,
+            inheritOtherJvmOptions = false,
+            inheritAdditionalProperties = true
+        )
+
         val clientOptions = configureClientOptions()
         val filteredArgs = args.asIterable().filterExtractProps(
             compilerId,
@@ -299,45 +260,70 @@ object KotlinCompilerClient {
         } else when {
             clientOptions.stop -> {
                 println("Shutdown the daemon")
-                daemon.shutdown()
+                runBlocking { daemon.shutdown() }
                 println("Daemon shut down successfully")
             }
             filteredArgs.none() -> {
                 // so far used only in tests
                 println(
-                    "Warning: empty arguments list, only daemon check is performed: checkCompilerId() returns ${daemon.checkCompilerId(
-                        compilerId
-                    )}"
+                    "Warning: empty arguments list, only daemon check is performed: checkCompilerId() returns ${runBlocking {
+                        daemon.checkCompilerId(
+                            compilerId
+                        )
+                    }}"
                 )
             }
             else -> {
                 println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
                 val outStrm = RemoteOutputStreamServer(System.out)
-                val servicesFacade = CompilerCallbackServicesFacadeServer()
+                val servicesFacade = CompilerCallbackServicesFacadeServerSide()
                 try {
-                    val memBefore = daemon.getUsedMemory().get() / 1024
+                    val memBefore = runBlocking { daemon.getUsedMemory().get() } / 1024
                     val startTime = System.nanoTime()
 
-                    val res = daemon.remoteCompile(
-                        CompileService.NO_SESSION,
-                        CompileService.TargetPlatform.JVM,
-                        filteredArgs.toList().toTypedArray(),
-                        servicesFacade,
-                        outStrm,
-                        CompileService.OutputFormat.PLAIN,
-                        outStrm,
-                        null
+                    val resultsPort = findPortForSocket(
+                        COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
+                        RESULTS_SERVER_PORTS_RANGE_START,
+                        RESULTS_SERVER_PORTS_RANGE_END
                     )
+                    val compResults = object : CompilationResultsServerSide,
+                        Server<CompilationResultsServerSide> by DefaultServer(resultsPort) {
 
-                    val endTime = System.nanoTime()
-                    println("Compilation ${if (res.isGood) "succeeded" else "failed"}, result code: ${res.get()}")
-                    val memAfter = daemon.getUsedMemory().get() / 1024
-                    println("Compilation time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
-                    println("Used memory $memAfter (${"%+d".format(memAfter - memBefore)} kb)")
+                        private val resultsMap = hashMapOf<Int, MutableList<Serializable>>()
+
+                        override val clientSide: CompilationResultsClientSide
+                            get() = CompilationResultsClientSideImpl(resultsPort)
+
+                        override suspend fun add(compilationResultCategory: Int, value: Serializable) {
+                            resultsMap.putIfAbsent(compilationResultCategory, mutableListOf())
+                            resultsMap[compilationResultCategory]!!.add(value)
+                            // TODO logger?
+                        }
+
+                    }
+                    runBlocking {
+                        val res = daemon.compile(
+                            CompileService.NO_SESSION,
+                            filteredArgs.toList().toTypedArray(),
+                            CompilationOptions(
+                                CompilerMode.NON_INCREMENTAL_COMPILER,
+                                CompileService.TargetPlatform.JVM,
+                                arrayOf(),  // TODO ???
+                                ReportSeverity.INFO.code,  // TODO ???
+                                arrayOf() // TODO ???
+                            ),
+                            servicesFacade.clientSide,
+                            compResults.clientSide
+                        )
+
+                        val endTime = System.nanoTime()
+                        println("Compilation ${if (res.isGood) "succeeded" else "failed"}, result code: ${res.get()}")
+                        val memAfter = daemon.getUsedMemory().get() / 1024
+                        println("Compilation time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
+                        println("Used memory $memAfter (${"%+d".format(memAfter - memBefore)} kb)")
+                    }
                 } finally {
-                    // forcing RMI to unregister all objects and stop
-                    UnicastRemoteObject.unexportObject(servicesFacade, true)
-                    UnicastRemoteObject.unexportObject(outStrm, true)
+                    // TODO ??
                 }
             }
         }
@@ -396,27 +382,29 @@ object KotlinCompilerClient {
         return null
     }
 
-    private fun tryFindSuitableDaemonOrNewOpts(
+    private suspend fun tryFindSuitableDaemonOrNewOpts(
         registryDir: File,
         compilerId: CompilerId,
         daemonJVMOptions: DaemonJVMOptions,
         report: (DaemonReportCategory, String) -> Unit
-    ): Pair<CompileService?, DaemonJVMOptions> {
+    ): Pair<CompileServiceClientSide?, DaemonJVMOptions> {
         registryDir.mkdirs()
         val timestampMarker = createTempFile("kotlin-daemon-client-tsmarker", directory = registryDir)
         val aliveWithMetadata = try {
-            walkDaemons(registryDir, compilerId, timestampMarker, report = report).toList()
+            walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report).await().toList()
         } finally {
             timestampMarker.delete()
         }
-        val comparator = compareBy<DaemonWithMetadata, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
+        val comparator = compareBy<DaemonWithMetadataAsync, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
             .thenBy(FileAgeComparator()) { it.runFile }
         val optsCopy = daemonJVMOptions.copy()
         // if required options fit into fattest running daemon - return the daemon and required options with memory params set to actual ones in the daemon
-        return aliveWithMetadata.maxWith(comparator)?.takeIf { daemonJVMOptions memorywiseFitsInto it.jvmOptions }?.let {
-            Pair(it.daemon, optsCopy.updateMemoryUpperBounds(it.jvmOptions))
-        }
-        // else combine all options from running daemon to get fattest option for a new daemon to run
+        return aliveWithMetadata.maxWith(comparator)
+            ?.takeIf { daemonJVMOptions memorywiseFitsInto it.jvmOptions }
+            ?.let {
+                Pair(it.daemon, optsCopy.updateMemoryUpperBounds(it.jvmOptions))
+            }
+        // else combine all options from running daemon to get fattest option for a new daemon to runServer
                 ?: Pair(null, aliveWithMetadata.fold(optsCopy, { opts, d -> opts.updateMemoryUpperBounds(d.jvmOptions) }))
     }
 
@@ -519,14 +507,11 @@ object KotlinCompilerClient {
     }
 }
 
-
-data class DaemonReportMessage(val category: DaemonReportCategory, val message: String)
-
 class DaemonReportingTargets(
     val out: PrintStream? = null,
     val messages: MutableCollection<DaemonReportMessage>? = null,
     val messageCollector: MessageCollector? = null,
-    val compilerServices: CompilerServicesFacadeBase? = null
+    val compilerServices: CompilerServicesFacadeBaseAsync? = null
 )
 
 internal fun DaemonReportingTargets.report(category: DaemonReportCategory, message: String, source: String? = null) {
@@ -542,9 +527,9 @@ internal fun DaemonReportingTargets.report(category: DaemonReportCategory, messa
     }
     compilerServices?.let {
         when (category) {
-            DaemonReportCategory.DEBUG -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.DEBUG, message, source)
-            DaemonReportCategory.INFO -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.INFO, message, source)
-            DaemonReportCategory.EXCEPTION -> it.report(ReportCategory.EXCEPTION, ReportSeverity.ERROR, message, source)
+            DaemonReportCategory.DEBUG -> async { it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.DEBUG, message, source) }
+            DaemonReportCategory.INFO -> async { it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.INFO, message, source) }
+            DaemonReportCategory.EXCEPTION -> async { it.report(ReportCategory.EXCEPTION, ReportSeverity.ERROR, message, source) }
         }
     }
 }

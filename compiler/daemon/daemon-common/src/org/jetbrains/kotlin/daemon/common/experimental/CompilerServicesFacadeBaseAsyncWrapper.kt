@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import java.io.Serializable
 
 
 class CompilerServicesFacadeBaseAsyncWrapper(
     val rmiImpl: CompilerServicesFacadeBase
-) : CompilerServicesFacadeBaseAsync {
+) : CompilerServicesFacadeBaseClientSide {
 
-    override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) = runBlocking {
+    override fun connectToServer() {} // done by rmi
+
+    override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) =
         rmiImpl.report(category, severity, message, attachment)
-    }
 
 }
 
-fun CompilerServicesFacadeBase.toWrapper() = CompilerServicesFacadeBaseAsyncWrapper(this)
+fun CompilerServicesFacadeBase.toClient() =
+    if (this is CompilerServicesFacadeBaseRMIWrapper) this.clientSide
+    else CompilerServicesFacadeBaseAsyncWrapper(this)

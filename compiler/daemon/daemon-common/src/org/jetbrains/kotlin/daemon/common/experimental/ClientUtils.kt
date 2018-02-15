@@ -11,6 +11,7 @@ import kotlinx.coroutines.experimental.async
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.rmi.registry.LocateRegistry
+import javax.swing.text.html.HTML.Tag.HEAD
 
 /*
 1) walkDaemonsAsync = walkDaemons + some async calls inside (also some used classes changed *** -> ***Async)
@@ -22,7 +23,7 @@ internal val MAX_PORT_NUMBER = 0xffff
 
 private const val ORPHANED_RUN_FILE_AGE_THRESHOLD_MS = 1000000L
 
-data class DaemonWithMetadataAsync(val daemon: CompileServiceAsync, val runFile: File, val jvmOptions: DaemonJVMOptions)
+data class DaemonWithMetadataAsync(val daemon: CompileServiceClientSide, val runFile: File, val jvmOptions: DaemonJVMOptions)
 
 // TODO: write metadata into discovery file to speed up selection
 // TODO: consider using compiler jar signature (checksum) as a CompilerID (plus java version, plus ???) instead of classpath checksum
@@ -45,19 +46,19 @@ suspend fun walkDaemonsAsync(
             async {
                 assert(port!! in 1..(org.jetbrains.kotlin.daemon.common.MAX_PORT_NUMBER - 1))
                 val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
-                report(org.jetbrains.kotlin.daemon.common.DaemonReportCategory.DEBUG, "found daemon on port $port ($relativeAge ms old), trying to connect")
+                report(org.jetbrains.kotlin.daemon.common.DaemonReportCategory.DEBUG, "found daemon on socketPort $port ($relativeAge ms old), trying to connect")
                 val daemon = tryConnectToDaemonAsync(port, report)
-                // cleaning orphaned file; note: daemon should shut itself down if it detects that the run file is deleted
+                // cleaning orphaned file; note: daemon should shut itself down if it detects that the runServer file is deleted
                 if (daemon == null) {
                     if (relativeAge - ORPHANED_RUN_FILE_AGE_THRESHOLD_MS <= 0) {
                         report(
                             org.jetbrains.kotlin.daemon.common.DaemonReportCategory.DEBUG,
-                            "found fresh run file '${file.absolutePath}' ($relativeAge ms old), but no daemon, ignoring it"
+                            "found fresh runServer file '${file.absolutePath}' ($relativeAge ms old), but no daemon, ignoring it"
                         )
                     } else {
                         report(
                             org.jetbrains.kotlin.daemon.common.DaemonReportCategory.DEBUG,
-                            "found seemingly orphaned run file '${file.absolutePath}' ($relativeAge ms old), deleting it"
+                            "found seemingly orphaned runServer file '${file.absolutePath}' ($relativeAge ms old), deleting it"
                         )
                         if (!file.delete()) {
                             report(
@@ -83,7 +84,7 @@ suspend fun walkDaemonsAsync(
         .mapNotNull { it.await() } // await for completion of the last action
 }
 
-private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceAsync? {
+private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceClientSide? {
     try {
         val daemon = LocateRegistry.getRegistry(
             LoopbackNetworkInterface.loopbackInetAddressName,
@@ -92,7 +93,7 @@ private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCateg
         )?.lookup(COMPILER_SERVICE_RMI_NAME)
         when (daemon) {
             null -> report(DaemonReportCategory.INFO, "daemon not found")
-            is CompileService -> return daemon.toWrapper()
+            is CompileService -> return daemon.toClient()
             else -> report(DaemonReportCategory.INFO, "Unable to cast compiler service, actual class received: ${daemon::class.java.name}")
         }
     } catch (e: Throwable) {
@@ -101,20 +102,20 @@ private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCateg
     return null
 }
 
-private inline fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceAsync? {
+private inline fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceClientSide? {
     try {
-        return CompileServiceClientSide(
+        return CompileServiceClientSideImpl(
             LoopbackNetworkInterface.loopbackInetAddressName,
             port,
             LoopbackNetworkInterface.clientLoopbackSocketFactoryKtor
-        )
+        ).also { it.connectToServer() }
     } catch (e: Throwable) {
         report(DaemonReportCategory.INFO, "cannot find or connect to socket")
     }
     return null
 }
 
-private fun tryConnectToDaemonAsync(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceAsync? =
+private fun tryConnectToDaemonAsync(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceClientSide? =
     tryConnectToDaemonBySockets(port, report)
             ?: tryConnectToDaemonByRMI(port, report)
 

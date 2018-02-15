@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 import kotlinx.coroutines.experimental.runBlocking
-import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
 import java.io.File
@@ -14,36 +13,38 @@ import java.io.Serializable
 
 class IncrementalCompilerServicesFacadeAsyncWrapper(
     val rmiImpl: IncrementalCompilerServicesFacade
-) : IncrementalCompilerServicesFacadeAsync {
+) : IncrementalCompilerServicesFacadeClientSide {
 
-    suspend override fun hasAnnotationsFileUpdater() = runBlocking {
+    override fun connectToServer() {} // already done by RMI
+
+    override suspend fun hasAnnotationsFileUpdater() = runBlocking {
         rmiImpl.hasAnnotationsFileUpdater()
     }
 
-    suspend override fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) = runBlocking {
+    override suspend fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) = runBlocking {
         rmiImpl.updateAnnotations(outdatedClassesJvmNames)
     }
 
-    suspend override fun revert() = runBlocking {
+    override suspend fun revert() = runBlocking {
         rmiImpl.revert()
     }
 
-    suspend override fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) = runBlocking {
+    override suspend fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) = runBlocking {
         rmiImpl.registerChanges(timestamp, dirtyData)
     }
 
-    suspend override fun unknownChanges(timestamp: Long) {
+    override suspend fun unknownChanges(timestamp: Long) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    suspend override fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>? {
+    override suspend fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    suspend override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
+    override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 }
 
-fun IncrementalCompilerServicesFacade.toWrapper() = IncrementalCompilerServicesFacadeAsyncWrapper(this)
+fun IncrementalCompilerServicesFacade.toClient() = IncrementalCompilerServicesFacadeAsyncWrapper(this)
