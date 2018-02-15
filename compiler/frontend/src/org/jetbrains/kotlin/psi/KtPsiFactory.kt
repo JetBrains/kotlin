@@ -815,8 +815,10 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return createFunction("fun foo() {\n$bodyText\n}").bodyExpression as KtBlockExpression
     }
 
-    fun createSingleStatementBlock(statement: KtExpression): KtBlockExpression {
-        return createDeclarationByPattern<KtNamedFunction>("fun foo() {\n$0\n}", statement).bodyExpression as KtBlockExpression
+    fun createSingleStatementBlock(statement: KtExpression, prevComment: String? = null, nextComment: String? = null): KtBlockExpression {
+        val prev = if (prevComment == null) "" else " $prevComment "
+        val next = if (nextComment == null) "" else " $nextComment "
+        return createDeclarationByPattern<KtNamedFunction>("fun foo() {\n$prev$0$next\n}", statement).bodyExpression as KtBlockExpression
     }
 
     fun createComment(text: String): PsiComment {
