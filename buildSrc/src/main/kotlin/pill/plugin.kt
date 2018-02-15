@@ -14,7 +14,10 @@ import java.io.FileOutputStream
 import javax.xml.transform.stream.StreamResult
 
 class JpsCompatiblePlugin : Plugin<Project> {
-    override fun apply(project: Project) {}
+    override fun apply(project: Project) {
+        // 'jpsTest' does not require the 'tests-jar' artifact
+        project.configurations.create("jpsTest")
+    }
 }
 
 class JpsCompatibleRootPlugin : Plugin<Project> {

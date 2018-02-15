@@ -99,7 +99,8 @@ private val CONFIGURATION_MAPPING = mapOf(
 private val TEST_CONFIGURATION_MAPPING = mapOf(
     listOf("runtime", "testRuntime") to Scope.RUNTIME,
     listOf("compile", "testCompile") to Scope.COMPILE,
-    listOf("compileOnly", "testCompileOnly") to Scope.PROVIDED
+    listOf("compileOnly", "testCompileOnly") to Scope.PROVIDED,
+    listOf("jpsTest") to Scope.TEST
 )
 
 private val SOURCE_SET_MAPPING = mapOf(
@@ -273,9 +274,9 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
                 }
             }
 
-            if (dependency.configuration == "runtimeElements") {
+            if (dependency.configuration == "runtimeElements" && scope != Scope.TEST) {
                 mainRoots += POrderRoot(PDependency.Module(dependency.moduleName + ".src"), scope)
-            } else if (dependency.configuration == "tests-jar") {
+            } else if (dependency.configuration == "tests-jar" || dependency.configuration == "jpsTest") {
                 mainRoots += POrderRoot(
                     PDependency.Module(dependency.moduleName + ".test"),
                     scope,
