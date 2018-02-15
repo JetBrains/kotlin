@@ -51,14 +51,17 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.script.experimental.KotlinScriptDefinitionAdapterFromNewAPI
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun doExecute(
@@ -471,11 +474,16 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 for (template in scriptTemplates) {
                     try {
                         val cls = classloader.loadClass(template)
-                        val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, scriptResolverEnv)
+                        val def =
+                            if (cls.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null) {
+                                KotlinScriptDefinitionAdapterFromNewAPI(ScriptDefinitionFromAnnotatedBaseClass(cls.kotlin))
+                            } else {
+                                KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, scriptResolverEnv)
+                            }
                         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
                         messageCollector.report(
                             INFO,
-                            "Added script definition $template to configuration: files pattern = \"${def.scriptFilePattern}\", " +
+                            "Added script definition $template to configuration: name = ${def.name}, " +
                                     "resolver = ${def.dependencyResolver.javaClass.name}"
                         )
                     } catch (ex: ClassNotFoundException) {
