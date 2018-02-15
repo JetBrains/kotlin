@@ -344,9 +344,6 @@ private inline fun StringBuilder.mangledSequence(crossinline mangle: StringBuild
         }
 
 private fun ObjCExportMapper.canHaveCommonSubtype(first: ClassDescriptor, second: ClassDescriptor): Boolean {
-    assert(shouldBeExposed(first))
-    assert(shouldBeExposed(second))
-
     if (first.isSubclassOf(second) || second.isSubclassOf(first)) {
         return true
     }
