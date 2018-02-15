@@ -2,7 +2,16 @@ package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import shadow.org.jdom2.input.SAXBuilder
+import shadow.org.jdom2.*
+import shadow.org.jdom2.output.DOMOutputter
+import shadow.org.jdom2.output.Format
+import shadow.org.jdom2.output.XMLOutputter
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.*
 import java.io.File
+import java.io.FileOutputStream
+import javax.xml.transform.stream.StreamResult
 
 class JpsCompatiblePlugin : Plugin<Project> {
     override fun apply(project: Project) {}
@@ -110,6 +119,7 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
             .forEach { it.delete() }
 
         copyRunConfigurations()
+        setOptionsForDefaultJunitRunConfiguration(project)
 
         for (file in files) {
             val stubFile = file.path
@@ -129,6 +139,76 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
             .filter { it.extension == "xml" }
             .map { it.name to it.readText().replace("\$IDEA_HOME_PATH\$", platformDirProjectRelative) }
             .forEach { File(targetDir, it.first).writeText(it.second) }
+    }
+
+    /*
+        This sets a proper (project root) working directory and a "idea.home.path" property to the default JUnit configuration,
+        so one does not need to make these changes manually.
+     */
+    private fun setOptionsForDefaultJunitRunConfiguration(project: Project) {
+        val workspaceFile = File(projectDir, ".idea/workspace.xml")
+        if (!workspaceFile.exists()) {
+            project.logger.warn("${workspaceFile.name} does not exist, JUnit default run configuration was not modified")
+            return
+        }
+
+        val document = SAXBuilder().build(workspaceFile)
+        val rootElement = document.rootElement
+
+        fun Element.getOrCreateChild(name: String, vararg attributes: Pair<String, String>): Element {
+            for (child in getChildren(name)) {
+                if (attributes.all { (attribute, value) -> child.getAttributeValue(attribute) == value }) {
+                    return child
+                }
+            }
+
+            return Element(name).apply {
+                for ((attributeName, value) in attributes) {
+                    setAttribute(attributeName, value)
+                }
+
+                this@getOrCreateChild.addContent(this@apply)
+            }
+        }
+
+        val platformDirProjectRelative = "\$PROJECT_DIR\$/" + platformDir.toRelativeString(projectDir)
+
+        val runManagerComponent = rootElement.getOrCreateChild("component", "name" to "RunManager")
+        val junitConfiguration = runManagerComponent.getOrCreateChild(
+            "configuration",
+            "default" to "true",
+            "type" to "JUnit",
+            "factoryName" to "JUnit"
+        )
+
+        junitConfiguration.apply {
+            getOrCreateChild("option", "name" to "WORKING_DIRECTORY").setAttribute("value", "file://\$PROJECT_DIR\$")
+            getOrCreateChild("option", "name" to "VM_PARAMETERS").also { vmParams ->
+                val ideaHomePathOptionKey = "-Didea.home.path="
+                val ideaHomePathOption = ideaHomePathOptionKey + platformDirProjectRelative
+                val existingOptions = vmParams.getAttributeValue("value", "").split(' ')
+                if (existingOptions.none { it.startsWith(ideaHomePathOptionKey) }) {
+                    vmParams.setAttribute("value", (vmParams.getAttributeValue("value", "") + " " + ideaHomePathOption).trim())
+                }
+            }
+        }
+
+        val output = XMLOutputter().also {
+            it.format = Format.getPrettyFormat().apply {
+                setEscapeStrategy { Verifier.isHighSurrogate(it) || it == '"' }
+                setIndent("  ")
+                setTextMode(Format.TextMode.TRIM)
+                setOmitEncoding(false)
+                setOmitDeclaration(false)
+            }
+        }
+
+        val postProcessedXml = output.outputString(document)
+            .replace("&#x22;", "&quot;")
+            .replace("&#xA;", "&#10;")
+            .replace("&#xC;", "&#13;")
+
+        workspaceFile.writeText(postProcessedXml)
     }
 
     private fun attachPlatformSources(platformVersion: String) = fun(library: PLibrary): PLibrary {
