@@ -759,6 +759,12 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             doTestWithSurroundWithIfElseExpression(fileName);
         }
 
+        @TestMetadata("replaceWithParenthesized.kt")
+        public void testReplaceWithParenthesized() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/withIfElseExpression/replaceWithParenthesized.kt");
+            doTestWithSurroundWithIfElseExpression(fileName);
+        }
+
         @TestMetadata("variable.kt")
         public void testVariable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/withIfElseExpression/variable.kt");
