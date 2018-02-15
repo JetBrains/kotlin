@@ -53,6 +53,7 @@ object GenerationUtils {
         compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace)
 
     @JvmStatic
+    @JvmOverloads
     fun compileFiles(
         files: List<KtFile>,
         configuration: CompilerConfiguration,
