@@ -248,10 +248,10 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
         val equals = any.method("equals")
 
         methodSelectors.forceAssign(hashCode, "hash")
-        methodSwiftNames.forceAssign(hashCode, "hash")
+        methodSwiftNames.forceAssign(hashCode, "hash()")
 
         methodSelectors.forceAssign(toString, "description")
-        methodSwiftNames.forceAssign(toString, "description")
+        methodSwiftNames.forceAssign(toString, "description()")
 
         methodSelectors.forceAssign(equals, "isEqual:")
         methodSwiftNames.forceAssign(equals, "isEqual(:)")
