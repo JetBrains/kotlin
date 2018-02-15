@@ -752,77 +752,15 @@
     <target name="fetch-annotations"/>
 
     <target name="get_android_studio">
-        <condition property="android.os.tag" value="windows">
-            <os family="windows"/>
-        </condition>
-
-        <condition property="android.os.tag" value="mac">
-            <os family="mac"/>
-        </condition>
-
-        <condition property="strip.dirs.count" value="2">
-            <os family="mac"/>
-        </condition>
-
-        <condition property="strip.dirs.count" value="1">
-            <not>
-                <os family="mac"/>
-            </not>
-        </condition>
-
-        <condition property="android.os.tag" value="linux">
-            <and>
-                <os family="unix"/>
-                <not>
-                    <os family="mac"/>
-                </not>
-            </and>
-        </condition>
-
-        <local name="have.android.studio.version"/>
-        <condition property="have.android.studio.version">
-            <and>
-                <isset property="android.studio.version"/>
-                <isset property="android.studio.build.number"/>
-            </and>
-        </condition>
-
-        <sequential unless:set="have.android.studio.version">
-            <loadresource property="android.studio.version">
-                <url url="https://developer.android.com/studio/preview/index.html"/>
-                <filterchain>
-                    <tokenfilter>
-                        <filetokenizer/>
-                        <replaceregex
-                            pattern="^(.*?)https?://dl\.google\.com/dl/android/studio/ide-zips/(${android.studio.major.version}\.[\d\.]+)/android-studio-ide(.*)$"
-                            replace="\2" flags="s"/>
-                    </tokenfilter>
-                </filterchain>
-            </loadresource>
-            <loadresource property="android.studio.build.number">
-                <url url="https://developer.android.com/studio/preview/index.html"/>
-                <filterchain>
-                    <tokenfilter>
-                        <filetokenizer/>
-                        <replaceregex
-                            pattern="^(.*?)https?://dl\.google\.com/dl/android/studio/ide-zips/${android.studio.major.version}\.[\d\.]+/android-studio-ide-([\d\.]+)-(.*)$"
-                            replace="\2" flags="s"/>
-                    </tokenfilter>
-                </filterchain>
-            </loadresource>
-        </sequential>
-
-        <echo message="Download android studio: ${android.studio.version} ${android.studio.build.number}"/>
-
-        <property name="android.file.name" value="android-studio-ide-${android.studio.build.number}-${android.os.tag}.zip"/>
-        <property name="android.studio.url"
-                  value="http://dl.google.com/dl/android/studio/ide-zips/${android.studio.version}/${android.file.name}"/>
-        <property name="android.download.dir" value="${dependencies}/android-studio"/>
-        <property name="android.destination.dir" value="ideaSDK"/>
+        <property name="android.studio.url" value="${android.studio.snapshot.private.url}" />
+        <property name="android.file.name" value="android-studio-ide-snapshot.zip" />
+        <property name="android.download.dir" value="${dependencies}/android-studio" />
+        <property name="android.destination.dir" value="ideaSDK" />
+        <property name="strip.dirs.count" value="1" />
 
         <mkdir dir="${android.download.dir}"/>
 
-        <get src="${android.studio.url}" dest="${android.download.dir}" usetimestamp="true"/>
+        <get src="${android.studio.url}" dest="${android.download.dir}/${android.file.name}" usetimestamp="true"/>
 
         <delete dir="${android.destination.dir}" failonerror="false" includeemptydirs="true">
             <exclude name="config/**"/>
