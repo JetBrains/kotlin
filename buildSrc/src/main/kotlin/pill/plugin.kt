@@ -99,15 +99,18 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
 
     private lateinit var projectDir: File
     private lateinit var platformVersion: String
+    private lateinit var platformBaseNumber: String
     private lateinit var platformDir: File
 
     private fun pill(project: Project) {
         projectDir = project.projectDir
         platformVersion = project.extensions.extraProperties.get("versions.intellijSdk").toString()
+        platformBaseNumber = platformVersion.substringBefore(".", "").takeIf { it.isNotEmpty() }
+                ?: error("Invalid platform version: $platformVersion")
         platformDir = File(projectDir, "buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/$platformVersion")
 
         val jpsProject = parse(project, ParserContext(dependencyMappers))
-            .mapLibraries(attachPlatformSources(platformVersion))
+            .mapLibraries(this::attachPlatformSources, this::attachAsmSources)
 
         val files = render(jpsProject, getProjectLibraries(jpsProject))
 
@@ -211,11 +214,22 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
         workspaceFile.writeText(postProcessedXml)
     }
 
-    private fun attachPlatformSources(platformVersion: String) = fun(library: PLibrary): PLibrary {
+    private fun attachPlatformSources(library: PLibrary): PLibrary {
         val platformSourcesJar = File(platformDir, "sources/ideaIC-$platformVersion-sources.jar")
 
         if (library.classes.any { it.startsWith(platformDir) }) {
             return library.attachSource(platformSourcesJar)
+        }
+
+        return library
+    }
+
+    private fun attachAsmSources(library: PLibrary): PLibrary {
+        val asmSourcesJar = File(platformDir, "asm-shaded-sources/asm-src-$platformBaseNumber.jar")
+        val asmAllJar = File(platformDir, "intellij/lib/asm-all.jar")
+
+        if (library.classes.any { it == asmAllJar }) {
+            return library.attachSource(asmSourcesJar)
         }
 
         return library
