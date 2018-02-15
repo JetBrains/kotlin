@@ -652,14 +652,14 @@ class PsiInlineCodegen(
             callDefault: Boolean,
             codegen: ExpressionCodegen
     ) {
-        if (!state.inlineCycleReporter.enterIntoInlining(resolvedCall)) {
+        if (!state.globalInlineContext.enterIntoInlining(resolvedCall)) {
             generateStub(resolvedCall, codegen)
             return
         }
         try {
             performInline(resolvedCall?.typeArguments, callDefault, codegen)
         } finally {
-            state.inlineCycleReporter.exitFromInliningOf(resolvedCall)
+            state.globalInlineContext.exitFromInliningOf(resolvedCall)
         }
     }
 
