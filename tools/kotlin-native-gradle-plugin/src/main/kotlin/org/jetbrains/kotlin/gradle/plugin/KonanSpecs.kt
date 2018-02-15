@@ -31,6 +31,7 @@ interface KonanArtifactWithLibrariesSpec: KonanArtifactSpec {
     fun libraries(configure: KonanLibrariesSpec.() -> Unit)
 
     fun noDefaultLibs(flag: Boolean)
+    fun dependencies(closure: Closure<Unit>)
 }
 
 interface KonanBuildingSpec: KonanArtifactWithLibrariesSpec {

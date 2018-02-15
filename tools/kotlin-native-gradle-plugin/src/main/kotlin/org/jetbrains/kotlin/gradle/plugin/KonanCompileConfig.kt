@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import groovy.lang.Closure
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.ProjectInternal
@@ -68,6 +69,8 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     override fun entryPoint(entryPoint: String) = forEach { it.entryPoint(entryPoint) }
 
     override fun measureTime(flag: Boolean) = forEach { it.measureTime(flag) }
+
+    override fun dependencies(closure: Closure<Unit>) = forEach { it.dependencies(closure) }
 }
 
 open class KonanProgram(name: String,

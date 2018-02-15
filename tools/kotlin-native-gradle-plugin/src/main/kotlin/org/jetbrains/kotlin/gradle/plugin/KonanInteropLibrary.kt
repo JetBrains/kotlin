@@ -84,5 +84,6 @@ open class KonanInteropLibrary(name: String,
 
     override fun link(vararg files: Any) = forEach { it.link(*files) }
     override fun link(files: FileCollection) = forEach { it.link(files) }
+    override fun dependencies(closure: Closure<Unit>) = forEach { it.dependencies(closure) }
 
 }

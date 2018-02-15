@@ -17,9 +17,23 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.*
+import org.gradle.api.artifacts.PublishArtifact
+import org.gradle.api.attributes.Usage
+import org.gradle.api.component.ComponentWithVariants
+import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.file.FileCollection
+import org.gradle.api.internal.FeaturePreviews
+import org.gradle.api.internal.component.SoftwareComponentInternal
+import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.internal.PublicationInternal
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
+import org.gradle.language.cpp.internal.NativeVariant
+import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
@@ -242,6 +256,18 @@ open class KonanExtension {
     var jvmArgs = mutableListOf<String>()
 }
 
+open class KonanSoftwareComponent(val project: ProjectInternal?): SoftwareComponentInternal, ComponentWithVariants {
+    private val usages = mutableSetOf<UsageContext>()
+    override fun getUsages(): MutableSet<out UsageContext> = usages
+
+    private val variants = mutableSetOf<SoftwareComponent>()
+    override fun getName() = "main"
+
+    override fun getVariants(): Set<out SoftwareComponent> = variants
+
+    fun addVariant(component: SoftwareComponent) = variants.add(component)
+}
+
 class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderRegistry)
     : Plugin<ProjectInternal> {
 
@@ -259,6 +285,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         internal const val KONAN_DOWNLOAD_TASK_NAME = "checkKonanCompiler"
         internal const val KONAN_GENERATE_CMAKE_TASK_NAME = "generateCMake"
         internal const val COMPILE_ALL_TASK_NAME = "compileKonan"
+        internal const val KONAN_MAIN_VARIANT = "konan_main_variant"
 
         internal const val KONAN_EXTENSION_NAME = "konan"
 
@@ -272,15 +299,20 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.delete(it.artifact)
     }
 
+
+
     override fun apply(project: ProjectInternal?) {
-        if (project == null) { return }
+        if (project == null) {
+            return
+        }
         registry.register(KonanToolingModelBuilder)
         project.plugins.apply("base")
         // Create necessary tasks and extensions.
         project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
         project.tasks.create(KONAN_GENERATE_CMAKE_TASK_NAME, KonanGenerateCMakeTask::class.java)
         project.extensions.create(KONAN_EXTENSION_NAME, KonanExtension::class.java)
-        project.extensions.create(KonanArtifactContainer::class.java, ARTIFACTS_CONTAINER_NAME, KonanArtifactContainer::class.java, project)
+        val mainVariant = project.extensions.create(ComponentWithVariants::class.java, KONAN_MAIN_VARIANT, KonanSoftwareComponent::class.java, project)
+        val container = project.extensions.create(KonanArtifactContainer::class.java, ARTIFACTS_CONTAINER_NAME, KonanArtifactContainer::class.java, project)
 
         // Set additional project properties like konan.home, konan.build.targets etc.
         if (!project.hasProperty(ProjectProperty.KONAN_HOME)) {
@@ -306,7 +338,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             doLast {
                 for (task in project.tasks
                         .withType(KonanCompileProgramTask::class.java)
-                        .matching { !it.isCrossCompile}) {
+                        .matching { !it.isCrossCompile }) {
                     project.exec {
                         with(it) {
                             commandLine(task.artifact.canonicalPath)
@@ -318,8 +350,38 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                 }
             }
         }
-
+        //project.gradle.experimentalFeatures.enable()
+        project.gradle.services.get(FeaturePreviews::class.java).enableFeature(FeaturePreviews.Feature.GRADLE_METADATA)
         // Enable multiplatform support
         project.pluginManager.apply(KotlinNativePlatformPlugin::class.java)
+        project.afterEvaluate {
+            val konanSoftwareComponent = mainVariant as KonanSoftwareComponent
+            project.pluginManager.withPlugin("maven-publish") {
+                container.all {
+                    val buildingConfig = it
+                    val artifactId = buildingConfig.name
+                    project.extensions.configure(PublishingExtension::class.java) {
+                        val publishing = it
+                        it.publications.create(artifactId, MavenPublication::class.java) {
+                            it.artifactId = artifactId
+                            it.groupId = project.group.toString()
+                            it.from(konanSoftwareComponent)
+                            (it as MavenPublicationInternal).publishWithOriginalFileName()
+                        }
+                        for (v in konanSoftwareComponent.variants) {
+                            // TODO: with gradle 4.7 don't forget to change to SoftwareComponentsWithCoordinates
+                            val name = "${v.name}/$artifactId"
+                            publishing.publications.create(name, MavenPublication::class.java) {
+                                it.artifactId = "${artifactId}-${v.name}"
+                                it.groupId = project.group.toString()
+                                it.version = project.version.toString()
+                                it.from(v)
+                                (it as MavenPublicationInternal).publishWithOriginalFileName()
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
