@@ -37,7 +37,7 @@ class AddTargetApiQuickFix(
 
     private companion object {
         val FQNAME_TARGET_API = FqName(SdkConstants.FQCN_TARGET_API)
-        val FQNAME_REQUIRES_API = FqName(REQUIRES_API_ANNOTATION)
+        val FQNAME_REQUIRES_API = FqName(REQUIRES_API_ANNOTATION.defaultName())
     }
 
     override fun isApplicable(startElement: PsiElement, endElement: PsiElement, contextType: AndroidQuickfixContexts.ContextType): Boolean =
