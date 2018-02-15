@@ -21,7 +21,7 @@ import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.ClassLoadingUtils
 import com.intellij.debugger.impl.DebuggerUtilsEx
-import com.intellij.openapi.projectRoots.JavaSdkVersion
+import com.intellij.openapi.projectRoots.JdkVersionUtil
 import com.intellij.openapi.util.SystemInfo
 import com.sun.jdi.ClassLoaderReference
 import com.sun.jdi.ClassType
@@ -52,10 +52,10 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
         }
 
         val debugProcessVersionString = process.virtualMachineProxy.version()
-        val debugProcessVersion = JavaSdkVersion.fromVersionString(debugProcessVersionString)
+        val debugProcessVersion = JdkVersionUtil.getVersion(debugProcessVersionString)
                 ?: throw EvaluateException("Unable to parse java version from $debugProcessVersionString.")
 
-        val ideaJavaVersion = JavaSdkVersion.fromVersionString(SystemInfo.JAVA_RUNTIME_VERSION)
+        val ideaJavaVersion = JdkVersionUtil.getVersion(SystemInfo.JAVA_RUNTIME_VERSION)
                 ?: throw EvaluateException("Unable to parse java version from ${SystemInfo.JAVA_RUNTIME_VERSION}.")
 
         if (!ideaJavaVersion.isAtLeast(debugProcessVersion)) {
