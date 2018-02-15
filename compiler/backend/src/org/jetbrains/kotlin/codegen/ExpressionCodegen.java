@@ -2019,23 +2019,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (!skipPropertyAccessors) {
-            if (!couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context, state.getShouldInlineConstVals())) {
+            boolean needGetterAccessor = !couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context,
+                                                                         state.getShouldInlineConstVals());
+            boolean needSetterAccessor = propertyDescriptor.isVar() &&
+                                         !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context,
+                                                                         state.getShouldInlineConstVals());
+            if (needGetterAccessor || needSetterAccessor) {
                 propertyDescriptor = context.getAccessorForSuperCallIfNeeded(propertyDescriptor, superCallTarget, state);
-
                 propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superCallTarget);
-
-                PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-                if (getter != null && !isConstOrHasJvmFieldAnnotation(propertyDescriptor)) {
-                    callableGetter = typeMapper.mapToCallableMethod(getter, isSuper);
-                }
-            }
-
-            if (propertyDescriptor.isVar()) {
-                PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-                if (setter != null &&
-                    !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context, state.getShouldInlineConstVals()) &&
-                    !isConstOrHasJvmFieldAnnotation(propertyDescriptor)) {
-                    callableSetter = typeMapper.mapToCallableMethod(setter, isSuper);
+                if (!isConstOrHasJvmFieldAnnotation(propertyDescriptor)) {
+                    if (needGetterAccessor) {
+                        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+                        if (getter != null) {
+                            callableGetter = typeMapper.mapToCallableMethod(getter, isSuper);
+                        }
+                    }
+                    if (needSetterAccessor) {
+                        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+                        if (setter != null) {
+                            callableSetter = typeMapper.mapToCallableMethod(setter, isSuper);
+                        }
+                    }
                 }
             }
         }

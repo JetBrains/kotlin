@@ -194,6 +194,8 @@ public class JvmCodegenUtil {
             @NotNull MethodContext contextBeforeInline,
             boolean shouldInlineConstVals
     ) {
+        if (hasJvmFieldAnnotation(property)) return true;
+
         if (shouldInlineConstVals && property.isConst()) return true;
 
         if (KotlinTypeMapper.isAccessor(property)) return false;

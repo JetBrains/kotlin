@@ -23,6 +23,16 @@ class Foo {
             // accessor is required because field is move to Foo
             return bar
         }
+
+        private var value = "Value Field"
+            set(value) { field = value }
+    }
+
+    fun setAndGetValue (): String {
+        // setter is required because it is redefined
+        value = "Overriden value"
+        // getstatic can be used directly because field is move to Foo
+        return value
     }
 
     fun test(): String {
@@ -30,7 +40,9 @@ class Foo {
         return bar
     }
 
-    // getstatic used into the generated accessor
+    // getstatic used into the getter generated accessor for bar
+    // getstatic used into the getter generated accessor for value
+    // putstatic used into the setter generated accessor for value
 }
 
 fun box(): String {
@@ -42,8 +54,13 @@ fun box(): String {
         return "FAILURES"
     if (I.test1() != "Companion Field from I")
         return "FAILURES"
+    if (Foo().setAndGetValue() != "Overriden value")
+        return "FAILURES"
     return "OK"
 }
 
+// 2 GETSTATIC Foo.value
+// 2 PUTSTATIC Foo.value
+// 1 INVOKESPECIAL Foo\$Companion.setValue
 // 2 GETSTATIC Foo.bar
 // 3 GETSTATIC I\$Companion.bar
