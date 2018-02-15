@@ -36,4 +36,8 @@ public class KotlinPluginUtil {
     public static boolean isSnapshotVersion() {
         return "@snapshot@".equals(getPluginVersion());
     }
+
+    public static boolean isDevVersion() {
+        return getPluginVersion().contains("-dev-");
+    }
 }
