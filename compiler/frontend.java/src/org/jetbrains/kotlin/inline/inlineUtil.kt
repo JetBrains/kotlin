@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.getExtensionOrNull
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
@@ -33,13 +32,13 @@ fun inlineFunctionsJvmNames(header: KotlinClassHeader): Set<String> {
 
     return when (header.kind) {
         KotlinClassHeader.Kind.CLASS -> {
-            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(BitEncoding.decodeBytes(annotationData), strings)
+            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(annotationData, strings)
             inlineFunctionsJvmNames(classProto.functionList, nameResolver, classProto.typeTable) +
             inlineAccessorsJvmNames(classProto.propertyList, nameResolver)
         }
         KotlinClassHeader.Kind.FILE_FACADE,
         KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-            val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(BitEncoding.decodeBytes(annotationData), strings)
+            val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
             inlineFunctionsJvmNames(packageProto.functionList, nameResolver, packageProto.typeTable) +
             inlineAccessorsJvmNames(packageProto.propertyList, nameResolver)
         }
