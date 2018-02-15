@@ -28,8 +28,10 @@ private fun <T : Throwable> assertFailsWithImpl(exceptionClass: Class<T>, messag
         block()
     } catch (e: Throwable) {
         if (exceptionClass.isInstance(e)) {
-            @Suppress("UNCHECKED_CAST")
-            return e as T
+            if (message == null || message == e.message) {
+                @Suppress("UNCHECKED_CAST")
+                return e as T
+            }
         }
 
         @Suppress("INVISIBLE_MEMBER")
