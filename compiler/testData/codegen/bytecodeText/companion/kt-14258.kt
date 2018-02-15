@@ -61,6 +61,6 @@ fun box(): String {
 
 // 2 GETSTATIC Foo.value
 // 2 PUTSTATIC Foo.value
-// 1 INVOKESPECIAL Foo\$Companion.setValue
+// 1 INVOKESTATIC Foo\$Companion.access\$setValue\$p
 // 2 GETSTATIC Foo.bar
 // 3 GETSTATIC I\$Companion.bar
