@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
+import kotlin.test.assertTrue
 
 class MultiplatformGradleIT : BaseGradleIT() {
 
@@ -153,6 +154,35 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertSuccessful()
             assertTasksExecuted(listOf(compileJsTask))
             assertTasksUpToDate(listOf(compileCommonTask, compileJvmTask))
+        }
+    }
+
+    @Test
+    fun testMultipleCommonModules(): Unit = with(Project("multiplatformMultipleCommonModules")) {
+        build("build") {
+            assertSuccessful()
+
+            val sourceSets = listOf("", "Test")
+            val commonTasks = listOf("libA", "libB").flatMap { module ->
+                sourceSets.map { sourceSet -> ":$module:compile${sourceSet}KotlinCommon" }
+            }
+            val platformTasks = listOf("libJvm" to "", "libJs" to "2Js").flatMap { (module, platformSuffix) ->
+                sourceSets.map { sourceSet -> ":$module:compile${sourceSet}Kotlin$platformSuffix" }
+            }
+            assertTasksExecuted(commonTasks + platformTasks)
+
+            val expectedJvmMainClasses =
+                listOf("PlatformClassB", "PlatformClassA", "JavaLibUseKt", "CommonClassB", "CommonClassA").map { "foo/$it" }
+            val jvmMainClassesDir = File(projectDir, kotlinClassesDir(subproject = "libJvm"))
+            expectedJvmMainClasses.forEach { className ->
+                assertTrue(File(jvmMainClassesDir, className + ".class").isFile, "Class $className should be compiled for JVM.")
+            }
+
+            val expectedJvmTestClasses = listOf("PlatformTestB", "PlatformTestA", "CommonTestB", "CommonTestA").map { "foo/$it" }
+            val jvmTestClassesDir = File(projectDir, kotlinClassesDir(subproject = "libJvm", sourceSet = "test"))
+            expectedJvmTestClasses.forEach { className ->
+                assertTrue(File(jvmTestClassesDir, className + ".class").isFile, "Class $className should be compiled for JVM.")
+            }
         }
     }
 }

@@ -98,12 +98,6 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
 
     private fun addCommonProject(commonProject: Project, platformProject: Project) {
         commonProjects.add(commonProject)
-        if (commonProjects.size > 1) {
-            throw GradleException(
-                    "Platform project $platformProject has more than one " +
-                    "'$EXPECTED_BY_CONFIG_NAME'${if (implementConfigurationIsUsed) "/'$IMPLEMENT_CONFIG_NAME'" else ""} " +
-                    "dependency: ${commonProjects.joinToString()}")
-        }
 
         commonProject.whenEvaluated {
             if (!commonProject.pluginManager.hasPlugin("kotlin-platform-common")) {

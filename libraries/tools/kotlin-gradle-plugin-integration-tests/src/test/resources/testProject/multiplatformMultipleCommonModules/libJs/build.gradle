@@ -1,0 +1,6 @@
+apply plugin: 'kotlin-platform-js'
+
+dependencies {
+    expectedBy project(":libA")
+    expectedBy project(":libB")
+}
