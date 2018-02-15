@@ -657,7 +657,7 @@ class MethodInliner(
         }
 
         if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda) {
-            val capturedVars = inliningContext.lambdaInfo!!.capturedVars
+            val capturedVars = inliningContext.lambdaInfo.capturedVars
             var offset = parameters.realParametersSizeOnStack
             val map = capturedVars.map {
                 offset to it.also { offset += it.type.size }
