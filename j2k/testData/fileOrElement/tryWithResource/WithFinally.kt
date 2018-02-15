@@ -1,7 +1,7 @@
 import java.io.*
 
 class C {
-    @Throws(IOException::class)
+    @JvmThrows(IOException::class)
     internal fun foo() {
         try {
             ByteArrayInputStream(ByteArray(10)).use { stream ->

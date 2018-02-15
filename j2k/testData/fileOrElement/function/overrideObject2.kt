@@ -14,7 +14,7 @@ internal class X : Base() {
         return super.toString()
     }
 
-    @Throws(CloneNotSupportedException::class)
+    @JvmThrows(CloneNotSupportedException::class)
     protected fun clone(): Any {
         return super.clone()
     }
