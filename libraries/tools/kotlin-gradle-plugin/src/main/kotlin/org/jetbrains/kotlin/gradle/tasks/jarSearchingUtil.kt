@@ -34,18 +34,23 @@ private val K2JS_DCE_CLASS = "org.jetbrains.kotlin.cli.js.dce.K2JSDce"
 private val K2METADATA_COMPILER_CLASS = "org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler"
 private val KOTLIN_STDLIB_EXPECTED_CLASS = "kotlin.collections.ArraysKt"
 private val KOTLIN_SCRIPT_RUNTIME_EXPECTED_CLASS = "kotlin.script.templates.AnnotationsKt"
+private val KOTLIN_SCRIPT_ANNOTATION_EXPECTED_CLASS = "kotlin.script.experimental.annotations.KotlinScript"
+private val KOTLIN_JVM_SCRIPT_COMPILER_EXPECTED_CLASS = "kotlin.script.experimental.jvm.JvmScriptCompiler"
 private val KOTLIN_REFLECT_EXPECTED_CLASS = "kotlin.reflect.full.KClasses"
 private val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 private val KOTLIN_GRADLE_PLUGIN = "kotlin-gradle-plugin"
 private val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
 private val KOTLIN_STDLIB = "kotlin-stdlib"
 private val KOTLIN_SCRIPT_RUNTIME = "kotlin-script-runtime"
+private val KOTLIN_SCRIPT_COMMON = "kotlin-scripting-common"
+private val KOTLIN_SCRIPT_JVM = "kotlin-scripting-jvm"
 private val KOTLIN_REFLECT = "kotlin-reflect"
 
 internal fun findKotlinJvmCompilerClasspath(project: Project): List<File> =
         findKotlinModuleJar(project, K2JVM_COMPILER_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {
             if (it.isEmpty()) it
-            else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project)
+            else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project) +
+                    findKotlinScriptCommonClasspath(project) + findKotlinScriptJvmClasspath(project) + findCoroutinesClasspath()
         }
 
 internal fun findKotlinJsCompilerClasspath(project: Project): List<File> =
@@ -72,11 +77,29 @@ internal fun findKotlinStdlibClasspath(project: Project): List<File> =
 internal fun findKotlinScriptRuntimeClasspath(project: Project): List<File> =
         findKotlinModuleJar(project, KOTLIN_SCRIPT_RUNTIME_EXPECTED_CLASS, KOTLIN_SCRIPT_RUNTIME)
 
+internal fun findKotlinScriptCommonClasspath(project: Project): List<File> =
+    findKotlinModuleJar(project, KOTLIN_SCRIPT_ANNOTATION_EXPECTED_CLASS, KOTLIN_SCRIPT_COMMON)
+
+internal fun findKotlinScriptJvmClasspath(project: Project): List<File> =
+    findKotlinModuleJar(project, KOTLIN_JVM_SCRIPT_COMPILER_EXPECTED_CLASS, KOTLIN_SCRIPT_JVM)
+
 internal fun findKotlinReflectClasspath(project: Project): List<File> =
         findKotlinModuleJar(project, KOTLIN_REFLECT_EXPECTED_CLASS, KOTLIN_REFLECT)
 
 internal fun findToolsJar(): File? =
         Class.forName("com.sun.tools.javac.util.Context")?.let(::findJarByClass)
+
+internal fun findCoroutinesClasspath(): List<File> {
+    val classLoader = Thread.currentThread().contextClassLoader
+    val prefix = "kotlinx." // because shadow plugin rewrites strings too, so the fqn should be constructed on runtime
+    val clazz = try {
+        classLoader.loadClass(prefix + "coroutines.experimental.BuildersKt")
+    } catch (e: ClassNotFoundException) {
+        null
+    } ?: return emptyList()
+
+    return (findJarByClass(clazz))?.let { listOf(it) } ?: emptyList()
+}
 
 private fun findJarByClass(klass: Class<*>): File? {
     val classFileName = klass.name.substringAfterLast(".") + ".class"

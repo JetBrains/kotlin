@@ -57,6 +57,8 @@ dependencies {
     runtime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
     runtime project(path: ':kotlin-compiler-runner', configuration: 'runtimeJar')
     runtime project(':kotlin-reflect')
+    runtime project(':kotlin-scripting-common')
+    runtime project(':kotlin-scripting-jvm')
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
     agp25CompileOnly('com.android.tools.build:gradle:3.0.0-alpha1') { transitive = false }
