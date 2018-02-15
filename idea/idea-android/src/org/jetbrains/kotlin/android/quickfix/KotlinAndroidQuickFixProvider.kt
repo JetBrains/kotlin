@@ -75,6 +75,6 @@ class KotlinAndroidQuickFixProvider : AndroidLintQuickFixProvider {
     }
 
     companion object {
-        val REQUIRES_API_ANNOTATION = SUPPORT_ANNOTATIONS_PREFIX + "RequiresApi"
+        val REQUIRES_API_ANNOTATION = SUPPORT_ANNOTATIONS_PREFIX.defaultName() + "RequiresApi"
     }
 }
