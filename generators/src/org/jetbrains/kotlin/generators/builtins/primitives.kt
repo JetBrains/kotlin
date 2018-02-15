@@ -54,10 +54,10 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     )
 
     private fun primitiveConstants(type: PrimitiveType): List<Any> = when (type) {
-        PrimitiveType.INT -> listOf(java.lang.Integer.MIN_VALUE, java.lang.Integer.MAX_VALUE)
-        PrimitiveType.BYTE -> listOf(java.lang.Byte.MIN_VALUE, java.lang.Byte.MAX_VALUE)
-        PrimitiveType.SHORT -> listOf(java.lang.Short.MIN_VALUE, java.lang.Short.MAX_VALUE)
-        PrimitiveType.LONG ->listOf((java.lang.Long.MIN_VALUE + 1).toString() + "L - 1L", java.lang.Long.MAX_VALUE.toString() + "L")
+        PrimitiveType.INT -> listOf(java.lang.Integer.MIN_VALUE, java.lang.Integer.MAX_VALUE, java.lang.Integer.BYTES, java.lang.Integer.SIZE)
+        PrimitiveType.BYTE -> listOf(java.lang.Byte.MIN_VALUE, java.lang.Byte.MAX_VALUE, java.lang.Byte.BYTES, java.lang.Byte.SIZE)
+        PrimitiveType.SHORT -> listOf(java.lang.Short.MIN_VALUE, java.lang.Short.MAX_VALUE, java.lang.Short.BYTES, java.lang.Short.SIZE)
+        PrimitiveType.LONG ->listOf((java.lang.Long.MIN_VALUE + 1).toString() + "L - 1L", java.lang.Long.MAX_VALUE.toString() + "L", java.lang.Long.BYTES, java.lang.Long.SIZE)
 //        PrimitiveType.DOUBLE -> listOf(java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE, "1.0/0.0", "-1.0/0.0", "0.0/0.0")
 //        PrimitiveType.FLOAT -> listOf(java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE, "1.0F/0.0F", "-1.0F/0.0F", "0.0F/0.0F").map { it as? String ?: "${it}F" }
         else -> throw IllegalArgumentException("type: $type")
@@ -100,7 +100,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }""")
             }
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG || kind == PrimitiveType.SHORT || kind == PrimitiveType.BYTE) {
-                val (minValue, maxValue) = primitiveConstants(kind)
+                val (minValue, maxValue, bytes, bits) = primitiveConstants(kind)
                 out.println("""{
         /**
          * A constant holding the minimum value an instance of $className can have.
@@ -111,6 +111,16 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
          * A constant holding the maximum value an instance of $className can have.
          */
         public const val MAX_VALUE: $className = $maxValue
+
+        /**
+         * The number of bits used to represent an instance of $className.
+         */
+        public const val BITS: $className = $bits
+
+        /**
+         * The number of bytes used to represent an instance of $className.
+         */
+        public const val BYTES: $className = $bytes
     }""")
             }
 
