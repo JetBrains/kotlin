@@ -73,6 +73,8 @@ class IrClassImpl(
 
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()
 
+    override val superClasses: MutableList<IrClassSymbol> = SmartList()
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
 

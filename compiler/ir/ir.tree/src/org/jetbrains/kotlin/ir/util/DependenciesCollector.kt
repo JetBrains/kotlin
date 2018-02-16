@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 
 class DependenciesCollector {
     private val modulesForDependencyDescriptors = LinkedHashSet<ModuleDescriptor>()
@@ -40,6 +41,14 @@ class DependenciesCollector {
         assert(symbolTable.unboundTypeParameters.isEmpty()) { "Unbound type parameters: ${symbolTable.unboundTypeParameters}" }
         assert(symbolTable.unboundValueParameters.isEmpty()) { "Unbound value parameters: ${symbolTable.unboundValueParameters}" }
         assert(symbolTable.unboundVariables.isEmpty()) { "Unbound variables: ${symbolTable.unboundVariables}" }
+
+        for (unboundClass in symbolTable.unboundClasses.toTypedArray()) {
+            for (superClassifier in unboundClass.descriptor.getAllSuperClassifiers()) {
+                if (superClassifier is ClassDescriptor) {
+                    symbolTable.referenceClass(superClassifier)
+                }
+            }
+        }
 
         symbolTable.unboundClasses.addTopLevelDeclarations()
         symbolTable.unboundConstructors.addTopLevelDeclarations()

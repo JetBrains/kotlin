@@ -38,14 +38,20 @@ import java.lang.AssertionError
 class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generateClass(ktClassOrObject: KtClassOrObject): IrClass {
         val descriptor = getOrFail(BindingContext.CLASS, ktClassOrObject)
+        val startOffset = ktClassOrObject.startOffset
+        val endOffset = ktClassOrObject.endOffset
 
         return context.symbolTable.declareClass(
-            ktClassOrObject.startOffset, ktClassOrObject.endOffset,
-            IrDeclarationOrigin.DEFINED,
-            descriptor
+            startOffset, endOffset, IrDeclarationOrigin.DEFINED, descriptor
         ).buildWithScope { irClass ->
+            descriptor.typeConstructor.supertypes.mapNotNullTo(irClass.superClasses) {
+                it.constructor.declarationDescriptor?.safeAs<ClassDescriptor>()?.let {
+                    context.symbolTable.referenceClass(it)
+                }
+            }
+
             irClass.thisReceiver = context.symbolTable.declareValueParameter(
-                ktClassOrObject.startOffset, ktClassOrObject.endOffset,
+                startOffset, endOffset,
                 IrDeclarationOrigin.INSTANCE_RECEIVER,
                 irClass.descriptor.thisAsReceiverParameter
             )

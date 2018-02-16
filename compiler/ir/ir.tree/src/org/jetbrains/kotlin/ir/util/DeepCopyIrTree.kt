@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -96,6 +97,19 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
         ).apply {
             thisReceiver = declaration.thisReceiver?.withDescriptor(descriptor.thisAsReceiverParameter)
             transformTypeParameters(declaration, descriptor.declaredTypeParameters)
+
+            descriptor.typeConstructor.supertypes.forEachIndexed { index, supertype ->
+                val superclassDescriptor = supertype.constructor.declarationDescriptor
+                if (superclassDescriptor is ClassDescriptor) {
+                    val oldSuperclassSymbol = declaration.superClasses.getOrNull(index)
+                    val newSuperclassSymbol =
+                        if (superclassDescriptor == oldSuperclassSymbol?.descriptor)
+                            oldSuperclassSymbol
+                        else
+                            IrClassSymbolImpl(superclassDescriptor)
+                    superClasses.add(newSuperclassSymbol)
+                }
+            }
         }
 
     private fun IrValueParameter.withDescriptor(newDescriptor: ParameterDescriptor) =

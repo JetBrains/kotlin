@@ -68,7 +68,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     fun generateClassOrObjectDeclaration(ktClassOrObject: KtClassOrObject): IrClass =
         ClassGenerator(this).generateClass(ktClassOrObject)
 
-    fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
+    private fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
         IrTypeAliasImpl(
             ktDeclaration.startOffset, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
             getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration)

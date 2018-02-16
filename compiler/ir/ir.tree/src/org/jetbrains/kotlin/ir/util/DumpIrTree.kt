@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -78,6 +80,7 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
     override fun visitClass(declaration: IrClass, data: String) {
         declaration.dumpLabeledElementWith(data) {
             declaration.thisReceiver?.accept(this, "\$this")
+            declaration.superClasses.renderDeclarationElementsOrDescriptors("superClasses")
             declaration.typeParameters.dumpElements()
             declaration.declarations.dumpElements()
         }
@@ -85,22 +88,32 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
         declaration.dumpLabeledElementWith(data) {
-            if (declaration.overriddenSymbols.isNotEmpty()) {
-                indented("overridden") {
-                    for (overriddenSymbol in declaration.overriddenSymbols) {
-                        if (overriddenSymbol.isBound)
-                            overriddenSymbol.owner.render()
-                        else
-                            printer.println("UNBOUND: ", DescriptorRenderer.COMPACT.render(overriddenSymbol.descriptor))
-                    }
-                }
-            }
+            declaration.overriddenSymbols.renderDeclarationElementsOrDescriptors("overridden")
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")
             declaration.extensionReceiverParameter?.accept(this, "\$receiver")
             declaration.valueParameters.dumpElements()
             declaration.body?.accept(this, "")
         }
+    }
+
+    private fun <D : DeclarationDescriptor, B : IrSymbolOwner> Collection<IrBindableSymbol<D, B>>.renderDeclarationElementsOrDescriptors(
+        caption: String
+    ) {
+        if (isNotEmpty()) {
+            indented(caption) {
+                for (symbol in this) {
+                    symbol.renderDeclarationElementOrDescriptor()
+                }
+            }
+        }
+    }
+
+    private fun <D : DeclarationDescriptor, B : IrSymbolOwner> IrBindableSymbol<D, B>.renderDeclarationElementOrDescriptor() {
+        if (isBound)
+            owner.render()
+        else
+            printer.println("UNBOUND: ", DescriptorRenderer.COMPACT.render(descriptor))
     }
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
