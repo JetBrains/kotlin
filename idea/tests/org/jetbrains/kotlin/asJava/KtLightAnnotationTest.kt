@@ -23,6 +23,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.completion.test.assertInstanceOf
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -223,7 +224,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         assertTextAndRange("[\"abc\", \"def\"]", annotationAttributeVal)
 
         annotationAttributeVal as PsiArrayInitializerMemberValue
-        assertTextAndRange("\"abc\"", annotationAttributeVal.initializers[0])
+        assertTextAndRange("\"abc\"", annotationAttributeVal.initializers[0].assertInstanceOf<PsiLiteral>())
         assertTextAndRange("\"def\"", annotationAttributeVal.initializers[1])
     }
 
@@ -246,7 +247,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
             assertTextAndRange("Anno2(1)", innerAnnotationAttributeVal)
             assertIsKtLightAnnotation("Anno2(1)", innerAnnotationAttributeVal)
             innerAnnotationAttributeVal as PsiAnnotation
-            val value = innerAnnotationAttributeVal.findAttributeValue("v")!!
+            val value = innerAnnotationAttributeVal.findAttributeValue("v").assertInstanceOf<PsiLiteral>()
             assertTextAndRange("1", value)
         }
 
