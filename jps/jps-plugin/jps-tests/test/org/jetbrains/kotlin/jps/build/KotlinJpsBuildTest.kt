@@ -92,53 +92,51 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         private val KOTLIN_JS_LIBRARY = "jslib-example"
         private val PATH_TO_KOTLIN_JS_LIBRARY = AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
         private val KOTLIN_JS_LIBRARY_JAR = "$KOTLIN_JS_LIBRARY.jar"
+        private val STDLIB_JS_FILES = hashSetOf(
+            "lib/kotlin.js",
+            "lib/kotlin.meta.js",
+            "lib/kotlin-experimental.js",
+            "lib/kotlin-experimental.meta.js"
+        )
         private val EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY = hashSetOf(
-                "$PROJECT_NAME.js",
-                "$PROJECT_NAME.meta.js",
-                "lib/kotlin.js",
-                "lib/kotlin.meta.js",
-                "$PROJECT_NAME/root-package.kjsm"
-        )
+            "$PROJECT_NAME.js",
+            "$PROJECT_NAME.meta.js",
+            "$PROJECT_NAME/root-package.kjsm"
+        ) + STDLIB_JS_FILES
         private val EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY = hashSetOf(
-                "$ADDITIONAL_MODULE_NAME.js",
-                "$ADDITIONAL_MODULE_NAME.meta.js",
-                "lib/kotlin.js",
-                "lib/kotlin.meta.js",
-                "$ADDITIONAL_MODULE_NAME/module2/module2.kjsm"
-        )
+            "$ADDITIONAL_MODULE_NAME.js",
+            "$ADDITIONAL_MODULE_NAME.meta.js",
+            "$ADDITIONAL_MODULE_NAME/module2/module2.kjsm"
+        ) + STDLIB_JS_FILES
         private val EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY = hashSetOf(
-                "$PROJECT_NAME.js",
-                "$PROJECT_NAME.meta.js",
-                "$PROJECT_NAME/root-package.kjsm"
+            "$PROJECT_NAME.js",
+            "$PROJECT_NAME.meta.js",
+            "$PROJECT_NAME/root-package.kjsm"
         )
         private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR = hashSetOf(
-                "$PROJECT_NAME.js",
-                "$PROJECT_NAME.meta.js",
-                "lib/kotlin.js",
-                "lib/kotlin.meta.js",
-                "lib/jslib-example.js",
-                "lib/jslib-example.meta.js",
-                "lib/file0.js",
-                "lib/dir/file1.js",
-                "lib/META-INF-ex/file2.js",
-                "lib/res0.js",
-                "lib/resdir/res1.js",
-                "$PROJECT_NAME/root-package.kjsm"
-        )
+            "$PROJECT_NAME.js",
+            "$PROJECT_NAME.meta.js",
+            "lib/jslib-example.js",
+            "lib/jslib-example.meta.js",
+            "lib/file0.js",
+            "lib/dir/file1.js",
+            "lib/META-INF-ex/file2.js",
+            "lib/res0.js",
+            "lib/resdir/res1.js",
+            "$PROJECT_NAME/root-package.kjsm"
+        ) + STDLIB_JS_FILES
         private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR = hashSetOf(
-                "$PROJECT_NAME.js",
-                "$PROJECT_NAME.meta.js",
-                "custom/kotlin.js",
-                "custom/kotlin.meta.js",
-                "custom/jslib-example.js",
-                "custom/jslib-example.meta.js",
-                "custom/file0.js",
-                "custom/dir/file1.js",
-                "custom/META-INF-ex/file2.js",
-                "custom/res0.js",
-                "custom/resdir/res1.js",
-                "$PROJECT_NAME/root-package.kjsm"
-        )
+            "$PROJECT_NAME.js",
+            "$PROJECT_NAME.meta.js",
+            "custom/jslib-example.js",
+            "custom/jslib-example.meta.js",
+            "custom/file0.js",
+            "custom/dir/file1.js",
+            "custom/META-INF-ex/file2.js",
+            "custom/res0.js",
+            "custom/resdir/res1.js",
+            "$PROJECT_NAME/root-package.kjsm"
+        ) + STDLIB_JS_FILES.map { it.replace("lib", "custom") }
 
         private fun k2jsOutput(vararg moduleNames: String): Array<String> {
             val list = arrayListOf<String>()
