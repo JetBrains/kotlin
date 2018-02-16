@@ -61,13 +61,10 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.core.quoteSegmentsIfNeeded
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
 import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
 import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
-import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
@@ -779,11 +776,8 @@ fun <T> Pass(body: (T) -> Unit) = object : Pass<T>() {
 }
 
 fun KtExpression.removeTemplateEntryBracesIfPossible(): KtExpression {
-    val parent = parent
-    if (parent !is KtBlockStringTemplateEntry) return this
-
-    val intention = RemoveCurlyBracesFromTemplateIntention()
-    val newEntry = if (intention.isApplicableTo(parent)) intention.applyTo(parent) else parent
+    val parent = parent as? KtBlockStringTemplateEntry ?: return this
+    val newEntry = if (parent.canDropBraces()) parent.dropBraces() else parent
     return newEntry.expression!!
 }
 

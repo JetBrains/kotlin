@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
-import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -578,7 +575,11 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             val parens = element.parent as? KtParenthesizedExpression
             val requiredParens = parens != null && !KtPsiUtil.areParenthesesUseless(parens)
             val shortenedElement = element.replace(element.selectorExpression!!) as KtElement
-            if (requiredParens) return shortenedElement.parent.replaced(shortenedElement)
+            val newParent = shortenedElement.parent
+            if (requiredParens) return newParent.replaced(shortenedElement)
+            if (newParent is KtBlockStringTemplateEntry && newParent.canDropBraces()) {
+                newParent.dropBraces()
+            }
             return shortenedElement
         }
     }
