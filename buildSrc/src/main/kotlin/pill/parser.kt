@@ -25,6 +25,7 @@ data class PModule(
     val name: String,
     val bundleName: String,
     val rootDirectory: File,
+    val moduleFile: File,
     val contentRoots: List<PContentRoot>,
     val orderRoots: List<POrderRoot>,
     val moduleForProductionSources: PModule? = null,
@@ -78,11 +79,15 @@ data class PLibrary(
 }
 
 fun parse(project: Project, context: ParserContext): PProject = with (context) {
+    if (project != project.rootProject) {
+        error("$project is not a root project")
+    }
+
     val modules = project.allprojects
         .filter { it.plugins.hasPlugin(JpsCompatiblePlugin::class.java) }
         .flatMap { parseModules(it) }
 
-    return PProject("Kotlin", project.rootProject.projectDir, modules, emptyList())
+    return PProject("Kotlin", project.projectDir, modules, emptyList())
 }
 
 /*
@@ -120,7 +125,14 @@ private fun ParserContext.parseModules(project: Project): List<PModule> {
 
     var productionSourcesModule: PModule? = null
 
-    for ((nameSuffix, roots) in mapOf("src" to productionContentRoots, "test" to testContentRoots)) {
+    fun getModuleFile(suffix: String = ""): File {
+        val relativePath = File(project.projectDir, project.name + suffix + ".iml")
+            .toRelativeString(project.rootProject.projectDir)
+
+        return File(project.rootProject.projectDir, ".idea/modules/$relativePath")
+    }
+
+    for ((nameSuffix, roots) in mapOf(".src" to productionContentRoots, ".test" to testContentRoots)) {
         if (roots.isEmpty()) {
             continue
         }
@@ -134,9 +146,10 @@ private fun ParserContext.parseModules(project: Project): List<PModule> {
         }
 
         val module = PModule(
-            project.name + "." + nameSuffix,
+            project.name + nameSuffix,
             project.name,
             mainRoot.path,
+            getModuleFile(nameSuffix),
             roots,
             dependencies,
             productionSourcesModule
@@ -149,10 +162,16 @@ private fun ParserContext.parseModules(project: Project): List<PModule> {
         }
     }
 
+    val mainModuleFileRelativePath = when {
+        project == project.rootProject -> File(project.rootProject.projectDir, project.name + ".iml")
+        else -> getModuleFile()
+    }
+
     modules += PModule(
         project.name,
         project.name,
         project.projectDir,
+        mainModuleFileRelativePath,
         listOf(PContentRoot(project.projectDir, false, emptyList(), allExcludedDirs)),
         if (modules.isEmpty()) parseDependencies(project, false) else emptyList()
     )

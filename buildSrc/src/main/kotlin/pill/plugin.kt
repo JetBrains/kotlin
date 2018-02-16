@@ -125,7 +125,7 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
 
         val files = render(jpsProject, getProjectLibraries(jpsProject))
 
-        removeExistingIdeaLibraries()
+        removeExistingIdeaLibrariesAndModules()
         removeJpsRunConfigurations()
 
         copyRunConfigurations()
@@ -145,8 +145,9 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
         removeJpsRunConfigurations()
     }
 
-    private fun removeExistingIdeaLibraries() {
+    private fun removeExistingIdeaLibrariesAndModules() {
         File(projectDir, ".idea/libraries").deleteRecursively()
+        File(projectDir, ".idea/modules").deleteRecursively()
     }
 
     private fun removeJpsRunConfigurations() {
