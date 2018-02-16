@@ -8,7 +8,6 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
-    compile(project(":idea:idea-core"))
     compileOnly(intellijDep()) { includeJars("openapi", "idea", "util", "extensions", "asm-all") }
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
