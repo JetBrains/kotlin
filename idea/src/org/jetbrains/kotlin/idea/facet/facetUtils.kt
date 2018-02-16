@@ -123,7 +123,7 @@ val mavenLibraryIdToPlatform: Map<String, TargetPlatformKind<*>> by lazy {
             .toMap()
 }
 
-private fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider): List<Module> {
+internal fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider): List<Module> {
     return modelsProvider.modules.filter { module ->
         module.findImplementedModuleName(modelsProvider) == name
     }
