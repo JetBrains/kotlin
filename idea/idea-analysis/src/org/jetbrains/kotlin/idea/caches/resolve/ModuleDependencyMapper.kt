@@ -49,14 +49,14 @@ fun createModuleResolverProvider(
     syntheticFiles: Collection<KtFile>,
     delegateResolver: ResolverForProject<IdeaModuleInfo>,
     moduleFilter: (IdeaModuleInfo) -> Boolean,
-    allModules: Collection<IdeaModuleInfo>?,
+    allModules: Collection<IdeaModuleInfo>,
     providedBuiltIns: KotlinBuiltIns?, // null means create new builtins based on SDK
     dependencies: Collection<Any>,
     invalidateOnOOCB: Boolean = true
 ): ModuleResolverProvider {
     val builtIns = providedBuiltIns ?: createBuiltIns(analysisSettings, globalContext)
 
-    val allModuleInfos = (allModules ?: collectAllModuleInfosFromIdeaModel(project)).toHashSet()
+    val allModuleInfos = allModules.toMutableSet()
 
     val syntheticFilesByModule = syntheticFiles.groupBy(KtFile::getModuleInfo)
     val syntheticFilesModules = syntheticFilesByModule.keys
