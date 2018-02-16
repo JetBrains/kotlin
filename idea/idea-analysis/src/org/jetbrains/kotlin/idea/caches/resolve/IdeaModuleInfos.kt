@@ -154,11 +154,15 @@ sealed class ModuleSourceInfoWithExpectedBy(private val forProduction: Boolean) 
             return if (forProduction) expectedByModule?.productionSourceInfo() else expectedByModule?.testSourceInfo()
         }
 
-    override fun dependencies(): List<IdeaModuleInfo> = module.cached(CachedValueProvider {
+    override fun dependencies(): List<IdeaModuleInfo> = module.cached(createCachedValueProvider {
         CachedValueProvider.Result(
             ideaModelDependencies(module, forProduction),
             ProjectRootModificationTracker.getInstance(module.project))
     })
+
+    // NB: CachedValueProvider must exist separately in Production / Test source info,
+    // otherwise caching does not work properly
+    protected abstract fun <T> createCachedValueProvider(f: () -> CachedValueProvider.Result<T>): CachedValueProvider<T>
 }
 
 data class ModuleProductionSourceInfo internal constructor(
@@ -168,6 +172,8 @@ data class ModuleProductionSourceInfo internal constructor(
     override val name = Name.special("<production sources for module ${module.name}>")
 
     override fun contentScope(): GlobalSearchScope = ModuleProductionSourceScope(module)
+
+    override fun <T> createCachedValueProvider(f: () -> CachedValueProvider.Result<T>) = CachedValueProvider { f() }
 }
 
 //TODO: (module refactoring) do not create ModuleTestSourceInfo when there are no test roots for module
@@ -192,6 +198,8 @@ data class ModuleTestSourceInfo internal constructor(
 
         CachedValueProvider.Result(list, ProjectRootModificationTracker.getInstance(module.project))
     })
+
+    override fun <T> createCachedValueProvider(f: () -> CachedValueProvider.Result<T>) = CachedValueProvider { f() }
 }
 
 internal fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
