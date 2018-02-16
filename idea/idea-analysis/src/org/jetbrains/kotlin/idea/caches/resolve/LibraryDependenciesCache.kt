@@ -48,12 +48,14 @@ interface LibraryDependenciesCache {
 class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDependenciesCache {
 
     val cache by CachedValue(project) {
-        CachedValueProvider.Result(ContainerUtil.createConcurrentWeakMap<Library, LibrariesAndSdks>(),
-                                   ProjectRootManager.getInstance(project))
+        CachedValueProvider.Result(
+            ContainerUtil.createConcurrentWeakMap<Library, LibrariesAndSdks>(),
+            ProjectRootManager.getInstance(project)
+        )
     }
 
     override fun getLibrariesAndSdksUsedWith(library: Library): LibrariesAndSdks =
-            cache.getOrPut(library) { computeLibrariesAndSdksUsedWith(library) }
+        cache.getOrPut(library) { computeLibrariesAndSdksUsedWith(library) }
 
 
     //NOTE: used LibraryRuntimeClasspathScope as reference
@@ -63,8 +65,7 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
             if (orderEntry is ModuleOrderEntry) {
                 val module = orderEntry.module
                 module != null && module !in processedModules
-            }
-            else {
+            } else {
                 true
             }
         }

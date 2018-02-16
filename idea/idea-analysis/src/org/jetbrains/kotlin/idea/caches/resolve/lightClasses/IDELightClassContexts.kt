@@ -75,8 +75,8 @@ import org.jetbrains.kotlin.types.WrappedTypeFactory
 import org.jetbrains.kotlin.utils.sure
 
 
-class IDELightClassConstructionContext(bindingContext: BindingContext, module: ModuleDescriptor, val mode: Mode)
-    : LightClassConstructionContext(bindingContext, module) {
+class IDELightClassConstructionContext(bindingContext: BindingContext, module: ModuleDescriptor, val mode: Mode) :
+    LightClassConstructionContext(bindingContext, module) {
     enum class Mode {
         LIGHT,
         EXACT
@@ -95,9 +95,8 @@ object IDELightClassContexts {
             // need to make sure default values for parameters are resolved
             // because java resolve depends on whether there is a default value for an annotation attribute
             resolutionFacade.getFrontendService(ResolveElementCache::class.java)
-                    .resolvePrimaryConstructorParametersDefaultValues(classOrObject)
-        }
-        else {
+                .resolvePrimaryConstructorParametersDefaultValues(classOrObject)
+        } else {
             resolutionFacade.analyze(classOrObject)
         }
         val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject).sure {
@@ -149,7 +148,11 @@ object IDELightClassContexts {
     fun lightContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext? {
         if (!isDummyResolveApplicable(classOrObject)) return null
 
-        val resolveSession = setupAdHocResolve(classOrObject.project, classOrObject.getResolutionFacade().moduleDescriptor, listOf(classOrObject.containingKtFile))
+        val resolveSession = setupAdHocResolve(
+            classOrObject.project,
+            classOrObject.getResolutionFacade().moduleDescriptor,
+            listOf(classOrObject.containingKtFile)
+        )
 
         ForceResolveUtil.forceResolveAllContents(resolveSession.resolveToDescriptor(classOrObject))
 
@@ -167,9 +170,10 @@ object IDELightClassContexts {
 
     fun lightContextForScript(script: KtScript): LightClassConstructionContext {
         val resolveSession = setupAdHocResolve(
-                script.project,
-                script.getResolutionFacade().moduleDescriptor,
-                listOf(script.containingKtFile))
+            script.project,
+            script.getResolutionFacade().moduleDescriptor,
+            listOf(script.containingKtFile)
+        )
 
         ForceResolveUtil.forceResolveAllContents(resolveSession.resolveToDescriptor(script))
 
@@ -188,22 +192,23 @@ object IDELightClassContexts {
         return classOrObject.declarations.filterIsInstance<KtClassOrObject>().all { isDummyResolveApplicable(it) }
     }
 
-    private fun hasDelegatedSupertypes(classOrObject: KtClassOrObject) = classOrObject.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }
+    private fun hasDelegatedSupertypes(classOrObject: KtClassOrObject) =
+        classOrObject.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }
 
     private fun isDataClassWithGeneratedMembersOverridden(classOrObject: KtClassOrObject): Boolean {
         return classOrObject.hasModifier(KtTokens.DATA_KEYWORD) &&
-               classOrObject.declarations.filterIsInstance<KtFunction>().any {
-                   isGeneratedForDataClass(it.nameAsSafeName)
-               }
+                classOrObject.declarations.filterIsInstance<KtFunction>().any {
+                    isGeneratedForDataClass(it.nameAsSafeName)
+                }
     }
 
     private fun isGeneratedForDataClass(name: Name): Boolean {
         return name == DataClassDescriptorResolver.EQUALS_METHOD_NAME ||
-               // known failure is related to equals override, checking for other methods 'just in case'
-               name == DataClassDescriptorResolver.COPY_METHOD_NAME ||
-               name == DataClassDescriptorResolver.HASH_CODE_METHOD_NAME ||
-               name == DataClassDescriptorResolver.TO_STRING_METHOD_NAME ||
-               DataClassDescriptorResolver.isComponentLike(name)
+                // known failure is related to equals override, checking for other methods 'just in case'
+                name == DataClassDescriptorResolver.COPY_METHOD_NAME ||
+                name == DataClassDescriptorResolver.HASH_CODE_METHOD_NAME ||
+                name == DataClassDescriptorResolver.TO_STRING_METHOD_NAME ||
+                DataClassDescriptorResolver.isComponentLike(name)
     }
 
     private fun hasMembersOverridingInternalMembers(classOrObject: KtClassOrObject): Boolean {
@@ -221,8 +226,8 @@ object IDELightClassContexts {
     private fun anyInternalMembersWithThisName(name: String, project: Project): Boolean {
         var result = false
         StubIndex.getInstance().processElements(
-                KotlinOverridableInternalMembersShortNameIndex.Instance.key, name, project,
-                EverythingGlobalScope(project), KtCallableDeclaration::class.java
+            KotlinOverridableInternalMembersShortNameIndex.Instance.key, name, project,
+            EverythingGlobalScope(project), KtCallableDeclaration::class.java
         ) {
             result = true
             false // stop processing at first matching result
@@ -284,8 +289,8 @@ object IDELightClassContexts {
         val container = createContainer("LightClassStub", JvmPlatform) {
             val jvmTarget = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo) as? JvmTarget
             configureModule(
-                    ModuleContext(moduleDescriptor, project), JvmPlatform,
-                    jvmTarget ?: JvmTarget.DEFAULT, trace
+                ModuleContext(moduleDescriptor, project), JvmPlatform,
+                jvmTarget ?: JvmTarget.DEFAULT, trace
             )
 
             useInstance(GlobalSearchScope.EMPTY_SCOPE)
@@ -321,27 +326,26 @@ object IDELightClassContexts {
         fun get(name: String): ClassDescriptor? {
             val annotationFqName = annotationsThatAffectCodegen.firstOrNull { it.shortName().asString() == name } ?: return null
             return realModule.getPackage(annotationFqName.parent()).memberScope
-                    .getContributedClassifier(annotationFqName.shortName(), NoLookupLocation.FROM_IDE) as? ClassDescriptor
+                .getContributedClassifier(annotationFqName.shortName(), NoLookupLocation.FROM_IDE) as? ClassDescriptor
         }
 
         // see JvmPlatformAnnotations.kt, JvmFlagAnnotations.kt, also PsiModifier.MODIFIERS
         private val annotationsThatAffectCodegen = listOf(
-                "JvmField", "JvmOverloads", "JvmName", "JvmStatic",
-                "Synchronized", "Transient", "Volatile", "Strictfp"
+            "JvmField", "JvmOverloads", "JvmName", "JvmStatic",
+            "Synchronized", "Transient", "Volatile", "Strictfp"
         ).map { FqName("kotlin.jvm").child(Name.identifier(it)) } +
-                                                   FqName("kotlin.PublishedApi") +
-                                                   FqName("kotlin.Deprecated") +
-                                                   FqName("kotlin.internal.InlineOnly") +
-                                                   FqName("kotlinx.android.parcel.Parcelize")
+                FqName("kotlin.PublishedApi") +
+                FqName("kotlin.Deprecated") +
+                FqName("kotlin.internal.InlineOnly") +
+                FqName("kotlinx.android.parcel.Parcelize")
     }
 
     class AdHocAnnotationResolver(
-            private val codegenAffectingAnnotations: CodegenAffectingAnnotations,
-            private val callResolver: CallResolver,
-            private val languageVersionSettings: LanguageVersionSettings,
-            private val dataFlowValueFactory: DataFlowValueFactory,
-            constantExpressionEvaluator: ConstantExpressionEvaluator,
-            storageManager: StorageManager
+        private val codegenAffectingAnnotations: CodegenAffectingAnnotations,
+        private val callResolver: CallResolver,
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val dataFlowValueFactory: DataFlowValueFactory,constantExpressionEvaluator: ConstantExpressionEvaluator,
+        storageManager: StorageManager
     ) : AnnotationResolverImpl(callResolver, constantExpressionEvaluator, storageManager) {
 
         override fun resolveAnnotationType(scope: LexicalScope, entryElement: KtAnnotationEntry, trace: BindingTrace): KotlinType {
@@ -354,20 +358,24 @@ object IDELightClassContexts {
             return codegenAffectingAnnotations.get(referencedName)
         }
 
-        override fun resolveAnnotationCall(annotationEntry: KtAnnotationEntry, scope: LexicalScope, trace: BindingTrace): OverloadResolutionResults<FunctionDescriptor> {
+        override fun resolveAnnotationCall(
+            annotationEntry: KtAnnotationEntry,
+            scope: LexicalScope,
+            trace: BindingTrace
+        ): OverloadResolutionResults<FunctionDescriptor> {
             val annotationConstructor = annotationClassByEntry(annotationEntry)?.constructors?.singleOrNull()
-                                        ?: return super.resolveAnnotationCall(annotationEntry, scope, trace)
+                    ?: return super.resolveAnnotationCall(annotationEntry, scope, trace)
 
             @Suppress("UNCHECKED_CAST")
             return callResolver.resolveConstructorCall(
-                    BasicCallResolutionContext.create(
-                            trace, scope, CallMaker.makeCall(null, null, annotationEntry), TypeUtils.NO_EXPECTED_TYPE,
-                            DataFlowInfoFactory.EMPTY, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                            true, languageVersionSettings,
-                            dataFlowValueFactory
-                    ),
-                    annotationEntry.calleeExpression!!.constructorReferenceExpression!!,
-                    annotationConstructor.returnType
+                BasicCallResolutionContext.create(
+                    trace, scope, CallMaker.makeCall(null, null, annotationEntry), TypeUtils.NO_EXPECTED_TYPE,
+                    DataFlowInfoFactory.EMPTY, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                    true, languageVersionSettings,
+                    dataFlowValueFactory
+                ),
+                annotationEntry.calleeExpression!!.constructorReferenceExpression!!,
+                annotationConstructor.returnType
             ) as OverloadResolutionResults<FunctionDescriptor>
         }
     }

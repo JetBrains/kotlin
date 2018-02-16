@@ -34,8 +34,7 @@ fun ModuleSourceInfo.getDependentModules(): Set<ModuleSourceInfo> {
     val dependents = getDependents(module)
     return if (isTests()) {
         dependents.mapNotNullTo(HashSet<ModuleSourceInfo>(), Module::testSourceInfo)
-    }
-    else {
+    } else {
         dependents.flatMapTo(HashSet<ModuleSourceInfo>()) { it.correspondingModuleInfos() }
     }
 }

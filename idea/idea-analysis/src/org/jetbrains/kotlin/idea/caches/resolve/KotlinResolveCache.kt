@@ -68,7 +68,7 @@ internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: Com
     }
 
     fun getAnalysisResults(element: KtElement): AnalysisResult {
-        assert (element.containingKtFile == file) { "Wrong file. Expected $file, but was ${element.containingKtFile}" }
+        assert(element.containingKtFile == file) { "Wrong file. Expected $file, but was ${element.containingKtFile}" }
 
         val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element)
 
@@ -93,14 +93,11 @@ internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: Com
 
         try {
             return KotlinResolveDataProvider.analyze(project, componentProvider, analyzableElement)
-        }
-        catch (e: ProcessCanceledException) {
+        } catch (e: ProcessCanceledException) {
             throw e
-        }
-        catch (e: IndexNotReadyException) {
+        } catch (e: IndexNotReadyException) {
             throw e
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             DiagnosticUtils.throwIfRunningOnServer(e)
             LOG.error(e)
 
@@ -111,19 +108,19 @@ internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: Com
 
 private object KotlinResolveDataProvider {
     private val topmostElementTypes = arrayOf<Class<out PsiElement?>?>(
-            KtNamedFunction::class.java,
-            KtAnonymousInitializer::class.java,
-            KtProperty::class.java,
-            KtImportDirective::class.java,
-            KtPackageDirective::class.java,
-            KtCodeFragment::class.java,
-            // TODO: Non-analyzable so far, add more granular analysis
-            KtAnnotationEntry::class.java,
-            KtTypeConstraint::class.java,
-            KtSuperTypeList::class.java,
-            KtTypeParameter::class.java,
-            KtParameter::class.java,
-            KtTypeAlias::class.java
+        KtNamedFunction::class.java,
+        KtAnonymousInitializer::class.java,
+        KtProperty::class.java,
+        KtImportDirective::class.java,
+        KtPackageDirective::class.java,
+        KtCodeFragment::class.java,
+        // TODO: Non-analyzable so far, add more granular analysis
+        KtAnnotationEntry::class.java,
+        KtTypeConstraint::class.java,
+        KtSuperTypeList::class.java,
+        KtTypeParameter::class.java,
+        KtParameter::class.java,
+        KtTypeAlias::class.java
     )
 
     fun findAnalyzableParent(element: KtElement): KtElement {
@@ -145,10 +142,10 @@ private object KotlinResolveDataProvider {
         // Class initializer should be replaced by containing class to provide full analysis
         if (analyzableElement is KtClassInitializer) return analyzableElement.containingDeclaration
         return analyzableElement
-                    // if none of the above worked, take the outermost declaration
-                    ?: PsiTreeUtil.getTopmostParentOfType(element, KtDeclaration::class.java)
-                    // if even that didn't work, take the whole file
-                    ?: element.containingKtFile
+        // if none of the above worked, take the outermost declaration
+                ?: PsiTreeUtil.getTopmostParentOfType(element, KtDeclaration::class.java)
+                // if even that didn't work, take the whole file
+                ?: element.containingKtFile
     }
 
     fun analyze(project: Project, componentProvider: ComponentProvider, analyzableElement: KtElement): AnalysisResult {
@@ -159,32 +156,33 @@ private object KotlinResolveDataProvider {
             }
 
             val resolveSession = componentProvider.get<ResolveSession>()
-            val trace = DelegatingBindingTrace(resolveSession.bindingContext, "Trace for resolution of " + analyzableElement, allowSliceRewrite = true)
+            val trace = DelegatingBindingTrace(
+                resolveSession.bindingContext,
+                "Trace for resolution of " + analyzableElement,
+                allowSliceRewrite = true
+            )
 
             val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
 
             val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
-                    //TODO: should get ModuleContext
-                    componentProvider.get<GlobalContext>().withProject(project).withModule(module),
-                    resolveSession,
-                    trace,
-                    targetPlatform,
-                    componentProvider.get<BodyResolveCache>(),
-                    analyzableElement.jvmTarget,
-                    analyzableElement.languageVersionSettings
+                //TODO: should get ModuleContext
+                componentProvider.get<GlobalContext>().withProject(project).withModule(module),
+                resolveSession,
+                trace,
+                targetPlatform,
+                componentProvider.get<BodyResolveCache>(),
+                analyzableElement.jvmTarget,
+                analyzableElement.languageVersionSettings
             ).get<LazyTopDownAnalyzer>()
 
             lazyTopDownAnalyzer.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, listOf(analyzableElement))
 
             return AnalysisResult.success(trace.bindingContext, module)
-        }
-        catch (e: ProcessCanceledException) {
+        } catch (e: ProcessCanceledException) {
             throw e
-        }
-        catch (e: IndexNotReadyException) {
+        } catch (e: IndexNotReadyException) {
             throw e
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             DiagnosticUtils.throwIfRunningOnServer(e)
             LOG.error(e)
 
@@ -195,9 +193,9 @@ private object KotlinResolveDataProvider {
     private fun analyzeExpressionCodeFragment(componentProvider: ComponentProvider, codeFragment: KtCodeFragment): BindingContext {
         val trace = BindingTraceContext()
         componentProvider.get<CodeFragmentAnalyzer>().analyzeCodeFragment(
-                codeFragment,
-                trace,
-                BodyResolveMode.PARTIAL_FOR_COMPLETION //TODO: discuss it
+            codeFragment,
+            trace,
+            BodyResolveMode.PARTIAL_FOR_COMPLETION //TODO: discuss it
         )
         return trace.bindingContext
     }

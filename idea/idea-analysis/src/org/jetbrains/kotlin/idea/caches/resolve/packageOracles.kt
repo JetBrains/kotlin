@@ -64,9 +64,9 @@ class IdePackageOracleFactory(val project: Project) : PackageOracleFactory {
         private val kotlinSourceOracle = KotlinSourceFilesOracle(moduleInfo)
 
         override fun packageExists(fqName: FqName) =
-                javaPackagesOracle.packageExists(fqName)
-                || kotlinSourceOracle.packageExists(fqName)
-                || fqName.isSubpackageOf(ANDROID_SYNTHETIC_PACKAGE_PREFIX)
+            javaPackagesOracle.packageExists(fqName)
+                    || kotlinSourceOracle.packageExists(fqName)
+                    || fqName.isSubpackageOf(ANDROID_SYNTHETIC_PACKAGE_PREFIX)
     }
 }
 

@@ -46,9 +46,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
-class KotlinPackageContentModificationListener(
-        private val project: Project
-) {
+class KotlinPackageContentModificationListener(private val project: Project) {
     init {
         val connection = project.messageBus.connect()
 
@@ -57,22 +55,21 @@ class KotlinPackageContentModificationListener(
             override fun after(events: List<VFileEvent>) = onEvents(events)
 
             private fun isRelevant(it: VFileEvent): Boolean =
-                    it is VFileMoveEvent || it is VFileCreateEvent || it is VFileCopyEvent || it is VFileDeleteEvent
+                it is VFileMoveEvent || it is VFileCreateEvent || it is VFileCopyEvent || it is VFileDeleteEvent
 
             fun onEvents(events: List<VFileEvent>) {
 
                 val service = ServiceManager.getService(project, PerModulePackageCacheService::class.java)
                 if (events.size >= FULL_DROP_THRESHOLD) {
                     service.onTooComplexChange()
-                }
-                else {
+                } else {
                     events
-                            .asSequence()
-                            .filter { it.file != null }
-                            .filter(::isRelevant)
-                            .mapNotNull { it.file }
-                            .filter { it.isDirectory || FileTypeRegistry.getInstance().getFileTypeByFileName(it.name) == KotlinFileType.INSTANCE }
-                            .forEach { file -> service.notifyPackageChange(file) }
+                        .asSequence()
+                        .filter { it.file != null }
+                        .filter(::isRelevant)
+                        .mapNotNull { it.file }
+                        .filter { it.isDirectory || FileTypeRegistry.getInstance().getFileTypeByFileName(it.name) == KotlinFileType.INSTANCE }
+                        .forEach { file -> service.notifyPackageChange(file) }
                 }
             }
         })
@@ -139,8 +136,7 @@ class PerModulePackageCacheService(private val project: Project) {
     private fun checkPendingChanges() = synchronized(this) {
         if (pendingVFileChanges.size + pendingKtFileChanges.size >= FULL_DROP_THRESHOLD) {
             onTooComplexChange()
-        }
-        else {
+        } else {
 
             pendingVFileChanges.forEach { vfile ->
                 // When VirtualFile !isValid (deleted for example), it impossible to use getModuleInfoByVirtualFile
@@ -149,13 +145,12 @@ class PerModulePackageCacheService(private val project: Project) {
                     for ((module, data) in cache) {
                         val sourceRootUrls = module.rootManager.sourceRootUrls
                         if (sourceRootUrls.any { url ->
-                            vfile.containedInOrContains(url)
-                        }) {
+                                vfile.containedInOrContains(url)
+                            }) {
                             data.clear()
                         }
                     }
-                }
-                else {
+                } else {
                     (getModuleInfoByVirtualFile(project, vfile) as? ModuleSourceInfo)?.let {
                         invalidateCacheForModuleSourceInfo(it)
                     }
@@ -174,8 +169,8 @@ class PerModulePackageCacheService(private val project: Project) {
     }
 
     private fun VirtualFile.containedInOrContains(root: String) =
-            (VfsUtilCore.isEqualOrAncestor(url, root)
-             || isDirectory && VfsUtilCore.isEqualOrAncestor(root, url))
+        (VfsUtilCore.isEqualOrAncestor(url, root)
+                || isDirectory && VfsUtilCore.isEqualOrAncestor(root, url))
 
 
     fun packageExists(packageFqName: FqName, moduleInfo: ModuleSourceInfo): Boolean {

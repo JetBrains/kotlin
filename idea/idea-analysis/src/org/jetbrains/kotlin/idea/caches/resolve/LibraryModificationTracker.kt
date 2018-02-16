@@ -109,4 +109,5 @@ class LibraryModificationTracker(project: Project) : SimpleModificationTracker()
     }
 }
 
-private fun isRelevantEvent(vFileEvent: VFileEvent) = vFileEvent is VFileCreateEvent || vFileEvent is VFileMoveEvent || vFileEvent is VFileCopyEvent
+private fun isRelevantEvent(vFileEvent: VFileEvent) =
+    vFileEvent is VFileCreateEvent || vFileEvent is VFileMoveEvent || vFileEvent is VFileCopyEvent

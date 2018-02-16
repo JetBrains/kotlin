@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
 
 class IdeLightClassInheritanceHelper : LightClassInheritanceHelper {
     override fun isInheritor(
-            lightClass: KtLightClass,
-            baseClass: PsiClass,
-            checkDeep: Boolean
+        lightClass: KtLightClass,
+        baseClass: PsiClass,
+        checkDeep: Boolean
     ): ImpreciseResolveResult {
         val classOrObject = lightClass.kotlinOrigin ?: return UNSURE
         val entries = classOrObject.superTypeListEntries

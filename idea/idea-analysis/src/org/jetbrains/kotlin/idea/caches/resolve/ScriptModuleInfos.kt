@@ -38,9 +38,9 @@ class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSear
 }
 
 data class ScriptModuleInfo(
-        val project: Project,
-        val scriptFile: VirtualFile,
-        val scriptDefinition: KotlinScriptDefinition
+    val project: Project,
+    val scriptFile: VirtualFile,
+    val scriptDefinition: KotlinScriptDefinition
 ) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
@@ -54,27 +54,30 @@ data class ScriptModuleInfo(
 
     override fun dependencies(): List<IdeaModuleInfo> {
         return listOf(
-                this, ScriptDependenciesModuleInfo(project, this)
+            this, ScriptDependenciesModuleInfo(project, this)
         ) + sdkDependencies(externalDependencies, project)
     }
 }
 
-private fun sdkDependencies(scriptDependencies: ScriptDependencies?, project: Project): List<SdkInfo>
-        = listOfNotNull(findJdk(scriptDependencies, project)?.let { SdkInfo(project, it) })
+private fun sdkDependencies(scriptDependencies: ScriptDependencies?, project: Project): List<SdkInfo> =
+    listOfNotNull(findJdk(scriptDependencies, project)?.let { SdkInfo(project, it) })
 
 fun findJdk(dependencies: ScriptDependencies?, project: Project): Sdk? {
     val allJdks = getAllProjectSdks()
     // workaround for mismatched gradle wrapper and plugin version
-    val javaHome = try { dependencies?.javaHome?.canonicalPath } catch (e: Throwable) { null }
+    val javaHome = try {
+        dependencies?.javaHome?.canonicalPath
+    } catch (e: Throwable) {
+        null
+    }
 
-    return allJdks.find { javaHome != null && it.homePath == javaHome } ?:
-           ProjectRootManager.getInstance(project).projectSdk ?:
-           allJdks.firstOrNull()
+    return allJdks.find { javaHome != null && it.homePath == javaHome } ?: ProjectRootManager.getInstance(project).projectSdk
+    ?: allJdks.firstOrNull()
 }
 
 class ScriptDependenciesModuleInfo(
-        val project: Project,
-        val scriptModuleInfo: ScriptModuleInfo?
+    val project: Project,
+    val scriptModuleInfo: ScriptModuleInfo?
 ) : IdeaModuleInfo, BinaryModuleInfo {
     override fun dependencies() = (listOf(this) + sdkDependencies(scriptModuleInfo?.externalDependencies, project))
 
@@ -84,7 +87,7 @@ class ScriptDependenciesModuleInfo(
         if (scriptModuleInfo == null) {
             // we do not know which scripts these dependencies are
             return KotlinSourceFilterScope.libraryClassFiles(
-                    ScriptDependenciesManager.getInstance(project).getAllScriptsClasspathScope(), project
+                ScriptDependenciesManager.getInstance(project).getAllScriptsClasspathScope(), project
             )
         }
         return ServiceManager.getService(project, ScriptBinariesScopeCache::class.java).get(scriptModuleInfo.externalDependencies)
@@ -93,6 +96,7 @@ class ScriptDependenciesModuleInfo(
     // NOTE: intentionally not taking corresponding script info into account
     // otherwise there is no way to implement getModuleInfo
     override fun hashCode() = project.hashCode()
+
     override fun equals(other: Any?): Boolean = other is ScriptDependenciesModuleInfo && this.project == other.project
 
     override val moduleOrigin: ModuleOrigin
@@ -103,7 +107,7 @@ class ScriptDependenciesModuleInfo(
 }
 
 data class ScriptDependenciesSourceModuleInfo(
-        val project: Project
+    val project: Project
 ) : IdeaModuleInfo, SourceForBinaryModuleInfo {
     override val name = Name.special("<Source for script dependencies>")
 
@@ -111,7 +115,7 @@ data class ScriptDependenciesSourceModuleInfo(
         get() = ScriptDependenciesModuleInfo(project, null)
 
     override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(
-            ScriptDependenciesManager.getInstance(project).getAllLibrarySourcesScope(), project
+        ScriptDependenciesManager.getInstance(project).getAllLibrarySourcesScope(), project
     )
 
 }

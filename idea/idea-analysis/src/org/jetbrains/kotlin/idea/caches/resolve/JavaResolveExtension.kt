@@ -91,15 +91,14 @@ fun PsiParameter.getParameterDescriptor(resolutionFacade: ResolutionFacade = jav
 }
 
 fun PsiClass.resolveToDescriptor(
-        resolutionFacade: ResolutionFacade,
-        declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it }
+    resolutionFacade: ResolutionFacade,
+    declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it }
 ): ClassDescriptor? {
     return if (this is KtLightClass && this !is KtLightClassForDecompiledDeclaration) {
         val origin = this.kotlinOrigin ?: return null
         val declaration = declarationTranslator(origin) ?: return null
         resolutionFacade.resolveToDescriptor(declaration)
-    }
-    else {
+    } else {
         getJavaClassDescriptor(resolutionFacade)
     } as? ClassDescriptor
 }
@@ -143,4 +142,4 @@ private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElemen
 }
 
 fun PsiElement.javaResolutionFacade() =
-        KotlinCacheService.getInstance(project).getResolutionFacadeByFile(this.originalElement.containingFile, JvmPlatform)
+    KotlinCacheService.getInstance(project).getResolutionFacadeByFile(this.originalElement.containingFile, JvmPlatform)

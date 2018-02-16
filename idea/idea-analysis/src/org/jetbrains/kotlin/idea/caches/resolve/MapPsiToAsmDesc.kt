@@ -44,7 +44,7 @@ object MapPsiToAsmDesc {
                 is PsiTypeParameter -> resolved.superTypes.firstOrNull()?.let { typeDesc(it) } ?: "Ljava/lang/Object;"
                 is PsiClass -> classDesc(resolved)
                 null -> unknownSignature()
-                else -> error("Resolved to unexpected $resolved of class ${resolved::class.java}" )
+                else -> error("Resolved to unexpected $resolved of class ${resolved::class.java}")
             }
 
         }
@@ -71,7 +71,7 @@ object MapPsiToAsmDesc {
         psiMethod.returnType?.let {
             append(typeDesc(it))
         }
-        ?: return unknownSignature() // TODO: support constructors, there seems to be additional logic in java that doesn't work correctly for compiled kotlin
+                ?: return unknownSignature() // TODO: support constructors, there seems to be additional logic in java that doesn't work correctly for compiled kotlin
     }
 
     private fun unknownSignature() = ""
@@ -79,6 +79,7 @@ object MapPsiToAsmDesc {
         LOG.error(message)
         return unknownSignature()
     }
+
     private fun primitive(asmType: Type) = asmType.descriptor
 
     private val LOG = Logger.getInstance(this::class.java)

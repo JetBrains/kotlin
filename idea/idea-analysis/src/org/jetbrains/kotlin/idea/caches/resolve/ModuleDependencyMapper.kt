@@ -42,17 +42,17 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 
 fun createModuleResolverProvider(
-        debugName: String,
-        project: Project,
-        globalContext: GlobalContextImpl,
-        analysisSettings: PlatformAnalysisSettings,
-        syntheticFiles: Collection<KtFile>,
-        delegateResolver: ResolverForProject<IdeaModuleInfo>,
-        moduleFilter: (IdeaModuleInfo) -> Boolean,
-        allModules: Collection<IdeaModuleInfo>?,
-        providedBuiltIns: KotlinBuiltIns?, // null means create new builtins based on SDK
-        dependencies: Collection<Any>,
-        invalidateOnOOCB: Boolean = true
+    debugName: String,
+    project: Project,
+    globalContext: GlobalContextImpl,
+    analysisSettings: PlatformAnalysisSettings,
+    syntheticFiles: Collection<KtFile>,
+    delegateResolver: ResolverForProject<IdeaModuleInfo>,
+    moduleFilter: (IdeaModuleInfo) -> Boolean,
+    allModules: Collection<IdeaModuleInfo>?,
+    providedBuiltIns: KotlinBuiltIns?, // null means create new builtins based on SDK
+    dependencies: Collection<Any>,
+    invalidateOnOOCB: Boolean = true
 ): ModuleResolverProvider {
     val builtIns = providedBuiltIns ?: createBuiltIns(analysisSettings, globalContext)
 
@@ -74,19 +74,19 @@ fun createModuleResolverProvider(
     }
 
     val resolverForProject = ResolverForProjectImpl(
-            debugName, globalContext.withProject(project), modulesToCreateResolversFor,
-            { module ->
-                val platform = module.platform ?: analysisSettings.platform
-                IdePlatformSupport.facades[platform] ?: throw UnsupportedOperationException("Unsupported platform $platform")
-            },
-            modulesContent, jvmPlatformParameters,
-            IdeaEnvironment, builtIns,
-            delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
-            analysisSettings.sdk?.let { SdkInfo(project, it) },
-            modulePlatforms = { module -> module.platform?.multiTargetPlatform },
-            packageOracleFactory = ServiceManager.getService(project, IdePackageOracleFactory::class.java),
-            languageSettingsProvider =  IDELanguageSettingsProvider,
-            invalidateOnOOCB = invalidateOnOOCB
+        debugName, globalContext.withProject(project), modulesToCreateResolversFor,
+        { module ->
+            val platform = module.platform ?: analysisSettings.platform
+            IdePlatformSupport.facades[platform] ?: throw UnsupportedOperationException("Unsupported platform $platform")
+        },
+        modulesContent, jvmPlatformParameters,
+        IdeaEnvironment, builtIns,
+        delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
+        analysisSettings.sdk?.let { SdkInfo(project, it) },
+        modulePlatforms = { module -> module.platform?.multiTargetPlatform },
+        packageOracleFactory = ServiceManager.getService(project, IdePackageOracleFactory::class.java),
+        languageSettingsProvider = IDELanguageSettingsProvider,
+        invalidateOnOOCB = invalidateOnOOCB
     )
 
     if (providedBuiltIns == null && builtIns is JvmBuiltIns) {
@@ -95,9 +95,9 @@ fun createModuleResolverProvider(
     }
 
     return ModuleResolverProvider(
-            resolverForProject,
-            builtIns,
-            dependencies + listOf(globalContext.exceptionTracker)
+        resolverForProject,
+        builtIns,
+        dependencies + listOf(globalContext.exceptionTracker)
     )
 }
 
@@ -136,7 +136,7 @@ fun getAllProjectSdks(): Collection<Sdk> {
 
 
 class ModuleResolverProvider(
-        val resolverForProject: ResolverForProject<IdeaModuleInfo>,
-        val builtIns: KotlinBuiltIns,
-        val cacheDependencies: Collection<Any>
+    val resolverForProject: ResolverForProject<IdeaModuleInfo>,
+    val builtIns: KotlinBuiltIns,
+    val cacheDependencies: Collection<Any>
 )

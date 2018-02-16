@@ -36,8 +36,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 // Used as a placeholder when actual light class does not exist (expect-classes, for example)
 // The main purpose is to allow search of inheritors within hierarchies containing such classes
 class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
-        AbstractLightClass(kotlinOrigin.manager, KotlinLanguage.INSTANCE),
-        KtLightClass {
+    AbstractLightClass(kotlinOrigin.manager, KotlinLanguage.INSTANCE),
+    KtLightClass {
     private val _delegate by lazy { PsiElementFactory.SERVICE.getInstance(kotlinOrigin.project).createClass("dummy") }
     private val _containingClass by lazy { kotlinOrigin.containingClassOrObject?.let { KtFakeLightClass(it) } }
 
@@ -62,18 +62,21 @@ class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
         val baseKtClass = (baseClass as? KtLightClass)?.kotlinOrigin ?: return false
         val baseDescriptor = baseKtClass.resolveToDescriptorIfAny() ?: return false
         val thisDescriptor = kotlinOrigin.resolveToDescriptorIfAny() ?: return false
-        return if (checkDeep) DescriptorUtils.isSubclass(thisDescriptor, baseDescriptor) else DescriptorUtils.isDirectSubclass(thisDescriptor, baseDescriptor)
+        return if (checkDeep)
+            DescriptorUtils.isSubclass(thisDescriptor, baseDescriptor)
+        else
+            DescriptorUtils.isDirectSubclass(thisDescriptor, baseDescriptor)
     }
 }
 
 class KtFakeLightMethod private constructor(
-        val ktDeclaration: KtNamedDeclaration,
-        ktClassOrObject : KtClassOrObject
-) : LightMethod (
-        ktDeclaration.manager,
-        PsiElementFactory.SERVICE.getInstance(ktDeclaration.project).createMethod("dummy", PsiType.VOID),
-        KtFakeLightClass(ktClassOrObject),
-        KotlinLanguage.INSTANCE
+    val ktDeclaration: KtNamedDeclaration,
+    ktClassOrObject: KtClassOrObject
+) : LightMethod(
+    ktDeclaration.manager,
+    PsiElementFactory.SERVICE.getInstance(ktDeclaration.project).createMethod("dummy", PsiType.VOID),
+    KtFakeLightClass(ktClassOrObject),
+    KotlinLanguage.INSTANCE
 ), KtLightElement<KtNamedDeclaration, PsiMethod> {
     override val kotlinOrigin get() = ktDeclaration
     override val clsDelegate get() = myMethod

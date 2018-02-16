@@ -43,35 +43,31 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.UserDataProperty
 
-private val readOnlyQualifiedNamesToJavaClass = JavaToKotlinClassMap.mutabilityMappings.associateBy {
-    (_, readOnly, _) ->
+private val readOnlyQualifiedNamesToJavaClass = JavaToKotlinClassMap.mutabilityMappings.associateBy { (_, readOnly, _) ->
     readOnly.asSingleFqName()
 }
 
-private val mutableQualifiedNamesToJavaClass = JavaToKotlinClassMap.mutabilityMappings.associateBy {
-    (_, _, mutable) ->
+private val mutableQualifiedNamesToJavaClass = JavaToKotlinClassMap.mutabilityMappings.associateBy { (_, _, mutable) ->
     mutable.asSingleFqName()
 }
 
 private val membersWithSpecializedSignature: Set<String> =
-        BuiltinMethodsWithSpecialGenericSignature.ERASED_VALUE_PARAMETERS_SIGNATURES.mapTo(LinkedHashSet()) {
-            val fqNameString = it.substringBefore('(').replace('/', '.')
-            FqName(fqNameString).shortName().asString()
-        }
+    BuiltinMethodsWithSpecialGenericSignature.ERASED_VALUE_PARAMETERS_SIGNATURES.mapTo(LinkedHashSet()) {
+        val fqNameString = it.substringBefore('(').replace('/', '.')
+        FqName(fqNameString).shortName().asString()
+    }
 
-private val javaGetterNameToKotlinGetterName: Map<String, String> = BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.map {
-    (propertyFqName, javaGetterShortName) ->
-    Pair(javaGetterShortName.asString(), JvmAbi.getterName(propertyFqName.shortName().asString()))
-}.toMap()
+private val javaGetterNameToKotlinGetterName: Map<String, String> =
+    BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.map { (propertyFqName, javaGetterShortName) ->
+        Pair(javaGetterShortName.asString(), JvmAbi.getterName(propertyFqName.shortName().asString()))
+    }.toMap()
 
 fun platformMutabilityWrapper(fqName: FqName, findJavaClass: (String) -> PsiClass?): PsiClass? {
-    readOnlyQualifiedNamesToJavaClass[fqName]?.let {
-        (javaClass, kotlinReadOnly) ->
+    readOnlyQualifiedNamesToJavaClass[fqName]?.let { (javaClass, kotlinReadOnly) ->
         val javaBaseClass = findJavaClass(javaClass.asSingleFqName().asString()) ?: return null
         return getOrCreateWrapper(javaBaseClass, kotlinReadOnly.asSingleFqName(), isMutable = false)
     }
-    mutableQualifiedNamesToJavaClass[fqName]?.let {
-        (javaClass, _, kotlinMutable) ->
+    mutableQualifiedNamesToJavaClass[fqName]?.let { (javaClass, _, kotlinMutable) ->
         val javaBaseClass = findJavaClass(javaClass.asSingleFqName().asString()) ?: return null
         return getOrCreateWrapper(javaBaseClass, kotlinMutable.asSingleFqName(), isMutable = true)
     }
@@ -80,16 +76,20 @@ fun platformMutabilityWrapper(fqName: FqName, findJavaClass: (String) -> PsiClas
 
 private fun getOrCreateWrapper(javaBaseClass: PsiClass, kotlinFqName: FqName, isMutable: Boolean): KtLightMutabilityPlatformWrapper {
     val userDataStorage = if (isMutable) javaBaseClass::mutableWrapper else javaBaseClass::readOnlyWrapper
-    return userDataStorage.get() ?: KtLightMutabilityPlatformWrapper(javaBaseClass, kotlinFqName, isMutable).also { userDataStorage.set(it) }
+    return userDataStorage.get() ?: KtLightMutabilityPlatformWrapper(
+        javaBaseClass,
+        kotlinFqName,
+        isMutable
+    ).also { userDataStorage.set(it) }
 }
 
 private var PsiClass.readOnlyWrapper: KtLightMutabilityPlatformWrapper? by UserDataProperty(Key.create("READ_ONLY_WRAPPER"))
 private var PsiClass.mutableWrapper: KtLightMutabilityPlatformWrapper? by UserDataProperty(Key.create("MUTABLE_WRAPPER"))
 
 class KtLightMutabilityPlatformWrapper(
-        private val javaBaseClass: PsiClass,
-        private val kotlinInterfaceFqName: FqName,
-        private val isMutable: Boolean
+    private val javaBaseClass: PsiClass,
+    private val kotlinInterfaceFqName: FqName,
+    private val isMutable: Boolean
 ) : KtAbstractContainerWrapper(kotlinInterfaceFqName, javaBaseClass), PsiClass {
     private val _methods by lazyPub { calcMethods() }
 
@@ -144,11 +144,11 @@ class KtLightMutabilityPlatformWrapper(
 
     private fun createRemoveAt(baseMethod: PsiMethod): PsiMethod {
         return baseMethod.wrap(
-                name = "removeAt",
-                signature = MethodSignature(
-                        parameterTypes = listOf(PsiType.INT),
-                        returnType = singleTypeParameterAsType()
-                )
+            name = "removeAt",
+            signature = MethodSignature(
+                parameterTypes = listOf(PsiType.INT),
+                returnType = singleTypeParameterAsType()
+            )
         )
     }
 
@@ -156,18 +156,18 @@ class KtLightMutabilityPlatformWrapper(
     private fun PsiMethod.openBridge() = wrap(makeFinal = false, hasImplementation = true)
 
     private fun PsiMethod.wrap(
-            makeFinal: Boolean = false,
-            hasImplementation: Boolean = false,
-            name: String = this.name,
-            substituteObjectWith: PsiType? = null,
-            signature: MethodSignature? = null
+        makeFinal: Boolean = false,
+        hasImplementation: Boolean = false,
+        name: String = this.name,
+        substituteObjectWith: PsiType? = null,
+        signature: MethodSignature? = null
     ) = KtLightMethodWrapper(
-            this@KtLightMutabilityPlatformWrapper, this@wrap,
-            isFinal = makeFinal,
-            name = name,
-            substituteObjectWith = substituteObjectWith,
-            providedSignature = signature,
-            hasImplementation = hasImplementation
+        this@KtLightMutabilityPlatformWrapper, this@wrap,
+        isFinal = makeFinal,
+        name = name,
+        substituteObjectWith = substituteObjectWith,
+        providedSignature = signature,
+        hasImplementation = hasImplementation
     )
 
     private fun javaUtilMapMethodWithSpecialSignature(method: PsiMethod): KtLightMethodWrapper? {
@@ -176,30 +176,30 @@ class KtLightMutabilityPlatformWrapper(
 
         val signature = when (method.name) {
             "get" -> MethodSignature(
-                    parameterTypes = listOf(k),
-                    returnType = v
+                parameterTypes = listOf(k),
+                returnType = v
             )
             "getOrDefault" -> MethodSignature(
-                    parameterTypes = listOf(k, v),
-                    returnType = v
+                parameterTypes = listOf(k, v),
+                returnType = v
             )
             "containsKey" -> MethodSignature(
-                    parameterTypes = listOf(k),
-                    returnType = PsiType.BOOLEAN
+                parameterTypes = listOf(k),
+                returnType = PsiType.BOOLEAN
             )
             "containsValue" -> MethodSignature(
-                    parameterTypes = listOf(v),
-                    returnType = PsiType.BOOLEAN
+                parameterTypes = listOf(v),
+                returnType = PsiType.BOOLEAN
             )
             "remove" ->
                 when (method.parameterList.parametersCount) {
                     1 -> MethodSignature(
-                            parameterTypes = listOf(k),
-                            returnType = v
+                        parameterTypes = listOf(k),
+                        returnType = v
                     )
                     2 -> MethodSignature(
-                            parameterTypes = listOf(k, v),
-                            returnType = PsiType.BOOLEAN
+                        parameterTypes = listOf(k, v),
+                        returnType = PsiType.BOOLEAN
                     )
                     else -> null
                 }
@@ -221,7 +221,7 @@ class KtLightMutabilityPlatformWrapper(
 
         val methodName = Name.identifier(name)
         return scope.getContributedFunctions(methodName, NoLookupLocation.FROM_IDE).isNotEmpty()
-               || scope.getContributedVariables(methodName, NoLookupLocation.FROM_IDE).isNotEmpty()
+                || scope.getContributedVariables(methodName, NoLookupLocation.FROM_IDE).isNotEmpty()
     }
 
     override fun getContainingFile() = javaBaseClass.containingFile
@@ -230,13 +230,13 @@ class KtLightMutabilityPlatformWrapper(
 private data class MethodSignature(val parameterTypes: List<PsiType>, val returnType: PsiType)
 
 private class KtLightMethodWrapper(
-        private val containingClass: KtAbstractContainerWrapper,
-        private val baseMethod: PsiMethod,
-        private val name: String,
-        private val isFinal: Boolean,
-        private val hasImplementation: Boolean,
-        private val substituteObjectWith: PsiType?,
-        private val providedSignature: MethodSignature?
+    private val containingClass: KtAbstractContainerWrapper,
+    private val baseMethod: PsiMethod,
+    private val name: String,
+    private val isFinal: Boolean,
+    private val hasImplementation: Boolean,
+    private val substituteObjectWith: PsiType?,
+    private val providedSignature: MethodSignature?
 ) : PsiMethod, KtLightElementBase(containingClass) {
 
     init {
@@ -249,8 +249,7 @@ private class KtLightMethodWrapper(
         val substituted = containingClass.substitutor.substitute(psiType)
         return if (TypeUtils.isJavaLangObject(substituted) && substituteObjectWith != null) {
             substituteObjectWith
-        }
-        else {
+        } else {
             substituted
         }
     }
@@ -260,20 +259,22 @@ private class KtLightMethodWrapper(
     override val kotlinOrigin get() = null
 
     override fun hasModifierProperty(name: String) =
-            when (name) {
-                PsiModifier.DEFAULT -> hasImplementation
-                PsiModifier.ABSTRACT -> !hasImplementation
-                PsiModifier.FINAL -> isFinal
-                else -> baseMethod.hasModifierProperty(name)
-            }
+        when (name) {
+            PsiModifier.DEFAULT -> hasImplementation
+            PsiModifier.ABSTRACT -> !hasImplementation
+            PsiModifier.FINAL -> isFinal
+            else -> baseMethod.hasModifierProperty(name)
+        }
 
     override fun getParameterList(): PsiParameterList {
         return LightParameterListBuilder(manager, KotlinLanguage.INSTANCE).apply {
             baseMethod.parameterList.parameters.forEachIndexed { index, paramFromJava ->
                 val type = providedSignature?.parameterTypes?.get(index) ?: substituteType(paramFromJava.type)
                 addParameter(
-                        LightParameter(paramFromJava.name ?: "p$index", type,
-                                       this@KtLightMethodWrapper, KotlinLanguage.INSTANCE, paramFromJava.isVarArgs)
+                    LightParameter(
+                        paramFromJava.name ?: "p$index", type,
+                        this@KtLightMethodWrapper, KotlinLanguage.INSTANCE, paramFromJava.isVarArgs
+                    )
                 )
             }
         }
@@ -288,8 +289,12 @@ private class KtLightMethodWrapper(
     override fun findSuperMethods(checkAccess: Boolean) = PsiSuperMethodImplUtil.findSuperMethods(this, checkAccess)
     override fun findSuperMethods(parentClass: PsiClass) = PsiSuperMethodImplUtil.findSuperMethods(this, parentClass)
     override fun findSuperMethods() = PsiSuperMethodImplUtil.findSuperMethods(this)
-    override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean) = PsiSuperMethodImplUtil.findSuperMethodSignaturesIncludingStatic(this, checkAccess)
-    @Suppress("OverridingDeprecatedMember") override fun findDeepestSuperMethod() = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
+    override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean) =
+        PsiSuperMethodImplUtil.findSuperMethodSignaturesIncludingStatic(this, checkAccess)
+
+    @Suppress("OverridingDeprecatedMember")
+    override fun findDeepestSuperMethod() = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
+
     override fun findDeepestSuperMethods() = PsiSuperMethodImplUtil.findDeepestSuperMethods(this)
     override fun getHierarchicalMethodSignature() = PsiSuperMethodImplUtil.getHierarchicalMethodSignature(this)
     override fun getSignature(substitutor: PsiSubstitutor) = MethodSignatureBackedByPsiMethod.create(this, substitutor)
@@ -313,17 +318,16 @@ private class KtLightMethodWrapper(
 }
 
 
-abstract class KtAbstractContainerWrapper(internal val fqName: FqName, private val superInterface: PsiClass)
-    : LightElement(superInterface.manager, KotlinLanguage.INSTANCE), PsiExtensibleClass {
+abstract class KtAbstractContainerWrapper(internal val fqName: FqName, private val superInterface: PsiClass) :
+    LightElement(superInterface.manager, KotlinLanguage.INSTANCE), PsiExtensibleClass {
 
     private val memberCache = ClassInnerStuffCache(this)
 
-    private val superClassTypeParametersToMyTypeParameters: Map<PsiTypeParameter, PsiTypeParameter>
-            = superInterface.typeParameters
-            .mapIndexed { index, supersParameter ->
-                supersParameter to LightTypeParameterBuilder(supersParameter.name ?: "T$index", this, index)
-            }
-            .toMap()
+    private val superClassTypeParametersToMyTypeParameters: Map<PsiTypeParameter, PsiTypeParameter> = superInterface.typeParameters
+        .mapIndexed { index, supersParameter ->
+            supersParameter to LightTypeParameterBuilder(supersParameter.name ?: "T$index", this, index)
+        }
+        .toMap()
 
     internal val substitutor = createSubstitutor(superClassTypeParametersToMyTypeParameters.mapValues {
         it.value.asType()
@@ -378,14 +382,16 @@ abstract class KtAbstractContainerWrapper(internal val fqName: FqName, private v
     override fun getSuperClass() = null
     override fun findInnerClassByName(name: String?, checkBases: Boolean) = null
     override fun getExtendsListTypes() = PsiClassType.EMPTY_ARRAY
-    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?) = InheritanceImplUtil.isInheritorDeep(this, baseClass, classToByPass)
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?) =
+        InheritanceImplUtil.isInheritorDeep(this, baseClass, classToByPass)
+
     override fun isAnnotationType() = false
-    override fun findMethodsAndTheirSubstitutorsByName(name: String?, checkBases: Boolean)
-            = PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
+    override fun findMethodsAndTheirSubstitutorsByName(name: String?, checkBases: Boolean) =
+        PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
 
     override fun getInnerClasses() = PsiClass.EMPTY_ARRAY
-    override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean)
-            = PsiClassImplUtil.findMethodBySignature(this, patternMethod, checkBases)
+    override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean) =
+        PsiClassImplUtil.findMethodBySignature(this, patternMethod, checkBases)
 
     override fun findFieldByName(name: String?, checkBases: Boolean) = null
     override fun getAllFields() = PsiClassImplUtil.getAllFields(this)
@@ -394,7 +400,7 @@ abstract class KtAbstractContainerWrapper(internal val fqName: FqName, private v
     override fun getAllMethods() = PsiClassImplUtil.getAllMethods(this)
     override fun getOwnFields() = emptyList<PsiField>()
     override fun getAllMethodsAndTheirSubstitutors() =
-            PsiClassImplUtil.getAllWithSubstitutorsByMap<PsiMethod>(this, PsiClassImplUtil.MemberType.METHOD)
+        PsiClassImplUtil.getAllWithSubstitutorsByMap<PsiMethod>(this, PsiClassImplUtil.MemberType.METHOD)
 
     override fun hasTypeParameters() = true
     override fun getRBrace() = null
@@ -410,8 +416,8 @@ abstract class KtAbstractContainerWrapper(internal val fqName: FqName, private v
     override fun getConstructors() = PsiMethod.EMPTY_ARRAY
     override fun isDeprecated() = false
     override fun setName(name: String) = cannotModify()
-    override fun findMethodsBySignature(patternMethod: PsiMethod, checkBases: Boolean)
-            = PsiClassImplUtil.findMethodsBySignature(this, patternMethod, checkBases)
+    override fun findMethodsBySignature(patternMethod: PsiMethod, checkBases: Boolean) =
+        PsiClassImplUtil.findMethodsBySignature(this, patternMethod, checkBases)
 }
 
 private fun PsiTypeParameter.asType() = PsiImmediateClassType(this, PsiSubstitutor.EMPTY)
