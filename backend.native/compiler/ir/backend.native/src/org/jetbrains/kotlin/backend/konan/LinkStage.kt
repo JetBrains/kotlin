@@ -120,10 +120,10 @@ internal class LinkStage(val context: Context) {
         hostLlvmTool("llvm-link", "-o", combinedBc, *bitcodeFiles.toTypedArray())
 
         val optimizedBc = temporary("optimized", ".bc")
-        hostLlvmTool("opt", combinedBc, "-o=$optimizedBc", "-O3")
+        hostLlvmTool("opt", combinedBc, "-o=$optimizedBc", "-O3", "-internalize", "-globaldce")
 
         val combinedO = temporary("combined", ".o")
-        hostLlvmTool("llc", combinedBc, "-filetype=obj", "-o", combinedO, "-function-sections", "-data-sections")
+        hostLlvmTool("llc", optimizedBc, "-filetype=obj", "-o", combinedO, "-function-sections", "-data-sections")
 
         return combinedO
     }

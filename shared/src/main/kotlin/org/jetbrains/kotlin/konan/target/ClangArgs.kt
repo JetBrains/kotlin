@@ -90,10 +90,13 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-fno-pie",
                         "-fno-pic",
                         "-nostdinc",
+                        // TODO: make it a libGcc property? 
+                        // We need to get rid of wasm sysroot first.
+                        "-isystem $targetToolchain/../lib/gcc/arm-none-eabi/7.2.1/include",
+                        "-isystem $targetToolchain/../lib/gcc/arm-none-eabi/7.2.1/include-fixed",
                         "-isystem$absoluteTargetSysRoot/include/libcxx",
-                        "-isystem$absoluteTargetSysRoot/lib/libcxxabi/include",
-                        "-isystem$absoluteTargetSysRoot/include/compat",
-                        "-isystem$absoluteTargetSysRoot/include/libc") +
+                        "-isystem$absoluteTargetSysRoot/include/libc"
+                        ) +
                     (configurables as ZephyrConfigurables).boardSpecificClangFlags
 
             }
@@ -140,7 +143,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             is KonanTarget.ZEPHYR ->
                 listOf( "-DKONAN_ZEPHYR=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
                         "-DKONAN_NO_MATH=1", "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1",
-                        "-DKONAN_NO_MEMMEM=1", "-DKONAN_NO_CTORS_SECTION")
+                        "-DKONAN_NO_MEMMEM=1", "-DKONAN_NO_CTORS_SECTION=1")
         }
 
     private val host = HostManager.host

@@ -14,11 +14,27 @@
  * limitations under the License.
  */
 
-@SymbolName("blinky")
-external fun blinky(value: Int) 
+import platform.zephyr.stm32f4_disco.*
+import kotlinx.cinterop.*
 
-val x = 1
+fun blinky(value: Int) {
+
+    // See the .def file for details of led0_gpio_port()
+    val port = led0_gpio_port()!!.toKString()
+    val led = LED0_GPIO_PIN
+    var toggler = false
+    val dev = device_get_binding(port)
+
+    gpio_pin_configure(dev, led, GPIO_DIR_OUT)
+
+    while (true) {
+         /* Set pin to HIGH/LOW every 1 second */
+         gpio_pin_write(dev, led, if (toggler) 1 else 0);
+         toggler = !toggler
+         k_sleep(1000 * value);
+   }
+}
 
 fun main(args: Array<String>) {
-    blinky(x)
+    blinky(1)
 }

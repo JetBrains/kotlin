@@ -444,35 +444,5 @@ extern "C" {
     RUNTIME_USED void Konan_abort(const char*) {
         while(1) {}
     }
-
-    /* Support the alias for the __aeabi_memset which may
-       assume memory alignment.  */
-    RUNTIME_USED void __aeabi_memset4 (void *dest, size_t n, int c)
-        __attribute__ ((alias ("__aeabi_memset")));
-
-    RUNTIME_USED void __aeabi_memset8 (void *dest, size_t n, int c)
-        __attribute__ ((alias ("__aeabi_memset")));
-
-    /* Support the routine __aeabi_memset.  Can't alias to memset
-       because it's not defined in the same translation unit.  */
-    RUNTIME_USED void __aeabi_memset (void *dest, size_t n, int c)
-    {
-      /*Note that relative to ANSI memset, __aeabi_memset hase the order
-        of its second and third arguments reversed.  */
-      memset (dest, c, n);
-    }
-    /* Support the alias for the __aeabi_memclr which may
-       assume memory alignment.  */
-    RUNTIME_USED void __aeabi_memclr4 (void *dest, size_t n)
-        __attribute__ ((alias ("__aeabi_memclr")));
-
-    RUNTIME_USED void __aeabi_memclr8 (void *dest, size_t n)
-        __attribute__ ((alias ("__aeabi_memclr")));
-
-    /* Support the routine __aeabi_memclr.  */
-    RUNTIME_USED void __aeabi_memclr (void *dest, size_t n)
-    {
-      __aeabi_memset (dest, n, 0);
-    }
 #endif // KONAN_ZEPHYR
 }
