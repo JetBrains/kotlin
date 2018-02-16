@@ -28,12 +28,16 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
+import kotlin.math.min
 
 interface ClassLoadingAdapter {
     companion object {
+        private const val CHUNK_SIZE = 4096
+
         private val ADAPTERS = listOf(
-                AndroidOClassLoadingAdapter(),
-                OrdinaryClassLoadingAdapter())
+            AndroidOClassLoadingAdapter(),
+            OrdinaryClassLoadingAdapter()
+        )
 
         fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference? {
             val hasAdditionalClasses = classes.size > 1
@@ -88,7 +92,13 @@ interface ClassLoadingAdapter {
         for (byte in bytes) {
             mirrors += process.virtualMachineProxy.mirrorOf(byte)
         }
-        reference.values = mirrors
+
+        var loaded = 0
+        while (loaded < mirrors.size) {
+            val chunkSize = min(CHUNK_SIZE, mirrors.size - loaded)
+            reference.setValues(loaded, mirrors, loaded, chunkSize)
+            loaded += chunkSize
+        }
 
         return reference
     }
