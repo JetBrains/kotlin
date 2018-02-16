@@ -176,7 +176,7 @@ class KtLightAnnotationForSourceEntry(
         override fun getType(): PsiType? = delegate.type
     }
 
-    inner class LightStringLiteral(
+    inner class LightPsiLiteral(
             delegate: PsiLiteralExpression,
             parent: PsiElement,
             valueOrigin: AnnotationValueOrigin
@@ -230,7 +230,7 @@ class KtLightAnnotationForSourceEntry(
 
     private fun wrapAnnotationValue(value: PsiAnnotationMemberValue, parent: PsiElement, ktOrigin: AnnotationValueOrigin): PsiAnnotationMemberValue =
             when {
-                value is PsiLiteralExpression && value.value is String -> LightStringLiteral(value, parent, ktOrigin)
+                value is PsiLiteralExpression -> LightPsiLiteral(value, parent, ktOrigin)
                 value is PsiClassObjectAccessExpression -> LightClassLiteral(value, parent, ktOrigin)
                 value is PsiExpression -> LightExpressionValue(value, parent, ktOrigin)
                 value is PsiArrayInitializerMemberValue -> LightArrayInitializerValue(value, parent, ktOrigin)
