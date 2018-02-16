@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.annotation.plugin.ide.getSpecialAnnotations
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -43,7 +44,12 @@ class IdeSamWithReceiverComponentContributor(val project: Project) : StorageComp
     }
 
     private val cache = CachedValuesManager.getManager(project).createCachedValue({
-        Result.create(WeakHashMap<Module, List<String>>(), ProjectRootModificationTracker.getInstance(project))
+        Result.create(
+            ContainerUtil.createConcurrentWeakMap<Module, List<String>>(),
+            ProjectRootModificationTracker.getInstance(
+                project
+            )
+        )
     }, /* trackValue = */ false)
 
     private fun getAnnotationsForModule(module: Module): List<String> {
