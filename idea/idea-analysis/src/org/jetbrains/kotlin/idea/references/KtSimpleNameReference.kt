@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
@@ -201,6 +202,12 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
             }
         }
 
+        val targetUnwrapped = targetElement?.unwrapped
+
+        if (targetUnwrapped != null && targetUnwrapped.isTopLevelKtOrJavaMember() && fqName.isOneSegmentFQN()) {
+            addDelayedImportRequest(targetUnwrapped, containingKtFile)
+        }
+
         var parentDelimiter = "."
         val fqNameBase = when {
             parent is KtCallElement -> {
@@ -215,8 +222,8 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
                     .callableReference
                     .replace(psiFactory.createSimpleName(shortName))
                     .parent as KtCallableReferenceExpression
-                if (targetElement != null && targetElement.isTopLevelKtOrJavaMember()) {
-                    addDelayedImportRequest(targetElement, parent.containingKtFile)
+                if (targetUnwrapped != null && targetUnwrapped.isTopLevelKtOrJavaMember()) {
+                    addDelayedImportRequest(targetUnwrapped, parent.containingKtFile)
                     return parent.replaced(newCallableRef).callableReference as KtNameReferenceExpression
                 }
                 newCallableRef.text
