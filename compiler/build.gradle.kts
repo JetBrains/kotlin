@@ -180,4 +180,9 @@ codegenTest(target = 9, jvm = 9) {
     systemProperty("kotlin.test.substitute.bytecode.1.8.to.1.9", "true")
 }
 
+codegenTest(target = 10, jvm = 10) {
+    systemProperty("kotlin.test.default.jvm.target", "1.8")
+    systemProperty("kotlin.test.substitute.bytecode.1.8.to.10", "true")
+}
+
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt")
