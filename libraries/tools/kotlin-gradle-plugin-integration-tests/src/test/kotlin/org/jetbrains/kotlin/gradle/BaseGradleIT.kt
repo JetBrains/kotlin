@@ -465,6 +465,9 @@ abstract class BaseGradleIT {
     private fun Project.createBuildCommand(wrapperDir: File, params: Array<out String>, options: BuildOptions): List<String> =
             createGradleCommand(wrapperDir, createGradleTailParameters(options, params))
 
+    fun Project.gradleBuildScript(subproject: String? = null): File =
+        File(projectDir, subproject?.plus("/").orEmpty() + "build.gradle")
+
     private fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
             params.toMutableList().apply {
                 add("--stacktrace")

@@ -185,4 +185,20 @@ class MultiplatformGradleIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testFreeCompilerArgsAssignment(): Unit = with(Project("multiplatformProject")) {
+        setupWorkingDir()
+
+        val overrideCompilerArgs = "kotlinOptions.freeCompilerArgs = ['-verbose']"
+
+        gradleBuildScript("lib").appendText("\ncompileKotlinCommon.$overrideCompilerArgs")
+        gradleBuildScript("libJvm").appendText("\ncompileKotlin.$overrideCompilerArgs")
+        gradleBuildScript("libJs").appendText("\ncompileKotlin2Js.$overrideCompilerArgs")
+
+        build("build") {
+            assertSuccessful()
+            assertTasksExecuted(listOf(":lib:compileKotlinCommon", ":libJvm:compileKotlin", ":libJs:compileKotlin2Js"))
+        }
+    }
 }

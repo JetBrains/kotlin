@@ -54,10 +54,6 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     private val platformKotlinTasksBySourceSetName = hashMapOf<String, AbstractKotlinCompile<*>>()
 
     override fun apply(project: Project) {
-        project.tasks.withType(AbstractKotlinCompile::class.java).all {
-            (it as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += listOf("-Xmulti-platform")
-        }
-
         project.tasks.filterIsInstance<AbstractKotlinCompile<*>>().associateByTo(platformKotlinTasksBySourceSetName) { it.sourceSetName }
 
         val implementConfig = project.configurations.create(IMPLEMENT_CONFIG_NAME)
