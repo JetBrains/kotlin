@@ -32,11 +32,14 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.expressions.*
@@ -60,11 +63,22 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return fileName.endsWith(".kt", false) || fileName.endsWith(".kts", false)
     }
 
+    private val PsiElement.isJvmElement
+        get() = try {
+            // Workaround for UAST used without full-fledged IDEA when ProjectFileIndex is not available
+            // If we can't get the module, act as if the current platform is JVM
+            module?.let { TargetPlatformDetector.getPlatform(it) } is JvmPlatform
+        } catch (e: Exception) {
+            true
+        }
+
     override fun convertElement(element: PsiElement, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
+        if (!element.isJvmElement) return null
         return convertDeclarationOrElement(element, parent, requiredType)
     }
 
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
+        if (!element.isJvmElement) return null
         if (element is PsiFile) return convertDeclaration(element, null, requiredType)
         if (element is KtLightClassForFacade) return convertDeclaration(element, null, requiredType)
 
