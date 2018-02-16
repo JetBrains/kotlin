@@ -1,11 +1,15 @@
 MODULE_FRAGMENT name:<test-module>
   EXTERNAL_PACKAGE_FRAGMENT fqName:<root>
     CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:J modality:OPEN visibility:public flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public modality:FINAL flags:var
         FIELD IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public
       FUN IR_EXTERNAL_DECLARATION_STUB name:bar visibility:public modality:OPEN <> () returnType:Unit flags:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:JInner modality:OPEN visibility:public flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J.JInner flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:z type:kotlin.Int visibility:public modality:FINAL flags:var
           FIELD IR_EXTERNAL_DECLARATION_STUB name:z type:kotlin.Int visibility:public

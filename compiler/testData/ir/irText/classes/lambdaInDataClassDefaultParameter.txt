@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
   CLASS CLASS name:A modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (runA:A.(kotlin.String) -> kotlin.Unit) returnType:A flags:
       VALUE_PARAMETER name:runA index:0 type:A.(kotlin.String) -> kotlin.Unit flags:
         EXPRESSION_BODY
@@ -102,12 +104,16 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           CONST Boolean type=kotlin.Boolean value=true
   CLASS CLASS name:B modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (x:kotlin.Any) returnType:B flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
         EXPRESSION_BODY
           BLOCK type=B.<init>.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B.<init>.<no name provided> flags:
+              superClasses:
+                CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
               CONSTRUCTOR visibility:public <> () returnType:B.<init>.<no name provided> flags:
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

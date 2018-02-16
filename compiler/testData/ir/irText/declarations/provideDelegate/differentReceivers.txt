@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/differentReceivers.kt
   CLASS CLASS name:MyClass modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:MyClass flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:MyClass flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       BLOCK_BODY

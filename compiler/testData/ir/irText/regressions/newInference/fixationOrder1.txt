@@ -7,6 +7,8 @@ FILE fqName:<root> fileName:/fixationOrder1.kt
         CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
   CLASS INTERFACE name:Inv2 modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Inv2<A, B> flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:A index:0 variance: upperBounds:[kotlin.Any?]
     TYPE_PARAMETER name:B index:1 variance: upperBounds:[kotlin.Any?]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

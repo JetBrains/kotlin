@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/integerCoercionToT.kt
   CLASS INTERFACE name:CPointed modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:CPointed flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
@@ -22,6 +24,8 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
         CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
   CLASS CLASS name:CInt32VarX modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:CInt32VarX<T> flags:
+    superClasses:
+      CLASS INTERFACE name:CPointed modality:ABSTRACT visibility:public flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> () returnType:CInt32VarX<T> flags:
       BLOCK_BODY
@@ -53,6 +57,8 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
       BLOCK_BODY
   CLASS CLASS name:IdType modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IdType flags:
+    superClasses:
+      CLASS INTERFACE name:CPointed modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:IdType flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY

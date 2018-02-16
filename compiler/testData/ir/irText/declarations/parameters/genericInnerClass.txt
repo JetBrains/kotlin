@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/genericInnerClass.kt
   CLASS CLASS name:Outer modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer<T1> flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T1 index:0 variance: upperBounds:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> () returnType:Outer<T1> flags:
       BLOCK_BODY
@@ -8,6 +10,8 @@ FILE fqName:<root> fileName:/genericInnerClass.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     CLASS CLASS name:Inner modality:FINAL visibility:public flags:
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer<T1>.Inner<T2> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       TYPE_PARAMETER name:T2 index:0 variance: upperBounds:[kotlin.Any?]
       CONSTRUCTOR visibility:public <> ($this:Outer<T1>) returnType:Outer<T1>.Inner<T2> flags:
         $outer: VALUE_PARAMETER name:<this> type:Outer<T1> flags:

@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/objectLiteralExpressions.kt
   CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IFoo flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:IFoo) returnType:Unit flags:
       $this: VALUE_PARAMETER name:<this> type:IFoo flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -22,6 +24,8 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
         BLOCK type=test1.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test1.<no name provided> flags:
+            superClasses:
+              CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
             CONSTRUCTOR visibility:public <> () returnType:test1.<no name provided> flags:
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -50,6 +54,8 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
         BLOCK type=test2.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test2.<no name provided> flags:
+            superClasses:
+              CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public flags:
             CONSTRUCTOR visibility:public <> () returnType:test2.<no name provided> flags:
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -81,12 +87,16 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
           GET_FIELD 'test2: IFoo' type=IFoo origin=null
   CLASS CLASS name:Outer modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:Outer flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     CLASS CLASS name:Inner modality:ABSTRACT visibility:public flags:
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.Inner flags:
+      superClasses:
+        CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public flags:
       CONSTRUCTOR visibility:public <> ($this:Outer) returnType:Outer.Inner flags:
         $outer: VALUE_PARAMETER name:<this> type:Outer flags:
         BLOCK_BODY
@@ -116,6 +126,8 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
           BLOCK type=Outer.test3.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.test3.<no name provided> flags:
+              superClasses:
+                CLASS CLASS name:Inner modality:ABSTRACT visibility:public flags:
               CONSTRUCTOR visibility:public <> () returnType:Outer.test3.<no name provided> flags:
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
@@ -162,6 +174,8 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
         BLOCK type=test4.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test4.<no name provided> flags:
+            superClasses:
+              CLASS CLASS name:Inner modality:ABSTRACT visibility:public flags:
             CONSTRUCTOR visibility:public <> () returnType:test4.<no name provided> flags:
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'

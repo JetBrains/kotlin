@@ -1,6 +1,8 @@
 MODULE_FRAGMENT name:<test-module>
   EXTERNAL_PACKAGE_FRAGMENT fqName:<root>
     CLASS IR_EXTERNAL_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL visibility:public flags:
+      superClasses:
+        UNBOUND: class Enum<E : kotlin.Enum<E>> : kotlin.Comparable<E>, java.io.Serializable
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:JEnum flags:
       ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:ONE
       ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:THREE

@@ -20,6 +20,8 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
             property: PROPERTY_REFERENCE 'test1: Int' field=null getter='<get-test1>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   CLASS CLASS name:C modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (map:kotlin.collections.MutableMap<kotlin.String, kotlin.Any>) returnType:C flags:
       VALUE_PARAMETER name:map index:0 type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> flags:
       BLOCK_BODY

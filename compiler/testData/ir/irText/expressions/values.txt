@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/values.kt
   CLASS ENUM_CLASS name:Enum modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Enum flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:private <> () returnType:Enum flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -55,6 +57,8 @@ FILE fqName:<root> fileName:/values.kt
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS OBJECT name:A modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:private <> () returnType:A flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -82,12 +86,16 @@ FILE fqName:<root> fileName:/values.kt
           GET_FIELD 'a: Int' type=kotlin.Int origin=null
   CLASS CLASS name:Z modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:Z flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Z'
     CLASS OBJECT name:Companion modality:FINAL visibility:public flags:companion
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z.Companion flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       CONSTRUCTOR visibility:private <> () returnType:Z.Companion flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

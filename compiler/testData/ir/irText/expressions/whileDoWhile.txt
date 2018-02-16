@@ -82,3 +82,4 @@ FILE fqName:<root> fileName:/whileDoWhile.kt
                 body: COMPOSITE type=kotlin.Unit origin=null
                 condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
                   GET_VAR 'a: Any?' type=kotlin.Any? origin=null
+

@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/dataClassMembers.kt
   CLASS CLASS name:Test modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test<T> flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (x:T, y:kotlin.String) returnType:Test<T> flags:
       VALUE_PARAMETER name:x index:0 type:T flags:

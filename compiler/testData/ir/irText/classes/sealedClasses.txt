@@ -1,12 +1,16 @@
 FILE fqName:<root> fileName:/sealedClasses.kt
   CLASS CLASS name:Expr modality:SEALED visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Expr flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:private <> () returnType:Expr flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Expr'
     CLASS CLASS name:Const modality:FINAL visibility:public flags:
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Expr.Const flags:
+      superClasses:
+        CLASS CLASS name:Expr modality:SEALED visibility:public flags:
       CONSTRUCTOR visibility:public <> (number:kotlin.Double) returnType:Expr.Const flags:
         VALUE_PARAMETER name:number index:0 type:kotlin.Double flags:
         BLOCK_BODY
@@ -37,6 +41,8 @@ FILE fqName:<root> fileName:/sealedClasses.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     CLASS CLASS name:Sum modality:FINAL visibility:public flags:
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Expr.Sum flags:
+      superClasses:
+        CLASS CLASS name:Expr modality:SEALED visibility:public flags:
       CONSTRUCTOR visibility:public <> (e1:Expr, e2:Expr) returnType:Expr.Sum flags:
         VALUE_PARAMETER name:e1 index:0 type:Expr flags:
         VALUE_PARAMETER name:e2 index:1 type:Expr flags:
@@ -78,6 +84,8 @@ FILE fqName:<root> fileName:/sealedClasses.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     CLASS OBJECT name:NotANumber modality:FINAL visibility:public flags:
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Expr.NotANumber flags:
+      superClasses:
+        CLASS CLASS name:Expr modality:SEALED visibility:public flags:
       CONSTRUCTOR visibility:private <> () returnType:Expr.NotANumber flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'

@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
   CLASS ENUM_CLASS name:Test0 modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test0 flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:Test0 flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
@@ -70,6 +72,8 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS name:Test1 modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:Test1 flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
@@ -142,6 +146,8 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS name:Test2 modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2 flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:Test2 flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
@@ -162,6 +168,8 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       init: ENUM_CONSTRUCTOR_CALL 'constructor ZERO()'
       class: CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:public flags:
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2.ZERO flags:
+        superClasses:
+          CLASS ENUM_CLASS name:Test2 modality:FINAL visibility:public flags:
         CONSTRUCTOR visibility:private <> () returnType:Test2.ZERO flags:
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor Test2()'
@@ -222,6 +230,8 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       init: ENUM_CONSTRUCTOR_CALL 'constructor ONE()'
       class: CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:public flags:
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2.ONE flags:
+        superClasses:
+          CLASS ENUM_CLASS name:Test2 modality:FINAL visibility:public flags:
         CONSTRUCTOR visibility:private <> () returnType:Test2.ONE flags:
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor Test2(Int)'

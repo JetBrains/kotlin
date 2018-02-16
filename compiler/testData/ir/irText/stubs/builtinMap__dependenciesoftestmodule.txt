@@ -1,6 +1,9 @@
 MODULE_FRAGMENT name:<dependencies of test-module>
   EXTERNAL_PACKAGE_FRAGMENT fqName:java.util
     CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedHashMap modality:OPEN visibility:public flags:
+      superClasses:
+        UNBOUND: class HashMap<K : kotlin.Any!, V : kotlin.Any!> : java.util.AbstractMap<K!, V!>, kotlin.Cloneable, java.io.Serializable, kotlin.collections.MutableMap<K, V>
+        UNBOUND: interface MutableMap<K, V> : kotlin.collections.Map<K, V>
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any!]
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any!]
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:java.util.LinkedHashMap<K, V> flags:
@@ -88,6 +91,8 @@ MODULE_FRAGMENT name:<dependencies of test-module>
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:OPEN flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:OPEN <> () returnType:(kotlin.collections.MutableCollection<(V..V?)>..kotlin.collections.Collection<(V..V?)>?) flags:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedHashIterator modality:ABSTRACT visibility:public/*package*/ flags:
+        superClasses:
+          UNBOUND: class Any
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedHashIterator flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:FINAL <> () returnType:Unit flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:FINAL <> () returnType:Boolean flags:
@@ -103,6 +108,9 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
           FIELD IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedEntryIterator modality:FINAL visibility:public/*package*/ flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedHashIterator modality:ABSTRACT visibility:public/*package*/ flags:
+          UNBOUND: interface MutableIterator<out T> : kotlin.collections.Iterator<T>
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedEntryIterator flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:FINAL <> () returnType:(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?) flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:FINAL <> () returnType:Boolean flags:
@@ -121,6 +129,8 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
           FIELD IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedEntrySet modality:FINAL visibility:public/*package*/ flags:
+        superClasses:
+          UNBOUND: class AbstractSet<E : kotlin.Any!> : java.util.AbstractCollection<E!>, kotlin.collections.MutableSet<E!>
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedEntrySet flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:FINAL <> () returnType:Unit flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:FINAL <> (element:kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!) returnType:Boolean flags:
@@ -165,6 +175,9 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         FUN IR_EXTERNAL_DECLARATION_STUB name:hugeCapacity visibility:invisible_fake modality:OPEN <> (p0:kotlin.Int) returnType:Int flags:
           VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedKeyIterator modality:FINAL visibility:public/*package*/ flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedHashIterator modality:ABSTRACT visibility:public/*package*/ flags:
+          UNBOUND: interface MutableIterator<out T> : kotlin.collections.Iterator<T>
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedKeyIterator flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:FINAL <> () returnType:(K..K?) flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:FINAL <> () returnType:Boolean flags:
@@ -183,6 +196,8 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
           FIELD IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedKeySet modality:FINAL visibility:public/*package*/ flags:
+        superClasses:
+          UNBOUND: class AbstractSet<E : kotlin.Any!> : java.util.AbstractCollection<E!>, kotlin.collections.MutableSet<E!>
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedKeySet flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:FINAL <> () returnType:Unit flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:FINAL <> (element:K!) returnType:Boolean flags:
@@ -227,6 +242,9 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         FUN IR_EXTERNAL_DECLARATION_STUB name:hugeCapacity visibility:invisible_fake modality:OPEN <> (p0:kotlin.Int) returnType:Int flags:
           VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Int flags:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedValueIterator modality:FINAL visibility:public/*package*/ flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedHashIterator modality:ABSTRACT visibility:public/*package*/ flags:
+          UNBOUND: interface MutableIterator<out T> : kotlin.collections.Iterator<T>
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedValueIterator flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:FINAL <> () returnType:(V..V?) flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:FINAL <> () returnType:Boolean flags:
@@ -245,6 +263,8 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
           FIELD IR_EXTERNAL_DECLARATION_STUB name:next type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:LinkedValues modality:FINAL visibility:public/*package*/ flags:
+        superClasses:
+          UNBOUND: class AbstractCollection<E : kotlin.Any!> : kotlin.collections.MutableCollection<E!>
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> () returnType:java.util.LinkedHashMap<K, V>.LinkedValues flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:FINAL <> () returnType:Unit flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:FINAL <> (element:V!) returnType:Boolean flags:
@@ -335,6 +355,8 @@ MODULE_FRAGMENT name:<dependencies of test-module>
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:tail type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/ modality:FINAL flags:var
         FIELD IR_EXTERNAL_DECLARATION_STUB name:tail type:java.util.LinkedHashMap.Entry<K!, V!>! visibility:public/*package*/
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Entry modality:OPEN visibility:public/*package*/ flags:
+        superClasses:
+          UNBOUND: class Node<K : kotlin.Any!, V : kotlin.Any!> : kotlin.collections.MutableMap.MutableEntry<K!, V!>
         TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any!]
         TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any!]
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public/*package*/ <> (p0:kotlin.Int, p1:K!, p2:V!, p3:java.util.HashMap.Node<K!, V!>!) returnType:java.util.LinkedHashMap.Entry<K, V> flags:
@@ -418,6 +440,8 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:kotlin.Any! flags:
   EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin.collections
     CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Map modality:ABSTRACT visibility:public flags:
+      superClasses:
+        UNBOUND: class Any
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance:out upperBounds:[kotlin.Any?]
       FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> (key:K, defaultValue:@kotlin.UnsafeVariance V) returnType:V flags:
@@ -439,6 +463,8 @@ MODULE_FRAGMENT name:<dependencies of test-module>
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.Collection<V> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> () returnType:Collection<V> flags:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Entry modality:ABSTRACT visibility:public flags:
+        superClasses:
+          UNBOUND: class Any
         TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance:out upperBounds:[kotlin.Any?]
         TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance:out upperBounds:[kotlin.Any?]
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
@@ -462,6 +488,8 @@ MODULE_FRAGMENT name:<dependencies of test-module>
       VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:pair index:0 type:kotlin.Pair<K, V> flags:
   EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin
     CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Pair modality:FINAL visibility:public flags:data
+      superClasses:
+        UNBOUND: interface Serializable
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:A index:0 variance:out upperBounds:[kotlin.Any?]
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:B index:1 variance:out upperBounds:[kotlin.Any?]
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> (first:A, second:B) returnType:kotlin.Pair<A, B> flags:

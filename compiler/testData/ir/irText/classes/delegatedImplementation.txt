@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/delegatedImplementation.kt
   CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IBase flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:IBase, x:kotlin.Int, s:kotlin.String) returnType:Unit flags:
       $this: VALUE_PARAMETER name:<this> type:IBase flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
@@ -25,6 +27,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS OBJECT name:BaseImpl modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:BaseImpl flags:
+    superClasses:
+      CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:private <> () returnType:BaseImpl flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -64,6 +68,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS INTERFACE name:IOther modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IOther flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     PROPERTY name:x type:kotlin.String visibility:public modality:ABSTRACT flags:val
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:ABSTRACT <> ($this:IOther) returnType:String flags:
         $this: VALUE_PARAMETER name:<this> type:IOther flags:
@@ -106,6 +112,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
         BLOCK type=otherImpl.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:otherImpl.<no name provided> flags:
+            superClasses:
+              CLASS INTERFACE name:IOther modality:ABSTRACT visibility:public flags:
             CONSTRUCTOR visibility:public <> () returnType:otherImpl.<no name provided> flags:
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -184,6 +192,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
           CALL 'constructor <no name provided>()' type=otherImpl.<no name provided> origin=OBJECT_LITERAL
   CLASS CLASS name:Test1 modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
+    superClasses:
+      CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:Test1 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -237,6 +247,9 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS CLASS name:Test2 modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2 flags:
+    superClasses:
+      CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
+      CLASS INTERFACE name:IOther modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:Test2 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

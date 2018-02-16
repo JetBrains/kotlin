@@ -84,6 +84,8 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     BLOCK_BODY
   CLASS CLASS name:TestImplicitArguments modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestImplicitArguments flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (x:kotlin.Long) returnType:TestImplicitArguments flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Long flags:
         EXPRESSION_BODY

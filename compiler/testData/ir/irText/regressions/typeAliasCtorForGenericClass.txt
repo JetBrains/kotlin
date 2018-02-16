@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
   CLASS CLASS name:A modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A<Q> flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:Q index:0 variance: upperBounds:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (q:Q) returnType:A<Q> flags:
       VALUE_PARAMETER name:q index:0 type:Q flags:

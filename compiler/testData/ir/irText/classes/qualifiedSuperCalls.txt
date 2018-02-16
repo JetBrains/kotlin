@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
   CLASS INTERFACE name:ILeft modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:ILeft flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     FUN name:foo visibility:public modality:OPEN <> ($this:ILeft) returnType:Unit flags:
       $this: VALUE_PARAMETER name:<this> type:ILeft flags:
       BLOCK_BODY
@@ -25,6 +27,8 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS INTERFACE name:IRight modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IRight flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     FUN name:foo visibility:public modality:OPEN <> ($this:IRight) returnType:Unit flags:
       $this: VALUE_PARAMETER name:<this> type:IRight flags:
       BLOCK_BODY
@@ -49,6 +53,9 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS CLASS name:CBoth modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:CBoth flags:
+    superClasses:
+      CLASS INTERFACE name:ILeft modality:ABSTRACT visibility:public flags:
+      CLASS INTERFACE name:IRight modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:CBoth flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

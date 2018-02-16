@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/classes.kt
   CLASS CLASS name:TestClass modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestClass flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:TestClass flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -20,6 +22,8 @@ FILE fqName:<root> fileName:/classes.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS INTERFACE name:TestInterface modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestInterface flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
@@ -35,6 +39,8 @@ FILE fqName:<root> fileName:/classes.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS OBJECT name:TestObject modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestObject flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:private <> () returnType:TestObject flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -54,6 +60,8 @@ FILE fqName:<root> fileName:/classes.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS ANNOTATION_CLASS name:TestAnnotationClass modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnnotationClass flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
@@ -69,6 +77,8 @@ FILE fqName:<root> fileName:/classes.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS ENUM_CLASS name:TestEnumClass modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnumClass flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:private <> () returnType:TestEnumClass flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'

@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/interfaceProperties.kt
   CLASS INTERFACE name:C modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     PROPERTY name:test1 type:kotlin.Int visibility:public modality:ABSTRACT flags:val
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:ABSTRACT <> ($this:C) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:C flags:

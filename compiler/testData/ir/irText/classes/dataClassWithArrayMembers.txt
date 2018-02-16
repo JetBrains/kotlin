@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
   CLASS CLASS name:Test1 modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (stringArray:kotlin.Array<kotlin.String>, charArray:kotlin.CharArray, booleanArray:kotlin.BooleanArray, byteArray:kotlin.ByteArray, shortArray:kotlin.ShortArray, intArray:kotlin.IntArray, longArray:kotlin.LongArray, floatArray:kotlin.FloatArray, doubleArray:kotlin.DoubleArray) returnType:Test1 flags:
       VALUE_PARAMETER name:stringArray index:0 type:kotlin.Array<kotlin.String> flags:
       VALUE_PARAMETER name:charArray index:1 type:kotlin.CharArray flags:
@@ -454,6 +456,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
           CONST Boolean type=kotlin.Boolean value=true
   CLASS CLASS name:Test2 modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2<T> flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (genericArray:kotlin.Array<T>) returnType:Test2<T> flags:
       VALUE_PARAMETER name:genericArray index:0 type:kotlin.Array<T> flags:
@@ -549,6 +553,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
           CONST Boolean type=kotlin.Boolean value=true
   CLASS CLASS name:Test3 modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test3 flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (anyArrayN:kotlin.Array<kotlin.Any>?) returnType:Test3 flags:
       VALUE_PARAMETER name:anyArrayN index:0 type:kotlin.Array<kotlin.Any>? flags:
       BLOCK_BODY

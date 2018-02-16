@@ -1,6 +1,8 @@
 MODULE_FRAGMENT name:<built-ins module>
   EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin
     CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Function1 modality:ABSTRACT visibility:public flags:
+      superClasses:
+        UNBOUND: interface Function<out R>
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:P1 index:0 variance:in upperBounds:[kotlin.Any?]
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:R index:1 variance:out upperBounds:[kotlin.Any?]
       FUN IR_EXTERNAL_DECLARATION_STUB name:invoke visibility:public modality:ABSTRACT <> (p1:P1) returnType:R flags:

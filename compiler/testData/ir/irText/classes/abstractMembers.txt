@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/abstractMembers.kt
   CLASS CLASS name:AbstractClass modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:AbstractClass flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:AbstractClass flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -31,6 +33,8 @@ FILE fqName:<root> fileName:/abstractMembers.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS INTERFACE name:Interface modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Interface flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     FUN name:abstractFun visibility:public modality:ABSTRACT <> ($this:Interface) returnType:Unit flags:
       $this: VALUE_PARAMETER name:<this> type:Interface flags:
     PROPERTY name:abstractVal type:kotlin.Int visibility:public modality:ABSTRACT flags:val

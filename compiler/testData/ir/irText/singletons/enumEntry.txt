@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/enumEntry.kt
   CLASS ENUM_CLASS name:Z modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:private <> () returnType:Z flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -10,6 +12,8 @@ FILE fqName:<root> fileName:/enumEntry.kt
       init: ENUM_CONSTRUCTOR_CALL 'constructor ENTRY()'
       class: CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:public flags:
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z.ENTRY flags:
+        superClasses:
+          CLASS ENUM_CLASS name:Z modality:FINAL visibility:public flags:
         CONSTRUCTOR visibility:private <> () returnType:Z.ENTRY flags:
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor Z()'
@@ -19,6 +23,8 @@ FILE fqName:<root> fileName:/enumEntry.kt
           BLOCK_BODY
         CLASS CLASS name:A modality:FINAL visibility:public flags:
           $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z.ENTRY.A flags:
+          superClasses:
+            CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
           CONSTRUCTOR visibility:public <> () returnType:Z.ENTRY.A flags:
             BLOCK_BODY
               DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

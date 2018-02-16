@@ -1,6 +1,10 @@
 MODULE_FRAGMENT name:<built-ins module>
   EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin
     CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
+      superClasses:
+        UNBOUND: class Number : kotlin.Any, java.io.Serializable
+        UNBOUND: interface Comparable<in T>
+        UNBOUND: interface Serializable
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> (other:kotlin.Byte) returnType:Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
@@ -27,6 +31,8 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> (other:kotlin.Short) returnType:Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
       CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public flags:companion
+        superClasses:
+          UNBOUND: class Any
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int.Companion flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public modality:FINAL flags:constmval
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MAX_VALUE> visibility:public modality:FINAL <> () returnType:Int flags:

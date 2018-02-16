@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/primaryCtorDefaultArguments.kt
   CLASS CLASS name:Test modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         EXPRESSION_BODY

@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/javaInnerClass.kt
   CLASS CLASS name:Test1 modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:J modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:Test1 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor J()'

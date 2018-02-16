@@ -1,9 +1,13 @@
 FILE fqName:<root> fileName:/class.kt
   CLASS INTERFACE name:TestInterface modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestInterface<T> flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
     CLASS INTERFACE name:TestNestedInterface modality:ABSTRACT visibility:public flags:
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestInterface.TestNestedInterface<TT> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       TYPE_PARAMETER name:TT index:0 variance: upperBounds:[kotlin.Any?]
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
         overridden:
@@ -33,6 +37,8 @@ FILE fqName:<root> fileName:/class.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS CLASS name:Test modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test<T0> flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T0 index:0 variance: upperBounds:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> () returnType:Test<T0> flags:
       BLOCK_BODY
@@ -40,6 +46,8 @@ FILE fqName:<root> fileName:/class.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
     CLASS CLASS name:TestNested modality:FINAL visibility:public flags:
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test.TestNested<T1> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       TYPE_PARAMETER name:T1 index:0 variance: upperBounds:[kotlin.Any?]
       CONSTRUCTOR visibility:public <> () returnType:Test.TestNested<T1> flags:
         BLOCK_BODY
@@ -60,6 +68,8 @@ FILE fqName:<root> fileName:/class.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     CLASS CLASS name:TestInner modality:FINAL visibility:public flags:
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test<T0>.TestInner<T2> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       TYPE_PARAMETER name:T2 index:0 variance: upperBounds:[kotlin.Any?]
       CONSTRUCTOR visibility:public <> ($this:Test<T0>) returnType:Test<T0>.TestInner<T2> flags:
         $outer: VALUE_PARAMETER name:<this> type:Test<T0> flags:

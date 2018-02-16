@@ -3,6 +3,8 @@ FILE fqName:<root> fileName:/localClasses.kt
     BLOCK_BODY
       CLASS CLASS name:LocalClass modality:FINAL visibility:local flags:
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:outer.LocalClass flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
         CONSTRUCTOR visibility:public <> () returnType:outer.LocalClass flags:
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
