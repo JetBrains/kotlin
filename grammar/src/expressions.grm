@@ -241,7 +241,7 @@ typeArguments
   ;
 
 valueArguments
-  : "(" (SimpleName "=")? "*"? expression{","} ")"
+  : "(" ((SimpleName "=")? "*"? expression){","} ")"
   ;
 
 jump
