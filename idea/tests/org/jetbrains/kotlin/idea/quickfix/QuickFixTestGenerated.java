@@ -3345,6 +3345,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                         doTest(fileName);
                     }
 
+                    @TestMetadata("classMemberInFunctionLiteralWithReceiver.kt")
+                    public void testClassMemberInFunctionLiteralWithReceiver() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/classMemberInFunctionLiteralWithReceiver.kt");
+                        doTest(fileName);
+                    }
+
                     @TestMetadata("classMemberPartialSubstitution.kt")
                     public void testClassMemberPartialSubstitution() throws Exception {
                         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/classMemberPartialSubstitution.kt");
