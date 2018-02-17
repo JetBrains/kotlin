@@ -221,9 +221,18 @@ class AnnotationChecker(
             }.toSet()
         }
 
-        fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?, trace: BindingTrace):
+        fun getDeclarationSiteActualTargetList(
+            annotated: KtElement,
+            descriptor: ClassDescriptor?,
+            trace: BindingTrace,
+            all: Boolean = false
+        ):
                 List<KotlinTarget> {
-            return getActualTargetList(annotated, descriptor, trace).defaultTargets
+            val actualTargetList = getActualTargetList(annotated, descriptor, trace)
+            return if (all)
+                actualTargetList.defaultTargets + actualTargetList.onlyWithUseSiteTarget + actualTargetList.canBeSubstituted
+            else
+                actualTargetList.defaultTargets
         }
 
         private fun DeclarationDescriptor?.hasBackingField(bindingTrace: BindingTrace) =
