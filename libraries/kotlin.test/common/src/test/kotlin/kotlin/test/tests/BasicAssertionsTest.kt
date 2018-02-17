@@ -20,6 +20,29 @@ class BasicAssertionsTest {
     }
 
     @Test
+    fun testAssertFailsWithMessage() {
+        assertFailsWith<NoSuchElementException>("This message is asserted") {
+            throw NoSuchElementException("This message is asserted")
+        }
+    }
+
+    @Test
+    fun testAssertFailsWithMessageFails() {
+        assertTrue(true) // at least one assertion required for qunit
+
+        withDefaultAsserter run@ {
+            try {
+                assertFailsWith<IllegalArgumentException>("message") {
+                    throw IllegalArgumentException("another message")
+                }
+            } catch (e: AssertionError) {
+                return@run
+            }
+            throw AssertionError("Expected to fail")
+        }
+    }
+
+    @Test
     fun testAssertFailsWith() {
         assertFailsWith<IllegalStateException> { throw IllegalStateException() }
         assertFailsWith<AssertionError> { throw AssertionError() }
