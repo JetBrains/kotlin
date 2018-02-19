@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore;
 import org.jetbrains.kotlin.resolve.ModifiersChecker;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.checkers.LambdaWithSuspendModifierCallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -55,6 +57,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
@@ -662,6 +665,22 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
+                }
+                else if (labelTargetElement instanceof KtFunctionLiteral
+                         && Objects.equals(expression.getLabelName(), "suspend")) {
+                    KtExpression callExpression = KtPsiUtil.getParentCallIfPresent((KtFunction) labelTargetElement);
+                    ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                            CallUtilKt.getResolvedCall(callExpression, context.trace.getBindingContext());
+
+                    if (resolvedCall != null &&
+                        !KtPsiUtil.isLabeledFunctionLiteral((KtFunctionLiteral) labelTargetElement) &&
+                        Objects.equals(
+                                DescriptorUtilsKt.fqNameOrNull(resolvedCall.getResultingDescriptor()),
+                                LambdaWithSuspendModifierCallChecker.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
+                        )
+                    ) {
+                        context.trace.report(RETURN_FOR_BUILT_IN_SUSPEND.on(expression));
+                    }
                 }
             }
         }
