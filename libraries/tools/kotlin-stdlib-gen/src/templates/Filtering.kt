@@ -129,7 +129,13 @@ object Filtering : TemplateGroupBase() {
         include(CharSequences, Strings)
     } builder {
         val n = "\$n"
-        doc { "Returns a list containing first [n] elements." }
+        doc { 
+            """
+            Returns a list containing first [n] elements.
+                        
+            @sample samples.collections.Collections.Transformations.take
+            """
+        }
         returns("List<T>")
         body {
             """
@@ -228,7 +234,14 @@ object Filtering : TemplateGroupBase() {
         include(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
     } builder {
         val n = "\$n"
-        doc { "Returns a list containing last [n] elements." }
+        doc { 
+            """
+            Returns a list containing last [n] elements.
+            
+            @sample samples.collections.Collections.Transformations.take
+            """
+        }
+
         returns("List<T>")
         specialFor(Strings, CharSequences) {
             returns("SELF")
@@ -339,7 +352,13 @@ object Filtering : TemplateGroupBase() {
     } builder {
         inline()
 
-        doc { "Returns a list containing first elements satisfying the given [predicate]." }
+        doc { 
+            """
+            Returns a list containing first elements satisfying the given [predicate].
+            
+            @sample samples.collections.Collections.Transformations.take
+            """ 
+        }
         returns("List<T>")
         body {
             """
@@ -435,7 +454,13 @@ object Filtering : TemplateGroupBase() {
         include(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
     } builder {
         inline()
-        doc { "Returns a list containing last elements satisfying the given [predicate]."}
+        doc { 
+            """
+            Returns a list containing last elements satisfying the given [predicate].
+                
+            @sample samples.collections.Collections.Transformations.take
+            """
+        }
         returns("List<T>")
 
         body {

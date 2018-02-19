@@ -3792,6 +3792,8 @@ public fun CharArray.sliceArray(indices: IntRange): CharArray {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun <T> Array<out T>.take(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3810,6 +3812,8 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun ByteArray.take(n: Int): List<Byte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3828,6 +3832,8 @@ public fun ByteArray.take(n: Int): List<Byte> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun ShortArray.take(n: Int): List<Short> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3846,6 +3852,8 @@ public fun ShortArray.take(n: Int): List<Short> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun IntArray.take(n: Int): List<Int> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3864,6 +3872,8 @@ public fun IntArray.take(n: Int): List<Int> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun LongArray.take(n: Int): List<Long> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3882,6 +3892,8 @@ public fun LongArray.take(n: Int): List<Long> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun FloatArray.take(n: Int): List<Float> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3900,6 +3912,8 @@ public fun FloatArray.take(n: Int): List<Float> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun DoubleArray.take(n: Int): List<Double> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3918,6 +3932,8 @@ public fun DoubleArray.take(n: Int): List<Double> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun BooleanArray.take(n: Int): List<Boolean> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3936,6 +3952,8 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun CharArray.take(n: Int): List<Char> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3954,6 +3972,8 @@ public fun CharArray.take(n: Int): List<Char> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun <T> Array<out T>.takeLast(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3969,6 +3989,8 @@ public fun <T> Array<out T>.takeLast(n: Int): List<T> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun ByteArray.takeLast(n: Int): List<Byte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3984,6 +4006,8 @@ public fun ByteArray.takeLast(n: Int): List<Byte> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun ShortArray.takeLast(n: Int): List<Short> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3999,6 +4023,8 @@ public fun ShortArray.takeLast(n: Int): List<Short> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun IntArray.takeLast(n: Int): List<Int> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -4014,6 +4040,8 @@ public fun IntArray.takeLast(n: Int): List<Int> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun LongArray.takeLast(n: Int): List<Long> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -4029,6 +4057,8 @@ public fun LongArray.takeLast(n: Int): List<Long> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun FloatArray.takeLast(n: Int): List<Float> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -4044,6 +4074,8 @@ public fun FloatArray.takeLast(n: Int): List<Float> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun DoubleArray.takeLast(n: Int): List<Double> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -4059,6 +4091,8 @@ public fun DoubleArray.takeLast(n: Int): List<Double> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun BooleanArray.takeLast(n: Int): List<Boolean> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -4074,6 +4108,8 @@ public fun BooleanArray.takeLast(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun CharArray.takeLast(n: Int): List<Char> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -4089,6 +4125,8 @@ public fun CharArray.takeLast(n: Int): List<Char> {
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun <T> Array<out T>.takeLastWhile(predicate: (T) -> Boolean): List<T> {
     for (index in lastIndex downTo 0) {
@@ -4101,6 +4139,8 @@ public inline fun <T> Array<out T>.takeLastWhile(predicate: (T) -> Boolean): Lis
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun ByteArray.takeLastWhile(predicate: (Byte) -> Boolean): List<Byte> {
     for (index in lastIndex downTo 0) {
@@ -4113,6 +4153,8 @@ public inline fun ByteArray.takeLastWhile(predicate: (Byte) -> Boolean): List<By
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun ShortArray.takeLastWhile(predicate: (Short) -> Boolean): List<Short> {
     for (index in lastIndex downTo 0) {
@@ -4125,6 +4167,8 @@ public inline fun ShortArray.takeLastWhile(predicate: (Short) -> Boolean): List<
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun IntArray.takeLastWhile(predicate: (Int) -> Boolean): List<Int> {
     for (index in lastIndex downTo 0) {
@@ -4137,6 +4181,8 @@ public inline fun IntArray.takeLastWhile(predicate: (Int) -> Boolean): List<Int>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun LongArray.takeLastWhile(predicate: (Long) -> Boolean): List<Long> {
     for (index in lastIndex downTo 0) {
@@ -4149,6 +4195,8 @@ public inline fun LongArray.takeLastWhile(predicate: (Long) -> Boolean): List<Lo
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun FloatArray.takeLastWhile(predicate: (Float) -> Boolean): List<Float> {
     for (index in lastIndex downTo 0) {
@@ -4161,6 +4209,8 @@ public inline fun FloatArray.takeLastWhile(predicate: (Float) -> Boolean): List<
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun DoubleArray.takeLastWhile(predicate: (Double) -> Boolean): List<Double> {
     for (index in lastIndex downTo 0) {
@@ -4173,6 +4223,8 @@ public inline fun DoubleArray.takeLastWhile(predicate: (Double) -> Boolean): Lis
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun BooleanArray.takeLastWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
     for (index in lastIndex downTo 0) {
@@ -4185,6 +4237,8 @@ public inline fun BooleanArray.takeLastWhile(predicate: (Boolean) -> Boolean): L
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun CharArray.takeLastWhile(predicate: (Char) -> Boolean): List<Char> {
     for (index in lastIndex downTo 0) {
@@ -4197,6 +4251,8 @@ public inline fun CharArray.takeLastWhile(predicate: (Char) -> Boolean): List<Ch
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T> {
     val list = ArrayList<T>()
@@ -4210,6 +4266,8 @@ public inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun ByteArray.takeWhile(predicate: (Byte) -> Boolean): List<Byte> {
     val list = ArrayList<Byte>()
@@ -4223,6 +4281,8 @@ public inline fun ByteArray.takeWhile(predicate: (Byte) -> Boolean): List<Byte> 
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Short> {
     val list = ArrayList<Short>()
@@ -4236,6 +4296,8 @@ public inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Shor
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun IntArray.takeWhile(predicate: (Int) -> Boolean): List<Int> {
     val list = ArrayList<Int>()
@@ -4249,6 +4311,8 @@ public inline fun IntArray.takeWhile(predicate: (Int) -> Boolean): List<Int> {
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun LongArray.takeWhile(predicate: (Long) -> Boolean): List<Long> {
     val list = ArrayList<Long>()
@@ -4262,6 +4326,8 @@ public inline fun LongArray.takeWhile(predicate: (Long) -> Boolean): List<Long> 
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun FloatArray.takeWhile(predicate: (Float) -> Boolean): List<Float> {
     val list = ArrayList<Float>()
@@ -4275,6 +4341,8 @@ public inline fun FloatArray.takeWhile(predicate: (Float) -> Boolean): List<Floa
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun DoubleArray.takeWhile(predicate: (Double) -> Boolean): List<Double> {
     val list = ArrayList<Double>()
@@ -4288,6 +4356,8 @@ public inline fun DoubleArray.takeWhile(predicate: (Double) -> Boolean): List<Do
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun BooleanArray.takeWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
     val list = ArrayList<Boolean>()
@@ -4301,6 +4371,8 @@ public inline fun BooleanArray.takeWhile(predicate: (Boolean) -> Boolean): List<
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun CharArray.takeWhile(predicate: (Char) -> Boolean): List<Char> {
     val list = ArrayList<Char>()
@@ -13610,7 +13682,7 @@ public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: CharSequence 
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
- *
+ * 
  * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun <T> Array<out T>.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): String {
@@ -13622,7 +13694,7 @@ public fun <T> Array<out T>.joinToString(separator: CharSequence = ", ", prefix:
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
- *
+ * 
  * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun ByteArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Byte) -> CharSequence)? = null): String {
@@ -13646,7 +13718,7 @@ public fun ShortArray.joinToString(separator: CharSequence = ", ", prefix: CharS
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
- *
+ * 
  * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun IntArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Int) -> CharSequence)? = null): String {

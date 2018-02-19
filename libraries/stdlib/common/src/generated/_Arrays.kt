@@ -2138,181 +2138,253 @@ public expect fun CharArray.sliceArray(indices: IntRange): CharArray
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun <T> Array<out T>.take(n: Int): List<T>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun ByteArray.take(n: Int): List<Byte>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun ShortArray.take(n: Int): List<Short>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun IntArray.take(n: Int): List<Int>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun LongArray.take(n: Int): List<Long>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun FloatArray.take(n: Int): List<Float>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun DoubleArray.take(n: Int): List<Double>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun BooleanArray.take(n: Int): List<Boolean>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun CharArray.take(n: Int): List<Char>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun <T> Array<out T>.takeLast(n: Int): List<T>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun ByteArray.takeLast(n: Int): List<Byte>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun ShortArray.takeLast(n: Int): List<Short>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun IntArray.takeLast(n: Int): List<Int>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun LongArray.takeLast(n: Int): List<Long>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun FloatArray.takeLast(n: Int): List<Float>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun DoubleArray.takeLast(n: Int): List<Double>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun BooleanArray.takeLast(n: Int): List<Boolean>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun CharArray.takeLast(n: Int): List<Char>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun <T> Array<out T>.takeLastWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun ByteArray.takeLastWhile(predicate: (Byte) -> Boolean): List<Byte>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun ShortArray.takeLastWhile(predicate: (Short) -> Boolean): List<Short>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun IntArray.takeLastWhile(predicate: (Int) -> Boolean): List<Int>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun LongArray.takeLastWhile(predicate: (Long) -> Boolean): List<Long>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun FloatArray.takeLastWhile(predicate: (Float) -> Boolean): List<Float>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun DoubleArray.takeLastWhile(predicate: (Double) -> Boolean): List<Double>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun BooleanArray.takeLastWhile(predicate: (Boolean) -> Boolean): List<Boolean>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun CharArray.takeLastWhile(predicate: (Char) -> Boolean): List<Char>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun ByteArray.takeWhile(predicate: (Byte) -> Boolean): List<Byte>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Short>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun IntArray.takeWhile(predicate: (Int) -> Boolean): List<Int>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun LongArray.takeWhile(predicate: (Long) -> Boolean): List<Long>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun FloatArray.takeWhile(predicate: (Float) -> Boolean): List<Float>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun DoubleArray.takeWhile(predicate: (Double) -> Boolean): List<Double>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun BooleanArray.takeWhile(predicate: (Boolean) -> Boolean): List<Boolean>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun CharArray.takeWhile(predicate: (Char) -> Boolean): List<Char>
 

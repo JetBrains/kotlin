@@ -342,21 +342,29 @@ public expect fun <T> List<T>.slice(indices: Iterable<Int>): List<T>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun <T> Iterable<T>.take(n: Int): List<T>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun <T> List<T>.takeLast(n: Int): List<T>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun <T> List<T>.takeLastWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T>
 

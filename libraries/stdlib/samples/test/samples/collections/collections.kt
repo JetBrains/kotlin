@@ -340,6 +340,15 @@ class Collections {
 
             assertPrints(chunks, "[[one, two, three], [four, five, six], [seven, eight, nine], [ten]]")
         }
+        
+        @Sample
+        fun take(){
+            val chars = ('a'..'z').toList()
+            assertPrints(chars.take(3), "[a, b, c]")
+            assertPrints(chars.takeWhile { it < 'f' }, "[a, b, c, d, e]")
+            assertPrints(chars.takeLast(2), "[y, z]")
+            assertPrints(chars.takeLastWhile { it > 'w' }, "[x, y, z]")
+        }
 
 
         @Sample
