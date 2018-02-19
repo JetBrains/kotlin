@@ -16,10 +16,6 @@ import com.intellij.util.containers.Queue
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.openapi.roots.ProjectRootModificationTracker
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.correspondingModuleInfos
-import org.jetbrains.kotlin.idea.caches.resolve.isTests
-import org.jetbrains.kotlin.idea.caches.resolve.testSourceInfo
 import java.util.HashSet
 
 //NOTE: this is an approximation that may contain more module infos then the exact solution

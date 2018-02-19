@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.idea.caches.resolve.util
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.ScriptModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.SourceForBinaryModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.ScriptModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.SourceForBinaryModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile

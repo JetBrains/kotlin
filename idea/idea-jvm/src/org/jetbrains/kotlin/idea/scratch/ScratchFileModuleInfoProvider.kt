@@ -30,14 +30,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.FileAttribute
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.caches.resolve.NotUnderContentRootModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.productionSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.testSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.moduleInfo
+import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_EXT
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.moduleInfo
 import kotlin.reflect.KProperty
 
 class ScratchFileModuleInfoProvider(project: Project) : AbstractProjectComponent(project) {

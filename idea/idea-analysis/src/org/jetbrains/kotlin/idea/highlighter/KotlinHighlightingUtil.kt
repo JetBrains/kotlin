@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.caches.resolve.NotUnderContentRootModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.core.script.scriptDependencies
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtCodeFragment

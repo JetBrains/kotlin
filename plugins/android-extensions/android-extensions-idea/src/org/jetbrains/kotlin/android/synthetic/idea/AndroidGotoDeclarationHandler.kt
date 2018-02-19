@@ -25,9 +25,9 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformSupport
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
+import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -90,7 +91,12 @@ fun createModuleResolverProvider(
     )
 
     if (providedBuiltIns == null && builtIns is JvmBuiltIns) {
-        val sdkModuleDescriptor = analysisSettings.sdk!!.let { resolverForProject.descriptorForModule(SdkInfo(project, it)) }
+        val sdkModuleDescriptor = analysisSettings.sdk!!.let { resolverForProject.descriptorForModule(
+            SdkInfo(
+                project,
+                it
+            )
+        ) }
         builtIns.initialize(sdkModuleDescriptor, analysisSettings.isAdditionalBuiltInFeaturesSupported)
     }
 
@@ -120,7 +126,12 @@ fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
         }
     }
 
-    val sdksInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map { SdkInfo(project, it) }
+    val sdksInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map {
+        SdkInfo(
+            project,
+            it
+        )
+    }
 
     return modulesSourcesInfos + librariesInfos + sdksInfos
 }

@@ -1,25 +1,17 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.caches.resolve
+package org.jetbrains.kotlin.idea.caches.project
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.*
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
@@ -36,23 +28,32 @@ import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import kotlin.coroutines.experimental.buildSequence
 
+var PsiFile.moduleInfo: ModuleInfo? by UserDataProperty(Key.create("MODULE_INFO"))
+
 fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.collectInfos(ModuleInfoCollector.NotNullTakeFirst)
 
 fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.collectInfos(ModuleInfoCollector.NullableTakeFirst)
 
 fun PsiElement.getModuleInfos(): Sequence<IdeaModuleInfo> = this.collectInfos(ModuleInfoCollector.ToSequence)
 
-fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile): IdeaModuleInfo? = collectInfosByVirtualFile(
-    project, virtualFile,
-    treatAsLibrarySource = false,
-    onOccurrence = { return@getModuleInfoByVirtualFile it }
-)
+fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile): IdeaModuleInfo? =
+    collectInfosByVirtualFile(
+        project, virtualFile,
+        treatAsLibrarySource = false,
+        onOccurrence = { return@getModuleInfoByVirtualFile it }
+    )
 
 fun getBinaryLibrariesModuleInfos(project: Project, virtualFile: VirtualFile) =
-    collectModuleInfosByType<BinaryModuleInfo>(project, virtualFile)
+    collectModuleInfosByType<BinaryModuleInfo>(
+        project,
+        virtualFile
+    )
 
 fun getLibrarySourcesModuleInfos(project: Project, virtualFile: VirtualFile) =
-    collectModuleInfosByType<LibrarySourceInfo>(project, virtualFile)
+    collectModuleInfosByType<LibrarySourceInfo>(
+        project,
+        virtualFile
+    )
 
 private typealias VirtualFileProcessor<T> = (Project, VirtualFile, Boolean) -> T
 
@@ -68,7 +69,13 @@ private sealed class ModuleInfoCollector<out T>(
             NotUnderContentRootModuleInfo
         },
         virtualFileProcessor = processor@ { project, virtualFile, isLibrarySource ->
-            collectInfosByVirtualFile(project, virtualFile, isLibrarySource, { return@processor it ?: NotUnderContentRootModuleInfo })
+            collectInfosByVirtualFile(
+                project,
+                virtualFile,
+                isLibrarySource,
+                {
+                    return@processor it ?: NotUnderContentRootModuleInfo
+                })
         }
     )
 
@@ -79,7 +86,11 @@ private sealed class ModuleInfoCollector<out T>(
             null
         },
         virtualFileProcessor = processor@ { project, virtualFile, isLibrarySource ->
-            collectInfosByVirtualFile(project, virtualFile, isLibrarySource, { return@processor it })
+            collectInfosByVirtualFile(
+                project,
+                virtualFile,
+                isLibrarySource,
+                { return@processor it })
         }
     )
 
@@ -91,7 +102,11 @@ private sealed class ModuleInfoCollector<out T>(
         },
         virtualFileProcessor = { project, virtualFile, isLibrarySource ->
             buildSequence {
-                collectInfosByVirtualFile(project, virtualFile, isLibrarySource, { yieldIfNotNull(it) })
+                collectInfosByVirtualFile(
+                    project,
+                    virtualFile,
+                    isLibrarySource,
+                    { yieldIfNotNull(it) })
             }
         }
     )

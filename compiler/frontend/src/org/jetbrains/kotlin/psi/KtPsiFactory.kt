@@ -34,7 +34,6 @@ private val DO_NOT_ANALYZE_NOTIFICATION = "This file was created by KtPsiFactory
 
 var KtFile.doNotAnalyze: String? by UserDataProperty(Key.create("DO_NOT_ANALYZE"))
 var KtFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS_CONTEXT"))
-var PsiFile.moduleInfo: ModuleInfo? by UserDataProperty(Key.create("MODULE_INFO"))
 var KtFile.targetPlatform: TargetPlatform? by UserDataProperty(Key.create("TARGET_PLATFORM"))
 
 /**

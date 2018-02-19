@@ -34,9 +34,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService.Companion.FULL_DROP_THRESHOLD
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfoByVirtualFile
-import org.jetbrains.kotlin.idea.caches.resolve.getNullableModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
+import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -113,7 +113,7 @@ class PerModulePackageCacheService(private val project: Project) {
 
     private val projectScope = GlobalSearchScope.projectScope(project)
 
-    internal fun onTooComplexChange() = synchronized(this) {
+    internal fun onTooComplexChange(): Unit = synchronized(this) {
         pendingVFileChanges.clear()
         pendingKtFileChanges.clear()
         cache.clear()

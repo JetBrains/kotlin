@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.PackageOracle
 import org.jetbrains.kotlin.analyzer.PackageOracleFactory
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade

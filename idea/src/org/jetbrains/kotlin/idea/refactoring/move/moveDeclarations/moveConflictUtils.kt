@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
+import org.jetbrains.kotlin.idea.caches.project.moduleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -92,7 +94,10 @@ class MoveConflictChecker(
     }
 
     private fun getModuleDescriptor(sourceFile: VirtualFile) =
-            getModuleInfoByVirtualFile(project, sourceFile)?.let { resolutionFacade.findModuleDescriptor(it) }
+            getModuleInfoByVirtualFile(
+                project,
+                sourceFile
+            )?.let { resolutionFacade.findModuleDescriptor(it) }
 
     private fun KotlinMoveTarget.getContainerDescriptor(): DeclarationDescriptor? {
         return when (this) {
