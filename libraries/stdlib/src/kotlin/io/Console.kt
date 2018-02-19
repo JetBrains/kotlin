@@ -139,22 +139,14 @@ public inline fun println() {
 private const val BUFFER_SIZE: Int = 32
 private const val LINE_SEPARATOR_MAX_LENGTH: Int = 2
 
-private var cachedDecoder: CharsetDecoder? = null
-
-private fun decoderFor(charset: Charset): CharsetDecoder {
-    return cachedDecoder?.takeIf { cached ->
-        cached.charset() == charset
-    } ?: charset.newDecoder().also { newDecoder ->
-        cachedDecoder = newDecoder
-    }
-}
+private val decoder: CharsetDecoder by lazy { Charset.defaultCharset().newDecoder() }
 
 /**
  * Reads a line of input from the standard input stream.
  *
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
-fun readLine(charset: Charset = Charset.defaultCharset()): String? = readLine(System.`in`, decoderFor(charset))
+fun readLine(): String? = readLine(System.`in`, decoder)
 
 internal fun readLine(inputStream: InputStream, decoder: CharsetDecoder): String? {
     require(decoder.maxCharsPerByte() <= 1) { "Encodings with multiple chars per byte are not supported" }
@@ -165,7 +157,7 @@ internal fun readLine(inputStream: InputStream, decoder: CharsetDecoder): String
 
     var read = inputStream.read()
     if (read == -1) return null
-    while (read != -1) {
+    do {
         byteBuffer.put(read.toByte())
         if (decoder.tryDecode(byteBuffer, charBuffer, false)) {
             if (charBuffer.containsLineSeparator()) {
@@ -176,7 +168,7 @@ internal fun readLine(inputStream: InputStream, decoder: CharsetDecoder): String
             }
         }
         read = inputStream.read()
-    }
+    } while (read != -1)
 
     with(decoder) {
         tryDecode(byteBuffer, charBuffer, true) // throws exception if undecoded bytes are left
