@@ -161,6 +161,7 @@ class JavaToJKTreeBuilder {
         }
 
         fun PsiIdentifier.convertMethodReference(): JKJavaMethodReference {
+
             return JKJavaMethodReferenceImpl()
         }
 

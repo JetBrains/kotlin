@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
@@ -75,37 +76,45 @@ interface JKFieldAccessExpression : JKExpression {
 }
 
 interface JKArrayAccessExpression : JKExpression {
-    val expression : JKExpression
-    val indexExpression : JKExpression?
+    val expression: JKExpression
+    val indexExpression: JKExpression?
 }
 
 interface JKParenthesizedExpression : JKExpression {
-    val expression : JKExpression?
+    val expression: JKExpression?
 }
 
 interface JKTypeCastExpression : JKExpression {
-    val expression : JKExpression?
-    val type : JKTypeReference?
+    val expression: JKExpression?
+    val type: JKTypeReference?
 }
 
 interface JKExpressionList : JKElement {
-    val expressions: Array<JKExpression>
-}
-
-interface JKMethodReference : JKElement {
 
 }
 
-interface JKFieldReference : JKElement {
+interface JKReference : JKElement {
 
 }
 
-interface JKClassReference : JKElement {
+interface JKExternalReference {
+    fun resolve(): PsiElement
+}
+
+interface JKMethodReference : JKReference {
 
 }
 
-interface JKTypeReference : JKElement {
+interface JKFieldReference : JKReference {
 
+}
+
+interface JKClassReference : JKReference {
+
+}
+
+interface JKTypeReference : JKReference {
+    val parameters: List<JKTypeReference>
 }
 
 interface JKOperatorIdentifier : JKIdentifier

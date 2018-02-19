@@ -87,3 +87,7 @@ interface JKJavaNewEmptyArray : JKExpression {
 interface JKJavaNewArray : JKExpression {
     val initializer: List<JKExpression>
 }
+
+interface JKJavaExternalReference : JKExternalReference {
+
+}
