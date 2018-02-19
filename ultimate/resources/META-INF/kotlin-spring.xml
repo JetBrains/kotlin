@@ -5,13 +5,6 @@
 
       <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.spring.lineMarking.KotlinSpringModelDependenciesLineMarkerProvider"/>
 
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.spring.inspections.KotlinFinalClassOrFunSpringInspection"
-                       displayName="Final Kotlin class or function with Spring annotation"
-                       groupBundle="resources.messages.SpringBundle"
-                       groupKey="inspection.group.code"
-                       groupPath="Spring,Spring Core"
-                       enabledByDefault="false"
-                       level="WARNING"/>
       <localInspection language="kotlin"
                        displayName="Spring Facet Code Configuration (Kotlin)"
                        groupBundle="resources.messages.SpringBundle"
