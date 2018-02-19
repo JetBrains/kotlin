@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
+package org.jetbrains.kotlin.idea.caches.lightClasses
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.components.ServiceManager

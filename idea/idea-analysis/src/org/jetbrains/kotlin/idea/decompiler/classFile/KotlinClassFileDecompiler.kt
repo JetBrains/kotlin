@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.idea.decompiler.classFile
 
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.BySignatureIndexer
+import org.jetbrains.kotlin.idea.caches.lightClasses.BySignatureIndexer
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText

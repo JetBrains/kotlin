@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
+package org.jetbrains.kotlin.idea.caches.lightClasses
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key

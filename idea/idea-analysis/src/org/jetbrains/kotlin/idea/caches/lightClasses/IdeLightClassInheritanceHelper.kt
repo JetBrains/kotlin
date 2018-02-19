@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
+package org.jetbrains.kotlin.idea.caches.lightClasses
 
 import com.intellij.psi.CommonClassNames
 import com.intellij.psi.PsiClass
