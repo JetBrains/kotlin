@@ -62,6 +62,9 @@ fun run() {
     println(globalObject)
 
     println(formatStringLength("%d %d", 42, 17))
+
+    println(STRING_MACRO)
+    println(CFSTRING_MACRO)
 }
 
 fun MutablePairProtocol.swap() {

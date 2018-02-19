@@ -761,13 +761,24 @@ class StubGenerator(
         val literal = when (constant) {
             is IntegerConstantDef -> integerLiteral(constant.type, constant.value) ?: return
             is FloatingConstantDef -> floatingLiteral(constant.type, constant.value) ?: return
+            is StringConstantDef -> constant.value.quoteAsKotlinLiteral()
             else -> {
                 // Not supported yet, ignore:
                 return
             }
         }
 
-        val kotlinType = mirror(constant.type).argType.render(kotlinFile)
+        val kotlinType = when (constant) {
+            is IntegerConstantDef,
+            is FloatingConstantDef -> mirror(constant.type).argType
+
+            is StringConstantDef -> KotlinTypes.string
+
+            else -> {
+                // Not supported yet, ignore:
+                return
+            }
+        }.render(kotlinFile)
 
         // TODO: improve value rendering.
 

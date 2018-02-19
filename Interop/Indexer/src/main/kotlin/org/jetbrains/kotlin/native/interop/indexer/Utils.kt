@@ -599,3 +599,14 @@ fun createVfsOverlayFile(virtualPathToReal: Map<Path, Path>): Path {
         deleteOnExit()
     }.toPath()
 }
+
+tailrec fun Type.unwrapTypedefs(): Type = if (this is Typedef) {
+    this.def.aliased.unwrapTypedefs()
+} else {
+    this
+}
+
+fun Type.canonicalIsPointerToChar(): Boolean {
+    val unwrappedType = this.unwrapTypedefs()
+    return unwrappedType is PointerType && unwrappedType.pointeeType.unwrapTypedefs() == CharType
+}

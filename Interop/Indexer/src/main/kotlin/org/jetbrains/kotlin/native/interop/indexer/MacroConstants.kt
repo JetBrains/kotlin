@@ -110,10 +110,7 @@ private fun reparseWithCodeSnippet(library: NativeLibrary,
         val codeSnippetLines = when (library.language) {
             // Note: __auto_type is a GNU extension which is supported by clang.
             Language.C, Language.OBJECTIVE_C -> listOf(
-                    "const __auto_type KNI_INDEXER_VARIABLE = $name;",
-                    // Clang evaluate API doesn't provide a way to get a `long long` value yet;
-                    // so extract such values from the enum declaration:
-                    "enum { KNI_INDEXER_ENUM_CONST = (long long)KNI_INDEXER_VARIABLE };"
+                    "const __auto_type KNI_INDEXER_VARIABLE = $name;"
             )
         }
 
@@ -133,53 +130,27 @@ private fun processCodeSnippet(
 ): ConstantDef? {
 
     var state = VisitorState.EXPECT_VARIABLE
-    var evalResultKind: CXEvalResultKind? = null
-    var type: Type? = null
-    var longValue: Long? = null
-    var doubleValue: Double? = null
+    var evalResultOrNull: CXEvalResult? = null
+    var typeOrNull: Type? = null
 
     val visitor: CursorVisitor = { cursor, _ ->
         val kind = cursor.kind
         when {
             state == VisitorState.EXPECT_VARIABLE && kind == CXCursorKind.CXCursor_VarDecl -> {
-
                 val evalResult = clang_Cursor_Evaluate(cursor)
+
                 if (evalResult != null) {
+                    evalResultOrNull = evalResult
                     state = VisitorState.EXPECT_VARIABLE_VALUE
-                    try {
-                        evalResultKind = clang_EvalResult_getKind(evalResult)
-                        if (evalResultKind == CXEvalResultKind.CXEval_Float) {
-                            doubleValue = clang_EvalResult_getAsDouble(evalResult)
-                        }
-                    } finally {
-                        clang_EvalResult_dispose(evalResult)
-                    }
                 } else {
                     state = VisitorState.INVALID
                 }
+
                 CXChildVisitResult.CXChildVisit_Recurse
             }
 
             state == VisitorState.EXPECT_VARIABLE_VALUE && clang_isExpression(kind) != 0 -> {
-                state = VisitorState.EXPECT_ENUM
-                type = typeConverter(clang_getCursorType(cursor))
-                CXChildVisitResult.CXChildVisit_Continue
-            }
-
-            state == VisitorState.EXPECT_ENUM && kind == CXCursorKind.CXCursor_EnumDecl -> {
-                state = VisitorState.EXPECT_ENUM_CONST
-                CXChildVisitResult.CXChildVisit_Recurse
-            }
-
-            state == VisitorState.EXPECT_ENUM_CONST && kind == CXCursorKind.CXCursor_EnumConstantDecl -> {
-                state = VisitorState.EXPECT_ENUM_CONST_VALUE
-                if (evalResultKind == CXEvalResultKind.CXEval_Int) {
-                    longValue = clang_getEnumConstantDeclValue(cursor)
-                }
-                CXChildVisitResult.CXChildVisit_Recurse
-            }
-
-            state == VisitorState.EXPECT_ENUM_CONST_VALUE && clang_isExpression(kind) != 0 -> {
+                typeOrNull = typeConverter(clang_getCursorType(cursor))
                 state = VisitorState.EXPECT_END
                 CXChildVisitResult.CXChildVisit_Continue
             }
@@ -191,21 +162,46 @@ private fun processCodeSnippet(
         }
     }
 
-    visitChildren(translationUnit, visitor)
+    try {
+        visitChildren(translationUnit, visitor)
 
-    if (state != VisitorState.EXPECT_END) {
-        return null
-    }
-    return when (evalResultKind!!) {
-        CXEvalResultKind.CXEval_Int -> IntegerConstantDef(name, type!!, longValue!!)
-        CXEvalResultKind.CXEval_Float -> FloatingConstantDef(name, type!!, doubleValue!!)
-        else -> null
+        if (state != VisitorState.EXPECT_END) {
+            return null
+        }
+
+        val evalResult = evalResultOrNull!!
+        val type = typeOrNull!!
+        val evalResultKind = clang_EvalResult_getKind(evalResult)
+
+        return when (evalResultKind) {
+            CXEvalResultKind.CXEval_Int ->
+                IntegerConstantDef(name, type, clang_EvalResult_getAsLongLong(evalResult))
+
+            CXEvalResultKind.CXEval_Float ->
+                FloatingConstantDef(name, type, clang_EvalResult_getAsDouble(evalResult))
+
+            CXEvalResultKind.CXEval_CFStr,
+            CXEvalResultKind.CXEval_ObjCStrLiteral,
+            CXEvalResultKind.CXEval_StrLiteral ->
+                if (evalResultKind == CXEvalResultKind.CXEval_StrLiteral && !type.canonicalIsPointerToChar()) {
+                    // libclang doesn't seem to support wide string literals properly in this API;
+                    // thus disable wide literals here:
+                    null
+                } else {
+                    StringConstantDef(name, type, clang_EvalResult_getAsStr(evalResult)!!.toKString())
+                }
+
+            CXEvalResultKind.CXEval_Other,
+            CXEvalResultKind.CXEval_UnExposed -> null
+        }
+
+    } finally {
+        evalResultOrNull?.let { clang_EvalResult_dispose(it) }
     }
 }
 
 enum class VisitorState {
     EXPECT_VARIABLE, EXPECT_VARIABLE_VALUE,
-    EXPECT_ENUM, EXPECT_ENUM_CONST, EXPECT_ENUM_CONST_VALUE,
     EXPECT_END, INVALID
 }
 

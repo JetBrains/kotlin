@@ -60,12 +60,6 @@ fun Type.getStringRepresentation(): String = when (this) {
 private val ObjCQualifiedPointer.protocolQualifier: String
     get() = if (this.protocols.isEmpty()) "" else " <${protocols.joinToString { it.name }}>"
 
-tailrec fun Type.unwrapTypedefs(): Type = if (this is Typedef) {
-    this.def.aliased.unwrapTypedefs()
-} else {
-    this
-}
-
 fun blockTypeStringRepresentation(type: ObjCBlockPointer): String {
     return buildString {
         append(type.returnType.getStringRepresentation())

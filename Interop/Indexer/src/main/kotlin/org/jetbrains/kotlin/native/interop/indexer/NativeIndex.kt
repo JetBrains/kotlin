@@ -192,6 +192,7 @@ class TypedefDef(val aliased: Type, val name: String, override val location: Loc
 abstract class ConstantDef(val name: String, val type: Type)
 class IntegerConstantDef(name: String, type: Type, val value: Long) : ConstantDef(name, type)
 class FloatingConstantDef(name: String, type: Type, val value: Double) : ConstantDef(name, type)
+class StringConstantDef(name: String, type: Type, val value: String) : ConstantDef(name, type)
 
 class GlobalDecl(val name: String, val type: Type, val isConst: Boolean)
 

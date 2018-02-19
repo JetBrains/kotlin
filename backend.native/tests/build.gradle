@@ -2350,6 +2350,10 @@ kotlinNativeInterop {
         defFile 'interop/basics/cfunptr.def'
     }
 
+    cmacros {
+        defFile 'interop/basics/cmacros.def'
+    }
+
     if (isMac()) {
         objcSmoke {
             defFile 'interop/objc/objcSmoke.def'
@@ -2425,6 +2429,12 @@ task interop_globals(type: RunInteropKonanTest) {
     interop = 'cglobals'
 }
 
+task interop_macros(type: RunInteropKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/macros.kt"
+    interop = 'cmacros'
+}
+
 task interop_echo_server(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     if (!isMac()) {
@@ -2452,6 +2462,8 @@ if (isMac()) {
                 "true\ntrue\n" +
                 "Global string\nAnother global string\nnull\nglobal object\n" +
                 "5\n" +
+                "String macro\n" +
+                "CFString macro\n" +
                 "Deallocated\nDeallocated\n"
 
         source = "interop/objc/smoke.kt"

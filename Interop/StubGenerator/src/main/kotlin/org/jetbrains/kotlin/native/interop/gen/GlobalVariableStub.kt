@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.native.interop.gen
 import org.jetbrains.kotlin.native.interop.gen.jvm.StubGenerator
 import org.jetbrains.kotlin.native.interop.indexer.ArrayType
 import org.jetbrains.kotlin.native.interop.indexer.GlobalDecl
+import org.jetbrains.kotlin.native.interop.indexer.unwrapTypedefs
 
 class GlobalVariableStub(global: GlobalDecl, stubGenerator: StubGenerator) : KotlinStub, NativeBacked {
 

@@ -1,0 +1,14 @@
+---
+#define ZERO 0
+#define ONE 1
+#define MAX_LONG 9223372036854775807
+#define FOO_STRING "foo"
+// This one should be ignored:
+#define WIDE_FOO_STRING L"foo"
+#define FOURTY_TWO 42
+#define SEVENTEEN ((long long) 17)
+#define ONE_POINT_ZERO 1.0
+#define ONE_POINT_FIVE 1.5f
+
+#define BAD1 bar
+#define BAD2 5;

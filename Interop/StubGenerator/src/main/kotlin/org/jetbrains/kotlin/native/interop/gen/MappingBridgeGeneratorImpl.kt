@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.native.interop.gen
 import org.jetbrains.kotlin.native.interop.indexer.RecordType
 import org.jetbrains.kotlin.native.interop.indexer.Type
 import org.jetbrains.kotlin.native.interop.indexer.VoidType
+import org.jetbrains.kotlin.native.interop.indexer.unwrapTypedefs
 
 /**
  * The [MappingBridgeGenerator] implementation which uses [SimpleBridgeGenerator] as the backend and

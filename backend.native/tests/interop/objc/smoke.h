@@ -1,4 +1,5 @@
 #import <objc/NSObject.h>
+#import <CoreFoundation/CoreFoundation.h>
 
 @class Foo;
 
@@ -57,3 +58,6 @@ extern NSString* globalString;
 extern NSObject* globalObject;
 
 int formatStringLength(NSString* format, ...);
+
+#define STRING_MACRO @"String macro"
+#define CFSTRING_MACRO CFSTR("CFString macro")
