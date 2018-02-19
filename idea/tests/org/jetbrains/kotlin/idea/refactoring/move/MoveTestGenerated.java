@@ -601,6 +601,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/facadeClassChangeInTheSamePackage/facadeClassChangeInTheSamePackage.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_facadeClassChangeInTheSamePackage_FacadeClassChangeInTheSamePackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/facadeClassChangeInTheSamePackage/facadeClassChangeInTheSamePackage.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/fakeOverrideInObject/fakeOverrideInObject.test")
     public void testKotlin_moveTopLevelDeclarations_misc_fakeOverrideInObject_FakeOverrideInObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/fakeOverrideInObject/fakeOverrideInObject.test");

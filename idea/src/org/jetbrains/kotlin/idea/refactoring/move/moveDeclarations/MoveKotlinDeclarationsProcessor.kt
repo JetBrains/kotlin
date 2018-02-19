@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
@@ -23,6 +24,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.move.MoveCallback
@@ -41,6 +44,7 @@ import com.intellij.util.containers.MultiMap
 import gnu.trove.THashMap
 import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
+import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
@@ -49,6 +53,7 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinClassHandler
 import org.jetbrains.kotlin.idea.search.projectScope
+import org.jetbrains.kotlin.idea.search.restrictByFileType
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -153,24 +158,39 @@ class MoveKotlinDeclarationsProcessor(
 
         val newContainerName = descriptor.moveTarget.targetContainerFqName?.asString() ?: ""
 
-        fun canSkipUsages(element: PsiElement): Boolean {
-            val ktDeclaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return false
-            if (ktDeclaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) return false
-            val (oldContainer, newContainer) = descriptor.delegate.getContainerChangeInfo(ktDeclaration, descriptor.moveTarget)
-            val targetModule = descriptor.moveTarget.getTargetModule(project) ?: return false
-            return oldContainer == newContainer && ktDeclaration.module == targetModule
+        fun getSearchScope(element: PsiElement): GlobalSearchScope? {
+            val projectScope = project.projectScope()
+            val ktDeclaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return projectScope
+            if (ktDeclaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) return projectScope
+            val moveTarget = descriptor.moveTarget
+            val (oldContainer, newContainer) = descriptor.delegate.getContainerChangeInfo(ktDeclaration, moveTarget)
+            val targetModule = moveTarget.getTargetModule(project) ?: return projectScope
+            if (oldContainer != newContainer || ktDeclaration.module != targetModule) return projectScope
+            // Check if facade class may change
+            if (newContainer is ContainerInfo.Package) {
+                val javaScope = projectScope.restrictByFileType(JavaFileType.INSTANCE)
+                val currentFile = ktDeclaration.containingKtFile
+                val newFile = when (moveTarget) {
+                    is KotlinMoveTargetForExistingElement -> moveTarget.targetElement as? KtFile ?: return null
+                    is KotlinMoveTargetForDeferredFile -> return javaScope
+                    else -> return null
+                }
+                val currentFacade = currentFile.findFacadeClass()
+                val newFacade = newFile.findFacadeClass()
+                return if (currentFacade?.qualifiedName != newFacade?.qualifiedName) javaScope else null
+            }
+            return null
         }
 
         fun collectUsages(kotlinToLightElements: Map<KtNamedDeclaration, List<PsiNamedElement>>, result: MutableCollection<UsageInfo>) {
             kotlinToLightElements.values.flatten().flatMapTo(result) { lightElement ->
-                if (canSkipUsages(lightElement)) return@flatMapTo emptyList()
+                val searchScope = getSearchScope(lightElement) ?: return@flatMapTo emptyList()
 
                 val newFqName = StringUtil.getQualifiedName(newContainerName, lightElement.name)
 
                 val foundReferences = HashSet<PsiReference>()
-                val projectScope = project.projectScope()
                 val results = ReferencesSearch
-                        .search(lightElement, projectScope)
+                        .search(lightElement, searchScope)
                         .mapNotNullTo(ArrayList()) { ref ->
                             if (foundReferences.add(ref) && elementsToMove.none { it.isAncestor(ref.element)}) {
                                 createMoveUsageInfoIfPossible(ref, lightElement, true, false)
