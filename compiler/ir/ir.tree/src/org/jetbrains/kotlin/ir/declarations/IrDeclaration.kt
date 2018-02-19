@@ -31,7 +31,7 @@ interface IrDeclaration : IrStatement {
     val declarationKind: IrDeclarationKind
     val origin: IrDeclarationOrigin
 
-    val parent: IrDeclarationParent
+    var parent: IrDeclarationParent
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrStatement =
         accept(transformer, data) as IrStatement
