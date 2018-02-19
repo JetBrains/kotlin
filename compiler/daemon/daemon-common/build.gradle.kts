@@ -4,13 +4,6 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-repositories {
-    mavenCentral()
-    maven {
-        setUrl("http://dl.bintray.com/kotlin/ktor")
-    }
-}
-
 dependencies {
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))

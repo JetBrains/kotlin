@@ -11,7 +11,6 @@ import kotlinx.coroutines.experimental.async
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.rmi.registry.LocateRegistry
-import javax.swing.text.html.HTML.Tag.HEAD
 
 /*
 1) walkDaemonsAsync = walkDaemons + some async calls inside (also some used classes changed *** -> ***Async)
@@ -34,7 +33,8 @@ suspend fun walkDaemonsAsync(
     compilerId: CompilerId,
     fileToCompareTimestamp: File,
     filter: (File, Int) -> Boolean = { _, _ -> true },
-    report: (DaemonReportCategory, String) -> Unit = { _, _ -> }
+    report: (DaemonReportCategory, String) -> Unit = { _, _ -> },
+    useRMI: Boolean = true
 ): Deferred<List<DaemonWithMetadataAsync>> = async {
     // : Sequence<DaemonWithMetadataAsync>
     val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
@@ -42,12 +42,16 @@ suspend fun walkDaemonsAsync(
     registryDir.walk().toList() // list, since walk returns Sequence and Sequence.map{...} is not inline => coroutines dont work
         .map { Pair(it, portExtractor(it.name)) }
         .filter { (file, port) -> port != null && filter(file, port) }
-        .map { (file, port) -> // all actions process concurrently
+        .map { (file, port) ->
+            // all actions process concurrently
             async {
                 assert(port!! in 1..(org.jetbrains.kotlin.daemon.common.MAX_PORT_NUMBER - 1))
                 val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
-                report(org.jetbrains.kotlin.daemon.common.DaemonReportCategory.DEBUG, "found daemon on socketPort $port ($relativeAge ms old), trying to connect")
-                val daemon = tryConnectToDaemonAsync(port, report)
+                report(
+                    org.jetbrains.kotlin.daemon.common.DaemonReportCategory.DEBUG,
+                    "found daemon on socketPort $port ($relativeAge ms old), trying to connect"
+                )
+                val daemon = tryConnectToDaemonAsync(port, report, useRMI)
                 // cleaning orphaned file; note: daemon should shut itself down if it detects that the runServer file is deleted
                 if (daemon == null) {
                     if (relativeAge - ORPHANED_RUN_FILE_AGE_THRESHOLD_MS <= 0) {
@@ -115,8 +119,12 @@ private inline fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportC
     return null
 }
 
-private fun tryConnectToDaemonAsync(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceClientSide? =
+private fun tryConnectToDaemonAsync(
+    port: Int,
+    report: (DaemonReportCategory, String) -> Unit,
+    useRMI: Boolean = true
+): CompileServiceClientSide? =
     tryConnectToDaemonBySockets(port, report)
-            ?: tryConnectToDaemonByRMI(port, report)
+            ?: useRMI.takeIf { it }?.let { tryConnectToDaemonByRMI(port, report) }
 
 private const val validFlagFileKeywordChars = "abcdefghijklmnopqrstuvwxyz0123456789-_"

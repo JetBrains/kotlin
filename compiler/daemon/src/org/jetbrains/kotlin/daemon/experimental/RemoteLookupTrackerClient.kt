@@ -6,16 +6,20 @@
 package org.jetbrains.kotlin.daemon.experimental
 
 import com.intellij.util.containers.StringInterner
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerCallbackServicesFacade
-import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.experimental.Profiler
+import org.jetbrains.kotlin.daemon.common.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseAsync
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 
 
-class RemoteLookupTrackerClient(val facade: CompilerCallbackServicesFacade, eventManager: EventManager, val profiler: Profiler = DummyProfiler()) : LookupTracker {
+class RemoteLookupTrackerClient(
+    val facade: CompilerServicesFacadeBaseAsync,
+    eventManager: EventManager,
+    val profiler: Profiler = DummyProfiler()
+) : LookupTracker {
     private val isDoNothing = profiler.withMeasure(this) { facade.lookupTracker_isDoNothing() }
 
     private val lookups = hashSetOf<LookupInfo>()
