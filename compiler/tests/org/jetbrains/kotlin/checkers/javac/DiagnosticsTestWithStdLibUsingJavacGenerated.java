@@ -1374,6 +1374,12 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             doTest(fileName);
         }
 
+        @TestMetadata("returnLabelForBuiltInSuspend.kt")
+        public void testReturnLabelForBuiltInSuspend() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/returnLabelForBuiltInSuspend.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("suspendApplicability.kt")
         public void testSuspendApplicability() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendApplicability.kt");

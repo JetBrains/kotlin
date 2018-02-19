@@ -920,6 +920,11 @@ public class KtPsiUtil {
         return null;
     }
 
+    public static boolean isLabeledFunctionLiteral(@NotNull KtFunctionLiteral functionLiteral) {
+        // KtFunctionLiteral -> KtLambdaExpression -> KtLabeledExpression
+        return functionLiteral.getParent().getParent() instanceof KtLabeledExpression;
+    }
+
     @Nullable
     public static KtExpression getLastElementDeparenthesized(
             @Nullable KtExpression expression,
