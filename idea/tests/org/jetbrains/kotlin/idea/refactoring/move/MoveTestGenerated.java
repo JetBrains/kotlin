@@ -661,6 +661,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/protectedConstructorRefInSuperListEntry/protectedConstructorRefInSuperListEntry.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_protectedConstructorRefInSuperListEntry_ProtectedConstructorRefInSuperListEntry() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/protectedConstructorRefInSuperListEntry/protectedConstructorRefInSuperListEntry.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/protectedMembersExternalRefs/protectedMembersExternalRefs.test")
     public void testKotlin_moveTopLevelDeclarations_misc_protectedMembersExternalRefs_ProtectedMembersExternalRefs() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/protectedMembersExternalRefs/protectedMembersExternalRefs.test");
