@@ -894,6 +894,9 @@ class StubGenerator(
 
         out("")
 
+        out("// NOTE THIS FILE IS AUTO-GENERATED")
+        out("")
+
         val context = object : StubGenerationContext {
             val topLevelDeclarationLines = mutableListOf<String>()
 
@@ -940,6 +943,9 @@ class StubGenerator(
         libraryForCStubs.preambleLines.forEach {
             out(it)
         }
+        out("")
+
+        out("// NOTE THIS FILE IS AUTO-GENERATED")
         out("")
 
         bridges.nativeLines.forEach {
