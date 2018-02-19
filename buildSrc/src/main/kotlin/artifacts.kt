@@ -53,7 +53,12 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
 }
 
 fun Project.noDefaultJar() {
-    tasks.findByName("jar")?.enabled = false
+    tasks.findByName("jar")?.let { defaultJarTask ->
+        defaultJarTask.enabled = false
+        configurations.findByName("archives")?.artifacts?.removeAll {
+            (it as? ArchivePublishArtifact)?.archiveTask?.let { it == defaultJarTask } ?: false
+        }
+    }
 }
 
 fun<T> Project.runtimeJarArtifactBy(task: Task, artifactRef: T, body: ConfigurablePublishArtifact.() -> Unit = {}) {
