@@ -5828,9 +5828,45 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("forInByteArrayWithIndexWithSmartCast.kt")
+            public void testForInByteArrayWithIndexWithSmartCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInByteArrayWithIndexWithSmartCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInByteArrrayWithIndex.kt")
+            public void testForInByteArrrayWithIndex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInByteArrrayWithIndex.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forInEmptyArrrayWithIndex.kt")
             public void testForInEmptyArrrayWithIndex() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInEmptyArrrayWithIndex.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInGenericArrayOfIntsWithIndex.kt")
+            public void testForInGenericArrayOfIntsWithIndex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInGenericArrayOfIntsWithIndex.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInGenericArrayOfIntsWithIndexWithSmartCast.kt")
+            public void testForInGenericArrayOfIntsWithIndexWithSmartCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInGenericArrayOfIntsWithIndexWithSmartCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInGenericArrayWithIndex.kt")
+            public void testForInGenericArrayWithIndex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInGenericArrayWithIndex.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInIntArrayWithIndexWithSmartCast.kt")
+            public void testForInIntArrayWithIndexWithSmartCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInIntArrayWithIndexWithSmartCast.kt");
                 doTest(fileName);
             }
 
@@ -5843,6 +5879,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("forInObjectArrrayWithIndex.kt")
             public void testForInObjectArrrayWithIndex() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInObjectArrrayWithIndex.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInShortArrayWithIndexWithSmartCast.kt")
+            public void testForInShortArrayWithIndexWithSmartCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInShortArrayWithIndexWithSmartCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInShortArrrayWithIndex.kt")
+            public void testForInShortArrrayWithIndex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInShortArrrayWithIndex.kt");
                 doTest(fileName);
             }
         }
