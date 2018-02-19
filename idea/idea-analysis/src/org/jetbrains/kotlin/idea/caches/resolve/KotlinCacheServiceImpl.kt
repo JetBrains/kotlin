@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.container.getService
-import org.jetbrains.kotlin.container.tryGetService
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -188,7 +186,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 files.sumByLong { it.outOfBlockModificationCount + it.modificationStamp }
             }
         }
-        val dependenciesForSyntheticFileCache = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT, filesModificationTracker)
+
+        val dependenciesForSyntheticFileCache = listOf(
+            PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
+            filesModificationTracker,
+            ScriptDependenciesModificationTracker.getInstance(project)
+        )
+
         val resolverDebugName = "completion/highlighting in $syntheticFileModule for files ${files.joinToString { it.name }} for platform $targetPlatform"
 
         fun makeProjectResolutionFacade(debugName: String,
