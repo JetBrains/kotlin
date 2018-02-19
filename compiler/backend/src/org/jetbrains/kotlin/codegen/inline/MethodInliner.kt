@@ -185,7 +185,7 @@ class MethodInliner(
             }
 
             override fun anew(type: Type) {
-                if (isOldSamWrapper(type.internalName) || isAnonymousClass(type.internalName)) {
+                if (isSamWrapper(type.internalName) || isAnonymousClass(type.internalName)) {
                     handleAnonymousObjectRegeneration()
                 }
 

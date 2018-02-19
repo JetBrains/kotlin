@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -27,9 +25,9 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -72,12 +70,9 @@ public class SamWrapperCodegen {
     }
 
     @NotNull
-    public Type genWrapper(
-            @NotNull KtFile file,
-            @NotNull CallableMemberDescriptor contextDescriptor
-    ) {
+    public Type genWrapper(@NotNull KtFile file) {
         // Name for generated class, in form of whatever$1
-        FqName fqName = getWrapperName(file, contextDescriptor);
+        FqName fqName = getWrapperName(file);
         Type asmType = asmTypeByFqNameWithoutInnerClasses(fqName);
 
         // e.g. (T, T) -> Int
@@ -187,30 +182,20 @@ public class SamWrapperCodegen {
     }
 
     @NotNull
-    private FqName getWrapperName(
-            @NotNull KtFile containingFile,
-            CallableMemberDescriptor contextDescriptor
-    ) {
-        boolean hasPackagePartClass =
-                CollectionsKt.any(CodegenUtil.getActualDeclarations(containingFile), PackageCodegenImpl::isFilePartDeclaration);
-        FqName filePartFqName = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile).getFileClassFqName();
-
-        FqName outermostOwner;
-        if (hasPackagePartClass) {
-            outermostOwner = filePartFqName;
-        }
-        else {
-            ClassifierDescriptor outermostClassifier = DescriptorUtils.getParentOfType(contextDescriptor, ClassDescriptor.class);
-            if (outermostClassifier == null) throw new IllegalStateException("Can't find outermost parent class for " + contextDescriptor);
-            outermostOwner = filePartFqName.parent().child(outermostClassifier.getName());
-        }
-
+    private FqName getWrapperName(@NotNull KtFile containingFile) {
+        FqName fileClassFqName = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile).getFileClassFqName();
+        JavaClassDescriptor descriptor = samType.getJavaClassDescriptor();
+        //Change sam wrapper name template carefully cause it's used in inliner:
+        // see isSamWrapper/isSamWrapperConstructorCall in inlineCodegenUtils.kt
+        int hash = PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 +
+                DescriptorUtils.getFqNameSafe(descriptor).hashCode();
         String shortName = String.format(
-                "%s$sam%s$%s$0",
-                outermostOwner.shortName().asString(),
+                "%s$sam$%s%s$%08x",
+                fileClassFqName.shortName().asString(),
+                descriptor.getName().asString(),
                 (isInsideInline ? "$i" : ""),
-                DescriptorUtils.getFqNameSafe(samType.getJavaClassDescriptor()).asString().replace('.', '_')
+                hash
         );
-        return outermostOwner.parent().child(Name.identifier(shortName));
+        return fileClassFqName.parent().child(Name.identifier(shortName));
     }
 }
