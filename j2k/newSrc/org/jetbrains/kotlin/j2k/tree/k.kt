@@ -27,9 +27,25 @@ interface JKKtAssignmentStatement : JKStatement
 interface JKKtCall : JKMethodCallExpression
 
 interface JKKtProperty : JKDeclaration, JKModifierListOwner {
-    var type: JKTypeIdentifier
-    var name: JKNameIdentifier
-    var initializer: JKExpression?
-    var getter: JKBlock?
-    var setter: JKBlock?
+    val type: JKTypeIdentifier
+    val name: JKNameIdentifier
+    val initializer: JKExpression?
+    val getter: JKBlock?
+    val setter: JKBlock?
+}
+
+interface JKKtFunction : JKDeclaration, JKModifierListOwner {
+    val returnType: JKTypeIdentifier
+    val name: JKNameIdentifier
+    val valueArguments: List<JKValueArgument>
+    val block: JKBlock?
+}
+
+interface JKKtModifier : JKModifier {
+    val type: KtModifierType
+
+    enum class KtModifierType {
+        ACTUAL, ABSTRACT, ANNOTATION, COMPANION, CONST, CROSSINLINE, DATA, ENUM, EXPECT, EXTERNAL, FINAL, INFIX, INLINE, INNER,
+        INTERNAL, LATEINIT, NOINLINE, OPEN, OPERATOR, OUT, OVERRIDE, REIFIED, SEALED, SUSPEND, TAILREC, VARARG
+    }
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.j2k
 
 import org.jetbrains.kotlin.j2k.conversions.JavaFieldToKotlinPropertyConversion
+import org.jetbrains.kotlin.j2k.conversions.JavaMethodToKotlinFunctionConversion
 import org.jetbrains.kotlin.j2k.tree.JKElement
 
 object ConversionsRunner {
@@ -25,6 +26,7 @@ object ConversionsRunner {
 
         trees.forEach {
             JavaFieldToKotlinPropertyConversion().runConversion(it)
+            JavaMethodToKotlinFunctionConversion().runConversion(it)
         }
     }
 

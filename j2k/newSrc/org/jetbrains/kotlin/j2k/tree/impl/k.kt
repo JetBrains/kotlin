@@ -45,3 +45,11 @@ class JKKtPropertyImpl(override var modifierList: JKModifierList,
         setter = setter?.transform(transformer, data)
     }
 }
+
+class JKKtFunctionImpl(override var returnType: JKTypeIdentifier,
+                       override var name: JKNameIdentifier,
+                       override var valueArguments: List<JKValueArgument>,
+                       override var block: JKBlock?,
+                       override var modifierList: JKModifierList) : JKElementBase(), JKKtFunction {
+
+}

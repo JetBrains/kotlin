@@ -198,7 +198,9 @@ class JKTypeCastExpressionImpl(override var expression: JKExpression?, override 
     }
 }
 
-class JKTypeReferenceImpl() : JKTypeReference, JKElementBase() {
+class JKTypeReferenceImpl(override val parameters: List<JKTypeReference>) : JKTypeReference, JKElementBase() {
+
+
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeReference(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
