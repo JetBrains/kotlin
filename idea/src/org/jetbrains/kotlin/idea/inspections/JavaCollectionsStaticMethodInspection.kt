@@ -29,17 +29,7 @@ import org.jetbrains.kotlin.types.KotlinType
 class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return dotQualifiedExpressionVisitor(fun(expression) {
-            val callExpression = expression.callExpression ?: return
-            val args = callExpression.valueArguments
-            val firstArg = args.firstOrNull() ?: return
-            val context = expression.analyze(BodyResolveMode.PARTIAL)
-            if (firstArg.getArgumentExpression()?.getType(context)?.isMutableListOrSubtype() != true) return
-
-            val descriptor = expression.getResolvedCall(context)?.resultingDescriptor as? JavaMethodDescriptor ?: return
-            val fqName = descriptor.importableFqName?.asString() ?: return
-            if (!canReplaceWithStdLib(expression, fqName, args)) return
-
-            val methodName = fqName.split(".").last()
+            val (methodName, firstArg) = getTargetMethodOnMutableList(expression) ?: return
             holder.registerProblem(
                 expression,
                 "Java Collections static method call should be replaced with Kotlin stdlib",
@@ -49,23 +39,49 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
         })
     }
 
-    private fun canReplaceWithStdLib(expression: KtDotQualifiedExpression, fqName: String, args: List<KtValueArgument>): Boolean {
-        if (!fqName.startsWith("java.util.Collections.")) return false
-        val size = args.size
-        return when (fqName) {
-            "java.util.Collections.fill" -> checkApiVersion(ApiVersion.KOTLIN_1_2, expression) && size == 2
-            "java.util.Collections.reverse" -> size == 1
-            "java.util.Collections.shuffle" -> checkApiVersion(ApiVersion.KOTLIN_1_2, expression) && (size == 1 || size == 2)
-            "java.util.Collections.sort" -> {
-                size == 1 || (size == 2 && args.getOrNull(1)?.getArgumentExpression() is KtLambdaExpression)
-            }
-            else -> false
-        }
-    }
+    companion object {
+        fun getTargetMethodOnImmutableList(expression: KtDotQualifiedExpression) =
+            getTargetMethod(expression) { isListOrSubtype() && !isMutableListOrSubtype() }
 
-    private fun checkApiVersion(requiredVersion: ApiVersion, expression: KtDotQualifiedExpression): Boolean {
-        val module = ModuleUtilCore.findModuleForPsiElement(expression) ?: return true
-        return module.languageVersionSettings.apiVersion >= requiredVersion
+        private fun getTargetMethodOnMutableList(expression: KtDotQualifiedExpression) =
+            getTargetMethod(expression) { isMutableListOrSubtype() }
+
+        private fun getTargetMethod(
+            expression: KtDotQualifiedExpression,
+            isValidFirstArgument: KotlinType.() -> Boolean
+        ): Pair<String, KtValueArgument>? {
+            val callExpression = expression.callExpression ?: return null
+            val args = callExpression.valueArguments
+            val firstArg = args.firstOrNull() ?: return null
+            val context = expression.analyze(BodyResolveMode.PARTIAL)
+            if (firstArg.getArgumentExpression()?.getType(context)?.isValidFirstArgument() != true) return null
+
+            val descriptor = expression.getResolvedCall(context)?.resultingDescriptor as? JavaMethodDescriptor ?: return null
+            val fqName = descriptor.importableFqName?.asString() ?: return null
+            if (!canReplaceWithStdLib(expression, fqName, args)) return null
+
+            val methodName = fqName.split(".").last()
+            return methodName to firstArg
+        }
+
+        private fun canReplaceWithStdLib(expression: KtDotQualifiedExpression, fqName: String, args: List<KtValueArgument>): Boolean {
+            if (!fqName.startsWith("java.util.Collections.")) return false
+            val size = args.size
+            return when (fqName) {
+                "java.util.Collections.fill" -> checkApiVersion(ApiVersion.KOTLIN_1_2, expression) && size == 2
+                "java.util.Collections.reverse" -> size == 1
+                "java.util.Collections.shuffle" -> checkApiVersion(ApiVersion.KOTLIN_1_2, expression) && (size == 1 || size == 2)
+                "java.util.Collections.sort" -> {
+                    size == 1 || (size == 2 && args.getOrNull(1)?.getArgumentExpression() is KtLambdaExpression)
+                }
+                else -> false
+            }
+        }
+
+        private fun checkApiVersion(requiredVersion: ApiVersion, expression: KtDotQualifiedExpression): Boolean {
+            val module = ModuleUtilCore.findModuleForPsiElement(expression) ?: return true
+            return module.languageVersionSettings.apiVersion >= requiredVersion
+        }
     }
 
 }
@@ -75,6 +91,13 @@ private fun KotlinType.isMutableList() =
 
 private fun KotlinType.isMutableListOrSubtype(): Boolean {
     return isMutableList() || constructor.supertypes.reversed().any { it.isMutableList() }
+}
+
+private fun KotlinType.isList() =
+    constructor.declarationDescriptor?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.list
+
+private fun KotlinType.isListOrSubtype(): Boolean {
+    return isList() || constructor.supertypes.reversed().any { it.isList() }
 }
 
 private class ReplaceWithStdLibFix(private val methodName: String, private val receiver: String) : LocalQuickFix {
