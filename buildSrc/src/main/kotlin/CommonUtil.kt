@@ -56,3 +56,9 @@ fun Project.generator(fqName: String) = task<JavaExec> {
     main = fqName
     workingDir = rootDir
 }
+
+fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
+    val v = it.toString()
+    if (v.isBlank()) true
+    else v.toBoolean()
+}
