@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import kotlin.collections.CollectionsKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -26,10 +27,8 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -200,9 +199,10 @@ public class SamWrapperCodegen {
             outermostOwner = filePartFqName;
         }
         else {
-            ClassifierDescriptor outermostClassifier = DescriptorUtils.getParentOfType(contextDescriptor, ClassDescriptor.class);
+            ClassifierDescriptor outermostClassifier = getOutermostParentClass(contextDescriptor);
             if (outermostClassifier == null) throw new IllegalStateException("Can't find outermost parent class for " + contextDescriptor);
-            outermostOwner = filePartFqName.parent().child(outermostClassifier.getName());
+            String internalName = typeMapper.mapType(outermostClassifier).getInternalName();
+            outermostOwner = filePartFqName.parent().child(Name.identifier(StringsKt.substringAfterLast(internalName, '/', internalName)));
         }
 
         String shortName = String.format(
@@ -212,5 +212,16 @@ public class SamWrapperCodegen {
                 DescriptorUtils.getFqNameSafe(samType.getJavaClassDescriptor()).asString().replace('.', '_')
         );
         return outermostOwner.parent().child(Name.identifier(shortName));
+    }
+
+    private static ClassDescriptor getOutermostParentClass(CallableMemberDescriptor contextDescriptor) {
+        ClassDescriptor parent = DescriptorUtils.getParentOfType(contextDescriptor, ClassDescriptor.class, true);
+        ClassDescriptor next;
+        do {
+            next = DescriptorUtils.getParentOfType(parent, ClassDescriptor.class, true);
+            if (next != null) parent = next;
+        }
+        while (next != null);
+        return parent;
     }
 }

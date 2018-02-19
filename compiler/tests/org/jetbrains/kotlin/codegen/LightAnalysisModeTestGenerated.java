@@ -19503,6 +19503,24 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("kt17091_4.kt")
+        public void testKt17091_4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/kt17091_4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt22906.kt")
+        public void testKt22906() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/kt22906.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt22906_2.kt")
+        public void testKt22906_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/kt22906_2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compiler/testData/codegen/box/sam/constructors")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
