@@ -1959,6 +1959,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
+        public void testBoxResultInlineClassOfConstructorCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/boxResultInlineClassOfConstructorCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("boxThisOfInlineClass.kt")
         public void testBoxThisOfInlineClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/boxThisOfInlineClass.kt");

@@ -2107,19 +2107,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         if (descriptor instanceof ConstructorDescriptor) {
             if (InlineClassesUtilsKt.isInlineClass(descriptor.getContainingDeclaration())) {
-                KtValueArgument valueArgument = CollectionsKt.firstOrNull(expression.getValueArguments());
-                if (valueArgument == null) return null;
-
-                SimpleType inlineClassType = ((ClassDescriptor) descriptor.getContainingDeclaration()).getDefaultType();
-
-                Type underlyingType = typeMapper.mapType(inlineClassType);
-                KotlinType underlyingKotlinType = InlineClassesUtilsKt.unsubstitutedUnderlyingType(inlineClassType);
-
-                StackValue argumentValue = gen(valueArgument.getArgumentExpression());
-
-                return StackValue.coercionValueForArgumentOfInlineClassConstructor(
-                        argumentValue, underlyingType, inlineClassType, underlyingKotlinType
-                );
+                return generateInlineClassConstructorCall(expression);
             }
 
             return generateNewCall(expression, resolvedCall);
@@ -2132,6 +2120,24 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         return invokeFunction(resolvedCall, receiver);
+    }
+
+    private StackValue generateInlineClassConstructorCall(@NotNull KtCallExpression expression) {
+        KtValueArgument valueArgument = CollectionsKt.singleOrNull(expression.getValueArguments());
+        assert valueArgument != null : "Inline class constructor call should have single argument";
+
+        KotlinType inlineClassType = kotlinType(expression);
+        assert inlineClassType != null && InlineClassesUtilsKt.isInlineClassType(inlineClassType) :
+                "Constructor call expression of inline class should have inline class type, but have: " + inlineClassType;
+
+        Type underlyingType = typeMapper.mapType(inlineClassType);
+        KotlinType underlyingKotlinType = InlineClassesUtilsKt.unsubstitutedUnderlyingType(inlineClassType);
+
+        StackValue argumentValue = gen(valueArgument.getArgumentExpression());
+
+        return StackValue.coercionValueForArgumentOfInlineClassConstructor(
+                argumentValue, underlyingType, inlineClassType, underlyingKotlinType
+        );
     }
 
     @Override
