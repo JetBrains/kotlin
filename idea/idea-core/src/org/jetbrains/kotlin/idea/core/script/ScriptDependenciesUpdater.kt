@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.core.script
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.isProjectOrWorkspaceFile
 import com.intellij.openapi.roots.ProjectRootManager
@@ -29,8 +31,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.openapi.wm.WindowManager
+import com.intellij.openapi.wm.ex.StatusBarEx
+import com.intellij.openapi.wm.ex.WindowManagerEx
 import kotlinx.coroutines.experimental.CoroutineDispatcher
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.asCoroutineDispatcher
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.annotations.TestOnly
@@ -66,7 +70,7 @@ class ScriptDependenciesUpdater(
         listenToVfsChanges()
     }
 
-    private class TimeStampedJob(val actualJob: Job, val timeStamp: TimeStamp) {
+    private class TimeStampedJob(val actualJob: Task.Backgroundable, val timeStamp: TimeStamp) {
         fun stampBy(virtualFile: VirtualFile) = ModStampedRequest(virtualFile.modificationStamp, this)
     }
 
@@ -74,7 +78,12 @@ class ScriptDependenciesUpdater(
         val modificationStamp: Long,
         val job: TimeStampedJob?
     ) {
-        fun cancel() = job?.actualJob?.cancel()
+        fun cancel() {
+            val actualJob = job?.actualJob ?: return
+            val frame = (WindowManager.getInstance() as? WindowManagerEx)?.findFrameFor(actualJob.project)
+            val statusBar = frame?.statusBar as? StatusBarEx ?: return
+            statusBar.backgroundProcesses.find { it.first == actualJob }?.second?.cancel()
+        }
     }
 
     fun getCurrentDependencies(file: VirtualFile): ScriptDependencies {
@@ -160,19 +169,14 @@ class ScriptDependenciesUpdater(
     ): TimeStampedJob {
         val currentTimeStamp = TimeStamps.next()
 
-        val dependenciesResolver = scriptDef.dependencyResolver
-        val scriptContents = contentLoader.getScriptContents(scriptDef, file)
-        val environment = contentLoader.getEnvironment(scriptDef)
-        val newJob = if (dependenciesResolver is AsyncDependenciesResolver) {
-            launchAsyncUpdate(asyncUpdatesDispatcher, file, currentTimeStamp, scriptDef) {
-                dependenciesResolver.resolveAsync(scriptContents, environment)
-            }
-        } else {
-            assert(dependenciesResolver is LegacyResolverWrapper)
-            launchAsyncUpdate(legacyUpdatesDispatcher, file, currentTimeStamp, scriptDef) {
-                dependenciesResolver.resolve(scriptContents, environment)
+        val newJob = object : Task.Backgroundable(project, "Kotlin: Loading dependencies for ${file.name} ...", true) {
+            override fun run(indicator: ProgressIndicator) {
+                if (updateSync(file, scriptDef)) {
+                    notifyRootsChanged()
+                }
             }
         }
+        newJob.queue()
         return TimeStampedJob(newJob, currentTimeStamp)
     }
 
@@ -243,7 +247,7 @@ class ScriptDependenciesUpdater(
 
         val application = ApplicationManager.getApplication()
         if (application.isUnitTestMode) {
-            rootsChangesRunnable.invoke()
+            rootsChangesRunnable()
         } else {
             launch(EDT(project)) {
                 rootsChangesRunnable()
