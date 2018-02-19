@@ -360,4 +360,59 @@ class Collections {
         }
     }
 
+    class Aggregates {
+        @Sample
+        fun all() {
+            val isEven: (Int) -> Boolean = { it % 2 == 0 }
+            val zeroToTen = 0..10
+            assertFalse(zeroToTen.all { isEven(it) })
+            assertFalse(zeroToTen.all(isEven))
+
+            val evens = zeroToTen.map { it * 2 }
+            assertTrue(evens.all { isEven(it) })
+
+            assertTrue(emptyList<Int>().all { false })
+        }
+
+        @Sample
+        fun none() {
+            assertTrue(emptyList<Int>().none())
+
+            assertFalse(listOf("one", "two", "three").none())
+        }
+
+        @Sample
+        fun noneWithPredicate() {
+            val isEven: (Int) -> Boolean = { it % 2 == 0 }
+            val zeroToTen = 0..10
+            assertFalse(zeroToTen.none { isEven(it) })
+            assertFalse(zeroToTen.none(isEven))
+
+            val odds = zeroToTen.map { it * 2 + 1 }
+            assertTrue(odds.none { isEven(it) })
+
+            assertTrue(emptyList<Int>().none { true })
+        }
+
+        @Sample
+        fun any() {
+            assertFalse(emptyList<Int>().any())
+
+            assertTrue(listOf(1, 2, 3).any())
+        }
+
+        @Sample
+        fun anyWithPredicate() {
+            val isEven: (Int) -> Boolean = { it % 2 == 0 }
+            val zeroToTen = 0..10
+            assertTrue(zeroToTen.any { isEven(it) })
+            assertTrue(zeroToTen.any(isEven))
+
+            val odds = zeroToTen.map { it * 2 + 1 }
+            assertFalse(odds.any { isEven(it) })
+
+            assertFalse(emptyList<Int>().any { true })
+        }
+    }
+
 }

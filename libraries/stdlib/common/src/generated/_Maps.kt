@@ -51,16 +51,22 @@ public expect inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.ma
 
 /**
  * Returns `true` if all entries match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun <K, V> Map<out K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean
 
 /**
  * Returns `true` if map has at least one entry.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun <K, V> Map<out K, V>.any(): Boolean
 
 /**
  * Returns `true` if at least one entry matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun <K, V> Map<out K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean): Boolean
 
@@ -105,11 +111,15 @@ public expect fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Ent
 
 /**
  * Returns `true` if the map has no entries.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun <K, V> Map<out K, V>.none(): Boolean
 
 /**
  * Returns `true` if no entries match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun <K, V> Map<out K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean
 

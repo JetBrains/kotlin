@@ -5611,136 +5611,190 @@ public expect infix fun CharArray.union(other: Iterable<Char>): Set<Char>
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun <T> Array<out T>.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun ByteArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun ShortArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun IntArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun LongArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun FloatArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun DoubleArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun BooleanArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun CharArray.any(): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun CharArray.any(predicate: (Char) -> Boolean): Boolean
 
@@ -6487,91 +6541,127 @@ public expect fun CharArray.minWith(comparator: Comparator<in Char>): Char?
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun <T> Array<out T>.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun ByteArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun ShortArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun IntArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun LongArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun FloatArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun DoubleArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun BooleanArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun CharArray.none(): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun <T> Array<out T>.none(predicate: (T) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun ByteArray.none(predicate: (Byte) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun ShortArray.none(predicate: (Short) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun IntArray.none(predicate: (Int) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun LongArray.none(predicate: (Long) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun FloatArray.none(predicate: (Float) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun DoubleArray.none(predicate: (Double) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun BooleanArray.none(predicate: (Boolean) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean
 
