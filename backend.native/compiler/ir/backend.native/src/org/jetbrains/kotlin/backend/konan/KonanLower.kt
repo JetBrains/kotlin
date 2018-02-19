@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.backend.konan.lower.DefaultParameterInjector
+import org.jetbrains.kotlin.backend.konan.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.konan.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -95,6 +96,9 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_INITIALIZERS) {
             InitializersLowering(context).runOnFilePostfix(irFile)
         }
+        phaser.phase(KonanPhase.LOWER_LATEINIT) {
+            LateinitLowering(context).lower(irFile)
+        }
         phaser.phase(KonanPhase.LOWER_SHARED_VARIABLES) {
             SharedVariablesLowering(context).runOnFilePostfix(irFile)
         }
@@ -116,9 +120,6 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_DEFAULT_PARAMETER_EXTENT) {
             DefaultArgumentStubGenerator(context).runOnFilePostfix(irFile)
             DefaultParameterInjector(context).runOnFilePostfix(irFile)
-        }
-        phaser.phase(KonanPhase.LOWER_LATEINIT) {
-            LateinitLowering(context).lower(irFile)
         }
         phaser.phase(KonanPhase.LOWER_BUILTIN_OPERATORS) {
             BuiltinOperatorLowering(context).runOnFilePostfix(irFile)

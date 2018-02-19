@@ -1036,6 +1036,28 @@ task lateinit_inBaseClass(type: RunKonanTest) {
     source = "codegen/lateinit/inBaseClass.kt"
 }
 
+task lateinit_localInitialized(type: RunKonanTest) {
+    goldValue = "zzz\n"
+    source = "codegen/lateinit/localInitialized.kt"
+}
+
+task lateinit_localNotInitialized(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
+    goldValue = "OK\n"
+    source = "codegen/lateinit/localNotInitialized.kt"
+}
+
+task lateinit_localCapturedInitialized(type: RunKonanTest) {
+    goldValue = "zzz\n"
+    source = "codegen/lateinit/localCapturedInitialized.kt"
+}
+
+task lateinit_localCapturedNotInitialized(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
+    goldValue = "OK\n"
+    source = "codegen/lateinit/localCapturedNotInitialized.kt"
+}
+
 task kclass0(type: RunKonanTest) {
     source = "codegen/kclass/kclass0.kt"
 }
