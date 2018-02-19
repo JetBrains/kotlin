@@ -27,7 +27,6 @@ import junit.framework.Assert
 import junit.framework.AssertionFailedError
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.jsonUtils.getString
-import org.jetbrains.kotlin.idea.spring.lineMarking.KotlinSpringClassAnnotator
 import org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -42,10 +41,6 @@ abstract class AbstractSpringClassAnnotatorTest : KotlinLightCodeInsightFixtureT
     override fun setUp() {
         super.setUp()
         TestFixtureExtension.loadFixture<SpringTestFixtureExtension>(myModule)
-        Assert.assertTrue("Kotlin-ultimate service was not found, make sure that <!-- ULTIMATE-PLUGIN-PLACEHOLDER --> " +
-                          "is replaced in `plugin.xml` with data from `ultimate-plugin.xml`",
-                          LineMarkerProviders.INSTANCE.allForLanguage(KotlinLanguage.INSTANCE).any { it is KotlinSpringClassAnnotator }
-        )
     }
 
     protected fun doTest(path: String) {
