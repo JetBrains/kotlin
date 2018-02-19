@@ -99,7 +99,7 @@ internal fun checkRedeclarations(
 
     fun MemberScope.findSiblingsByName(): List<DeclarationDescriptor> {
         val descriptorKindFilter = when (descriptor) {
-            is ClassDescriptor -> DescriptorKindFilter.CLASSIFIERS
+            is ClassifierDescriptor -> DescriptorKindFilter.CLASSIFIERS
             is PropertyDescriptor -> DescriptorKindFilter.VARIABLES
             is FunctionDescriptor -> DescriptorKindFilter.FUNCTIONS
             else -> return emptyList()
