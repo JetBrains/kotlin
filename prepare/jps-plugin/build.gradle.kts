@@ -21,6 +21,7 @@ val projectsToShadow = listOf(
         ":core:util.runtime",
         ":plugins:android-extensions-jps")
 
+// Do not rename, used in JPS importer
 val fatJarContents by configurations.creating
 
 dependencies {

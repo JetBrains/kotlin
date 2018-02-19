@@ -36,7 +36,6 @@ dist(targetName = the<BasePluginConvention>().archivesBaseName.removePrefix("kot
 
 ideaPlugin {
     from(jar)
-    rename("^kotlin-", "")
 }
 
 projectTest {

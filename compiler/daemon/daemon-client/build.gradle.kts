@@ -9,6 +9,7 @@ jvmTarget = "1.6"
 
 val nativePlatformVariants: List<String> by rootProject.extra
 
+// Do not rename, used in JPS importer
 val fatJarContents by configurations.creating
 
 dependencies {

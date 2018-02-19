@@ -4,14 +4,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import shadow.org.jdom2.input.SAXBuilder
 import shadow.org.jdom2.*
-import shadow.org.jdom2.output.DOMOutputter
 import shadow.org.jdom2.output.Format
 import shadow.org.jdom2.output.XMLOutputter
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.dom.*
 import java.io.File
-import java.io.FileOutputStream
-import javax.xml.transform.stream.StreamResult
 
 class JpsCompatiblePlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -104,6 +99,7 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
         }
     }
 
+
     private lateinit var projectDir: File
     private lateinit var platformVersion: String
     private lateinit var platformBaseNumber: String
@@ -123,6 +119,8 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
         val jpsProject = parse(project, ParserContext(dependencyMappers))
             .mapLibraries(this::attachPlatformSources, this::attachAsmSources)
 
+        generateKotlinPluginArtifactFile(project).write()
+
         val files = render(jpsProject, getProjectLibraries(jpsProject))
 
         removeExistingIdeaLibrariesAndModules()
@@ -131,11 +129,7 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
         copyRunConfigurations()
         setOptionsForDefaultJunitRunConfiguration(project)
 
-        for (file in files) {
-            val stubFile = file.path
-            stubFile.parentFile.mkdirs()
-            stubFile.writeText(file.text)
-        }
+        files.forEach { it.write() }
     }
 
     private fun unpill(project: Project) {

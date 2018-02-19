@@ -6,6 +6,9 @@ apply { plugin("jps-compatible") }
 
 val robolectricClasspath by configurations.creating
 
+// Do not rename, used in JPS importer
+val fatJarContents by configurations.creating
+
 dependencies {
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
 
@@ -30,6 +33,8 @@ dependencies {
     testRuntime(intellijPluginDep("junit")) { includeJars("idea-junit", "resources_en") }
 
     robolectricClasspath(commonDep("org.robolectric", "robolectric"))
+
+    fatJarContents(project(":kotlin-android-extensions-runtime"))
 }
 
 sourceSets {

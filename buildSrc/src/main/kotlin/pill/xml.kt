@@ -14,6 +14,7 @@ class xml(val name: String, vararg val args: Pair<String, Any>, block: xml.() ->
     }
 
     private val children = mutableListOf<xml>()
+    private var value: Any? = null
 
     init {
         @Suppress("UNUSED_EXPRESSION")
@@ -28,11 +29,21 @@ class xml(val name: String, vararg val args: Pair<String, Any>, block: xml.() ->
         children += xml
     }
 
+    fun raw(text: String) {
+        value = text
+    }
+
     private fun toElement(): Element {
         val element = Element(name)
 
         for (arg in args) {
             element.setAttribute(arg.first, arg.second.toString())
+        }
+
+        require(value == null || children.isEmpty())
+
+        value?.let { value ->
+            element.addContent(value.toString())
         }
 
         for (child in children) {

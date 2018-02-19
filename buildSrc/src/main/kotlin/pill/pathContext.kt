@@ -1,6 +1,7 @@
 @file:Suppress("PackageDirectoryMismatch")
 package org.jetbrains.kotlin.pill
 
+import org.gradle.api.Project
 import java.io.File
 
 interface PathContext {
@@ -16,10 +17,12 @@ interface PathContext {
     }
 }
 
-class ProjectContext(val project: PProject) : PathContext {
+class ProjectContext private constructor(val projectDir: File) : PathContext {
+    constructor(project: PProject) : this(project.rootDirectory)
+    constructor(project: Project) : this(project.projectDir)
+
     override fun invoke(file: File): String {
-        return file.absolutePath
-            .replace(project.rootDirectory.absolutePath, "\$PROJECT_DIR\$")
+        return file.absolutePath.replace(projectDir.absolutePath, "\$PROJECT_DIR\$")
     }
 }
 
@@ -29,11 +32,12 @@ class ModuleContext(val project: PProject, val module: PModule) : PathContext {
             return file.absolutePath
         }
 
-        fun String.withSlash() = if (this.endsWith("/")) this else (this + "/")
-
         return "\$MODULE_DIR\$/" +
             project.rootDirectory.toRelativeString(module.moduleFile.parentFile).withSlash() +
             module.rootDirectory.toRelativeString(project.rootDirectory).withSlash() +
             file.toRelativeString(module.rootDirectory)
     }
 }
+
+fun String.withSlash() = if (this.endsWith("/")) this else (this + "/")
+fun String.withoutSlash() = this.trimEnd('/')

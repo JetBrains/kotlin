@@ -3,7 +3,13 @@ package org.jetbrains.kotlin.pill
 
 import java.io.File
 
-class PFile(val path: File, val text: String)
+class PFile(val path: File, val text: String) {
+    fun write() {
+        path.parentFile.mkdirs()
+        path.writeText(text)
+    }
+}
+
 fun PFile(path: File, xml: xml) = PFile(path, xml.toString())
 
 fun render(project: PProject, extraLibraries: List<PLibrary> = emptyList()): List<PFile> {

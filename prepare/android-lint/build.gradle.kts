@@ -13,6 +13,15 @@ sourceSets {
     "test" {}
 }
 
+// Do not rename, used in JPS importer
+val fatJarContents by configurations.creating
+
+dependencies {
+    projectsToShadow.forEach {p ->
+        fatJarContents(project(p)) { isTransitive = false }
+    }
+}
+
 runtimeJar {
     projectsToShadow.forEach {
         dependsOn("$it:classes")

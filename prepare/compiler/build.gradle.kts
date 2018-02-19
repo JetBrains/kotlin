@@ -23,7 +23,9 @@ val shrink =
 val compilerManifestClassPath =
         "kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar"
 
+// Do not rename, used in JPS importer
 val fatJarContents by configurations.creating
+
 val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
 val fatSourcesJarContents by configurations.creating
