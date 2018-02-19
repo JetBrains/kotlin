@@ -3,7 +3,6 @@
 
       <multiHostInjector implementation="org.jetbrains.kotlin.idea.spring.el.KotlinSpringELInjector"/>
 
-      <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.spring.lineMarking.KotlinSpringClassAnnotator"/>
       <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.spring.lineMarking.KotlinSpringModelDependenciesLineMarkerProvider"/>
 
       <localInspection implementationClass="org.jetbrains.kotlin.idea.spring.inspections.KotlinFinalClassOrFunSpringInspection"
