@@ -1368,90 +1368,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
-        @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ForInArrayWithIndex extends AbstractBytecodeTextTest {
-            public void testAllFilesPresentInForInArrayWithIndex() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-            }
-
-            @TestMetadata("forInArrrayWithIndexNoElementVar.kt")
-            public void testForInArrrayWithIndexNoElementVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInArrrayWithIndexNoElementVar.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInArrrayWithIndexNoIndexVar.kt")
-            public void testForInArrrayWithIndexNoIndexVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInArrrayWithIndexNoIndexVar.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInEmptyArrrayWithIndex.kt")
-            public void testForInEmptyArrrayWithIndex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInEmptyArrrayWithIndex.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInIntArrrayWithIndex.kt")
-            public void testForInIntArrrayWithIndex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInIntArrrayWithIndex.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInObjectArrrayWithIndex.kt")
-            public void testForInObjectArrrayWithIndex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInObjectArrrayWithIndex.kt");
-                doTest(fileName);
-            }
-        }
-
-        @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ForInCharSequenceWithIndex extends AbstractBytecodeTextTest {
-            public void testAllFilesPresentInForInCharSequenceWithIndex() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-            }
-
-            @TestMetadata("forInCharSequenceWithIndex.kt")
-            public void testForInCharSequenceWithIndex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex/forInCharSequenceWithIndex.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInEmptyStringWithIndex.kt")
-            public void testForInEmptyStringWithIndex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex/forInEmptyStringWithIndex.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInStringWithIndex.kt")
-            public void testForInStringWithIndex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex/forInStringWithIndex.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInStringWithIndexNoElementVar.kt")
-            public void testForInStringWithIndexNoElementVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex/forInStringWithIndexNoElementVar.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInStringWithIndexNoIndexVar.kt")
-            public void testForInStringWithIndexNoIndexVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex/forInStringWithIndexNoIndexVar.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInStringWithIndexWithExplicitlyTypedIndexVariable.kt")
-            public void testForInStringWithIndexWithExplicitlyTypedIndexVariable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex/forInStringWithIndexWithExplicitlyTypedIndexVariable.kt");
-                doTest(fileName);
-            }
-        }
-
         @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIndices")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1493,45 +1409,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             @TestMetadata("forInPrimitiveArrayIndices.kt")
             public void testForInPrimitiveArrayIndices() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIndices/forInPrimitiveArrayIndices.kt");
-                doTest(fileName);
-            }
-        }
-
-        @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIterableWithIndex")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ForInIterableWithIndex extends AbstractBytecodeTextTest {
-            public void testAllFilesPresentInForInIterableWithIndex() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInIterableWithIndex"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-            }
-
-            @TestMetadata("forInEmptyListWithIndex.kt")
-            public void testForInEmptyListWithIndex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIterableWithIndex/forInEmptyListWithIndex.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInListWithIndex.kt")
-            public void testForInListWithIndex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIterableWithIndex/forInListWithIndex.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInListWithIndexNoElementVar.kt")
-            public void testForInListWithIndexNoElementVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIterableWithIndex/forInListWithIndexNoElementVar.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInListWithIndexNoIndexVar.kt")
-            public void testForInListWithIndexNoIndexVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIterableWithIndex/forInListWithIndexNoIndexVar.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInListWithIndexWithExplicitlyTypedIndexVariable.kt")
-            public void testForInListWithIndexWithExplicitlyTypedIndexVariable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIterableWithIndex/forInListWithIndexWithExplicitlyTypedIndexVariable.kt");
                 doTest(fileName);
             }
         }
@@ -1601,51 +1478,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             @TestMetadata("forInReversedUntil.kt")
             public void testForInReversedUntil() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInReversed/forInReversedUntil.kt");
-                doTest(fileName);
-            }
-        }
-
-        @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ForInSequenceWithIndex extends AbstractBytecodeTextTest {
-            public void testAllFilesPresentInForInSequenceWithIndex() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-            }
-
-            @TestMetadata("forInEmptySequenceWithIndex.kt")
-            public void testForInEmptySequenceWithIndex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex/forInEmptySequenceWithIndex.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInSequenceWithIndex.kt")
-            public void testForInSequenceWithIndex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex/forInSequenceWithIndex.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInSequenceWithIndexNoElementVar.kt")
-            public void testForInSequenceWithIndexNoElementVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex/forInSequenceWithIndexNoElementVar.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInSequenceWithIndexNoIndexVar.kt")
-            public void testForInSequenceWithIndexNoIndexVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex/forInSequenceWithIndexNoIndexVar.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInSequenceWithIndexThrowsCME.kt")
-            public void testForInSequenceWithIndexThrowsCME() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex/forInSequenceWithIndexThrowsCME.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("forInSequenceWithIndexWithExplicitlyTypedIndexVariable.kt")
-            public void testForInSequenceWithIndexWithExplicitlyTypedIndexVariable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex/forInSequenceWithIndexWithExplicitlyTypedIndexVariable.kt");
                 doTest(fileName);
             }
         }

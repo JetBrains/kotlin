@@ -126,14 +126,6 @@ private fun ExpressionCodegen.createIntrinsifiedRangeValueOrNull(rangeCall: Reso
             CollectionIndicesRangeValue(rangeCall)
         isCharSequenceIndices(rangeCallee) ->
             CharSequenceIndicesRangeValue(rangeCall)
-        isArrayOrPrimitiveArrayWithIndex(rangeCallee) ->
-            ArrayWithIndexRangeValue(rangeCall)
-        isIterableWithIndex(rangeCallee) ->
-            IterableWithIndexRangeValue(rangeCall)
-        isSequenceWithIndex(rangeCallee) ->
-            SequenceWithIndexRangeValue(rangeCall)
-        isCharSequenceWithIndex(rangeCallee) ->
-            CharSequenceWithIndexRangeValue(rangeCall)
         isComparableRangeTo(rangeCallee) ->
             ComparableRangeLiteralRangeValue(this, rangeCall)
         isPrimitiveProgressionReverse(rangeCallee) ->
