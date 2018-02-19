@@ -36,7 +36,8 @@ interface Callable {
     fun isStaticCall(): Boolean
 
     fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, codegen: ExpressionCodegen): StackValue {
-        return StackValue.functionCall(returnType, resolvedCall.resultingDescriptor.returnType) {
+        // it's important to use unsubstituted return type here to unbox value if it comes from type variable
+        return StackValue.functionCall(returnType, resolvedCall.resultingDescriptor.original.returnType) {
             codegen.invokeMethodWithArguments(this, resolvedCall, receiver)
         }
     }
