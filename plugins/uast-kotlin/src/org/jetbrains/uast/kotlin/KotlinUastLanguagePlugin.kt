@@ -66,8 +66,9 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     private val PsiElement.isJvmElement
         get() = try {
             // Workaround for UAST used without full-fledged IDEA when ProjectFileIndex is not available
-            // If we can't get the module, act as if the current platform is JVM
-            module?.let { TargetPlatformDetector.getPlatform(it) } is JvmPlatform
+            // If we can't get the module (or don't have one), act as if the current platform is JVM
+            val module = module
+            module == null || TargetPlatformDetector.getPlatform(module) is JvmPlatform
         } catch (e: Exception) {
             true
         }
