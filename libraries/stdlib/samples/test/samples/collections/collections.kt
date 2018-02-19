@@ -371,14 +371,17 @@ class Collections {
             val evens = zeroToTen.map { it * 2 }
             assertTrue(evens.all { isEven(it) })
 
-            assertTrue(emptyList<Int>().all { false })
+            val emptyList = emptyList<Int>()
+            assertTrue(emptyList.all { false })
         }
 
         @Sample
         fun none() {
-            assertTrue(emptyList<Int>().none())
+            val emptyList = emptyList<Int>()
+            assertTrue(emptyList.none())
 
-            assertFalse(listOf("one", "two", "three").none())
+            val nonEmptyList = listOf("one", "two", "three")
+            assertFalse(nonEmptyList.none())
         }
 
         @Sample
@@ -391,14 +394,17 @@ class Collections {
             val odds = zeroToTen.map { it * 2 + 1 }
             assertTrue(odds.none { isEven(it) })
 
-            assertTrue(emptyList<Int>().none { true })
+            val emptyList = emptyList<Int>()
+            assertTrue(emptyList.none { true })
         }
 
         @Sample
         fun any() {
-            assertFalse(emptyList<Int>().any())
+            val emptyList = emptyList<Int>()
+            assertFalse(emptyList.any())
 
-            assertTrue(listOf(1, 2, 3).any())
+            val nonEmptyList = listOf(1, 2, 3)
+            assertTrue(nonEmptyList.any())
         }
 
         @Sample
@@ -411,7 +417,8 @@ class Collections {
             val odds = zeroToTen.map { it * 2 + 1 }
             assertFalse(odds.any { isEven(it) })
 
-            assertFalse(emptyList<Int>().any { true })
+            val emptyList = emptyList<Int>()
+            assertFalse(emptyList.any { true })
         }
     }
 
