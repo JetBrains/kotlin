@@ -3,1276 +3,944 @@
 #include <clang-c/Index.h>
 #include <clang-c/ext.h>
 
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCString (JNIEnv *jniEnv, jclass jclss, jlong string) {
-    return (jlong) (clang_getCString(*(CXString*)string));
-}
+// NOTE THIS FILE IS AUTO-GENERATED
 
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeString (JNIEnv *jniEnv, jclass jclss, jlong string) {
-    clang_disposeString(*(CXString*)string);
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge0 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getCString(*(CXString*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeStringSet (JNIEnv *jniEnv, jclass jclss, jlong set) {
-    clang_disposeStringSet((CXStringSet*)set);
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge1 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeString(*(CXString*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getBuildSessionTimestamp (JNIEnv *jniEnv, jclass jclss) {
-    return (jlong) (clang_getBuildSessionTimestamp());
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge2 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeStringSet((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1VirtualFileOverlay_1create (JNIEnv *jniEnv, jclass jclss, jint options) {
-    return (jlong) (clang_VirtualFileOverlay_create((unsigned int)options));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge3 (JNIEnv* jniEnv, jclass jclss) {
+    return (jlong)clang_getBuildSessionTimestamp();
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1VirtualFileOverlay_1addFileMapping (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong virtualPath, jlong realPath) {
-    return (jint) (clang_VirtualFileOverlay_addFileMapping((CXVirtualFileOverlay)arg0, (char*)virtualPath, (char*)realPath));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge4 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jlong)clang_VirtualFileOverlay_create(p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1VirtualFileOverlay_1setCaseSensitivity (JNIEnv *jniEnv, jclass jclss, jlong arg0, jint caseSensitive) {
-    return (jint) (clang_VirtualFileOverlay_setCaseSensitivity((CXVirtualFileOverlay)arg0, (int)caseSensitive));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge5 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    return (jint)clang_VirtualFileOverlay_addFileMapping((void*)p0, (void*)p1, (void*)p2);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1VirtualFileOverlay_1writeToBuffer (JNIEnv *jniEnv, jclass jclss, jlong arg0, jint options, jlong out_buffer_ptr, jlong out_buffer_size) {
-    return (jint) (clang_VirtualFileOverlay_writeToBuffer((CXVirtualFileOverlay)arg0, (unsigned int)options, (char**)out_buffer_ptr, (unsigned int*)out_buffer_size));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge6 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    return (jint)clang_VirtualFileOverlay_setCaseSensitivity((void*)p0, p1);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1free (JNIEnv *jniEnv, jclass jclss, jlong buffer) {
-    clang_free((void*)buffer);
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge7 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2, jlong p3) {
+    return (jint)clang_VirtualFileOverlay_writeToBuffer((void*)p0, p1, (void*)p2, (void*)p3);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1VirtualFileOverlay_1dispose (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    clang_VirtualFileOverlay_dispose((CXVirtualFileOverlay)arg0);
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge8 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_free((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1ModuleMapDescriptor_1create (JNIEnv *jniEnv, jclass jclss, jint options) {
-    return (jlong) (clang_ModuleMapDescriptor_create((unsigned int)options));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge9 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_VirtualFileOverlay_dispose((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1ModuleMapDescriptor_1setFrameworkModuleName (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong name) {
-    return (jint) (clang_ModuleMapDescriptor_setFrameworkModuleName((CXModuleMapDescriptor)arg0, (char*)name));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge10 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jlong)clang_ModuleMapDescriptor_create(p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1ModuleMapDescriptor_1setUmbrellaHeader (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong name) {
-    return (jint) (clang_ModuleMapDescriptor_setUmbrellaHeader((CXModuleMapDescriptor)arg0, (char*)name));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge11 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_ModuleMapDescriptor_setFrameworkModuleName((void*)p0, (void*)p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1ModuleMapDescriptor_1writeToBuffer (JNIEnv *jniEnv, jclass jclss, jlong arg0, jint options, jlong out_buffer_ptr, jlong out_buffer_size) {
-    return (jint) (clang_ModuleMapDescriptor_writeToBuffer((CXModuleMapDescriptor)arg0, (unsigned int)options, (char**)out_buffer_ptr, (unsigned int*)out_buffer_size));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge12 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_ModuleMapDescriptor_setUmbrellaHeader((void*)p0, (void*)p1);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1ModuleMapDescriptor_1dispose (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    clang_ModuleMapDescriptor_dispose((CXModuleMapDescriptor)arg0);
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge13 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2, jlong p3) {
+    return (jint)clang_ModuleMapDescriptor_writeToBuffer((void*)p0, p1, (void*)p2, (void*)p3);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1createIndex (JNIEnv *jniEnv, jclass jclss, jint excludeDeclarationsFromPCH, jint displayDiagnostics) {
-    return (jlong) (clang_createIndex((int)excludeDeclarationsFromPCH, (int)displayDiagnostics));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge14 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_ModuleMapDescriptor_dispose((void*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeIndex (JNIEnv *jniEnv, jclass jclss, jlong index) {
-    clang_disposeIndex((CXIndex)index);
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge15 (JNIEnv* jniEnv, jclass jclss, jint p0, jint p1) {
+    return (jlong)clang_createIndex(p0, p1);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1CXIndex_1setGlobalOptions (JNIEnv *jniEnv, jclass jclss, jlong arg0, jint options) {
-    clang_CXIndex_setGlobalOptions((CXIndex)arg0, (unsigned int)options);
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge16 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeIndex((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXIndex_1getGlobalOptions (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_CXIndex_getGlobalOptions((CXIndex)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge17 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    clang_CXIndex_setGlobalOptions((void*)p0, p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getFileName (JNIEnv *jniEnv, jclass jclss, jlong SFile, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getFileName((CXFile)SFile);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge18 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_CXIndex_getGlobalOptions((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getFileTime (JNIEnv *jniEnv, jclass jclss, jlong SFile) {
-    return (jlong) (clang_getFileTime((CXFile)SFile));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge19 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_getFileName((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getFileUniqueID (JNIEnv *jniEnv, jclass jclss, jlong file, jlong outID) {
-    return (jint) (clang_getFileUniqueID((CXFile)file, (CXFileUniqueID*)outID));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge20 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getFileTime((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isFileMultipleIncludeGuarded (JNIEnv *jniEnv, jclass jclss, jlong tu, jlong file) {
-    return (jint) (clang_isFileMultipleIncludeGuarded((CXTranslationUnit)tu, (CXFile)file));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge21 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_getFileUniqueID((void*)p0, (void*)p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getFile (JNIEnv *jniEnv, jclass jclss, jlong tu, jlong file_name) {
-    return (jlong) (clang_getFile((CXTranslationUnit)tu, (char*)file_name));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge22 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_isFileMultipleIncludeGuarded((void*)p0, (void*)p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1File_1isEqual (JNIEnv *jniEnv, jclass jclss, jlong file1, jlong file2) {
-    return (jint) (clang_File_isEqual((CXFile)file1, (CXFile)file2));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge23 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jlong)clang_getFile((void*)p0, (void*)p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getNullLocation (JNIEnv *jniEnv, jclass jclss, jlong retValPlacement) {
-    *(CXSourceLocation*)retValPlacement = clang_getNullLocation();
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge24 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_File_isEqual((void*)p0, (void*)p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1equalLocations (JNIEnv *jniEnv, jclass jclss, jlong loc1, jlong loc2) {
-    return (jint) (clang_equalLocations(*(CXSourceLocation*)loc1, *(CXSourceLocation*)loc2));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge25 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    *(CXSourceLocation*)p0 = clang_getNullLocation();
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getLocation (JNIEnv *jniEnv, jclass jclss, jlong tu, jlong file, jint line, jint column, jlong retValPlacement) {
-    *(CXSourceLocation*)retValPlacement = clang_getLocation((CXTranslationUnit)tu, (CXFile)file, (unsigned int)line, (unsigned int)column);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge26 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_equalLocations(*(CXSourceLocation*)p0, *(CXSourceLocation*)p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getLocationForOffset (JNIEnv *jniEnv, jclass jclss, jlong tu, jlong file, jint offset, jlong retValPlacement) {
-    *(CXSourceLocation*)retValPlacement = clang_getLocationForOffset((CXTranslationUnit)tu, (CXFile)file, (unsigned int)offset);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge27 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jint p2, jint p3, jlong p4) {
+    *(CXSourceLocation*)p4 = clang_getLocation((void*)p0, (void*)p1, p2, p3);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Location_1isInSystemHeader (JNIEnv *jniEnv, jclass jclss, jlong location) {
-    return (jint) (clang_Location_isInSystemHeader(*(CXSourceLocation*)location));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge28 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jint p2, jlong p3) {
+    *(CXSourceLocation*)p3 = clang_getLocationForOffset((void*)p0, (void*)p1, p2);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Location_1isFromMainFile (JNIEnv *jniEnv, jclass jclss, jlong location) {
-    return (jint) (clang_Location_isFromMainFile(*(CXSourceLocation*)location));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge29 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Location_isInSystemHeader(*(CXSourceLocation*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getNullRange (JNIEnv *jniEnv, jclass jclss, jlong retValPlacement) {
-    *(CXSourceRange*)retValPlacement = clang_getNullRange();
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge30 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Location_isFromMainFile(*(CXSourceLocation*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getRange (JNIEnv *jniEnv, jclass jclss, jlong begin, jlong end, jlong retValPlacement) {
-    *(CXSourceRange*)retValPlacement = clang_getRange(*(CXSourceLocation*)begin, *(CXSourceLocation*)end);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge31 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    *(CXSourceRange*)p0 = clang_getNullRange();
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1equalRanges (JNIEnv *jniEnv, jclass jclss, jlong range1, jlong range2) {
-    return (jint) (clang_equalRanges(*(CXSourceRange*)range1, *(CXSourceRange*)range2));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge32 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    *(CXSourceRange*)p2 = clang_getRange(*(CXSourceLocation*)p0, *(CXSourceLocation*)p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Range_1isNull (JNIEnv *jniEnv, jclass jclss, jlong range) {
-    return (jint) (clang_Range_isNull(*(CXSourceRange*)range));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge33 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_equalRanges(*(CXSourceRange*)p0, *(CXSourceRange*)p1);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1getExpansionLocation (JNIEnv *jniEnv, jclass jclss, jlong location, jlong file, jlong line, jlong column, jlong offset) {
-    clang_getExpansionLocation(*(CXSourceLocation*)location, (CXFile*)file, (unsigned int*)line, (unsigned int*)column, (unsigned int*)offset);
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge34 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Range_isNull(*(CXSourceRange*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1getPresumedLocation (JNIEnv *jniEnv, jclass jclss, jlong location, jlong filename, jlong line, jlong column) {
-    clang_getPresumedLocation(*(CXSourceLocation*)location, (CXString*)filename, (unsigned int*)line, (unsigned int*)column);
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge35 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jlong p3, jlong p4) {
+    clang_getExpansionLocation(*(CXSourceLocation*)p0, (void*)p1, (void*)p2, (void*)p3, (void*)p4);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1getInstantiationLocation (JNIEnv *jniEnv, jclass jclss, jlong location, jlong file, jlong line, jlong column, jlong offset) {
-    clang_getInstantiationLocation(*(CXSourceLocation*)location, (CXFile*)file, (unsigned int*)line, (unsigned int*)column, (unsigned int*)offset);
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge36 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jlong p3) {
+    clang_getPresumedLocation(*(CXSourceLocation*)p0, (void*)p1, (void*)p2, (void*)p3);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1getSpellingLocation (JNIEnv *jniEnv, jclass jclss, jlong location, jlong file, jlong line, jlong column, jlong offset) {
-    clang_getSpellingLocation(*(CXSourceLocation*)location, (CXFile*)file, (unsigned int*)line, (unsigned int*)column, (unsigned int*)offset);
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge37 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jlong p3, jlong p4) {
+    clang_getInstantiationLocation(*(CXSourceLocation*)p0, (void*)p1, (void*)p2, (void*)p3, (void*)p4);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1getFileLocation (JNIEnv *jniEnv, jclass jclss, jlong location, jlong file, jlong line, jlong column, jlong offset) {
-    clang_getFileLocation(*(CXSourceLocation*)location, (CXFile*)file, (unsigned int*)line, (unsigned int*)column, (unsigned int*)offset);
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge38 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jlong p3, jlong p4) {
+    clang_getSpellingLocation(*(CXSourceLocation*)p0, (void*)p1, (void*)p2, (void*)p3, (void*)p4);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getRangeStart (JNIEnv *jniEnv, jclass jclss, jlong range, jlong retValPlacement) {
-    *(CXSourceLocation*)retValPlacement = clang_getRangeStart(*(CXSourceRange*)range);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge39 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jlong p3, jlong p4) {
+    clang_getFileLocation(*(CXSourceLocation*)p0, (void*)p1, (void*)p2, (void*)p3, (void*)p4);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getRangeEnd (JNIEnv *jniEnv, jclass jclss, jlong range, jlong retValPlacement) {
-    *(CXSourceLocation*)retValPlacement = clang_getRangeEnd(*(CXSourceRange*)range);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge40 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXSourceLocation*)p1 = clang_getRangeStart(*(CXSourceRange*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getSkippedRanges (JNIEnv *jniEnv, jclass jclss, jlong tu, jlong file) {
-    return (jlong) (clang_getSkippedRanges((CXTranslationUnit)tu, (CXFile)file));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge41 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXSourceLocation*)p1 = clang_getRangeEnd(*(CXSourceRange*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeSourceRangeList (JNIEnv *jniEnv, jclass jclss, jlong ranges) {
-    clang_disposeSourceRangeList((CXSourceRangeList*)ranges);
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge42 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jlong)clang_getSkippedRanges((void*)p0, (void*)p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getNumDiagnosticsInSet (JNIEnv *jniEnv, jclass jclss, jlong Diags) {
-    return (jint) (clang_getNumDiagnosticsInSet((CXDiagnosticSet)Diags));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge43 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getAllSkippedRanges((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDiagnosticInSet (JNIEnv *jniEnv, jclass jclss, jlong Diags, jint Index) {
-    return (jlong) (clang_getDiagnosticInSet((CXDiagnosticSet)Diags, (unsigned int)Index));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge44 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeSourceRangeList((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1loadDiagnostics (JNIEnv *jniEnv, jclass jclss, jlong file, jlong error, jlong errorString) {
-    return (jlong) (clang_loadDiagnostics((char*)file, (enum CXLoadDiag_Error*)error, (CXString*)errorString));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge45 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getNumDiagnosticsInSet((void*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeDiagnosticSet (JNIEnv *jniEnv, jclass jclss, jlong Diags) {
-    clang_disposeDiagnosticSet((CXDiagnosticSet)Diags);
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge46 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    return (jlong)clang_getDiagnosticInSet((void*)p0, p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getChildDiagnostics (JNIEnv *jniEnv, jclass jclss, jlong D) {
-    return (jlong) (clang_getChildDiagnostics((CXDiagnostic)D));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge47 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    return (jlong)clang_loadDiagnostics((void*)p0, (void*)p1, (void*)p2);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getNumDiagnostics (JNIEnv *jniEnv, jclass jclss, jlong Unit) {
-    return (jint) (clang_getNumDiagnostics((CXTranslationUnit)Unit));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge48 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeDiagnosticSet((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDiagnostic (JNIEnv *jniEnv, jclass jclss, jlong Unit, jint Index) {
-    return (jlong) (clang_getDiagnostic((CXTranslationUnit)Unit, (unsigned int)Index));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge49 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getChildDiagnostics((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDiagnosticSetFromTU (JNIEnv *jniEnv, jclass jclss, jlong Unit) {
-    return (jlong) (clang_getDiagnosticSetFromTU((CXTranslationUnit)Unit));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge50 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getNumDiagnostics((void*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeDiagnostic (JNIEnv *jniEnv, jclass jclss, jlong Diagnostic) {
-    clang_disposeDiagnostic((CXDiagnostic)Diagnostic);
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge51 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    return (jlong)clang_getDiagnostic((void*)p0, p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1formatDiagnostic (JNIEnv *jniEnv, jclass jclss, jlong Diagnostic, jint Options, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_formatDiagnostic((CXDiagnostic)Diagnostic, (unsigned int)Options);
-    return (jlong) retValPlacement;
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge52 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getDiagnosticSetFromTU((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1defaultDiagnosticDisplayOptions (JNIEnv *jniEnv, jclass jclss) {
-    return (jint) (clang_defaultDiagnosticDisplayOptions());
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge53 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeDiagnostic((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getDiagnosticSeverity (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_getDiagnosticSeverity((CXDiagnostic)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge54 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2) {
+    *(CXString*)p2 = clang_formatDiagnostic((void*)p0, p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDiagnosticLocation (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXSourceLocation*)retValPlacement = clang_getDiagnosticLocation((CXDiagnostic)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge55 (JNIEnv* jniEnv, jclass jclss) {
+    return (jint)clang_defaultDiagnosticDisplayOptions();
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDiagnosticSpelling (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getDiagnosticSpelling((CXDiagnostic)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge56 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getDiagnosticSeverity((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDiagnosticOption (JNIEnv *jniEnv, jclass jclss, jlong Diag, jlong Disable, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getDiagnosticOption((CXDiagnostic)Diag, (CXString*)Disable);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge57 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXSourceLocation*)p1 = clang_getDiagnosticLocation((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getDiagnosticCategory (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_getDiagnosticCategory((CXDiagnostic)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge58 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_getDiagnosticSpelling((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDiagnosticCategoryName (JNIEnv *jniEnv, jclass jclss, jint Category, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getDiagnosticCategoryName((unsigned int)Category);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge59 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    *(CXString*)p2 = clang_getDiagnosticOption((void*)p0, (void*)p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDiagnosticCategoryText (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getDiagnosticCategoryText((CXDiagnostic)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge60 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getDiagnosticCategory((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getDiagnosticNumRanges (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_getDiagnosticNumRanges((CXDiagnostic)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge61 (JNIEnv* jniEnv, jclass jclss, jint p0, jlong p1) {
+    *(CXString*)p1 = clang_getDiagnosticCategoryName(p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDiagnosticRange (JNIEnv *jniEnv, jclass jclss, jlong Diagnostic, jint Range, jlong retValPlacement) {
-    *(CXSourceRange*)retValPlacement = clang_getDiagnosticRange((CXDiagnostic)Diagnostic, (unsigned int)Range);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge62 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_getDiagnosticCategoryText((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getDiagnosticNumFixIts (JNIEnv *jniEnv, jclass jclss, jlong Diagnostic) {
-    return (jint) (clang_getDiagnosticNumFixIts((CXDiagnostic)Diagnostic));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge63 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getDiagnosticNumRanges((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDiagnosticFixIt (JNIEnv *jniEnv, jclass jclss, jlong Diagnostic, jint FixIt, jlong ReplacementRange, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getDiagnosticFixIt((CXDiagnostic)Diagnostic, (unsigned int)FixIt, (CXSourceRange*)ReplacementRange);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge64 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2) {
+    *(CXSourceRange*)p2 = clang_getDiagnosticRange((void*)p0, p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getTranslationUnitSpelling (JNIEnv *jniEnv, jclass jclss, jlong CTUnit, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getTranslationUnitSpelling((CXTranslationUnit)CTUnit);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge65 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getDiagnosticNumFixIts((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1createTranslationUnitFromSourceFile (JNIEnv *jniEnv, jclass jclss, jlong CIdx, jlong source_filename, jint num_clang_command_line_args, jlong clang_command_line_args, jint num_unsaved_files, jlong unsaved_files) {
-    return (jlong) (clang_createTranslationUnitFromSourceFile((CXIndex)CIdx, (char*)source_filename, (int)num_clang_command_line_args, (char**)clang_command_line_args, (unsigned int)num_unsaved_files, (struct CXUnsavedFile*)unsaved_files));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge66 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2, jlong p3) {
+    *(CXString*)p3 = clang_getDiagnosticFixIt((void*)p0, p1, (void*)p2);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1createTranslationUnit (JNIEnv *jniEnv, jclass jclss, jlong CIdx, jlong ast_filename) {
-    return (jlong) (clang_createTranslationUnit((CXIndex)CIdx, (char*)ast_filename));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge67 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_getTranslationUnitSpelling((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1createTranslationUnit2 (JNIEnv *jniEnv, jclass jclss, jlong CIdx, jlong ast_filename, jlong out_TU) {
-    return (jint) (clang_createTranslationUnit2((CXIndex)CIdx, (char*)ast_filename, (CXTranslationUnit*)out_TU));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge68 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jint p2, jlong p3, jint p4, jlong p5) {
+    return (jlong)clang_createTranslationUnitFromSourceFile((void*)p0, (void*)p1, p2, (void*)p3, p4, (void*)p5);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1defaultEditingTranslationUnitOptions (JNIEnv *jniEnv, jclass jclss) {
-    return (jint) (clang_defaultEditingTranslationUnitOptions());
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge69 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jlong)clang_createTranslationUnit((void*)p0, (void*)p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1parseTranslationUnit (JNIEnv *jniEnv, jclass jclss, jlong CIdx, jlong source_filename, jlong command_line_args, jint num_command_line_args, jlong unsaved_files, jint num_unsaved_files, jint options) {
-    return (jlong) (clang_parseTranslationUnit((CXIndex)CIdx, (char*)source_filename, (char**)command_line_args, (int)num_command_line_args, (struct CXUnsavedFile*)unsaved_files, (unsigned int)num_unsaved_files, (unsigned int)options));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge70 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    return (jint)clang_createTranslationUnit2((void*)p0, (void*)p1, (void*)p2);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1parseTranslationUnit2 (JNIEnv *jniEnv, jclass jclss, jlong CIdx, jlong source_filename, jlong command_line_args, jint num_command_line_args, jlong unsaved_files, jint num_unsaved_files, jint options, jlong out_TU) {
-    return (jint) (clang_parseTranslationUnit2((CXIndex)CIdx, (char*)source_filename, (char**)command_line_args, (int)num_command_line_args, (struct CXUnsavedFile*)unsaved_files, (unsigned int)num_unsaved_files, (unsigned int)options, (CXTranslationUnit*)out_TU));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge71 (JNIEnv* jniEnv, jclass jclss) {
+    return (jint)clang_defaultEditingTranslationUnitOptions();
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1parseTranslationUnit2FullArgv (JNIEnv *jniEnv, jclass jclss, jlong CIdx, jlong source_filename, jlong command_line_args, jint num_command_line_args, jlong unsaved_files, jint num_unsaved_files, jint options, jlong out_TU) {
-    return (jint) (clang_parseTranslationUnit2FullArgv((CXIndex)CIdx, (char*)source_filename, (char**)command_line_args, (int)num_command_line_args, (struct CXUnsavedFile*)unsaved_files, (unsigned int)num_unsaved_files, (unsigned int)options, (CXTranslationUnit*)out_TU));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge72 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jint p3, jlong p4, jint p5, jint p6) {
+    return (jlong)clang_parseTranslationUnit((void*)p0, (void*)p1, (void*)p2, p3, (void*)p4, p5, p6);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1defaultSaveOptions (JNIEnv *jniEnv, jclass jclss, jlong TU) {
-    return (jint) (clang_defaultSaveOptions((CXTranslationUnit)TU));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge73 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jint p3, jlong p4, jint p5, jint p6, jlong p7) {
+    return (jint)clang_parseTranslationUnit2((void*)p0, (void*)p1, (void*)p2, p3, (void*)p4, p5, p6, (void*)p7);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1saveTranslationUnit (JNIEnv *jniEnv, jclass jclss, jlong TU, jlong FileName, jint options) {
-    return (jint) (clang_saveTranslationUnit((CXTranslationUnit)TU, (char*)FileName, (unsigned int)options));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge74 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jint p3, jlong p4, jint p5, jint p6, jlong p7) {
+    return (jint)clang_parseTranslationUnit2FullArgv((void*)p0, (void*)p1, (void*)p2, p3, (void*)p4, p5, p6, (void*)p7);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeTranslationUnit (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    clang_disposeTranslationUnit((CXTranslationUnit)arg0);
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge75 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_defaultSaveOptions((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1defaultReparseOptions (JNIEnv *jniEnv, jclass jclss, jlong TU) {
-    return (jint) (clang_defaultReparseOptions((CXTranslationUnit)TU));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge76 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jint p2) {
+    return (jint)clang_saveTranslationUnit((void*)p0, (void*)p1, p2);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1reparseTranslationUnit (JNIEnv *jniEnv, jclass jclss, jlong TU, jint num_unsaved_files, jlong unsaved_files, jint options) {
-    return (jint) (clang_reparseTranslationUnit((CXTranslationUnit)TU, (unsigned int)num_unsaved_files, (struct CXUnsavedFile*)unsaved_files, (unsigned int)options));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge77 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_suspendTranslationUnit((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getTUResourceUsageName (JNIEnv *jniEnv, jclass jclss, jint kind) {
-    return (jlong) (clang_getTUResourceUsageName((enum CXTUResourceUsageKind)kind));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge78 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeTranslationUnit((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCXTUResourceUsage (JNIEnv *jniEnv, jclass jclss, jlong TU, jlong retValPlacement) {
-    *(struct CXTUResourceUsage*)retValPlacement = clang_getCXTUResourceUsage((CXTranslationUnit)TU);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge79 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_defaultReparseOptions((void*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeCXTUResourceUsage (JNIEnv *jniEnv, jclass jclss, jlong usage) {
-    clang_disposeCXTUResourceUsage(*(struct CXTUResourceUsage*)usage);
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge80 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2, jint p3) {
+    return (jint)clang_reparseTranslationUnit((void*)p0, p1, (void*)p2, p3);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getNullCursor (JNIEnv *jniEnv, jclass jclss, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_getNullCursor();
-    return (jlong) retValPlacement;
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge81 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jlong)clang_getTUResourceUsageName(p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getTranslationUnitCursor (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_getTranslationUnitCursor((CXTranslationUnit)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge82 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(struct CXTUResourceUsage*)p1 = clang_getCXTUResourceUsage((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1equalCursors (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong arg1) {
-    return (jint) (clang_equalCursors(*(CXCursor*)arg0, *(CXCursor*)arg1));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge83 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeCXTUResourceUsage(*(struct CXTUResourceUsage*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1isNull (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
-    return (jint) (clang_Cursor_isNull(*(CXCursor*)cursor));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge84 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getTranslationUnitTargetInfo((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1hashCursor (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_hashCursor(*(CXCursor*)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge85 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_TargetInfo_dispose((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getCursorKind (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_getCursorKind(*(CXCursor*)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge86 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_TargetInfo_getTriple((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isDeclaration (JNIEnv *jniEnv, jclass jclss, jint arg0) {
-    return (jint) (clang_isDeclaration((enum CXCursorKind)arg0));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge87 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_TargetInfo_getPointerWidth((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isReference (JNIEnv *jniEnv, jclass jclss, jint arg0) {
-    return (jint) (clang_isReference((enum CXCursorKind)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge88 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    *(CXCursor*)p0 = clang_getNullCursor();
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isExpression (JNIEnv *jniEnv, jclass jclss, jint arg0) {
-    return (jint) (clang_isExpression((enum CXCursorKind)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge89 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXCursor*)p1 = clang_getTranslationUnitCursor((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isStatement (JNIEnv *jniEnv, jclass jclss, jint arg0) {
-    return (jint) (clang_isStatement((enum CXCursorKind)arg0));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge90 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_equalCursors(*(CXCursor*)p0, *(CXCursor*)p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isAttribute (JNIEnv *jniEnv, jclass jclss, jint arg0) {
-    return (jint) (clang_isAttribute((enum CXCursorKind)arg0));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge91 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_isNull(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1hasAttrs (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_hasAttrs(*(CXCursor*)C));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge92 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_hashCursor(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isInvalid (JNIEnv *jniEnv, jclass jclss, jint arg0) {
-    return (jint) (clang_isInvalid((enum CXCursorKind)arg0));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge93 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getCursorKind(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isTranslationUnit (JNIEnv *jniEnv, jclass jclss, jint arg0) {
-    return (jint) (clang_isTranslationUnit((enum CXCursorKind)arg0));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge94 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jint)clang_isDeclaration(p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isPreprocessing (JNIEnv *jniEnv, jclass jclss, jint arg0) {
-    return (jint) (clang_isPreprocessing((enum CXCursorKind)arg0));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge95 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jint)clang_isReference(p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isUnexposed (JNIEnv *jniEnv, jclass jclss, jint arg0) {
-    return (jint) (clang_isUnexposed((enum CXCursorKind)arg0));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge96 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jint)clang_isExpression(p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getCursorLinkage (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
-    return (jint) (clang_getCursorLinkage(*(CXCursor*)cursor));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge97 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jint)clang_isStatement(p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getCursorVisibility (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
-    return (jint) (clang_getCursorVisibility(*(CXCursor*)cursor));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge98 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jint)clang_isAttribute(p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getCursorAvailability (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
-    return (jint) (clang_getCursorAvailability(*(CXCursor*)cursor));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge99 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_hasAttrs(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getCursorPlatformAvailability (JNIEnv *jniEnv, jclass jclss, jlong cursor, jlong always_deprecated, jlong deprecated_message, jlong always_unavailable, jlong unavailable_message, jlong availability, jint availability_size) {
-    return (jint) (clang_getCursorPlatformAvailability(*(CXCursor*)cursor, (int*)always_deprecated, (CXString*)deprecated_message, (int*)always_unavailable, (CXString*)unavailable_message, (struct CXPlatformAvailability*)availability, (int)availability_size));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge100 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jint)clang_isInvalid(p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeCXPlatformAvailability (JNIEnv *jniEnv, jclass jclss, jlong availability) {
-    clang_disposeCXPlatformAvailability((struct CXPlatformAvailability*)availability);
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge101 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jint)clang_isTranslationUnit(p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getCursorLanguage (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
-    return (jint) (clang_getCursorLanguage(*(CXCursor*)cursor));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge102 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jint)clang_isPreprocessing(p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getTranslationUnit (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jlong) (clang_Cursor_getTranslationUnit(*(CXCursor*)arg0));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge103 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jint)clang_isUnexposed(p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1createCXCursorSet (JNIEnv *jniEnv, jclass jclss) {
-    return (jlong) (clang_createCXCursorSet());
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge104 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getCursorLinkage(*(CXCursor*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeCXCursorSet (JNIEnv *jniEnv, jclass jclss, jlong cset) {
-    clang_disposeCXCursorSet((CXCursorSet)cset);
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge105 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getCursorVisibility(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXCursorSet_1contains (JNIEnv *jniEnv, jclass jclss, jlong cset, jlong cursor) {
-    return (jint) (clang_CXCursorSet_contains((CXCursorSet)cset, *(CXCursor*)cursor));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge106 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getCursorAvailability(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXCursorSet_1insert (JNIEnv *jniEnv, jclass jclss, jlong cset, jlong cursor) {
-    return (jint) (clang_CXCursorSet_insert((CXCursorSet)cset, *(CXCursor*)cursor));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge107 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jlong p3, jlong p4, jlong p5, jint p6) {
+    return (jint)clang_getCursorPlatformAvailability(*(CXCursor*)p0, (void*)p1, (void*)p2, (void*)p3, (void*)p4, (void*)p5, p6);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorSemanticParent (JNIEnv *jniEnv, jclass jclss, jlong cursor, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_getCursorSemanticParent(*(CXCursor*)cursor);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge108 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeCXPlatformAvailability((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorLexicalParent (JNIEnv *jniEnv, jclass jclss, jlong cursor, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_getCursorLexicalParent(*(CXCursor*)cursor);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge109 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getCursorLanguage(*(CXCursor*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1getOverriddenCursors (JNIEnv *jniEnv, jclass jclss, jlong cursor, jlong overridden, jlong num_overridden) {
-    clang_getOverriddenCursors(*(CXCursor*)cursor, (CXCursor**)overridden, (unsigned int*)num_overridden);
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge110 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_Cursor_getTranslationUnit(*(CXCursor*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeOverriddenCursors (JNIEnv *jniEnv, jclass jclss, jlong overridden) {
-    clang_disposeOverriddenCursors((CXCursor*)overridden);
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge111 (JNIEnv* jniEnv, jclass jclss) {
+    return (jlong)clang_createCXCursorSet();
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getIncludedFile (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
-    return (jlong) (clang_getIncludedFile(*(CXCursor*)cursor));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge112 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeCXCursorSet((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursor (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong arg1, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_getCursor((CXTranslationUnit)arg0, *(CXSourceLocation*)arg1);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge113 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_CXCursorSet_contains((void*)p0, *(CXCursor*)p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorLocation (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXSourceLocation*)retValPlacement = clang_getCursorLocation(*(CXCursor*)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge114 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_CXCursorSet_insert((void*)p0, *(CXCursor*)p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorExtent (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXSourceRange*)retValPlacement = clang_getCursorExtent(*(CXCursor*)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge115 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXCursor*)p1 = clang_getCursorSemanticParent(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorType (JNIEnv *jniEnv, jclass jclss, jlong C, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_getCursorType(*(CXCursor*)C);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge116 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXCursor*)p1 = clang_getCursorLexicalParent(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getTypeSpelling (JNIEnv *jniEnv, jclass jclss, jlong CT, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getTypeSpelling(*(CXType*)CT);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge117 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    clang_getOverriddenCursors(*(CXCursor*)p0, (void*)p1, (void*)p2);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getTypedefDeclUnderlyingType (JNIEnv *jniEnv, jclass jclss, jlong C, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_getTypedefDeclUnderlyingType(*(CXCursor*)C);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge118 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeOverriddenCursors((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getEnumDeclIntegerType (JNIEnv *jniEnv, jclass jclss, jlong C, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_getEnumDeclIntegerType(*(CXCursor*)C);
-    return (jlong) retValPlacement;
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge119 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getIncludedFile(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getEnumConstantDeclValue (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jlong) (clang_getEnumConstantDeclValue(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge120 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    *(CXCursor*)p2 = clang_getCursor((void*)p0, *(CXSourceLocation*)p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getEnumConstantDeclUnsignedValue (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jlong) (clang_getEnumConstantDeclUnsignedValue(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge121 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXSourceLocation*)p1 = clang_getCursorLocation(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getFieldDeclBitWidth (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_getFieldDeclBitWidth(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge122 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXSourceRange*)p1 = clang_getCursorExtent(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1getNumArguments (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_getNumArguments(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge123 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_getCursorType(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getArgument (JNIEnv *jniEnv, jclass jclss, jlong C, jint i, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_Cursor_getArgument(*(CXCursor*)C, (unsigned int)i);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge124 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_getTypeSpelling(*(CXType*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1getNumTemplateArguments (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_getNumTemplateArguments(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge125 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_getTypedefDeclUnderlyingType(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1getTemplateArgumentKind (JNIEnv *jniEnv, jclass jclss, jlong C, jint I) {
-    return (jint) (clang_Cursor_getTemplateArgumentKind(*(CXCursor*)C, (unsigned int)I));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge126 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_getEnumDeclIntegerType(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getTemplateArgumentType (JNIEnv *jniEnv, jclass jclss, jlong C, jint I, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_Cursor_getTemplateArgumentType(*(CXCursor*)C, (unsigned int)I);
-    return (jlong) retValPlacement;
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge127 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getEnumConstantDeclValue(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getTemplateArgumentValue (JNIEnv *jniEnv, jclass jclss, jlong C, jint I) {
-    return (jlong) (clang_Cursor_getTemplateArgumentValue(*(CXCursor*)C, (unsigned int)I));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge128 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getEnumConstantDeclUnsignedValue(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getTemplateArgumentUnsignedValue (JNIEnv *jniEnv, jclass jclss, jlong C, jint I) {
-    return (jlong) (clang_Cursor_getTemplateArgumentUnsignedValue(*(CXCursor*)C, (unsigned int)I));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge129 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getFieldDeclBitWidth(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1equalTypes (JNIEnv *jniEnv, jclass jclss, jlong A, jlong B) {
-    return (jint) (clang_equalTypes(*(CXType*)A, *(CXType*)B));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge130 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_getNumArguments(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCanonicalType (JNIEnv *jniEnv, jclass jclss, jlong T, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_getCanonicalType(*(CXType*)T);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge131 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2) {
+    *(CXCursor*)p2 = clang_Cursor_getArgument(*(CXCursor*)p0, p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isConstQualifiedType (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jint) (clang_isConstQualifiedType(*(CXType*)T));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge132 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_getNumTemplateArguments(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1isMacroFunctionLike (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_isMacroFunctionLike(*(CXCursor*)C));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge133 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    return (jint)clang_Cursor_getTemplateArgumentKind(*(CXCursor*)p0, p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1isMacroBuiltin (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_isMacroBuiltin(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge134 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2) {
+    *(CXType*)p2 = clang_Cursor_getTemplateArgumentType(*(CXCursor*)p0, p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1isFunctionInlined (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_isFunctionInlined(*(CXCursor*)C));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge135 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    return (jlong)clang_Cursor_getTemplateArgumentValue(*(CXCursor*)p0, p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isVolatileQualifiedType (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jint) (clang_isVolatileQualifiedType(*(CXType*)T));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge136 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    return (jlong)clang_Cursor_getTemplateArgumentUnsignedValue(*(CXCursor*)p0, p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isRestrictQualifiedType (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jint) (clang_isRestrictQualifiedType(*(CXType*)T));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge137 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_equalTypes(*(CXType*)p0, *(CXType*)p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getPointeeType (JNIEnv *jniEnv, jclass jclss, jlong T, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_getPointeeType(*(CXType*)T);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge138 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_getCanonicalType(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getTypeDeclaration (JNIEnv *jniEnv, jclass jclss, jlong T, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_getTypeDeclaration(*(CXType*)T);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge139 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_isConstQualifiedType(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDeclObjCTypeEncoding (JNIEnv *jniEnv, jclass jclss, jlong C, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getDeclObjCTypeEncoding(*(CXCursor*)C);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge140 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_isMacroFunctionLike(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Type_1getObjCEncoding (JNIEnv *jniEnv, jclass jclss, jlong type, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_Type_getObjCEncoding(*(CXType*)type);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge141 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_isMacroBuiltin(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getTypeKindSpelling (JNIEnv *jniEnv, jclass jclss, jint K, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getTypeKindSpelling((enum CXTypeKind)K);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge142 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_isFunctionInlined(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getFunctionTypeCallingConv (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jint) (clang_getFunctionTypeCallingConv(*(CXType*)T));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge143 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_isVolatileQualifiedType(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getResultType (JNIEnv *jniEnv, jclass jclss, jlong T, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_getResultType(*(CXType*)T);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge144 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_isRestrictQualifiedType(*(CXType*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getNumArgTypes (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jint) (clang_getNumArgTypes(*(CXType*)T));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge145 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getAddressSpace(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getArgType (JNIEnv *jniEnv, jclass jclss, jlong T, jint i, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_getArgType(*(CXType*)T, (unsigned int)i);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge146 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_getTypedefName(*(CXType*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isFunctionTypeVariadic (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jint) (clang_isFunctionTypeVariadic(*(CXType*)T));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge147 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_getPointeeType(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorResultType (JNIEnv *jniEnv, jclass jclss, jlong C, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_getCursorResultType(*(CXCursor*)C);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge148 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXCursor*)p1 = clang_getTypeDeclaration(*(CXType*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isPODType (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jint) (clang_isPODType(*(CXType*)T));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge149 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_getDeclObjCTypeEncoding(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getElementType (JNIEnv *jniEnv, jclass jclss, jlong T, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_getElementType(*(CXType*)T);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge150 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_Type_getObjCEncoding(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getNumElements (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jlong) (clang_getNumElements(*(CXType*)T));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge151 (JNIEnv* jniEnv, jclass jclss, jint p0, jlong p1) {
+    *(CXString*)p1 = clang_getTypeKindSpelling(p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getArrayElementType (JNIEnv *jniEnv, jclass jclss, jlong T, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_getArrayElementType(*(CXType*)T);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge152 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getFunctionTypeCallingConv(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getArraySize (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jlong) (clang_getArraySize(*(CXType*)T));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge153 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_getResultType(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Type_1getNamedType (JNIEnv *jniEnv, jclass jclss, jlong T, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_Type_getNamedType(*(CXType*)T);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge154 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getExceptionSpecificationType(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Type_1getAlignOf (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jlong) (clang_Type_getAlignOf(*(CXType*)T));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge155 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getNumArgTypes(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Type_1getClassType (JNIEnv *jniEnv, jclass jclss, jlong T, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_Type_getClassType(*(CXType*)T);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge156 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2) {
+    *(CXType*)p2 = clang_getArgType(*(CXType*)p0, p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Type_1getSizeOf (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jlong) (clang_Type_getSizeOf(*(CXType*)T));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge157 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_isFunctionTypeVariadic(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Type_1getOffsetOf (JNIEnv *jniEnv, jclass jclss, jlong T, jlong S) {
-    return (jlong) (clang_Type_getOffsetOf(*(CXType*)T, (char*)S));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge158 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_getCursorResultType(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getOffsetOfField (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jlong) (clang_Cursor_getOffsetOfField(*(CXCursor*)C));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge159 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getCursorExceptionSpecificationType(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1isAnonymous (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_isAnonymous(*(CXCursor*)C));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge160 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_isPODType(*(CXType*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Type_1getNumTemplateArguments (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jint) (clang_Type_getNumTemplateArguments(*(CXType*)T));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge161 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_getElementType(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Type_1getTemplateArgumentAsType (JNIEnv *jniEnv, jclass jclss, jlong T, jint i, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_Type_getTemplateArgumentAsType(*(CXType*)T, (unsigned int)i);
-    return (jlong) retValPlacement;
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge162 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getNumElements(*(CXType*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Type_1getCXXRefQualifier (JNIEnv *jniEnv, jclass jclss, jlong T) {
-    return (jint) (clang_Type_getCXXRefQualifier(*(CXType*)T));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge163 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_getArrayElementType(*(CXType*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1isBitField (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_isBitField(*(CXCursor*)C));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge164 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getArraySize(*(CXType*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isVirtualBase (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_isVirtualBase(*(CXCursor*)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge165 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_Type_getNamedType(*(CXType*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getCXXAccessSpecifier (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_getCXXAccessSpecifier(*(CXCursor*)arg0));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge166 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Type_isTransparentTagTypedef(*(CXType*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1getStorageClass (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_Cursor_getStorageClass(*(CXCursor*)arg0));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge167 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_Type_getAlignOf(*(CXType*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getNumOverloadedDecls (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
-    return (jint) (clang_getNumOverloadedDecls(*(CXCursor*)cursor));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge168 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_Type_getClassType(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getOverloadedDecl (JNIEnv *jniEnv, jclass jclss, jlong cursor, jint index, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_getOverloadedDecl(*(CXCursor*)cursor, (unsigned int)index);
-    return (jlong) retValPlacement;
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge169 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_Type_getSizeOf(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getIBOutletCollectionType (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_getIBOutletCollectionType(*(CXCursor*)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge170 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jlong)clang_Type_getOffsetOf(*(CXType*)p0, (void*)p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1visitChildren (JNIEnv *jniEnv, jclass jclss, jlong parent, jlong visitor, jlong client_data) {
-    return (jint) (clang_visitChildren(*(CXCursor*)parent, (CXCursorVisitor)visitor, (CXClientData)client_data));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge171 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_Cursor_getOffsetOfField(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorUSR (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getCursorUSR(*(CXCursor*)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge172 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_isAnonymous(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1constructUSR_1ObjCClass (JNIEnv *jniEnv, jclass jclss, jlong class_name, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_constructUSR_ObjCClass((char*)class_name);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge173 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Type_getNumTemplateArguments(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1constructUSR_1ObjCCategory (JNIEnv *jniEnv, jclass jclss, jlong class_name, jlong category_name, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_constructUSR_ObjCCategory((char*)class_name, (char*)category_name);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge174 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2) {
+    *(CXType*)p2 = clang_Type_getTemplateArgumentAsType(*(CXType*)p0, p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1constructUSR_1ObjCProtocol (JNIEnv *jniEnv, jclass jclss, jlong protocol_name, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_constructUSR_ObjCProtocol((char*)protocol_name);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge175 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Type_getCXXRefQualifier(*(CXType*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1constructUSR_1ObjCIvar (JNIEnv *jniEnv, jclass jclss, jlong name, jlong classUSR, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_constructUSR_ObjCIvar((char*)name, *(CXString*)classUSR);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge176 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_isBitField(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1constructUSR_1ObjCMethod (JNIEnv *jniEnv, jclass jclss, jlong name, jint isInstanceMethod, jlong classUSR, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_constructUSR_ObjCMethod((char*)name, (unsigned int)isInstanceMethod, *(CXString*)classUSR);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge177 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_isVirtualBase(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1constructUSR_1ObjCProperty (JNIEnv *jniEnv, jclass jclss, jlong property, jlong classUSR, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_constructUSR_ObjCProperty((char*)property, *(CXString*)classUSR);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge178 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getCXXAccessSpecifier(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorSpelling (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getCursorSpelling(*(CXCursor*)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge179 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_getStorageClass(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getSpellingNameRange (JNIEnv *jniEnv, jclass jclss, jlong arg0, jint pieceIndex, jint options, jlong retValPlacement) {
-    *(CXSourceRange*)retValPlacement = clang_Cursor_getSpellingNameRange(*(CXCursor*)arg0, (unsigned int)pieceIndex, (unsigned int)options);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge180 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getNumOverloadedDecls(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorDisplayName (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getCursorDisplayName(*(CXCursor*)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge181 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2) {
+    *(CXCursor*)p2 = clang_getOverloadedDecl(*(CXCursor*)p0, p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorReferenced (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_getCursorReferenced(*(CXCursor*)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge182 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_getIBOutletCollectionType(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorDefinition (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_getCursorDefinition(*(CXCursor*)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge183 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    return (jint)clang_visitChildren(*(CXCursor*)p0, (void*)p1, (void*)p2);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1isCursorDefinition (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_isCursorDefinition(*(CXCursor*)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge184 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_getCursorUSR(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCanonicalCursor (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_getCanonicalCursor(*(CXCursor*)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge185 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_constructUSR_ObjCClass((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1getObjCSelectorIndex (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_Cursor_getObjCSelectorIndex(*(CXCursor*)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge186 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    *(CXString*)p2 = clang_constructUSR_ObjCCategory((void*)p0, (void*)p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1isDynamicCall (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_isDynamicCall(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge187 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_constructUSR_ObjCProtocol((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getReceiverType (JNIEnv *jniEnv, jclass jclss, jlong C, jlong retValPlacement) {
-    *(CXType*)retValPlacement = clang_Cursor_getReceiverType(*(CXCursor*)C);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge188 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    *(CXString*)p2 = clang_constructUSR_ObjCIvar((void*)p0, *(CXString*)p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1getObjCPropertyAttributes (JNIEnv *jniEnv, jclass jclss, jlong C, jint reserved) {
-    return (jint) (clang_Cursor_getObjCPropertyAttributes(*(CXCursor*)C, (unsigned int)reserved));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge189 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2, jlong p3) {
+    *(CXString*)p3 = clang_constructUSR_ObjCMethod((void*)p0, p1, *(CXString*)p2);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1getObjCDeclQualifiers (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_getObjCDeclQualifiers(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge190 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    *(CXString*)p2 = clang_constructUSR_ObjCProperty((void*)p0, *(CXString*)p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1isObjCOptional (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_isObjCOptional(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge191 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_getCursorSpelling(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1isVariadic (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_Cursor_isVariadic(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge192 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jint p2, jlong p3) {
+    *(CXSourceRange*)p3 = clang_Cursor_getSpellingNameRange(*(CXCursor*)p0, p1, p2);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getCommentRange (JNIEnv *jniEnv, jclass jclss, jlong C, jlong retValPlacement) {
-    *(CXSourceRange*)retValPlacement = clang_Cursor_getCommentRange(*(CXCursor*)C);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge193 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_getCursorDisplayName(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getRawCommentText (JNIEnv *jniEnv, jclass jclss, jlong C, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_Cursor_getRawCommentText(*(CXCursor*)C);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge194 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXCursor*)p1 = clang_getCursorReferenced(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getBriefCommentText (JNIEnv *jniEnv, jclass jclss, jlong C, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_Cursor_getBriefCommentText(*(CXCursor*)C);
-    return (jlong) retValPlacement;
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge195 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXCursor*)p1 = clang_getCursorDefinition(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getMangling (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_Cursor_getMangling(*(CXCursor*)arg0);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge196 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_isCursorDefinition(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getCXXManglings (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jlong) (clang_Cursor_getCXXManglings(*(CXCursor*)arg0));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge197 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXCursor*)p1 = clang_getCanonicalCursor(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getModule (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jlong) (clang_Cursor_getModule(*(CXCursor*)C));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge198 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_getObjCSelectorIndex(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getModuleForFile (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong arg1) {
-    return (jlong) (clang_getModuleForFile((CXTranslationUnit)arg0, (CXFile)arg1));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge199 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_isDynamicCall(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Module_1getASTFile (JNIEnv *jniEnv, jclass jclss, jlong Module) {
-    return (jlong) (clang_Module_getASTFile((CXModule)Module));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge200 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXType*)p1 = clang_Cursor_getReceiverType(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Module_1getParent (JNIEnv *jniEnv, jclass jclss, jlong Module) {
-    return (jlong) (clang_Module_getParent((CXModule)Module));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge201 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    return (jint)clang_Cursor_getObjCPropertyAttributes(*(CXCursor*)p0, p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Module_1getName (JNIEnv *jniEnv, jclass jclss, jlong Module, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_Module_getName((CXModule)Module);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge202 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_getObjCDeclQualifiers(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Module_1getFullName (JNIEnv *jniEnv, jclass jclss, jlong Module, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_Module_getFullName((CXModule)Module);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge203 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_isObjCOptional(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Module_1isSystem (JNIEnv *jniEnv, jclass jclss, jlong Module) {
-    return (jint) (clang_Module_isSystem((CXModule)Module));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge204 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_isVariadic(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Module_1getNumTopLevelHeaders (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong Module) {
-    return (jint) (clang_Module_getNumTopLevelHeaders((CXTranslationUnit)arg0, (CXModule)Module));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge205 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jlong p3) {
+    return (jint)clang_Cursor_isExternalSymbol(*(CXCursor*)p0, (void*)p1, (void*)p2, (void*)p3);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Module_1getTopLevelHeader (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong Module, jint Index) {
-    return (jlong) (clang_Module_getTopLevelHeader((CXTranslationUnit)arg0, (CXModule)Module, (unsigned int)Index));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge206 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXSourceRange*)p1 = clang_Cursor_getCommentRange(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXXConstructor_1isConvertingConstructor (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_CXXConstructor_isConvertingConstructor(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge207 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_Cursor_getRawCommentText(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXXConstructor_1isCopyConstructor (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_CXXConstructor_isCopyConstructor(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge208 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_Cursor_getBriefCommentText(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXXConstructor_1isDefaultConstructor (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_CXXConstructor_isDefaultConstructor(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge209 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_Cursor_getMangling(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXXConstructor_1isMoveConstructor (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_CXXConstructor_isMoveConstructor(*(CXCursor*)C));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge210 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_Cursor_getCXXManglings(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXXField_1isMutable (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_CXXField_isMutable(*(CXCursor*)C));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge211 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_Cursor_getModule(*(CXCursor*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXXMethod_1isDefaulted (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_CXXMethod_isDefaulted(*(CXCursor*)C));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge212 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jlong)clang_getModuleForFile((void*)p0, (void*)p1);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXXMethod_1isPureVirtual (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_CXXMethod_isPureVirtual(*(CXCursor*)C));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge213 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_Module_getASTFile((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXXMethod_1isStatic (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_CXXMethod_isStatic(*(CXCursor*)C));
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge214 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_Module_getParent((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXXMethod_1isVirtual (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_CXXMethod_isVirtual(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge215 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_Module_getName((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1CXXMethod_1isConst (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_CXXMethod_isConst(*(CXCursor*)C));
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge216 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_Module_getFullName((void*)p0);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getTemplateCursorKind (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jint) (clang_getTemplateCursorKind(*(CXCursor*)C));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge217 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Module_isSystem((void*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getSpecializedCursorTemplate (JNIEnv *jniEnv, jclass jclss, jlong C, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_getSpecializedCursorTemplate(*(CXCursor*)C);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge218 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_Module_getNumTopLevelHeaders((void*)p0, (void*)p1);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorReferenceNameRange (JNIEnv *jniEnv, jclass jclss, jlong C, jint NameFlags, jint PieceIndex, jlong retValPlacement) {
-    *(CXSourceRange*)retValPlacement = clang_getCursorReferenceNameRange(*(CXCursor*)C, (unsigned int)NameFlags, (unsigned int)PieceIndex);
-    return (jlong) retValPlacement;
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge219 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jint p2) {
+    return (jlong)clang_Module_getTopLevelHeader((void*)p0, (void*)p1, p2);
 }
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getTokenKind (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_getTokenKind(*(CXToken*)arg0));
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge220 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_CXXConstructor_isConvertingConstructor(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getTokenSpelling (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong arg1, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getTokenSpelling((CXTranslationUnit)arg0, *(CXToken*)arg1);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge221 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_CXXConstructor_isCopyConstructor(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getTokenLocation (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong arg1, jlong retValPlacement) {
-    *(CXSourceLocation*)retValPlacement = clang_getTokenLocation((CXTranslationUnit)arg0, *(CXToken*)arg1);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge222 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_CXXConstructor_isDefaultConstructor(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getTokenExtent (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong arg1, jlong retValPlacement) {
-    *(CXSourceRange*)retValPlacement = clang_getTokenExtent((CXTranslationUnit)arg0, *(CXToken*)arg1);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge223 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_CXXConstructor_isMoveConstructor(*(CXCursor*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1tokenize (JNIEnv *jniEnv, jclass jclss, jlong TU, jlong Range, jlong Tokens, jlong NumTokens) {
-    clang_tokenize((CXTranslationUnit)TU, *(CXSourceRange*)Range, (CXToken**)Tokens, (unsigned int*)NumTokens);
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge224 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_CXXField_isMutable(*(CXCursor*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1annotateTokens (JNIEnv *jniEnv, jclass jclss, jlong TU, jlong Tokens, jint NumTokens, jlong Cursors) {
-    clang_annotateTokens((CXTranslationUnit)TU, (CXToken*)Tokens, (unsigned int)NumTokens, (CXCursor*)Cursors);
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge225 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_CXXMethod_isDefaulted(*(CXCursor*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeTokens (JNIEnv *jniEnv, jclass jclss, jlong TU, jlong Tokens, jint NumTokens) {
-    clang_disposeTokens((CXTranslationUnit)TU, (CXToken*)Tokens, (unsigned int)NumTokens);
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge226 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_CXXMethod_isPureVirtual(*(CXCursor*)p0);
 }
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorKindSpelling (JNIEnv *jniEnv, jclass jclss, jint Kind, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getCursorKindSpelling((enum CXCursorKind)Kind);
-    return (jlong) retValPlacement;
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge227 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_CXXMethod_isStatic(*(CXCursor*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1getDefinitionSpellingAndExtent (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong startBuf, jlong endBuf, jlong startLine, jlong startColumn, jlong endLine, jlong endColumn) {
-    clang_getDefinitionSpellingAndExtent(*(CXCursor*)arg0, (char**)startBuf, (char**)endBuf, (unsigned int*)startLine, (unsigned int*)startColumn, (unsigned int*)endLine, (unsigned int*)endColumn);
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge228 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_CXXMethod_isVirtual(*(CXCursor*)p0);
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1enableStackTraces (JNIEnv *jniEnv, jclass jclss) {
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge229 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_EnumDecl_isScoped(*(CXCursor*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge230 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_CXXMethod_isConst(*(CXCursor*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge231 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getTemplateCursorKind(*(CXCursor*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge232 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXCursor*)p1 = clang_getSpecializedCursorTemplate(*(CXCursor*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge233 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jint p2, jlong p3) {
+    *(CXSourceRange*)p3 = clang_getCursorReferenceNameRange(*(CXCursor*)p0, p1, p2);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge234 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getTokenKind(*(CXToken*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge235 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    *(CXString*)p2 = clang_getTokenSpelling((void*)p0, *(CXToken*)p1);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge236 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    *(CXSourceLocation*)p2 = clang_getTokenLocation((void*)p0, *(CXToken*)p1);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge237 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    *(CXSourceRange*)p2 = clang_getTokenExtent((void*)p0, *(CXToken*)p1);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge238 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jlong p3) {
+    clang_tokenize((void*)p0, *(CXSourceRange*)p1, (void*)p2, (void*)p3);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge239 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jint p2, jlong p3) {
+    clang_annotateTokens((void*)p0, (void*)p1, p2, (void*)p3);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge240 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jint p2) {
+    clang_disposeTokens((void*)p0, (void*)p1, p2);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge241 (JNIEnv* jniEnv, jclass jclss, jint p0, jlong p1) {
+    *(CXString*)p1 = clang_getCursorKindSpelling(p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge242 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jlong p3, jlong p4, jlong p5, jlong p6) {
+    clang_getDefinitionSpellingAndExtent(*(CXCursor*)p0, (void*)p1, (void*)p2, (void*)p3, (void*)p4, (void*)p5, (void*)p6);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge243 (JNIEnv* jniEnv, jclass jclss) {
     clang_enableStackTraces();
 }
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1executeOnThread (JNIEnv *jniEnv, jclass jclss, jlong fn, jlong user_data, jint stack_size) {
-    clang_executeOnThread((void*)fn, (void*)user_data, (unsigned int)stack_size);
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getCompletionChunkKind (JNIEnv *jniEnv, jclass jclss, jlong completion_string, jint chunk_number) {
-    return (jint) (clang_getCompletionChunkKind((CXCompletionString)completion_string, (unsigned int)chunk_number));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCompletionChunkText (JNIEnv *jniEnv, jclass jclss, jlong completion_string, jint chunk_number, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getCompletionChunkText((CXCompletionString)completion_string, (unsigned int)chunk_number);
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCompletionChunkCompletionString (JNIEnv *jniEnv, jclass jclss, jlong completion_string, jint chunk_number) {
-    return (jlong) (clang_getCompletionChunkCompletionString((CXCompletionString)completion_string, (unsigned int)chunk_number));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getNumCompletionChunks (JNIEnv *jniEnv, jclass jclss, jlong completion_string) {
-    return (jint) (clang_getNumCompletionChunks((CXCompletionString)completion_string));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getCompletionPriority (JNIEnv *jniEnv, jclass jclss, jlong completion_string) {
-    return (jint) (clang_getCompletionPriority((CXCompletionString)completion_string));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getCompletionAvailability (JNIEnv *jniEnv, jclass jclss, jlong completion_string) {
-    return (jint) (clang_getCompletionAvailability((CXCompletionString)completion_string));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1getCompletionNumAnnotations (JNIEnv *jniEnv, jclass jclss, jlong completion_string) {
-    return (jint) (clang_getCompletionNumAnnotations((CXCompletionString)completion_string));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCompletionAnnotation (JNIEnv *jniEnv, jclass jclss, jlong completion_string, jint annotation_number, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getCompletionAnnotation((CXCompletionString)completion_string, (unsigned int)annotation_number);
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCompletionParent (JNIEnv *jniEnv, jclass jclss, jlong completion_string, jlong kind, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getCompletionParent((CXCompletionString)completion_string, (enum CXCursorKind*)kind);
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCompletionBriefComment (JNIEnv *jniEnv, jclass jclss, jlong completion_string, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getCompletionBriefComment((CXCompletionString)completion_string);
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorCompletionString (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
-    return (jlong) (clang_getCursorCompletionString(*(CXCursor*)cursor));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1defaultCodeCompleteOptions (JNIEnv *jniEnv, jclass jclss) {
-    return (jint) (clang_defaultCodeCompleteOptions());
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1codeCompleteAt (JNIEnv *jniEnv, jclass jclss, jlong TU, jlong complete_filename, jint complete_line, jint complete_column, jlong unsaved_files, jint num_unsaved_files, jint options) {
-    return (jlong) (clang_codeCompleteAt((CXTranslationUnit)TU, (char*)complete_filename, (unsigned int)complete_line, (unsigned int)complete_column, (struct CXUnsavedFile*)unsaved_files, (unsigned int)num_unsaved_files, (unsigned int)options));
-}
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1sortCodeCompletionResults (JNIEnv *jniEnv, jclass jclss, jlong Results, jint NumResults) {
-    clang_sortCodeCompletionResults((CXCompletionResult*)Results, (unsigned int)NumResults);
-}
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1disposeCodeCompleteResults (JNIEnv *jniEnv, jclass jclss, jlong Results) {
-    clang_disposeCodeCompleteResults((CXCodeCompleteResults*)Results);
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1codeCompleteGetNumDiagnostics (JNIEnv *jniEnv, jclass jclss, jlong Results) {
-    return (jint) (clang_codeCompleteGetNumDiagnostics((CXCodeCompleteResults*)Results));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1codeCompleteGetDiagnostic (JNIEnv *jniEnv, jclass jclss, jlong Results, jint Index) {
-    return (jlong) (clang_codeCompleteGetDiagnostic((CXCodeCompleteResults*)Results, (unsigned int)Index));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1codeCompleteGetContexts (JNIEnv *jniEnv, jclass jclss, jlong Results) {
-    return (jlong) (clang_codeCompleteGetContexts((CXCodeCompleteResults*)Results));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1codeCompleteGetContainerKind (JNIEnv *jniEnv, jclass jclss, jlong Results, jlong IsIncomplete) {
-    return (jint) (clang_codeCompleteGetContainerKind((CXCodeCompleteResults*)Results, (unsigned int*)IsIncomplete));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1codeCompleteGetContainerUSR (JNIEnv *jniEnv, jclass jclss, jlong Results, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_codeCompleteGetContainerUSR((CXCodeCompleteResults*)Results);
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1codeCompleteGetObjCSelector (JNIEnv *jniEnv, jclass jclss, jlong Results, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_codeCompleteGetObjCSelector((CXCodeCompleteResults*)Results);
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getClangVersion (JNIEnv *jniEnv, jclass jclss, jlong retValPlacement) {
-    *(CXString*)retValPlacement = clang_getClangVersion();
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1toggleCrashRecovery (JNIEnv *jniEnv, jclass jclss, jint isEnabled) {
-    clang_toggleCrashRecovery((unsigned int)isEnabled);
-}
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1getInclusions (JNIEnv *jniEnv, jclass jclss, jlong tu, jlong visitor, jlong client_data) {
-    clang_getInclusions((CXTranslationUnit)tu, (CXInclusionVisitor)visitor, (CXClientData)client_data);
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1Evaluate (JNIEnv *jniEnv, jclass jclss, jlong C) {
-    return (jlong) (clang_Cursor_Evaluate(*(CXCursor*)C));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1EvalResult_1getKind (JNIEnv *jniEnv, jclass jclss, jlong E) {
-    return (jint) (clang_EvalResult_getKind((CXEvalResult)E));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1EvalResult_1getAsInt (JNIEnv *jniEnv, jclass jclss, jlong E) {
-    return (jint) (clang_EvalResult_getAsInt((CXEvalResult)E));
-}
-
-JNIEXPORT jdouble JNICALL Java_clang_clang_kni_1clang_1EvalResult_1getAsDouble (JNIEnv *jniEnv, jclass jclss, jlong E) {
-    return (jdouble) (clang_EvalResult_getAsDouble((CXEvalResult)E));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1EvalResult_1getAsStr (JNIEnv *jniEnv, jclass jclss, jlong E) {
-    return (jlong) (clang_EvalResult_getAsStr((CXEvalResult)E));
-}
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1EvalResult_1dispose (JNIEnv *jniEnv, jclass jclss, jlong E) {
-    clang_EvalResult_dispose((CXEvalResult)E);
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getRemappings (JNIEnv *jniEnv, jclass jclss, jlong path) {
-    return (jlong) (clang_getRemappings((char*)path));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getRemappingsFromFileList (JNIEnv *jniEnv, jclass jclss, jlong filePaths, jint numFiles) {
-    return (jlong) (clang_getRemappingsFromFileList((char**)filePaths, (unsigned int)numFiles));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1remap_1getNumFiles (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jint) (clang_remap_getNumFiles((CXRemapping)arg0));
-}
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1remap_1getFilenames (JNIEnv *jniEnv, jclass jclss, jlong arg0, jint index, jlong original, jlong transformed) {
-    clang_remap_getFilenames((CXRemapping)arg0, (unsigned int)index, (CXString*)original, (CXString*)transformed);
-}
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1remap_1dispose (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    clang_remap_dispose((CXRemapping)arg0);
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1findReferencesInFile (JNIEnv *jniEnv, jclass jclss, jlong cursor, jlong file, jlong visitor) {
-    return (jint) (clang_findReferencesInFile(*(CXCursor*)cursor, (CXFile)file, *(struct CXCursorAndRangeVisitor*)visitor));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1findIncludesInFile (JNIEnv *jniEnv, jclass jclss, jlong TU, jlong file, jlong visitor) {
-    return (jint) (clang_findIncludesInFile((CXTranslationUnit)TU, (CXFile)file, *(struct CXCursorAndRangeVisitor*)visitor));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1index_1isEntityObjCContainerKind (JNIEnv *jniEnv, jclass jclss, jint arg0) {
-    return (jint) (clang_index_isEntityObjCContainerKind((CXIdxEntityKind)arg0));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1index_1getObjCContainerDeclInfo (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jlong) (clang_index_getObjCContainerDeclInfo((CXIdxDeclInfo*)arg0));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1index_1getObjCInterfaceDeclInfo (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jlong) (clang_index_getObjCInterfaceDeclInfo((CXIdxDeclInfo*)arg0));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1index_1getObjCCategoryDeclInfo (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jlong) (clang_index_getObjCCategoryDeclInfo((CXIdxDeclInfo*)arg0));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1index_1getObjCProtocolRefListInfo (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jlong) (clang_index_getObjCProtocolRefListInfo((CXIdxDeclInfo*)arg0));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1index_1getObjCPropertyDeclInfo (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jlong) (clang_index_getObjCPropertyDeclInfo((CXIdxDeclInfo*)arg0));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1index_1getIBOutletCollectionAttrInfo (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jlong) (clang_index_getIBOutletCollectionAttrInfo((CXIdxAttrInfo*)arg0));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1index_1getCXXClassDeclInfo (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jlong) (clang_index_getCXXClassDeclInfo((CXIdxDeclInfo*)arg0));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1index_1getClientContainer (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jlong) (clang_index_getClientContainer((CXIdxContainerInfo*)arg0));
-}
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1index_1setClientContainer (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong arg1) {
-    clang_index_setClientContainer((CXIdxContainerInfo*)arg0, (CXIdxClientContainer)arg1);
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1index_1getClientEntity (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    return (jlong) (clang_index_getClientEntity((CXIdxEntityInfo*)arg0));
-}
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1index_1setClientEntity (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong arg1) {
-    clang_index_setClientEntity((CXIdxEntityInfo*)arg0, (CXIdxClientEntity)arg1);
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1IndexAction_1create (JNIEnv *jniEnv, jclass jclss, jlong CIdx) {
-    return (jlong) (clang_IndexAction_create((CXIndex)CIdx));
-}
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1IndexAction_1dispose (JNIEnv *jniEnv, jclass jclss, jlong arg0) {
-    clang_IndexAction_dispose((CXIndexAction)arg0);
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1indexSourceFile (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong client_data, jlong index_callbacks, jint index_callbacks_size, jint index_options, jlong source_filename, jlong command_line_args, jint num_command_line_args, jlong unsaved_files, jint num_unsaved_files, jlong out_TU, jint TU_options) {
-    return (jint) (clang_indexSourceFile((CXIndexAction)arg0, (CXClientData)client_data, (IndexerCallbacks*)index_callbacks, (unsigned int)index_callbacks_size, (unsigned int)index_options, (char*)source_filename, (char**)command_line_args, (int)num_command_line_args, (struct CXUnsavedFile*)unsaved_files, (unsigned int)num_unsaved_files, (CXTranslationUnit*)out_TU, (unsigned int)TU_options));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1indexSourceFileFullArgv (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong client_data, jlong index_callbacks, jint index_callbacks_size, jint index_options, jlong source_filename, jlong command_line_args, jint num_command_line_args, jlong unsaved_files, jint num_unsaved_files, jlong out_TU, jint TU_options) {
-    return (jint) (clang_indexSourceFileFullArgv((CXIndexAction)arg0, (CXClientData)client_data, (IndexerCallbacks*)index_callbacks, (unsigned int)index_callbacks_size, (unsigned int)index_options, (char*)source_filename, (char**)command_line_args, (int)num_command_line_args, (struct CXUnsavedFile*)unsaved_files, (unsigned int)num_unsaved_files, (CXTranslationUnit*)out_TU, (unsigned int)TU_options));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1indexTranslationUnit (JNIEnv *jniEnv, jclass jclss, jlong arg0, jlong client_data, jlong index_callbacks, jint index_callbacks_size, jint index_options, jlong arg5) {
-    return (jint) (clang_indexTranslationUnit((CXIndexAction)arg0, (CXClientData)client_data, (IndexerCallbacks*)index_callbacks, (unsigned int)index_callbacks_size, (unsigned int)index_options, (CXTranslationUnit)arg5));
-}
-
-JNIEXPORT void JNICALL Java_clang_clang_kni_1clang_1indexLoc_1getFileLocation (JNIEnv *jniEnv, jclass jclss, jlong loc, jlong indexFile, jlong file, jlong line, jlong column, jlong offset) {
-    clang_indexLoc_getFileLocation(*(CXIdxLoc*)loc, (CXIdxClientFile*)indexFile, (CXFile*)file, (unsigned int*)line, (unsigned int*)column, (unsigned int*)offset);
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1indexLoc_1getCXSourceLocation (JNIEnv *jniEnv, jclass jclss, jlong loc, jlong retValPlacement) {
-    *(CXSourceLocation*)retValPlacement = clang_indexLoc_getCXSourceLocation(*(CXIdxLoc*)loc);
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Type_1visitFields (JNIEnv *jniEnv, jclass jclss, jlong T, jlong visitor, jlong client_data) {
-    return (jint) (clang_Type_visitFields(*(CXType*)T, (CXFieldVisitor)visitor, (CXClientData)client_data));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getAttributeSpelling (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
-    return (jlong) (clang_Cursor_getAttributeSpelling(*(CXCursor*)cursor));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDeclTypeAttributes (JNIEnv *jniEnv, jclass jclss, jlong cursor, jlong retValPlacement) {
-    *(CXTypeAttributes*)retValPlacement = clang_getDeclTypeAttributes(*(CXCursor*)cursor);
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getResultTypeAttributes (JNIEnv *jniEnv, jclass jclss, jlong typeAttributes, jlong retValPlacement) {
-    *(CXTypeAttributes*)retValPlacement = clang_getResultTypeAttributes(*(CXTypeAttributes*)typeAttributes);
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorResultTypeAttributes (JNIEnv *jniEnv, jclass jclss, jlong cursor, jlong retValPlacement) {
-    *(CXTypeAttributes*)retValPlacement = clang_getCursorResultTypeAttributes(*(CXCursor*)cursor);
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Type_1getNullabilityKind (JNIEnv *jniEnv, jclass jclss, jlong type, jlong attributes) {
-    return (jint) (clang_Type_getNullabilityKind(*(CXType*)type, *(CXTypeAttributes*)attributes));
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Type_1getNumProtocols (JNIEnv *jniEnv, jclass jclss, jlong type) {
-    return (jint) (clang_Type_getNumProtocols(*(CXType*)type));
-}
-
-JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Type_1getProtocol (JNIEnv *jniEnv, jclass jclss, jlong type, jint index, jlong retValPlacement) {
-    *(CXCursor*)retValPlacement = clang_Type_getProtocol(*(CXType*)type, (unsigned int)index);
-    return (jlong) retValPlacement;
-}
-
-JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1isObjCInitMethod (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
-    return (jint) (clang_Cursor_isObjCInitMethod(*(CXCursor*)cursor));
-}
-
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge244 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jint p2) {
+    clang_executeOnThread((void*)p0, (void*)p1, p2);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge245 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    return (jint)clang_getCompletionChunkKind((void*)p0, p1);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge246 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2) {
+    *(CXString*)p2 = clang_getCompletionChunkText((void*)p0, p1);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge247 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    return (jlong)clang_getCompletionChunkCompletionString((void*)p0, p1);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge248 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getNumCompletionChunks((void*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge249 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getCompletionPriority((void*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge250 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getCompletionAvailability((void*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge251 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_getCompletionNumAnnotations((void*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge252 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2) {
+    *(CXString*)p2 = clang_getCompletionAnnotation((void*)p0, p1);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge253 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    *(CXString*)p2 = clang_getCompletionParent((void*)p0, (void*)p1);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge254 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_getCompletionBriefComment((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge255 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getCursorCompletionString(*(CXCursor*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge256 (JNIEnv* jniEnv, jclass jclss) {
+    return (jint)clang_defaultCodeCompleteOptions();
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge257 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jint p2, jint p3, jlong p4, jint p5, jint p6) {
+    return (jlong)clang_codeCompleteAt((void*)p0, (void*)p1, p2, p3, (void*)p4, p5, p6);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge258 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    clang_sortCodeCompletionResults((void*)p0, p1);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge259 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeCodeCompleteResults((void*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge260 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_codeCompleteGetNumDiagnostics((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge261 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    return (jlong)clang_codeCompleteGetDiagnostic((void*)p0, p1);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge262 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_codeCompleteGetContexts((void*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge263 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_codeCompleteGetContainerKind((void*)p0, (void*)p1);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge264 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_codeCompleteGetContainerUSR((void*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge265 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXString*)p1 = clang_codeCompleteGetObjCSelector((void*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge266 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    *(CXString*)p0 = clang_getClangVersion();
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge267 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    clang_toggleCrashRecovery(p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge268 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    clang_getInclusions((void*)p0, (void*)p1, (void*)p2);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge269 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_Cursor_Evaluate(*(CXCursor*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge270 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_EvalResult_getKind((void*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge271 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_EvalResult_getAsInt((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge272 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_EvalResult_getAsLongLong((void*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge273 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_EvalResult_isUnsignedInt((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge274 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_EvalResult_getAsUnsigned((void*)p0);
+}
+JNIEXPORT jdouble JNICALL Java_clang_clang_kniBridge275 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jdouble)clang_EvalResult_getAsDouble((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge276 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_EvalResult_getAsStr((void*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge277 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_EvalResult_dispose((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge278 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_getRemappings((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge279 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1) {
+    return (jlong)clang_getRemappingsFromFileList((void*)p0, p1);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge280 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_remap_getNumFiles((void*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge281 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2, jlong p3) {
+    clang_remap_getFilenames((void*)p0, p1, (void*)p2, (void*)p3);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge282 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_remap_dispose((void*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge283 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    return (jint)clang_findReferencesInFile(*(CXCursor*)p0, (void*)p1, *(struct CXCursorAndRangeVisitor*)p2);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge284 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    return (jint)clang_findIncludesInFile((void*)p0, (void*)p1, *(struct CXCursorAndRangeVisitor*)p2);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge285 (JNIEnv* jniEnv, jclass jclss, jint p0) {
+    return (jint)clang_index_isEntityObjCContainerKind(p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge286 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_index_getObjCContainerDeclInfo((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge287 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_index_getObjCInterfaceDeclInfo((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge288 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_index_getObjCCategoryDeclInfo((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge289 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_index_getObjCProtocolRefListInfo((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge290 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_index_getObjCPropertyDeclInfo((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge291 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_index_getIBOutletCollectionAttrInfo((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge292 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_index_getCXXClassDeclInfo((void*)p0);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge293 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_index_getClientContainer((void*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge294 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    clang_index_setClientContainer((void*)p0, (void*)p1);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge295 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_index_getClientEntity((void*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge296 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    clang_index_setClientEntity((void*)p0, (void*)p1);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge297 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_IndexAction_create((void*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge298 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_IndexAction_dispose((void*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge299 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jint p3, jint p4, jlong p5, jlong p6, jint p7, jlong p8, jint p9, jlong p10, jint p11) {
+    return (jint)clang_indexSourceFile((void*)p0, (void*)p1, (void*)p2, p3, p4, (void*)p5, (void*)p6, p7, (void*)p8, p9, (void*)p10, p11);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge300 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jint p3, jint p4, jlong p5, jlong p6, jint p7, jlong p8, jint p9, jlong p10, jint p11) {
+    return (jint)clang_indexSourceFileFullArgv((void*)p0, (void*)p1, (void*)p2, p3, p4, (void*)p5, (void*)p6, p7, (void*)p8, p9, (void*)p10, p11);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge301 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jint p3, jint p4, jlong p5) {
+    return (jint)clang_indexTranslationUnit((void*)p0, (void*)p1, (void*)p2, p3, p4, (void*)p5);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge302 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2, jlong p3, jlong p4, jlong p5) {
+    clang_indexLoc_getFileLocation(*(CXIdxLoc*)p0, (void*)p1, (void*)p2, (void*)p3, (void*)p4, (void*)p5);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge303 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXSourceLocation*)p1 = clang_indexLoc_getCXSourceLocation(*(CXIdxLoc*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge304 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1, jlong p2) {
+    return (jint)clang_Type_visitFields(*(CXType*)p0, (void*)p1, (void*)p2);
+}
+JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge305 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jlong)clang_Cursor_getAttributeSpelling(*(CXCursor*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge306 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXTypeAttributes*)p1 = clang_getDeclTypeAttributes(*(CXCursor*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge307 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXTypeAttributes*)p1 = clang_getResultTypeAttributes(*(CXTypeAttributes*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge308 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    *(CXTypeAttributes*)p1 = clang_getCursorResultTypeAttributes(*(CXCursor*)p0);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge309 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    return (jint)clang_Type_getNullabilityKind(*(CXType*)p0, *(CXTypeAttributes*)p1);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge310 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Type_getNumProtocols(*(CXType*)p0);
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge311 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2) {
+    *(CXCursor*)p2 = clang_Type_getProtocol(*(CXType*)p0, p1);
+}
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge312 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_Cursor_isObjCInitMethod(*(CXCursor*)p0);
+}
