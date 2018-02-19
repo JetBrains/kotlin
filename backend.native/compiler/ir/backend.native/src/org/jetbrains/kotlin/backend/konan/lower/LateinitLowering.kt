@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -42,6 +43,24 @@ class LateinitLowering(
 ) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+
+            override fun visitVariable(declaration: IrVariable): IrStatement {
+                declaration.transformChildrenVoid(this)
+
+                val symbol = declaration.symbol
+                val descriptor = declaration.descriptor
+                if (!descriptor.isLateInit) return declaration
+
+                assert(declaration.initializer == null, { "'lateinit' modifier is not allowed for variables with initializer" })
+                assert(!KotlinBuiltIns.isPrimitiveType(descriptor.type), { "'lateinit' modifier is not allowed on primitive types" })
+                val startOffset = declaration.startOffset
+                val endOffset = declaration.endOffset
+                val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
+                irBuilder.run {
+                    declaration.initializer = irNull()
+                }
+                return declaration
+            }
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 val symbol = expression.symbol
@@ -67,8 +86,19 @@ class LateinitLowering(
             override fun visitProperty(declaration: IrProperty): IrStatement {
                 declaration.transformChildrenVoid(this)
 
-                if (declaration.descriptor.isLateInit && declaration.descriptor.kind.isReal)
-                    transformGetter(declaration.backingField!!.symbol, declaration.getter!!)
+                if (!declaration.descriptor.isLateInit || !declaration.descriptor.kind.isReal)
+                    return declaration
+
+                val backingField = declaration.backingField!!
+                transformGetter(backingField.symbol, declaration.getter!!)
+
+                assert(backingField.initializer == null, { "'lateinit' modifier is not allowed for properties with initializer" })
+                val startOffset = declaration.startOffset
+                val endOffset = declaration.endOffset
+                val irBuilder = context.createIrBuilder(backingField.symbol, startOffset, endOffset)
+                irBuilder.run {
+                    backingField.initializer = irExprBody(irNull())
+                }
 
                 return declaration
             }
