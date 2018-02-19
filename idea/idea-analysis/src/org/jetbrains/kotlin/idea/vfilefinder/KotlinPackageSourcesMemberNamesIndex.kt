@@ -30,10 +30,13 @@ object KotlinPackageSourcesMemberNamesIndex : FileBasedIndexExtension<String, Co
     override fun getInputFilter(): FileBasedIndex.InputFilter =
             FileBasedIndex.InputFilter { file -> file.extension == KotlinFileType.EXTENSION }
 
-    override fun getVersion(): Int = 1
+    override fun getVersion(): Int = 2
 
     override fun getIndexer(): DataIndexer<String, Collection<String>, FileContent> =
         DataIndexer { inputData ->
+            // Check if ".kt" file is marked as plain text
+            if (inputData.fileType !is KotlinFileType) return@DataIndexer emptyMap()
+
             val ktFile = inputData.psiFile as? KtFile ?: return@DataIndexer emptyMap()
             val packageName = ktFile.packageDirective?.fqName?.asString() ?: ""
 
