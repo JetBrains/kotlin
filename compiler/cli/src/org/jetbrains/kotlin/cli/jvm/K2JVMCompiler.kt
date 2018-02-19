@@ -24,11 +24,8 @@ import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
-import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -57,10 +54,12 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
+import java.io.IOException
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
 import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.jar.JarFile
 import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
@@ -262,7 +261,13 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         messageCollector: MessageCollector
     ): KotlinCoreEnvironment? {
         val scriptResolverEnv = createScriptResolverEnvironment(arguments, messageCollector) ?: return null
-        configureScriptDefinitions(arguments.scriptTemplates, configuration, messageCollector, scriptResolverEnv)
+        val templatesFromClasspath = discoverScriptTemplatesInClasspath(configuration, messageCollector)
+        configureScriptDefinitions(
+            arguments.scriptTemplates.orEmpty().asIterable() + templatesFromClasspath,
+            configuration,
+            messageCollector,
+            scriptResolverEnv
+        )
         if (messageCollector.hasErrors()) return null
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -279,6 +284,49 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         return null
+    }
+
+    private fun discoverScriptTemplatesInClasspath(configuration: CompilerConfiguration, messageCollector: MessageCollector): Iterable<String> {
+        val templates = arrayListOf<String>()
+        val templatesPath = "META-INF/kotlin/script/templates/"
+        for (dep in configuration.jvmClasspathRoots) {
+            when {
+                dep.isFile ->
+                    try {
+                        with(JarFile(dep)) {
+                            for (template in entries()) {
+                                if (!template.isDirectory && template.name.startsWith(templatesPath)) {
+                                    val templateClassName = template.name.removePrefix(templatesPath)
+                                    templates.add(templateClassName)
+                                    messageCollector.report(
+                                        CompilerMessageSeverity.LOGGING,
+                                        "Configure scripting: Added template $templateClassName from $dep"
+                                    )
+                                }
+                            }
+                        }
+                    } catch (e: IOException) {
+                        messageCollector.report(
+                            CompilerMessageSeverity.WARNING,
+                            "Configure scripting: unable to process classpath entry $dep: $e"
+                        )
+                    }
+                dep.isDirectory -> {
+                    val dir = File(dep, templatesPath)
+                    if (dir.isDirectory) {
+                        dir.listFiles().forEach {
+                            templates.add(it.name)
+                            messageCollector.report(
+                                CompilerMessageSeverity.LOGGING,
+                                "Configure scripting: Added template ${it.name} from $dep"
+                            )
+                        }
+                    }
+                }
+                else -> messageCollector.report(CompilerMessageSeverity.WARNING, "Configure scripting: Unknown classpath entry $dep")
+            }
+        }
+        return templates
     }
 
     override fun setupPlatformSpecificArgumentsAndServices(
@@ -460,14 +508,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         fun configureScriptDefinitions(
-            scriptTemplates: Array<String>?,
+            scriptTemplates: List<String>,
             configuration: CompilerConfiguration,
             messageCollector: MessageCollector,
             scriptResolverEnv: HashMap<String, Any?>
         ) {
             val classpath = configuration.jvmClasspathRoots
             // TODO: consider using escaping to allow kotlin escaped names in class names
-            if (scriptTemplates != null && scriptTemplates.isNotEmpty()) {
+            if (scriptTemplates.isNotEmpty()) {
                 val classloader =
                     URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), Thread.currentThread().contextClassLoader)
                 var hasErrors = false
