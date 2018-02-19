@@ -89,6 +89,7 @@ dependencies {
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":plugins:uast-kotlin"))
     testRuntime(project(":plugins:uast-kotlin-idea"))
+    testRuntime(intellijPluginDep("smali"))
 
     if (intellijUltimateEnabled) {
         testCompile(intellijUltimatePluginDep("CSS"))
