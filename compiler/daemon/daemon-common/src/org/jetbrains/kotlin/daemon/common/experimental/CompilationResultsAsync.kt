@@ -54,6 +54,10 @@ class CompilationResultsRMIWrapper(val clientSide: CompilationResultsClientSide)
         clientSide.add(compilationResultCategory, value)
     }
 
+    init {
+        clientSide.connectToServer()
+    }
+
 }
 
 fun CompilationResults.toClient() =

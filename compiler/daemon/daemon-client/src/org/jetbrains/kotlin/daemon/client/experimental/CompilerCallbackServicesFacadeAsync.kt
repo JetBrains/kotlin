@@ -5,18 +5,13 @@
 
 package org.jetbrains.kotlin.daemon.client.experimental
 
-import io.ktor.network.sockets.Socket
-import io.ktor.network.sockets.aSocket
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseServerSide
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.daemon.client.reportFromDaemon
+import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_FIND_PORT_ATTEMPTS
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSide
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSideImpl
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openIO
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -24,21 +19,25 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartPro
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.isProcessCanceledException
+import java.io.File
 import java.io.Serializable
-import java.net.InetSocketAddress
+import java.util.logging.Logger
 
 open class CompilerCallbackServicesFacadeServerSide(
     val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
     val lookupTracker: LookupTracker? = null,
     val compilationCanceledStatus: CompilationCanceledStatus? = null,
-    val port: Int = SOCKET_ANY_FREE_PORT
+    val port: Int = findCallbackServerSocket()
 ) : CompilerServicesFacadeBaseServerSide, Server<CompilerServicesFacadeBaseServerSide> by DefaultServer(port) {
+
+    private val log = Logger.getLogger("CompilerCallbackServicesFacadeServerSide")
 
     val clientSide : CompilerServicesFacadeBaseClientSide
         get() = CompilerServicesFacadeBaseClientSideImpl(port)
 
-    override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) =
-            TODO("report!!")
+    override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
+        //TODO : some report
+    }
 
     fun hasIncrementalCaches(): Boolean = incrementalCompilationComponents != null
 

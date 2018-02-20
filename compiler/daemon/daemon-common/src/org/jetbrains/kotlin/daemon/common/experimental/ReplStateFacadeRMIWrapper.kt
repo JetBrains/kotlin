@@ -22,6 +22,10 @@ class ReplStateFacadeRMIWrapper(val clientSide: ReplStateFacadeClientSide) : Rep
 
     override suspend fun historyResetTo(id: ILineId) = runBlocking { clientSide.historyResetTo(id) }
 
+    init {
+        clientSide.connectToServer()
+    }
+
 }
 
 fun ReplStateFacadeClientSide.toRMI() = ReplStateFacadeRMIWrapper(this)

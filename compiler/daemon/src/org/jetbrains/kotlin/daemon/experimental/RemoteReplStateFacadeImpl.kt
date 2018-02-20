@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.daemon.experimental
 
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
+import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_FIND_PORT_ATTEMPTS
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
-import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeClientSide
-import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeServerSide
+import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
@@ -19,7 +19,11 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Serv
 class RemoteReplStateFacadeServerSide(
     val _id: Int,
     val state: GenericReplCompilerState,
-    val port: Int = SOCKET_ANY_FREE_PORT
+    val port: Int = findPortForSocket(
+        COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
+        REPL_SERVER_PORTS_RANGE_START,
+        REPL_SERVER_PORTS_RANGE_END
+    )
 ) : ReplStateFacadeServerSide, Server<ReplStateFacadeServerSide> by DefaultServer(port) {
 
     override suspend fun getId(): Int = _id

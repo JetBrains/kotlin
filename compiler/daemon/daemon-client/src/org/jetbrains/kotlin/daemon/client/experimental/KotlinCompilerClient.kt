@@ -9,7 +9,6 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
@@ -148,15 +147,15 @@ object KotlinCompilerClient {
     }
 
 
-    fun leaseCompileSession(compilerService: CompileService, aliveFlagPath: String?): Int =
-        compilerService.leaseCompileSession(aliveFlagPath).get()
+    fun leaseCompileSession(compilerService: CompileServiceClientSide, aliveFlagPath: String?): Int =
+        runBlocking { compilerService.leaseCompileSession(aliveFlagPath) }.get()
 
-    fun releaseCompileSession(compilerService: CompileService, sessionId: Int): Unit {
-        compilerService.releaseCompileSession(sessionId)
+    fun releaseCompileSession(compilerService: CompileServiceClientSide, sessionId: Int): Unit {
+        runBlocking { compilerService.releaseCompileSession(sessionId) }
     }
 
     fun compile(
-        compilerService: CompileService,
+        compilerService: CompileServiceClientSide,
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
         args: Array<out String>,
@@ -164,28 +163,30 @@ object KotlinCompilerClient {
         outputsCollector: ((File, List<File>) -> Unit)? = null,
         compilerMode: CompilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
         reportSeverity: ReportSeverity = ReportSeverity.INFO,
-        port: Int = SOCKET_ANY_FREE_PORT,
+        port: Int = findCallbackServerSocket(),
         profiler: Profiler = DummyProfiler()
     ): Int = profiler.withMeasure(this) {
-        val services = BasicCompilerServicesWithResultsFacadeServer(messageCollector, outputsCollector, port)
-        compilerService.compile(
-            sessionId,
-            args,
-            CompilationOptions(
-                compilerMode,
-                targetPlatform,
-                arrayOf(
-                    ReportCategory.COMPILER_MESSAGE.code,
-                    ReportCategory.DAEMON_MESSAGE.code,
-                    ReportCategory.EXCEPTION.code,
-                    ReportCategory.OUTPUT_MESSAGE.code
+        val services = BasicCompilerServicesWithResultsFacadeServerServerSide(messageCollector, outputsCollector, port)
+        runBlocking {
+            compilerService.compile(
+                sessionId,
+                args,
+                CompilationOptions(
+                    compilerMode,
+                    targetPlatform,
+                    arrayOf(
+                        ReportCategory.COMPILER_MESSAGE.code,
+                        ReportCategory.DAEMON_MESSAGE.code,
+                        ReportCategory.EXCEPTION.code,
+                        ReportCategory.OUTPUT_MESSAGE.code
+                    ),
+                    reportSeverity.code,
+                    emptyArray()
                 ),
-                reportSeverity.code,
-                emptyArray()
-            ),
-            services,
-            null
-        ).get()
+                services.clientSide,
+                null
+            )
+        }.get()
     }
 
     val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
