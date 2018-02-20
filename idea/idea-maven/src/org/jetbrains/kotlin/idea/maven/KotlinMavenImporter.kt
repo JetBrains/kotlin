@@ -301,13 +301,13 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
 
     private fun setImplementedModuleName(kotlinFacet: KotlinFacet, mavenProject: MavenProject, module: Module) {
         if (kotlinFacet.configuration.settings.targetPlatformKind == TargetPlatformKind.Common) {
-            kotlinFacet.configuration.settings.implementedModuleName = null
+            kotlinFacet.configuration.settings.implementedModuleNames = emptyList()
         } else {
             val manager = MavenProjectsManager.getInstance(module.project)
             val mavenDependencies = mavenProject.dependencies.mapNotNull { manager?.findProject(it) }
-            val implemented = mavenDependencies.singleOrNull { detectPlatformByExecutions(it) == TargetPlatformKind.Common }
+            val implemented = mavenDependencies.filter { detectPlatformByExecutions(it) == TargetPlatformKind.Common }
 
-            kotlinFacet.configuration.settings.implementedModuleName = implemented?.let { manager.findModule(it)?.name ?: it.displayName }
+            kotlinFacet.configuration.settings.implementedModuleNames = implemented.map { manager.findModule(it)?.name ?: it.displayName }
         }
     }
 }

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compati
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
 object ExpectedActualDeclarationChecker : DeclarationChecker {
@@ -114,8 +115,16 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         // However, in compiler context platform & common modules are joined into one module,
         // so there is yet no "common module" in this situation.
         // So yet we are using own module in compiler context and common module in IDE context.
-        val commonOrOwnModule = descriptor.module.expectedByModule ?: descriptor.module
-        val compatibility = ExpectedActualResolver.findExpectedForActual(descriptor, commonOrOwnModule) ?: return
+        val commonOrOwnModules = descriptor.module.expectedByModules.ifEmpty { listOf(descriptor.module) }
+        val compatibility = commonOrOwnModules
+            .asSequence()
+            .fold(LinkedHashMap<Compatibility, List<MemberDescriptor>>()) { resultMap, commonModule ->
+                val currentMap = ExpectedActualResolver.findExpectedForActual(descriptor, commonModule)
+                if (currentMap != null) {
+                    resultMap.putAll(currentMap)
+                }
+                resultMap
+            }
 
         val hasActualModifier = descriptor.isActual && reportOn.hasActualModifier()
         if (!hasActualModifier) {

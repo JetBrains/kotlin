@@ -49,8 +49,8 @@ var DataNode<ModuleData>.coroutines
         by CopyableDataNodeUserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
 var DataNode<ModuleData>.platformPluginId
         by CopyableDataNodeUserDataProperty(Key.create<String>("PLATFORM_PLUGIN_ID"))
-var DataNode<out ModuleData>.implementedModuleName
-        by CopyableDataNodeUserDataProperty(Key.create<String>("IMPLEMENTED_MODULE_NAME"))
+var DataNode<out ModuleData>.implementedModuleNames
+        by NotNullableCopyableDataNodeUserDataProperty(Key.create<List<String>>("IMPLEMENTED_MODULE_NAME"), emptyList())
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
     val isAndroidProjectKey = Key.findKeyByName("IS_ANDROID_PROJECT_KEY")
@@ -134,23 +134,23 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                         gradleIdeaProject.modules.firstOrNull { it.gradleProject.path == moduleNodeForGradleModel?.data?.id }
                     }
                     else gradleModule
-                    val implementsModuleId = resolverCtx.getExtraProject(ideaModule, KotlinGradleModel::class.java)?.implements
+                    val implementsModuleIds = resolverCtx.getExtraProject(ideaModule, KotlinGradleModel::class.java)?.implements
+                            ?: emptyList()
 
-                    val targetModule = implementsModuleId?.let {
+                    for (implementsModuleId in implementsModuleIds) {
                         val compositePrefix = if (resolverCtx.models.ideaProject != gradleModule.project
-                                                  && it.startsWith(":")) {
+                                && implementsModuleId.startsWith(":")) {
                             gradleModule.project.name
                         } else {
                             ""
                         }
 
-                        findModuleById(ideProject, compositePrefix + it)
-                    }
-                    if (targetModule != null) {
+                        val targetModule = findModuleById(ideProject, compositePrefix + implementsModuleId) ?: continue
+
                         if (useModulePerSourceSet()) {
                             val targetSourceSetsByName = ExternalSystemApiUtil
-                                    .findAll(targetModule, GradleSourceSetData.KEY)
-                                    .associateBy { it.sourceSetName }
+                                .findAll(targetModule, GradleSourceSetData.KEY)
+                                .associateBy { it.sourceSetName }
                             val targetMainSourceSet = targetSourceSetsByName["main"] ?: targetModule
                             val targetSourceSet = targetSourceSetsByName[currentModuleNode.sourceSetName]
                             if (targetSourceSet != null) {
@@ -193,17 +193,15 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             ideProject: DataNode<ProjectData>,
             gradleModel: KotlinGradleModel
     ) {
-        val implementedModule = gradleModel.implements?.let { findModuleById(ideProject, it) } ?: return
+        val implementedModules = gradleModel.implements.mapNotNull { findModuleById(ideProject, it) }
         if (resolverCtx.isResolveModulePerSourceSet) {
             val dependentSourceSets = dependentModule.getSourceSetsMap()
-            val implementedSourceSets = implementedModule.getSourceSetsMap()
+            val implementedSourceSetMaps = implementedModules.map { it.getSourceSetsMap() }
             for ((sourceSetName, dependentSourceSet) in dependentSourceSets) {
-                val implementedSourceSet = implementedSourceSets[sourceSetName] ?: continue
-                dependentSourceSet.implementedModuleName = implementedSourceSet.data.internalName
+                dependentSourceSet.implementedModuleNames = implementedSourceSetMaps.mapNotNull { it[sourceSetName]?.data?.internalName }
             }
-        }
-        else {
-            dependentModule.implementedModuleName = implementedModule.data.internalName
+        } else {
+            dependentModule.implementedModuleNames = implementedModules.map { it.data.internalName }
         }
     }
 

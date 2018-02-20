@@ -1481,10 +1481,10 @@ compileTestKotlin {
 
         importProject()
 
-        Assert.assertEquals("MultiTest_main", facetSettings("MultiTest-jvm_main").implementedModuleName)
-        Assert.assertEquals("MultiTest_test", facetSettings("MultiTest-jvm_test").implementedModuleName)
-        Assert.assertEquals("MultiTest_main", facetSettings("MultiTest-js_main").implementedModuleName)
-        Assert.assertEquals("MultiTest_test", facetSettings("MultiTest-js_test").implementedModuleName)
+        Assert.assertEquals(listOf("MultiTest_main"), facetSettings("MultiTest-jvm_main").implementedModuleNames)
+        Assert.assertEquals(listOf("MultiTest_test"), facetSettings("MultiTest-jvm_test").implementedModuleNames)
+        Assert.assertEquals(listOf("MultiTest_main"), facetSettings("MultiTest-js_main").implementedModuleNames)
+        Assert.assertEquals(listOf("MultiTest_test"), facetSettings("MultiTest-js_test").implementedModuleNames)
     }
 
     @Test
@@ -1630,10 +1630,10 @@ compileTestKotlin {
 
         importProject()
 
-        Assert.assertEquals("MultiTest_myMain", facetSettings("MultiTest-jvm_myMain").implementedModuleName)
-        Assert.assertEquals("MultiTest_myTest", facetSettings("MultiTest-jvm_myTest").implementedModuleName)
-        Assert.assertEquals("MultiTest_myMain", facetSettings("MultiTest-js_myMain").implementedModuleName)
-        Assert.assertEquals("MultiTest_myTest", facetSettings("MultiTest-js_myTest").implementedModuleName)
+        Assert.assertEquals(listOf("MultiTest_myMain"), facetSettings("MultiTest-jvm_myMain").implementedModuleNames)
+        Assert.assertEquals(listOf("MultiTest_myTest"), facetSettings("MultiTest-jvm_myTest").implementedModuleNames)
+        Assert.assertEquals(listOf("MultiTest_myMain"), facetSettings("MultiTest-js_myMain").implementedModuleNames)
+        Assert.assertEquals(listOf("MultiTest_myTest"), facetSettings("MultiTest-js_myTest").implementedModuleNames)
     }
 
     @Test
