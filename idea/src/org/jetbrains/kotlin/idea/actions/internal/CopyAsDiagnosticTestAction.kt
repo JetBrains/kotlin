@@ -14,52 +14,40 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.actions.internal;
+package org.jetbrains.kotlin.idea.actions.internal
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.kotlin.checkers.CheckerTestUtil;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.checkers.CheckerTestUtil
+import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.psi.KtFile
+import java.awt.*
+import java.awt.datatransfer.StringSelection
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.util.List;
+class CopyAsDiagnosticTestAction : AnAction() {
+    override fun actionPerformed(e: AnActionEvent) {
+        val editor = e.getData(CommonDataKeys.EDITOR)
+        val psiFile = e.getData(CommonDataKeys.PSI_FILE)
+        assert(editor != null && psiFile != null)
 
-public class CopyAsDiagnosticTestAction extends AnAction {
-    @Override
-    public void actionPerformed(AnActionEvent e) {
-        Editor editor = e.getData(CommonDataKeys.EDITOR);
-        PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-        assert editor != null && psiFile != null;
+        val bindingContext = (psiFile as KtFile).analyzeWithDeclarations()
 
-        BindingContext bindingContext = ResolutionUtils.analyzeFully((KtFile) psiFile);
+        val diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
+            bindingContext, psiFile, false, null, null, false
+        )
+        val result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, diagnostics).toString()
 
-        List<CheckerTestUtil.ActualDiagnostic> diagnostics =
-                CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null, null, false);
-        String result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, diagnostics).toString();
-
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(new StringSelection(result), new ClipboardOwner() {
-            @Override
-            public void lostOwnership(Clipboard clipboard, Transferable contents) {}
-        });
+        val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+        clipboard.setContents(StringSelection(result)) { _, _ -> }
     }
 
-    @Override
-    public void update(AnActionEvent e) {
-        e.getPresentation().setVisible(ApplicationManager.getApplication().isInternal());
+    override fun update(e: AnActionEvent) {
+        e.presentation.isVisible = ApplicationManager.getApplication().isInternal
 
-        Editor editor = e.getData(CommonDataKeys.EDITOR);
-        PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-        e.getPresentation().setEnabled(editor != null && psiFile instanceof KtFile);
+        val editor = e.getData(CommonDataKeys.EDITOR)
+        val psiFile = e.getData(CommonDataKeys.PSI_FILE)
+        e.presentation.isEnabled = editor != null && psiFile is KtFile
     }
 }

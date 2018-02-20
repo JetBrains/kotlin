@@ -14,39 +14,38 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.highlighter;
+package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.DuplicateJvmSignatureUtilKt;
-import org.jetbrains.kotlin.idea.caches.resolve.GetModuleInfoKt;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector;
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtElement;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.lang.annotation.Annotator
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.asJava.getJvmSignatureDiagnostics
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithDeclarations
+import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-public class DuplicateJvmSignatureAnnotator implements Annotator {
-    @Override
-    public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!(element instanceof KtFile) && !(element instanceof KtDeclaration)) return;
-        if (!ProjectRootsUtil.isInProjectSource(element)) return;
+class DuplicateJvmSignatureAnnotator : Annotator {
+    override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+        if (element !is KtFile && element !is KtDeclaration) return
+        if (!ProjectRootsUtil.isInProjectSource(element)) return
 
-        PsiFile file = element.getContainingFile();
-        if (!(file instanceof KtFile) || TargetPlatformDetector.getPlatform((KtFile) file) != JvmPlatform.INSTANCE) return;
+        val file = element.containingFile
+        if (file !is KtFile || TargetPlatformDetector.getPlatform(file) !== JvmPlatform) return
 
-        Diagnostics otherDiagnostics = ResolutionUtils.analyzeFully((KtElement) element).getDiagnostics();
-        GlobalSearchScope moduleScope = GetModuleInfoKt.getModuleInfo(element).contentScope();
-        Diagnostics diagnostics = DuplicateJvmSignatureUtilKt.getJvmSignatureDiagnostics(element, otherDiagnostics, moduleScope);
+        val otherDiagnostics = when (element) {
+            is KtDeclaration -> element.analyzeWithContent()
+            is KtFile -> element.analyzeWithDeclarations()
+            else -> throw AssertionError("DuplicateJvmSignatureAnnotator: should not get here! Element: ${element.text}")
+        }.diagnostics
 
-        if (diagnostics == null) return;
-        new KotlinPsiChecker().annotateElement(element, holder, diagnostics);
+        val moduleScope = element.getModuleInfo().contentScope()
+        val diagnostics = getJvmSignatureDiagnostics(element, otherDiagnostics, moduleScope) ?: return
+
+        KotlinPsiChecker().annotateElement(element, holder, diagnostics)
     }
 }

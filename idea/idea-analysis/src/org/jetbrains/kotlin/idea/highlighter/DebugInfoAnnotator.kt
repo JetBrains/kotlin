@@ -14,72 +14,66 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.highlighter;
+package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.checkers.DebugInfoUtil;
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.KtCodeFragment;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtReferenceExpression;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.lang.annotation.Annotator
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.checkers.DebugInfoUtil
+import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
+import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 
 /**
  * Quick showing possible problems with Kotlin internals in IDEA with tooltips
  */
-public class DebugInfoAnnotator implements Annotator {
+class DebugInfoAnnotator : Annotator {
 
-    public static boolean isDebugInfoEnabled() {
-        return KotlinInternalMode.Instance.getEnabled();
-    }
-
-    @Override
-    public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
-        if (!isDebugInfoEnabled() || !ProjectRootsUtil.isInProjectOrLibSource(element)) {
-            return;
+    override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+        if (!isDebugInfoEnabled || !ProjectRootsUtil.isInProjectOrLibSource(element)) {
+            return
         }
 
-        if (element instanceof KtFile && !(element instanceof KtCodeFragment)) {
-            KtFile file = (KtFile) element;
+        if (element is KtFile && element !is KtCodeFragment) {
             try {
-                BindingContext bindingContext = ResolutionUtils.analyzeFully(file);
-                DebugInfoUtil.markDebugAnnotations(file, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
-                    @Override
-                    public void reportElementWithErrorType(@NotNull KtReferenceExpression expression) {
-                        holder.createErrorAnnotation(expression, "[DEBUG] Resolved to error element")
-                                .setTextAttributes(KotlinHighlightingColors.RESOLVED_TO_ERROR);
+                val bindingContext = element.analyzeWithDeclarations()
+                DebugInfoUtil.markDebugAnnotations(element, bindingContext, object : DebugInfoUtil.DebugInfoReporter() {
+                    override fun reportElementWithErrorType(expression: KtReferenceExpression) {
+                        holder.createErrorAnnotation(expression, "[DEBUG] Resolved to error element").textAttributes =
+                                KotlinHighlightingColors.RESOLVED_TO_ERROR
                     }
 
-                    @Override
-                    public void reportMissingUnresolved(@NotNull KtReferenceExpression expression) {
-                        holder.createErrorAnnotation(expression,
-                                                     "[DEBUG] Reference is not resolved to anything, but is not marked unresolved")
-                                .setTextAttributes(KotlinHighlightingColors.DEBUG_INFO);
+                    override fun reportMissingUnresolved(expression: KtReferenceExpression) {
+                        holder.createErrorAnnotation(
+                            expression,
+                            "[DEBUG] Reference is not resolved to anything, but is not marked unresolved"
+                        ).textAttributes = KotlinHighlightingColors.DEBUG_INFO
                     }
 
-                    @Override
-                    public void reportUnresolvedWithTarget(@NotNull KtReferenceExpression expression, @NotNull String target) {
+                    override fun reportUnresolvedWithTarget(expression: KtReferenceExpression, target: String) {
                         holder.createErrorAnnotation(expression, "[DEBUG] Reference marked as unresolved is actually resolved to " + target)
-                                .setTextAttributes(KotlinHighlightingColors.DEBUG_INFO);
+                            .textAttributes =
+                                KotlinHighlightingColors.DEBUG_INFO
                     }
-                });
-            }
-            catch (ProcessCanceledException e) {
-                throw e;
-            }
-            catch (Throwable e) {
+                })
+            } catch (e: ProcessCanceledException) {
+                throw e
+            } catch (e: Throwable) {
                 // TODO
-                holder.createErrorAnnotation(element, e.getClass().getCanonicalName() + ": " + e.getMessage());
-                e.printStackTrace();
+                holder.createErrorAnnotation(element, e.javaClass.canonicalName + ": " + e.message)
+                e.printStackTrace()
             }
+
         }
     }
 
+    companion object {
 
+        val isDebugInfoEnabled: Boolean
+            get() = KotlinInternalMode.enabled
+    }
 }
