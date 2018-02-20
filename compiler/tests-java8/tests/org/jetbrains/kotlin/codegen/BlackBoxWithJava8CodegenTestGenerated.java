@@ -353,6 +353,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
                 doTest(fileName);
             }
 
+            @TestMetadata("callableReference.kt")
+            public void testCallableReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/callableReference.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("capturedSuperCall.kt")
             public void testCapturedSuperCall() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/capturedSuperCall.kt");
@@ -463,12 +469,6 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
                 @TestMetadata("propertyAnnotations.kt")
                 public void testPropertyAnnotations() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/reflection/propertyAnnotations.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("propertyAnnotationsCompatibility.kt")
-                public void testPropertyAnnotationsCompatibility() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/reflection/propertyAnnotationsCompatibility.kt");
                     doTest(fileName);
                 }
             }

@@ -414,7 +414,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @NotNull D descriptor,
             @Nullable ClassDescriptor superCallTarget,
             @NotNull GenerationState state) {
-        if (superCallTarget != null && !isNonDefaultInterfaceMember(descriptor, state)) {
+        if (superCallTarget != null && !isNonDefaultInterfaceMember(descriptor)) {
             CodegenContext afterInline = getFirstCrossInlineOrNonInlineContext();
             CodegenContext c = afterInline.findParentContextWithDescriptor(superCallTarget);
             assert c != null : "Couldn't find a context for a super-call: " + descriptor;

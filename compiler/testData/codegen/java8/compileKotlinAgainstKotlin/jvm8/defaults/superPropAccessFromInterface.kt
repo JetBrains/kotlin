@@ -1,27 +1,20 @@
 // !API_VERSION: 1.3
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
-
+// FILE: 1.kt
 interface Test {
     @kotlin.annotations.JvmDefault
-    fun test(): String {
-        return "OK"
-    }
+    val prop: String
+        get() =  "OK"
 }
 
+// FILE: 2.kt
 interface Test2 : Test {
     @kotlin.annotations.JvmDefault
-    override fun test(): String {
-        return super.test()
-    }
+    override val prop: String
+        get() = super.prop
 }
-
-
-class TestClass : Test2 {
-
-}
-
 
 fun box(): String {
-    return TestClass().test()
+    return object : Test2 {}.prop
 }

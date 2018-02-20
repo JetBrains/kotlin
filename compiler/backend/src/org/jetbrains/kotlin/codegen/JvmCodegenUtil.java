@@ -56,10 +56,13 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return isInterfaceWithoutDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
+        return isInterfaceWithoutDefaults(descriptor, state.isJvm8Target());
     }
 
-    private static boolean isInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
+    private static boolean isInterfaceWithoutDefaults(
+            @NotNull DeclarationDescriptor descriptor,
+            boolean isJvm8PlusTarget
+    ) {
         if (!DescriptorUtils.isInterface(descriptor)) return false;
 
         if (descriptor instanceof DeserializedClassDescriptor) {
@@ -68,27 +71,15 @@ public class JvmCodegenUtil {
                 KotlinJvmBinaryClass binaryClass = ((KotlinJvmBinarySourceElement) source).getBinaryClass();
                 assert binaryClass instanceof FileBasedKotlinClass :
                         "KotlinJvmBinaryClass should be subclass of FileBasedKotlinClass, but " + binaryClass;
-                /*TODO need add some flags to compiled code*/
-                return true || ((FileBasedKotlinClass) binaryClass).getClassVersion() == Opcodes.V1_6;
+                return ((FileBasedKotlinClass) binaryClass).getClassVersion() == Opcodes.V1_6;
             }
         }
-        return !isJvm8TargetWithDefaults;
+        //we can't determine is interface have default methods or not
+        //we need inspect all methods for jvm target 1.8+
+        return !isJvm8PlusTarget;
     }
 
-    public static boolean isJvm8InterfaceWithDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return isJvm8InterfaceWithDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
-    }
-
-    public static boolean isJvm8InterfaceWithDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
-        return DescriptorUtils.isInterface(descriptor) && !isInterfaceWithoutDefaults(descriptor, isJvm8Target, isJvm8TargetWithDefaults);
-    }
-
-    public static boolean isJvm8InterfaceWithDefaultsMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
-        DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
-        return isJvm8InterfaceWithDefaults(declaration, state);
-    }
-
-    public static boolean isNonDefaultInterfaceMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
+    public static boolean isNonDefaultInterfaceMember(@NotNull CallableMemberDescriptor descriptor) {
         if (!isJvmInterface(descriptor.getContainingDeclaration())) {
             return false;
         }
@@ -96,7 +87,7 @@ public class JvmCodegenUtil {
             return descriptor.getModality() == Modality.ABSTRACT;
         }
 
-        return !isJvm8InterfaceWithDefaultsMember(descriptor, state);
+        return !CodegenUtilKt.hasJvmDefaultAnnotation(descriptor);
     }
 
     public static boolean isJvmInterface(DeclarationDescriptor descriptor) {

@@ -63,7 +63,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceWithDefaultsMember;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.getInlineName;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
@@ -407,7 +406,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             ClassDescriptor classDescriptor = ((ClassContext) outermost).getContextDescriptor();
             if (context instanceof MethodContext) {
                 FunctionDescriptor functionDescriptor = ((MethodContext) context).getFunctionDescriptor();
-                if (isInterface(functionDescriptor.getContainingDeclaration()) && !isJvm8InterfaceWithDefaultsMember(functionDescriptor, state)) {
+                if (isInterface(functionDescriptor.getContainingDeclaration()) && !CodegenUtilKt
+                        .hasJvmDefaultAnnotation(functionDescriptor)) {
                     return typeMapper.mapDefaultImpls(classDescriptor);
                 }
             }
@@ -813,7 +813,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         boolean isJvmStaticInObjectOrClass = CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);
         boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) &&
-                                      !isNonDefaultInterfaceMember(functionDescriptor, state) &&
+                                      !isNonDefaultInterfaceMember(functionDescriptor) &&
                                       !isJvmStaticInObjectOrClass;
         boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
 

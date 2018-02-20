@@ -2,9 +2,8 @@
 // FILE: 1.kt
 
 interface Test {
-    fun test(): String {
-        return "OK"
-    }
+    val test: String
+        get() = "OK"
 }
 
 // FILE: 2.kt
@@ -12,9 +11,8 @@ interface Test {
 // WITH_RUNTIME
 interface Test2 : Test {
     @kotlin.annotations.JvmDefault
-    override fun test(): String {
-        return super.test()
-    }
+    override val test: String
+        get() = super.test
 }
 
 
@@ -22,6 +20,7 @@ class TestClass : Test2 {
 
 }
 
+
 fun box(): String {
-    return TestClass().test()
+    return TestClass().test
 }

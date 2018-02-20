@@ -1,9 +1,12 @@
+// !API_VERSION: 1.3
 // JVM_TARGET: 1.8
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM8_TARGET_WITH_DEFAULTS
+// WITH_RUNTIME
 
 interface Z<T> {
+
     val value: T
 
+    @kotlin.annotations.JvmDefault
     val z: T
         get() = value
 }
