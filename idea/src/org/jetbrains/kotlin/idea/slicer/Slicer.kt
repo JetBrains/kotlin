@@ -61,7 +61,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -265,7 +264,7 @@ class InflowSlicer(
             val argumentExpression = when {
                 refElement is KtExpression -> {
                     val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return@body
-                    val resolvedCall = callElement.getResolvedCall(callElement.analyze()) ?: return@body
+                    val resolvedCall = callElement.resolveToCall() ?: return@body
                     val resolvedArgument = resolvedCall.valueArguments[parameterDescriptor] ?: return@body
                     when (resolvedArgument) {
                         is DefaultValueArgument -> defaultValue

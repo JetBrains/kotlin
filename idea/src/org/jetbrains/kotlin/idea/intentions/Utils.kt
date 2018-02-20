@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -56,7 +57,7 @@ fun KtContainerNode.description(): String? {
 }
 
 fun KtCallExpression.isMethodCall(fqMethodName: String): Boolean {
-    val resolvedCall = this.getResolvedCall(this.analyze()) ?: return false
+    val resolvedCall = this.resolveToCall() ?: return false
     return resolvedCall.resultingDescriptor.fqNameUnsafe.asString() == fqMethodName
 }
 
@@ -103,7 +104,7 @@ val KtQualifiedExpression.calleeName: String?
 
 fun KtQualifiedExpression.toResolvedCall(bodyResolveMode: BodyResolveMode): ResolvedCall<out CallableDescriptor>? {
     val callExpression = callExpression ?: return null
-    return callExpression.getResolvedCall(callExpression.analyze(bodyResolveMode)) ?: return null
+    return callExpression.resolveToCall(bodyResolveMode) ?: return null
 }
 
 fun KtExpression.isExitStatement(): Boolean = when (this) {
@@ -232,7 +233,7 @@ fun KtElement?.isZero() = this?.text == "0"
 fun KtElement?.isOne() = this?.text == "1"
 
 private fun KtExpression.isExpressionOfTypeOrSubtype(predicate: (KotlinType) -> Boolean): Boolean {
-    val returnType = getResolvedCall(analyze())?.resultingDescriptor?.returnType
+    val returnType = resolveToCall()?.resultingDescriptor?.returnType
     return returnType != null && (returnType.constructor.supertypes + returnType).any(predicate)
 }
 
@@ -289,7 +290,7 @@ private val ARRAY_OF_METHODS = setOf(CollectionLiteralResolver.ARRAY_OF_FUNCTION
                                Name.identifier("emptyArray")
 
 fun KtCallExpression.isArrayOfMethod(): Boolean {
-    val resolvedCall = getResolvedCall(analyze()) ?: return false
+    val resolvedCall = resolveToCall() ?: return false
     val descriptor = resolvedCall.candidateDescriptor
     return (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
            ARRAY_OF_METHODS.contains(descriptor.name)

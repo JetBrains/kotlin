@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.inspections.conventionNameCalls.ReplaceGetOrSetInspection
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceInvokeIntention
@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class KotlinByConventionCallUsage(
@@ -56,7 +54,7 @@ class KotlinByConventionCallUsage(
         val element = element ?: return
         val convertedExpression = OperatorToFunctionIntention.convert(element).first
         val callExpression = convertedExpression.getPossiblyQualifiedCallExpression() ?: return
-        resolvedCall = callExpression.getResolvedCall(callExpression.analyze(BodyResolveMode.PARTIAL))
+        resolvedCall = callExpression.resolveToCall()
         convertedCallExpression = callExpression
     }
 

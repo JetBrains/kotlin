@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
@@ -204,8 +205,7 @@ fun KtExpression.isSimpleCollectionInstantiation(): CollectionKind? {
     val callExpression = this as? KtCallExpression ?: return null //TODO: it can be qualified too
     if (callExpression.valueArguments.isNotEmpty()) return null
 
-    val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
-    val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return null
+    val resolvedCall = callExpression.resolveToCall() ?: return null
     val descriptor = resolvedCall.resultingDescriptor
 
     when (descriptor) {

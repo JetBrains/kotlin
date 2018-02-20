@@ -22,6 +22,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -190,8 +190,7 @@ fun KtExpression?.extractStaticFunctionCallArguments(functionFqName: String): Li
         else -> null
     } ?: return null
 
-    val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
-    val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return null
+    val resolvedCall = callExpression.resolveToCall() ?: return null
     val functionDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return null
     if (functionDescriptor.dispatchReceiverParameter != null || functionDescriptor.extensionReceiverParameter != null) return null
     if (functionDescriptor.importableFqName?.asString() != functionFqName) return null

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
@@ -163,8 +163,7 @@ class MovePropertyToConstructorIntention :
             }
 
             override fun visitReferenceExpression(expression: KtReferenceExpression) {
-                val context = expression.analyze(BodyResolveMode.PARTIAL)
-                val declarationDescriptor = expression.getResolvedCall(context)?.resultingDescriptor ?: return
+                val declarationDescriptor = expression.resolveToCall()?.resultingDescriptor ?: return
                 if (declarationDescriptor.containingDeclaration == containingClass.descriptor) {
                     isValid = false
                 }

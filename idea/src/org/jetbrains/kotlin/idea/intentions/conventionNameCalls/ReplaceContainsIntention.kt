@@ -20,12 +20,11 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -89,8 +88,7 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
     }
 
     private fun getFunctionDescriptor(element: KtDotQualifiedExpression) : FunctionDescriptor? {
-        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
-        val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
+        val resolvedCall = element.resolveToCall() ?: return null
         return resolvedCall.resultingDescriptor as? FunctionDescriptor
     }
 }

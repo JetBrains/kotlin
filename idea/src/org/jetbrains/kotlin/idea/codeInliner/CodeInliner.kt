@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -461,8 +462,7 @@ class CodeInliner<TCallElement : KtElement>(
         }
 
         for (callExpression in callsToProcess) {
-            val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
-            val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return
+            val resolvedCall = callExpression.resolveToCall() ?: return
             if (!resolvedCall.isReallySuccess()) return
 
             val argumentsToMakeNamed = callExpression.valueArguments.dropWhile { !it[MAKE_ARGUMENT_NAMED_KEY] }
@@ -539,7 +539,7 @@ class CodeInliner<TCallElement : KtElement>(
         result.forEachDescendantOfType<KtValueArgument>(canGoInside = { !it[USER_CODE_KEY] }) { argument ->
             if (argument.getSpreadElement() != null && !argument.isNamed()) {
                 val argumentExpression = argument.getArgumentExpression() ?: return@forEachDescendantOfType
-                val resolvedCall = argumentExpression.getResolvedCall(argumentExpression.analyze(BodyResolveMode.PARTIAL)) ?: return@forEachDescendantOfType
+                val resolvedCall = argumentExpression.resolveToCall() ?: return@forEachDescendantOfType
                 val callExpression = resolvedCall.call.callElement as? KtCallExpression ?: return@forEachDescendantOfType
                 if (CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)) {
                     argumentsToExpand.add(argument to callExpression.valueArguments)
@@ -581,7 +581,7 @@ class CodeInliner<TCallElement : KtElement>(
             val callExpression = argumentList.parent as? KtCallExpression ?: return
             if (callExpression.lambdaArguments.isNotEmpty()) return
 
-            val resolvedCall = callExpression.getResolvedCall(callExpression.analyze(BodyResolveMode.PARTIAL)) ?: return
+            val resolvedCall = callExpression.resolveToCall() ?: return
             if (!resolvedCall.isReallySuccess()) return
             val argumentMatch = resolvedCall.getArgumentMapping(argument) as ArgumentMatch
             if (argumentMatch.valueParameter != resolvedCall.resultingDescriptor.valueParameters.last()) return

@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ConvertUnsafeCastCallToUnsafeCastIntention : SelfTargetingIntention<KtDotQualifiedExpression>(
     KtDotQualifiedExpression::class.java, "Convert to unsafe cast"
@@ -22,8 +20,7 @@ class ConvertUnsafeCastCallToUnsafeCastIntention : SelfTargetingIntention<KtDotQ
         if (element.platform != JsPlatform) return false
         if ((element.selectorExpression as? KtCallExpression)?.calleeExpression?.text != "unsafeCast") return false
 
-        val context = element.analyze(BodyResolveMode.PARTIAL)
-        val fqName = element.getResolvedCall(context)?.resultingDescriptor?.fqNameOrNull()?.asString() ?: return false
+        val fqName = element.resolveToCall()?.resultingDescriptor?.fqNameOrNull()?.asString() ?: return false
         if (fqName != "kotlin.js.unsafeCast") return false
 
         val type = element.callExpression?.typeArguments?.singleOrNull() ?: return false

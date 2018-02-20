@@ -21,14 +21,13 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
 
 class WrapWithSafeLetCallFix(
@@ -61,7 +60,7 @@ class WrapWithSafeLetCallFix(
             val element = diagnostic.psiElement
 
             if (element is KtNameReferenceExpression) {
-                val resolvedCall = element.getResolvedCall(element.analyze())
+                val resolvedCall = element.resolveToCall()
                 if (resolvedCall?.call?.callType != Call.CallType.INVOKE) return null
             }
 
