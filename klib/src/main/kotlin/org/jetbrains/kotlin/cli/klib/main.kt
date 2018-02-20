@@ -143,8 +143,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
 
     fun contents(output: Appendable = out) {
         val reader = LibraryReaderImpl(libraryInRepoOrCurrentDir(repository, name), currentAbiVersion)
-        // TODO: Should the klib tool have arguments like compilerVersion or apiVersion?
-        val versionSpec = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
+        val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
         val module = reader.moduleDescriptor(versionSpec)
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()
         if (!module.isStdlib()) {
@@ -169,6 +168,8 @@ class Library(val name: String, val requestedRepository: String?, val target: St
 
 // TODO: need to do something here.
 val currentAbiVersion = 1
+val currentLanguageVersion = LanguageVersion.LATEST_STABLE
+val currentApiVersion = ApiVersion.LATEST_STABLE
 
 fun libraryInRepo(repository: File, name: String): File {
     val resolver = KonanLibrarySearchPathResolver(

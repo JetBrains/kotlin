@@ -26,10 +26,13 @@ class ContentsTest {
 
     private fun testLibrary(name: String) = LIBRARY_DIRECTORY.resolve("$name.klib").toFile().absolutePath
 
-    private fun klibContents(library: String, expected: () -> String) {
+    private fun klibContents(library: String, printOutput: Boolean = false, expected: () -> String) {
         val output = StringBuilder()
         val lib = Library(library, null, "host")
         lib.contents(output)
+        if (printOutput) {
+            println(output.trim().toString())
+        }
         assertEquals(expected(), output.trim().toString(), "klib contents test failed for library: $library")
     }
 
@@ -59,9 +62,9 @@ class ContentsTest {
             inline fun <reified T> t4(x: T)
             fun <T : Number> t5(x: T)
             fun Foo.e()
-            final annotation class A constructor() : Annotation
-            final annotation class B constructor() : Annotation
-            final class Foo constructor()
+            annotation class A constructor() : Annotation
+            annotation class B constructor() : Annotation
+            class Foo constructor()
         }
         """.trimIndent()
     }
@@ -70,11 +73,11 @@ class ContentsTest {
     fun constructors() = klibContents(testLibrary("Constructors")) {
         """
         package <root> {
-            final annotation class A constructor() : Annotation
-            final class Bar @A constructor(x: Int)
-            final class Baz private constructor(x: Int)
+            annotation class A constructor() : Annotation
+            class Bar @A constructor(x: Int)
+            class Baz private constructor(x: Int)
 
-            final class Foo constructor(x: Int) {
+            class Foo constructor(x: Int) {
                 constructor()
                 constructor(x: Double)
                 constructor(x: Double, y: Int)
@@ -82,9 +85,9 @@ class ContentsTest {
                 @A constructor(x: Foo)
             }
 
-            final class Qux protected constructor(x: Int)
+            class Qux protected constructor(x: Int)
 
-            final class Typed<T> constructor(x: Int) {
+            class Typed<T> constructor(x: Int) {
                 constructor()
                 constructor(x: Double)
                 constructor(x: Double, y: Int)
@@ -102,25 +105,25 @@ class ContentsTest {
         package <root> {
 
             object A {
-                final fun a()
+                fun a()
             }
 
-            final class B constructor() {
+            class B constructor() {
 
                 object C {
-                    final fun c()
+                    fun c()
                 }
 
                 companion object {
-                    final fun b()
+                    fun b()
                 }
 
             }
 
-            final class D constructor() {
+            class D constructor() {
 
                 companion object E {
-                    final fun e()
+                    fun e()
                 }
 
             }
@@ -134,54 +137,54 @@ class ContentsTest {
         """
         package <root> {
 
-            final class A constructor() {
-                final val aVal: Int = 0
-                final var aVar: String
-                final fun aFun()
+            class A constructor() {
+                val aVal: Int = 0
+                var aVar: String
+                fun aFun()
 
-                final inner class B constructor() {
-                    final val bVal: Int = 0
-                    final var bVar: String
-                    final fun bFun()
+                inner class B constructor() {
+                    val bVal: Int = 0
+                    var bVar: String
+                    fun bFun()
 
-                    final inner class C constructor() {
-                        final val cVal: Int = 0
-                        final var cVar: String
-                        final fun cFun()
+                    inner class C constructor() {
+                        val cVal: Int = 0
+                        var cVar: String
+                        fun cFun()
                     }
 
                 }
 
-                final class E constructor() {
-                    final val eVal: Int = 0
-                    final var eVar: String
-                    final fun eFun()
+                class E constructor() {
+                    val eVal: Int = 0
+                    var eVar: String
+                    fun eFun()
                 }
 
             }
 
-            final data class F constructor(fVal: Int, fVar: String) {
-                final val fVal: Int
-                final var fVar: String
-                final operator fun component1(): Int
-                final operator fun component2(): String
-                final fun copy(fVal: Int = ..., fVar: String = ...): F
+            data class F constructor(fVal: Int, fVar: String) {
+                val fVal: Int
+                var fVar: String
+                operator fun component1(): Int
+                operator fun component2(): String
+                fun copy(fVal: Int = ..., fVar: String = ...): F
                 override fun equals(other: Any?): Boolean
-                final fun fFun()
+                fun fFun()
                 override fun hashCode(): Int
                 override fun toString(): String
             }
 
-            final class FinalImpl constructor() : OpenImpl {
+            class FinalImpl constructor() : OpenImpl {
                 override val iVal: Int = 0
                 override var iVar: String
                 override fun iFun()
             }
 
             interface Interface {
-                abstract val iVal: Int
-                abstract var iVar: String
-                abstract fun iFun()
+                val iVal: Int
+                var iVar: String
+                fun iFun()
             }
 
             open class OpenImpl constructor() : Interface {
@@ -195,12 +198,60 @@ class ContentsTest {
     }
 
     @Test
+    fun methodModality() = klibContents(testLibrary("MethodModality")) {
+        """
+        package <root> {
+
+            abstract class AbstractClass constructor() : Interface {
+                abstract fun abstractFun()
+                override fun interfaceFun()
+            }
+
+            class FinalClass constructor() : OpenClass {
+                override fun openFun1()
+                final override fun openFun2()
+            }
+
+            interface Interface {
+                fun interfaceFun()
+            }
+
+            open class OpenClass constructor() : AbstractClass {
+                override fun abstractFun()
+                fun finalFun()
+                open fun openFun1()
+                open fun openFun2()
+            }
+
+        }
+        """.trimIndent()
+    }
+
+    @Test
+    fun functionModifiers() = klibContents(testLibrary("FunctionModifiers")) {
+        """
+        package <root> {
+
+            class Foo constructor() {
+                fun f1()
+                infix fun f2(x: Int)
+                suspend fun f3()
+                tailrec fun f4()
+                fun f5(vararg x: Int)
+                operator fun plus(x: Int)
+            }
+
+        }
+        """.trimIndent()
+    }
+
+    @Test
     @Ignore // TODO: Do we need to print the overridden method in the C entry?
     fun enum() = klibContents(testLibrary("Enum")) {
         """
         package <root> {
 
-            final enum class E private constructor(x: Int = ...) : Enum<E> {
+            enum class E private constructor(x: Int = ...) : Enum<E> {
                 enum entry A
                 enum entry B
 
@@ -208,9 +259,9 @@ class ContentsTest {
                     override fun enumFun(): Int
                 }
 
-                final val enumVal: Int = 0
-                final var enumVar: String
-                final val x: Int
+                val enumVal: Int = 0
+                var enumVar: String
+                val x: Int
                 open fun enumFun(): Int
             }
 

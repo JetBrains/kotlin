@@ -29,21 +29,6 @@ import org.jetbrains.kotlin.utils.Printer
 class KlibPrinter(out: Appendable) {
 
     val printer = Printer(out, 1, "    ")
-    val renderer = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
-        modifiers = DescriptorRendererModifier.ALL
-        overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
-        annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
-        excludedAnnotationClasses += setOf(KotlinBuiltIns.FQ_NAMES.suppress)
-
-        classWithPrimaryConstructor = true
-        renderConstructorKeyword = true
-        includePropertyConstant = true
-
-        unitReturnType = false
-        withDefinedIn = false
-        renderDefaultVisibility = false
-        secondaryConstructorsAsPrimary = false
-    }
 
     val DeclarationDescriptorWithVisibility.isPublicOrProtected: Boolean
         get() = visibility == Visibilities.PUBLIC || visibility == Visibilities.PROTECTED
@@ -62,6 +47,27 @@ class KlibPrinter(out: Appendable) {
         popIndent()
         println("}")
         println()
+    }
+
+    private fun ClassDescriptor.render(): String {
+        val renderer = when (modality) {
+            // Don't render 'final' modality
+            Modality.FINAL -> Renderers.WITHOUT_MODALITY
+            else -> Renderers.DEFAULT
+        }
+        return renderer.render(this)
+    }
+
+    private fun CallableMemberDescriptor.render(): String {
+        val containingDeclaration = containingDeclaration
+        val renderer = when {
+            // Don't render modality for non-override final methods and interface methods.
+            containingDeclaration is ClassDescriptor && containingDeclaration.kind == ClassKind.INTERFACE ||
+            modality == Modality.FINAL && overriddenDescriptors.isEmpty() ->
+                Renderers.WITHOUT_MODALITY
+            else -> Renderers.DEFAULT
+        }
+        return renderer.render(this)
     }
 
     fun print(module: ModuleDescriptor) {
@@ -89,7 +95,7 @@ class KlibPrinter(out: Appendable) {
         override fun visitClassDescriptor(descriptor: ClassDescriptor, data: Unit) {
             val children = descriptor.unsubstitutedMemberScope.getContributedDescriptors().filter { it.shouldBePrinted }
             val constructors = descriptor.constructors.filter { !it.isPrimary && it.shouldBePrinted }
-            val header = renderer.render(descriptor)
+            val header = descriptor.render()
             if (children.isNotEmpty() || constructors.isNotEmpty()) {
                 printer.printBody(header) {
                     constructors.forEach { it.accept(this, data) }
@@ -102,15 +108,36 @@ class KlibPrinter(out: Appendable) {
         }
 
         override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit) {
-            printer.println(renderer.render(descriptor))
+            printer.println(descriptor.render())
         }
 
         override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit) {
-            printer.println(renderer.render(descriptor))
+            printer.println(descriptor.render())
         }
 
-        override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: Unit) {
-            printer.println(renderer.render(constructorDescriptor))
+        override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit) {
+            printer.println(descriptor.render())
+        }
+    }
+
+    object Renderers {
+        val DEFAULT = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
+            modifiers = DescriptorRendererModifier.ALL
+            overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
+            annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
+            excludedAnnotationClasses += setOf(KotlinBuiltIns.FQ_NAMES.suppress)
+
+            classWithPrimaryConstructor = true
+            renderConstructorKeyword = true
+            includePropertyConstant = true
+
+            unitReturnType = false
+            withDefinedIn = false
+            renderDefaultVisibility = false
+            secondaryConstructorsAsPrimary = false
+        }
+        val WITHOUT_MODALITY = DEFAULT.withOptions {
+            modifiers -= DescriptorRendererModifier.MODALITY
         }
     }
 
