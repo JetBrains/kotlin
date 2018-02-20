@@ -14,13 +14,13 @@ import java.net.InetSocketAddress
  */
 interface ServerBase
 
-interface Server<T : ServerBase> : ServerBase {
+interface Server<out T : ServerBase> : ServerBase {
 
     enum class State {
         WORKING, CLOSED, ERROR
     }
 
-    suspend fun processMessage(msg: AnyMessage<T>, output: ByteWriteChannelWrapper): State
+    suspend fun processMessage(msg: AnyMessage<in T>, output: ByteWriteChannelWrapper): State
 
     suspend fun attachClient(client: Socket)
 
@@ -37,11 +37,11 @@ interface Server<T : ServerBase> : ServerBase {
 }
 
 @Suppress("UNCHECKED_CAST")
-class DefaultServer<ServerType : ServerBase> (val serverPort: Int) : Server<ServerType> {
+class DefaultServer<out ServerType : ServerBase> (val serverPort: Int) : Server<ServerType> {
 
-    final override suspend fun processMessage(msg: Server.AnyMessage<ServerType>, output: ByteWriteChannelWrapper) = when(msg) {
-        is Server.Message<ServerType> -> Server.State.WORKING.also { msg.process(this as ServerType, output) }
-        is Server.EndConnectionMessage<ServerType> -> Server.State.CLOSED
+    final override suspend fun processMessage(msg: Server.AnyMessage<in ServerType>, output: ByteWriteChannelWrapper) = when(msg) {
+        is Server.Message<in ServerType> -> Server.State.WORKING.also { msg.process(this as ServerType, output) }
+        is Server.EndConnectionMessage<in ServerType> -> Server.State.CLOSED
         else -> Server.State.ERROR
     }
 

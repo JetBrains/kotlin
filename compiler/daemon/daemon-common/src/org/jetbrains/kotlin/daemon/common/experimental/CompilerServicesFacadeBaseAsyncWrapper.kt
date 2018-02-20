@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import com.sun.deploy.util.SessionState
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClientRMIWrapper
 import java.io.Serializable
 
 
 class CompilerServicesFacadeBaseAsyncWrapper(
     val rmiImpl: CompilerServicesFacadeBase
-) : CompilerServicesFacadeBaseClientSide {
-
-    override fun connectToServer() {} // done by rmi
+) : CompilerServicesFacadeBaseClientSide, Client by DefaultClientRMIWrapper() {
 
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) =
         rmiImpl.report(category, severity, message, attachment)

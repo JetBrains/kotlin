@@ -5,16 +5,10 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import io.ktor.network.sockets.Socket
-import io.ktor.network.sockets.aSocket
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.CompilationResults
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 import java.io.Serializable
-import java.net.InetSocketAddress
-import java.rmi.Remote
-import java.rmi.RemoteException
 
 interface CompilationResultsAsync {
     suspend fun add(compilationResultCategory: Int, value: Serializable)
@@ -32,20 +26,12 @@ interface CompilationResultsServerSide : CompilationResultsAsync, Server<Compila
     }
 }
 
-interface CompilationResultsClientSide : CompilationResultsAsync
+interface CompilationResultsClientSide : CompilationResultsAsync, Client
 
-class CompilationResultsClientSideImpl(val socketPort: Int) : CompilationResultsClientSide, Client {
-
-    private lateinit var serverOutput: ByteWriteChannelWrapper
+class CompilationResultsClientSideImpl(val socketPort: Int) : CompilationResultsClientSide, Client by DefaultClient(socketPort) {
 
     override suspend fun add(compilationResultCategory: Int, value: Serializable) {
-        serverOutput.writeObject(CompilationResultsServerSide.AddMessage(compilationResultCategory, value))
-    }
-
-    override fun connectToServer() {
-        async {
-            serverOutput = aSocket().tcp().connect(InetSocketAddress(socketPort)).openAndWrapWriteChannel()
-        }
+        sendMessage(CompilationResultsServerSide.AddMessage(compilationResultCategory, value))
     }
 
     init {
@@ -54,7 +40,7 @@ class CompilationResultsClientSideImpl(val socketPort: Int) : CompilationResults
 
 }
 
-class CompilationResultsAsyncWrapper(val rmiImpl: CompilationResults) : CompilationResultsClientSide {
+class CompilationResultsAsyncWrapper(val rmiImpl: CompilationResults) : CompilationResultsClientSide, Client by DefaultClientRMIWrapper() {
 
     override suspend fun add(compilationResultCategory: Int, value: Serializable) {
         rmiImpl.add(compilationResultCategory, value)

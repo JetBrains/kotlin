@@ -5,51 +5,21 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
-import io.ktor.network.sockets.Socket
-import io.ktor.network.sockets.aSocket
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
-import org.jetbrains.kotlin.daemon.common.ReplStateFacade
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
-import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeClientSide
 import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeServerSide
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openIO
-import java.net.InetAddress
-import java.rmi.server.UnicastRemoteObject
-
-open class RemoteReplStateFacadeImpl(
-    val _id: Int,
-    val state: GenericReplCompilerState,
-    port: Int = SOCKET_ANY_FREE_PORT
-) : ReplStateFacade,
-    UnicastRemoteObject(
-        port,
-        LoopbackNetworkInterface.clientLoopbackSocketFactoryRMI,
-        LoopbackNetworkInterface.serverLoopbackSocketFactoryRMI
-    ) {
-
-    override fun getId(): Int = _id
-
-    override fun getHistorySize(): Int = state.history.size
-
-    override fun historyGet(index: Int): ILineId = state.history[index].id
-
-    override fun historyReset(): List<ILineId> = state.history.reset().toList()
-
-    override suspend fun historyResetTo(id: ILineId): List<ILineId> = state.history.resetTo(id).toList()
-
-}
 
 @Suppress("UNCHECKED_CAST")
-class RemoteReplStateFacadeServerSideImpl(
+class RemoteReplStateFacadeServerSide(
     val _id: Int,
     val state: GenericReplCompilerState,
-    port: Int = SOCKET_ANY_FREE_PORT
+    val port: Int = SOCKET_ANY_FREE_PORT
 ) : ReplStateFacadeServerSide, Server<ReplStateFacadeServerSide> by DefaultServer(port) {
 
     override suspend fun getId(): Int = _id
@@ -62,4 +32,39 @@ class RemoteReplStateFacadeServerSideImpl(
 
     override suspend fun historyResetTo(id: ILineId): List<ILineId> = state.history.resetTo(id).toList()
 
+    val clientSide: RemoteReplStateFacadeClientSide
+        get() = RemoteReplStateFacadeClientSide(port)
+
 }
+
+
+class RemoteReplStateFacadeClientSide(val serverPort: Int) : ReplStateFacadeClientSide, Client by DefaultClient(serverPort) {
+
+    override suspend fun getId(): Int {
+        sendMessage(ReplStateFacadeServerSide.GetIdMessage()).await()
+        return readMessage<Int>().await()
+    }
+
+    override suspend fun getHistorySize(): Int {
+        sendMessage(ReplStateFacadeServerSide.GetHistorySizeMessage()).await()
+        return readMessage<Int>().await()
+    }
+
+    override suspend fun historyGet(index: Int): ILineId {
+        sendMessage(ReplStateFacadeServerSide.HistoryGetMessage(index)).await()
+        return readMessage<ILineId>().await()
+    }
+
+    override suspend fun historyReset(): List<ILineId> {
+        sendMessage(ReplStateFacadeServerSide.HistoryResetMessage()).await()
+        return readMessage<List<ILineId>>().await()
+    }
+
+    override suspend fun historyResetTo(id: ILineId): List<ILineId> {
+        sendMessage(ReplStateFacadeServerSide.HistoryResetToMessage(id)).await()
+        return readMessage<List<ILineId>>().await()
+    }
+
+}
+
+

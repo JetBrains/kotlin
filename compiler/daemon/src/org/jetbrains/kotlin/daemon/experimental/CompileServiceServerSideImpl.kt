@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.KotlinJvmReplService
+import org.jetbrains.kotlin.daemon.LazyClasspathWatcher
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
@@ -368,7 +369,7 @@ class CompileServiceServerSideImpl(
             CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
         } else when (compilationOptions.compilerMode) {
             CompilerMode.JPS_COMPILER -> {
-                val jpsServicesFacade = servicesFacade as JpsCompilerServicesFacade
+                val jpsServicesFacade = servicesFacade as CompilerCallbackServicesFacadeClientSide
 
                 withIC(enabled = servicesFacade.hasIncrementalCaches()) {
                     doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
@@ -558,7 +559,7 @@ class CompileServiceServerSideImpl(
     override suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeClientSide> =
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
-                CompileService.CallResult.Good(createRemoteState(port))
+                CompileService.CallResult.Good(createRemoteState(port).clientSide)
             }
         }
 
@@ -687,8 +688,7 @@ class CompileServiceServerSideImpl(
                     compilerId,
                     runFile,
                     filter = { _, p -> p != port },
-                    report = { _, msg -> log.info(msg) },
-                    useRMI = false
+                    report = { _, msg -> log.info(msg) }, useRMI = false
                 ).await().toList()
                 val comparator = compareByDescending<DaemonWithMetadataAsync, DaemonJVMOptions>(
                     DaemonJVMOptionsMemoryComparator(),
@@ -848,10 +848,10 @@ class CompileServiceServerSideImpl(
         }
 
     private fun createCompileServices(
-        facade: CompilerCallbackServicesFacade,
+        facade: CompilerCallbackServicesFacadeClientSide,
         eventManager: EventManager,
         rpcProfiler: Profiler
-    ): Services {
+    ): Services = runBlocking {
         val builder = Services.Builder()
         if (facade.hasIncrementalCaches()) {
             builder.register(
@@ -865,7 +865,7 @@ class CompileServiceServerSideImpl(
         if (facade.hasCompilationCanceledStatus()) {
             builder.register(CompilationCanceledStatus::class.java, RemoteCompilationCanceledStatusClient(facade, rpcProfiler))
         }
-        return builder.build()
+        builder.build()
     }
 
 

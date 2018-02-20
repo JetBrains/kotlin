@@ -5,21 +5,22 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
-import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.experimental.Profiler
-import org.jetbrains.kotlin.daemon.common.experimental.RemoteOutputStream
+import org.jetbrains.kotlin.daemon.common.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.experimental.RemoteOutputStreamAsyncClientSide
+import org.jetbrains.kotlin.daemon.common.experimental.withMeasureBlocking
 import java.io.OutputStream
 
-class RemoteOutputStreamClient(val remote: RemoteOutputStream, val profiler: Profiler = DummyProfiler()): OutputStream() {
+class RemoteOutputStreamClient(val remote: RemoteOutputStreamAsyncClientSide, val profiler: Profiler = DummyProfiler()): OutputStream() {
     override fun write(data: ByteArray) {
-        profiler.withMeasure(this) { remote.write(data, 0, data.size) }
+        profiler.withMeasureBlocking(this) { remote.write(data, 0, data.size) }
     }
 
     override fun write(data: ByteArray, offset: Int, length: Int) {
-        profiler.withMeasure(this) { remote.write(data, offset, length) }
+        profiler.withMeasureBlocking(this) { remote.write(data, offset, length) }
     }
 
     override fun write(byte: Int) {
-        profiler.withMeasure(this) { remote.write(byte) }
+        profiler.withMeasureBlocking(this) { remote.write(byte) }
     }
 }

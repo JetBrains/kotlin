@@ -7,22 +7,23 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
-import java.beans.Transient
+import org.jetbrains.kotlin.daemon.common.CompileService.CallResult
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import java.io.File
 
 interface CompileServiceClientSide : CompileServiceAsync, Client
 
 class CompileServiceClientSideImpl(
     val serverHost: String,
-    val serverPort: Int,
-    val socketFactory: LoopbackNetworkInterface.ClientLoopbackSocketFactoryKtor
-) : CompileServiceClientSide {
+    val serverPort: Int
+) : CompileServiceClientSide, Client by DefaultClient(serverPort, serverHost) {
 
     override suspend fun compile(
         sessionId: Int,
@@ -30,9 +31,9 @@ class CompileServiceClientSideImpl(
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         compilationResults: CompilationResultsClientSide?
-    ): CompileService.CallResult<Int> {
-        output.writeObject(CompileMessage(sessionId, compilerArguments, compilationOptions, servicesFacade, compilationResults))
-        return input.nextObject() as CompileService.CallResult<Int>
+    ): CallResult<Int> {
+        sendMessage(CompileMessage(sessionId, compilerArguments, compilationOptions, servicesFacade, compilationResults)).await()
+        return readMessage<CallResult<Int>>().await()
     }
 
     override suspend fun leaseReplSession(
@@ -42,8 +43,8 @@ class CompileServiceClientSideImpl(
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         templateClasspath: List<File>,
         templateClassName: String
-    ): CompileService.CallResult<Int> {
-        output.writeObject(
+    ): CallResult<Int> {
+        sendMessage(
             LeaseReplSessionMessage(
                 aliveFlagPath,
                 compilerArguments,
@@ -52,141 +53,124 @@ class CompileServiceClientSideImpl(
                 templateClasspath,
                 templateClassName
             )
-        )
-        return input.nextObject() as CompileService.CallResult<Int>
+        ).await()
+        return readMessage<CallResult<Int>>().await()
     }
-
-    @Transient
-    lateinit var input: ByteReadChannelWrapper
-    @Transient
-    lateinit var output: ByteWriteChannelWrapper
 
     // CompileService methods:
 
     override suspend fun checkCompilerId(expectedCompilerId: CompilerId): Boolean {
-        output.writeObject(
+        sendMessage(
             CheckCompilerIdMessage(
                 expectedCompilerId
             )
-        )
-        return input.nextObject() as Boolean
+        ).await()
+        return readMessage<Boolean>().await()
     }
 
-    override suspend fun getUsedMemory(): CompileService.CallResult<Long> {
-        output.writeObject(GetUsedMemoryMessage())
-        return input.nextObject() as CompileService.CallResult<Long>
+    override suspend fun getUsedMemory(): CallResult<Long> {
+        sendMessage(GetUsedMemoryMessage()).await()
+        return readMessage<CallResult<Long>>().await()
     }
 
 
-    override suspend fun getDaemonOptions(): CompileService.CallResult<DaemonOptions> {
-        output.writeObject(GetDaemonOptionsMessage())
-        return input.nextObject() as CompileService.CallResult<DaemonOptions>
+    override suspend fun getDaemonOptions(): CallResult<DaemonOptions> {
+        sendMessage(GetDaemonOptionsMessage()).await()
+        return readMessage<CallResult<DaemonOptions>>().await()
     }
 
-    override suspend fun getDaemonInfo(): CompileService.CallResult<String> {
-        output.writeObject(GetDaemonInfoMessage())
-        return input.nextObject() as CompileService.CallResult<String>
+    override suspend fun getDaemonInfo(): CallResult<String> {
+        sendMessage(GetDaemonInfoMessage()).await()
+        return readMessage<CallResult<String>>().await()
     }
 
-    override suspend fun getDaemonJVMOptions(): CompileService.CallResult<DaemonJVMOptions> {
-        output.writeObject(GetDaemonJVMOptionsMessage())
-        return input.nextObject() as CompileService.CallResult<DaemonJVMOptions>
+    override suspend fun getDaemonJVMOptions(): CallResult<DaemonJVMOptions> {
+        sendMessage(GetDaemonJVMOptionsMessage()).await()
+        return readMessage<CallResult<DaemonJVMOptions>>().await()
     }
 
-    override suspend fun registerClient(aliveFlagPath: String?): CompileService.CallResult<Nothing> {
-        output.writeObject(RegisterClientMessage(aliveFlagPath))
-        return input.nextObject() as CompileService.CallResult<Nothing>
+    override suspend fun registerClient(aliveFlagPath: String?): CallResult<Nothing> {
+        sendMessage(RegisterClientMessage(aliveFlagPath)).await()
+        return readMessage<CallResult<Nothing>>().await()
     }
 
-    override suspend fun getClients(): CompileService.CallResult<List<String>> {
-        output.writeObject(GetClientsMessage())
-        return input.nextObject() as CompileService.CallResult<List<String>>
+    override suspend fun getClients(): CallResult<List<String>> {
+        sendMessage(GetClientsMessage()).await()
+        return readMessage<CallResult<List<String>>>().await()
     }
 
-    override suspend fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> {
-        output.writeObject(
+    override suspend fun leaseCompileSession(aliveFlagPath: String?): CallResult<Int> {
+        sendMessage(
             LeaseCompileSessionMessage(
                 aliveFlagPath
             )
-        )
-        return input.nextObject() as CompileService.CallResult<Int>
+        ).await()
+        return readMessage<CallResult<Int>>().await()
     }
 
-    override suspend fun releaseCompileSession(sessionId: Int): CompileService.CallResult<Nothing> {
-        output.writeObject(
+    override suspend fun releaseCompileSession(sessionId: Int): CallResult<Nothing> {
+        sendMessage(
             ReleaseCompileSessionMessage(
                 sessionId
             )
-        )
-        return input.nextObject() as CompileService.CallResult<Nothing>
+        ).await()
+        return readMessage<CallResult<Nothing>>().await()
     }
 
-    override suspend fun shutdown(): CompileService.CallResult<Nothing> {
-        output.writeObject(ShutdownMessage())
-        return input.nextObject() as CompileService.CallResult<Nothing>
+    override suspend fun shutdown(): CallResult<Nothing> {
+        sendMessage(ShutdownMessage()).await()
+        return readMessage<CallResult<Nothing>>().await()
     }
 
-    override suspend fun scheduleShutdown(graceful: Boolean): CompileService.CallResult<Boolean> {
-        output.writeObject(ScheduleShutdownMessage(graceful))
-        return input.nextObject() as CompileService.CallResult<Boolean>
+    override suspend fun scheduleShutdown(graceful: Boolean): CallResult<Boolean> {
+        sendMessage(ScheduleShutdownMessage(graceful)).await()
+        return readMessage<CallResult<Boolean>>().await()
     }
 
     override suspend fun clearJarCache() {
-        output.writeObject(ClearJarCacheMessage())
+        sendMessage(ClearJarCacheMessage())
     }
 
-    override suspend fun releaseReplSession(sessionId: Int): CompileService.CallResult<Nothing> {
-        output.writeObject(ReleaseReplSessionMessage(sessionId))
-        return input.nextObject() as CompileService.CallResult<Nothing>
+    override suspend fun releaseReplSession(sessionId: Int): CallResult<Nothing> {
+        sendMessage(ReleaseReplSessionMessage(sessionId)).await()
+        return readMessage<CallResult<Nothing>>().await()
     }
 
-    override suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeClientSide> {
-        output.writeObject(ReplCreateStateMessage(sessionId))
-        return input.nextObject() as CompileService.CallResult<ReplStateFacadeClientSide>
+    override suspend fun replCreateState(sessionId: Int): CallResult<ReplStateFacadeClientSide> {
+        sendMessage(ReplCreateStateMessage(sessionId)).await()
+        return readMessage<CallResult<ReplStateFacadeClientSide>>().await()
     }
 
     override suspend fun replCheck(
         sessionId: Int,
         replStateId: Int,
         codeLine: ReplCodeLine
-    ): CompileService.CallResult<ReplCheckResult> {
-        output.writeObject(
+    ): CallResult<ReplCheckResult> {
+        sendMessage(
             ReplCheckMessage(
                 sessionId,
                 replStateId,
                 codeLine
             )
-        )
-        return input.nextObject() as CompileService.CallResult<ReplCheckResult>
+        ).await()
+        return readMessage<CallResult<ReplCheckResult>>().await()
     }
 
     override suspend fun replCompile(
         sessionId: Int,
         replStateId: Int,
         codeLine: ReplCodeLine
-    ): CompileService.CallResult<ReplCompileResult> {
-        output.writeObject(
+    ): CallResult<ReplCompileResult> {
+        sendMessage(
             ReplCompileMessage(
                 sessionId,
                 replStateId,
                 codeLine
             )
-        )
-        return input.nextObject() as CompileService.CallResult<ReplCompileResult>
+        ).await()
+        return readMessage<CallResult<ReplCompileResult>>().await()
     }
-
-
-    // Client methods:
-    override fun connectToServer() {
-        runBlocking {
-            socketFactory.createSocket(serverHost, serverPort).let {
-                input = it.openAndWrapReadChannel()
-                output = it.openAndWrapWriteChannel()
-            }
-        }
-    }
-
-
+    
     // Query messages:
 
     class CheckCompilerIdMessage(val expectedCompilerId: CompilerId) : Server.Message<CompileServiceServerSide> {

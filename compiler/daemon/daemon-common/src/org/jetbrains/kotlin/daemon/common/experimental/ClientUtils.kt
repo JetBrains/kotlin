@@ -110,8 +110,7 @@ private inline fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportC
     try {
         return CompileServiceClientSideImpl(
             LoopbackNetworkInterface.loopbackInetAddressName,
-            port,
-            LoopbackNetworkInterface.clientLoopbackSocketFactoryKtor
+            port
         ).also { it.connectToServer() }
     } catch (e: Throwable) {
         report(DaemonReportCategory.INFO, "cannot find or connect to socket")

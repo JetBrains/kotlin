@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 
-import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
-import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
-import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClientRMIWrapper
 import java.io.File
 
-class CompileServiceAsyncWrapper(val rmiCompileService: CompileService) : CompileServiceClientSide {
+class CompileServiceAsyncWrapper(val rmiCompileService: CompileService) : CompileServiceClientSide, Client by DefaultClientRMIWrapper() {
 
     override suspend fun compile(
         sessionId: Int,
@@ -48,8 +46,6 @@ class CompileServiceAsyncWrapper(val rmiCompileService: CompileService) : Compil
     )
 
     override suspend fun replCreateState(sessionId: Int) = rmiCompileService.replCreateState(sessionId).toClient()
-
-    override fun connectToServer() {} // is done by RMI
 
     override suspend fun getUsedMemory() =
         rmiCompileService.getUsedMemory()

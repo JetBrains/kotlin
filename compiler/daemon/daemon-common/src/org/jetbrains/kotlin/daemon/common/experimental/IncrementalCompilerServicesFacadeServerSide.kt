@@ -26,7 +26,7 @@ interface IncrementalCompilerServicesFacadeServerSide : IncrementalCompilerServi
             output.writeObject(server.updateAnnotations(outdatedClassesJvmNames))
     }
 
-    class RevertMessage(val outdatedClassesJvmNames: Iterable<String>) : Server.Message<IncrementalCompilerServicesFacadeServerSide> {
+    class RevertMessage() : Server.Message<IncrementalCompilerServicesFacadeServerSide> {
         override suspend fun process(server: IncrementalCompilerServicesFacadeServerSide, output: ByteWriteChannelWrapper) =
             server.revert()
     }

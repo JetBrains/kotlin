@@ -167,6 +167,7 @@ object KotlinCompileDaemonSockets {
                         timer.cancel()
                     }
                 })
+            compilerService.runServer()
 
             println(COMPILE_DAEMON_IS_READY_MESSAGE)
             log.info("daemon is listening on socketPort: $port")

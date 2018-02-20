@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
-import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
@@ -120,6 +119,7 @@ object KotlinCompilerClient {
                 { cat, msg -> reportingTargets.report(cat, msg) })
         }
         if (service != null) {
+            service.connectToServer()
             service.leaseImpl()
         } else {
             if (!isLastAttempt && autostart) {
@@ -275,8 +275,8 @@ object KotlinCompilerClient {
             }
             else -> {
                 println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
-                val outStrm = RemoteOutputStreamServer(System.out)
                 val servicesFacade = CompilerCallbackServicesFacadeServerSide()
+                servicesFacade.runServer()
                 try {
                     val memBefore = runBlocking { daemon.getUsedMemory().get() } / 1024
                     val startTime = System.nanoTime()

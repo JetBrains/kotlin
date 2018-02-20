@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.daemon.common.experimental
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClientRMIWrapper
 import java.io.File
 import java.io.Serializable
 
 class IncrementalCompilerServicesFacadeAsyncWrapper(
     val rmiImpl: IncrementalCompilerServicesFacade
-) : IncrementalCompilerServicesFacadeClientSide {
-
-    override fun connectToServer() {} // already done by RMI
+) : IncrementalCompilerServicesFacadeClientSide, Client by DefaultClientRMIWrapper() {
 
     override suspend fun hasAnnotationsFileUpdater() = runBlocking {
         rmiImpl.hasAnnotationsFileUpdater()
@@ -33,16 +33,16 @@ class IncrementalCompilerServicesFacadeAsyncWrapper(
         rmiImpl.registerChanges(timestamp, dirtyData)
     }
 
-    override suspend fun unknownChanges(timestamp: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override suspend fun unknownChanges(timestamp: Long) = runBlocking {
+        rmiImpl.unknownChanges(timestamp)
     }
 
-    override suspend fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override suspend fun getChanges(artifact: File, sinceTS: Long) = runBlocking {
+        rmiImpl.getChanges(artifact, sinceTS)
     }
 
-    override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) = runBlocking {
+        rmiImpl.report(category, severity, message, attachment)
     }
 
 }

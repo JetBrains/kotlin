@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.daemon.common.experimental
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.ReplStateFacade
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClientRMIWrapper
 
-class ReplStateFacadeAsyncWrapper(val rmiReplStateFacade: ReplStateFacade): ReplStateFacadeClientSide {
-
-    override fun connectToServer() {} // done by rmi
+class ReplStateFacadeAsyncWrapper(val rmiReplStateFacade: ReplStateFacade): ReplStateFacadeClientSide, Client by DefaultClientRMIWrapper() {
 
     override suspend fun getId() = rmiReplStateFacade.getId()
 

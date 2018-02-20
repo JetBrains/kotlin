@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.daemon.experimental
 
 import com.intellij.util.containers.StringInterner
+import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.experimental.CompilerCallbackServicesFacadeClientSide
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseAsync
+import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSide
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
@@ -16,16 +19,16 @@ import org.jetbrains.kotlin.incremental.components.ScopeKind
 
 
 class RemoteLookupTrackerClient(
-    val facade: CompilerServicesFacadeBaseAsync,
+    val facade: CompilerCallbackServicesFacadeClientSide,
     eventManager: EventManager,
     val profiler: Profiler = DummyProfiler()
 ) : LookupTracker {
-    private val isDoNothing = profiler.withMeasure(this) { facade.lookupTracker_isDoNothing() }
+    private val isDoNothing = profiler.withMeasure(this) { runBlocking { facade.lookupTracker_isDoNothing() } }
 
     private val lookups = hashSetOf<LookupInfo>()
     private val interner = StringInterner()
 
-    override val requiresPosition: Boolean = profiler.withMeasure(this) { facade.lookupTracker_requiresPosition() }
+    override val requiresPosition: Boolean = profiler.withMeasure(this) { runBlocking { facade.lookupTracker_requiresPosition() } }
 
     override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
         if (isDoNothing) return
@@ -45,7 +48,7 @@ class RemoteLookupTrackerClient(
         if (isDoNothing || lookups.isEmpty()) return
 
         profiler.withMeasure(this) {
-            facade.lookupTracker_record(lookups)
+            runBlocking { facade.lookupTracker_record(lookups) }
         }
 
         lookups.clear()
