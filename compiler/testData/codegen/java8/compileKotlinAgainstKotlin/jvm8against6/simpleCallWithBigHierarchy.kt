@@ -1,3 +1,4 @@
+// !API_VERSION: 1.3
 // FILE: 1.kt
 interface Test {
     fun test(): String {
@@ -7,16 +8,18 @@ interface Test {
 
 // FILE: 2.kt
 // JVM_TARGET: 1.8
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM8_TARGET_WITH_DEFAULTS
+// WITH_RUNTIME
 interface Test2 : Test {
+    @kotlin.annotations.JvmDefault
     override fun test(): String {
         return super.test()
     }
 }
 
-class TestClass : Test2 {
+interface Test3 : Test2 {
 
 }
+class TestClass : Test3
 
 fun box(): String {
     return TestClass().test()

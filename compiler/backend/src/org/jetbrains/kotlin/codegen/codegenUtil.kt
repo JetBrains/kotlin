@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.getDirectMember
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
@@ -57,6 +58,8 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.StringWriter
 import java.io.PrintWriter
 import java.util.*
+
+private val JVM_DEFAULT_FQ_NAME = FqName("kotlin.annotations.JvmDefault")
 
 fun generateIsCheck(
     v: InstructionAdapter,
@@ -230,26 +233,6 @@ fun ClassBuilder.generateMethod(
         iv.generate()
         iv.areturn(method.returnType)
         FunctionCodegen.endVisit(mv, debugString, element)
-    }
-}
-
-
-fun reportTarget6InheritanceErrorIfNeeded(
-    classDescriptor: ClassDescriptor, classElement: PsiElement, restrictedInheritance: List<FunctionDescriptor>, state: GenerationState
-) {
-    if (!restrictedInheritance.isEmpty()) {
-        val groupBy = restrictedInheritance.groupBy { descriptor -> descriptor.containingDeclaration as ClassDescriptor }
-
-        for ((key, value) in groupBy) {
-            state.diagnostics.report(
-                ErrorsJvm.TARGET6_INTERFACE_INHERITANCE.on(
-                    classElement, classDescriptor, key,
-                    value.joinToString(separator = "\n", prefix = "\n") {
-                        Renderers.COMPACT.render(JvmCodegenUtil.getDirectMember(it), RenderingContext.Empty)
-                    }
-                )
-            )
-        }
     }
 }
 
@@ -440,3 +423,5 @@ fun MethodNode.textifyMethodNode(): String {
     text.print(PrintWriter(sw))
     return "$sw"
 }
+
+fun CallableMemberDescriptor.hasJvmDefaultAnnotation() = getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)

@@ -1,5 +1,6 @@
+// !API_VERSION: 1.3
 // JVM_TARGET: 1.8
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM8_TARGET_WITH_DEFAULTS
+// WITH_RUNTIME
 // FULL_JDK
 
 // There should be no DefaultImpls method for MutableMap.remove(K;V)
@@ -11,6 +12,7 @@ class B : A<String, String>, java.util.AbstractMap<String, String>() {
 }
 
 interface C<K, V> : MutableMap<K, V> {
+    @kotlin.annotations.JvmDefault
     override fun remove(key: K, value: V) = true
 }
 

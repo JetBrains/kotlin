@@ -66,7 +66,6 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceWithDefaultsMember;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
@@ -173,11 +172,7 @@ public class FunctionCodegen {
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-        if (isInterface(containingDeclaration) &&
-            functionDescriptor.getVisibility() == Visibilities.PRIVATE &&
-            !processInterfaceMember(functionDescriptor, contextKind, state)) {
-            return;
-        }
+        if (isInterface(containingDeclaration) && !processInterfaceMethod(functionDescriptor, contextKind, false)) return;
 
         boolean hasSpecialBridge = hasSpecialBridgeMethod(functionDescriptor);
         JvmMethodGenericSignature jvmSignature = strategy.mapMethodSignature(functionDescriptor, typeMapper, contextKind, hasSpecialBridge);
@@ -220,7 +215,7 @@ public class FunctionCodegen {
             generateBridges(functionDescriptor);
         }
 
-        if (isJvm8InterfaceWithDefaultsMember(functionDescriptor, state) && contextKind != OwnerKind.DEFAULT_IMPLS && state.getGenerateDefaultImplsForJvm8()) {
+        if (CodegenUtilKt.hasJvmDefaultAnnotation(functionDescriptor) && contextKind != OwnerKind.DEFAULT_IMPLS && state.getGenerateDefaultImplsForJvm8()) {
             generateDelegateForDefaultImpl(functionDescriptor, origin.getElement());
         }
 
@@ -376,7 +371,7 @@ public class FunctionCodegen {
             boolean staticInCompanionObject
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
-        if (!state.getClassBuilderMode().generateBodies || isAbstractMethod(functionDescriptor, contextKind, state)) {
+        if (!state.getClassBuilderMode().generateBodies || isAbstractMethod(functionDescriptor, contextKind)) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
@@ -597,7 +592,7 @@ public class FunctionCodegen {
             generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (MultifileClassFacadeContext) context.getParentContext());
             methodEnd = new Label();
         }
-        else if (OwnerKind.DEFAULT_IMPLS == context.getContextKind() && isJvm8InterfaceWithDefaultsMember(functionDescriptor, parentCodegen.state)) {
+        else if (OwnerKind.DEFAULT_IMPLS == context.getContextKind() && CodegenUtilKt.hasJvmDefaultAnnotation(functionDescriptor)) {
             int flags = AsmUtil.getMethodAsmFlags(functionDescriptor, OwnerKind.DEFAULT_IMPLS, context.getState());
             assert (flags & Opcodes.ACC_ABSTRACT) == 0 : "Interface method with body should be non-abstract" + functionDescriptor;
             Type type = typeMapper.mapOwner(functionDescriptor);
@@ -1001,7 +996,7 @@ public class FunctionCodegen {
                 }
             }
 
-            if (!descriptor.getKind().isReal() && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION, state)) {
+            if (!descriptor.getKind().isReal() && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION)) {
                 CallableDescriptor overridden = SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor);
                 assert overridden != null;
 
@@ -1073,7 +1068,8 @@ public class FunctionCodegen {
     ) {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
-        if (isInterface(contextClass) && !processInterface(contextClass, kind, state)) {
+        if (isInterface(contextClass) &&
+            !processInterfaceMethod(functionDescriptor, kind, true)) {
             return;
         }
 
@@ -1330,7 +1326,7 @@ public class FunctionCodegen {
             iv.invokespecial(parentInternalName, delegateTo.getName(), delegateTo.getDescriptor(), false);
         }
         else {
-            if (isJvm8InterfaceWithDefaultsMember(descriptor, state)) {
+            if (CodegenUtilKt.hasJvmDefaultAnnotation(descriptor)) {
                 iv.invokeinterface(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
             }
             else {
@@ -1489,20 +1485,23 @@ public class FunctionCodegen {
         );
     }
 
-    public static boolean processInterfaceMember(
-            @NotNull CallableMemberDescriptor function,
+    public static boolean processInterfaceMethod(
+            @NotNull CallableMemberDescriptor memberDescriptor,
             @NotNull OwnerKind kind,
-            @NotNull GenerationState state
+            boolean isDefaultOrSynthetic
     ) {
-        return processInterface(function.getContainingDeclaration(), kind, state);
-    }
+        DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
+        assert isInterface(containingDeclaration) : "'processInterfaceMethod' method should be called only for interfaces, but: " +
+                                                    containingDeclaration;
 
-    public static boolean processInterface(
-            @NotNull DeclarationDescriptor contextClass,
-            @NotNull OwnerKind kind,
-            @NotNull GenerationState state
-    ) {
-        assert isInterface(contextClass) : "'processInterface' method should be called only for interfaces, but: " + contextClass;
-        return JvmCodegenUtil.isJvm8InterfaceWithDefaults(contextClass, state) ? kind != OwnerKind.DEFAULT_IMPLS : kind == OwnerKind.DEFAULT_IMPLS;
+        if (CodegenUtilKt.hasJvmDefaultAnnotation(memberDescriptor)) {
+           return kind != OwnerKind.DEFAULT_IMPLS;
+        } else {
+            switch (kind) {
+                case DEFAULT_IMPLS: return true;
+                case IMPLEMENTATION: return !Visibilities.isPrivate(memberDescriptor.getVisibility()) && !isDefaultOrSynthetic;
+                default: return false;
+            }
+        }
     }
 }

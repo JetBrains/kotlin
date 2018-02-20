@@ -160,7 +160,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 }
             }
 
-            if (!descriptor.kind.isReal && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION, state)) {
+            if (!descriptor.kind.isReal && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION)) {
                 descriptor.getOverriddenBuiltinReflectingJvmDescriptor<CallableMemberDescriptor>() ?:
                 error("Expect to find overridden descriptors for $descriptor")
 

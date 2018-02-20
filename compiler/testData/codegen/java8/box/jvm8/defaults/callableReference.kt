@@ -4,8 +4,14 @@
 
 interface Test {
     @kotlin.annotations.JvmDefault
+    fun foo(): String = "O"
+
+    @kotlin.annotations.JvmDefault
+    val bar: String
+        get() = "K"
+
     fun test(): String {
-        return "OK"
+        return (::foo)() + (::bar)()
     }
 }
 

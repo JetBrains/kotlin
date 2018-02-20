@@ -1,23 +1,20 @@
+// !API_VERSION: 1.3
+// JVM_TARGET: 1.8
+// WITH_RUNTIME
 // FILE: 1.kt
 interface Test {
+    @kotlin.annotations.JvmDefault
     fun test(): String {
         return "OK"
     }
 }
 
 // FILE: 2.kt
-// JVM_TARGET: 1.8
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM8_TARGET_WITH_DEFAULTS
-interface Test2 : Test {
+class TestClass : Test {
     override fun test(): String {
         return super.test()
     }
 }
-
-interface Test3 : Test2 {
-
-}
-class TestClass : Test3
 
 fun box(): String {
     return TestClass().test()
