@@ -3,11 +3,22 @@
 */
 
 [helper]
+LongSuffix
+  : "L"
+  ;
+
+IntegerLiteral
+  : DecimalLiteral LongSuffix?
+  : HexadecimalLiteral LongSuffix?
+  : BinaryLiteral LongSuffix?
+  ;
+
+[helper]
 Digit
   : ["0".."9"]
   ;
 
-IntegerLiteral
+DecimalLiteral
   : Digit
   : Digit (Digit | "_")* Digit
   ;
@@ -22,9 +33,18 @@ HexDigit
   ;
 
 HexadecimalLiteral
-  : "0x" HexDigit
-  : "0x" HexDigit (HexDigit | "_")* HexDigit
+  : "0" ("x" | "X") HexDigit
+  : "0" ("x" | "X") HexDigit (HexDigit | "_")* HexDigit
   ;
+
+[helper]
+BinaryDigit
+  : ("0" | "1")
+  ;
+
+BinaryLiteral
+  : "0" ("b" | "B") BinaryDigit
+  : "0" ("b" | "B") BinaryDigit (BinaryDigit | "_")* BinaryDigit
 
 CharacterLiteral
   : <character as in Java>

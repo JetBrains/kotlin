@@ -137,7 +137,6 @@ literalConstant
   : stringTemplate
   : NoEscapeString
   : IntegerLiteral
-  : HexadecimalLiteral
   : CharacterLiteral
   : FloatLiteral
   : "null"
