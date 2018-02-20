@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
-import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
-import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
+import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.utils.Printer
 
 class KlibPrinter(out: Appendable) {
@@ -70,6 +67,20 @@ class KlibPrinter(out: Appendable) {
         return renderer.render(this)
     }
 
+    private fun PropertyAccessorDescriptor.render() = buildString {
+        annotations.forEach {
+            append(Renderers.DEFAULT.renderAnnotation(it)).append(" ")
+        }
+        if (visibility != Visibilities.DEFAULT_VISIBILITY) {
+            append(visibility.displayName).append(" ")
+        }
+        when (this@render) {
+            is PropertyGetterDescriptor -> append("get")
+            is PropertySetterDescriptor -> append("set")
+            else -> throw AssertionError("Unknown accessor descriptor type: ${this@render}")
+        }
+    }
+
     fun print(module: ModuleDescriptor) {
         module.accept(PrinterVisitor(), Unit)
     }
@@ -84,8 +95,8 @@ class KlibPrinter(out: Appendable) {
         override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: Unit) {
             val children = descriptor.getMemberScope().getContributedDescriptors().filter { it.shouldBePrinted }
             if (children.isNotEmpty()) {
-                val pacakgeName = descriptor.fqName.let { if (it.isRoot) "<root>" else it.asString() }
-                val header = "package $pacakgeName"
+                val packageName = descriptor.fqName.let { if (it.isRoot) "<root>" else it.asString() }
+                val header = "package $packageName"
                 printer.printBody(header) {
                     children.forEach { it.accept(this, data) }
                 }
@@ -104,7 +115,6 @@ class KlibPrinter(out: Appendable) {
             } else {
                 printer.println(header)
             }
-
         }
 
         override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit) {
@@ -113,6 +123,20 @@ class KlibPrinter(out: Appendable) {
 
         override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit) {
             printer.println(descriptor.render())
+            descriptor.getter?.let { getter ->
+                if (!getter.annotations.isEmpty()) {
+                    printer.pushIndent()
+                    printer.println(getter.render())
+                    printer.popIndent()
+                }
+            }
+            descriptor.setter?.let { setter ->
+                if (!setter.annotations.isEmpty() || setter.visibility != descriptor.visibility) {
+                    printer.pushIndent()
+                    printer.println(setter.render())
+                    printer.popIndent()
+                }
+            }
         }
 
         override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit) {

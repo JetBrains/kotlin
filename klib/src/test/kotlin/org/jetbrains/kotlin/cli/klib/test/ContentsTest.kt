@@ -246,7 +246,7 @@ class ContentsTest {
     }
 
     @Test
-    @Ignore // TODO: Do we need to print the overridden method in the C entry?
+    // TODO: Support enum entry methods in serialization/deserialization.
     fun enum() = klibContents(testLibrary("Enum")) {
         """
         package <root> {
@@ -254,11 +254,7 @@ class ContentsTest {
             enum class E private constructor(x: Int = ...) : Enum<E> {
                 enum entry A
                 enum entry B
-
-                enum entry C {
-                    override fun enumFun(): Int
-                }
-
+                enum entry C
                 val enumVal: Int = 0
                 var enumVar: String
                 val x: Int
@@ -266,10 +262,36 @@ class ContentsTest {
             }
 
         }
+        """.trimIndent()
+    }
+
+    @Test
+    // TODO: Support getter/setter annotations in serialization/deserialization.
+    fun accessors() = klibContents(testLibrary("Accessors")) {
         """
+        package custom.pkg {
+            annotation class A constructor() : Annotation
+
+            class Foo constructor() {
+                @A val annotated: Int = 0
+                var annotatedAccessors: Int
+                    get
+                    set
+                val annotatedGetter: Int = 0
+                    get
+                var annotatedSetter: Int
+                    set
+                var privateSetter: Int
+                    private set
+                protected val protectedSimple: Int = 0
+                val simple: Int = 0
+            }
+
+        }
+        """.trimIndent()
     }
 
     companion object {
-        val LIBRARY_DIRECTORY = Paths.get("build/konan/libs").resolve( HostManager.host.visibleName)
+        val LIBRARY_DIRECTORY = Paths.get("build/konan/libs").resolve( HostManager.hostName)
     }
 }
