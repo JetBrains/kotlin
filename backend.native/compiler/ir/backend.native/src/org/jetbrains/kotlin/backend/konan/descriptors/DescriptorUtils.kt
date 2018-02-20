@@ -75,7 +75,7 @@ internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(): T {
 private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
 
 // TODO: check it is external?
-internal val FunctionDescriptor.isIntrinsic: Boolean
+internal val CallableDescriptor.isIntrinsic: Boolean
     get() = this.annotations.findAnnotation(intrinsicAnnotation) != null
 
 internal fun FunctionDescriptor.externalOrIntrinsic() = isExternal || isIntrinsic || (this is IrBuiltinOperatorDescriptorBase)
@@ -305,7 +305,7 @@ internal val FunctionDescriptor.needsInlining: Boolean
     get() {
         val inlineConstructor = annotations.hasAnnotation(inlineConstructor)
         if (inlineConstructor) return true
-        return (this.isInline && !this.isExternal)
+        return (this.isInline && !this.isExternal && !this.propertyIfAccessor.isIntrinsic)
     }
 
 internal val FunctionDescriptor.needsSerializedIr: Boolean 

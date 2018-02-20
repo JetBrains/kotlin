@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
@@ -29,34 +27,45 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.TypeUtils
 
-class LateinitLowering(
+internal class LateinitLowering(
         val context: CommonBackendContext,
         private val generateParameterNameInAssertion: Boolean = false
 ) : FileLoweringPass {
+
+    private val KOTLIN_FQ_NAME                  = FqName("kotlin")
+    private val kotlinPackageScope              = context.ir.irModule.descriptor.getPackage(KOTLIN_FQ_NAME).memberScope
+    private val isInitializedPropertyDescriptor = kotlinPackageScope
+            .getContributedVariables(Name.identifier("isInitialized"), NoLookupLocation.FROM_BACKEND).single {
+                it.extensionReceiverParameter.let { it != null && TypeUtils.getClassDescriptor(it.type) == context.reflectionTypes.kProperty0 }
+            }
+    private val isInitializedGetterDescriptor   = isInitializedPropertyDescriptor.getter!!
+
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
 
             override fun visitVariable(declaration: IrVariable): IrStatement {
                 declaration.transformChildrenVoid(this)
 
-                val symbol = declaration.symbol
                 val descriptor = declaration.descriptor
                 if (!descriptor.isLateInit) return declaration
 
                 assert(declaration.initializer == null, { "'lateinit' modifier is not allowed for variables with initializer" })
                 assert(!KotlinBuiltIns.isPrimitiveType(descriptor.type), { "'lateinit' modifier is not allowed on primitive types" })
-                val startOffset = declaration.startOffset
-                val endOffset = declaration.endOffset
-                val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
-                irBuilder.run {
+                builder.at(declaration).run {
                     declaration.initializer = irNull()
                 }
                 return declaration
@@ -68,10 +77,7 @@ class LateinitLowering(
                 if (descriptor == null || !descriptor.isLateInit) return expression
 
                 assert(!KotlinBuiltIns.isPrimitiveType(descriptor.type), { "'lateinit' modifier is not allowed on primitive types" })
-                val startOffset = expression.startOffset
-                val endOffset = expression.endOffset
-                val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
-                irBuilder.run {
+                builder.at(expression).run {
                     return irBlock(expression) {
                         // TODO: do data flow analysis to check if value is proved to be not-null.
                         +irIfThen(
@@ -80,6 +86,31 @@ class LateinitLowering(
                         )
                         +irGet(symbol)
                     }
+                }
+            }
+
+            override fun visitCall(expression: IrCall): IrExpression {
+                expression.transformChildrenVoid(this)
+
+                val descriptor = expression.descriptor
+                if (descriptor != isInitializedGetterDescriptor) return expression
+
+                val propertyReference = expression.extensionReceiver!! as IrPropertyReference
+                assert(propertyReference.extensionReceiver == null, { "'lateinit' modifier is not allowed on extension properties" })
+                // TODO: Take propertyReference.fieldSymbol as soon as it will show up in IR.
+                val propertyDescriptor = propertyReference.descriptor
+
+                val type = propertyDescriptor.type
+                assert(!KotlinBuiltIns.isPrimitiveType(type), { "'lateinit' modifier is not allowed on primitive types" })
+                builder.at(expression).run {
+                    @Suppress("DEPRECATION")
+                    val fieldValue = IrGetFieldImpl(
+                            expression.startOffset,
+                            expression.endOffset,
+                            propertyDescriptor,
+                            propertyReference.dispatchReceiver
+                    )
+                    return irNotEquals(fieldValue, irNull())
                 }
             }
 
@@ -93,9 +124,7 @@ class LateinitLowering(
                 transformGetter(backingField.symbol, declaration.getter!!)
 
                 assert(backingField.initializer == null, { "'lateinit' modifier is not allowed for properties with initializer" })
-                val startOffset = declaration.startOffset
-                val endOffset = declaration.endOffset
-                val irBuilder = context.createIrBuilder(backingField.symbol, startOffset, endOffset)
+                val irBuilder = context.createIrBuilder(backingField.symbol, declaration.startOffset, declaration.endOffset)
                 irBuilder.run {
                     backingField.initializer = irExprBody(irNull())
                 }
@@ -106,9 +135,7 @@ class LateinitLowering(
             private fun transformGetter(backingFieldSymbol: IrFieldSymbol, getter: IrFunction) {
                 val type = backingFieldSymbol.descriptor.type
                 assert(!KotlinBuiltIns.isPrimitiveType(type), { "'lateinit' modifier is not allowed on primitive types" })
-                val startOffset = getter.startOffset
-                val endOffset = getter.endOffset
-                val irBuilder = context.createIrBuilder(getter.symbol, startOffset, endOffset)
+                val irBuilder = context.createIrBuilder(getter.symbol, getter.startOffset, getter.endOffset)
                 irBuilder.run {
                     getter.body = irBlockBody {
                         val resultVar = irTemporary(

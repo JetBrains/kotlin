@@ -40,7 +40,7 @@ annotation class CName(val fullName: String = "", val shortName: String = "")
 /**
  * This annotation denotes that the element is intrinsic and its usages require special handling in compiler.
  */
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 annotation class Intrinsic
 

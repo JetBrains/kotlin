@@ -1058,6 +1058,16 @@ task lateinit_localCapturedNotInitialized(type: RunKonanTest) {
     source = "codegen/lateinit/localCapturedNotInitialized.kt"
 }
 
+task lateinit_isInitialized(type: RunKonanTest) {
+    goldValue = "false\ntrue\n"
+    source = "codegen/lateinit/isInitialized.kt"
+}
+
+task lateinit_globalIsInitialized(type: RunKonanTest) {
+    goldValue = "false\ntrue\n"
+    source = "codegen/lateinit/globalIsInitialized.kt"
+}
+
 task kclass0(type: RunKonanTest) {
     source = "codegen/kclass/kclass0.kt"
 }

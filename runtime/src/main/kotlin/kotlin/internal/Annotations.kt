@@ -76,3 +76,12 @@ internal annotation class InlineExposed
 @Target(AnnotationTarget.TYPE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class PureReifiable
+
+/**
+ * The value of this parameter should be a property reference expression (`this::foo`), referencing a `lateinit` property,
+ * the backing field of which is accessible at the point where the corresponding argument is passed.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("1.2")
+internal annotation class AccessibleLateinitPropertyLiteral

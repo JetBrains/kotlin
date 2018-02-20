@@ -73,6 +73,10 @@ internal class KonanLower(val context: Context) {
             irModule.files.forEach(InteropLoweringPart1(context)::lower)
         }
 
+        phaser.phase(KonanPhase.LOWER_LATEINIT) {
+            irModule.files.forEach(LateinitLowering(context)::lower)
+        }
+
         @Suppress("DEPRECATION")
         irModule.replaceUnboundSymbols(context)
         validateIrModule(context, irModule)
@@ -95,9 +99,6 @@ internal class KonanLower(val context: Context) {
         }
         phaser.phase(KonanPhase.LOWER_INITIALIZERS) {
             InitializersLowering(context).runOnFilePostfix(irFile)
-        }
-        phaser.phase(KonanPhase.LOWER_LATEINIT) {
-            LateinitLowering(context).lower(irFile)
         }
         phaser.phase(KonanPhase.LOWER_SHARED_VARIABLES) {
             SharedVariablesLowering(context).runOnFilePostfix(irFile)
