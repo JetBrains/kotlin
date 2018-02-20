@@ -776,7 +776,7 @@ class StubGenerator(
         // Also it provokes constant propagation which can reduce binary compatibility
         // when replacing interop stubs without recompiling the application.
 
-        out("val ${constant.name.asSimpleName()}: $kotlinType = $literal")
+        out("val ${constant.name.asSimpleName()}: $kotlinType get() = $literal")
     }
 
     private fun generateStubs(): List<KotlinStub> {
