@@ -135,7 +135,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
             return doInvoke(targetParent, editor, file)
         }
 
-        chooseContainerElementIfNecessary(applicableParents, editor, "Choose class container", true, { it }) {
+        chooseContainerElementIfNecessary(applicableParents.reversed(), editor, "Choose class container", true, { it }) {
             doInvoke(it, editor, file)
         }
     }
