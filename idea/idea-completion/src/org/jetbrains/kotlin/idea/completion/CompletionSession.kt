@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
@@ -269,7 +270,11 @@ abstract class CompletionSession(
 
         sorter = sorter.weighAfter("kotlin.proximity", ByNameAlphabeticalWeigher, PreferLessParametersWeigher)
 
-        sorter = sorter.weighBefore("prefix", PreferDslMembers)
+        if (expectedInfos.all { it.fuzzyType?.type?.isUnit() == true }) {
+            sorter = sorter.weighBefore("prefix", PreferDslMembers)
+        } else {
+            sorter = sorter.weighAfter("kotlin.preferContextElements", PreferDslMembers)
+        }
 
         return sorter
     }
