@@ -3,6 +3,7 @@ apply { plugin("kotlin") }
 val compilerModules: Array<String> by rootProject.extra
 
 dependencies {
+    compileOnly(project(":jps-plugin:jps-services-declarations"))
     compile(project(":kotlin-build-common"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
