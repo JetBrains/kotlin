@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
 import java.io.File
 import java.rmi.NoSuchObjectException
 import java.rmi.server.UnicastRemoteObject
+import java.util.*
 
-class CompileServiceRMIWrapper(val server: CompileServiceServerSide) : CompileService {
+class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptions: DaemonOptions, compilerId: CompilerId) : CompileService {
 
-    private fun deprecated(): Nothing = TODO("NEVER USE DEPRECATED METHODS, PLEASE!")
+    private fun deprecated(): Nothing = TODO("NEVER USE DEPRECATED METHODS, PLEASE!") // prints this todo message
 
     override fun checkCompilerId(expectedCompilerId: CompilerId) = runBlocking {
         server.checkCompilerId(expectedCompilerId)
@@ -189,8 +190,26 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide) : CompileSe
         ) as CompileService
 
         registry.rebind(COMPILER_SERVICE_RMI_NAME, stub)
+
+        // create file :
+        val runFileDir = File(daemonOptions.runFilesPathOrDefault)
+        runFileDir.mkdirs()
+        val runFile = File(
+            runFileDir,
+            makeRunFilenameString(
+                timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
+                digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
+                port = port.toString()
+            )
+        )
+        try {
+            if (!runFile.createNewFile()) throw Exception("createNewFile returned false")
+        } catch (e: Throwable) {
+            throw IllegalStateException("Unable to create runServer file '${runFile.absolutePath}'", e)
+        }
+        runFile.deleteOnExit()
     }
 
 }
 
-fun CompileServiceServerSide.toRMIServer() = CompileServiceRMIWrapper(this)
+fun CompileServiceServerSide.toRMIServer(daemonOptions: DaemonOptions) = CompileServiceRMIWrapper(this, daemonOptions)
