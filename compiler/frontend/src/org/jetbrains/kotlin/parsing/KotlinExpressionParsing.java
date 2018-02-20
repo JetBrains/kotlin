@@ -803,7 +803,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : stringTemplate
      *   : NoEscapeString
      *   : IntegerLiteral
-     *   : LongLiteral
      *   : CharacterLiteral
      *   : FloatLiteral
      *   : "null"
