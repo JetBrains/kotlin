@@ -57,23 +57,20 @@ fun KtDeclaration.unsafeResolveToDescriptor(bodyResolveMode: BodyResolveMode = B
  * and then takes the relevant descriptor from binding context.
  * The exact set of declarations to resolve depends on bodyResolveMode
  */
-inline fun <reified D : DeclarationDescriptor> KtDeclaration.resolveToDescriptorIfAny(
-    bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL,
-    klass: Class<D> = D::class.java
-): D? {
+fun KtDeclaration.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): DeclarationDescriptor? {
     //TODO: BodyResolveMode.PARTIAL is not quite safe!
     val context = analyze(bodyResolveMode)
-    if (this is KtParameter && this.hasValOrVar() && klass != ValueParameterDescriptor::class.java) {
-        return context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this) as? D
+    return if (this is KtParameter && hasValOrVar()) {
+        context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
+    } else {
+        context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
     }
-    return context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this) as? D
 }
 
-fun KtDeclaration.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL) =
-    resolveToDescriptorIfAny<DeclarationDescriptor>(bodyResolveMode)
-
-fun KtParameter.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL) =
-    resolveToDescriptorIfAny<ValueParameterDescriptor>(bodyResolveMode)
+fun KtParameter.resolveToParameterDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): ValueParameterDescriptor? {
+    val context = analyze(bodyResolveMode)
+    return context.get(BindingContext.VALUE_PARAMETER, this) as? ValueParameterDescriptor
+}
 
 fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
     val facade = getResolutionFacade()

@@ -256,7 +256,7 @@ class InflowSlicer(
                     .forEach { (it.element?.parent as? KtProperty)?.processPropertyAssignments() }
         }
 
-        val parameterDescriptor = resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return
+        val parameterDescriptor = resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
         (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope()) body@ {
             val refElement = it.element ?: return@body

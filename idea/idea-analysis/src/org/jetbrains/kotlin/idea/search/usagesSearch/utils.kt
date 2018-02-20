@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.unwrappedTargets
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
@@ -60,10 +61,10 @@ val KtDeclaration.constructor: ConstructorDescriptor?
     }
 
 val KtParameter.descriptor: ValueParameterDescriptor?
-    get() = this.resolveToDescriptorIfAny<ValueParameterDescriptor>(BodyResolveMode.FULL)
+    get() = this.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL)
 
 val KtParameter.propertyDescriptor: PropertyDescriptor?
-    get() = this.resolveToDescriptorIfAny<PropertyDescriptor>(BodyResolveMode.FULL)
+    get() = this.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? PropertyDescriptor
 
 fun PsiReference.checkUsageVsOriginalDescriptor(
         targetDescriptor: DeclarationDescriptor,

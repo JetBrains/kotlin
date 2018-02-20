@@ -18,10 +18,9 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.RemoveEmptyPrimaryConstructorIntention
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
@@ -40,7 +39,7 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
         val element = element ?: return
         val primaryConstructor = element.parent?.parent as? KtPrimaryConstructor
         val parameterList = element.parent as? KtParameterList
-        val parameterDescriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return
+        val parameterDescriptor = element.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
         ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
         val nextParameter = parameterList?.parameters?.getOrNull(parameterDescriptor.index)
         if (nextParameter != null) {
