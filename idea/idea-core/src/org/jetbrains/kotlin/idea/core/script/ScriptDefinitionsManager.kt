@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
+import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -149,23 +150,36 @@ fun loadDefinitionsFromTemplates(
     val loader = if (classpath.isEmpty()) baseLoader else URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseLoader)
 
     templateClassNames.mapNotNull {
-        val template = loader.loadClass(it).kotlin
-        when {
-            template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>() != null ||
-                    template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() != null -> {
-                KotlinScriptDefinitionFromAnnotatedTemplate(
-                    template,
-                    environment,
-                    templateClasspath
-                )
+        try {
+            val template = loader.loadClass(it).kotlin
+            when {
+                template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>() != null ||
+                        template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() != null -> {
+                    KotlinScriptDefinitionFromAnnotatedTemplate(
+                        template,
+                        environment,
+                        templateClasspath
+                    )
+                }
+                template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
+                    KotlinScriptDefinitionAdapterFromNewAPI(ScriptDefinitionFromAnnotatedBaseClass(template))
+                }
+                else -> {
+                    LOG.error("[kts] cannot find a valid script definition annotation on the class $template")
+                    null
+                }
             }
-            template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
-                KotlinScriptDefinitionAdapterFromNewAPI(ScriptDefinitionFromAnnotatedBaseClass(template))
-            }
-            else -> {
-                LOG.error("[kts] cannot find a valid script definition annotation on the class $template")
-                null
-            }
+        } catch (e: ClassNotFoundException) {
+            // Assuming that direct ClassNotFoundException is the result of versions mismatch and missing subsystems, e.g. gradle
+            // so, it only results in warning, while other errors are severe misconfigurations, resulting it user-visible error
+            LOG.warn("[kts] cannot load script definition class $it", e)
+            null
+        } catch (e: NoClassDefFoundError) {
+            LOG.error("[kts] cannot load script definition class $it", e)
+            null
+        } catch (e: InvocationTargetException) {
+            LOG.error("[kts] cannot load script definition class $it", e)
+            null
         }
     }
 }

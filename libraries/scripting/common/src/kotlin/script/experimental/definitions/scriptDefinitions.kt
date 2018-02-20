@@ -14,9 +14,9 @@ open class ScriptDefinitionFromAnnotatedBaseClass(final override val baseClass: 
     private val annotation = baseClass.java.getAnnotation(KotlinScript::class.java)
             ?: throw IllegalArgumentException("Expecting KotlinScript on the $baseClass")
 
-    override val selector by lazy { annotation.selector.instantiateScriptHandler() }
-    override val configurator by lazy { annotation.configurator.instantiateScriptHandler() }
-    override val runner by lazy { annotation.runner.instantiateScriptHandler() }
+    override val selector = annotation.selector.instantiateScriptHandler()
+    override val configurator = annotation.configurator.instantiateScriptHandler()
+    override val runner = annotation.runner.instantiateScriptHandler()
 
     private fun <T : Any> KClass<T>.instantiateScriptHandler(): T {
         val fqn = this.qualifiedName!!

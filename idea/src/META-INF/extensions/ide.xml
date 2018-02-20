@@ -47,6 +47,10 @@
             id="ScriptTemplatesFromCompilerSettingsProvider"
             implementation="org.jetbrains.kotlin.idea.script.ScriptTemplatesFromCompilerSettingsProvider"/>
 
+        <scriptDefinitionContributor
+            id="ScriptTemplatesFromDependenciesProvider"
+            implementation="org.jetbrains.kotlin.idea.script.ScriptTemplatesFromDependenciesProvider"/>
+
         <scriptDefinitionContributor id="StandardScriptDefinitionContributor"
                                  order="last"
                                  implementation="org.jetbrains.kotlin.idea.core.script.StandardScriptDefinitionContributor"/>
