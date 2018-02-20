@@ -20,6 +20,7 @@
 package kotlin.collections
 
 import kotlin.comparisons.compareValues
+import kotlin.internal.contracts.*
 
 internal object EmptyIterator : ListIterator<Nothing> {
     override fun hasNext(): Boolean = false
@@ -185,6 +186,19 @@ public val <T> List<T>.lastIndex: Int
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
+
+/**
+ * Returns `true` if the collection is null or if it is empty.
+ * @sample samples.collections.Collections.Collections.collectionIsNullOrEmpty
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>?.isNullOrEmpty(): Boolean {
+    contract {
+        returns(false) implies (this@isNullOrEmpty != null)
+    }
+
+    return this == null || this.isEmpty()
+}
 
 /**
  * Returns this Collection if it's not `null` and the empty list otherwise.
