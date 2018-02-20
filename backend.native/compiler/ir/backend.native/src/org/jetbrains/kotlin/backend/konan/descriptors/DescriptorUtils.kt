@@ -78,8 +78,6 @@ private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
 internal val CallableDescriptor.isIntrinsic: Boolean
     get() = this.annotations.findAnnotation(intrinsicAnnotation) != null
 
-internal fun FunctionDescriptor.externalOrIntrinsic() = isExternal || isIntrinsic || (this is IrBuiltinOperatorDescriptorBase)
-
 private val intrinsicTypes = setOf(
         "kotlin.Boolean", "kotlin.Char",
         "kotlin.Byte", "kotlin.Short",

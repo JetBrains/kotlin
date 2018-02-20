@@ -48,7 +48,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     private fun countParams(fn: FunctionDescriptor) = LLVMCountParams(fn.llvmFunction)
 
-    fun functionLlvmValue(descriptor: FunctionDescriptor) = descriptor.llvmFunction
     fun functionEntryPointAddress(descriptor: FunctionDescriptor) = descriptor.entryPointAddress.llvm
     fun functionHash(descriptor: FunctionDescriptor): LLVMValueRef = descriptor.functionName.localHash.llvm
 

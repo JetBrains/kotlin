@@ -207,18 +207,16 @@ private fun maskParameterSymbol(function: IrFunction, number: Int) =
 
 private fun markerParameterDescriptor(descriptor: FunctionDescriptor) = descriptor.valueParameters.single { it.name == kConstructorMarkerName }
 
-private fun nullConst(expression: IrElement, type: KotlinType): IrExpression? {
-    when {
-        KotlinBuiltIns.isFloat(type)   -> return IrConstImpl.float     (expression.startOffset, expression.endOffset, type, 0.0F)
-        KotlinBuiltIns.isDouble(type)  -> return IrConstImpl.double    (expression.startOffset, expression.endOffset, type, 0.0)
-        KotlinBuiltIns.isBoolean(type) -> return IrConstImpl.boolean   (expression.startOffset, expression.endOffset, type, false)
-        KotlinBuiltIns.isByte(type)    -> return IrConstImpl.byte      (expression.startOffset, expression.endOffset, type, 0)
-        KotlinBuiltIns.isChar(type)    -> return IrConstImpl.char      (expression.startOffset, expression.endOffset, type, 0.toChar())
-        KotlinBuiltIns.isShort(type)   -> return IrConstImpl.short     (expression.startOffset, expression.endOffset, type, 0)
-        KotlinBuiltIns.isInt(type)     -> return IrConstImpl.int       (expression.startOffset, expression.endOffset, type, 0)
-        KotlinBuiltIns.isLong(type)    -> return IrConstImpl.long      (expression.startOffset, expression.endOffset, type, 0)
-        else                           -> return IrConstImpl.constNull (expression.startOffset, expression.endOffset, type.builtIns.nullableNothingType)
-    }
+fun nullConst(expression: IrElement, type: KotlinType) = when {
+    KotlinBuiltIns.isFloat(type)   -> IrConstImpl.float     (expression.startOffset, expression.endOffset, type, 0.0F)
+    KotlinBuiltIns.isDouble(type)  -> IrConstImpl.double    (expression.startOffset, expression.endOffset, type, 0.0)
+    KotlinBuiltIns.isBoolean(type) -> IrConstImpl.boolean   (expression.startOffset, expression.endOffset, type, false)
+    KotlinBuiltIns.isByte(type)    -> IrConstImpl.byte      (expression.startOffset, expression.endOffset, type, 0)
+    KotlinBuiltIns.isChar(type)    -> IrConstImpl.char      (expression.startOffset, expression.endOffset, type, 0.toChar())
+    KotlinBuiltIns.isShort(type)   -> IrConstImpl.short     (expression.startOffset, expression.endOffset, type, 0)
+    KotlinBuiltIns.isInt(type)     -> IrConstImpl.int       (expression.startOffset, expression.endOffset, type, 0)
+    KotlinBuiltIns.isLong(type)    -> IrConstImpl.long      (expression.startOffset, expression.endOffset, type, 0)
+    else                           -> IrConstImpl.constNull (expression.startOffset, expression.endOffset, type.builtIns.nullableNothingType)
 }
 
 class DefaultParameterInjector constructor(val context: CommonBackendContext): BodyLoweringPass {

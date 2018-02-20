@@ -96,7 +96,14 @@ internal fun emitLLVM(context: Context) {
         val privateFunctions = moduleDFG!!.symbolTable.getPrivateFunctionsTableForExport()
 
         codegenVisitor.codegen.staticData.placeGlobalConstArray(irModule.descriptor.privateFunctionsTableSymbolName, int8TypePtr,
-                privateFunctions.map { constPointer(codegenVisitor.codegen.functionLlvmValue(it)).bitcast(int8TypePtr) },
+                privateFunctions.map { constPointer(codegenVisitor.codegen.llvmFunction(it)).bitcast(int8TypePtr) },
+                isExported = true
+        )
+
+        val privateClasses = moduleDFG!!.symbolTable.getPrivateClassesTableForExport()
+
+        codegenVisitor.codegen.staticData.placeGlobalConstArray(irModule.descriptor.privateClassesTableSymbolName, int8TypePtr,
+                privateClasses.map { constPointer(codegenVisitor.codegen.typeInfoValue(it)).bitcast(int8TypePtr) },
                 isExported = true
         )
     }
@@ -766,6 +773,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrSuspendableExpression ->
                                         return evaluateSuspendableExpression  (value)
             is IrSuspensionPoint     -> return evaluateSuspensionPoint        (value)
+            is IrPrivateClassReference ->
+                                        return evaluatePrivateClassReference  (value)
             else                     -> {
                 TODO(ir2string(value))
             }
@@ -1942,6 +1951,21 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
+    private fun evaluatePrivateClassReference(classReference: IrPrivateClassReference): LLVMValueRef {
+        val classesListName = classReference.moduleDescriptor.privateClassesTableSymbolName
+        // LLVM inlines access to this global array (with -opt option on).
+        val functionsList =
+                if (classReference.moduleDescriptor == context.irModule!!.descriptor)
+                    LLVMGetNamedGlobal(context.llvmModule, classesListName)
+                else
+                    codegen.importGlobal(classesListName, LLVMArrayType(int8TypePtr, classReference.totalClasses)!!, classReference.moduleDescriptor.llvmSymbolOrigin)
+        val classIndex    = Int32(classReference.classIndex).llvm
+        val classPlacePtr = LLVMBuildGEP(functionGenerationContext.builder, functionsList, cValuesOf(kImmZero, classIndex), 2, "")!!
+        return functionGenerationContext.load(classPlacePtr)
+    }
+
+    //-------------------------------------------------------------------------//
+
     private fun evaluateSimpleFunctionCall(
             descriptor: FunctionDescriptor, args: List<LLVMValueRef>,
             resultLifetime: Lifetime, superClass: ClassDescriptor? = null): LLVMValueRef {
@@ -2362,7 +2386,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     fun callDirect(descriptor: FunctionDescriptor, args: List<LLVMValueRef>,
                    resultLifetime: Lifetime): LLVMValueRef {
         val realDescriptor = descriptor.target
-        val llvmFunction = codegen.functionLlvmValue(realDescriptor)
+        val llvmFunction = codegen.llvmFunction(realDescriptor)
         return call(descriptor, llvmFunction, args, resultLifetime)
     }
 

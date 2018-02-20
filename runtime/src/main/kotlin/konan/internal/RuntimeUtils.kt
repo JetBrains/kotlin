@@ -17,6 +17,7 @@
 package konan.internal
 
 import kotlin.internal.getProgressionLastElement
+import kotlin.reflect.KClass
 
 @ExportForCppRuntime
 fun ThrowNullPointerException(): Nothing {
@@ -35,6 +36,10 @@ fun ThrowClassCastException(): Nothing {
 
 fun ThrowTypeCastException(): Nothing {
     throw TypeCastException()
+}
+
+fun ThrowInvalidReceiverTypeException(klass: KClass<*>): Nothing {
+    throw RuntimeException("Unexpected receiver type: " + (klass.qualifiedName ?: "noname"))
 }
 
 @ExportForCppRuntime

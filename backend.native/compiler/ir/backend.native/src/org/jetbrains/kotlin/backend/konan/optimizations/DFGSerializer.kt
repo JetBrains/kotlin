@@ -204,15 +204,16 @@ internal object DFGSerializer {
         }
     }
 
-    class DeclaredType(val isFinal: Boolean, val isAbstract: Boolean, val superTypes: IntArray,
+    class DeclaredType(val isFinal: Boolean, val isAbstract: Boolean, val index: Int, val superTypes: IntArray,
                        val vtable: IntArray, val itable: Array<ItableSlot>) {
 
-        constructor(data: ArraySlice) : this(data.readBoolean(), data.readBoolean(), data.readIntArray(),
+        constructor(data: ArraySlice) : this(data.readBoolean(), data.readBoolean(), data.readInt(), data.readIntArray(),
                 data.readIntArray(), data.readArray { ItableSlot(this) })
 
         fun write(result: ArraySlice) {
             result.writeBoolean(isFinal)
             result.writeBoolean(isAbstract)
+            result.writeInt(index)
             result.writeIntArray(superTypes)
             result.writeIntArray(vtable)
             result.writeArray(itable) { it.write(this) }
@@ -699,7 +700,7 @@ internal object DFGSerializer {
             println("TYPES: ${typeMap.size}, " +
                     "FUNCTIONS: ${functionSymbolMap.size}, " +
                     "PRIVATE FUNCTIONS: ${functionSymbolMap.keys.count { it is DataFlowIR.FunctionSymbol.Private }}, " +
-                    "FUNCTION TABLE SIZE: ${symbolTable.couldBeCalledVirtuallyIndex}"
+                    "FUNCTION TABLE SIZE: ${symbolTable.privateFunIndex}"
             )
         }
         val types = typeMap.entries
@@ -709,6 +710,7 @@ internal object DFGSerializer {
                             DeclaredType(
                                     type.isFinal,
                                     type.isAbstract,
+                                    type.symbolTableIndex,
                                     type.superTypes.map { typeMap[it]!! }.toIntArray(),
                                     type.vtable.map { functionSymbolMap[it]!! }.toIntArray(),
                                     type.itable.map { (hash, symbol) -> ItableSlot(hash, functionSymbolMap[symbol]!!) }.toTypedArray()
@@ -865,18 +867,26 @@ internal object DFGSerializer {
                         when {
                             external != null -> DataFlowIR.Type.External(external.hash, external.name)
 
-                            public != null ->
+                            public != null -> {
+                                val symbolTableIndex = public.intestines.index
+                                if (symbolTableIndex >= 0)
+                                    ++module.numberOfClasses
                                 DataFlowIR.Type.Public(public.hash, public.intestines.isFinal,
-                                        public.intestines.isAbstract, public.name).also {
+                                        public.intestines.isAbstract, module, symbolTableIndex, public.name).also {
                                     publicTypesMap.put(it.hash, it)
                                     allTypes += it
                                 }
+                            }
 
-                            else ->
-                                DataFlowIR.Type.Private(privateTypeIndex++, private!!.intestines.isFinal,
-                                        private.intestines.isAbstract, private.name).also {
+                            else -> {
+                                val symbolTableIndex = private!!.intestines.index
+                                if (symbolTableIndex >= 0)
+                                    ++module.numberOfClasses
+                                DataFlowIR.Type.Private(privateTypeIndex++, private.intestines.isFinal,
+                                        private.intestines.isAbstract, module, symbolTableIndex, private.name).also {
                                     allTypes += it
                                 }
+                            }
                         }
                     }
                 }
@@ -1119,6 +1129,10 @@ internal object DFGSerializer {
                 it.superTypes.forEach {
                     println("        $it")
                 }
+            }
+
+            functions.forEach {
+                println(it.key)
             }
         }
 

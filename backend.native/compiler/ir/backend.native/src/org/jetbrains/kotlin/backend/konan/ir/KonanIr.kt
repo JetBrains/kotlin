@@ -24,10 +24,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallWithIndexedArgumentsBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
+import org.jetbrains.kotlin.ir.expressions.impl.IrTerminalDeclarationReferenceBase
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -209,4 +212,28 @@ internal class IrPrivateFunctionCallImpl(startOffset: Int,
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitCall(this, data)
 
+}
+
+internal interface IrPrivateClassReference : IrClassReference {
+    val moduleDescriptor: ModuleDescriptor
+    val totalClasses: Int
+    val classIndex: Int
+}
+
+internal class IrPrivateClassReferenceImpl(startOffset: Int,
+                                           endOffset: Int,
+                                           type: KotlinType,
+                                           symbol: IrClassifierSymbol,
+                                           override val classType: KotlinType,
+                                           override val moduleDescriptor: ModuleDescriptor,
+                                           override val totalClasses: Int,
+                                           override val classIndex: Int
+) : IrPrivateClassReference,
+        IrTerminalDeclarationReferenceBase<IrClassifierSymbol, ClassifierDescriptor>(
+                startOffset, endOffset, type,
+                symbol, symbol.descriptor
+        )
+{
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+            visitor.visitClassReference(this, data)
 }

@@ -21,15 +21,26 @@ import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.ir.IrPrivateClassReferenceImpl
 import org.jetbrains.kotlin.backend.konan.ir.IrPrivateFunctionCallImpl
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.lower.nullConst
+import org.jetbrains.kotlin.backend.konan.objcexport.getErasedTypeClass
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.getValueArgument
+import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 // Devirtualization analysis is performed using Variable Type Analysis algorithm.
@@ -873,37 +884,127 @@ internal object Devirtualization {
 
     private fun devirtualize(irModule: IrModuleFragment, context: Context,
                              devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
+        val nativePtrType = context.builtIns.nativePtr.defaultType
+        val nativePtrEqualityOperatorSymbol = context.ir.symbols.areEqualByValue.single { it.descriptor.valueParameters[0].type == nativePtrType }
+
         irModule.transformChildrenVoid(object: IrElementTransformerVoidWithContext() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
                 val devirtualizedCallSite = devirtualizedCallSites[expression]
-                val actualCallee = devirtualizedCallSite?.possibleCallees?.singleOrNull()?.callee as? DataFlowIR.FunctionSymbol.Declared
-                        ?: return expression
+                val possibleCallees = devirtualizedCallSite?.possibleCallees
+                if (possibleCallees == null
+                        || possibleCallees.any { it.callee is DataFlowIR.FunctionSymbol.External }
+                        || possibleCallees.any { it.receiverType is DataFlowIR.Type.External })
+                    return expression
+
+                val descriptor = expression.descriptor
+                val owner = (descriptor.containingDeclaration as ClassDescriptor)
+                val maxUnfoldFactor = if (owner.isInterface) 3 else 1
+                if (possibleCallees.size > maxUnfoldFactor) {
+                    // Callsite too complicated to devirtualize.
+                    return expression
+                }
+
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
+                val type = if (descriptor.isSuspend)
+                               context.builtIns.nullableAnyType
+                           else descriptor.original.returnType!!
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
                 irBuilder.run {
                     val dispatchReceiver = expression.dispatchReceiver!!
-                    return IrPrivateFunctionCallImpl(
-                            startOffset,
-                            endOffset,
-                            expression.type,
-                            expression.symbol,
-                            expression.descriptor,
-                            (expression as? IrCallImpl)?.typeArguments,
-                            actualCallee.module.descriptor,
-                            actualCallee.module.numberOfFunctions,
-                            actualCallee.symbolTableIndex
-                    ).apply {
-                        this.dispatchReceiver    = dispatchReceiver
-                        this.extensionReceiver   = expression.extensionReceiver
-                        expression.descriptor.valueParameters.forEach {
-                            this.putValueArgument(it.index, expression.getValueArgument(it))
+                    return when {
+                        possibleCallees.isEmpty() -> irBlock(expression) {
+                            +irCall(context.ir.symbols.throwInvalidReceiverTypeException).apply {
+                                putValueArgument(0, irCall(context.ir.symbols.kClassImplConstructor, listOf(dispatchReceiver.type)).apply {
+                                    putValueArgument(0, irCall(context.ir.symbols.getObjectTypeInfo).apply {
+                                        putValueArgument(0, dispatchReceiver)
+                                    })
+                                })
+                            }
+                            +nullConst(expression, type)
+                        }
+
+                        possibleCallees.size == 1 -> { // Monomorphic callsite.
+                            val actualCallee = possibleCallees[0].callee as DataFlowIR.FunctionSymbol.Declared
+                            irDevirtualizedCall(expression, type, actualCallee).apply {
+                                this.dispatchReceiver = dispatchReceiver
+                                this.extensionReceiver = expression.extensionReceiver
+                                expression.descriptor.valueParameters.forEach {
+                                    this.putValueArgument(it.index, expression.getValueArgument(it))
+                                }
+                            }
+                        }
+
+                        else -> irBlock(expression) {
+                            val receiver = irTemporary(dispatchReceiver, "receiver")
+                            val extensionReceiver = expression.extensionReceiver?.let { irTemporary(it, "extensionReceiver") }
+                            val parameters = expression.descriptor.valueParameters.associate { it to irTemporary(expression.getValueArgument(it)!!) }
+                            val typeInfo = irTemporary(irCall(context.ir.symbols.getObjectTypeInfo).apply {
+                                putValueArgument(0, irGet(receiver.symbol))
+                            })
+
+                            val branches = possibleCallees.mapIndexed { index, devirtualizedCallee ->
+                                val actualCallee = devirtualizedCallee.callee as DataFlowIR.FunctionSymbol.Declared
+                                val actualReceiverType = devirtualizedCallee.receiverType as DataFlowIR.Type.Declared
+                                val expectedTypeInfo = IrPrivateClassReferenceImpl(
+                                        startOffset,
+                                        endOffset,
+                                        nativePtrType,
+                                        IrClassSymbolImpl(dispatchReceiver.type.getErasedTypeClass()),
+                                        receiver.type,
+                                        actualReceiverType.module!!.descriptor,
+                                        actualReceiverType.module.numberOfClasses,
+                                        actualReceiverType.symbolTableIndex)
+                                val condition =
+                                        if (index == possibleCallees.size - 1)
+                                            irTrue()
+                                        else
+                                            irCall(nativePtrEqualityOperatorSymbol).apply {
+                                                putValueArgument(0, irGet(typeInfo.symbol))
+                                                putValueArgument(1, expectedTypeInfo)
+                                            }
+                                IrBranchImpl(
+                                        startOffset,
+                                        endOffset,
+                                        condition,
+                                        irDevirtualizedCall(expression, type, actualCallee).apply {
+                                            this.dispatchReceiver = irGet(receiver.symbol)
+                                            this.extensionReceiver = extensionReceiver?.let { irGet(it.symbol) }
+                                            expression.descriptor.valueParameters.forEach {
+                                                this.putValueArgument(it.index, irGet(parameters[it]!!.symbol))
+                                            }
+                                        }
+                                )
+                            }
+
+                            +IrWhenImpl(
+                                    startOffset,
+                                    endOffset,
+                                    type,
+                                    expression.origin,
+                                    branches
+                            )
                         }
                     }
                 }
             }
+
+            fun IrBuilderWithScope.irDevirtualizedCall(callee: IrCall, actualType: KotlinType,
+                                                       devirtualizedCallee: DataFlowIR.FunctionSymbol.Declared) =
+                    IrPrivateFunctionCallImpl(
+                            startOffset,
+                            endOffset,
+                            actualType,
+                            callee.symbol,
+                            callee.descriptor,
+                            (callee as? IrCallImpl)?.typeArguments,
+                            devirtualizedCallee.module.descriptor,
+                            devirtualizedCallee.module.numberOfFunctions,
+                            devirtualizedCallee.symbolTableIndex
+                    )
+
         })
     }
 }

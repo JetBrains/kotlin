@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.externalOrIntrinsic
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.isObjCClass
+import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -50,7 +51,7 @@ internal object DataFlowIR {
 
     abstract class Type {
         // Special marker type forbidding devirtualization on its instances.
-        object Virtual : Declared(false, true)
+        object Virtual : Declared(false, true, null, -1)
 
         class External(val hash: Long, val name: String? = null) : Type() {
             override fun equals(other: Any?): Boolean {
@@ -69,13 +70,14 @@ internal object DataFlowIR {
             }
         }
 
-        abstract class Declared(val isFinal: Boolean, val isAbstract: Boolean) : Type() {
+        abstract class Declared(val isFinal: Boolean, val isAbstract: Boolean, val module: Module?, val symbolTableIndex: Int) : Type() {
             val superTypes = mutableListOf<Type>()
             val vtable = mutableListOf<FunctionSymbol>()
             val itable = mutableMapOf<Long, FunctionSymbol>()
         }
 
-        class Public(val hash: Long, isFinal: Boolean, isAbstract: Boolean, val name: String? = null) : Declared(isFinal, isAbstract) {
+        class Public(val hash: Long, isFinal: Boolean, isAbstract: Boolean, module: Module, symbolTableIndex: Int, val name: String? = null)
+            : Declared(isFinal, isAbstract, module, symbolTableIndex) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
@@ -88,11 +90,12 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PublicType(hash='$hash', name='$name')"
+                return "PublicType(hash='$hash', symbolTableIndex='$symbolTableIndex', name='$name')"
             }
         }
 
-        class Private(val index: Int, isFinal: Boolean, isAbstract: Boolean, val name: String? = null) : Declared(isFinal, isAbstract) {
+        class Private(val index: Int, isFinal: Boolean, isAbstract: Boolean, module: Module, symbolTableIndex: Int, val name: String? = null)
+            : Declared(isFinal, isAbstract, module, symbolTableIndex) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -105,13 +108,14 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PrivateType(index=$index, name='$name')"
+                return "PrivateType(index=$index, symbolTableIndex='$symbolTableIndex', name='$name')"
             }
         }
     }
 
     class Module(val descriptor: ModuleDescriptor) {
         var numberOfFunctions = 0
+        var numberOfClasses = 0
     }
 
     abstract class FunctionSymbol(val numberOfParameters: Int, val isGlobalInitializer: Boolean, val name: String?) {
@@ -154,7 +158,7 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PublicFunction(hash='$hash', name='$name')"
+                return "PublicFunction(hash='$hash', symbolTableIndex='$symbolTableIndex', name='$name')"
             }
         }
 
@@ -173,7 +177,7 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PrivateFunction(index=$index, name='$name')"
+                return "PrivateFunction(index=$index, symbolTableIndex='$symbolTableIndex', name='$name')"
             }
         }
     }
@@ -435,7 +439,6 @@ internal object DataFlowIR {
 
         var privateTypeIndex = 0
         var privateFunIndex = 0
-        var couldBeCalledVirtuallyIndex = 0
 
         init {
             irModule.accept(object : IrElementVisitorVoid {
@@ -474,10 +477,12 @@ internal object DataFlowIR {
 
             val isFinal = descriptor.isFinal()
             val isAbstract = descriptor.isAbstract()
+            val placeToClassTable = !descriptor.defaultType.isValueType()
+            val symbolTableIndex = if (placeToClassTable) module.numberOfClasses++ else -1
             val type = if (descriptor.isExported())
-                Type.Public(name.localHash.value, isFinal, isAbstract, takeName { name })
-            else
-                Type.Private(privateTypeIndex++, isFinal, isAbstract, takeName { name })
+                           Type.Public(name.localHash.value, isFinal, isAbstract, module, symbolTableIndex, takeName { name })
+                       else
+                           Type.Private(privateTypeIndex++, isFinal, isAbstract, module, symbolTableIndex, takeName { name })
             if (!descriptor.isInterface) {
                 val vtableBuilder = context.getVtableBuilder(descriptor)
                 type.vtable += vtableBuilder.vtableEntries.map { mapFunction(it.getImplementation(context)) }
@@ -528,7 +533,7 @@ internal object DataFlowIR {
                     is FunctionDescriptor -> {
                         val name = if (it.isExported()) it.symbolName else it.internalName
                         val numberOfParameters = it.allParameters.size + if (it.isSuspend) 1 else 0
-                        if (it.module != irModule.descriptor || it.externalOrIntrinsic()) {
+                        if (it.module != irModule.descriptor || it.isExternal || (it is IrBuiltinOperatorDescriptorBase)) {
                             val escapesAnnotation = it.annotations.findAnnotation(FQ_NAME_ESCAPES)
                             val pointsToAnnotation = it.annotations.findAnnotation(FQ_NAME_POINTS_TO)
                             @Suppress("UNCHECKED_CAST")
@@ -543,9 +548,7 @@ internal object DataFlowIR {
                             val placeToFunctionsTable = !isAbstract && it !is ConstructorDescriptor && classDescriptor != null
                                     && classDescriptor.kind != ClassKind.ANNOTATION_CLASS
                                     && (it.isOverridableOrOverrides || it.name.asString().contains("<bridge-") || !classDescriptor.isFinal())
-                            if (placeToFunctionsTable)
-                                ++module.numberOfFunctions
-                            val symbolTableIndex = if (!placeToFunctionsTable) -1 else couldBeCalledVirtuallyIndex++
+                            val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
                             if (it.isExported())
                                 FunctionSymbol.Public(name.localHash.value, numberOfParameters, module, symbolTableIndex, false, takeName { name })
                             else
@@ -570,6 +573,19 @@ internal object DataFlowIR {
                             }
                         }
                         .map { it.key as FunctionDescriptor }
+                        .toList()
+
+        fun getPrivateClassesTableForExport() =
+                classMap
+                        .asSequence()
+                        .filter { it.value.let { it is DataFlowIR.Type.Declared && it.symbolTableIndex >= 0 } }
+                        .sortedBy { (it.value as DataFlowIR.Type.Declared).symbolTableIndex }
+                        .apply {
+                            forEachIndexed { index, entry ->
+                                assert((entry.value  as DataFlowIR.Type.Declared).symbolTableIndex == index) { "Inconsistent class table" }
+                            }
+                        }
+                        .map { it.key }
                         .toList()
     }
 }
