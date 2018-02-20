@@ -11715,6 +11715,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noAssertionsOnInlineClassBasedOnNullableType.kt")
+        public void testNoAssertionsOnInlineClassBasedOnNullableType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("passInlineClassAsVararg.kt")
         public void testPassInlineClassAsVararg() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVararg.kt");

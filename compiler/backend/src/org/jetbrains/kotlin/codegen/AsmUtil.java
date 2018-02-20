@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.MessageLite;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
@@ -683,7 +684,7 @@ public class AsmUtil {
             @NotNull String name
     ) {
         KotlinType type = parameter.getType();
-        if (isNullableType(type)) return;
+        if (isNullableType(type) || InlineClassesUtilsKt.isNullableUnderlyingType(type)) return;
 
         int index = frameMap.getIndex(parameter);
         Type asmType = typeMapper.mapType(type);

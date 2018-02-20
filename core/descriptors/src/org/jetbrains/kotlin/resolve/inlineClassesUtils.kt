@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun ClassDescriptor.underlyingRepresentation(): ValueParameterDescriptor? {
@@ -30,4 +31,11 @@ fun KotlinType.isInlineClassType(): Boolean = constructor.declarationDescriptor?
 fun KotlinType.substitutedUnderlyingType(): KotlinType? {
     val parameter = unsubstitutedUnderlyingParameter() ?: return null
     return memberScope.getContributedVariables(parameter.name, NoLookupLocation.FOR_ALREADY_TRACKED).singleOrNull()?.type
+}
+
+fun KotlinType.isNullableUnderlyingType(): Boolean {
+    if (!isInlineClassType()) return false
+    val underlyingType = unsubstitutedUnderlyingType() ?: return false
+
+    return TypeUtils.isNullableType(underlyingType)
 }

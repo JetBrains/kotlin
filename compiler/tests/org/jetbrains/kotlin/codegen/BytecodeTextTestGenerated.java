@@ -1947,6 +1947,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("assertionsForParametersOfInlineClassTypes.kt")
+        public void testAssertionsForParametersOfInlineClassTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/assertionsForParametersOfInlineClassTypes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("boxInlineClassesOnPassingToVarargs.kt")
         public void testBoxInlineClassesOnPassingToVarargs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/boxInlineClassesOnPassingToVarargs.kt");
@@ -2046,6 +2052,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("isCheckForInlineClass.kt")
         public void testIsCheckForInlineClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/isCheckForInlineClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noAssertionsForInlineClassesBasedOnNullableTypes.kt")
+        public void testNoAssertionsForInlineClassesBasedOnNullableTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/noAssertionsForInlineClassesBasedOnNullableTypes.kt");
             doTest(fileName);
         }
 
