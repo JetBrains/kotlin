@@ -155,3 +155,9 @@ class KotlinCallCompleter(
         )
     }
 }
+
+interface InferenceExtension {
+    companion object {
+        val none = object : InferenceExtension {}
+    }
+}
