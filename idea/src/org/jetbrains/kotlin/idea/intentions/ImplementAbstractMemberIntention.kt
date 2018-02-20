@@ -85,7 +85,7 @@ abstract class ImplementAbstractMemberIntentionBase :
                 is KtEnumEntry -> subClass.resolveToDescriptorIfAny()
                 is PsiClass -> subClass.getJavaClassDescriptor()
                 else -> null
-            } as? ClassDescriptor ?: return false
+            } ?: return false
             return acceptSubClass(classDescriptor, memberDescriptor)
         }
 
@@ -117,7 +117,7 @@ abstract class ImplementAbstractMemberIntentionBase :
     protected abstract val preferConstructorParameters: Boolean
 
     private fun implementInKotlinClass(editor: Editor?, member: KtNamedDeclaration, targetClass: KtClassOrObject) {
-        val subClassDescriptor = targetClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
+        val subClassDescriptor = targetClass.resolveToDescriptorIfAny() ?: return
         val superMemberDescriptor = member.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return
         val superClassDescriptor = superMemberDescriptor.containingDeclaration as? ClassDescriptor ?: return
         val substitutor = getTypeSubstitutor(superClassDescriptor.defaultType, subClassDescriptor.defaultType)

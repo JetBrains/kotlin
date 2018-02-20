@@ -25,7 +25,6 @@ import com.intellij.psi.impl.light.LightMethod
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -61,8 +60,8 @@ class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
         LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
 
         val baseKtClass = (baseClass as? KtLightClass)?.kotlinOrigin ?: return false
-        val baseDescriptor = baseKtClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return false
-        val thisDescriptor = kotlinOrigin.resolveToDescriptorIfAny() as? ClassDescriptor ?: return false
+        val baseDescriptor = baseKtClass.resolveToDescriptorIfAny() ?: return false
+        val thisDescriptor = kotlinOrigin.resolveToDescriptorIfAny() ?: return false
         return if (checkDeep) DescriptorUtils.isSubclass(thisDescriptor, baseDescriptor) else DescriptorUtils.isDirectSubclass(thisDescriptor, baseDescriptor)
     }
 }

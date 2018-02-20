@@ -20,9 +20,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -65,6 +63,10 @@ fun KtDeclaration.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = Bo
     } else {
         context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
     }
+}
+
+fun KtClassOrObject.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): ClassDescriptor? {
+    return (this as KtDeclaration).resolveToDescriptorIfAny(bodyResolveMode) as? ClassDescriptor
 }
 
 fun KtParameter.resolveToParameterDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): ValueParameterDescriptor? {

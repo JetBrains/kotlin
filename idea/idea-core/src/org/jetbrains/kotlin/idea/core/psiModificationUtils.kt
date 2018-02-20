@@ -214,7 +214,7 @@ fun KtDeclaration.toDescriptor(): DeclarationDescriptor? {
     val bindingContext = analyze()
     // TODO: temporary code
     if (this is KtPrimaryConstructor) {
-        return (this.getContainingClassOrObject().resolveToDescriptorIfAny() as? ClassDescriptor)?.unsubstitutedPrimaryConstructor
+        return this.getContainingClassOrObject().resolveToDescriptorIfAny()?.unsubstitutedPrimaryConstructor
     }
 
     val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]

@@ -55,7 +55,7 @@ class ParcelMigrateToParcelizeQuickFix(function: KtClass) : AbstractParcelableQu
 
         private fun KtClass.findParcelerCompanionObject(): Pair<KtObjectDeclaration, ClassDescriptor>? {
             for (obj in companionObjects) {
-                val objDescriptor = obj.resolveToDescriptorIfAny() as? ClassDescriptor ?: continue
+                val objDescriptor = obj.resolveToDescriptorIfAny() ?: continue
                 for (superClassifier in objDescriptor.getAllSuperClassifiers()) {
                     val superClass = superClassifier as? ClassDescriptor ?: continue
                     if (superClass.fqNameSafe == PARCELER_FQNAME) return Pair(obj, objDescriptor)

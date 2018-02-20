@@ -57,7 +57,7 @@ class MoveMemberOutOfCompanionObjectIntention : MoveMemberOutOfObjectIntention("
                         it.parents
                             .filterIsInstance<KtClassOrObject>()
                             .none {
-                                val classDescriptor = it.resolveToDescriptorIfAny() as? ClassDescriptor
+                                val classDescriptor = it.resolveToDescriptorIfAny()
                                 if (classDescriptor != null && classDescriptor.isSubclassOf(targetClassDescriptor)) return@none true
                                 if (it.isTopLevel() || it is KtObjectDeclaration || (it is KtClass && !it.isInner())) return@filter true
                                 false

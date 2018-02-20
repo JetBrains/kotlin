@@ -232,7 +232,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
     }
 
     private fun KtClassOrObject.isSubclassOfAny(baseClasses: Collection<String>): Boolean {
-        val declarationDescriptor = resolveToDescriptorIfAny() as? ClassDescriptor
+        val declarationDescriptor = resolveToDescriptorIfAny()
         return baseClasses.any { declarationDescriptor?.isSubclassOf(it) ?: false }
     }
 

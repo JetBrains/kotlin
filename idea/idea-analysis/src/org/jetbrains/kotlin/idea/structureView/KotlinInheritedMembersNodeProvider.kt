@@ -20,7 +20,6 @@ import com.intellij.ide.util.InheritedMembersNodeProvider
 import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.psi.NavigatablePsiElement
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -35,7 +34,7 @@ class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeEleme
 
         val project = element.project
 
-        val descriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? ClassifierDescriptor ?: return listOf()
+        val descriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return listOf()
 
         val children = ArrayList<TreeElement>()
 

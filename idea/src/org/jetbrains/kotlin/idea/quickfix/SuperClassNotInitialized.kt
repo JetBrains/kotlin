@@ -60,8 +60,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
         if (type.isError) return emptyList()
 
         val superClass = (type.constructor.declarationDescriptor as? ClassDescriptor) ?: return emptyList()
-        val classDescriptor = classOrObjectDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? ClassDescriptor
-                              ?: return emptyList()
+        val classDescriptor = classOrObjectDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return emptyList()
         val constructors = superClass.constructors.filter { it.isVisible(classDescriptor) }
         if (constructors.isEmpty()) return emptyList() // no accessible constructor
 
