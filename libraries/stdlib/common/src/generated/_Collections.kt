@@ -258,21 +258,29 @@ public expect inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean)
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun <T> Iterable<T>.drop(n: Int): List<T>
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun <T> List<T>.dropLast(n: Int): List<T>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun <T> List<T>.dropLastWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T>
 

@@ -2522,6 +2522,8 @@ public inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean): Char? {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Array<out T>.drop(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2530,6 +2532,8 @@ public fun <T> Array<out T>.drop(n: Int): List<T> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ByteArray.drop(n: Int): List<Byte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2538,6 +2542,8 @@ public fun ByteArray.drop(n: Int): List<Byte> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ShortArray.drop(n: Int): List<Short> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2546,6 +2552,8 @@ public fun ShortArray.drop(n: Int): List<Short> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun IntArray.drop(n: Int): List<Int> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2554,6 +2562,8 @@ public fun IntArray.drop(n: Int): List<Int> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun LongArray.drop(n: Int): List<Long> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2562,6 +2572,8 @@ public fun LongArray.drop(n: Int): List<Long> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun FloatArray.drop(n: Int): List<Float> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2570,6 +2582,8 @@ public fun FloatArray.drop(n: Int): List<Float> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun DoubleArray.drop(n: Int): List<Double> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2578,6 +2592,8 @@ public fun DoubleArray.drop(n: Int): List<Double> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun BooleanArray.drop(n: Int): List<Boolean> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2586,6 +2602,8 @@ public fun BooleanArray.drop(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun CharArray.drop(n: Int): List<Char> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2594,6 +2612,8 @@ public fun CharArray.drop(n: Int): List<Char> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Array<out T>.dropLast(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2602,6 +2622,8 @@ public fun <T> Array<out T>.dropLast(n: Int): List<T> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ByteArray.dropLast(n: Int): List<Byte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2610,6 +2632,8 @@ public fun ByteArray.dropLast(n: Int): List<Byte> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ShortArray.dropLast(n: Int): List<Short> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2618,6 +2642,8 @@ public fun ShortArray.dropLast(n: Int): List<Short> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun IntArray.dropLast(n: Int): List<Int> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2626,6 +2652,8 @@ public fun IntArray.dropLast(n: Int): List<Int> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun LongArray.dropLast(n: Int): List<Long> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2634,6 +2662,8 @@ public fun LongArray.dropLast(n: Int): List<Long> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun FloatArray.dropLast(n: Int): List<Float> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2642,6 +2672,8 @@ public fun FloatArray.dropLast(n: Int): List<Float> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun DoubleArray.dropLast(n: Int): List<Double> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2650,6 +2682,8 @@ public fun DoubleArray.dropLast(n: Int): List<Double> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun BooleanArray.dropLast(n: Int): List<Boolean> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2658,6 +2692,8 @@ public fun BooleanArray.dropLast(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun CharArray.dropLast(n: Int): List<Char> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2666,6 +2702,8 @@ public fun CharArray.dropLast(n: Int): List<Char> {
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun <T> Array<out T>.dropLastWhile(predicate: (T) -> Boolean): List<T> {
     for (index in lastIndex downTo 0) {
@@ -2678,6 +2716,8 @@ public inline fun <T> Array<out T>.dropLastWhile(predicate: (T) -> Boolean): Lis
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun ByteArray.dropLastWhile(predicate: (Byte) -> Boolean): List<Byte> {
     for (index in lastIndex downTo 0) {
@@ -2690,6 +2730,8 @@ public inline fun ByteArray.dropLastWhile(predicate: (Byte) -> Boolean): List<By
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun ShortArray.dropLastWhile(predicate: (Short) -> Boolean): List<Short> {
     for (index in lastIndex downTo 0) {
@@ -2702,6 +2744,8 @@ public inline fun ShortArray.dropLastWhile(predicate: (Short) -> Boolean): List<
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun IntArray.dropLastWhile(predicate: (Int) -> Boolean): List<Int> {
     for (index in lastIndex downTo 0) {
@@ -2714,6 +2758,8 @@ public inline fun IntArray.dropLastWhile(predicate: (Int) -> Boolean): List<Int>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun LongArray.dropLastWhile(predicate: (Long) -> Boolean): List<Long> {
     for (index in lastIndex downTo 0) {
@@ -2726,6 +2772,8 @@ public inline fun LongArray.dropLastWhile(predicate: (Long) -> Boolean): List<Lo
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun FloatArray.dropLastWhile(predicate: (Float) -> Boolean): List<Float> {
     for (index in lastIndex downTo 0) {
@@ -2738,6 +2786,8 @@ public inline fun FloatArray.dropLastWhile(predicate: (Float) -> Boolean): List<
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun DoubleArray.dropLastWhile(predicate: (Double) -> Boolean): List<Double> {
     for (index in lastIndex downTo 0) {
@@ -2750,6 +2800,8 @@ public inline fun DoubleArray.dropLastWhile(predicate: (Double) -> Boolean): Lis
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun BooleanArray.dropLastWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
     for (index in lastIndex downTo 0) {
@@ -2762,6 +2814,8 @@ public inline fun BooleanArray.dropLastWhile(predicate: (Boolean) -> Boolean): L
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun CharArray.dropLastWhile(predicate: (Char) -> Boolean): List<Char> {
     for (index in lastIndex downTo 0) {
@@ -2774,6 +2828,8 @@ public inline fun CharArray.dropLastWhile(predicate: (Char) -> Boolean): List<Ch
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun <T> Array<out T>.dropWhile(predicate: (T) -> Boolean): List<T> {
     var yielding = false
@@ -2790,6 +2846,8 @@ public inline fun <T> Array<out T>.dropWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun ByteArray.dropWhile(predicate: (Byte) -> Boolean): List<Byte> {
     var yielding = false
@@ -2806,6 +2864,8 @@ public inline fun ByteArray.dropWhile(predicate: (Byte) -> Boolean): List<Byte> 
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Short> {
     var yielding = false
@@ -2822,6 +2882,8 @@ public inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Shor
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun IntArray.dropWhile(predicate: (Int) -> Boolean): List<Int> {
     var yielding = false
@@ -2838,6 +2900,8 @@ public inline fun IntArray.dropWhile(predicate: (Int) -> Boolean): List<Int> {
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun LongArray.dropWhile(predicate: (Long) -> Boolean): List<Long> {
     var yielding = false
@@ -2854,6 +2918,8 @@ public inline fun LongArray.dropWhile(predicate: (Long) -> Boolean): List<Long> 
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun FloatArray.dropWhile(predicate: (Float) -> Boolean): List<Float> {
     var yielding = false
@@ -2870,6 +2936,8 @@ public inline fun FloatArray.dropWhile(predicate: (Float) -> Boolean): List<Floa
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun DoubleArray.dropWhile(predicate: (Double) -> Boolean): List<Double> {
     var yielding = false
@@ -2886,6 +2954,8 @@ public inline fun DoubleArray.dropWhile(predicate: (Double) -> Boolean): List<Do
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun BooleanArray.dropWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
     var yielding = false
@@ -2902,6 +2972,8 @@ public inline fun BooleanArray.dropWhile(predicate: (Boolean) -> Boolean): List<
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun CharArray.dropWhile(predicate: (Char) -> Boolean): List<Char> {
     var yielding = false

@@ -276,6 +276,15 @@ class Collections {
     class Transformations {
 
         @Sample
+        fun drop(){
+            val chars = ('a'..'z').toList()
+            assertPrints(chars.drop(23), "[x, y, z]")
+            assertPrints(chars.dropLast(23), "[a, b, c]")
+            assertPrints(chars.dropWhile { it < 'x'}, "[x, y, z]")
+            assertPrints(chars.dropLastWhile { it > 'c'}, "[a, b, c]")
+        }
+
+        @Sample
         fun groupBy() {
             val words = listOf("a", "abc", "ab", "def", "abcd")
             val byLength = words.groupBy { it.length }
