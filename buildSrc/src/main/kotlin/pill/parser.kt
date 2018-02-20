@@ -78,7 +78,7 @@ data class PLibrary(
     }
 }
 
-fun parse(project: Project, context: ParserContext): PProject = with (context) {
+fun parse(project: Project, libraries: List<PLibrary>, context: ParserContext): PProject = with (context) {
     if (project != project.rootProject) {
         error("$project is not a root project")
     }
@@ -87,7 +87,7 @@ fun parse(project: Project, context: ParserContext): PProject = with (context) {
         .filter { it.plugins.hasPlugin(JpsCompatiblePlugin::class.java) }
         .flatMap { parseModules(it) }
 
-    return PProject("Kotlin", project.projectDir, modules, emptyList())
+    return PProject("Kotlin", project.projectDir, modules, libraries)
 }
 
 /*

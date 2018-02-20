@@ -42,9 +42,9 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
             DependencyMapper("org.jetbrains.kotlin", "compiler", "runtimeElements") { null }
         )
 
-        fun getProjectLibraries(project: PProject): List<PLibrary> {
-            fun distJar(name: String) = File(project.rootDirectory, "dist/kotlinc/lib/$name.jar")
-            fun projectFile(path: String) = File(project.rootDirectory, path)
+        fun getProjectLibraries(project: Project): List<PLibrary> {
+            fun distJar(name: String) = File(project.projectDir, "dist/kotlinc/lib/$name.jar")
+            fun projectFile(path: String) = File(project.projectDir, path)
 
             return listOf(
                 PLibrary(
@@ -116,12 +116,12 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
     private fun pill(project: Project) {
         initEnvironment(project)
 
-        val jpsProject = parse(project, ParserContext(dependencyMappers))
+        val jpsProject = parse(project, getProjectLibraries(project), ParserContext(dependencyMappers))
             .mapLibraries(this::attachPlatformSources, this::attachAsmSources)
 
         generateKotlinPluginArtifactFile(project).write()
 
-        val files = render(jpsProject, getProjectLibraries(jpsProject))
+        val files = render(jpsProject)
 
         removeExistingIdeaLibrariesAndModules()
         removeJpsRunConfigurations()
