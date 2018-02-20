@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.ExceptionUtil
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithDeclarations
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -154,7 +154,7 @@ private fun KtFile.findContextElement(): KtElement? {
 private var PsiElement.DEBUG_SMART_CAST: PsiElement? by CopyablePsiUserDataProperty(Key.create("DEBUG_SMART_CAST"))
 
 private fun KtCodeFragment.markSmartCasts() {
-    val bindingContext = runInReadActionWithWriteActionPriorityWithPCE { analyzeWithDeclarations() }
+    val bindingContext = runInReadActionWithWriteActionPriorityWithPCE { analyzeWithContent() }
     val factory = KtPsiFactory(project)
 
     getContentElement()?.forEachDescendantOfType<KtExpression> { expression ->

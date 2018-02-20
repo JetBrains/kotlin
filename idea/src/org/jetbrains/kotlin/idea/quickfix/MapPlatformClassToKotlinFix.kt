@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithDeclarations
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -61,7 +61,7 @@ class MapPlatformClassToKotlinFix(
     override fun getFamilyName() = "Change to Kotlin class"
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val bindingContext = file.analyzeWithDeclarations()
+        val bindingContext = file.analyzeWithContent()
 
         val imports = ArrayList<KtImportDirective>()
         val usages = ArrayList<KtUserType>()

@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.asJava.getJvmSignatureDiagnostics
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithDeclarations
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -39,7 +37,7 @@ class DuplicateJvmSignatureAnnotator : Annotator {
 
         val otherDiagnostics = when (element) {
             is KtDeclaration -> element.analyzeWithContent()
-            is KtFile -> element.analyzeWithDeclarations()
+            is KtFile -> element.analyzeWithContent()
             else -> throw AssertionError("DuplicateJvmSignatureAnnotator: should not get here! Element: ${element.text}")
         }.diagnostics
 

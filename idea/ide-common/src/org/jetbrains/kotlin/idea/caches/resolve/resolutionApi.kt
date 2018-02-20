@@ -78,18 +78,18 @@ fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescrip
 }
 
 
-// This and next function are used for 'normal' element analysis
+// This and next functions are used for 'normal' element analysis
 // This analysis *should* provide all information extractable from this KtElement except:
-// - it does not analyze bodies of functions
-// - it does not analyze content of classes
-// - it does not analyze initializers / accessors for member / top-level properties
+// - for declarations, it does not analyze their bodies
+// - for classes, it does not analyze their content
+// - for member / top-level properties, it does not analyze initializers / accessors
 // This information includes related descriptors, resolved calls (but not inside body, see above!)
 // and many other binding context slices.
 // Normally, the function is used on local declarations or statements / expressions
 // Any usage on non-local declaration is a bit suspicious,
 // consider replacing it with resolveToDescriptorIfAny and
 // remember that body / content is not analyzed;
-// if it's necessary, use analyzeWithContent() / analyzeWithDeclarations().
+// if it's necessary, use analyzeWithContent()
 //
 // If you need diagnostics in result context, use BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS.
 // BodyResolveMode.FULL analyzes all statements on the level of KtElement and above.
@@ -114,13 +114,13 @@ fun KtDeclaration.analyzeWithContent(): BindingContext =
 
 // This function is used to make full analysis of declaration container.
 // All its declarations, including their content (see above), are analyzed.
-inline fun <reified T> T.analyzeWithDeclarations(): BindingContext where T : KtDeclarationContainer, T : KtElement =
+inline fun <reified T> T.analyzeWithContent(): BindingContext where T : KtDeclarationContainer, T : KtElement =
     getResolutionFacade().analyzeFullyAndGetResult(listOf(this)).bindingContext
 
 // NB: for statements / expressions, usually should be replaced with analyze(),
 // for declarations, analyzeWithContent() will do what you want.
 @Deprecated(
-    "Use either analyzeWithContent() or analyzeWithDeclarations() instead, or use just analyze()",
+    "Use analyzeWithContent() instead, or use just analyze()",
     ReplaceWith("analyze()")
 )
 fun KtElement.analyzeFully(): BindingContext = getResolutionFacade().analyzeFullyAndGetResult(listOf(this)).bindingContext

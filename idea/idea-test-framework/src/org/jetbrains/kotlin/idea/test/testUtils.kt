@@ -32,7 +32,7 @@ import com.intellij.util.Consumer
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithDeclarations
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -73,7 +73,7 @@ fun Module.configureAs(kind: ModuleKind) {
 }
 
 fun KtFile.dumpTextWithErrors(): String {
-    val diagnostics = analyzeWithDeclarations().diagnostics
+    val diagnostics = analyzeWithContent().diagnostics
     val errors = diagnostics.filter { it.severity == Severity.ERROR }
     if (errors.isEmpty()) return text
     val header = errors.map { "// ERROR: " + DefaultErrorMessages.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")

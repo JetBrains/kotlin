@@ -32,7 +32,7 @@ class CopyAsDiagnosticTestAction : AnAction() {
         val psiFile = e.getData(CommonDataKeys.PSI_FILE)
         assert(editor != null && psiFile != null)
 
-        val bindingContext = (psiFile as KtFile).analyzeWithDeclarations()
+        val bindingContext = (psiFile as KtFile).analyzeWithContent()
 
         val diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
             bindingContext, psiFile, false, null, null, false

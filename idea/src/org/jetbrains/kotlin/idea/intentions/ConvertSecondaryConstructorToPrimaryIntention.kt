@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithDeclarations
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -59,7 +59,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
         val klass = element.containingClassOrObject ?: return null
         if (klass.hasPrimaryConstructor()) return null
 
-        val context = klass.analyzeWithDeclarations()
+        val context = klass.analyzeWithContent()
         val classDescriptor = context[BindingContext.CLASS, klass] ?: return null
         val elementDescriptor = context[BindingContext.CONSTRUCTOR, element] ?: return null
 
@@ -154,7 +154,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
 
     override fun applyTo(element: KtSecondaryConstructor, editor: Editor?) {
         val klass = element.containingClassOrObject as? KtClass ?: return
-        val context = klass.analyzeWithDeclarations()
+        val context = klass.analyzeWithContent()
         val factory = KtPsiFactory(klass)
         val constructorCommentSaver = CommentSaver(element)
         val constructorInClass = klass.createPrimaryConstructorIfAbsent()

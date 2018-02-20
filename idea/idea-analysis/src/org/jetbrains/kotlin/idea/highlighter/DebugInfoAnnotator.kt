@@ -40,7 +40,7 @@ class DebugInfoAnnotator : Annotator {
 
         if (element is KtFile && element !is KtCodeFragment) {
             try {
-                val bindingContext = element.analyzeWithDeclarations()
+                val bindingContext = element.analyzeWithContent()
                 DebugInfoUtil.markDebugAnnotations(element, bindingContext, object : DebugInfoUtil.DebugInfoReporter() {
                     override fun reportElementWithErrorType(expression: KtReferenceExpression) {
                         holder.createErrorAnnotation(expression, "[DEBUG] Resolved to error element").textAttributes =

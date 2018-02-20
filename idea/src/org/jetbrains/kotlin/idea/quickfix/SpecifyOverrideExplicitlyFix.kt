@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithDeclarations
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
@@ -44,7 +44,7 @@ class SpecifyOverrideExplicitlyFix(
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val context = element.analyzeWithDeclarations()
+        val context = element.analyzeWithContent()
         val delegatedDescriptor = context.diagnostics.forElement(element).mapNotNull {
             if (it.factory == Errors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE)
                 Errors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE.cast(it).a
