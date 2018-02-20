@@ -210,7 +210,7 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
             return false
         }
 
-        val descriptor = element.resolveToDescriptorIfAny() as? FunctionDescriptor ?: return false
+        val descriptor = element.resolveToDescriptorIfAny() ?: return false
         val returnType = descriptor.returnType ?: return false
         return !KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType)
     }

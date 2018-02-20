@@ -22,7 +22,6 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -61,7 +60,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
 
         if (!SingleAbstractMethodUtils.isSamType(baseType)) return null
 
-        val functionDescriptor = singleFunction.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? FunctionDescriptor ?: return null
+        val functionDescriptor = singleFunction.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return null
         val overridden = functionDescriptor.overriddenDescriptors.singleOrNull() ?: return null
         if (overridden.modality != Modality.ABSTRACT) return null
 

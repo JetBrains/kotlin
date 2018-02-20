@@ -69,6 +69,10 @@ fun KtClassOrObject.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = 
     return (this as KtDeclaration).resolveToDescriptorIfAny(bodyResolveMode) as? ClassDescriptor
 }
 
+fun KtNamedFunction.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): FunctionDescriptor? {
+    return (this as KtDeclaration).resolveToDescriptorIfAny(bodyResolveMode) as? FunctionDescriptor
+}
+
 fun KtParameter.resolveToParameterDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): ValueParameterDescriptor? {
     val context = analyze(bodyResolveMode)
     return context.get(BindingContext.VALUE_PARAMETER, this) as? ValueParameterDescriptor

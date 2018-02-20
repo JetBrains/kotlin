@@ -28,7 +28,6 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.project.targetPlatform
@@ -70,7 +69,7 @@ class KotlinTypeHierarchyProvider : JavaTypeHierarchyProvider() {
             is KtClassOrObject -> getOriginalPsiClassOrCreateLightClass(target, module)
             is KtNamedFunction -> { // Factory methods
                 val functionName = target.name
-                val functionDescriptor = target.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? FunctionDescriptor ?: return null
+                val functionDescriptor = target.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return null
                 val type = functionDescriptor.returnType ?: return null
                 val returnTypeText = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
                 if (returnTypeText != functionName) return null

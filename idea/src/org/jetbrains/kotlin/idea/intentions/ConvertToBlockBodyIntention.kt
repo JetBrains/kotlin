@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.setType
@@ -101,7 +100,7 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
 
         private fun KtNamedFunction.returnType(): KotlinType? {
             val descriptor = resolveToDescriptorIfAny() ?: return null
-            return (descriptor as FunctionDescriptor).returnType
+            return descriptor.returnType
         }
     }
 }

@@ -10,7 +10,6 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
 import org.jetbrains.kotlin.psi.KtCodeFragment
@@ -22,7 +21,7 @@ class RedundantUnitReturnTypeInspection : AbstractKotlinInspection(), CleanupLoc
         return namedFunctionVisitor(fun(function) {
             if (function.containingFile is KtCodeFragment) return
             val typeElement = function.typeReference?.typeElement ?: return
-            val descriptor = function.resolveToDescriptorIfAny() as? FunctionDescriptor ?: return
+            val descriptor = function.resolveToDescriptorIfAny() ?: return
             if (descriptor.returnType?.isUnit() == true) {
                 if (!function.hasBlockBody()) {
                     return
