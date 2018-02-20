@@ -201,4 +201,25 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertTasksExecuted(listOf(":lib:compileKotlinCommon", ":libJvm:compileKotlin", ":libJs:compileKotlin2Js"))
         }
     }
+
+    @Test
+    fun testCommonModuleAsTransitiveDependency() = with(Project("multiplatformProject")) {
+        setupWorkingDir()
+        gradleBuildScript("libJvm").appendText("""
+            ${'\n'}
+            task printCompileConfiguration(type: DefaultTask) {
+                doFirst {
+                    configurations.compile.resolvedConfiguration.resolvedArtifacts.each {
+                        println("Dependency: '" + it.name + "'")
+                    }
+                }
+            }
+            """.trimIndent())
+
+        build("printCompileConfiguration") {
+            assertSuccessful()
+            // Check that `lib` is contained in the resolved compile artifacts of `libJvm`:
+            assertContains("Dependency: 'lib'")
+        }
+    }
 }
