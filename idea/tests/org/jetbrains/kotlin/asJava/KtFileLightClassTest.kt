@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.intellij.injected.editor.EditorWindow
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightProjectDescriptor
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -72,4 +74,22 @@ class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/asJava/fileLightClass/"
     }
+
+    fun testInjectedCode() {
+        myFixture.configureByText("foo.kt", """
+            import org.intellij.lang.annotations.Language
+
+            fun foo(@Language("kotlin") a: String){a.toString()}
+
+            fun bar(){ foo("class<caret> A") }
+            """)
+
+
+        myFixture.testHighlighting("foo.kt")
+
+        val injectedFile = (editor as? EditorWindow)?.injectedFile
+        assertEquals("Wrong injection language", "kotlin", injectedFile?.language?.id)
+        assertEquals("Injected class should be `A`", "A", (injectedFile as KtFile).classes.single().name)
+    }
+
 }
