@@ -12,7 +12,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("annotations", "asm-all", "trove4j", "guava", rootProject = rootProject) }
+    compileOnly(intellijDep()) { includeJars("annotations", "platform-impl", "asm-all", "trove4j", "guava", rootProject = rootProject) }
 }
 
 sourceSets {
