@@ -39,7 +39,7 @@ private class KotlinNodeJsRunConfigurationProducer :
         if (!context.isAcceptable) return false
 
         val psiElement = sourceElement.get() ?: return false
-        val psiFile = psiElement.containingFile
+        val psiFile = psiElement.containingFile ?: return false
         val jsModule = psiFile.module?.jsOrJsImpl() ?: return false
         val project = psiFile.project
 
