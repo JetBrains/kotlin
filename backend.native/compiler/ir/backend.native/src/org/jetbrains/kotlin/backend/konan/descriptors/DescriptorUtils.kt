@@ -74,9 +74,14 @@ internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(): T {
 
 private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
 
-// TODO: check it is external?
-internal val CallableDescriptor.isIntrinsic: Boolean
-    get() = this.annotations.findAnnotation(intrinsicAnnotation) != null
+internal val FunctionDescriptor.isIntrinsic: Boolean
+    get() = when {
+        this.annotations.hasAnnotation(intrinsicAnnotation) -> {
+            check(isExternal, { "Intrinsic function $name should be external" })
+            true
+        }
+        else -> false
+    }
 
 private val intrinsicTypes = setOf(
         "kotlin.Boolean", "kotlin.Char",
