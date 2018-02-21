@@ -97,12 +97,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> PARAMETERS_METADATA =
             CompilerConfigurationKey.create("Parameters metadata for java 1.8 reflection");
 
-    public static final CompilerConfigurationKey<Boolean> INTERFACE_COMPATIBILITY =
-            CompilerConfigurationKey.create("Generate additional 'DefaultImpls' class files for jvm 8 target for compatibility with 6 target interfaces");
-
-    public static final CompilerConfigurationKey<Boolean> JVM8_TARGET_WITH_DEFAULTS =
-            CompilerConfigurationKey.create("Generate default methods in interfaces");
-
     public static final CompilerConfigurationKey<IncrementalCompilationComponents> INCREMENTAL_COMPILATION_COMPONENTS =
             CompilerConfigurationKey.create("incremental cache provider");
 
