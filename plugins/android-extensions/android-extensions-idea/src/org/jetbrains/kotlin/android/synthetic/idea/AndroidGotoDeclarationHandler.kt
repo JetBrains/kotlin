@@ -26,11 +26,9 @@ import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
@@ -48,9 +46,7 @@ class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     }
 
     private fun resolvePropertyDescriptor(simpleNameExpression: KtSimpleNameExpression): PropertyDescriptor? {
-        val bindingContext = simpleNameExpression.analyze(BodyResolveMode.PARTIAL)
-        val call = bindingContext[BindingContext.CALL, simpleNameExpression]
-        val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call]
+        val resolvedCall = simpleNameExpression.resolveToCall()
         return resolvedCall?.resultingDescriptor as? PropertyDescriptor
     }
 

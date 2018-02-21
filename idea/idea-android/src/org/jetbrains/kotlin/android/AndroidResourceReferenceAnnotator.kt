@@ -23,16 +23,13 @@ import com.android.tools.idea.rendering.GutterIconRenderer
 import com.android.tools.idea.res.ResourceHelper
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.AndroidColorAnnotator
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.android.ResourceReferenceAnnotatorUtil.*
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.psi.KtReferenceExpression
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 
 class AndroidResourceReferenceAnnotator : Annotator {
@@ -77,5 +74,5 @@ class AndroidResourceReferenceAnnotator : Annotator {
     }
 
     private fun KtReferenceExpression.getResourceReferenceTargetDescriptor(): JavaPropertyDescriptor? =
-            analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, this] as? JavaPropertyDescriptor
+            resolveToCall()?.resultingDescriptor as? JavaPropertyDescriptor
 }

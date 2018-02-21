@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -115,8 +115,7 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
         private fun replaceFieldReferences(element: KtElement, propertyName: String) {
             element.acceptChildren(object : KtTreeVisitorVoid() {
                 override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-                    val bindingContext = expression.analyze()
-                    val target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
+                    val target = expression.resolveToCall()?.resultingDescriptor
                     if (target is SyntheticFieldDescriptor) {
                         expression.replace(KtPsiFactory(element).createSimpleName("_$propertyName"))
                     }

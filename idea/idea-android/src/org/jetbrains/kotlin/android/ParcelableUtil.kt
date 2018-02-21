@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
@@ -161,7 +162,7 @@ private fun KtExpression.isReadFromParcelPropertyAssignment(): Boolean {
 private fun KtExpression.isReadFromParcel(): Boolean {
     val reference = firstChild as? KtReferenceExpression
                     ?: (firstChild as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() as? KtReferenceExpression ?: return false
-    val target = reference.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, reference] ?: return false
+    val target = reference.resolveToCall()?.resultingDescriptor ?: return false
     return (target as? ParameterDescriptor)?.type?.fqNameEquals(CLASS_PARCEL) ?: false
 }
 

@@ -29,7 +29,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.ui.GuiUtils
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaIntention
@@ -43,8 +43,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 interface UsageReplacementStrategy {
     fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)?
@@ -189,8 +187,7 @@ private fun UsageReplacementStrategy.doRefactoringInside(
 ) {
     element.forEachDescendantOfType<KtSimpleNameExpression> { usage ->
         if (usage.isValid && usage.getReferencedName() == targetName) {
-            val context = usage.analyze(BodyResolveMode.PARTIAL)
-            if (targetDescriptor == context[BindingContext.REFERENCE_TARGET, usage]) {
+            if (targetDescriptor == usage.resolveToCall()?.candidateDescriptor) {
                 createReplacer(usage)?.invoke()
             }
         }

@@ -306,7 +306,7 @@ class InflowSlicer(
     private fun KtExpression.isBackingFieldReference(): Boolean {
         return this is KtSimpleNameExpression &&
                getReferencedName() == SyntheticFieldDescriptor.NAME.asString() &&
-               analyze()[BindingContext.REFERENCE_TARGET, this] is SyntheticFieldDescriptor
+               resolveToCall()?.resultingDescriptor is SyntheticFieldDescriptor
     }
 
     private fun KtExpression.processExpression() {

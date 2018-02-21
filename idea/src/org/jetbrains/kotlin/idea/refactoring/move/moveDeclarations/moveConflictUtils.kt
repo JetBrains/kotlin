@@ -294,6 +294,7 @@ class MoveConflictChecker(
             if (declaration.module == targetModule) continue
 
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
+                // NB: for unknown reason, refExpr.resolveToCall() does not work here
                 val targetDescriptor = refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] ?: return@forEachDescendantOfType
 
                 if (KotlinBuiltIns.isBuiltIn(targetDescriptor)) return@forEachDescendantOfType
@@ -467,10 +468,10 @@ class MoveConflictChecker(
             val rootClassDescriptor: ClassDescriptor
             if (elementToMove is KtClass && elementToMove.isSealed()) {
                 rootClass = elementToMove
-                rootClassDescriptor = rootClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
+                rootClassDescriptor = rootClass.resolveToDescriptorIfAny() ?: return
             }
             else {
-                val classDescriptor = elementToMove.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
+                val classDescriptor = elementToMove.resolveToDescriptorIfAny() ?: return
                 val superClassDescriptor = classDescriptor.getSuperClassNotAny() ?: return
                 if (superClassDescriptor.modality != Modality.SEALED) return
                 rootClassDescriptor = superClassDescriptor
