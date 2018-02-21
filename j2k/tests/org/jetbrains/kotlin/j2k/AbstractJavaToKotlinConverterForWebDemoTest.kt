@@ -24,7 +24,6 @@ import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.jvm.facade.JvmElementProvider
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
@@ -40,71 +39,47 @@ import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.psi.util.JavaClassSupers
-import com.intellij.util.containers.MultiMap
 import junit.framework.TestCase
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.net.URLClassLoader
 
 abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
-    lateinit var testDisposable: Disposable
+    val DISPOSABLE = Disposer.newDisposable()
 
     fun doTest(javaPath: String) {
-        val fileContents = FileUtil.loadFile(File(javaPath), true)
-        val javaCoreEnvironment: JavaCoreProjectEnvironment = setUpJavaCoreEnvironment()
-        translateToKotlin(fileContents, javaCoreEnvironment.project)
+        try {
+            val fileContents = FileUtil.loadFile(File(javaPath), true)
+            val javaCoreEnvironment: JavaCoreProjectEnvironment = setUpJavaCoreEnvironment()
+            translateToKotlin(fileContents, javaCoreEnvironment.project)
+        }
+        finally {
+            Disposer.dispose(DISPOSABLE)
+        }
     }
 
-    override fun setUp() {
-        super.setUp()
-        testDisposable = Disposer.newDisposable()
-    }
-
-    override fun tearDown() {
-        super.tearDown()
-
-        Disposer.dispose(testDisposable)
-    }
-
-
-    private fun setUpJavaCoreEnvironment(): JavaCoreProjectEnvironment {
-        Extensions.cleanRootArea(testDisposable)
+    fun setUpJavaCoreEnvironment(): JavaCoreProjectEnvironment {
+        Extensions.cleanRootArea(DISPOSABLE)
         val area = Extensions.getRootArea()
+
         registerExtensionPoints(area)
 
-        val applicationEnvironment = JavaCoreApplicationEnvironment(testDisposable)
-
-        Disposer.register(testDisposable, Disposable {
-            val rootArea = Extensions.getRootArea()
-            val availabilityListeners = rootArea::class.java.getDeclaredField("myAvailabilityListeners")
-            availabilityListeners.isAccessible = true
-            (availabilityListeners.get(rootArea) as MultiMap<String, *>)
-                .remove("com.intellij.virtualFileSystem")
-        })
-
-
-        val javaCoreEnvironment = object : JavaCoreProjectEnvironment(testDisposable, applicationEnvironment) {
+        val applicationEnvironment = JavaCoreApplicationEnvironment(DISPOSABLE)
+        val javaCoreEnvironment = object : JavaCoreProjectEnvironment(DISPOSABLE, applicationEnvironment) {
             override fun preregisterServices() {
                 val projectArea = Extensions.getArea(project)
-                CoreApplicationEnvironment.registerExtensionPoint(
-                    projectArea,
-                    PsiTreeChangePreprocessor.EP_NAME,
-                    PsiTreeChangePreprocessor::class.java
-                )
+                CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiTreeChangePreprocessor.EP_NAME, PsiTreeChangePreprocessor::class.java)
                 CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiElementFinder.EP_NAME, PsiElementFinder::class.java)
                 CoreApplicationEnvironment.registerExtensionPoint(projectArea, JvmElementProvider.EP_NAME, JvmElementProvider::class.java)
             }
         }
 
-        javaCoreEnvironment.project.registerService(
-            NullableNotNullManager::class.java,
-            object : NullableNotNullManager(javaCoreEnvironment.project) {
-                override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
-
-                override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
-                override fun hasHardcodedContracts(element: PsiElement): Boolean = false
-                override fun getPredefinedNotNulls() = emptyList<String>()
-            })
+        javaCoreEnvironment.project.registerService(NullableNotNullManager::class.java, object : NullableNotNullManager(javaCoreEnvironment.project) {
+            override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
+            override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
+            override fun hasHardcodedContracts(element: PsiElement): Boolean = false
+            override fun getPredefinedNotNulls() = emptyList<String>()
+        })
 
         applicationEnvironment.application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
 
@@ -135,7 +110,7 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
         CoreApplicationEnvironment.registerExtensionPoint(area, JavaModuleSystem.EP_NAME, JavaModuleSystem::class.java)
     }
 
-    private fun findAnnotations(): File? {
+    fun findAnnotations(): File? {
         var classLoader = JavaToKotlinTranslator::class.java.classLoader
         while (classLoader != null) {
             val loader = classLoader
