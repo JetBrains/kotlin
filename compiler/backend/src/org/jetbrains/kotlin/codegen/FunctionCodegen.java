@@ -215,10 +215,6 @@ public class FunctionCodegen {
             generateBridges(functionDescriptor);
         }
 
-        if (CodegenUtilKt.hasJvmDefaultAnnotation(functionDescriptor) && contextKind != OwnerKind.DEFAULT_IMPLS && state.getGenerateDefaultImplsForJvm8()) {
-            generateDelegateForDefaultImpl(functionDescriptor, origin.getElement());
-        }
-
         boolean staticInCompanionObject = CodegenUtilKt.isJvmStaticInCompanionObject(functionDescriptor);
         if (staticInCompanionObject) {
             ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
@@ -590,18 +586,6 @@ public class FunctionCodegen {
 
         if (context.getParentContext() instanceof MultifileClassFacadeContext) {
             generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (MultifileClassFacadeContext) context.getParentContext());
-            methodEnd = new Label();
-        }
-        else if (OwnerKind.DEFAULT_IMPLS == context.getContextKind() && CodegenUtilKt.hasJvmDefaultAnnotation(functionDescriptor)) {
-            int flags = AsmUtil.getMethodAsmFlags(functionDescriptor, OwnerKind.DEFAULT_IMPLS, context.getState());
-            assert (flags & Opcodes.ACC_ABSTRACT) == 0 : "Interface method with body should be non-abstract" + functionDescriptor;
-            Type type = typeMapper.mapOwner(functionDescriptor);
-            Method asmMethod = typeMapper.mapAsmMethod(functionDescriptor, OwnerKind.DEFAULT_IMPLS);
-            generateDelegateToStaticMethodBody(
-                    true, mv,
-                    new Method(asmMethod.getName() + JvmAbi.DEFAULT_IMPLS_DELEGATE_SUFFIX, asmMethod.getDescriptor()),
-                    type.getInternalName()
-            );
             methodEnd = new Label();
         }
         else {

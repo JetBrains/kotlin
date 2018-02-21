@@ -29,7 +29,8 @@ class IdeaKotlinUastBindingContextProviderService : KotlinUastBindingContextProv
     override fun getBindingContext(element: KtElement) = element.analyze(BodyResolveMode.PARTIAL)
 
     override fun getTypeMapper(element: KtElement): KotlinTypeMapper? {
-        return KotlinTypeMapper(getBindingContext(element), ClassBuilderMode.LIGHT_CLASSES,
-                                IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, false, false)
+        return KotlinTypeMapper(
+            getBindingContext(element), ClassBuilderMode.LIGHT_CLASSES,
+            IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, false)
     }
 }

@@ -142,8 +142,7 @@ public class KotlinTypeMapper {
             @NotNull ClassBuilderMode classBuilderMode,
             @NotNull IncompatibleClassTracker incompatibleClassTracker,
             @NotNull String moduleName,
-            boolean isJvm8Target,
-            boolean isJvm8TargetWithDefaults
+            boolean isJvm8Target
     ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
