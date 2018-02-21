@@ -16,7 +16,7 @@
 
 @file:JvmName("JavaResolutionUtils")
 
-package org.jetbrains.kotlin.idea.caches.resolve
+package org.jetbrains.kotlin.idea.caches.resolve.util
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
