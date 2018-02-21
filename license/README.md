@@ -11,6 +11,10 @@ the Kotlin IntelliJ IDEA plugin:
      - License: BSD (license/third_party/asm_license.txt)
      - Origin: Derived from ASM: a very small and fast Java bytecode manipulation framework, Copyright (c) 2000-2011 INRIA, France Telecom
 
+ - Path: compiler/backend/src/org/jetbrains/kotlin/codegen/inline/MaxLocalsCalculator.java
+     - License: BSD (license/third_party/asm_license.txt)
+     - Origin: Derived from ASM: a very small and fast Java bytecode manipulation framework, Copyright (c) 2000-2011 INRIA, France Telecom
+
  - Path: compiler/backend/src/org/jetbrains/kotlin/codegen/optimization/common/MethodAnalyzer.kt
      - License: BSD (license/third_party/asm_license.txt)
      - Origin: Derived from ASM: a very small and fast Java bytecode manipulation framework, Copyright (c) 2000-2011 INRIA, France Telecom
@@ -18,6 +22,14 @@ the Kotlin IntelliJ IDEA plugin:
  - Path: core/reflection.jvm/src/kotlin.reflect/jvm/internal/pcollections
      - License: MIT (license/third_party/pcollections_LICENSE.txt)
      - Origin: Derived from PCollections, A Persistent Java Collections Library (https://pcollections.org/)
+     
+ - Path: eval4j/src/org/jetbrains/eval4j/interpreterLoop.kt
+     - License: BSD (license/third_party/asm_license.txt)
+     - Origin: Derived from ASM: a very small and fast Java bytecode manipulation framework, Copyright (c) 2000-2011 INRIA, France Telecom
+  
+ - Path: compiler/backend/src/org/jetbrains/kotlin/codegen/optimization/common/OptimizationBasicInterpreter.java
+     - License: BSD (license/third_party/asm_license.txt)
+     - Origin: Derived from ASM: a very small and fast Java bytecode manipulation framework, Copyright (c) 2000-2011 INRIA, France Telecom
   
  - Path: js/js.ast 
      - License: BSD (license/third_party/dart_LICENSE.txt)
@@ -146,6 +158,21 @@ any distributions of the tools or libraries:
  - Path: libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt
       - License: Apache 2 (license/third_party/testdata/gradle_license.txt)
       - Origin: Gradle, Copyright 2002-2017 Gradle, Inc. 
+
+ - Path: libraries/tools/kotlin-gradle-plugin-integration-tests/target/test-classes/testProject/noArgJpa/src/javax/persistence/Entity.java
+      - License: Eclipse Public License v1.0 (license/third_party/testdata/eclipse_license.txt) 
+             and Eclipse Distribution License - v1.0 (license/third_party/testdata/eclipse_distribution_license.txt) 
+      - Origin: javax.persistence, Copyright (c) 2008, 2017 Sun Microsystems, Oracle Corporation. 
+ 
+ - Path: libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/noArgJpa/src/javax/persistence/Entity.java
+      - License: Eclipse Public License v1.0 (license/third_party/testdata/eclipse_license.txt) 
+             and Eclipse Distribution License - v1.0 (license/third_party/testdata/eclipse_distribution_license.txt) 
+      - Origin: javax.persistence, Copyright (c) 2008, 2017 Sun Microsystems, Oracle Corporation. 
+
+ - Path: libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/noArgJpa/src/javax/persistence/Embeddable.java 
+      - License: Eclipse Public License v1.0 (license/third_party/testdata/eclipse_license.txt) 
+             and Eclipse Distribution License - v1.0 (license/third_party/testdata/eclipse_distribution_license.txt) 
+      - Origin: javax.persistence, Copyright (c) 2008, 2017 Sun Microsystems, Oracle Corporation. 
 
 ## Example Code
 
