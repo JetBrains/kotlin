@@ -17,26 +17,22 @@
 package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.pom.java.LanguageLevel
-import com.intellij.psi.ClassFileViewProvider
-import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.compiled.ClsFileImpl
-import com.intellij.psi.impl.source.tree.injected.InjectedFileViewProvider
 import com.intellij.psi.stubs.PsiClassHolderFileStub
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class FakeFileForLightClass(
         val ktFile: KtFile,
         private val lightClass: () -> KtLightClass,
         private val stub: () -> PsiClassHolderFileStub<*>,
         private val packageFqName: FqName = ktFile.packageFqName
-) : ClsFileImpl(getFileViewProviderForLightClass(ktFile)) {
+) : ClsFileImpl(ktFile.viewProvider) {
     override fun getPackageName() = packageFqName.asString()
 
     override fun getStub() = stub()
@@ -84,11 +80,4 @@ open class FakeFileForLightClass(
     }
 
     override fun isPhysical() = false
-}
-
-fun getFileViewProviderForLightClass(ktFile: KtFile): FileViewProvider {
-    ktFile.viewProvider.safeAs<InjectedFileViewProvider>()?.let { return it }
-    return ClassFileViewProvider(
-        ktFile.manager, ktFile.virtualFile ?: ktFile.originalFile.virtualFile ?: ktFile.viewProvider.virtualFile
-    )
 }
