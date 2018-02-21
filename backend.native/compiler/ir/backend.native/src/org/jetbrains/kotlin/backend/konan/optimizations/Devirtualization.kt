@@ -894,6 +894,7 @@ internal object Devirtualization {
                              devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
         val nativePtrType = context.builtIns.nativePtr.defaultType
         val nativePtrEqualityOperatorSymbol = context.ir.symbols.areEqualByValue.single { it.descriptor.valueParameters[0].type == nativePtrType }
+        val optimize = context.config.configuration.get(KonanConfigKeys.OPTIMIZATION) ?: false
 
         irModule.transformChildrenVoid(object: IrElementTransformerVoidWithContext() {
             override fun visitCall(expression: IrCall): IrExpression {
@@ -934,7 +935,7 @@ internal object Devirtualization {
                             +nullConst(expression, type)
                         }
 
-                        possibleCallees.size == 1 -> { // Monomorphic callsite.
+                        optimize && possibleCallees.size == 1 -> { // Monomorphic callsite.
                             val actualCallee = possibleCallees[0].callee as DataFlowIR.FunctionSymbol.Declared
                             irDevirtualizedCall(expression, type, actualCallee).apply {
                                 this.dispatchReceiver = dispatchReceiver
@@ -953,46 +954,63 @@ internal object Devirtualization {
                                 putValueArgument(0, irGet(receiver.symbol))
                             })
 
-                            val branches = possibleCallees.mapIndexed { index, devirtualizedCallee ->
+                            val branches = mutableListOf<IrBranchImpl>()
+                            possibleCallees.mapIndexedTo(branches) { index, devirtualizedCallee ->
                                 val actualCallee = devirtualizedCallee.callee as DataFlowIR.FunctionSymbol.Declared
                                 val actualReceiverType = devirtualizedCallee.receiverType as DataFlowIR.Type.Declared
                                 val expectedTypeInfo = IrPrivateClassReferenceImpl(
-                                        startOffset,
-                                        endOffset,
-                                        nativePtrType,
-                                        IrClassSymbolImpl(dispatchReceiver.type.getErasedTypeClass()),
-                                        receiver.type,
-                                        actualReceiverType.module!!.descriptor,
-                                        actualReceiverType.module.numberOfClasses,
-                                        actualReceiverType.symbolTableIndex)
+                                        startOffset      = startOffset,
+                                        endOffset        = endOffset,
+                                        type             = nativePtrType,
+                                        symbol           = IrClassSymbolImpl(dispatchReceiver.type.getErasedTypeClass()),
+                                        classType        = receiver.type,
+                                        moduleDescriptor = actualReceiverType.module!!.descriptor,
+                                        totalClasses     = actualReceiverType.module.numberOfClasses,
+                                        classIndex       = actualReceiverType.symbolTableIndex)
                                 val condition =
-                                        if (index == possibleCallees.size - 1)
-                                            irTrue()
+                                        if (optimize && index == possibleCallees.size - 1)
+                                            irTrue() // Don't check last type in optimize mode.
                                         else
                                             irCall(nativePtrEqualityOperatorSymbol).apply {
                                                 putValueArgument(0, irGet(typeInfo.symbol))
                                                 putValueArgument(1, expectedTypeInfo)
                                             }
                                 IrBranchImpl(
-                                        startOffset,
-                                        endOffset,
-                                        condition,
-                                        irDevirtualizedCall(expression, type, actualCallee).apply {
-                                            this.dispatchReceiver = irGet(receiver.symbol)
+                                        startOffset = startOffset,
+                                        endOffset   = endOffset,
+                                        condition   = condition,
+                                        result      = irDevirtualizedCall(expression, type, actualCallee).apply {
+                                            this.dispatchReceiver  = irGet(receiver.symbol)
                                             this.extensionReceiver = extensionReceiver?.let { irGet(it.symbol) }
                                             expression.descriptor.valueParameters.forEach {
-                                                this.putValueArgument(it.index, irGet(parameters[it]!!.symbol))
+                                                putValueArgument(it.index, irGet(parameters[it]!!.symbol))
                                             }
                                         }
                                 )
                             }
+                            if (!optimize) { // Add else branch throwing exception for debug purposes.
+                                branches.add(IrBranchImpl(
+                                        startOffset = startOffset,
+                                        endOffset   = endOffset,
+                                        condition   = irTrue(),
+                                        result      = irCall(context.ir.symbols.throwInvalidReceiverTypeException).apply {
+                                            putValueArgument(0,
+                                                    irCall(context.ir.symbols.kClassImplConstructor,
+                                                            listOf(dispatchReceiver.type)
+                                                    ).apply {
+                                                        putValueArgument(0, irGet(typeInfo.symbol))
+                                                    }
+                                            )
+                                        })
+                                )
+                            }
 
                             +IrWhenImpl(
-                                    startOffset,
-                                    endOffset,
-                                    type,
-                                    expression.origin,
-                                    branches
+                                    startOffset = startOffset,
+                                    endOffset   = endOffset,
+                                    type        = type,
+                                    origin      = expression.origin,
+                                    branches    = branches
                             )
                         }
                     }
@@ -1002,15 +1020,15 @@ internal object Devirtualization {
             fun IrBuilderWithScope.irDevirtualizedCall(callee: IrCall, actualType: KotlinType,
                                                        devirtualizedCallee: DataFlowIR.FunctionSymbol.Declared) =
                     IrPrivateFunctionCallImpl(
-                            startOffset,
-                            endOffset,
-                            actualType,
-                            callee.symbol,
-                            callee.descriptor,
-                            (callee as? IrCallImpl)?.typeArguments,
-                            devirtualizedCallee.module.descriptor,
-                            devirtualizedCallee.module.numberOfFunctions,
-                            devirtualizedCallee.symbolTableIndex
+                            startOffset      = startOffset,
+                            endOffset        = endOffset,
+                            type             = actualType,
+                            symbol           = callee.symbol,
+                            descriptor       = callee.descriptor,
+                            typeArguments    = (callee as? IrCallImpl)?.typeArguments,
+                            moduleDescriptor = devirtualizedCallee.module.descriptor,
+                            totalFunctions   = devirtualizedCallee.module.numberOfFunctions,
+                            functionIndex    = devirtualizedCallee.symbolTableIndex
                     )
 
         })
