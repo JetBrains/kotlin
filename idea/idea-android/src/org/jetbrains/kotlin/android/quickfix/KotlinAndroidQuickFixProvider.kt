@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.android.quickfix
 
 import com.android.SdkConstants.SUPPORT_ANNOTATIONS_PREFIX
+import com.android.support.AndroidxName
 import com.android.tools.lint.checks.ApiDetector
 import com.android.tools.lint.checks.CommentDetector
 import com.android.tools.lint.checks.ParcelDetector
@@ -57,7 +58,10 @@ class KotlinAndroidQuickFixProvider : AndroidLintQuickFixProvider {
         }
 
         val project = element.project
-        if (JavaPsiFacade.getInstance(project).findClass(REQUIRES_API_ANNOTATION, GlobalSearchScope.allScope(project)) != null) {
+        if (JavaPsiFacade.getInstance(project).findClass(REQUIRES_API_ANNOTATION.newName(), GlobalSearchScope.allScope(project)) != null) {
+            return arrayOf(AddTargetApiQuickFix(api, true, true), AddTargetApiQuickFix(api, false, true), AddTargetVersionCheckQuickFix(api))
+        }
+        if (JavaPsiFacade.getInstance(project).findClass(REQUIRES_API_ANNOTATION.oldName(), GlobalSearchScope.allScope(project)) != null) {
             return arrayOf(AddTargetApiQuickFix(api, true), AddTargetApiQuickFix(api, false), AddTargetVersionCheckQuickFix(api))
         }
 
@@ -75,6 +79,6 @@ class KotlinAndroidQuickFixProvider : AndroidLintQuickFixProvider {
     }
 
     companion object {
-        val REQUIRES_API_ANNOTATION = SUPPORT_ANNOTATIONS_PREFIX.defaultName() + "RequiresApi"
+        val REQUIRES_API_ANNOTATION = AndroidxName.of(SUPPORT_ANNOTATIONS_PREFIX, "RequiresApi")
     }
 }
