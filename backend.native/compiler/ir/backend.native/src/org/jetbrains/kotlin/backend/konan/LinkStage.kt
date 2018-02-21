@@ -68,11 +68,8 @@ internal class LinkStage(val context: Context) {
         return combined
     }
 
-    private fun temporary(name: String, suffix: String): String {
-        val temporaryFile = createTempFile(name, suffix)
-        temporaryFile.deleteOnExit()
-        return temporaryFile.absolutePath
-    }
+    private fun temporary(name: String, suffix: String): String =
+            context.config.tempFiles.create(name, suffix).absolutePath
 
     private fun targetTool(tool: String, vararg arg: String) {
         val absoluteToolName = "${platform.absoluteTargetToolchain}/bin/$tool"

@@ -154,6 +154,10 @@ class NamedNativeInteropConfig implements Named {
         return new File(project.buildDir, "nativeInteropStubs/$name/kotlin")
     }
 
+    File getTemporaryFilesDir() {
+        return new File(project.buildDir, "interopTemp")
+    }
+
     NamedNativeInteropConfig(Project project, String name, String target = null, String flavor = 'jvm') {
         this.name = name
         this.project = project
@@ -204,6 +208,7 @@ class NamedNativeInteropConfig implements Named {
 
             outputs.dir generatedSrcDir
             outputs.dir nativeLibsDir
+            outputs.dir temporaryFilesDir
 
             // defer as much as possible
             doFirst {
@@ -217,6 +222,7 @@ class NamedNativeInteropConfig implements Named {
 
                 args '-generated', generatedSrcDir
                 args '-natives', nativeLibsDir
+                args '-temporaryFilesDir', temporaryFilesDir
                 args '-flavor', this.flavor
                 // Uncomment to debug.
                 // args '-verbose', 'true'

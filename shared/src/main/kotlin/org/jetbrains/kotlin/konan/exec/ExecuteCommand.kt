@@ -66,7 +66,10 @@ open class Command(initialCommand: List<String>) {
         handleExitCode(code)
     }
 
-    fun getOutputLines(): List<String> {
+    /**
+     * If withErrors is true then output from error stream will be added
+     */
+    fun getOutputLines(withErrors: Boolean = false): List<String> {
         log()
 
         val outputFile = createTempFile()
@@ -78,6 +81,7 @@ open class Command(initialCommand: List<String>) {
             builder.redirectInput(Redirect.INHERIT)
             builder.redirectError(Redirect.INHERIT)
             builder.redirectOutput(ProcessBuilder.Redirect.to(outputFile))
+                    .redirectErrorStream(withErrors)
             // Note: getting process output could be done without redirecting to temporary file,
             // however this would require managing a thread to read `process.inputStream` because
             // it may have limited capacity.

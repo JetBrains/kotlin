@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
+import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.native.interop.gen.HeadersInclusionPolicyImpl
 import org.jetbrains.kotlin.native.interop.gen.ImportsImpl
@@ -64,13 +66,6 @@ private fun substitute(properties: Properties, substitutions: Map<String, String
     }
 }
 
-private fun ProcessBuilder.runExpectingSuccess() {
-    val res = this.start().waitFor()
-    if (res != 0) {
-        throw Error("Process finished with non-zero exit code: $res")
-    }
-}
-
 private fun <T> Collection<T>.atMostOne(): T? {
     return when (this.size) {
         0 -> null
@@ -84,35 +79,9 @@ private fun List<String>?.isTrue(): Boolean {
     return this?.last() == "true"
 }
 
-private fun runCmd(command: Array<String>, workDir: File, verbose: Boolean = false) {
-    val builder = ProcessBuilder(*command)
-            .directory(workDir)
-
-    val logFile: File?
-
-    if (verbose) {
-        println(command.joinToString(" "))
-        builder.inheritIO()
-        logFile = null
-    } else {
-        logFile = createTempFile(suffix = ".log")
-        logFile.deleteOnExit()
-
-        builder.redirectOutput(ProcessBuilder.Redirect.to(logFile))
-                .redirectErrorStream(true)
-    }
-
-    try {
-        builder.runExpectingSuccess()
-    } catch (e: Throwable) {
-        if (!verbose) {
-            println(command.joinToString(" "))
-            logFile!!.useLines {
-                it.forEach { println(it) }
-            }
-        }
-
-        throw e
+private fun runCmd(command: Array<String>, verbose: Boolean = false) {
+    Command(*command).getOutputLines(true).let { lines ->
+        if (verbose) lines.forEach(::println)
     }
 }
 
@@ -241,7 +210,7 @@ private fun processCLib(args: Array<String>): Array<String>? {
     val flavor = KotlinPlatform.values().single { it.name.equals(flavorName, ignoreCase = true) }
     val defFile = arguments.def?.let { File(it) }
     val manifestAddend = arguments.manifest?.let { File(it) }
-    
+
     if (defFile == null && arguments.pkg == null) {
         usage()
         return null
@@ -309,6 +278,8 @@ private fun processCLib(args: Array<String>): Array<String>? {
 
     val libName = arguments.cstubsname ?: fqParts.joinToString("") + "stubs"
 
+    val tempFiles = TempFiles(libName, arguments.temporaryFilesDir)
+
     val headerFilterGlobs = def.config.headerFilter
     val imports = parseImports(arguments.import)
     val headerInclusionPolicy = HeadersInclusionPolicyImpl(headerFilterGlobs, imports)
@@ -340,10 +311,10 @@ private fun processCLib(args: Array<String>): Array<String>? {
     outKtFile.parentFile.mkdirs()
 
     File(nativeLibsDir).mkdirs()
-    val outCFile = File("$nativeLibsDir/$libName.${language.sourceFileExtension}") // TODO: select the better location.
+    val outCFile = tempFiles.create(libName, ".${language.sourceFileExtension}")
 
     outKtFile.bufferedWriter().use { ktFile ->
-        outCFile.bufferedWriter().use { cFile ->
+        File(outCFile.absolutePath).bufferedWriter().use { cFile ->
             gen.generateFiles(ktFile = ktFile, cFile = cFile, entryPoint = entryPoint)
         }
     }
@@ -353,7 +324,7 @@ private fun processCLib(args: Array<String>): Array<String>? {
 
     def.manifestAddendProperties.putAndRunOnReplace("package", outKtPkg) {
         _, oldValue, newValue ->
-            warn("The package value `$oldValue` specified in .def file is overriden with explicit $newValue")
+            warn("The package value `$oldValue` specified in .def file is overridden with explicit $newValue")
     }
 
     def.manifestAddendProperties["interop"] = "true"
@@ -363,16 +334,14 @@ private fun processCLib(args: Array<String>): Array<String>? {
     manifestAddend?.parentFile?.mkdirs()
     manifestAddend?.let { def.manifestAddendProperties.storeProperties(it) }
 
-    val workDir = defFile?.absoluteFile?.parentFile ?: File(userDir)
-
     if (flavor == KotlinPlatform.JVM) {
 
-        val outOFile = createTempFile(suffix = ".o")
+        val outOFile = tempFiles.create(libName,".o")
 
         val compilerCmd = arrayOf(compiler, *gen.libraryForCStubs.compilerArgs.toTypedArray(),
                 "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
 
-        runCmd(compilerCmd, workDir, verbose)
+        runCmd(compilerCmd, verbose)
 
         val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
 
@@ -380,21 +349,14 @@ private fun processCLib(args: Array<String>): Array<String>? {
                 outOFile.absolutePath, "-shared", "-o", outLib.absolutePath,
                 *linkerOpts)
 
-        runCmd(linkerCmd, workDir, verbose)
-
-        outOFile.delete()
+        runCmd(linkerCmd, verbose)
     } else if (flavor == KotlinPlatform.NATIVE) {
         val outBcName = libName + ".bc"
         val outLib = File(nativeLibsDir, outBcName)
         val compilerCmd = arrayOf(compiler, *gen.libraryForCStubs.compilerArgs.toTypedArray(),
                 "-emit-llvm", "-c", outCFile.absolutePath, "-o", outLib.absolutePath)
 
-        runCmd(compilerCmd, workDir, verbose)
+        runCmd(compilerCmd, verbose)
     }
-
-    if (!arguments.keepcstubs) {
-        outCFile.delete()
-    }
-
     return argsToCompiler(staticLibraries, libraryPaths)
 }

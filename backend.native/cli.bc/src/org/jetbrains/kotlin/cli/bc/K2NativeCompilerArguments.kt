@@ -119,8 +119,11 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     var purgeUserLibs: Boolean = false
 
     @Argument(value = "--runtime", valueDescription = "<path>", description = "Override standard 'runtime.bc' location")
-
     var runtimeFile: String? = null
+
+    @Argument(value = "--temporary_files_dir", valueDescription = "<path>", description = "Save temporary files to the given directory")
+    var temporaryFilesDir: String? = null
+
     @Argument(value = "--time", description = "Report execution time for compiler phases")
     var timePhases: Boolean = false
 

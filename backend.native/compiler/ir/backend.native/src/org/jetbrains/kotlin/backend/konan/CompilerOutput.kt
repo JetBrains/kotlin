@@ -19,7 +19,6 @@ import llvm.LLVMLinkModules2
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
-import org.jetbrains.kotlin.backend.konan.util.getValueOrNull
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 val CompilerOutputKind.isNativeBinary: Boolean get() = when (this) {
@@ -68,7 +67,7 @@ internal fun produceOutput(context: Context) {
             LLVMWriteBitcodeToFile(llvmModule, output)
         }
         CompilerOutputKind.LIBRARY -> {
-            val output = context.config.outputName
+            val output = context.config.outputFiles.outputName
             val libraryName = context.config.moduleId
             val neededLibraries 
                 = context.llvm.librariesForLibraryManifest

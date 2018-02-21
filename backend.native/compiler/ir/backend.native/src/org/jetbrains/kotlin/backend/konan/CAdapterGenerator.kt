@@ -710,7 +710,7 @@ internal class CAdapterGenerator(
     val exportedSymbols = mutableListOf<String>()
 
     private fun makeGlobalStruct(top: ExportedElementScope) {
-        val headerFile = context.config.tempFiles.cAdapterHeader
+        val headerFile = context.config.outputFiles.cAdapterHeader
         outputStreamWriter = headerFile.printWriter()
 
         val exportedSymbol = "${prefix}_symbols"

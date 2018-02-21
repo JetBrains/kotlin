@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -64,17 +64,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val indirectBranchesAreAllowed = target != KonanTarget.WASM32
 
     internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
-    private val prefix = produce.prefix(target)
-    private val suffix = produce.suffix(target)
-    val outputName = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(suffix) ?: produce.visibleName
-    val outputFile = outputName
-        .prefixBaseNameIfNot(prefix)
-        .suffixIfNot(suffix)
 
-    val tempFiles = TempFiles(outputName)
+    val outputFiles = OutputFiles(configuration.get(KonanConfigKeys.OUTPUT), target, produce)
+    val tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
+
+    val outputFile = outputFiles.mainFile
 
     val moduleId: String
-        get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: File(outputName).name
+        get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: File(outputFiles.outputName).name
 
     internal val purgeUserLibs: Boolean
         get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)

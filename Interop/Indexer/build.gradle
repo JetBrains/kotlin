@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.konan.target.HostManager
-
 buildscript {
     apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
 }
@@ -70,7 +68,7 @@ model {
         clangstubs(NativeLibrarySpec) {
             sources {
                 c.source.srcDir 'prebuilt/nativeInteropStubs/c'
-		cpp.source.srcDir 'prebuilt/nativeInteropStubs/cpp'
+		        cpp.source.srcDir 'prebuilt/nativeInteropStubs/cpp'
             }
 
             binaries.all {
@@ -130,7 +128,6 @@ kotlinNativeInterop {
         defFile 'clang.def'
         compilerOpts cflags
         linkerOpts ldflags
-        genTask.args '-keepcstubs', 'true'
         genTask.dependsOn libclangextTask
         genTask.inputs.dir libclangextDir
     }
@@ -153,7 +150,7 @@ task updatePrebuilt {
         }
 
         copy {
-            from("$buildDir/nativelibs/${HostManager.host.visibleName}") {
+            from("$buildDir/interopTemp") {
                 include 'clangstubs.c'
             }
             into 'prebuilt/nativeInteropStubs/c'
