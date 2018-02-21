@@ -790,8 +790,8 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         }
     }
 
-    val virtualAdapters = descriptor.contributedMethods.
-            filter { mapper.isBaseMethod(it) && it.isOverridable }
+    val virtualAdapters = exposedMethods
+            .filter { mapper.isBaseMethod(it) && it.isOverridable }
             .map { createMethodVirtualAdapter(it) }
 
     val typeInfo = constPointer(codegen.typeInfoValue(descriptor))
