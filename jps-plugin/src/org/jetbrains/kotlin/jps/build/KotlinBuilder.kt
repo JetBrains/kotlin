@@ -380,7 +380,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                         rebuildAfterCacheVersionChanged[target] = true
                     }
 
-                    dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider).clean()
+                    dataManager.withLookupStorage { it.clean() }
                     return
                 }
                 CacheVersion.Action.REBUILD_CHUNK -> {
@@ -405,7 +405,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 }
                 CacheVersion.Action.CLEAN_DATA_CONTAINER -> {
                     LOG.info("Clearing lookup cache")
-                    dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider).clean()
+                    dataManager.withLookupStorage { it.clean() }
                     cacheVersionsProvider.dataContainerVersion().clean()
                 }
                 else -> {
@@ -617,12 +617,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     ) {
         if (lookupTracker !is LookupTrackerImpl) throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker::class.java}")
 
-        val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
-
         val removedFiles = chunk.targets.flatMap { KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it) }
-        lookupStorage.removeLookupsFrom(filesToCompile.values().asSequence() + removedFiles.asSequence())
-
-        lookupStorage.addAll(lookupTracker.lookups.entrySet(), lookupTracker.pathInterner.values)
+        dataManager.withLookupStorage { lookupStorage ->
+            lookupStorage.removeLookupsFrom(filesToCompile.values().asSequence() + removedFiles.asSequence())
+            lookupStorage.addAll(lookupTracker.lookups.entrySet(), lookupTracker.pathInterner.values)
+        }
     }
 
     // if null is returned, nothing was done
@@ -818,15 +817,16 @@ private fun ChangesCollector.processChangesUsingLookups(
         fsOperations: FSOperationsHelper,
         caches: Iterable<IncrementalJvmCache>
 ) {
-    val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
     val allCaches = caches.flatMap { it.thisWithDependentCaches }
     val reporter = JpsICReporter()
 
     reporter.report { "Start processing changes" }
 
     val (dirtyLookupSymbols, dirtyClassFqNames) = getDirtyData(allCaches, reporter)
-    val dirtyFiles = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, reporter) +
-                     mapClassesFqNamesToFiles(allCaches, dirtyClassFqNames, reporter)
+    val dirtyFilesFromLookups = dataManager.withLookupStorage {
+        mapLookupSymbolsToFiles(it, dirtyLookupSymbols, reporter)
+    }
+    val dirtyFiles = dirtyFilesFromLookups + mapClassesFqNamesToFiles(allCaches, dirtyClassFqNames, reporter)
     fsOperations.markInChunkOrDependents(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
 
     reporter.report { "End of processing changes" }

@@ -10,8 +10,7 @@ import org.jetbrains.jps.builders.java.ConstantSearchProvider
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageProvider
-import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
+import org.jetbrains.kotlin.jps.incremental.withLookupStorage
 import java.io.File
 import java.util.concurrent.Future
 
@@ -30,8 +29,9 @@ class KotlinLookupConstantSearch(context: CompileContext) : Callbacks.ConstantAf
         fieldRemoved: Boolean,
         accessChanged: Boolean
     ): Future<Callbacks.ConstantAffection> {
-        val storage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
-        val paths = storage.get(LookupSymbol(name = fieldName, scope = ownerClassName))
+        val paths = dataManager.withLookupStorage { storage ->
+            storage.get(LookupSymbol(name = fieldName, scope = ownerClassName))
+        }
         return FixedFuture(Callbacks.ConstantAffection(paths.map(::File)))
     }
 }

@@ -17,12 +17,19 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.jps.builders.storage.StorageProvider
+import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.incremental.LookupStorage
 import java.io.File
 
-object JpsLookupStorageProvider : StorageProvider<JpsLookupStorage>() {
+@Synchronized
+fun <T> BuildDataManager.withLookupStorage(fn: (LookupStorage) -> T): T {
+    val lookupStorage = getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
+    return fn(lookupStorage)
+}
+
+private object JpsLookupStorageProvider : StorageProvider<JpsLookupStorage>() {
     override fun createStorage(targetDataDir: File): JpsLookupStorage = JpsLookupStorage(targetDataDir)
 }
 
-class JpsLookupStorage(targetDataDir: File) : StorageOwner, LookupStorage(targetDataDir)
+private class JpsLookupStorage(targetDataDir: File) : StorageOwner, LookupStorage(targetDataDir)
