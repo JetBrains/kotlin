@@ -250,7 +250,6 @@ apply {
 }
 
 apply { plugin("jps-compatible") }
-apply { plugin("jps-compatible-root") }
 
 fun Project.allprojectsRecursive(body: Project.() -> Unit) {
     this.body()

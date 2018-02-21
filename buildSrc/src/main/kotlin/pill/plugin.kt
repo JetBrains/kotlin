@@ -9,13 +9,6 @@ import shadow.org.jdom2.output.XMLOutputter
 import java.io.File
 
 class JpsCompatiblePlugin : Plugin<Project> {
-    override fun apply(project: Project) {
-        // 'jpsTest' does not require the 'tests-jar' artifact
-        project.configurations.create("jpsTest")
-    }
-}
-
-class JpsCompatibleRootPlugin : Plugin<Project> {
     companion object {
         private fun mapper(module: String, vararg configurations: String): DependencyMapper {
             return DependencyMapper("org.jetbrains.kotlin", module, *configurations) { MappedDependency(PDependency.Library(module)) }
@@ -82,23 +75,22 @@ class JpsCompatibleRootPlugin : Plugin<Project> {
                 )
             )
         }
-
     }
 
     override fun apply(project: Project) {
-        if (project != project.rootProject) {
-            error("JpsCompatible root plugin can be applied only to the root project")
-        }
+        // 'jpsTest' does not require the 'tests-jar' artifact
+        project.configurations.create("jpsTest")
 
-        project.tasks.create("pill") {
-            doLast { pill(project) }
-        }
+        if (project == project.rootProject) {
+            project.tasks.create("pill") {
+                doLast { pill(project) }
+            }
 
-        project.tasks.create("unpill") {
-            doLast { unpill(project) }
+            project.tasks.create("unpill") {
+                doLast { unpill(project) }
+            }
         }
     }
-
 
     private lateinit var projectDir: File
     private lateinit var platformVersion: String
