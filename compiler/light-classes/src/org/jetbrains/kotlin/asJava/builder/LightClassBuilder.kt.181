@@ -26,7 +26,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
-import org.jetbrains.kotlin.asJava.elements.getFileViewProviderForLightClass
 import com.intellij.psi.impl.source.tree.TreeElement
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -79,7 +78,7 @@ private fun createJavaFileStub(project: Project, packageFqName: FqName, files: C
     val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
     javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE
 
-    val fakeFile = object : ClsFileImpl(getFileViewProviderForLightClass(files.first())) {
+    val fakeFile = object : ClsFileImpl(files.first().viewProvider) {
         override fun getStub() = javaFileStub
 
         override fun getPackageName() = packageFqName.asString()
