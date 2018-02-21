@@ -39,15 +39,28 @@ import org.junit.Assert
 
 class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
     private class SimpleMethodRequest(
-            project: Project,
-            override val methodName: String,
-            override val modifiers: Collection<JvmModifier> = emptyList(),
-            override val returnType: ExpectedTypes = emptyList(),
-            override val annotations: Collection<AnnotationRequest> = emptyList(),
-            override val parameters: List<ExpectedParameter> = emptyList(),
-            override val targetSubstitutor: JvmSubstitutor = PsiJvmSubstitutor(project, PsiSubstitutor.EMPTY)
+        project: Project,
+        private val methodName: String,
+        private val modifiers: Collection<JvmModifier> = emptyList(),
+        private val returnType: ExpectedTypes = emptyList(),
+        private val annotations: Collection<AnnotationRequest> = emptyList(),
+        private val parameters: List<Pair<SuggestedNameInfo, List<ExpectedType>>> = emptyList(),
+        private val targetSubstitutor: JvmSubstitutor = PsiJvmSubstitutor(project, PsiSubstitutor.EMPTY)
     ) : CreateMethodRequest {
-        override val isValid: Boolean = true
+        override fun getTargetSubstitutor(): JvmSubstitutor = targetSubstitutor
+
+        override fun getModifiers() = modifiers
+
+        override fun getMethodName() = methodName
+
+        override fun getAnnotations() = annotations
+
+        override fun getParameters() = parameters
+
+        override fun getReturnType() = returnType
+
+        override fun isValid(): Boolean = true
+
     }
 
     private class NameInfo(vararg names: String) : SuggestedNameInfo(names)

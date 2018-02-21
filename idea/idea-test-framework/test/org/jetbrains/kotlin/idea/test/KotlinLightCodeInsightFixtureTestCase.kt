@@ -72,7 +72,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
                 }
             })
         }
-        CodeInsightTestCase.fixTemplates()
     }
 
     override fun tearDown() {
