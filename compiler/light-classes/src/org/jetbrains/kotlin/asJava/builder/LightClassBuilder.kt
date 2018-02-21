@@ -22,11 +22,9 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
-import org.jetbrains.kotlin.asJava.elements.getFileViewProviderForLightClass
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
@@ -77,7 +75,7 @@ private fun createJavaFileStub(project: Project, packageFqName: FqName, files: C
     val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
     javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE
 
-    val fakeFile = object : ClsFileImpl(getFileViewProviderForLightClass(files.first())) {
+    val fakeFile = object : ClsFileImpl(files.first().viewProvider) {
         override fun getStub() = javaFileStub
 
         override fun getPackageName() = packageFqName.asString()
