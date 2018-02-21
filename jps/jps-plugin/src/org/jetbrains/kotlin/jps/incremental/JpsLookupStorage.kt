@@ -16,16 +16,22 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
+import org.jetbrains.jps.builders.storage.BuildDataCorruptedException
 import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.incremental.LookupStorage
 import java.io.File
+import java.io.IOException
 
 @Synchronized
 fun <T> BuildDataManager.withLookupStorage(fn: (LookupStorage) -> T): T {
-    val lookupStorage = getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
-    return fn(lookupStorage)
+    try {
+        val lookupStorage = getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
+        return fn(lookupStorage)
+    } catch (e: IOException) {
+        throw BuildDataCorruptedException(e)
+    }
 }
 
 private object JpsLookupStorageProvider : StorageProvider<JpsLookupStorage>() {
