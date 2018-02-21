@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
 import org.jetbrains.kotlin.analyzer.ResolverForModule
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfos
+import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext

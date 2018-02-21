@@ -17,14 +17,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.ProjectJdkTable
-import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.JdkOrderEntry
-import com.intellij.openapi.roots.LibraryOrderEntry
-import com.intellij.openapi.roots.ModuleRootManager
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.analyzer.ResolverForProjectImpl
@@ -33,7 +26,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformSupport
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
-import org.jetbrains.kotlin.idea.caches.project.*
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.SdkInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -107,44 +103,10 @@ fun createModuleResolverProvider(
     )
 }
 
-fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
-    val ideaModules = ModuleManager.getInstance(project).modules.toList()
-    val modulesSourcesInfos = ideaModules.flatMap(Module::correspondingModuleInfos)
-
-    //TODO: (module refactoring) include libraries that are not among dependencies of any module
-    val ideaLibraries = ideaModules.flatMap {
-        ModuleRootManager.getInstance(it).orderEntries.filterIsInstance<LibraryOrderEntry>().map {
-            it.library
-        }
-    }.filterNotNull().toSet()
-
-    val librariesInfos = ideaLibraries.map { LibraryInfo(project, it) }
-
-    val sdksFromModulesDependencies = ideaModules.flatMap {
-        ModuleRootManager.getInstance(it).orderEntries.filterIsInstance<JdkOrderEntry>().map {
-            it.jdk
-        }
-    }
-
-    val sdksInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map {
-        SdkInfo(
-            project,
-            it
-        )
-    }
-
-    return modulesSourcesInfos + librariesInfos + sdksInfos
-}
-
 private fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns {
     val supportInstance = IdePlatformSupport.platformSupport[settings.platform] ?: return DefaultBuiltIns.Instance
     return supportInstance.createBuiltIns(settings, sdkContext)
 }
-
-fun getAllProjectSdks(): Collection<Sdk> {
-    return ProjectJdkTable.getInstance().allJdks.toList()
-}
-
 
 class ModuleResolverProvider(
     val resolverForProject: ResolverForProject<IdeaModuleInfo>,
