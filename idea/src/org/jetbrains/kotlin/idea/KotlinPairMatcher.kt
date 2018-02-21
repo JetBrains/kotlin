@@ -44,7 +44,9 @@ class KotlinPairMatcher : PairedBraceMatcher {
         if (element == null || element is PsiFile) return openingBraceOffset
         val parent = element.parent
         return when (parent) {
-            is KtClassBody, is KtBlockExpression -> DeclarationRangeUtil.getDeclarationRange(parent.parent).startOffset
+            is KtClassBody, is KtBlockExpression ->
+                DeclarationRangeUtil.getPossibleDeclarationAtRange(parent.parent)?.startOffset ?: openingBraceOffset
+
             else -> openingBraceOffset
         }
     }
