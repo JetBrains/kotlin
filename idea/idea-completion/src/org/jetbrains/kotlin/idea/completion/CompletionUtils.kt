@@ -79,7 +79,6 @@ enum class ItemPriority {
 }
 
 val ITEM_PRIORITY_KEY = Key<ItemPriority>("ITEM_PRIORITY_KEY")
-var LookupElement.isDslMember: Boolean? by UserDataProperty(Key.create("DSL_LOOKUP_ITEM"))
 
 fun LookupElement.assignPriority(priority: ItemPriority): LookupElement {
     putUserData(ITEM_PRIORITY_KEY, priority)
