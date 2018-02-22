@@ -246,7 +246,7 @@ internal object Devirtualization {
                             .forEach { addInstantiatingClass(it) }
                 }
                 // Traverse call graph from the roots.
-                rootSet.forEach { dfs(it) }
+                rootSet.forEach { dfs(it, functions[it]!!.returnType) }
                 return instantiatingClasses
             }
 
@@ -275,7 +275,7 @@ internal object Devirtualization {
 
                     else -> error("Unreachable")
                 }
-                dfs(callee)
+                dfs(callee, virtualCall.returnType)
             }
 
             private fun checkSupertypes(type: DataFlowIR.Type.Declared,
@@ -310,12 +310,19 @@ internal object Devirtualization {
                         .forEach { checkSupertypes(it, inheritor, seenTypes) }
             }
 
-            private fun dfs(symbol: DataFlowIR.FunctionSymbol) {
+            private fun dfs(symbol: DataFlowIR.FunctionSymbol, returnType: DataFlowIR.Type) {
                 val resolvedFunctionSymbol = symbol.resolved()
                 if (resolvedFunctionSymbol is DataFlowIR.FunctionSymbol.External) {
 
                     DEBUG_OUTPUT(1) { println("Function $resolvedFunctionSymbol is external") }
 
+                    val resolvedReturnType = returnType.resolved()
+                    if (resolvedReturnType.isFinal) {
+
+                        DEBUG_OUTPUT(1) { println("Adding return type as it is final") }
+
+                        addInstantiatingClass(resolvedReturnType)
+                    }
                     return
                 }
                 if (!visited.add(resolvedFunctionSymbol)) return
@@ -330,17 +337,18 @@ internal object Devirtualization {
                     when (node) {
                         is DataFlowIR.Node.NewObject -> {
                             addInstantiatingClass(node.returnType)
-                            dfs(node.callee)
+                            dfs(node.callee, node.returnType)
                         }
 
                         is DataFlowIR.Node.Singleton -> {
                             addInstantiatingClass(node.type)
-                            node.constructor?.let { dfs(it) }
+                            node.constructor?.let { dfs(it, node.type) }
                         }
 
                         is DataFlowIR.Node.Const -> addInstantiatingClass(node.type)
 
-                        is DataFlowIR.Node.StaticCall -> dfs(node.callee)
+                        is DataFlowIR.Node.StaticCall ->
+                            dfs(node.callee, node.returnType)
 
                         is DataFlowIR.Node.VirtualCall -> {
                             if (node.receiverType == DataFlowIR.Type.Virtual)
