@@ -28,11 +28,13 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -70,13 +72,7 @@ internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(): T {
 private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
 
 internal val CallableDescriptor.isIntrinsic: Boolean
-    get() = when {
-        this.annotations.hasAnnotation(intrinsicAnnotation) -> {
-        //    check(isExternal, { "Intrinsic function $name should be external" })
-            true
-        }
-        else -> false
-    }
+    get() = this.annotations.hasAnnotation(intrinsicAnnotation)
 
 private val intrinsicTypes = setOf(
         "kotlin.Boolean", "kotlin.Char",
@@ -345,3 +341,6 @@ val ClassDescriptor.enumEntries: List<ClassDescriptor>
 
 internal val DeclarationDescriptor.isExpectMember: Boolean
     get() = this is MemberDescriptor && this.isExpect
+
+fun FunctionDescriptor.isComparisonDescriptor(map: Map<SimpleType, IrSimpleFunction>): Boolean =
+        map.values.any { it.descriptor == this }

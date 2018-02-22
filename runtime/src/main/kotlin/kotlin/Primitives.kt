@@ -1016,11 +1016,7 @@ public final class Float : Number(), Comparable<Float> {
         val otherBits = other.toBits()
 
         // Canonical NaN bits representation higher than any other bit representvalue
-        return when {
-            (thisBits > otherBits) -> 1
-            (thisBits < otherBits) -> -1
-            else -> 0
-        }
+        return thisBits.compareTo(otherBits)
     }
 
     /**
@@ -1028,7 +1024,7 @@ public final class Float : Number(), Comparable<Float> {
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    public operator fun compareTo(other: Double): Int = - other.toDouble().compareTo(this)
+    public operator fun compareTo(other: Double): Int = - other.compareTo(this)
 
     /** Adds the other value to this value. */
     @SymbolName("Kotlin_Float_plus_Byte")
@@ -1250,11 +1246,7 @@ public final class Double : Number(), Comparable<Double> {
         val otherBits = other.toBits()
 
         // Canonical NaN bits representation higher than any other bit representvalue
-        return when {
-            (thisBits > otherBits) -> 1
-            (thisBits < otherBits) -> -1
-            else -> 0
-        }
+        return thisBits.compareTo(otherBits)
     }
 
     /** Adds the other value to this value. */
@@ -1371,8 +1363,8 @@ public final class Double : Number(), Comparable<Double> {
 
     public override fun toShort(): Short = this.toInt().toShort()
 
-    public override fun toInt(): Int = this.toLong().toInt()
-
+    @SymbolName("Kotlin_Double_toInt")
+    external public override fun toInt(): Int
     @SymbolName("Kotlin_Double_toLong")
     external public override fun toLong(): Long
     @SymbolName("Kotlin_Double_toFloat")

@@ -307,3 +307,8 @@ internal fun String.mdString() = LLVMMDString(this, this.length)!!
 internal fun node(vararg it:LLVMValueRef) = LLVMMDNode(it.toList().toCValues(), it.size)
 
 internal fun LLVMValueRef.setUnaligned() = apply { LLVMSetAlignment(this, 1) }
+
+fun LLVMTypeRef.isFloatingPoint(): Boolean = when (llvm.LLVMGetTypeKind(this)) {
+    LLVMTypeKind.LLVMFloatTypeKind, LLVMTypeKind.LLVMDoubleTypeKind -> true
+    else -> false
+}

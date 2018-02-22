@@ -2341,39 +2341,33 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         context.log{"evaluateOperatorCall           : origin:${ir2string(callee)}"}
         val descriptor = callee.descriptor
         val ib = context.irModule!!.irBuiltins
-        val funGen = functionGenerationContext
 
-        return when {
-            descriptor == ib.eqeqeq -> funGen.icmpEq(args[0], args[1])
-            descriptor == ib.booleanNot -> funGen.icmpNe(args[0], kTrue)
+        with(functionGenerationContext) {
+            val arg0 = args[0]
+            val arg1 = args[1]
+            return when {
+                descriptor == ib.eqeqeq -> icmpEq(arg0, arg1)
+                descriptor == ib.booleanNot -> icmpNe(arg0, kTrue)
 
-            descriptor.isComparisonDescriptor(ib.greaterFunByOperandType) -> {
-                if (args[0].type.isFloatingPoint()) funGen.fcmpGt(args[0], args[1])
-                else funGen.icmpGt(args[0], args[1])
+                descriptor.isComparisonDescriptor(ib.greaterFunByOperandType) -> {
+                    if (arg0.type.isFloatingPoint()) fcmpGt(arg0, arg1)
+                    else icmpGt(arg0, arg1)
+                }
+                descriptor.isComparisonDescriptor(ib.greaterOrEqualFunByOperandType) -> {
+                    if (arg0.type.isFloatingPoint()) fcmpGe(arg0, arg1)
+                    else icmpGe(arg0, arg1)
+                }
+                descriptor.isComparisonDescriptor(ib.lessFunByOperandType) -> {
+                    if (arg0.type.isFloatingPoint()) fcmpLt(arg0, arg1)
+                    else icmpLt(arg0, arg1)
+                }
+                descriptor.isComparisonDescriptor(ib.lessOrEqualFunByOperandType) -> {
+                    if (arg0.type.isFloatingPoint()) fcmpLe(arg0, arg1)
+                    else icmpLe(arg0, arg1)
+                }
+                else -> TODO(descriptor.name.toString())
             }
-            descriptor.isComparisonDescriptor(ib.greaterOrEqualFunByOperandType) -> {
-                if (args[0].type.isFloatingPoint()) funGen.fcmpGe(args[0], args[1])
-                else funGen.icmpGe(args[0], args[1])
-            }
-            descriptor.isComparisonDescriptor(ib.lessFunByOperandType) -> {
-                if (args[0].type.isFloatingPoint()) funGen.fcmpLt(args[0], args[1])
-                else funGen.icmpLt(args[0], args[1])
-            }
-            descriptor.isComparisonDescriptor(ib.lessOrEqualFunByOperandType) -> {
-                if (args[0].type.isFloatingPoint()) funGen.fcmpLe(args[0], args[1])
-                else funGen.icmpLe(args[0], args[1])
-            }
-            else -> TODO(descriptor.name.toString())
         }
-    }
-
-    private fun LLVMTypeRef.isFloatingPoint(): Boolean {
-        val typeKind = LLVMGetTypeKind(this)
-        return typeKind == LLVMTypeKind.LLVMFloatTypeKind || typeKind == LLVMTypeKind.LLVMDoubleTypeKind
-    }
-
-    private fun FunctionDescriptor.isComparisonDescriptor(map: Map<SimpleType, IrSimpleFunction>): Boolean {
-        return map.values.any { it.descriptor == this }
     }
 
     //-------------------------------------------------------------------------//
