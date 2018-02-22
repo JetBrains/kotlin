@@ -51,9 +51,9 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
         fun shouldSuggestToConvert(expression: KtBinaryExpression): Boolean {
             val entries = buildReplacement(expression).entries
             return entries.none { it is KtBlockStringTemplateEntry }
-                   && !entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
-                   && entries.count { it is KtLiteralStringTemplateEntry } > 1
-                   && !expression.textContains('\n')
+                    && !entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
+                    && entries.count { it is KtLiteralStringTemplateEntry } >= 1
+                    && !expression.textContains('\n')
         }
 
         @JvmStatic
