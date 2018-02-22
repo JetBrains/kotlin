@@ -20,13 +20,7 @@ sourceSets {
     builtins {
         java {
             srcDir "${rootDir}/core/builtins/src"
-            srcDir "${rootDir}/core/runtime.jvm/src"
-            exclude 'org/jetbrains/annotations/**'
-        }
-        kotlin {
-            srcDir "${rootDir}/core/builtins/src"
-            srcDir "${rootDir}/core/runtime.jvm/src"
-            exclude 'org/jetbrains/annotations/**'
+            srcDir "jvm/runtime"
         }
     }
     main {

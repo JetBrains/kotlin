@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package kotlin;
+package kotlin
 
-public class NoWhenBranchMatchedException extends RuntimeException {
-    public NoWhenBranchMatchedException() {
-    }
+public open class NoWhenBranchMatchedException : RuntimeException {
+    constructor()
 
-    public NoWhenBranchMatchedException(String message) {
-        super(message);
-    }
+    constructor(message: String?) : super(message)
 
-    public NoWhenBranchMatchedException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    constructor(message: String?, cause: Throwable?) : super(message, cause)
 
-    public NoWhenBranchMatchedException(Throwable cause) {
-        super(cause);
-    }
+    constructor(cause: Throwable?) : super(cause)
 }

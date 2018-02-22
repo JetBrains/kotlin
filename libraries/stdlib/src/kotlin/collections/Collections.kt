@@ -228,12 +228,12 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
 @JvmVersion
 @kotlin.internal.InlineOnly
 internal inline fun copyToArrayImpl(collection: Collection<*>): Array<Any?> =
-        kotlin.jvm.internal.CollectionToArray.toArray(collection)
+        kotlin.jvm.internal.collectionToArray(collection)
 
 @JvmVersion
 @kotlin.internal.InlineOnly
 internal inline fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> =
-        kotlin.jvm.internal.CollectionToArray.toArray(collection, array)
+        kotlin.jvm.internal.collectionToArray(collection, array as Array<Any?>) as Array<T>
 
 // copies typed varargs array to array of objects
 @JvmVersion
