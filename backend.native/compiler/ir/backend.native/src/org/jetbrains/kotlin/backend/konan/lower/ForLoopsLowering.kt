@@ -441,7 +441,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                 putValueArgument(0, minConst)
             }
             putValueArgument(0, compareToCall)
-            putValueArgument(1, IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, 0))
+            putValueArgument(1, irInt(0))
         }
     }
 
@@ -459,7 +459,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
 
         val check: IrExpression = irCall(comparingBuiltIn!!).apply {
             putValueArgument(0, irCallOp(compareTo, irGet(forLoopInfo.inductionVariable), irGet(forLoopInfo.last)))
-            putValueArgument(1, IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, 0))
+            putValueArgument(1, irInt(0))
         }
 
         // Process closed and open ranges in different manners.

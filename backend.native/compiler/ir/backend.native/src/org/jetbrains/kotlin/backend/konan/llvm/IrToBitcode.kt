@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
@@ -2343,27 +2342,25 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val ib = context.irModule!!.irBuiltins
 
         with(functionGenerationContext) {
-            val arg0 = args[0]
-            val arg1 = args[1]
             return when {
-                descriptor == ib.eqeqeq -> icmpEq(arg0, arg1)
-                descriptor == ib.booleanNot -> icmpNe(arg0, kTrue)
+                descriptor == ib.eqeqeq -> icmpEq(args[0], args[1])
+                descriptor == ib.booleanNot -> icmpNe(args[0], kTrue)
 
                 descriptor.isComparisonDescriptor(ib.greaterFunByOperandType) -> {
-                    if (arg0.type.isFloatingPoint()) fcmpGt(arg0, arg1)
-                    else icmpGt(arg0, arg1)
+                    if (args[0].type.isFloatingPoint()) fcmpGt(args[0], args[1])
+                    else icmpGt(args[0], args[1])
                 }
                 descriptor.isComparisonDescriptor(ib.greaterOrEqualFunByOperandType) -> {
-                    if (arg0.type.isFloatingPoint()) fcmpGe(arg0, arg1)
-                    else icmpGe(arg0, arg1)
+                    if (args[0].type.isFloatingPoint()) fcmpGe(args[0], args[1])
+                    else icmpGe(args[0], args[1])
                 }
                 descriptor.isComparisonDescriptor(ib.lessFunByOperandType) -> {
-                    if (arg0.type.isFloatingPoint()) fcmpLt(arg0, arg1)
-                    else icmpLt(arg0, arg1)
+                    if (args[0].type.isFloatingPoint()) fcmpLt(args[0], args[1])
+                    else icmpLt(args[0], args[1])
                 }
                 descriptor.isComparisonDescriptor(ib.lessOrEqualFunByOperandType) -> {
-                    if (arg0.type.isFloatingPoint()) fcmpLe(arg0, arg1)
-                    else icmpLe(arg0, arg1)
+                    if (args[0].type.isFloatingPoint()) fcmpLe(args[0], args[1])
+                    else icmpLe(args[0], args[1])
                 }
                 else -> TODO(descriptor.name.toString())
             }

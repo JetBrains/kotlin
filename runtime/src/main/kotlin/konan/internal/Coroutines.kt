@@ -21,12 +21,11 @@ import kotlin.coroutines.experimental.intrinsics.*
 
 @Intrinsic
 @PublishedApi
-internal external fun <T> getContinuation(): Continuation<T> = throw AssertionError("Call to getContinuation should've been lowered")
+internal external fun <T> getContinuation(): Continuation<T>
 
 @Intrinsic
 @PublishedApi
 internal external suspend fun <T> returnIfSuspended(@Suppress("UNUSED_PARAMETER") argument: Any?): T
-        = throw AssertionError("Call to returnIfSuspended should've been lowered")
 
 // Single-threaded continuation.
 class SafeContinuation<in T>
