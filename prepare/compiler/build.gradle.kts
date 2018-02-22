@@ -5,12 +5,6 @@ import org.gradle.api.file.DuplicatesStrategy
 
 description = "Kotlin Compiler"
 
-buildscript {
-    dependencies {
-        classpath("net.sf.proguard:proguard-gradle:${property("versions.proguard")}")
-    }
-}
-
 plugins {
     `java`
 }

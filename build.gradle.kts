@@ -1,4 +1,5 @@
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
 import java.util.*
 import java.io.File
@@ -6,6 +7,7 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import proguard.gradle.ProGuardTask
 
 buildscript {
     extra["defaultSnapshotVersion"] = "1.2-SNAPSHOT"
@@ -22,8 +24,6 @@ buildscript {
 
     extra["repos"] = repos
 
-    extra["versions.proguard"] = "5.3.3"
-
     repositories {
         for (repo in repos) {
             maven(url = repo)
@@ -33,6 +33,7 @@ buildscript {
     dependencies {
         classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
         classpath(kotlinDep("gradle-plugin", bootstrapKotlinVersion))
+        classpath("net.sf.proguard:proguard-gradle:5.3.3")
     }
 }
 
@@ -604,5 +605,43 @@ fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
 
     tasks.withType<Test> {
         executable = File(javaHome, "bin/java").canonicalPath
+    }
+}
+
+tasks.create("findShadowJarsInClasspath").doLast {
+    fun Collection<File>.printSorted(indent: String = "    ") {
+        sortedBy { it.path }.forEach { println(indent + it.relativeTo(rootProject.projectDir)) }
+    }
+
+    val shadowJars = hashSetOf<File>()
+    for (project in rootProject.allprojects) {
+        for (task in project.tasks) {
+            when (task) {
+                is ShadowJar -> {
+                    shadowJars.add(File(task.archivePath))
+                }
+                is ProGuardTask -> {
+                    shadowJars.addAll(task.outputs.files.toList())
+                }
+            }
+        }
+    }
+
+    println("Shadow jars:")
+    shadowJars.printSorted()
+
+    fun Project.checkConfig(configName: String) {
+        val config = configurations.findByName(configName) ?: return
+        val shadowJarsInConfig = config.resolvedConfiguration.files.filter { it in shadowJars }
+        if (shadowJarsInConfig.isNotEmpty()) {
+            println()
+            println("Project $project contains shadow jars in configuration '$configName':")
+            shadowJarsInConfig.printSorted()
+        }
+    }
+
+    for (project in rootProject.allprojects) {
+        project.checkConfig("compileClasspath")
+        project.checkConfig("testCompileClasspath")
     }
 }
