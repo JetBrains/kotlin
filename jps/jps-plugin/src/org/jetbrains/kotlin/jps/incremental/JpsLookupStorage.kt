@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jps.builders.storage.BuildDataCorruptedException
 import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.jps.incremental.storage.BuildDataManager
@@ -24,13 +25,28 @@ import org.jetbrains.kotlin.incremental.LookupStorage
 import java.io.File
 import java.io.IOException
 
-@Synchronized
+private object LookupStorageLock
+
+fun BuildDataManager.cleanLookupStorage(log: Logger) {
+    synchronized(LookupStorageLock) {
+        try {
+            cleanTargetStorages(KotlinDataContainerTarget)
+        } catch (e: IOException) {
+            if (!dataPaths.getTargetDataRoot(KotlinDataContainerTarget).deleteRecursively()) {
+                log.debug("Could not clear lookup storage caches", e)
+            }
+        }
+    }
+}
+
 fun <T> BuildDataManager.withLookupStorage(fn: (LookupStorage) -> T): T {
-    try {
-        val lookupStorage = getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
-        return fn(lookupStorage)
-    } catch (e: IOException) {
-        throw BuildDataCorruptedException(e)
+    synchronized(LookupStorageLock) {
+        try {
+            val lookupStorage = getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
+            return fn(lookupStorage)
+        } catch (e: IOException) {
+            throw BuildDataCorruptedException(e)
+        }
     }
 }
 

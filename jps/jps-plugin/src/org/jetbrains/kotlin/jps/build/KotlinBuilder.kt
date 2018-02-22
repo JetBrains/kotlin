@@ -380,7 +380,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                         rebuildAfterCacheVersionChanged[target] = true
                     }
 
-                    dataManager.withLookupStorage { it.clean() }
+                    dataManager.cleanLookupStorage(LOG)
                     return
                 }
                 CacheVersion.Action.REBUILD_CHUNK -> {
@@ -405,7 +405,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 }
                 CacheVersion.Action.CLEAN_DATA_CONTAINER -> {
                     LOG.info("Clearing lookup cache")
-                    dataManager.withLookupStorage { it.clean() }
+                    dataManager.cleanLookupStorage(LOG)
                     cacheVersionsProvider.dataContainerVersion().clean()
                 }
                 else -> {
