@@ -107,7 +107,10 @@ fun generateKotlinPluginArtifactFile(rootProject: Project): PFile {
     val root = Root()
 
     // Copy kotlinc directory
-    root.add(DirectoryCopy(File(rootProject.extra["distKotlinHomeDir"].toString())))
+    root.add(Directory("kotlinc").apply {
+        val kotlincDirectory = rootProject.extra["distKotlinHomeDir"].toString()
+        add(DirectoryCopy(File(kotlincDirectory)))
+    })
 
     for (task in ideaPluginTasks) {
         val spec = task.rootSpec.children.filterIsInstance<SingleParentCopySpec>().singleOrNull()
@@ -146,11 +149,11 @@ fun generateKotlinPluginArtifactFile(rootProject: Project): PFile {
                         root.getDirectory(targetDir).add(this)
                     }
 
-                    val fatJarContentsConfiguration = sourcePath.project.configurations
-                        .findByName("fatJarContents")?.resolvedConfiguration
+                    val embeddedComponents = sourcePath.project.configurations
+                        .findByName(EmbeddedComponents.CONFIGURATION_NAME)?.resolvedConfiguration
 
-                    if (fatJarContentsConfiguration != null) {
-                        for ((_, _, dependency) in listOf(fatJarContentsConfiguration to Scope.COMPILE).collectDependencies()) {
+                    if (embeddedComponents != null) {
+                        for ((_, _, dependency) in listOf(embeddedComponents to Scope.COMPILE).collectDependencies()) {
                             if (dependency.configuration == "runtimeElements") {
                                 archiveForJar.add(ModuleOutput(dependency.moduleName + ".src"))
                             } else if (dependency.configuration == "tests-jar" || dependency.configuration == "jpsTest") {

@@ -5,6 +5,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.tasks.AbstractCopyTask
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
@@ -98,3 +100,19 @@ fun firstFromJavaHomeThatExists(vararg paths: String): File? =
 
 fun toolsJar(): File? = firstFromJavaHomeThatExists("../lib/tools.jar", "../Classes/tools.jar")
 
+object EmbeddedComponents {
+    val CONFIGURATION_NAME = "embeddedComponents"
+}
+
+fun Project.containsEmbeddedComponents() {
+    configurations.create(EmbeddedComponents.CONFIGURATION_NAME)
+}
+
+fun AbstractCopyTask.fromEmbeddedComponents() {
+    val embeddedComponents = project.configurations.getByName(EmbeddedComponents.CONFIGURATION_NAME)
+    if (this is ShadowJar) {
+        from(embeddedComponents)
+    } else {
+        embeddedComponents.forEach { from(if (it.isDirectory) it else project.zipTree(it)) }
+    }
+}

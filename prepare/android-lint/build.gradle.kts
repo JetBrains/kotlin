@@ -13,16 +13,19 @@ sourceSets {
     "test" {}
 }
 
-// Do not rename, used in JPS importer
-val fatJarContents by configurations.creating
+containsEmbeddedComponents()
 
 dependencies {
-    projectsToShadow.forEach {p ->
-        fatJarContents(project(p)) { isTransitive = false }
+    projectsToShadow.forEach { p ->
+        embeddedComponents(project(p)) { isTransitive = false }
     }
 }
 
 runtimeJar {
+    /*
+        TODO: `fromEmbeddedComponents()` should be used here.
+        Couldn't use it because of the "must be locked before it can be used to compute a classpath" error.
+     */
     projectsToShadow.forEach {
         dependsOn("$it:classes")
         project(it).let { p ->

@@ -9,8 +9,7 @@ jvmTarget = "1.6"
 
 val nativePlatformVariants: List<String> by rootProject.extra
 
-// Do not rename, used in JPS importer
-val fatJarContents by configurations.creating
+containsEmbeddedComponents()
 
 dependencies {
     compileOnly(project(":compiler:util"))
@@ -18,10 +17,11 @@ dependencies {
     compileOnly(project(":compiler:daemon-common"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
-    fatJarContents(project(":compiler:daemon-common")) { isTransitive = false }
-    fatJarContents(commonDep("net.rubygrapefruit", "native-platform"))
+
+    embeddedComponents(project(":compiler:daemon-common")) { isTransitive = false }
+    embeddedComponents(commonDep("net.rubygrapefruit", "native-platform"))
     nativePlatformVariants.forEach {
-        fatJarContents(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
+        embeddedComponents(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
     }
 }
 
@@ -32,8 +32,9 @@ sourceSets {
 
 runtimeJar(task<ShadowJar>("shadowJar")) {
     from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
-    from(fatJarContents)
+    fromEmbeddedComponents()
 }
+
 sourcesJar()
 javadocJar()
 
