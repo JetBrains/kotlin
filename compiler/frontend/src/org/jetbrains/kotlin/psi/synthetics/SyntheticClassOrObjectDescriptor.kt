@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
+import java.lang.IllegalStateException
 
 /*
  * This class introduces all attributes that are needed for synthetic classes/object so far.
@@ -151,7 +152,10 @@ class SyntheticClassOrObjectDescriptor(
 
         override fun getPsiOrParent() = _parent.psiOrParent
         override fun getParent() = _parent.psiOrParent
-        override fun getContainingKtFile() = _parent.containingKtFile
+        override fun getContainingKtFile() =
+        // in theory `containingKtFile` is `@NotNull` but in practice EA-114080
+            _parent.containingKtFile ?: throw IllegalStateException("containingKtFile was null for $_parent of ${_parent.javaClass}")
+
     }
 }
 

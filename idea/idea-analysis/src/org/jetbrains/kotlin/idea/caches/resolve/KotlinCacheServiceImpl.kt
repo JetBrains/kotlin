@@ -62,7 +62,10 @@ data class PlatformAnalysisSettings(val platform: TargetPlatform, val sdk: Sdk?,
 
 class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     override fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
-        return getFacadeToAnalyzeFiles(elements.map { it.containingKtFile })
+        return getFacadeToAnalyzeFiles(elements.map {
+            // in theory `containingKtFile` is `@NotNull` but in practice EA-114080
+            it.containingKtFile ?: throw IllegalStateException("containingKtFile was null for $it of ${it.javaClass}")
+        })
     }
 
     override fun getSuppressionCache(): KotlinSuppressCache = kotlinSuppressCache.value
