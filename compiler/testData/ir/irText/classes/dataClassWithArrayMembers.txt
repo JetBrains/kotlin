@@ -459,6 +459,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (genericArray:kotlin.Array<T>) returnType:Test2<T> flags:
       VALUE_PARAMETER name:genericArray index:0 type:kotlin.Array<T> flags:
       BLOCK_BODY

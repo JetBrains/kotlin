@@ -39,9 +39,15 @@ MODULE_FRAGMENT name:<built-ins module>
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public modality:FINAL flags:constmval
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MIN_VALUE> visibility:public modality:FINAL <> () returnType:Int flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            UNBOUND: operator fun equals(other: kotlin.Any?): kotlin.Boolean
           VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+          overridden:
+            UNBOUND: fun hashCode(): kotlin.Int
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+          overridden:
+            UNBOUND: fun toString(): kotlin.String
       FUN IR_EXTERNAL_DECLARATION_STUB name:inv visibility:public modality:FINAL <> () returnType:Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:and visibility:public modality:FINAL <> (other:kotlin.Int) returnType:Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
@@ -126,15 +132,40 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:unaryMinus visibility:public modality:FINAL <> () returnType:Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:unaryPlus visibility:public modality:FINAL <> () returnType:Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN <> (other:kotlin.Int) returnType:Int flags:
+        overridden:
+          UNBOUND: operator fun compareTo(other: T): kotlin.Int
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:OPEN <> () returnType:Byte flags:
+        overridden:
+          UNBOUND: fun toByte(): kotlin.Byte
       FUN IR_EXTERNAL_DECLARATION_STUB name:toChar visibility:public modality:OPEN <> () returnType:Char flags:
+        overridden:
+          UNBOUND: fun toChar(): kotlin.Char
       FUN IR_EXTERNAL_DECLARATION_STUB name:toDouble visibility:public modality:OPEN <> () returnType:Double flags:
+        overridden:
+          UNBOUND: fun toDouble(): kotlin.Double
       FUN IR_EXTERNAL_DECLARATION_STUB name:toFloat visibility:public modality:OPEN <> () returnType:Float flags:
+        overridden:
+          UNBOUND: fun toFloat(): kotlin.Float
       FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> () returnType:Int flags:
+        overridden:
+          UNBOUND: fun toInt(): kotlin.Int
       FUN IR_EXTERNAL_DECLARATION_STUB name:toLong visibility:public modality:OPEN <> () returnType:Long flags:
+        overridden:
+          UNBOUND: fun toLong(): kotlin.Long
       FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:OPEN <> () returnType:Short flags:
+        overridden:
+          UNBOUND: fun toShort(): kotlin.Short
       FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          UNBOUND: fun equals(other: kotlin.Any?): kotlin.Boolean
+          UNBOUND: fun equals(other: kotlin.Any?): kotlin.Boolean
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        overridden:
+          UNBOUND: fun hashCode(): kotlin.Int
+          UNBOUND: fun hashCode(): kotlin.Int
       FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+        overridden:
+          UNBOUND: fun toString(): kotlin.String
+          UNBOUND: fun toString(): kotlin.String

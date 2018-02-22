@@ -4,6 +4,8 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:Q index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (q:Q) returnType:A<Q> flags:
       VALUE_PARAMETER name:q index:0 type:Q flags:
       BLOCK_BODY

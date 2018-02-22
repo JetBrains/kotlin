@@ -18,6 +18,8 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   FUN name:reinterpret visibility:public modality:FINAL <T> ($receiver:CPointed) returnType:T flags:inline
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[CPointed]
+      superClassifiers:
+        CLASS INTERFACE name:CPointed modality:ABSTRACT visibility:public flags:
     $receiver: VALUE_PARAMETER name:<this> type:CPointed flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='reinterpret() on CPointed: T'
@@ -27,6 +29,8 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
     superClasses:
       CLASS INTERFACE name:CPointed modality:ABSTRACT visibility:public flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:CInt32VarX<T> flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

@@ -71,7 +71,7 @@ class DeclarationStubGenerator(
         }
 
     fun generateFunctionStub(descriptor: FunctionDescriptor): IrSimpleFunction =
-        symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original).also { irFunction ->
+        symbolTable.declareSimpleFunctionWithOverrides(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original).also { irFunction ->
             generateTypeParameterStubs(descriptor.typeParameters, irFunction)
             generateValueParametersStubs(descriptor.valueParameters, irFunction)
         }

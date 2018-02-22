@@ -73,6 +73,8 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (testInPrimaryCtor1:T, testInPrimaryCtor2:kotlin.Int) returnType:InPrimaryCtor<T> flags:
       VALUE_PARAMETER name:testInPrimaryCtor1 index:0 type:T flags:
       VALUE_PARAMETER name:testInPrimaryCtor2 index:1 type:kotlin.Int flags:

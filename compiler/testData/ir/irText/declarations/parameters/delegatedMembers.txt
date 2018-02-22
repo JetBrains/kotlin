@@ -4,6 +4,8 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:IBase<T>, x:kotlin.Int) returnType:Unit flags:
       $this: VALUE_PARAMETER name:<this> type:IBase<T> flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
@@ -12,6 +14,8 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
         $this: VALUE_PARAMETER name:<this> type:IBase<T> flags:
     FUN name:qux visibility:public modality:ABSTRACT <X> ($this:IBase<T>, t:T, x:X) returnType:Unit flags:
       TYPE_PARAMETER name:X index:0 variance: upperBounds:[kotlin.Any?]
+        superClassifiers:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       $this: VALUE_PARAMETER name:<this> type:IBase<T> flags:
       VALUE_PARAMETER name:t index:0 type:T flags:
       VALUE_PARAMETER name:x index:1 type:X flags:
@@ -33,6 +37,8 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
     superClasses:
       CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
     TYPE_PARAMETER name:TT index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (impl:IBase<TT>) returnType:Test<TT> flags:
       VALUE_PARAMETER name:impl index:0 type:IBase<TT> flags:
       BLOCK_BODY
@@ -45,6 +51,8 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
       overridden:
         FUN name:qux visibility:public modality:ABSTRACT <X> ($this:IBase<T>, t:T, x:X) returnType:Unit flags:
       TYPE_PARAMETER name:X index:0 variance: upperBounds:[kotlin.Any?]
+        superClassifiers:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       $this: VALUE_PARAMETER name:<this> type:Test<TT> flags:
       VALUE_PARAMETER name:t index:0 type:TT flags:
       VALUE_PARAMETER name:x index:1 type:X flags:

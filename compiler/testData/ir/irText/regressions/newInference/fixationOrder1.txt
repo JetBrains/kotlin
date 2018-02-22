@@ -1,7 +1,11 @@
 FILE fqName:<root> fileName:/fixationOrder1.kt
   FUN name:foo visibility:public modality:FINAL <X, Y> () returnType:Function1<X, Y> flags:
     TYPE_PARAMETER name:X index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:Y index:1 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='foo(): (X) -> Y'
         CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
@@ -10,7 +14,11 @@ FILE fqName:<root> fileName:/fixationOrder1.kt
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:A index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:B index:1 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
@@ -26,7 +34,11 @@ FILE fqName:<root> fileName:/fixationOrder1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   FUN name:check visibility:public modality:FINAL <T, R> (x:T, y:R, f:(T) -> R) returnType:Inv2<T, R> flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:R index:1 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     VALUE_PARAMETER name:x index:0 type:T flags:
     VALUE_PARAMETER name:y index:1 type:R flags:
     VALUE_PARAMETER name:f index:2 type:(T) -> R flags:

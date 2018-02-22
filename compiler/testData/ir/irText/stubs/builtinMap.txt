@@ -1,7 +1,11 @@
 FILE fqName:<root> fileName:/builtinMap.kt
   FUN name:plus visibility:public modality:FINAL <K, V> ($receiver:kotlin.collections.Map<out K, V>, pair:kotlin.Pair<K, V>) returnType:Map<K, V> flags:
     TYPE_PARAMETER name:K index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:V index:1 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.Map<out K, V> flags:
     VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<K, V> flags:
     BLOCK_BODY

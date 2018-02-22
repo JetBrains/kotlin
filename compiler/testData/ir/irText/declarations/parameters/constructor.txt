@@ -4,7 +4,11 @@ FILE fqName:<root> fileName:/constructor.kt
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T1 index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T2 index:1 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (x:T1, y:T2) returnType:Test1<T1, T2> flags:
       VALUE_PARAMETER name:x index:0 type:T1 flags:
       VALUE_PARAMETER name:y index:1 type:T2 flags:
@@ -69,6 +73,8 @@ FILE fqName:<root> fileName:/constructor.kt
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       TYPE_PARAMETER name:Z index:0 variance: upperBounds:[kotlin.Any?]
+        superClassifiers:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       CONSTRUCTOR visibility:public <> ($this:Test2, z:Z) returnType:Test2.TestInner<Z> flags:
         $outer: VALUE_PARAMETER name:<this> type:Test2 flags:
         VALUE_PARAMETER name:z index:0 type:Z flags:
@@ -170,6 +176,8 @@ FILE fqName:<root> fileName:/constructor.kt
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test4<T> flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY

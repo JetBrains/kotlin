@@ -276,6 +276,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("localClassWithOverrides.kt")
+        public void testLocalClassWithOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/localClassWithOverrides.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localDelegatedProperties.kt")
         public void testLocalDelegatedProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/localDelegatedProperties.kt");
@@ -1257,9 +1263,21 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("javaMethod.kt")
+        public void testJavaMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/javaMethod.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("javaNestedClass.kt")
         public void testJavaNestedClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/javaNestedClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaStaticMethod.kt")
+        public void testJavaStaticMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/javaStaticMethod.kt");
             doTest(fileName);
         }
 

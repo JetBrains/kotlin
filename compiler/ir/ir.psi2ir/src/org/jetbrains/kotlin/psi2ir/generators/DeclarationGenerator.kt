@@ -83,9 +83,23 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             val ktTypeParameterDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameterDescriptor)
             val startOffset = ktTypeParameterDeclaration.startOffsetOrUndefined
             val endOffset = ktTypeParameterDeclaration.endOffsetOrUndefined
-            context.symbolTable.declareTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
+            declareTypeParameterWithSuperClassifiers(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
         }
     }
+
+    private fun declareTypeParameterWithSuperClassifiers(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: TypeParameterDescriptor
+    ) =
+        context.symbolTable.declareTypeParameter(startOffset, endOffset, origin, descriptor).also { irTypeParameter ->
+            descriptor.typeConstructor.supertypes.mapNotNullTo(irTypeParameter.superClassifiers) {
+                it.constructor.declarationDescriptor?.let {
+                    context.symbolTable.referenceClassifier(it)
+                }
+            }
+        }
 
     fun generateInitializerBody(scopeOwnerSymbol: IrSymbol, ktBody: KtExpression): IrExpressionBody =
         createBodyGenerator(scopeOwnerSymbol).generateExpressionBody(ktBody)

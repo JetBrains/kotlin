@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi2ir.containsNull
@@ -48,7 +49,7 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
     }
 
     private fun declareSimpleFunction(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, function: FunctionDescriptor) =
-        context.symbolTable.declareSimpleFunction(startOffset, endOffset, origin, function)
+        context.symbolTable.declareSimpleFunctionWithOverrides(startOffset, endOffset, origin, function)
 
     private inner class MemberFunctionBuilder(
         val irClass: IrClass,

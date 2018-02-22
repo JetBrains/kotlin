@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -188,7 +186,25 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             originalTypeParameter.startOffset, originalTypeParameter.endOffset,
             mapDeclarationOrigin(originalTypeParameter.origin),
             newTypeParameterDescriptor
-        )
+        ).apply {
+            for (i in upperBounds.indices) {
+                val upperBoundClassifier = upperBounds[i].constructor.declarationDescriptor ?: continue
+                val oldSuperClassifierSymbol = originalTypeParameter.superClassifiers[i]
+                val newSuperClassifierSymbol =
+                    if (upperBoundClassifier == oldSuperClassifierSymbol.descriptor)
+                        oldSuperClassifierSymbol
+                    else
+                        createUnboundClassifierSymbol(upperBoundClassifier)
+                superClassifiers.add(newSuperClassifierSymbol)
+            }
+        }
+
+    protected fun createUnboundClassifierSymbol(classifier: ClassifierDescriptor): IrClassifierSymbol =
+        when (classifier) {
+            is TypeParameterDescriptor -> IrTypeParameterSymbolImpl(classifier)
+            is ClassDescriptor -> IrClassSymbolImpl(classifier)
+            else -> throw IllegalArgumentException("Unexpected classifier descriptor: $classifier")
+        }
 
     protected fun copyValueParameter(
         originalValueParameter: IrValueParameter,

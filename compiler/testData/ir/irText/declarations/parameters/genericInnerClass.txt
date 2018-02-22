@@ -4,6 +4,8 @@ FILE fqName:<root> fileName:/genericInnerClass.kt
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T1 index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:Outer<T1> flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -13,6 +15,8 @@ FILE fqName:<root> fileName:/genericInnerClass.kt
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       TYPE_PARAMETER name:T2 index:0 variance: upperBounds:[kotlin.Any?]
+        superClassifiers:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       CONSTRUCTOR visibility:public <> ($this:Outer<T1>) returnType:Outer<T1>.Inner<T2> flags:
         $outer: VALUE_PARAMETER name:<this> type:Outer<T1> flags:
         BLOCK_BODY

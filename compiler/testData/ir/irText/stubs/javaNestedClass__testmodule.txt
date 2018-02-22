@@ -10,11 +10,23 @@ MODULE_FRAGMENT name:<test-module>
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J.JJ flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:foo visibility:public modality:OPEN <> () returnType:Unit flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            UNBOUND: operator fun equals(other: kotlin.Any?): kotlin.Boolean
           VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+          overridden:
+            UNBOUND: fun hashCode(): kotlin.Int
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+          overridden:
+            UNBOUND: fun toString(): kotlin.String
         FUN IR_EXTERNAL_DECLARATION_STUB name:bar visibility:public modality:OPEN <> () returnType:Unit flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          UNBOUND: operator fun equals(other: kotlin.Any?): kotlin.Boolean
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        overridden:
+          UNBOUND: fun hashCode(): kotlin.Int
       FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+        overridden:
+          UNBOUND: fun toString(): kotlin.String

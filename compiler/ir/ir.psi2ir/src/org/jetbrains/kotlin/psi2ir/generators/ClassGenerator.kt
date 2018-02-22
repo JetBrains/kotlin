@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.util.StableDescriptorsComparator
+import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -187,7 +188,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
     }
 
     private fun generateDelegatedFunction(irDelegate: IrField, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrFunction =
-        context.symbolTable.declareSimpleFunction(
+        context.symbolTable.declareSimpleFunctionWithOverrides(
             irDelegate.startOffset, irDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_MEMBER,
             delegated

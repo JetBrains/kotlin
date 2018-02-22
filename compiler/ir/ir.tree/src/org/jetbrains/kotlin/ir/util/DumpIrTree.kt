@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -86,6 +87,12 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
         }
     }
 
+    override fun visitTypeParameter(declaration: IrTypeParameter, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            declaration.superClassifiers.renderDeclarationElementsOrDescriptors("superClassifiers")
+        }
+    }
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
         declaration.dumpLabeledElementWith(data) {
             declaration.overriddenSymbols.renderDeclarationElementsOrDescriptors("overridden")
@@ -97,9 +104,7 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
         }
     }
 
-    private fun <D : DeclarationDescriptor, B : IrSymbolOwner> Collection<IrBindableSymbol<D, B>>.renderDeclarationElementsOrDescriptors(
-        caption: String
-    ) {
+    private fun Collection<IrSymbol>.renderDeclarationElementsOrDescriptors(caption: String) {
         if (isNotEmpty()) {
             indented(caption) {
                 for (symbol in this) {
@@ -109,7 +114,7 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
         }
     }
 
-    private fun <D : DeclarationDescriptor, B : IrSymbolOwner> IrBindableSymbol<D, B>.renderDeclarationElementOrDescriptor() {
+    private fun IrSymbol.renderDeclarationElementOrDescriptor() {
         if (isBound)
             owner.render()
         else

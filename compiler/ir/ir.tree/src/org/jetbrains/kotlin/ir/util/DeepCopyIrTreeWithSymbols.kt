@@ -196,7 +196,11 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredTypeParameter(declaration.symbol)
-        )
+        ).apply {
+            declaration.superClassifiers.mapTo(superClassifiers) {
+                symbolRemapper.getReferencedClassifier(it)
+            }
+        }
 
     override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
         IrValueParameterImpl(

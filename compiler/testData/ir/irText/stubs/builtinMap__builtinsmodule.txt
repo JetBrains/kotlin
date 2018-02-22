@@ -1,0 +1,125 @@
+MODULE_FRAGMENT name:<built-ins module>
+  EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+  EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin.collections
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableMap modality:ABSTRACT visibility:public flags:
+      superClasses:
+        UNBOUND: interface Map<K, out V>
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any?]
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:OPEN <> (key:K, value:V) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> (key:K, defaultValue:V) returnType:V flags:
+        overridden:
+          UNBOUND: fun getOrDefault(key: K, defaultValue: V): V
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:defaultValue index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:ABSTRACT <> () returnType:Unit flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:put visibility:public modality:ABSTRACT <> (key:K, value:V) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:putAll visibility:public modality:ABSTRACT <> (from:kotlin.collections.Map<out K, V>) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:from index:0 type:kotlin.collections.Map<out K, V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> (key:K) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsKey visibility:public modality:ABSTRACT <> (key:K) returnType:Boolean flags:
+        overridden:
+          UNBOUND: fun containsKey(key: K): kotlin.Boolean
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsValue visibility:public modality:ABSTRACT <> (value:V) returnType:Boolean flags:
+        overridden:
+          UNBOUND: fun containsValue(value: V): kotlin.Boolean
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:get visibility:public modality:ABSTRACT <> (key:K) returnType:V? flags:
+        overridden:
+          UNBOUND: operator fun get(key: K): V?
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> () returnType:Boolean flags:
+        overridden:
+          UNBOUND: fun isEmpty(): kotlin.Boolean
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> () returnType:Int flags:
+          overridden:
+            UNBOUND: fun <get-size>(): kotlin.Int
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> () returnType:MutableSet<MutableEntry<K, V>> flags:
+          overridden:
+            UNBOUND: fun <get-entries>(): kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> () returnType:MutableSet<K> flags:
+          overridden:
+            UNBOUND: fun <get-keys>(): kotlin.collections.Set<K>
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> () returnType:MutableCollection<V> flags:
+          overridden:
+            UNBOUND: fun <get-values>(): kotlin.collections.Collection<V>
+      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableEntry modality:ABSTRACT visibility:public flags:
+        superClasses:
+          UNBOUND: interface Entry<out K, out V>
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any?]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:setValue visibility:public modality:ABSTRACT <> (newValue:V) returnType:V flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:newValue index:0 type:V flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:ABSTRACT <> () returnType:K flags:
+            overridden:
+              UNBOUND: fun <get-key>(): K
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:ABSTRACT <> () returnType:V flags:
+            overridden:
+              UNBOUND: fun <get-value>(): V
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            UNBOUND: fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+          overridden:
+            UNBOUND: fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+          overridden:
+            UNBOUND: fun toString(): kotlin.String
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compute visibility:public modality:OPEN <> (p0:K, p1:java.util.function.BiFunction<in K, in V?, out V?>) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.function.BiFunction<in K, in V?, out V?> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:computeIfAbsent visibility:public modality:OPEN <> (p0:K, p1:java.util.function.Function<in K, out V>) returnType:V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.function.Function<in K, out V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:computeIfPresent visibility:public modality:OPEN <> (p0:K, p1:java.util.function.BiFunction<in K, in V, out V?>) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.function.BiFunction<in K, in V, out V?> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:merge visibility:public modality:OPEN <> (p0:K, p1:V, p2:java.util.function.BiFunction<in V, in V, out V?>) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:java.util.function.BiFunction<in V, in V, out V?> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:putIfAbsent visibility:public modality:OPEN <> (p0:K, p1:V) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replace visibility:public modality:OPEN <> (p0:K, p1:V) returnType:V? flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replace visibility:public modality:OPEN <> (p0:K, p1:V, p2:V) returnType:Boolean flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replaceAll visibility:public modality:OPEN <> (p0:java.util.function.BiFunction<in K, in V, out V>) returnType:Unit flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiFunction<in K, in V, out V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          UNBOUND: fun equals(other: kotlin.Any?): kotlin.Boolean
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> (p0:java.util.function.BiConsumer<in K, in V>) returnType:Unit flags:
+        overridden:
+          UNBOUND: fun forEach(p0: java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiConsumer<in K, in V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
+        overridden:
+          UNBOUND: fun hashCode(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+        overridden:
+          UNBOUND: fun toString(): kotlin.String
