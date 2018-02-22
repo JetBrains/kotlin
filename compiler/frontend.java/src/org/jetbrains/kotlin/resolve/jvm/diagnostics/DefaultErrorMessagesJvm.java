@@ -133,6 +133,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE, "Assignment to a for-in-array loop range variable. Behavior may change in Kotlin 1.3. " +
                                                    "See https://youtrack.jetbrains.com/issue/KT-21354 for more details");
+
+        MAP.put(JVM_DEFAULT_NOT_IN_INTERFACE,"'@JvmDefault' is only supported on interface members");
+        MAP.put(JVM_DEFAULT_IN_JVM6_TARGET,"'@JvmDefault' is only supported since JVM target 1.8. Recompile with '-jvm-target 1.8'");
+        MAP.put(JVM_DEFAULT_REQUIRED_FOR_OVERRIDE, "'@JvmDefault' is required for an override of a '@JvmDefault' member");
     }
 
     @NotNull

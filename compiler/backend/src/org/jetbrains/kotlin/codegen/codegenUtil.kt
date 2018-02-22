@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.jvm.checkers.JvmDefaultChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
@@ -58,8 +59,6 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.StringWriter
 import java.io.PrintWriter
 import java.util.*
-
-private val JVM_DEFAULT_FQ_NAME = FqName("kotlin.annotations.JvmDefault")
 
 fun generateIsCheck(
     v: InstructionAdapter,
@@ -424,4 +423,4 @@ fun MethodNode.textifyMethodNode(): String {
     return "$sw"
 }
 
-fun CallableMemberDescriptor.hasJvmDefaultAnnotation() = getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
+fun CallableMemberDescriptor.hasJvmDefaultAnnotation() = getDirectMember(this).annotations.hasAnnotation(JvmDefaultChecker.JVM_DEFAULT_FQ_NAME)
