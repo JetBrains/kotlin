@@ -344,9 +344,35 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         }
     }
 
-    val librariesToLink: List<KonanLibraryReader> get() = context.config.immediateLibraries
-            .filter { (!it.isDefaultLibrary && !context.config.purgeUserLibs) || it in usedLibraries }
-            .withResolvedDependencies()
+    val librariesToLink: List<KonanLibraryReader>  by lazy {
+        context.config.immediateLibraries
+                .filter { (!it.isDefaultLibrary && !context.config.purgeUserLibs) || it in usedLibraries }
+                .withResolvedDependencies()
+                .topoSort()
+    }
+
+    private fun List<LibraryReaderImpl>.topoSort(): List<LibraryReaderImpl> {
+        var sorted = mutableListOf<LibraryReaderImpl>()
+        val visited = mutableSetOf<LibraryReaderImpl>()
+        val tempMarks = mutableSetOf<LibraryReaderImpl>()
+
+        fun visit(node: LibraryReaderImpl, result: MutableList<LibraryReaderImpl>) {
+            if (visited.contains(node)) return
+            if (tempMarks.contains(node)) error("Cyclic dependency in library graph.")
+            tempMarks.add(node)
+            node.resolvedDependencies.forEach {
+                visit(it, result)
+            }
+            visited.add(node)
+            result += node
+        }
+
+        this.forEach next@{
+            if (visited.contains(it)) return@next
+            visit(it, sorted)
+        }
+        return sorted
+    }
 
     val librariesForLibraryManifest: List<KonanLibraryReader> get() {
         // Note: library manifest should contain the list of all user libraries and frontend-used default libraries.

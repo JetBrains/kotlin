@@ -133,14 +133,6 @@ function stackTop() {
     return new Uint32Array(fourBytes)[0];
 }
 
-function runGlobalInitializers(exports) {
-    for (var property in exports) {
-        if (property.startsWith("Konan_global_ctor_")) {
-            exports[property]();
-        }
-    }
-}
-
 var konan_dependencies = {
     env: {
         abort: function() {
@@ -220,7 +212,6 @@ function invokeModule(inst, args) {
     var exit_status = 0;
 
     try {
-        runGlobalInitializers(instance.exports);
         if (isBrowser()) {
             instance.exports.Kotlin_initRuntimeIfNeeded();
         }

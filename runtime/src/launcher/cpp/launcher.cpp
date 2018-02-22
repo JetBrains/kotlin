@@ -45,6 +45,12 @@ extern "C" KInt Konan_run_start(int argc, const char** argv) {
 }
 
 extern "C" RUNTIME_USED int Konan_main(int argc, const char** argv) {
+
+#ifdef KONAN_NO_CTORS_SECTION
+  extern void _Konan_constructors(void);
+  _Konan_constructors();
+#endif
+
   Kotlin_initRuntimeIfNeeded();
 
   KInt exitStatus = Konan_run_start(argc, argv);

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -354,13 +356,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    val kVoidFuncType = LLVMFunctionType(LLVMVoidType(), null, 0, 0)
-    val kInitFuncType = LLVMFunctionType(LLVMVoidType(), cValuesOf(LLVMInt32Type()), 1, 0)
+    val kVoidFuncType = LLVMFunctionType(LLVMVoidType(), null, 0, 0)!!
+    val kInitFuncType = LLVMFunctionType(LLVMVoidType(), cValuesOf(LLVMInt32Type()), 1, 0)!!
     val kNodeInitType = LLVMGetTypeByName(context.llvmModule, "struct.InitNode")!!
     //-------------------------------------------------------------------------//
 
     private fun createInitBody(initName: String): LLVMValueRef {
         val initFunction = LLVMAddFunction(context.llvmModule, initName, kInitFuncType)!!    // create LLVM function
+        LLVMSetLinkage(initFunction, LLVMLinkage.LLVMPrivateLinkage)
         generateFunction(codegen, initFunction) {
             using(FunctionScope(initFunction, initName, it)) {
                 val bbInit = basicBlock("init", null)
@@ -409,6 +412,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun createInitCtor(ctorName: String, initNodePtr: LLVMValueRef) {
         val ctorFunction = LLVMAddFunction(context.llvmModule, ctorName, kVoidFuncType)!!   // Create constructor function.
+        LLVMSetLinkage(ctorFunction, LLVMLinkage.LLVMExternalLinkage)
         generateFunction(codegen, ctorFunction) {
             call(context.llvm.appendToInitalizersTail, listOf(initNodePtr))             // Add node to the tail of initializers list.
             ret(null)
@@ -433,10 +437,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val fileName = declaration.name.takeLastWhile { it != '/' }.dropLastWhile { it != '.' }.dropLast(1)
             val initName = "${fileName}_init_${context.llvm.globalInitIndex}"
             val nodeName = "${fileName}_node_${context.llvm.globalInitIndex}"
-            // Make the name prefix easily parsable for the platforms lacking
-            // llvm.global_ctors mechanism (such as WASM).
-            val ctorName = "Konan_global_ctor_${fileName}_${context.llvm.globalInitIndex++}"
-
+            val ctorName = "${fileName}_${context.llvm.globalInitIndex++}"
             val initFunction = createInitBody(initName)
             val initNode = createInitNode(initFunction, nodeName)
             createInitCtor(ctorName, initNode)
@@ -2542,14 +2543,63 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     //-------------------------------------------------------------------------//
-    // Append initializers of global variables in "llvm.global_ctors" array
-
     fun appendStaticInitializers(initializers: List<LLVMValueRef>) {
-        if (initializers.isEmpty()) return
+        val ctorName = context.config.moduleId.moduleConstructorName
+        val ctorFunction = LLVMAddFunction(context.llvmModule, ctorName, kVoidFuncType)!!   // Create constructor function.
+        LLVMSetLinkage(ctorFunction, LLVMLinkage.LLVMExternalLinkage)
+        generateFunction(codegen, ctorFunction) {
+            val initGuard = LLVMAddGlobal(context.llvmModule, int32Type, "Konan_init_guard")
+            LLVMSetInitializer(initGuard, kImmZero)
+            LLVMSetLinkage(initGuard, LLVMLinkage.LLVMPrivateLinkage)
+            val bbInited = basicBlock("inited", null)
+            val bbNeedInit = basicBlock("need_init", null)
 
-        val ctorList = initializers.map { it -> createGlobalCtor(it) }
-        val globalCtors = context.llvm.staticData.placeGlobalArray("llvm.global_ctors", kCtorType, ctorList)
-        LLVMSetLinkage(globalCtors.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
+            val value = LLVMBuildLoad(builder, initGuard, "")!!
+            condBr(icmpEq(value, kImmZero), bbNeedInit, bbInited)
+
+            appendingTo(bbInited) {
+                ret(null)
+            }
+
+            appendingTo(bbNeedInit) {
+                LLVMBuildStore(builder, kImmOne, initGuard)
+
+                if (context.config.produce.isNativeBinary) {
+                    context.llvm.librariesToLink.forEach {
+                        val dependencyCtorFunction = context.llvm.externalFunction(
+                                it.moduleConstructorName, kVoidFuncType, CurrentKonanModule)
+                        call(dependencyCtorFunction, emptyList(), Lifetime.IRRELEVANT,
+                                exceptionHandler = ExceptionHandler.Caller, verbatim = true)
+                    }
+                }
+                // TODO: shall we put that into the try block?
+                initializers.forEach {
+                    call(it, emptyList(), Lifetime.IRRELEVANT,
+                            exceptionHandler = ExceptionHandler.Caller, verbatim = true)
+                }
+                ret(null)
+            }
+        }
+
+        if (context.config.produce.isNativeBinary) {
+            // Append initializers of global variables in "llvm.global_ctors" array
+            val globalCtors = context.llvm.staticData.placeGlobalArray("llvm.global_ctors", kCtorType,
+                    listOf(createGlobalCtor(ctorFunction)))
+            LLVMSetLinkage(globalCtors.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
+            if (context.config.produce == CompilerOutputKind.PROGRAM) {
+                // Provide an optional handle for calling .ctors, if standard constrcutors mechanism
+                // is not available on the platform (i.e. WASM, embedded).
+                val globalCtorFunction = LLVMAddFunction(context.llvmModule, "_Konan_constructors", kVoidFuncType)!!
+                LLVMSetLinkage(globalCtorFunction, LLVMLinkage.LLVMExternalLinkage)
+                generateFunction(codegen, globalCtorFunction) {
+                    // Unfortunately, LLVMAddAlias() doesn't seem to work on WASM yet.
+                    call(ctorFunction, emptyList(), Lifetime.IRRELEVANT,
+                            exceptionHandler = ExceptionHandler.Caller, verbatim = true)
+                    ret(null)
+                }
+                appendLlvmUsed("llvm.used", listOf(globalCtorFunction))
+            }
+        }
     }
 
     //-------------------------------------------------------------------------//

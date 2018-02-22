@@ -26,7 +26,6 @@ external fun EntryPointSelector(args: Array<String>)
 @ExportForCppRuntime
 private fun Konan_start(args: Array<String>): Int {
     try {
-
         EntryPointSelector(args)
 
         // Successfully finished:

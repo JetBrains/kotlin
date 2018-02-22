@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
 import org.jetbrains.kotlin.backend.konan.isExternalObjCClass
 import org.jetbrains.kotlin.backend.konan.isValueType
+import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -274,3 +274,9 @@ internal val ClassDescriptor.typeInfoHasVtableAttached: Boolean
 internal val ModuleDescriptor.privateFunctionsTableSymbolName get() = "private_functions_${name.asString()}"
 
 internal val ModuleDescriptor.privateClassesTableSymbolName get() = "private_classes_${name.asString()}"
+
+internal val String.moduleConstructorName
+    get() = "_Konan_init_${this}"
+
+internal val KonanLibraryReader.moduleConstructorName
+    get() = uniqueName.moduleConstructorName
