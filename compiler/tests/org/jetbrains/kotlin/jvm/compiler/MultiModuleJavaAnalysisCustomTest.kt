@@ -71,8 +71,8 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val resolverForProject = ResolverForProjectImpl(
                 "test",
                 projectContext, modules, { JvmAnalyzerFacade },
-                { module -> ModuleContent(module.kotlinFiles, module.javaFilesScope) },
-                JvmPlatformParameters {
+                modulesContent = { module -> ModuleContent(module.kotlinFiles, module.javaFilesScope) },
+                platformParameters = JvmPlatformParameters {
                     javaClass ->
                     val moduleName = javaClass.name.asString().toLowerCase().first().toString()
                     modules.first { it._name == moduleName }

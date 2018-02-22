@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
-object JsAnalyzerFacade : AnalyzerFacade() {
+object JsAnalyzerFacade : ResolverForModuleFactory() {
 
     override fun <M : ModuleInfo> createResolverForModule(
         moduleInfo: M,
