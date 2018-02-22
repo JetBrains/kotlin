@@ -21,7 +21,7 @@ buildscript {
     }
 
     ext.konanHome = distDir.absolutePath
-    ext.jvmArgs = project.findProperty("platformLibsJvmArgs") ?: "-Xmx3G"
+    ext.jvmArgs = project.findProperty("platformLibsJvmArgs") ?: "-Xmx4G"
     ext.setProperty("konan.home", konanHome)
     ext.setProperty("konan.jvmArgs", jvmArgs)
 }
