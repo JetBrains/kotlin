@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.util.kind
 import org.jetbrains.kotlin.util.supertypesWithAny
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import java.util.*
 
 class BasicCompletionSession(
         configuration: CompletionSessionConfiguration,
@@ -221,13 +222,6 @@ class BasicCompletionSession(
 
                     collector.addElements(additionalItems)
                 }
-            }
-
-            withCollectRequiredContextVariableTypes { lookupFactory ->
-                DslMembersCompletion(
-                    prefixMatcher, lookupFactory, receiverTypes,
-                    collector, indicesHelper(true), callTypeAndReceiver
-                ).completeDslFunctions()
             }
 
             val contextVariableTypesForSmartCompletion = withCollectRequiredContextVariableTypes(::completeWithSmartCompletion)

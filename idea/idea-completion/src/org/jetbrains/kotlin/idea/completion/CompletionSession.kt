@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class CompletionSessionConfiguration(
         val useBetterPrefixMatcherForNonImportedClasses: Boolean,
@@ -269,8 +271,6 @@ abstract class CompletionSession(
         sorter = sorter.weighAfter("lift.shorter", RealPrefixMatchingWeigher())
 
         sorter = sorter.weighAfter("kotlin.proximity", ByNameAlphabeticalWeigher, PreferLessParametersWeigher)
-
-        sorter = sorter.weighBefore("prefix", PreferDslMembers)
 
         return sorter
     }

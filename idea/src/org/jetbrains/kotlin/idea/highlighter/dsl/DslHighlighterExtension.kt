@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.highlighter.dsl
 import com.intellij.ide.highlighter.custom.CustomHighlighterColors.*
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.highlighter.HighlighterExtension
@@ -24,7 +23,12 @@ class DslHighlighterExtension : HighlighterExtension() {
     }
 
     override fun highlightCall(elementToHighlight: PsiElement, resolvedCall: ResolvedCall<*>): TextAttributesKey? {
-        return dslCustomTextStyle(resolvedCall.resultingDescriptor)
+        val markerAnnotation = resolvedCall.resultingDescriptor.annotations.find { annotation ->
+            annotation.annotationClass?.isDslHighlightingMarker() ?: false
+        }?.annotationClass ?: return null
+
+        val styleId = styleIdByMarkerAnnotation(markerAnnotation) ?: return null
+        return styles[styleId - 1]
     }
 
     companion object {
@@ -52,15 +56,6 @@ class DslHighlighterExtension : HighlighterExtension() {
         fun styleIdByMarkerAnnotation(markerAnnotation: ClassDescriptor): Int? {
             val markerAnnotationFqName = markerAnnotation.fqNameSafe
             return (markerAnnotationFqName.asString().hashCode() % numStyles).absoluteValue + 1
-        }
-
-        fun dslCustomTextStyle(callableDescriptor: CallableDescriptor): TextAttributesKey? {
-            val markerAnnotation = callableDescriptor.annotations.find { annotation ->
-                annotation.annotationClass?.isDslHighlightingMarker() ?: false
-            }?.annotationClass ?: return null
-
-            val styleId = styleIdByMarkerAnnotation(markerAnnotation) ?: return null
-            return styles[styleId - 1]
         }
     }
 }

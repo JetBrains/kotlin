@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.kotlin.idea.completion.test.RELATIVE_COMPLETION_TEST_DATA_BASE_PATH
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
@@ -43,6 +44,7 @@ abstract class AbstractCompletionWeigherTest(val completionType: CompletionType,
 }
 
 abstract class AbstractBasicCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.BASIC, "weighers/basic") {
+    override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 }
 
 abstract class AbstractSmartCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.SMART, "weighers/smart") {

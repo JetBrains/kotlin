@@ -145,8 +145,7 @@ class KotlinIndicesHelper(
     fun getCallableTopLevelExtensions(
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
             receiverTypes: Collection<KotlinType>,
-            nameFilter: (String) -> Boolean,
-            declarationFilter: (KtDeclaration) -> Boolean = { true }
+            nameFilter: (String) -> Boolean
     ): Collection<CallableDescriptor> {
         if (receiverTypes.isEmpty()) return emptyList()
 
@@ -162,7 +161,7 @@ class KotlinIndicesHelper(
                     KotlinTopLevelExtensionsByReceiverTypeIndex.receiverTypeNameFromKey(it) in receiverTypeNames
                     && nameFilter(KotlinTopLevelExtensionsByReceiverTypeIndex.callableNameFromKey(it))
                 }
-                .flatMap { index.get(it, project, scope).asSequence() }.filter(declarationFilter)
+                .flatMap { index.get(it, project, scope).asSequence() }
 
         val suitableExtensions = findSuitableExtensions(declarations, receiverTypes, callTypeAndReceiver.callType)
 
