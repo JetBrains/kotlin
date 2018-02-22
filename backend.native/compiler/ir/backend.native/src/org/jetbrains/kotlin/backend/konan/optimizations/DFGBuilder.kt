@@ -483,9 +483,11 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             val parameterTypes = (allParameters.map { it.type } + (if (descriptor.isSuspend) listOf(continuationType) else emptyList()))
                     .map { symbolTable.mapClass(choosePrimary(it.erasure())) }
                     .toTypedArray()
+            val returnType = if (descriptor.isSuspend) context.builtIns.anyType else (descriptor.returnType ?: context.builtIns.unitType)
             return DataFlowIR.Function(
                     symbol         = symbolTable.mapFunction(descriptor),
                     parameterTypes = parameterTypes,
+                    returnType     = symbolTable.mapType(returnType),
                     body           = DataFlowIR.FunctionBody(allNodes.distinct().toList(), returnsNode, throwsNode)
             )
         }

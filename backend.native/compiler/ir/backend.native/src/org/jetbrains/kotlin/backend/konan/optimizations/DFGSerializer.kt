@@ -665,13 +665,14 @@ internal object DFGSerializer {
         }
     }
 
-    class Function(val symbol: Int, val parameterTypes: IntArray, val body: FunctionBody) {
+    class Function(val symbol: Int, val parameterTypes: IntArray, val returnType: Int, val body: FunctionBody) {
 
-        constructor(data: ArraySlice) : this(data.readInt(), data.readIntArray(), FunctionBody(data))
+        constructor(data: ArraySlice) : this(data.readInt(), data.readIntArray(), data.readInt(), FunctionBody(data))
 
         fun write(result: ArraySlice) {
             result.writeInt(symbol)
             result.writeIntArray(parameterTypes)
+            result.writeInt(returnType)
             body.write(result)
         }
     }
@@ -820,6 +821,7 @@ internal object DFGSerializer {
                     Function(
                             functionSymbolMap[function.symbol]!!,
                             function.parameterTypes.map { typeMap[it]!! }.toIntArray(),
+                            typeMap[function.returnType]!!,
                             FunctionBody(nodes, nodeMap[body.returns]!!, nodeMap[body.throws]!!)
                     )
                 }
@@ -1115,6 +1117,7 @@ internal object DFGSerializer {
                     val function = DataFlowIR.Function(
                             symbol         = symbol,
                             parameterTypes = it.parameterTypes.map { types[it] }.toTypedArray(),
+                            returnType     = types[it.returnType],
                             body           = deserializeBody(it.body)
                     )
                     functions.put(symbol, function)

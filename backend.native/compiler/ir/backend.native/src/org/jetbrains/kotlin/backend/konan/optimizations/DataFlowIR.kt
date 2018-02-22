@@ -245,6 +245,7 @@ internal object DataFlowIR {
 
     class Function(val symbol: FunctionSymbol,
                    val parameterTypes: Array<Type>,
+                   val returnType: Type,
                    val body: FunctionBody) {
 
         fun debugOutput() {
