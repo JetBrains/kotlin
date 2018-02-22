@@ -21,10 +21,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
-import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -241,6 +238,10 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
                     }
                 }
             }
+        }
+
+        override fun visitTypeOperator(expression: IrTypeOperatorCall) {
+            expression.typeOperandClassifier.checkBinding("type operand", expression)
         }
     }
 

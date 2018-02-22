@@ -62,8 +62,7 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
           $this: GET_FIELD '`Test$IBase$delegate`: IBase<TT>' type=IBase<TT> origin=null
             receiver: GET_VAR 'this@Test: Test<TT>' type=Test<TT> origin=null
           t: GET_VAR 'value-parameter t: TT' type=TT origin=null
-          x: TYPE_OP type=X origin=IMPLICIT_CAST typeOperand=X
-            GET_VAR 'value-parameter x: X' type=X origin=null
+          x: GET_VAR 'value-parameter x: X' type=X origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:Test<TT>, x:kotlin.Int) returnType:Unit flags:
       overridden:
         FUN name:foo visibility:public modality:ABSTRACT <> ($this:IBase<T>, x:kotlin.Int) returnType:Unit flags:

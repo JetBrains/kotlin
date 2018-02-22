@@ -109,11 +109,13 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=A
+              typeOperand: CLASS CLASS name:A modality:FINAL visibility:public flags:data
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:A flags:val
           TYPE_OP type=A origin=CAST typeOperand=A
+            typeOperand: CLASS CLASS name:A modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

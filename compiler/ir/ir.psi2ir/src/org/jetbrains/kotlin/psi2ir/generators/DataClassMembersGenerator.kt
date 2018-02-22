@@ -135,8 +135,8 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
         override fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
             buildMember(function, declaration) {
                 +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
-                +irIfThenReturnFalse(irNotIs(irOther(), classDescriptor.defaultType))
-                val otherWithCast = irTemporary(irAs(irOther(), classDescriptor.defaultType), "other_with_cast")
+                +irIfThenReturnFalse(irNotIs(irOther(), classDescriptor.defaultType, irClass.symbol))
+                val otherWithCast = irTemporary(irAs(irOther(), classDescriptor.defaultType, irClass.symbol), "other_with_cast")
                 for (property in properties) {
                     val arg1 = irGet(irThis(), getPropertyGetterSymbol(property))
                     val arg2 = irGet(irGet(otherWithCast.symbol), getPropertyGetterSymbol(property))

@@ -119,6 +119,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
       VAR name:i type:kotlin.Int flags:var
         CONST Int type=kotlin.Int value=0
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp1_array type:kotlin.IntArray flags:val
             GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
@@ -143,6 +144,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
   FUN name:test2 visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp0_this type:X1 flags:val
             GET_OBJECT 'X1' type=X1
@@ -156,6 +158,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
                 $this: GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
             GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp2_this type:X1.X2 flags:val
             GET_OBJECT 'X2' type=X1.X2
@@ -169,6 +172,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
                 $this: GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
             GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp4_this type:X1.X2.X3 flags:val
             GET_OBJECT 'X3' type=X1.X2.X3

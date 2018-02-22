@@ -70,10 +70,12 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
               arg0: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
               arg1: CONST Null type=kotlin.Nothing? value=null
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
               CONST Null type=kotlin.Nothing? value=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
               BLOCK type=kotlin.Int origin=POSTFIX_INCR
                 VAR IR_TEMPORARY_VARIABLE name:tmp1_receiver type:test.C? flags:val
                   GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
@@ -90,6 +92,7 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
     VALUE_PARAMETER name:nc index:0 type:test.C? flags:
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp1_array type:kotlin.Int? flags:val
             BLOCK type=kotlin.Int? origin=SAFE_CALL

@@ -79,6 +79,7 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
     VALUE_PARAMETER name:c index:0 type:C flags:
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:kotlin.IntArray flags:val
             CALL '<get-x>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY

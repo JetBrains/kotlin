@@ -100,6 +100,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'hashCode(): Int' type=kotlin.Int origin=null
                   $this: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
                     GET_VAR 'tmp1: T' type=T origin=null
         SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
           CALL 'plus(Int): Int' type=kotlin.Int origin=null
@@ -127,11 +128,13 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test<T>
+              typeOperand: CLASS CLASS name:Test modality:FINAL visibility:public flags:data
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test<T> flags:val
           TYPE_OP type=Test<T> origin=CAST typeOperand=Test<T>
+            typeOperand: CLASS CLASS name:Test modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

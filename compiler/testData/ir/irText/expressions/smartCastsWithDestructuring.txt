@@ -49,6 +49,7 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=I2
+            typeOperand: CLASS INTERFACE name:I2 modality:ABSTRACT visibility:public flags:
             GET_VAR 'value-parameter x: I1' type=I1 origin=null
           then: RETURN type=kotlin.Nothing from='test(I1): Unit'
             GET_OBJECT 'Unit' type=kotlin.Unit
@@ -61,5 +62,6 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
         VAR name:c2 type:kotlin.String flags:val
           CALL 'component2() on I2: String' type=kotlin.String origin=COMPONENT_N(index=2)
             $receiver: TYPE_OP type=I2 origin=IMPLICIT_CAST typeOperand=I2
+              typeOperand: CLASS INTERFACE name:I2 modality:ABSTRACT visibility:public flags:
               GET_VAR 'tmp0_container: I1' type=I1 origin=null
 

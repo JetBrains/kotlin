@@ -27,6 +27,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Long visibility:public
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Long modality:FINAL visibility:public flags:
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:Long flags:
@@ -37,6 +38,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Short visibility:public
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Short origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Short modality:FINAL visibility:public flags:
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:Short flags:
@@ -47,6 +49,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Byte visibility:public
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Byte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Byte modality:FINAL visibility:public flags:
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:Byte flags:
@@ -65,20 +68,24 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
         CONST Long type=kotlin.Long value=-1
       VAR name:test5 type:kotlin.Long? flags:val
         TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Long modality:FINAL visibility:public flags:
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=1
       VAR name:test6 type:kotlin.Short? flags:val
         TYPE_OP type=kotlin.Short origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Short modality:FINAL visibility:public flags:
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=1
       VAR name:test7 type:kotlin.Byte? flags:val
         TYPE_OP type=kotlin.Byte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Byte modality:FINAL visibility:public flags:
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=1
   FUN name:testImplicitArguments visibility:public modality:FINAL <> (x:kotlin.Long) returnType:Unit flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Long flags:
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Long modality:FINAL visibility:public flags:
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=1
     BLOCK_BODY
@@ -90,6 +97,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Long flags:
         EXPRESSION_BODY
           TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Long modality:FINAL visibility:public flags:
             CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
               $this: CONST Int type=kotlin.Int value=1
       BLOCK_BODY

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
@@ -30,6 +31,7 @@ class IrTypeOperatorCallImpl(
     override val operator: IrTypeOperator,
     override val typeOperand: KotlinType
 ) : IrExpressionBase(startOffset, endOffset, type), IrTypeOperatorCall {
+    @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -39,9 +41,28 @@ class IrTypeOperatorCallImpl(
         argument: IrExpression
     ) : this(startOffset, endOffset, type, operator, typeOperand) {
         this.argument = argument
+
+        val typeOperandDescriptor = typeOperand.constructor.declarationDescriptor
+        if (typeOperandDescriptor != null) {
+            this.typeOperandClassifier = createClassifierSymbol(typeOperandDescriptor)
+        }
+    }
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: KotlinType,
+        operator: IrTypeOperator,
+        typeOperand: KotlinType,
+        argument: IrExpression,
+        typeOperandClassifier: IrClassifierSymbol
+    ) : this(startOffset, endOffset, type, operator, typeOperand) {
+        this.argument = argument
+        this.typeOperandClassifier = typeOperandClassifier
     }
 
     override lateinit var argument: IrExpression
+    override lateinit var typeOperandClassifier: IrClassifierSymbol
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeOperator(this, data)

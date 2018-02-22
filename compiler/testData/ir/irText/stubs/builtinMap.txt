@@ -32,6 +32,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='<anonymous>() on LinkedHashMap<K!, V!> /* = LinkedHashMap<K!, V!> */: Unit'
                       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
                         CALL 'put(K!, V!): V?' type=V? origin=null
                           $this: GET_VAR 'this@<anonymous>: LinkedHashMap<(K..K?), (V..V?)>' type=kotlin.collections.LinkedHashMap<K!, V!> /* = java.util.LinkedHashMap<K!, V!> */ origin=null
                           key: CALL '<get-first>(): K' type=K origin=GET_PROPERTY

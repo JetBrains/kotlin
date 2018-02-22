@@ -506,7 +506,15 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             expression.type,
             expression.operator,
             expression.typeOperand,
-            expression.argument.transform()
+            expression.argument.transform(),
+            run {
+                val oldTypeDescriptor = expression.typeOperandClassifier.descriptor
+                val newTypeDescriptor = mapClassifierReference(oldTypeDescriptor)
+                if (newTypeDescriptor == oldTypeDescriptor)
+                    expression.typeOperandClassifier
+                else
+                    createUnboundClassifierSymbol(newTypeDescriptor)
+            }
         )
 
     override fun visitWhen(expression: IrWhen): IrWhen =

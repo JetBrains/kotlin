@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -114,11 +112,16 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
         }
     }
 
-    private fun IrSymbol.renderDeclarationElementOrDescriptor() {
+    private fun IrSymbol.renderDeclarationElementOrDescriptor(label: String? = null) {
         if (isBound)
-            owner.render()
-        else
-            printer.println("UNBOUND: ", DescriptorRenderer.COMPACT.render(descriptor))
+            owner.render(label)
+        else {
+            if (label != null) {
+                printer.println("$label: ", "UNBOUND: ", DescriptorRenderer.COMPACT.render(descriptor))
+            } else {
+                printer.println("UNBOUND: ", DescriptorRenderer.COMPACT.render(descriptor))
+            }
+        }
     }
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
@@ -227,13 +230,25 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
         }
     }
 
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            expression.typeOperandClassifier.renderDeclarationElementOrDescriptor("typeOperand")
+            expression.acceptChildren(this, "")
+        }
+    }
+
     private inline fun IrElement.dumpLabeledElementWith(label: String, body: () -> Unit) {
         printer.println(accept(elementRenderer, null).withLabel(label))
         indented(body)
     }
 
-    private fun IrElement.render() {
-        printer.println(accept(elementRenderer, null))
+    private fun IrElement.render(label: String? = null) {
+        if (label != null) {
+            printer.println("$label: ", accept(elementRenderer, null))
+        } else {
+            printer.println(accept(elementRenderer, null))
+        }
+
     }
 
     private fun IrElement.dumpLabeledSubTree(label: String) {

@@ -23,14 +23,18 @@ FILE fqName:<root> fileName:/classReference.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         GET_CLASS type=kotlin.reflect.KClass<out A>
           CALL 'constructor A()' type=A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         CALL '<get-java>() on KClass<A>: Class<A>' type=java.lang.Class<A> origin=GET_PROPERTY
           $receiver: CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         CALL '<get-java>() on KClass<out A>: Class<out A>' type=java.lang.Class<out A> origin=GET_PROPERTY
           $receiver: GET_CLASS type=kotlin.reflect.KClass<out A>
             CALL 'constructor A()' type=A origin=null

@@ -3,6 +3,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
     BLOCK_BODY
       CALL 'println(String!): Unit' type=kotlin.Unit origin=null
         $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:PrintStream modality:OPEN visibility:public flags:
           GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
         x: CONST String type=kotlin.String value=testFun
   PROPERTY name:testProp type:kotlin.Any visibility:public modality:FINAL flags:var
@@ -10,6 +11,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:PrintStream modality:OPEN visibility:public flags:
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
           x: CONST String type=kotlin.String value=testProp/get
         RETURN type=kotlin.Nothing from='<get-testProp>(): Any'
@@ -19,6 +21,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:PrintStream modality:OPEN visibility:public flags:
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
           x: CONST String type=kotlin.String value=testProp/set
   CLASS CLASS name:TestClass modality:FINAL visibility:public flags:
@@ -38,6 +41,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
               then: BLOCK type=kotlin.Int origin=null
                 CALL 'println(String!): Unit' type=kotlin.Unit origin=null
                   $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:PrintStream modality:OPEN visibility:public flags:
                     GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
                   x: CONST String type=kotlin.String value=TestClass/test
                 CONST Int type=kotlin.Int value=42
@@ -51,6 +55,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:PrintStream modality:OPEN visibility:public flags:
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
           x: CONST String type=kotlin.String value=TestClass/init
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
