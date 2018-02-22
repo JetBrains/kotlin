@@ -2,12 +2,8 @@ apply plugin: 'groovy'
 repositories {
     mavenCentral()
     jcenter()
-    maven {
-        url "https://dl.bintray.com/kotlin/kotlin-eap"
-    }
-    maven {
-        url "https://dl.bintray.com/kotlin/kotlin-dev"
-    }
+    maven { url "https://dl.bintray.com/kotlin/kotlin-eap" }
+    maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
 }
 dependencies {
     compile 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
