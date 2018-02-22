@@ -261,9 +261,9 @@ public class IdeStubIndexService extends StubIndexService {
         boolean isScript = file.isScriptByTree();
         if (file.hasTopLevelCallables()) {
             JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file);
-            StringRef facadeSimpleName = StringRef.fromString(fileClassInfo.getFacadeClassFqName().shortName().asString());
+            StringRef facadeFqNameRef = StringRef.fromString(fileClassInfo.getFacadeClassFqName().asString());
             StringRef partSimpleName = StringRef.fromString(fileClassInfo.getFileClassFqName().shortName().asString());
-            return new KotlinFileStubForIde(file, packageFqName, isScript, facadeSimpleName, partSimpleName, null);
+            return new KotlinFileStubForIde(file, packageFqName, isScript, facadeFqNameRef, partSimpleName, null);
         }
         return new KotlinFileStubForIde(file, packageFqName, isScript, null, null, null);
     }
@@ -275,7 +275,8 @@ public class IdeStubIndexService extends StubIndexService {
         KotlinFileStubForIde fileStub = (KotlinFileStubForIde) stub;
         dataStream.writeName(fileStub.getPackageFqName().asString());
         dataStream.writeBoolean(fileStub.isScript());
-        dataStream.writeName(StringRef.toString(fileStub.getFacadeSimpleName()));
+        FqName facadeFqName = fileStub.getFacadeFqName();
+        dataStream.writeName(facadeFqName != null ? facadeFqName.asString() : null);
         dataStream.writeName(StringRef.toString(fileStub.getPartSimpleName()));
         List<StringRef> facadePartNames = fileStub.getFacadePartSimpleNames();
         if (facadePartNames == null) {
@@ -294,7 +295,7 @@ public class IdeStubIndexService extends StubIndexService {
     public KotlinFileStub deserializeFileStub(@NotNull StubInputStream dataStream) throws IOException {
         StringRef packageFqNameAsString = dataStream.readName();
         boolean isScript = dataStream.readBoolean();
-        StringRef facadeSimpleName = dataStream.readName();
+        StringRef facadeStringRef = dataStream.readName();
         StringRef partSimpleName = dataStream.readName();
         int numPartNames = dataStream.readInt();
         List<StringRef> facadePartNames = new ArrayList<StringRef>();
@@ -302,6 +303,6 @@ public class IdeStubIndexService extends StubIndexService {
             StringRef partNameRef = dataStream.readName();
             facadePartNames.add(partNameRef);
         }
-        return new KotlinFileStubForIde(null, packageFqNameAsString, isScript, facadeSimpleName, partSimpleName, facadePartNames);
+        return new KotlinFileStubForIde(null, packageFqNameAsString, isScript, facadeStringRef, partSimpleName, facadePartNames);
     }
 }
