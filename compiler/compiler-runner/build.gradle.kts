@@ -26,10 +26,6 @@ sourceSets {
 }
 
 val jar: Jar by tasks
-jar.apply {
-    from(getSourceSetsFrom(":kotlin-daemon-client")["main"].output.classesDirs)
-    from(getSourceSetsFrom(":compiler:daemon-common")["main"].output.classesDirs)
-}
 
 runtimeJar(rewriteDepsToShadedCompiler(jar))
 sourcesJar()

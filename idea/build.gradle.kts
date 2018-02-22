@@ -21,6 +21,7 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":kotlin-build-common"))
     compile(project(":compiler:daemon-common"))
+    compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(project(":kotlin-compiler-runner")) { isTransitive = false }
     compile(project(":compiler:plugin-api"))
     compile(project(":eval4j"))
