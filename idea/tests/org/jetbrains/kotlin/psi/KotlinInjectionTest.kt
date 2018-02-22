@@ -416,6 +416,24 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             )
     )
 
+    fun testSuffixPrefixWithAnnotation() = doInjectionPresentTest(
+        """
+            @org.intellij.lang.annotations.Language("TEXT", prefix = "abc", suffix = "ghi")
+            val test = "<caret>def"
+            """,
+        languageId = PlainTextLanguage.INSTANCE.id, unInjectShouldBePresent = false,
+        shreds = listOf(ShredInfo(range(0, 9), hostRange=range(1, 4), prefix = "abc", suffix = "ghi"))
+    )
+
+    fun testSuffixPrefixInComment() = doInjectionPresentTest(
+        """
+            // language="TEXT" prefix="abc" suffix=ghi
+            val test = "<caret>def"
+            """,
+        languageId = PlainTextLanguage.INSTANCE.id, unInjectShouldBePresent = false,
+        shreds = listOf(ShredInfo(range(0, 9), hostRange=range(1, 4), prefix = "abc", suffix = "ghi"))
+    )
+
     fun testJavaAnnotationsPattern() {
         myFixture.addClass("""
                 @interface Matches { String value(); }

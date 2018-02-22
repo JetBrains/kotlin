@@ -176,11 +176,7 @@ class KotlinLanguageInjector(
 
     private fun injectWithExplicitCodeInstruction(host: KtElement): InjectionInfo? {
         val support = kotlinSupport ?: return null
-        val languageId =
-                support.findInjectionCommentLanguageId(host) ?:
-                support.findAnnotationInjectionLanguageId(host) ?:
-                return null
-        return InjectionInfo(languageId, null, null)
+        return InjectionInfo.fromBaseInjection(support.findCommentInjection(host)) ?: support.findAnnotationInjectionLanguageId(host)
     }
 
     private fun injectWithReceiver(host: KtElement): InjectionInfo? {
@@ -352,25 +348,6 @@ class KotlinLanguageInjector(
 
     private fun isAnalyzeOff(): Boolean {
         return configuration.advancedConfiguration.dfaOption == Configuration.DfaOption.OFF
-    }
-
-    private class InjectionInfo(val languageId: String?, val prefix: String?, val suffix: String?) {
-        fun toBaseInjection(injectionSupport: KotlinLanguageInjectionSupport): BaseInjection? {
-            if (languageId == null) return null
-
-            val baseInjection = BaseInjection(injectionSupport.id)
-            baseInjection.injectedLanguageId = languageId
-
-            if (prefix != null) {
-                baseInjection.prefix = prefix
-            }
-
-            if (suffix != null) {
-                baseInjection.suffix = suffix
-            }
-
-            return baseInjection
-        }
     }
 
     private fun processAnnotationInjectionInner(annotations: Array<PsiAnnotation>): InjectionInfo? {
