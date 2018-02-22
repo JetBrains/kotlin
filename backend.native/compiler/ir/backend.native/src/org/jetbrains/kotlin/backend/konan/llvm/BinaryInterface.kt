@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
@@ -149,11 +150,9 @@ private fun typeToHashString(type: KotlinType)
 private val FunctionDescriptor.signature: String
     get() {
         val extensionReceiverPart = this.extensionReceiverParameter?.let { "@${typeToHashString(it.type)}." } ?: ""
-
         val argsPart = this.valueParameters.map {
-            typeToHashString(it.type)
+            "${typeToHashString(it.type)}${if (it.isVararg) "_VarArg" else ""}"
         }.joinToString(";")
-
         // Distinguish value types and references - it's needed for calling virtual methods through bridges.
         // Also is function has type arguments - frontend allows exactly matching overrides.
         val signatureSuffix =
@@ -163,7 +162,6 @@ private val FunctionDescriptor.signature: String
                     returnType.let { it != null && !KotlinBuiltIns.isUnitOrNullableUnit(it) } -> typeToHashString(returnType!!)
                     else -> ""
                 }
-
         return "$extensionReceiverPart($argsPart)$signatureSuffix"
     }
 
