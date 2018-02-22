@@ -54,6 +54,9 @@ interface KonanCompileSpec: KonanBuildingSpec {
 
     // DSL. Multiplatform projects
     fun enableMultiplatform(flag: Boolean)
+
+    // TODO: Get rid of commonSourceSet in 0.7
+    @Deprecated("Use commonSourceSets instead", ReplaceWith("commonSourceSets(sourceSetName)"))
     fun commonSourceSet(sourceSetName: String)
     fun commonSourceSets(vararg sourceSetNames: String)
 

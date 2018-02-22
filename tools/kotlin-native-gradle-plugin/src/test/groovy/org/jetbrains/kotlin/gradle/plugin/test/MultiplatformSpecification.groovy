@@ -151,7 +151,7 @@ class MultiplatformSpecification extends BaseKonanSpecification {
                 konanArtifacts {
                     library('foo') {
                         enableMultiplatform true
-                        commonSourceSet 'common'
+                        commonSourceSets 'common'
                     }
                 }
 
@@ -305,7 +305,7 @@ class MultiplatformSpecification extends BaseKonanSpecification {
                 konanArtifacts {
                     library('foo') {
                         enableMultiplatform true
-                        commonSourceSet 'common'
+                        commonSourceSets 'common'
                     }
                 }
 
@@ -339,7 +339,7 @@ class MultiplatformSpecification extends BaseKonanSpecification {
             it.buildFile.append("""
                 konanArtifacts {
                     library('foo') {
-                        commonSourceSet 'common'
+                        commonSourceSets 'common'
                     }
                 }
 

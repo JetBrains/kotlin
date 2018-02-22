@@ -157,6 +157,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         enableMultiplatform = flag
     }
 
+    @Deprecated("Use commonSourceSets instead", ReplaceWith("commonSourceSets(sourceSetName)"))
     override fun commonSourceSet(sourceSetName: String) {
         commonSourceSets = listOf(sourceSetName)
         enableMultiplatform(true)
