@@ -61,12 +61,6 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
-    @TestMetadata("DslCallWithExpectedType.kt")
-    public void testDslCallWithExpectedType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/DslCallWithExpectedType.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("DslCalls.kt")
     public void testDslCalls() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/DslCalls.kt");
