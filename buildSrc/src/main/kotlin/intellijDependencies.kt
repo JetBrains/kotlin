@@ -78,6 +78,13 @@ fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = n
     }
 }
 
+// Workaround. Top-level Kotlin function in a default package can't be called from a non-default package
+object IntellijRootUtils {
+    fun getRepositoryRootDir(project: Project): File = with (project.rootProject) {
+        return File(intellijRepoDir(), "kotlin.build.custom.deps/${extra["versions.intellijSdk"]}")
+    }
+}
+
 fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project) =
         includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).toTypedArray(), rootProject = project.rootProject)
 
@@ -89,7 +96,7 @@ fun Project.isIntellijCommunityAvailable() = !(rootProject.extra["intellijUltima
 fun Project.isIntellijUltimateSdkAvailable() = (rootProject.extra["intellijUltimateEnabled"] as Boolean)
 
 fun Project.intellijRootDir() =
-        File(intellijRepoDir(), "kotlin.build.custom.deps/${rootProject.extra["versions.intellijSdk"]}/intellij${if (isIntellijCommunityAvailable()) "" else "Ultimate"}")
+        File(IntellijRootUtils.getRepositoryRootDir(this), "intellij${if (isIntellijCommunityAvailable()) "" else "Ultimate"}")
 
 fun Project.intellijUltimateRootDir() =
         if (isIntellijUltimateSdkAvailable())

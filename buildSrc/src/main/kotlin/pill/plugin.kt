@@ -102,7 +102,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
         platformVersion = project.extensions.extraProperties.get("versions.intellijSdk").toString()
         platformBaseNumber = platformVersion.substringBefore(".", "").takeIf { it.isNotEmpty() }
                 ?: error("Invalid platform version: $platformVersion")
-        platformDir = File(projectDir, "buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/$platformVersion")
+        platformDir = IntellijRootUtils.getRepositoryRootDir(project)
     }
 
     private fun pill(project: Project) {
