@@ -983,43 +983,52 @@ public final class Float : Number(), Comparable<Float> {
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Float_compareTo_Byte")
-    external public operator fun compareTo(other: Byte): Int
+    public operator fun compareTo(other: Byte): Int = compareTo(other.toFloat())
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Float_compareTo_Short")
-    external public operator fun compareTo(other: Short): Int
+    public operator fun compareTo(other: Short): Int = compareTo(other.toFloat())
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Float_compareTo_Int")
-    external public operator fun compareTo(other: Int): Int
+    public operator fun compareTo(other: Int): Int = compareTo(other.toFloat())
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Float_compareTo_Long")
-    external public operator fun compareTo(other: Long): Int
+    public operator fun compareTo(other: Long): Int = compareTo(other.toFloat())
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Float_compareTo_Float")
-    external public override operator fun compareTo(other: Float): Int
+    public override operator fun compareTo(other: Float): Int {
+        // if any of values in NaN both comparisons return false
+        if (this > other) return 1
+        if (this < other) return -1
+
+        val thisBits = this.toBits()
+        val otherBits = other.toBits()
+
+        // Canonical NaN bits representation higher than any other bit representvalue
+        return when {
+            (thisBits > otherBits) -> 1
+            (thisBits < otherBits) -> -1
+            else -> 0
+        }
+    }
+
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Float_compareTo_Double")
-    external public operator fun compareTo(other: Double): Int
+    public operator fun compareTo(other: Double): Int = - other.toDouble().compareTo(this)
 
     /** Adds the other value to this value. */
     @SymbolName("Kotlin_Float_plus_Byte")
@@ -1129,11 +1138,12 @@ public final class Float : Number(), Comparable<Float> {
     @SymbolName("Kotlin_Float_unaryMinus")
     external public operator fun unaryMinus(): Float
 
-    @SymbolName("Kotlin_Float_toByte")
-    external public override fun toByte(): Byte
+    public override fun toByte(): Byte = this.toInt().toByte()
+
     public override fun toChar(): Char = this.toInt().toChar()
-    @SymbolName("Kotlin_Float_toShort")
-    external public override fun toShort(): Short
+
+    public override fun toShort(): Short = this.toInt().toShort()
+
     @SymbolName("Kotlin_Float_toInt")
     external public override fun toInt(): Int
     @SymbolName("Kotlin_Float_toLong")
@@ -1143,14 +1153,9 @@ public final class Float : Number(), Comparable<Float> {
     @SymbolName("Kotlin_Float_toDouble")
     external public override fun toDouble(): Double
 
-    // Konan-specific.
-    // We intentionally provide this overload to equals() to avoid artifical boxing.
-    // Note that here we intentionally deviate from JVM Kotlin, where this method would be
-    // this.bits() == other.bits().
-    public fun equals(other: Float): Boolean = konan.internal.areEqualByValue(this, other)
+    public fun equals(other: Float): Boolean = toBits() == other.toBits()
 
-    public override fun equals(other: Any?): Boolean =
-            other is Float && konan.internal.areEqualByValue(this, other)
+    public override fun equals(other: Any?): Boolean = other is Float && this.equals(other)
 
     public override fun toString() = NumberConverter.convert(this)
 
@@ -1201,43 +1206,56 @@ public final class Double : Number(), Comparable<Double> {
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Double_compareTo_Byte")
-    external public operator fun compareTo(other: Byte): Int
+    public operator fun compareTo(other: Byte): Int = compareTo(other.toDouble())
+
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Double_compareTo_Short")
-    external public operator fun compareTo(other: Short): Int
+    public operator fun compareTo(other: Short): Int = compareTo(other.toDouble())
+
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Double_compareTo_Int")
-    external public operator fun compareTo(other: Int): Int
+    public operator fun compareTo(other: Int): Int = compareTo(other.toDouble())
+
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Double_compareTo_Long")
-    external public operator fun compareTo(other: Long): Int
+    public operator fun compareTo(other: Long): Int = compareTo(other.toDouble())
+
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Double_compareTo_Float")
-    external public operator fun compareTo(other: Float): Int
+    public operator fun compareTo(other: Float): Int = compareTo(other.toDouble())
+
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
-    @SymbolName("Kotlin_Double_compareTo_Double")
-    external public override operator fun compareTo(other: Double): Int
+    public override operator fun compareTo(other: Double): Int {
+        // if any of values in NaN both comparisons return false
+        if (this > other) return 1
+        if (this < other) return -1
+
+        val thisBits = this.toBits()
+        val otherBits = other.toBits()
+
+        // Canonical NaN bits representation higher than any other bit representvalue
+        return when {
+            (thisBits > otherBits) -> 1
+            (thisBits < otherBits) -> -1
+            else -> 0
+        }
+    }
 
     /** Adds the other value to this value. */
     @SymbolName("Kotlin_Double_plus_Byte")
@@ -1347,14 +1365,14 @@ public final class Double : Number(), Comparable<Double> {
     @SymbolName("Kotlin_Double_unaryMinus")
     external public operator fun unaryMinus(): Double
 
+    public override fun toByte(): Byte = this.toInt().toByte()
 
-    @SymbolName("Kotlin_Double_toByte")
-    external public override fun toByte(): Byte
     public override fun toChar(): Char = this.toInt().toChar()
-    @SymbolName("Kotlin_Double_toShort")
-    external public override fun toShort(): Short
-    @SymbolName("Kotlin_Double_toInt")
-    external public override fun toInt(): Int
+
+    public override fun toShort(): Short = this.toInt().toShort()
+
+    public override fun toInt(): Int = this.toLong().toInt()
+
     @SymbolName("Kotlin_Double_toLong")
     external public override fun toLong(): Long
     @SymbolName("Kotlin_Double_toFloat")
@@ -1362,19 +1380,13 @@ public final class Double : Number(), Comparable<Double> {
     @SymbolName("Kotlin_Double_toDouble")
     external public override fun toDouble(): Double
 
-    // Konan-specific.
-    // Note that here we intentionally deviate from JVM Kotlin, where this method would be
-    // this.bits() == other.bits().
-    public fun equals(other: Double): Boolean = konan.internal.areEqualByValue(this, other)
+    public fun equals(other: Double): Boolean = toBits() == other.toBits()
 
-    public override fun equals(other: Any?): Boolean =
-            other is Double && konan.internal.areEqualByValue(this, other)
+    public override fun equals(other: Any?): Boolean = other is Double && this.equals(other)
 
     public override fun toString() = NumberConverter.convert(this)
 
-    public override fun hashCode(): Int {
-        return bits().hashCode()
-    }
+    public override fun hashCode(): Int = bits().hashCode()
 
     @SymbolName("Kotlin_Double_bits")
     external public fun bits(): Long

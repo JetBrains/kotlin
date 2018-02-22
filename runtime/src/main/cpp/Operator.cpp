@@ -324,13 +324,6 @@ KDouble Kotlin_Long_toDouble         (KLong a           ) { return a; }
 
 //--- Float -------------------------------------------------------------------//
 
-KInt    Kotlin_Float_compareTo_Byte   (KFloat a, KByte   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KInt    Kotlin_Float_compareTo_Short  (KFloat a, KShort  b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KInt    Kotlin_Float_compareTo_Int    (KFloat a, KInt    b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KInt    Kotlin_Float_compareTo_Long   (KFloat a, KLong   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KInt    Kotlin_Float_compareTo_Float  (KFloat a, KFloat  b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KInt    Kotlin_Float_compareTo_Double (KFloat a, KDouble b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-
 KFloat  Kotlin_Float_plus_Byte        (KFloat a, KByte   b) { return a + b; }
 KFloat  Kotlin_Float_plus_Short       (KFloat a, KShort  b) { return a + b; }
 KFloat  Kotlin_Float_plus_Int         (KFloat a, KInt    b) { return a + b; }
@@ -412,13 +405,6 @@ KBoolean Kotlin_Float_isFinite        (KFloat a)          { return isfinite(a); 
 
   //--- Double ------------------------------------------------------------------//
 
-KInt    Kotlin_Double_compareTo_Byte   (KDouble a, KByte   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KInt    Kotlin_Double_compareTo_Short  (KDouble a, KShort  b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KInt    Kotlin_Double_compareTo_Int    (KDouble a, KInt    b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KInt    Kotlin_Double_compareTo_Long   (KDouble a, KLong   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KInt    Kotlin_Double_compareTo_Float  (KDouble a, KFloat  b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KInt    Kotlin_Double_compareTo_Double (KDouble a, KDouble b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-
 KDouble Kotlin_Double_plus_Byte        (KDouble a, KByte   b) { return a + b; }
 KDouble Kotlin_Double_plus_Short       (KDouble a, KShort  b) { return a + b; }
 KDouble Kotlin_Double_plus_Int         (KDouble a, KInt    b) { return a + b; }
@@ -471,8 +457,7 @@ KLong   Kotlin_Double_toLong           (KDouble a           ) {
   if (a <= (KDouble) INT64_MIN) return INT64_MIN;
   return a;
 }
-KByte   Kotlin_Double_toByte           (KDouble a           ) { return (KByte)  Kotlin_Double_toInt(a); }
-KShort  Kotlin_Double_toShort          (KDouble a           ) { return (KShort) Kotlin_Double_toInt(a); }
+
 KFloat  Kotlin_Double_toFloat          (KDouble a           ) { return a; }
 KDouble Kotlin_Double_toDouble         (KDouble a           ) { return a; }
 

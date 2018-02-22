@@ -170,7 +170,7 @@ class FloatBox(val value: Float) : Number(), Comparable<Float> {
             return false
         }
 
-        return this.value == other.value
+        return this.value.equals(other.value)
     }
 
     override fun hashCode() = value.hashCode()
@@ -197,7 +197,7 @@ class DoubleBox(val value: Double) : Number(), Comparable<Double> {
             return false
         }
 
-        return this.value == other.value
+        return this.value.equals(other.value)
     }
 
     override fun hashCode() = value.hashCode()

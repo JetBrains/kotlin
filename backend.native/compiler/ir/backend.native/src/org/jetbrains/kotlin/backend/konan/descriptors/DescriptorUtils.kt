@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
-import org.jetbrains.kotlin.backend.konan.ValueType
-import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
@@ -30,10 +28,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -74,10 +69,10 @@ internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(): T {
 
 private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
 
-internal val FunctionDescriptor.isIntrinsic: Boolean
+internal val CallableDescriptor.isIntrinsic: Boolean
     get() = when {
         this.annotations.hasAnnotation(intrinsicAnnotation) -> {
-            check(isExternal, { "Intrinsic function $name should be external" })
+        //    check(isExternal, { "Intrinsic function $name should be external" })
             true
         }
         else -> false

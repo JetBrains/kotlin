@@ -424,10 +424,10 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         // Condition for a corner case: for (i in a until Int.MIN_VALUE) {}.
         // Check if forLoopInfo.bound > MIN_VALUE.
         val progressionType = forLoopInfo.progressionInfo.progressionType
-        return irCall(context.irBuiltIns.gt0Symbol).apply {
+        return irCall(context.irBuiltIns.greaterFunByOperandType[context.irBuiltIns.int]?.symbol!!).apply {
             val minConst = when {
                 progressionType.isIntProgression() -> IrConstImpl
-                        .int(startOffset,endOffset, context.builtIns.intType, Int.MIN_VALUE)
+                        .int(startOffset, endOffset, context.builtIns.intType, Int.MIN_VALUE)
                 progressionType.isCharProgression() -> IrConstImpl
                         .char(startOffset, endOffset, context.builtIns.charType, 0.toChar())
                 progressionType.isLongProgression() -> IrConstImpl
@@ -441,21 +441,25 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                 putValueArgument(0, minConst)
             }
             putValueArgument(0, compareToCall)
+            putValueArgument(1, IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, 0))
         }
     }
 
     // TODO: Eliminate the loop if we can prove that it will not be executed.
     private fun DeclarationIrBuilder.buildEmptyCheck(loop: IrLoop, forLoopInfo: ForLoopInfo): IrExpression {
+        val builtIns = context.irBuiltIns
         val increasing = forLoopInfo.progressionInfo.increasing
-        val comparingBuiltIn = if (increasing) context.irBuiltIns.lteq0Symbol else context.irBuiltIns.gteq0Symbol
+        val comparingBuiltIn = if (increasing) builtIns.lessOrEqualFunByOperandType[builtIns.int]?.symbol
+        else builtIns.greaterOrEqualFunByOperandType[builtIns.int]?.symbol
 
         // Check if inductionVariable <= last.
         val compareTo = symbols.getBinaryOperator(OperatorNameConventions.COMPARE_TO,
                 forLoopInfo.inductionVariable.descriptor.type,
                 forLoopInfo.last.descriptor.type)
 
-        val check: IrExpression = irCall(comparingBuiltIn).apply {
+        val check: IrExpression = irCall(comparingBuiltIn!!).apply {
             putValueArgument(0, irCallOp(compareTo, irGet(forLoopInfo.inductionVariable), irGet(forLoopInfo.last)))
+            putValueArgument(1, IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, 0))
         }
 
         // Process closed and open ranges in different manners.

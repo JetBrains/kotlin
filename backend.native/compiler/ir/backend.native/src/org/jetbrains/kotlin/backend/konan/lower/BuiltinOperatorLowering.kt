@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.isValueType
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -28,9 +29,9 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isNullConst
-import org.jetbrains.kotlin.ir.util.type
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
@@ -71,14 +72,17 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
         return expression
     }
 
+    private fun isIeee754Equals(descriptor: FunctionDescriptor): Boolean =
+            irBuiltins.ieee754equalsFunByOperandType.values.any { it.descriptor == descriptor }
+
     private fun transformBuiltinOperator(expression: IrCall): IrExpression {
         val descriptor = expression.descriptor
 
+        // IEEE754 comparison for floating point values are done by intrinsic
+        if (isIeee754Equals(descriptor)) return lowerEqeq(expression)
+
         return when (descriptor) {
-            irBuiltins.eqeq -> {
-                lowerEqeq(expression.getValueArgument(0)!!, expression.getValueArgument(1)!!,
-                        expression.startOffset, expression.endOffset)
-            }
+            irBuiltins.eqeq -> lowerEqeq(expression)
 
             irBuiltins.eqeqeq -> lowerEqeqeq(expression)
 
@@ -98,39 +102,49 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
 
         return if (lhs.type.isValueType() && rhs.type.isValueType()) {
             // Achieve the same behavior as with JVM BE: if both sides of `===` are values, then compare by value:
-            lowerEqeq(lhs, rhs, expression.startOffset, expression.endOffset)
+            lowerEqeq(expression)
             // Note: such comparisons are deprecated.
         } else {
             expression
         }
     }
 
-    private fun lowerEqeq(lhs: IrExpression, rhs: IrExpression, startOffset: Int, endOffset: Int): IrExpression {
+    private fun lowerEqeq(expression: IrCall): IrExpression {
         // TODO: optimize boxing?
+        val startOffset = expression.startOffset
+        val endOffset = expression.endOffset
 
-        val equals = selectEqualsFunction(lhs, rhs)
+        val equals = selectEqualsFunction(expression)
 
         return IrCallImpl(startOffset, endOffset, equals).apply {
-            putValueArgument(0, lhs)
-            putValueArgument(1, rhs)
+            putValueArgument(0, expression.getValueArgument(0)!!)
+            putValueArgument(1, expression.getValueArgument(1)!!)
         }
     }
 
-    private fun selectEqualsFunction(lhs: IrExpression, rhs: IrExpression): IrSimpleFunctionSymbol {
+    private fun selectEqualsFunction(expression: IrCall): IrSimpleFunctionSymbol {
+        val lhs = expression.getValueArgument(0)!!
+        val rhs = expression.getValueArgument(1)!!
+
         val nullableNothingType = builtIns.nullableNothingType
         if (lhs.type.isSubtypeOf(nullableNothingType) && rhs.type.isSubtypeOf(nullableNothingType)) {
             // Compare by reference if each part is either `Nothing` or `Nothing?`:
             return irBuiltins.eqeqeqSymbol
         }
 
-        // TODO: areEqualByValue intrinsics are specially treated by code generator
+        // TODO: areEqualByValue and ieee754Equals intrinsics are specially treated by code generator
         // and thus can be declared synthetically in the compiler instead of explicitly in the runtime.
 
+        // Find a type-compatible `konan.internal.ieee754Equals` intrinsic:
+        if (isIeee754Equals(expression.descriptor)) {
+            // FIXME: intrinsic should be also compatible with nullable types
+            selectIntrinsic(context.ir.symbols.ieee754Equals, lhs.type, rhs.type)?.let {
+                return it
+            }
+        }
+
         // Find a type-compatible `konan.internal.areEqualByValue` intrinsic:
-        context.ir.symbols.areEqualByValue.atMostOne {
-            lhs.type.isSubtypeOf(it.owner.valueParameters[0].type) &&
-                    rhs.type.isSubtypeOf(it.owner.valueParameters[1].type)
-        }?.let {
+        selectIntrinsic(context.ir.symbols.areEqualByValue, lhs.type, rhs.type)?.let {
             return it
         }
 
@@ -140,6 +154,13 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
         } else {
             // or use the general implementation:
             context.ir.symbols.areEqual
+        }
+    }
+
+    private fun selectIntrinsic(from: List<IrSimpleFunctionSymbol>, lhsType: KotlinType, rhsType: KotlinType):
+            IrSimpleFunctionSymbol? {
+        return from.atMostOne {
+            lhsType.isSubtypeOf(it.owner.valueParameters[0].type) && rhsType.isSubtypeOf(it.owner.valueParameters[1].type)
         }
     }
 }

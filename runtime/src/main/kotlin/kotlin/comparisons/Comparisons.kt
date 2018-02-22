@@ -266,7 +266,7 @@ public inline fun <T: Comparable<T>> nullsFirst(): Comparator<T?> = nullsFirst(n
  * considering `null` value greater than any other value.
  */
 public fun <T: Any> nullsLast(comparator: Comparator<in T>): Comparator<T?> {
-    return object: Comparator<T?> {
+   return object: Comparator<T?> {
         override fun compare(a: T?, b: T?): Int {
             if (a === b) return 0
             if (a == null) return 1

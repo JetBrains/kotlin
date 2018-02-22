@@ -40,9 +40,12 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: Context) {
     val collector = DeclarationSymbolCollector()
     with(collector) {
         with(irBuiltins) {
-            for (op in arrayOf(eqeqeqFun, eqeqFun, lt0Fun, lteq0Fun, gt0Fun, gteq0Fun, throwNpeFun, booleanNotFun,
-                    noWhenBranchMatchedExceptionFun)) {
-
+            for (op in arrayOf(eqeqeqFun, eqeqFun, throwNpeFun, booleanNotFun, noWhenBranchMatchedExceptionFun) +
+                    lessFunByOperandType.values +
+                    lessOrEqualFunByOperandType.values +
+                    greaterOrEqualFunByOperandType.values +
+                    greaterFunByOperandType.values +
+                    ieee754equalsFunByOperandType.values) {
                 register(op.symbol)
             }
         }

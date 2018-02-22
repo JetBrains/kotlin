@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.typeInfoSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.symbolName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
 internal fun DeclarationDescriptor.symbolName(): String = when (this) {
     is FunctionDescriptor 
@@ -81,16 +82,12 @@ class IrDeserializationDescriptorIndex(irBuiltIns: IrBuiltIns) {
 }
 
 val IrBuiltIns.irBuiltInDescriptors
-    get() = listOf<FunctionDescriptor>(
-        this.eqeqeq,
-        this.eqeq,
-        this.lt0,
-        this.lteq0,
-        this.gt0,
-        this.gteq0,
-        this.throwNpe,
-        this.booleanNot,
-        this.noWhenBranchMatchedException,
-        this.enumValueOf)
+    get() = (lessFunByOperandType.values +
+                lessOrEqualFunByOperandType.values +
+                greaterOrEqualFunByOperandType.values +
+                greaterFunByOperandType.values +
+                ieee754equalsFunByOperandType.values +
+                eqeqeqFun + eqeqFun + throwNpeFun + booleanNotFun + noWhenBranchMatchedExceptionFun + enumValueOfFun)
+                .map(IrSimpleFunction::descriptor)
 
 
