@@ -134,6 +134,14 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestMemberInplaceRename("foo")
     }
 
+    fun testExtensionAndNoReceiver() {
+        doTestMemberInplaceRename("b")
+    }
+
+    fun testTwoExtensions() {
+        doTestMemberInplaceRename("example")
+    }
+
     private fun doTestImplicitLambdaParameter(newName: String) {
         configureByFile(getTestName(false) + ".kt")
 

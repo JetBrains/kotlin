@@ -29,16 +29,16 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.explicateAsText
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.and
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.getAllAccessibleFunctions
-import org.jetbrains.kotlin.idea.util.getAllAccessibleVariables
-import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.js.resolve.JsTypeSpecificityComparator
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -46,11 +46,15 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.OverloadChecker
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
+import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -61,6 +65,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 internal fun ResolvedCall<*>.noReceivers() = dispatchReceiver == null && extensionReceiver == null
@@ -107,11 +112,11 @@ internal fun checkRedeclarations(
         return getDescriptorsFiltered(descriptorKindFilter) { it.asString() == newName }.filter { it != descriptor }
     }
 
-    fun getSiblingWithNewName(): DeclarationDescriptor? {
+    fun getSiblingsWithNewName(): List<DeclarationDescriptor> {
         val containingDescriptor = descriptor.containingDeclaration
 
         if (descriptor is ValueParameterDescriptor) {
-            return (containingDescriptor as CallableDescriptor).valueParameters.firstOrNull { it.name.asString() == newName }
+            return (containingDescriptor as CallableDescriptor).valueParameters.filter { it.name.asString() == newName }
         }
 
         if (descriptor is TypeParameterDescriptor) {
@@ -120,44 +125,64 @@ internal fun checkRedeclarations(
                 is CallableDescriptor -> containingDescriptor.typeParameters
                 else -> emptyList()
             }
-            typeParameters.firstOrNull { it.name.asString() == newName }?.let { return it }
 
-            val containingDeclaration = (containingDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtDeclaration
-                                        ?: return null
-            val dummyVar = KtPsiFactory(containingDeclaration).createProperty("val foo: $newName")
-            val outerScope = containingDeclaration.getResolutionScope()
-            val context = dummyVar.analyzeInContext(outerScope, containingDeclaration)
-            return context[BindingContext.VARIABLE, dummyVar]?.type?.constructor?.declarationDescriptor
+            return SmartList<DeclarationDescriptor>().apply {
+                typeParameters.filterTo(this) { it.name.asString() == newName }
+                val containingDeclaration = (containingDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtDeclaration
+                        ?: return emptyList()
+                val dummyVar = KtPsiFactory(containingDeclaration).createProperty("val foo: $newName")
+                val outerScope = containingDeclaration.getResolutionScope()
+                val context = dummyVar.analyzeInContext(outerScope, containingDeclaration)
+                addIfNotNull(context[BindingContext.VARIABLE, dummyVar]?.type?.constructor?.declarationDescriptor)
+            }
         }
 
         return when (containingDescriptor) {
-            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope.findSiblingsByName().firstOrNull()
-            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().findSiblingsByName().firstOrNull {
+            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope.findSiblingsByName()
+            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().findSiblingsByName().filter {
                 it != descriptor
                 && (!(descriptor.isTopLevelPrivate() || it.isTopLevelPrivate()) || isInSameFile(descriptor, it))
             }
             else -> {
                 val block = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()?.parent as? KtBlockExpression
-                            ?: return null
-                (block.statements.firstOrNull {
-                    if (it.name != newName) return@firstOrNull false
-                    when (descriptor) {
+                            ?: return emptyList()
+                block.statements.mapNotNull {
+                    if (it.name != newName) return@mapNotNull null
+                    val isAccepted = when (descriptor) {
                         is ClassDescriptor -> it is KtClassOrObject
                         is PropertyDescriptor -> it is KtProperty
                         is FunctionDescriptor -> it is KtNamedFunction
                         else -> false
                     }
-                } as? KtDeclaration)?.unsafeResolveToDescriptor()
+                    if (!isAccepted) return@mapNotNull null
+                    (it as? KtDeclaration)?.unsafeResolveToDescriptor()
+                }
             }
         }
     }
 
-    val candidateDescriptor = getSiblingWithNewName() ?: return
-    val candidate = (candidateDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtNamedDeclaration ?: return
-    val what = candidate.renderDescription().capitalize()
-    val where = candidate.representativeContainer()?.renderDescription() ?: return
-    val message = "$what is already declared in $where"
-    result += BasicUnresolvableCollisionUsageInfo(candidate, candidate, message)
+    val overloadChecker = when (descriptor) {
+        is PropertyDescriptor,
+        is FunctionDescriptor,
+        is ClassifierDescriptor -> {
+            val psi = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtElement ?: return
+            val typeSpecificityComparator = when (TargetPlatformDetector.getPlatform(psi.containingKtFile)) {
+                is JvmPlatform -> JvmTypeSpecificityComparator
+                is JsPlatform -> JsTypeSpecificityComparator
+                else -> TypeSpecificityComparator.NONE
+            }
+            OverloadChecker(typeSpecificityComparator)
+        }
+        else -> null
+    }
+    for (candidateDescriptor in getSiblingsWithNewName()) {
+        val candidate = (candidateDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtNamedDeclaration ?: continue
+        if (overloadChecker != null && overloadChecker.isOverloadable(descriptor, candidateDescriptor)) continue
+        val what = candidate.renderDescription().capitalize()
+        val where = candidate.representativeContainer()?.renderDescription() ?: continue
+        val message = "$what is already declared in $where"
+        result += BasicUnresolvableCollisionUsageInfo(candidate, candidate, message)
+    }
 }
 
 private fun LexicalScope.getRelevantDescriptors(
