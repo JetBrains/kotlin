@@ -11,10 +11,11 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
+import org.jetbrains.kotlin.idea.refactoring.rename.KotlinMemberInplaceRenameHandler
+import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinImplicitLambdaParameter
 import org.jetbrains.kotlin.idea.refactoring.rename.findElementForRename
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -142,6 +143,14 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestMemberInplaceRename("example")
     }
 
+    fun testQuotedLocalVar() {
+        doTestInplaceRename("x")
+    }
+
+    fun testQuotedParameter() {
+        doTestMemberInplaceRename("x")
+    }
+
     private fun doTestImplicitLambdaParameter(newName: String) {
         configureByFile(getTestName(false) + ".kt")
 
@@ -193,10 +202,10 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     }
 
     private fun doTestMemberInplaceRename(newName: String?) {
-        doTestInplaceRename(newName, MemberInplaceRenameHandler())
+        doTestInplaceRename(newName, KotlinMemberInplaceRenameHandler())
     }
 
-    private fun doTestInplaceRename(newName: String?, handler: VariableInplaceRenameHandler = VariableInplaceRenameHandler()) {
+    private fun doTestInplaceRename(newName: String?, handler: VariableInplaceRenameHandler = KotlinVariableInplaceRenameHandler()) {
         configureByFile(getTestName(false) + ".kt")
         val element = TargetElementUtil.findTargetElement(
                 LightPlatformCodeInsightTestCase.myEditor,

@@ -18,35 +18,31 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.*
+import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenamer
-import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer
 import org.jetbrains.kotlin.idea.core.unquote
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
 class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
-    companion object {
-        private val variableInplaceHandler = object : VariableInplaceRenameHandler() {
-            override public fun isAvailable(element: PsiElement?, editor: Editor?, file: PsiFile?): Boolean {
-                return super.isAvailable(element, editor, file)
-            }
-        }
-    }
-
     private class RenamerImpl(
-            elementToRename: PsiNamedElement,
-            substitutedElement: PsiElement?,
-            editor: Editor,
-            currentName: String,
-            oldName: String
+        elementToRename: PsiNamedElement,
+        substitutedElement: PsiElement?,
+        editor: Editor,
+        currentName: String,
+        oldName: String
     ) : MemberInplaceRenamer(elementToRename, substitutedElement, editor, currentName, oldName) {
         override fun acceptReference(reference: PsiReference): Boolean {
             val refElement = reference.element
             val textRange = reference.rangeInElement
             val referenceText = refElement.text.substring(textRange.startOffset, textRange.endOffset).unquote()
             return referenceText == myElementToRename.name
+        }
+
+        override fun startsOnTheSameElement(handler: RefactoringActionHandler?, element: PsiElement?): Boolean {
+            return variable == element && (handler is MemberInplaceRenameHandler || handler is KotlinRenameDispatcherHandler)
         }
 
         override fun createInplaceRenamerToRestart(variable: PsiNamedElement, editor: Editor, initialName: String): VariableInplaceRenamer {
@@ -67,10 +63,10 @@ class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
         val offset = editor.caretModel.offset
         val editorPsiFile = PsiDocumentManager.getInstance(element.project).getPsiFile(editor.document)
         if (nameIdentifier != null
-            && editorPsiFile == elementToRename.containingFile
-            && elementToRename is KtPrimaryConstructor
-            && offset !in nameIdentifier.textRange
-            && offset in elementToRename.textRange) {
+                && editorPsiFile == elementToRename.containingFile
+                && elementToRename is KtPrimaryConstructor
+                && offset !in nameIdentifier.textRange
+                && offset in elementToRename.textRange) {
             editor.caretModel.moveToOffset(nameIdentifier.textOffset)
         }
 
@@ -79,9 +75,8 @@ class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
     }
 
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
-        val currentElement = element?.substitute()
-        return currentElement is KtElement &&
-               !variableInplaceHandler.isAvailable(currentElement, editor, file) &&
-               super.isAvailable(currentElement, editor, file)
+        if (!editor.settings.isVariableInplaceRenameEnabled) return false
+        val currentElement = element?.substitute() as? KtNamedDeclaration ?: return false
+        return currentElement.nameIdentifier != null && !KotlinVariableInplaceRenameHandler.isInplaceRenameAvailable(currentElement)
     }
 }
