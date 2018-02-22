@@ -416,7 +416,7 @@ internal object DataFlowIR {
 
     class SymbolTable(val context: Context, val irModule: IrModuleFragment, val module: Module) {
 
-        private val TAKE_NAMES = false // Take fqNames for all functions and types (for debug purposes).
+        private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
 
         private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
