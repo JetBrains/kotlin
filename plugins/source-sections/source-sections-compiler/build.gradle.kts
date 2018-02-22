@@ -19,7 +19,7 @@ dependencies {
     testCompile(project(":compiler:cli-common"))
     testCompile(project(":compiler:frontend.java"))
     testCompile(project(":compiler:daemon-common"))
-    testCompile(project(":kotlin-daemon-client"))
+    testCompile(projectRuntimeJar(":kotlin-daemon-client"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }

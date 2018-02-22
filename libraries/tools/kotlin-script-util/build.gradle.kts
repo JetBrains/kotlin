@@ -9,7 +9,7 @@ dependencies {
     compile(project(":kotlin-script-runtime"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:daemon-common"))
-    compile(project(":kotlin-daemon-client"))
+    compile(projectRuntimeJar(":kotlin-daemon-client"))
     compileOnly("com.jcabi:jcabi-aether:0.10.1")
     compileOnly("org.sonatype.aether:aether-api:1.13.1")
     compileOnly("org.apache.maven:maven-core:3.0.3")
