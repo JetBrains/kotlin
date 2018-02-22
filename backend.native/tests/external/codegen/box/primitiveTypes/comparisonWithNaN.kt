@@ -1,5 +1,5 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JS
 
 // This test checks that our bytecode is consistent with javac bytecode
 
@@ -10,8 +10,8 @@ fun _assert(condition: Boolean) {
 fun _assertFalse(condition: Boolean) = _assert(!condition)
 
 fun box(): String {
-    var dnan = java.lang.Double.NaN
-    if (System.nanoTime() < 0) dnan = 3.14 // To avoid possible compile-time const propagation
+    var dnan = Double.NaN
+//    if (System.nanoTime() < 0) dnan = 3.14 // To avoid possible compile-time const propagation
 
     _assertFalse(0.0 < dnan)
     _assertFalse(0.0 > dnan)
@@ -34,8 +34,8 @@ fun box(): String {
     _assert(dnan.compareTo(0.0) == 1)
     _assert(dnan.compareTo(dnan) == 0)
 
-    var fnan = java.lang.Float.NaN
-    if (System.nanoTime() < 0) fnan = 3.14f
+    var fnan = Float.NaN
+//    if (System.nanoTime() < 0) fnan = 3.14f
 
     _assertFalse(0.0f < fnan)
     _assertFalse(0.0f > fnan)

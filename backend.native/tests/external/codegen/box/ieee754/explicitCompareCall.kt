@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JS
 fun less1(a: Double, b: Double) = a.compareTo(b) == -1
 
 fun less2(a: Double?, b: Double?) = a!!.compareTo(b!!) == -1

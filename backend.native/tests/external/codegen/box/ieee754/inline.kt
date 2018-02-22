@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JS!
 
 inline fun less(a: Comparable<Double>, b: Double): Boolean {
     return a < b

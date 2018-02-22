@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JS
 
 fun equals1(a: Double, b: Double) = a.equals(b)
 
