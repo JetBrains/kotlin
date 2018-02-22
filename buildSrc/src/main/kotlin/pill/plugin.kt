@@ -144,7 +144,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     }
 
     private fun copyRunConfigurations() {
-        val runConfigurationsDir = File(projectDir, "buildSrc/src/main/kotlin/pill/runConfigurations")
+        val runConfigurationsDir = File(projectDir, "buildSrc/src/main/resources/runConfigurations")
         val targetDir = File(projectDir, ".idea/runConfigurations")
         val platformDirProjectRelative = "\$PROJECT_DIR\$/" + platformDir.toRelativeString(projectDir)
 
