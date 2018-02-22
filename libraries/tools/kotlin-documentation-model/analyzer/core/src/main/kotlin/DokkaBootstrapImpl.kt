@@ -17,7 +17,8 @@ fun parsePerPackageOptions(arg: String): List<PackageOptions> {
         val deprecated = args.find { it.endsWith("deprecated") }?.startsWith("+") ?: true
         val reportUndocumented = args.find { it.endsWith("warnUndocumented") }?.startsWith("+") ?: true
         val privateApi = args.find { it.endsWith("privateApi") }?.startsWith("+") ?: false
-        PackageOptionsImpl(prefix, includeNonPublic = privateApi, reportUndocumented = reportUndocumented, skipDeprecated = !deprecated)
+        val suppress = args.find { it.endsWith("suppress") }?.startsWith("+") ?: false
+        PackageOptionsImpl(prefix, includeNonPublic = privateApi, reportUndocumented = reportUndocumented, skipDeprecated = !deprecated, suppress = suppress)
     }
 }
 
@@ -65,6 +66,8 @@ class DokkaBootstrapImpl : DokkaBootstrap {
                         perPackageOptions,
                         externalDocumentationLinks,
                         noStdlibLink,
+                        languageVersion,
+                        apiVersion,
                         cacheRoot,
                         suppressedFiles.map { File(it) }
                 )
