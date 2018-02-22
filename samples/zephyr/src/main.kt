@@ -19,8 +19,7 @@ import kotlinx.cinterop.*
 
 fun blinky(value: Int) {
 
-    // See the .def file for details of led0_gpio_port()
-    val port = led0_gpio_port()!!.toKString()
+    val port = LED0_GPIO_PORT
     val led = LED0_GPIO_PIN
     var toggler = false
     val dev = device_get_binding(port)

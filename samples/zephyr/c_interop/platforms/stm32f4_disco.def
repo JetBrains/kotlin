@@ -18,13 +18,3 @@
 headers = autoconf.h zephyr.h board.h device.h gpio.h
 compilerOpts = -DKERNEL -DUSE_FULL_LL_DRIVER -DUSE_HAL_DRIVER -D_FORTIFY_SOURCE=2 -D__ZEPHYR__=1 -ffreestanding -std=c99 -nostdinc
 
----
-
-// cinterop doesn't support `#define FOO "string"` constructs as of yet.
-// so we provide this accessor for now. Because the port names
-// are resolved to string literals.
-
-extern const char* led0_gpio_port(void) {
-     return LED0_GPIO_PORT;
-}
-
