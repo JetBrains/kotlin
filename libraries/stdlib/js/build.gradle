@@ -1,5 +1,5 @@
 plugins {
-    id 'com.craigburke.karma' version '1.4.4'
+    id "com.moowork.node" version "1.2.0"
 }
 
 description = 'Kotlin Standard Library for JS'
@@ -162,7 +162,7 @@ compileExperimentalKotlin2Js {
 compileTestKotlin2Js {
     dependsOn preprocessSourcesTest
     kotlinOptions {
-        moduleKind = "plain"
+        moduleKind = "umd"
     }
 }
 
@@ -301,33 +301,39 @@ dist {
     }
 }
 
+task populateNodeModules(type: Copy, dependsOn: [compileJs, compileTestKotlin2Js]) {
+    from jsOutputFile
+    from kotlinTestJsOutputFile
 
-karma {
-    dependencies(['qunitjs@1.23.1', 'karma-teamcity-reporter@0.1.2'])
+    into "${buildDir}/node_modules"
+}
 
-    frameworks = ['qunit']
-    browsers = ['PhantomJS']
+node {
+    download = true
+    version = '8.9.4' // The default 6.9.1 has buggy hyperbolic functions implementation
+    nodeModulesDir = buildDir
+}
+
+task installMocha(type: NpmTask, dependsOn: [populateNodeModules]) {
+    args = ['install', 'mocha']
+}
+
+task installTeamcityReporter(type: NpmTask, dependsOn: [populateNodeModules]) {
+    args = ['install', 'mocha-teamcity-reporter']
+}
+
+task runMocha(type: NodeTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, installMocha]) {
+    script = file("${buildDir}/node_modules/mocha/bin/mocha")
+    args = [jsTestOutputFile]
 
     if (project.hasProperty("teamcity")) {
-        reporters = ['teamcity']
-    }
+        dependsOn installTeamcityReporter
+        args = ['--reporter', 'mocha-teamcity-reporter'] + args
 
-    profile('default') {
-        libraryBases = ['']
-        libraryFiles = [jsOutputFile, kotlinTestJsOutputFile]
-
-        sourceBases = []
-        sourceFiles = []
-
-        testBases = ['']
-        testFiles = [jsTestOutputFile, kotlinTestJsTestOutputFile]
+        execOverrides {
+            it.ignoreExitValue = true
+        }
     }
 }
 
-karmaGenerateConfig.outputs.upToDateWhen { false }
-karmaRun {
-    ignoreExitValue = Boolean.valueOf(ignoreTestFailures)
-    dependsOn testClasses
-    dependsOn tasks.getByPath(':kotlin-test:kotlin-test-js:testClasses')
-}
-clean.dependsOn karmaClean
+test.dependsOn runMocha
