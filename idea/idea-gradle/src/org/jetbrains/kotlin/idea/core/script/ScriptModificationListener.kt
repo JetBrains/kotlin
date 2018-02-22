@@ -54,7 +54,8 @@ class ScriptModificationListener(private val project: Project) {
                         }) {
                         return
                     }
-                    ExternalProjectsManager.getInstance(project).externalProjectsWatcher.markDirty(project.basePath)
+                    // externalProjectsWatcher is not avaliable in 171
+                    //ExternalProjectsManager.getInstance(project).externalProjectsWatcher.markDirty(project.basePath)
                 }
             }
         })
@@ -67,6 +68,8 @@ class ScriptModificationListener(private val project: Project) {
         changedDocumentsQueue.activate()
 
         EditorFactory.getInstance().eventMulticaster.addDocumentListener(object : DocumentListener {
+            override fun beforeDocumentChange(event: DocumentEvent?) {}
+
             override fun documentChanged(event: DocumentEvent) {
                 if (project.isDisposed) return
 
