@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -375,18 +374,13 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             super.visitSetField(expression)
         }
 
-        // TODO: hack to overcome bad code in InlineConstructorsTransformation.
-        private val FQ_NAME_INLINE_CONSTRUCTOR = FqName("konan.internal.InlineConstructor")
-
         override fun visitReturn(expression: IrReturn) {
             val returnableBlock = returnableBlocks[expression.returnTarget]
             if (returnableBlock != null) {
                 returnableBlockValues[returnableBlock]!!.add(expression.value)
             } else { // Non-local return.
-                if (!expression.type.isUnit()) {
-                    if (!expression.returnTarget.annotations.hasAnnotation(FQ_NAME_INLINE_CONSTRUCTOR)) // Not inline constructor.
-                        returnValues += expression.value
-                }
+                if (!expression.type.isUnit())
+                    returnValues += expression.value
             }
             super.visitReturn(expression)
         }

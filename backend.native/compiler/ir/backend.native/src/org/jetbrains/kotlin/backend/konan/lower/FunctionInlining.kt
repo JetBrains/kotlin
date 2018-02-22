@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
@@ -27,23 +28,21 @@ import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.getDefault
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrMemberAccessExpressionBase
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -103,6 +102,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
     override fun visitElement(element: IrElement) = element.accept(this, null)
 }
 
+private val inlineConstructor = FqName("konan.internal.InlineConstructor")
+private val FunctionDescriptor.isInlineConstructor get() = annotations.hasAnnotation(inlineConstructor)
+
 //-----------------------------------------------------------------------------//
 
 private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor, SubstitutedDescriptor>,
@@ -123,22 +125,46 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
 
     //-------------------------------------------------------------------------//
 
-    private fun inlineFunction(irCall             : IrCall,                                 // Call to be substituted.
-                               functionDeclaration: IrFunction): IrReturnableBlockImpl {    // Function to substitute.
+    private fun inlineFunction(callee: IrCall,                                              // Call to be substituted.
+                               caller: IrFunction): IrReturnableBlockImpl {                 // Function to substitute.
 
         val copyFunctionDeclaration = copyIrElement.copy(                                   // Create copy of original function.
-            irElement       = functionDeclaration,                                          // Descriptors declared inside the function will be copied.
-            typeSubstitutor = createTypeSubstitutor(irCall)                                 // Type parameters will be substituted with type arguments.
+            irElement       = caller,                                                       // Descriptors declared inside the function will be copied.
+            typeSubstitutor = createTypeSubstitutor(callee)                                 // Type parameters will be substituted with type arguments.
         ) as IrFunction
 
-        val evaluationStatements = evaluateArguments(irCall, copyFunctionDeclaration)           // And list of evaluation statements.
+        val evaluationStatements = evaluateArguments(callee, copyFunctionDeclaration)       // And list of evaluation statements.
 
         val statements = (copyFunctionDeclaration.body as IrBlockBody).statements           // IR statements from function copy.
+
+        val startOffset = caller.startOffset
+        val endOffset = caller.endOffset
+        val descriptor = caller.descriptor.original
+        if (descriptor.isInlineConstructor) {
+            val delegatingConstructorCall = statements[0] as IrDelegatingConstructorCall
+            val irBuilder = context.createIrBuilder(copyFunctionDeclaration.symbol, startOffset, endOffset)
+            irBuilder.run {
+                val constructorDescriptor = delegatingConstructorCall.descriptor.original
+                val constructorCall = irCall(delegatingConstructorCall.symbol,
+                        constructorDescriptor.typeParameters.associate { it to delegatingConstructorCall.getTypeArgument(it)!! }).apply {
+                    constructorDescriptor.valueParameters.forEach { putValueArgument(it, delegatingConstructorCall.getValueArgument(it)) }
+                }
+                val oldThis = delegatingConstructorCall.descriptor.constructedClass.thisAsReceiverParameter
+                val newThis = currentScope.scope.createTemporaryVariable(
+                        irExpression = constructorCall,
+                        nameHint     = delegatingConstructorCall.descriptor.fqNameSafe.toString() + ".this"
+                )
+                statements[0] = newThis
+                substituteMap[oldThis] = irGet(newThis.symbol)
+                statements.add(irReturn(irGet(newThis.symbol)))
+            }
+        }
+
         val returnType = copyFunctionDeclaration.descriptor.returnType!!                    // Substituted return type.
-        val sourceFileName = context.ir.originalModuleIndex.declarationToFile[functionDeclaration.descriptor.original]?:""
+        val sourceFileName = context.ir.originalModuleIndex.declarationToFile[caller.descriptor.original]?:""
         val inlineFunctionBody = IrReturnableBlockImpl(                                     // Create new IR element to replace "call".
-            startOffset = copyFunctionDeclaration.startOffset,
-            endOffset   = copyFunctionDeclaration.endOffset,
+            startOffset = startOffset,
+            endOffset   = endOffset,
             type        = returnType,
             descriptor  = copyFunctionDeclaration.descriptor.original,
             origin      = null,

@@ -56,10 +56,6 @@ internal class KonanLower(val context: Context) {
             irModule.files.forEach(PreInlineLowering(context)::lower)
         }
 
-        phaser.phase(KonanPhase.LOWER_INLINE_CONSTRUCTORS) {
-            InlineConstructorsTransformation(context).lower(irModule)
-        }
-
         // Inlining must be run before other phases.
         phaser.phase(KonanPhase.LOWER_INLINE) {
             FunctionInlining(context).inline(irModule)
