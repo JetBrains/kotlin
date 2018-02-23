@@ -2228,6 +2228,12 @@ task serialized_doWhile(type: LinkKonanTest) {
     goldValue = "999\n"
 }
 
+task serialized_vararg(type: LinkKonanTest) {
+    source = "serialization/use.kt"
+    lib = "serialization/vararg.kt"
+    goldValue = "17\n19\n23\n29\n31\nsize: 5\n"
+}
+
 task testing_annotations(type: RunStandaloneKonanTest) {
     source = "testing/annotations.kt"
     flags = ['-tr']
