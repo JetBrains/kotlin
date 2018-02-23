@@ -464,14 +464,8 @@ class BasicCompletionSession(
                                         .filterNot { it.original in foundDescriptors }
                                         .onEach { foundDescriptors += it.original }
 
-                                collector.addDescriptorElements(
-                                    unique.toList(), factory,
-                                    prohibitDuplicates = true
-                                )
-                                collector.addDescriptorElements(
-                                    uniqueNotImportedExtensions.toList(), factory,
-                                    notImported = true, prohibitDuplicates = true
-                                )
+                                collector.addDescriptorElements(unique.toList(), factory)
+                                collector.addDescriptorElements(uniqueNotImportedExtensions.toList(), factory, notImported = true)
 
                                 flushToResultSet()
                             }
@@ -792,14 +786,8 @@ class BasicCompletionSession(
 
     private fun addReferenceVariantElements(lookupElementFactory: LookupElementFactory, descriptorKindFilter: DescriptorKindFilter) {
         fun addReferenceVariants(referenceVariants: ReferenceVariants) {
-            collector.addDescriptorElements(
-                referenceVariantsHelper.excludeNonInitializedVariable(referenceVariants.imported, position),
-                lookupElementFactory, prohibitDuplicates = true
-            )
-            collector.addDescriptorElements(
-                referenceVariants.notImportedExtensions, lookupElementFactory,
-                notImported = true, prohibitDuplicates = true
-            )
+            collector.addDescriptorElements(referenceVariantsHelper.excludeNonInitializedVariable(referenceVariants.imported, position), lookupElementFactory)
+            collector.addDescriptorElements(referenceVariants.notImportedExtensions, lookupElementFactory, notImported = true)
         }
 
         val referenceVariantsCollector = referenceVariantsCollector!!
