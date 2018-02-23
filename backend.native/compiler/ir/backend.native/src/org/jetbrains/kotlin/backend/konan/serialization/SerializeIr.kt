@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
 import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanIr.IrConst.ValueCase.*
 import org.jetbrains.kotlin.serialization.KonanIr.IrOperation.OperationCase.*
+import org.jetbrains.kotlin.serialization.KonanIr.IrVarargElement.VarargElementCase.*
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassConstructorDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
@@ -346,6 +347,14 @@ internal class IrSerializer(val context: Context,
         return proto.build()
     }
 
+    private fun serializeSpreadElement(element: IrSpreadElement): KonanIr.IrSpreadElement {
+        val coordinates = serializeCoordinates(element.startOffset, element.endOffset)
+        return KonanIr.IrSpreadElement.newBuilder()
+            .setExpression(serializeExpression(element.expression))
+            .setCoordinates(coordinates)
+            .build()
+    }
+
     private fun serializeThrow(expression: IrThrow): KonanIr.IrThrow {
         val proto = KonanIr.IrThrow.newBuilder()
             .setValue(serializeExpression(expression.value))
@@ -396,6 +405,21 @@ internal class IrSerializer(val context: Context,
     private fun serializeVararg(expression: IrVararg): KonanIr.IrVararg {
         val proto = KonanIr.IrVararg.newBuilder()
             .setElementType(serializeKotlinType(expression.varargElementType))
+        expression.elements.forEach {
+            proto.addElement(serializeVarargElement(it))
+        }
+        return proto.build()
+    }
+
+    private fun serializeVarargElement(element: IrVarargElement): KonanIr.IrVarargElement {
+        val proto = KonanIr.IrVarargElement.newBuilder()
+        when (element) {
+            is IrExpression
+                -> proto.expression = serializeExpression(element)
+            is IrSpreadElement
+                -> proto.spreadElement = serializeSpreadElement(element)
+            else -> TODO("Unknown vararg element kind")
+        }
         return proto.build()
     }
 
@@ -935,6 +959,11 @@ internal class IrDeserializer(val context: Context,
         return IrSetVariableImpl(start, end, IrVariableSymbolImpl(descriptor), value, null)
     }
 
+    private fun deserializeSpreadElement(proto: KonanIr.IrSpreadElement): IrSpreadElement {
+        val expression = deserializeExpression(proto.expression)
+        return IrSpreadElementImpl(proto.coordinates.startOffset, proto.coordinates.endOffset, expression)
+    }
+
     private fun deserializeStringConcat(proto: KonanIr.IrStringConcat, start: Int, end: Int, type: KotlinType): IrStringConcatenation {
         val argumentProtos = proto.argumentList
         val arguments = mutableListOf<IrExpression>()
@@ -989,7 +1018,23 @@ internal class IrDeserializer(val context: Context,
 
     private fun deserializeVararg(proto: KonanIr.IrVararg, start: Int, end: Int, type: KotlinType): IrVararg {
         val elementType = deserializeKotlinType(proto.elementType)
-        return IrVarargImpl(start, end, type, elementType)
+
+        val elements = mutableListOf<IrVarargElement>()
+        proto.elementList.forEach {
+            elements.add(deserializeVarargElement(it))
+        }
+        return IrVarargImpl(start, end, type, elementType, elements)
+    }
+
+    private fun deserializeVarargElement(element: KonanIr.IrVarargElement): IrVarargElement {
+        return when (element.varargElementCase) {
+            EXPRESSION 
+                -> deserializeExpression(element.expression)
+            SPREAD_ELEMENT 
+                -> deserializeSpreadElement(element.spreadElement)
+            else 
+                -> TODO("Unexpected vararg element")
+        }
     }
 
     private fun deserializeWhen(proto: KonanIr.IrWhen, start: Int, end: Int, type: KotlinType): IrWhen {
