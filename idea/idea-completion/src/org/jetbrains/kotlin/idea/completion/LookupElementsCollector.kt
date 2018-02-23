@@ -68,26 +68,23 @@ class LookupElementsCollector(
         postProcessors.add(processor)
     }
 
-    fun addDescriptorElements(
-        descriptors: Iterable<DeclarationDescriptor>,
-        lookupElementFactory: AbstractLookupElementFactory,
-        notImported: Boolean = false,
-        withReceiverCast: Boolean = false,
-        prohibitDuplicates: Boolean = false
+    fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>,
+                                     lookupElementFactory: AbstractLookupElementFactory,
+                                     notImported: Boolean = false,
+                                     withReceiverCast: Boolean = false
     ) {
         for (descriptor in descriptors) {
-            addDescriptorElements(descriptor, lookupElementFactory, notImported, withReceiverCast, prohibitDuplicates)
+            addDescriptorElements(descriptor, lookupElementFactory, notImported, withReceiverCast)
         }
     }
 
     fun addDescriptorElements(
-        descriptor: DeclarationDescriptor,
-        lookupElementFactory: AbstractLookupElementFactory,
-        notImported: Boolean = false,
-        withReceiverCast: Boolean = false,
-        prohibitDuplicates: Boolean = false
+            descriptor: DeclarationDescriptor,
+            lookupElementFactory: AbstractLookupElementFactory,
+            notImported: Boolean = false,
+            withReceiverCast: Boolean = false
     ) {
-        if (prohibitDuplicates && descriptor is CallableDescriptor && descriptor in processedCallables) return
+        if (descriptor is CallableDescriptor && descriptor in processedCallables) return
 
         var lookupElements = lookupElementFactory.createStandardLookupElementsForDescriptor(descriptor, useReceiverTypes = true)
 
@@ -97,7 +94,7 @@ class LookupElementsCollector(
 
         addElements(lookupElements, notImported)
 
-        if (prohibitDuplicates && descriptor is CallableDescriptor) processedCallables.add(descriptor)
+        if (descriptor is CallableDescriptor) processedCallables.add(descriptor)
     }
 
     fun addElement(element: LookupElement, notImported: Boolean = false) {
