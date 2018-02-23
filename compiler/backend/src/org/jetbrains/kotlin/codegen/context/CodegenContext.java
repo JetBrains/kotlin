@@ -569,10 +569,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         CodegenContext properContext = getFirstCrossInlineOrNonInlineContext();
         DeclarationDescriptor enclosing = descriptor.getContainingDeclaration();
         boolean isInliningContext = properContext.isInlineMethodContext();
+        boolean sameJvmDefault = CodegenUtilKt.hasJvmDefaultAnnotation(descriptor) ==
+                                 CodegenUtilKt.isCallableMemberWithJvmDefaultAnnotation(properContext.contextDescriptor) ||
+                                 properContext.contextDescriptor instanceof AccessorForCallableDescriptor;
         if (!isInliningContext && (
                 !properContext.hasThisDescriptor() ||
-                enclosing == properContext.getThisDescriptor() ||
-                enclosing == properContext.getClassOrPackageParentContext().getContextDescriptor())) {
+                ((enclosing == properContext.getThisDescriptor()) && sameJvmDefault) ||
+                ((enclosing == properContext.getClassOrPackageParentContext().getContextDescriptor()) && sameJvmDefault))) {
             return descriptor;
         }
         return (D) properContext.accessibleDescriptorIfNeeded(descriptor, superCallTarget, isInliningContext);
@@ -623,6 +626,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         if (descriptorContext == null) {
             return descriptor;
         }
+
+        if (CodegenUtilKt.hasJvmDefaultAnnotation(descriptor) && descriptorContext instanceof DefaultImplsClassContext) {
+            descriptorContext = ((DefaultImplsClassContext) descriptorContext).getInterfaceContext();
+        }
+
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             int propertyAccessFlag = getVisibilityAccessFlag(descriptor);

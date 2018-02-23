@@ -30,7 +30,8 @@ class CallableMethod(
     override val extensionReceiverKotlinType: KotlinType?,
     override val generateCalleeType: Type?,
     override val returnKotlinType: KotlinType?,
-    private val isInterfaceMethod: Boolean = Opcodes.INVOKEINTERFACE == invokeOpcode
+    private val isInterfaceMethod: Boolean = Opcodes.INVOKEINTERFACE == invokeOpcode,
+    private val isDefaultMethodInInterface: Boolean = false
 ) : Callable {
     fun getValueParameters(): List<JvmMethodParameterSignature> =
         signature.valueParameters
@@ -67,7 +68,7 @@ class CallableMethod(
         } else {
             v.visitMethodInsn(
                 INVOKESTATIC, defaultImplOwner.internalName,
-                method.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, defaultMethodDesc, false
+                method.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, defaultMethodDesc, isDefaultMethodInInterface
             )
 
             StackValue.coerce(Type.getReturnType(defaultMethodDesc), Type.getReturnType(signature.asmMethod.descriptor), v)

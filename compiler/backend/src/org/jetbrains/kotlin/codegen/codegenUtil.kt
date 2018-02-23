@@ -423,4 +423,8 @@ fun MethodNode.textifyMethodNode(): String {
     return "$sw"
 }
 
-fun CallableMemberDescriptor.hasJvmDefaultAnnotation() = getDirectMember(this).annotations.hasAnnotation(JvmDefaultChecker.JVM_DEFAULT_FQ_NAME)
+fun CallableMemberDescriptor.hasJvmDefaultAnnotation() =
+    getDirectMember(this).annotations.hasAnnotation(JvmDefaultChecker.JVM_DEFAULT_FQ_NAME)
+
+fun DeclarationDescriptor.isCallableMemberWithJvmDefaultAnnotation() =
+    (this as? CallableMemberDescriptor)?.hasJvmDefaultAnnotation() ?: false

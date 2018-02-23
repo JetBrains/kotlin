@@ -337,6 +337,24 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Defaults extends AbstractBlackBoxCodegenTest {
+            @TestMetadata("accessor.kt")
+            public void testAccessor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/accessor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("accessorFromCompanion.kt")
+            public void testAccessorFromCompanion() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/accessorFromCompanion.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("accessorsFromDefaultImpls.kt")
+            public void testAccessorsFromDefaultImpls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/accessorsFromDefaultImpls.kt");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInDefaults() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
@@ -410,6 +428,18 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             @TestMetadata("oneImplementation2.kt")
             public void testOneImplementation2() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/oneImplementation2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateDefaultFromDefaultImpl.kt")
+            public void testPrivateDefaultFromDefaultImpl() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/privateDefaultFromDefaultImpl.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateInDefaultImpls.kt")
+            public void testPrivateInDefaultImpls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/privateInDefaultImpls.kt");
                 doTest(fileName);
             }
 

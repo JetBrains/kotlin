@@ -400,9 +400,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateDelegates(delegationFieldsInfo);
 
-        if (!isInterface(descriptor)  || kind == OwnerKind.DEFAULT_IMPLS) {
-            generateSyntheticAccessors();
-        }
+        generateSyntheticAccessors();
 
         generateEnumMethods();
 

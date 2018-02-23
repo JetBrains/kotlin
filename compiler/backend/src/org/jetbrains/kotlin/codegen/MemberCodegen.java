@@ -695,9 +695,16 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         }
     }
 
-    protected void generateSyntheticAccessors() {
+    protected final void generateSyntheticAccessors() {
         for (AccessorForCallableDescriptor<?> accessor : ((CodegenContext<?>) context).getAccessors()) {
-            generateSyntheticAccessor(accessor);
+            boolean hasJvmDefaultAnnotation = CodegenUtilKt.hasJvmDefaultAnnotation(accessor.getCalleeDescriptor());
+            OwnerKind kind = context.getContextKind();
+
+            if (!isInterface(context.getContextDescriptor()) ||
+                (hasJvmDefaultAnnotation && kind == OwnerKind.IMPLEMENTATION) ||
+                (!hasJvmDefaultAnnotation && kind == OwnerKind.DEFAULT_IMPLS)) {
+                generateSyntheticAccessor(accessor);
+            }
         }
     }
 
