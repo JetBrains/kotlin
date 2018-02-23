@@ -1931,6 +1931,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
+    private static boolean isDefaultAccessor(@Nullable PropertyAccessorDescriptor accessor) {
+        return accessor == null || accessor.isDefault();
+    }
+
     public StackValue.Property intermediateValueForProperty(
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
@@ -1957,7 +1961,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             fieldAccessorKind = FieldAccessorKind.LATEINIT_INTRINSIC;
         }
         else if (isBackingFieldInClassCompanion &&
-            (forceField || propertyDescriptor.isConst() && Visibilities.isPrivate(propertyDescriptor.getVisibility()))) {
+                 (forceField ||
+                  (Visibilities.isPrivate(propertyDescriptor.getVisibility()) &&
+                   (propertyDescriptor.isConst() ||
+                    (isDefaultAccessor(propertyDescriptor.getGetter()) && isDefaultAccessor(propertyDescriptor.getSetter())))))) {
             fieldAccessorKind = FieldAccessorKind.IN_CLASS_COMPANION;
         }
         else if ((syntheticBackingField &&
@@ -1986,6 +1993,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         boolean skipPropertyAccessors;
 
         PropertyDescriptor originalPropertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
+        boolean directAccessToGetterProperty = couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context,
+                                                                              state.getShouldInlineConstVals());
+        boolean directAccessToSetterProperty = couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context,
+                                                                              state.getShouldInlineConstVals());
 
         if (fieldAccessorKind == FieldAccessorKind.LATEINIT_INTRINSIC) {
             skipPropertyAccessors = !isPrivateProperty || context.getClassOrPackageParentContext() == backingFieldContext;
@@ -1997,8 +2008,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             ownerDescriptor = propertyDescriptor;
         }
         else if (fieldAccessorKind == FieldAccessorKind.IN_CLASS_COMPANION || fieldAccessorKind == FieldAccessorKind.FIELD_FROM_LOCAL) {
-            boolean isInlinedConst = propertyDescriptor.isConst() && state.getShouldInlineConstVals();
-            skipPropertyAccessors = isInlinedConst || !isPrivateProperty || skipAccessorsForPrivateFieldInOuterClass;
+            // Do not use accessor 'access<property name>$cp' when the property can be accessed directly by his backing field.
+            skipPropertyAccessors = skipAccessorsForPrivateFieldInOuterClass ||
+                                    (directAccessToGetterProperty && (!propertyDescriptor.isVar() || directAccessToSetterProperty));
 
             if (!skipPropertyAccessors) {
                 //noinspection ConstantConditions
@@ -2019,22 +2031,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (!skipPropertyAccessors) {
-            boolean needGetterAccessor = !couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context,
-                                                                         state.getShouldInlineConstVals());
-            boolean needSetterAccessor = propertyDescriptor.isVar() &&
-                                         !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context,
-                                                                         state.getShouldInlineConstVals());
-            if (needGetterAccessor || needSetterAccessor) {
+            if (!directAccessToGetterProperty || !directAccessToSetterProperty) {
                 propertyDescriptor = context.getAccessorForSuperCallIfNeeded(propertyDescriptor, superCallTarget, state);
                 propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superCallTarget);
                 if (!isConstOrHasJvmFieldAnnotation(propertyDescriptor)) {
-                    if (needGetterAccessor) {
+                    if (!directAccessToGetterProperty) {
                         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
                         if (getter != null) {
                             callableGetter = typeMapper.mapToCallableMethod(getter, isSuper);
                         }
                     }
-                    if (needSetterAccessor) {
+                    if (propertyDescriptor.isVar() && !directAccessToSetterProperty) {
                         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
                         if (setter != null) {
                             callableSetter = typeMapper.mapToCallableMethod(setter, isSuper);

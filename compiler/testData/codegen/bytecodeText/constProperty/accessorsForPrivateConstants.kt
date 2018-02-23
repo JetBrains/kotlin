@@ -9,9 +9,12 @@ class Foo {
     }
 
     fun foo() {
+        // Access to the property use getstatic on the backed field
         LOCAL_PRIVATE
+        // Access to the property requires an invokestatic
         OUTER_PRIVATE
     }
 }
 
-// 2 INVOKESTATIC
+// 1 INVOKESTATIC
+// 1 PUTSTATIC
