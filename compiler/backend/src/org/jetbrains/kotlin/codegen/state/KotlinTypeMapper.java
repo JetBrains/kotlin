@@ -746,7 +746,7 @@ public class KotlinTypeMapper {
             String defaultImplDesc = mapDefaultMethod(originalDescriptor, OwnerKind.IMPLEMENTATION).getDescriptor();
             return new CallableMethod(
                     owner, owner, defaultImplDesc, method, INVOKESPECIAL,
-                    null, null, null, null, null, originalDescriptor.getReturnType(), false
+                    null, null, null, null, null, originalDescriptor.getReturnType(), false, false
             );
         }
 
@@ -770,6 +770,7 @@ public class KotlinTypeMapper {
         Type thisClass;
         KotlinType dispatchReceiverKotlinType;
         boolean isInterfaceMember = false;
+        boolean isDefaultMethodInInterface = false;
 
         if (functionParent instanceof ClassDescriptor) {
             FunctionDescriptor declarationFunctionDescriptor = findAnyDeclaration(functionDescriptor);
@@ -784,6 +785,7 @@ public class KotlinTypeMapper {
 
             baseMethodDescriptor = findBaseDeclaration(functionDescriptor).getOriginal();
             ClassDescriptor ownerForDefault = (ClassDescriptor) baseMethodDescriptor.getContainingDeclaration();
+            isDefaultMethodInInterface = isJvmInterface(ownerForDefault) && CodegenUtilKt.hasJvmDefaultAnnotation(baseMethodDescriptor);
             ownerForDefaultImpl =
                     isJvmInterface(ownerForDefault) && !CodegenUtilKt.hasJvmDefaultAnnotation(baseMethodDescriptor) ?
                     mapDefaultImpls(ownerForDefault) : mapClass(ownerForDefault);
@@ -803,7 +805,14 @@ public class KotlinTypeMapper {
                     FunctionDescriptor originalDescriptor = descriptor.getOriginal();
                     signature = mapSignatureSkipGeneric(originalDescriptor, OwnerKind.DEFAULT_IMPLS);
                     returnKotlinType = originalDescriptor.getReturnType();
-                    owner = mapDefaultImpls(currentOwner);
+                    if (descriptor instanceof AccessorForCallableDescriptor &&
+                        CodegenUtilKt.hasJvmDefaultAnnotation(((AccessorForCallableDescriptor) descriptor).getCalleeDescriptor())) {
+                        owner = mapClass(currentOwner);
+                        isInterfaceMember = true;
+                    }
+                    else {
+                        owner = mapDefaultImpls(currentOwner);
+                    }
                 }
             }
             else {
@@ -893,7 +902,7 @@ public class KotlinTypeMapper {
         return new CallableMethod(
                 owner, ownerForDefaultImpl, defaultImplDesc, signature, invokeOpcode,
                 thisClass, dispatchReceiverKotlinType, receiverParameterType, extensionReceiverKotlinType, calleeType, returnKotlinType,
-                isJvm8Target ? isInterfaceMember : invokeOpcode == INVOKEINTERFACE
+                isJvm8Target ? isInterfaceMember : invokeOpcode == INVOKEINTERFACE, isDefaultMethodInInterface
         );
     }
 
