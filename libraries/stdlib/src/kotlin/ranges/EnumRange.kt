@@ -1,9 +1,11 @@
 package kotlin.ranges
 
 /**
- * A range of values of an enum class type.
+ * A range of values of an `enum class` type. Permits membership testing and iteration.
  *
  * @see rangeTo
+ * @see downTo
+ * @see until
  */
 @SinceKotlin("1.2")
 public class EnumRange<E: Enum<E>>
@@ -28,7 +30,7 @@ public class EnumRange<E: Enum<E>>
     override fun toString(): String = "$first..$last"
 
     companion object {
-        /** An empty range of values of the specified enum class type. */
+        /** An empty range of the specified `enum class` type. */
         public inline fun <reified E: Enum<E>> empty(): EnumRange<E> {
             val enumValues = enumValues<E>()
             if (enumValues.size < 2)
@@ -40,7 +42,7 @@ public class EnumRange<E: Enum<E>>
 }
 
 /**
- * A progression of values of an enum class type.
+ * A progression of values of an `enum class` type.
  */
 @SinceKotlin("1.2")
 public open class EnumProgression<E: Enum<E>>
@@ -90,8 +92,8 @@ public open class EnumProgression<E: Enum<E>>
         /**
          * Creates EnumProgression within the specified bounds of a closed range.
 
-         * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
-         * In order to go backwards the [step] must be negative.
+         * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it,
+         * with the specified [step]. In order to go backwards the [step] must be negative.
          */
         public inline fun <reified E: Enum<E>> fromClosedRange(rangeStart: E, rangeEnd: E, step: Int): EnumProgression<E> =
                 EnumProgression(rangeStart, rangeEnd, enumValues(), step)
@@ -99,8 +101,9 @@ public open class EnumProgression<E: Enum<E>>
 }
 
 /**
- * An iterator over a progression of values of type `Int`.
- * @property step the number by which the value is incremented on each step.
+ * An iterator over a progression of values of an `enum class` type.
+ *
+ * @property step the number by which the ordinal of the next enum value to return is incremented on each step.
  */
 internal class EnumProgressionIterator<E: Enum<E>>(first: E, last: E, enumValues: Array<E>, val step: Int) : Iterator<E> {
     private val finalElement = last
@@ -124,16 +127,17 @@ internal class EnumProgressionIterator<E: Enum<E>>(first: E, last: E, enumValues
 }
 
 /**
- * Creates a range from this enum class value to the specified [that] value.
+ * Creates a range from this `enum class` value to the specified [that] value.
  *
  * This value needs to be smaller than [that] value, otherwise the returned range will be empty.
+ *
  * @sample samples.ranges.Ranges.rangeFromEnum
  */
 @SinceKotlin("1.2")
 public inline operator fun <reified E: Enum<E>> E.rangeTo(that: E): EnumRange<E> = EnumRange(this, that, enumValues())
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this `enum class` value down to the specified [to] value of the same class, with the step -1.
  *
  * The [to] value has to be less than this value.
  */
@@ -143,7 +147,7 @@ public infix inline fun <reified E: Enum<E>> E.downTo(to: E): EnumProgression<E>
 }
 
 /**
- * Returns a progression that goes over the same range in the opposite direction with the same step.
+ * Returns a progression that goes over the same range of `enum class` values in the opposite direction with the same step.
  */
 @SinceKotlin("1.2")
 public inline fun <reified E: Enum<E>> EnumProgression<E>.reversed(): EnumProgression<E> {
@@ -151,7 +155,7 @@ public inline fun <reified E: Enum<E>> EnumProgression<E>.reversed(): EnumProgre
 }
 
 /**
- * Returns a range from this value up to but excluding the specified [to] value.
+ * Returns a range from this `enum class` value up to but excluding the specified [to] value of the same class.
  */
 @SinceKotlin("1.2")
 public inline infix fun <reified E: Enum<E>> E.until(to: E): EnumRange<E> {
@@ -163,7 +167,9 @@ public inline infix fun <reified E: Enum<E>> E.until(to: E): EnumRange<E> {
 }
 
 /**
- * Returns a progression that goes over the same range with the given step.
+ * Returns a progression that goes over the same `enum class` range with the given [step].
+ *
+ * @sample samples.ranges.Ranges.enumRangeStep
  */
 @SinceKotlin("1.2")
 public infix inline fun <reified E: Enum<E>> EnumProgression<E>.step(step: Int): EnumProgression<E> {

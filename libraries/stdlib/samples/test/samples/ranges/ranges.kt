@@ -23,6 +23,39 @@ import kotlin.test.assertTrue
 
 class Ranges {
 
+    enum class Planet {
+        MERCURY, VENUS, EARTH, MARS, JUPITER, SATURN, URANUS, NEPTUNE //, PLUTO <- Sorry, buddy!
+    }
+
+    @Sample
+    fun rangeFromEnum() {
+
+//      enum class Planet {
+//          MERCURY, VENUS, EARTH, MARS, JUPITER, SATURN, URANUS, NEPTUNE
+//      }
+
+        val innerPlanets = Planet.MERCURY..Planet.MARS
+        assertPrints(innerPlanets, "MERCURY..MARS")
+
+        assertTrue(Planet.EARTH in innerPlanets)
+        assertFalse(Planet.JUPITER in innerPlanets)
+        assertTrue(Planet.NEPTUNE !in innerPlanets)
+
+        for (planet in innerPlanets) {
+            // ...
+        }
+    }
+
+    @Sample
+    fun enumRangeStep() {
+
+//      enum class Planet {
+//          MERCURY, VENUS, EARTH, MARS, JUPITER, SATURN, URANUS, NEPTUNE
+//      }
+
+        assertPrints((Planet.MERCURY..Planet.NEPTUNE step 2).toList(), "MERCURY, EARTH, JUPITER, URANUS")
+    }
+
     @Sample
     fun rangeFromComparable() {
         val start = Date.valueOf("2017-01-01")
