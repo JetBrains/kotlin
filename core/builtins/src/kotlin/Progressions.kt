@@ -32,6 +32,7 @@ public open class CharProgression
     ) : Iterable<Char> {
     init {
         if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        else if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must have an inverse")
     }
 
     /**
@@ -86,6 +87,7 @@ public open class IntProgression
     ) : Iterable<Int> {
     init {
         if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        else if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must have an inverse")
     }
 
     /**
@@ -96,7 +98,7 @@ public open class IntProgression
     /**
      * The last element in the progression.
      */
-    public val last: Int = getProgressionLastElement(start.toInt(), endInclusive.toInt(), step).toInt()
+    public val last: Int = getProgressionLastElement(start, endInclusive, step).toInt()
 
     /**
      * The step of the progression.
@@ -140,6 +142,7 @@ public open class LongProgression
     ) : Iterable<Long> {
     init {
         if (step == 0L) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        else if (step == Long.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must have an inverse")
     }
 
     /**
@@ -150,7 +153,7 @@ public open class LongProgression
     /**
      * The last element in the progression.
      */
-    public val last: Long = getProgressionLastElement(start.toLong(), endInclusive.toLong(), step).toLong()
+    public val last: Long = getProgressionLastElement(start, endInclusive, step).toLong()
 
     /**
      * The step of the progression.
