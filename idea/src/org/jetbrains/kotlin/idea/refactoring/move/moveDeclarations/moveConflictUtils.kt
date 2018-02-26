@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.idea.search.not
 import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
@@ -70,6 +71,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.util.isJavaDescriptor
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
@@ -141,27 +143,50 @@ class MoveConflictChecker(
         }
     }
 
-    private fun DeclarationDescriptor.asPredicted(newContainer: DeclarationDescriptor): DeclarationDescriptor? {
-        val originalVisibility = (this as? DeclarationDescriptorWithVisibility)?.visibility ?: return null
-        val visibility = if (originalVisibility == Visibilities.PROTECTED && newContainer is PackageFragmentDescriptor) {
+    private fun DeclarationDescriptor.wrap(
+        newContainer: DeclarationDescriptor? = null,
+        newVisibility: Visibility? = null
+    ): DeclarationDescriptor? {
+        if (newContainer == null && newVisibility == null) return this
+
+        val wrappedDescriptor = this
+        return when (wrappedDescriptor) {
+        // We rely on visibility not depending on more specific type of CallableMemberDescriptor
+            is CallableMemberDescriptor -> object : CallableMemberDescriptor by wrappedDescriptor {
+                override fun getOriginal() = this
+                override fun getContainingDeclaration() = newContainer ?: wrappedDescriptor.containingDeclaration
+                override fun getVisibility(): Visibility = newVisibility ?: wrappedDescriptor.visibility
+                override fun getSource() =
+                    newContainer?.let { SourceElement { DescriptorUtils.getContainingSourceFile(it) } } ?: wrappedDescriptor.source
+            }
+            is ClassDescriptor -> object: ClassDescriptor by wrappedDescriptor {
+                override fun getOriginal() = this
+                override fun getContainingDeclaration() = newContainer ?: wrappedDescriptor.containingDeclaration
+                override fun getVisibility(): Visibility = newVisibility ?: wrappedDescriptor.visibility
+                override fun getSource() =
+                    newContainer?.let { SourceElement { DescriptorUtils.getContainingSourceFile(it) } } ?: wrappedDescriptor.source
+            }
+            else -> null
+        }
+    }
+
+    private fun DeclarationDescriptor.asPredicted(newContainer: DeclarationDescriptor, actualVisibility: Visibility?): DeclarationDescriptor? {
+        val visibility = actualVisibility ?: (this as? DeclarationDescriptorWithVisibility)?.visibility ?: return null
+        val adjustedVisibility = if (visibility == Visibilities.PROTECTED && newContainer is PackageFragmentDescriptor) {
             Visibilities.PUBLIC
         } else {
-            originalVisibility
+            visibility
         }
-        return when (this) {
-        // We rely on visibility not depending on more specific type of CallableMemberDescriptor
-            is CallableMemberDescriptor -> object : CallableMemberDescriptor by this {
-                override fun getOriginal() = this
-                override fun getContainingDeclaration() = newContainer
-                override fun getVisibility(): Visibility = visibility
-                override fun getSource() = SourceElement { DescriptorUtils.getContainingSourceFile(newContainer) }
+        return wrap(newContainer, adjustedVisibility)
+    }
+
+    private fun DeclarationDescriptor.visibilityAsViewedFromJava(): Visibility? {
+        if (this !is DeclarationDescriptorWithVisibility) return null
+        return when (visibility) {
+            Visibilities.PRIVATE -> {
+                if (this is ClassDescriptor && DescriptorUtils.isTopLevelDeclaration(this)) JavaVisibilities.PACKAGE_VISIBILITY else null
             }
-            is ClassDescriptor -> object: ClassDescriptor by this {
-                override fun getOriginal() = this
-                override fun getContainingDeclaration() = newContainer
-                override fun getVisibility(): Visibility = visibility
-                override fun getSource() = SourceElement { DescriptorUtils.getContainingSourceFile(newContainer) }
-            }
+            Visibilities.PROTECTED -> JavaVisibilities.PROTECTED_AND_PACKAGE
             else -> null
         }
     }
@@ -351,9 +376,11 @@ class MoveConflictChecker(
                                             is PsiMember -> container.getJavaMemberDescriptor()
                                             else -> null
                                         } ?: continue
-            val descriptorToCheck = referencedDescriptor.asPredicted(targetContainer) ?: continue
+            val actualVisibility = if (referencingDescriptor.isJavaDescriptor) referencedDescriptor.visibilityAsViewedFromJava() else null
+            val originalDescriptorToCheck = referencedDescriptor.wrap(newVisibility = actualVisibility) ?: referencedDescriptor
+            val newDescriptorToCheck = referencedDescriptor.asPredicted(targetContainer, actualVisibility) ?: continue
 
-            if (referencedDescriptor.isVisibleIn(referencingDescriptor) && !descriptorToCheck.isVisibleIn(referencingDescriptor)) {
+            if (originalDescriptorToCheck.isVisibleIn(referencingDescriptor) && !newDescriptorToCheck.isVisibleIn(referencingDescriptor)) {
                 val message = "${render(container)} uses ${render(referencedElement)} which will be inaccessible after move"
                 conflicts.putValue(element, message.capitalize())
             }
