@@ -331,6 +331,18 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/multiplatform/expectClassInherited.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("expectedEnumClass.kt")
+            public void testExpectedEnumClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/multiplatform/expectedEnumClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expectedSealedClass.kt")
+            public void testExpectedSealedClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/multiplatform/expectedSealedClass.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/ir/irText/declarations/parameters")

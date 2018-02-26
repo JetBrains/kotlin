@@ -282,9 +282,11 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
             IrDeclarationOrigin.DEFINED,
             enumEntryDescriptor
         ).buildWithScope { irEnumEntry ->
-            irEnumEntry.initializerExpression =
-                    createBodyGenerator(irEnumEntry.symbol)
-                        .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor)
+            if (!enumEntryDescriptor.isExpect) {
+                irEnumEntry.initializerExpression =
+                        createBodyGenerator(irEnumEntry.symbol)
+                            .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor)
+            }
 
             if (ktEnumEntry.declarations.isNotEmpty()) {
                 irEnumEntry.correspondingClass = generateClass(ktEnumEntry)
