@@ -10,7 +10,7 @@ import com.intellij.psi.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
 
-object MapPsiToAsmDesc {
+internal object MapPsiToAsmDesc {
     fun typeDesc(type: PsiType): String = when (type) {
         PsiType.VOID -> primitive(VOID_TYPE)
 

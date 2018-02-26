@@ -87,7 +87,7 @@ internal class ModuleResolutionFacadeImpl(
         return projectFacade.resolverForElement(element).componentProvider.tryGetService(serviceClass)
     }
 
-    fun <T : Any> getFrontendService(ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
+    private fun <T : Any> getFrontendService(ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
         return projectFacade.resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
     }
 
