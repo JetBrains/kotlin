@@ -18,9 +18,6 @@ open class KotlinVariableInplaceRenameHandler : VariableInplaceRenameHandler() {
         fun isInplaceRenameAvailable(element: PsiElement): Boolean {
             when (element) {
                 is KtTypeParameter -> return true
-                is KtProperty -> {
-                    if (element.isLocal) return true
-                }
                 is KtDestructuringDeclarationEntry -> return true
                 is KtParameter -> {
                     val parent = element.parent

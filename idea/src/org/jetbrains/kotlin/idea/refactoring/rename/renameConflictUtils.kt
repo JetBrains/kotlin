@@ -105,7 +105,7 @@ internal fun checkRedeclarations(
     fun MemberScope.findSiblingsByName(): List<DeclarationDescriptor> {
         val descriptorKindFilter = when (descriptor) {
             is ClassifierDescriptor -> DescriptorKindFilter.CLASSIFIERS
-            is PropertyDescriptor -> DescriptorKindFilter.VARIABLES
+            is VariableDescriptor -> DescriptorKindFilter.VARIABLES
             is FunctionDescriptor -> DescriptorKindFilter.FUNCTIONS
             else -> return emptyList()
         }
@@ -150,7 +150,7 @@ internal fun checkRedeclarations(
                     if (it.name != newName) return@mapNotNull null
                     val isAccepted = when (descriptor) {
                         is ClassDescriptor -> it is KtClassOrObject
-                        is PropertyDescriptor -> it is KtProperty
+                        is VariableDescriptor -> it is KtProperty
                         is FunctionDescriptor -> it is KtNamedFunction
                         else -> false
                     }

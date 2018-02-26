@@ -11,15 +11,18 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
+import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.refactoring.rename.KotlinMemberInplaceRenameHandler
 import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinImplicitLambdaParameter
 import org.jetbrains.kotlin.idea.refactoring.rename.findElementForRename
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -28,7 +31,7 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/refactoring/rename/inplace/"
 
     fun testLocalVal() {
-        doTestInplaceRename("y")
+        doTestMemberInplaceRename("y")
     }
 
     fun testForLoop() {
@@ -80,7 +83,7 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     }
 
     fun testLocalVarShadowingMemberProperty() {
-        doTestInplaceRename("name1")
+        doTestMemberInplaceRename("name1")
     }
 
     fun testNoReformat() {
@@ -144,7 +147,7 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     }
 
     fun testQuotedLocalVar() {
-        doTestInplaceRename("x")
+        doTestMemberInplaceRename("x")
     }
 
     fun testQuotedParameter() {
@@ -153,6 +156,18 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
 
     fun testEraseCompanionName() {
         doTestMemberInplaceRename("")
+    }
+
+    fun testLocalVarRedeclaration() {
+        doTestMemberInplaceRename("localValB")
+    }
+
+    fun testLocalFunRedeclaration() {
+        doTestMemberInplaceRename("localFunB")
+    }
+
+    fun testLocalClassRedeclaration() {
+        doTestMemberInplaceRename("LocalClassB")
     }
 
     private fun doTestImplicitLambdaParameter(newName: String) {
@@ -225,9 +240,14 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
             assertFalse(handler.isRenaming(dataContext), "In-place rename is allowed for " + element)
         }
         else {
-            assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for " + element)
-            CodeInsightTestUtil.doInlineRename(handler, newName, LightPlatformCodeInsightTestCase.getEditor(), element)
-            checkResultByFile(getTestName(false) + ".kt.after")
+            try {
+                assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for " + element)
+                CodeInsightTestUtil.doInlineRename(handler, newName, LightPlatformCodeInsightTestCase.getEditor(), element)
+                checkResultByFile(getTestName(false) + ".kt.after")
+            } catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
+                val expectedMessage = InTextDirectivesUtils.findStringWithPrefixes(myFile.text, "// SHOULD_FAIL_WITH: ")
+                TestCase.assertEquals(expectedMessage, e.messages.joinToString())
+            }
         }
     }
 }
