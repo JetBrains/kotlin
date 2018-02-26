@@ -19,6 +19,11 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import sun.misc.Unsafe
+import kotlin.reflect.KClass
+import kotlin.reflect.KVisibility
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.jvmName
 
 internal class ExternalModulesDFG(val allTypes: List<DataFlowIR.Type.Declared>,
                                   val publicTypes: Map<Long, DataFlowIR.Type.Public>,
@@ -34,8 +39,6 @@ private val byteArrayDataOffset = theUnsafe.arrayBaseOffset(ByteArray::class.jav
 private val intArrayDataOffset  = theUnsafe.arrayBaseOffset(IntArray::class.java).toLong()
 private val charArrayDataOffset = theUnsafe.arrayBaseOffset(CharArray::class.java).toLong()
 private val stringValueOffset   = theUnsafe.objectFieldOffset(String::class.java.getDeclaredField("value"))
-
-private val VERSION = 2
 
 internal object DFGSerializer {
 
@@ -687,6 +690,35 @@ internal object DFGSerializer {
         }
     }
 
+    private fun mergeHashes(hashes: List<Long>): Long {
+        var result = 0L
+        for (x in hashes)
+            result = result * 997 + x
+        return result
+    }
+
+    private fun mergeHashes(vararg hashes: Long) = mergeHashes(hashes.asList())
+
+    private val String.hash: Long get() {
+        return mergeHashes((0 until length).map { this[it].toLong() })
+    }
+
+    private fun computeDataLayoutHash(kClass: KClass<*>): Long {
+        if (kClass.javaPrimitiveType != null || kClass == String::class || kClass.java.isEnum) {
+            return kClass.jvmName.hash
+        }
+        if (kClass.java.isArray)
+            return mergeHashes("array".hash, computeDataLayoutHash(kClass.java.componentType.kotlin))
+        val propertiesHashes = kClass.primaryConstructor!!.parameters
+                .map {
+                    val propHash = computeDataLayoutHash(it.type.classifier!! as KClass<*>)
+                    if (it.type.isMarkedNullable)
+                        mergeHashes("nullable".hash, propHash)
+                    else propHash
+                }
+        return mergeHashes(propertiesHashes)
+    }
+
     private val DEBUG = 0
 
     private inline fun DEBUG_OUTPUT(severity: Int, block: () -> Unit) {
@@ -828,7 +860,7 @@ internal object DFGSerializer {
                 .toTypedArray()
         val module = Module(SymbolTable(types, functionSymbols), functions)
         val writer = ArraySlice(ByteArray(1024))
-        writer.writeInt(VERSION)
+        writer.writeLong(computeDataLayoutHash(Module::class))
         module.write(writer)
         writer.trim()
         context.dataFlowGraph = writer.array
@@ -853,9 +885,10 @@ internal object DFGSerializer {
             if (libraryDataFlowGraph != null) {
                 val module = DataFlowIR.Module(library.moduleDescriptor(specifics))
                 val reader = ArraySlice(libraryDataFlowGraph)
-                val version = reader.readInt()
-                if (version != VERSION)
-                    error("Expected version $VERSION but actual is $version")
+                val dataLayoutHash = reader.readLong()
+                val expectedHash = computeDataLayoutHash(Module::class)
+                if (dataLayoutHash != expectedHash)
+                    error("Expected data layout hash: $expectedHash but actual is: $dataLayoutHash")
                 val moduleDataFlowGraph = Module(reader)
 
                 val symbolTable = moduleDataFlowGraph.symbolTable
