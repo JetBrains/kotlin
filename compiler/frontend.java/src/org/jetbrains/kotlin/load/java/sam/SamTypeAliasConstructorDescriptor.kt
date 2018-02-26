@@ -17,17 +17,22 @@
 package org.jetbrains.kotlin.load.java.sam
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithNavigationSubstitute
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 
-interface SamTypeAliasConstructorDescriptor : SamConstructorDescriptor {
+interface SamTypeAliasConstructorDescriptor : SamConstructorDescriptor, DeclarationDescriptorWithNavigationSubstitute {
     val typeAliasDescriptor: TypeAliasDescriptor
+
+    override val substitute: DeclarationDescriptor
+        get() = typeAliasDescriptor
 }
 
 class SamTypeAliasConstructorDescriptorImpl(
-        override val typeAliasDescriptor: TypeAliasDescriptor,
-        private val samInterfaceConstructorDescriptor: SamConstructorDescriptor
+    override val typeAliasDescriptor: TypeAliasDescriptor,
+    private val samInterfaceConstructorDescriptor: SamConstructorDescriptor
 ) : SimpleFunctionDescriptorImpl(
         typeAliasDescriptor.containingDeclaration,
         null,

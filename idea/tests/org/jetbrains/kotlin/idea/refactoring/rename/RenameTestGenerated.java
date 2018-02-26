@@ -1285,6 +1285,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("samConstructorTypeAlias/samConstructorTypeAlias.test")
+    public void testSamConstructorTypeAlias_SamConstructorTypeAlias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/samConstructorTypeAlias/samConstructorTypeAlias.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("secondaryCnstructorParameterRedeclaration/secondaryConstructorParameterRedeclaration.test")
     public void testSecondaryCnstructorParameterRedeclaration_SecondaryConstructorParameterRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/secondaryCnstructorParameterRedeclaration/secondaryConstructorParameterRedeclaration.test");
