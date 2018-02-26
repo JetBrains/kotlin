@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -77,7 +76,7 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
     private fun KotlinType.promoteIntegerTypeToIntIfRequired() =
         when {
             !isPrimitiveNumberType() -> throw AssertionError("Primitive number type expected: $this")
-            isByte() || isChar() || isShort() -> builtIns.intType
+            isByte() || isShort() -> builtIns.intType
             else -> this
         }
 

@@ -71,7 +71,8 @@ fun KotlinType.isDouble() = KotlinBuiltIns.isDouble(this)
 
 fun KotlinType.isPrimitiveNumberOrNullableType(): Boolean =
     KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(this) &&
-            !KotlinBuiltIns.isBooleanOrNullableBoolean(this)
+            !KotlinBuiltIns.isBooleanOrNullableBoolean(this) &&
+            !KotlinBuiltIns.isCharOrNullableChar(this)
 
 fun KotlinType.isTypeParameter(): Boolean = TypeUtils.isTypeParameter(this)
 
