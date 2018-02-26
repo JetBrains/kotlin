@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.script.experimental
+package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import kotlinx.coroutines.experimental.runBlocking

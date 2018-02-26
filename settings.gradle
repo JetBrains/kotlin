@@ -153,6 +153,8 @@ include ":kotlin-build-common",
         ":kotlin-scripting-common",
         ":kotlin-scripting-jvm",
         ":kotlin-scripting-jvm-host",
+        ":kotlin-scripting-compiler-plugin",
+        ":kotlin-scripting-idea-plugin",
         ":examples:scripting-jvm-simple-script",
         ":examples:scripting-jvm-maven-deps",
         ":pill:generate-all-tests",
@@ -251,6 +253,8 @@ project(':kotlin-annotations-android').projectDir = "$rootDir/libraries/tools/ko
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
 project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
+project(':kotlin-scripting-compiler-plugin').projectDir = "$rootDir/plugins/scripting/scripting-cli" as File
+project(':kotlin-scripting-idea-plugin').projectDir = "$rootDir/plugins/scripting/scripting-idea" as File
 project(':examples:scripting-jvm-simple-script').projectDir = "$rootDir/libraries/examples/scripting/jvm-simple-script" as File
 project(':examples:scripting-jvm-maven-deps').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps" as File
 project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate-all-tests" as File

@@ -54,7 +54,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     ): ExitCode {
         val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-        val pluginLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration)
+        val pluginLoadResult = PluginCliParser.loadPluginsSafe(arguments.pluginClasspaths, arguments.pluginOptions, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         for (arg in arguments.freeArgs) {

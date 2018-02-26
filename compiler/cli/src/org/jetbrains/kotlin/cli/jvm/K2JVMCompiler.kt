@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
@@ -45,22 +44,14 @@ import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.StandardScriptDefinition
-import org.jetbrains.kotlin.script.experimental.KotlinScriptDefinitionAdapterFromNewAPI
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
-import java.io.IOException
 import java.lang.management.ManagementFactory
-import java.net.URLClassLoader
-import java.util.*
 import java.util.concurrent.TimeUnit
-import java.util.jar.JarFile
-import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun doExecute(
@@ -77,7 +68,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             if (it != OK) return it
         }
 
-        val pluginLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration)
+        val pluginLoadResult = loadPlugins(paths, arguments, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         if (!arguments.script && arguments.buildFile == null) {
@@ -153,7 +144,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, moduleChunk.modules, buildFile)
 
-                val environment = createCoreEnvironment(rootDisposable, configuration, arguments, messageCollector)
+                val environment = createCoreEnvironment(rootDisposable, configuration, messageCollector)
                         ?: return COMPILATION_ERROR
 
                 registerJavacIfNeeded(environment, arguments).let {
@@ -167,7 +158,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
-                val environment = createCoreEnvironment(rootDisposable, configuration, arguments, messageCollector)
+                val environment = createCoreEnvironment(rootDisposable, configuration, messageCollector)
                         ?: return COMPILATION_ERROR
 
                 val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(environment.project)
@@ -191,7 +182,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     }
                 }
 
-                val environment = createCoreEnvironment(rootDisposable, configuration, arguments, messageCollector)
+                val environment = createCoreEnvironment(rootDisposable, configuration, messageCollector)
                         ?: return COMPILATION_ERROR
 
                 registerJavacIfNeeded(environment, arguments).let {
@@ -229,6 +220,39 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
     }
 
+    private fun loadPlugins(paths: KotlinPaths?, arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration): ExitCode {
+        val pluginClasspaths = arguments.pluginClasspaths?.toMutableList() ?: ArrayList()
+        val pluginOptions = arguments.pluginOptions?.toMutableList() ?: ArrayList()
+        val isEmbeddable =
+            try {
+                this::class.java.classLoader.loadClass("com.intellij.mock.MockProject") == null
+            } catch (_: ClassNotFoundException) {
+                true
+            } catch (_: NoClassDefFoundError) {
+                true
+            }
+
+        if (!isEmbeddable && pluginClasspaths.none { File(it).name == PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR }) {
+            // if scripting plugin is not enabled explicitly (probably from another path) try to enable it implicitly
+            val libPath = paths?.libPath ?: File(".")
+            val pluginJar = File(libPath, PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR)
+            val scriptingJar = File(libPath, PathUtil.KOTLIN_SCRIPTING_COMMON_JAR)
+            val scriptingJvmJar = File(libPath, PathUtil.KOTLIN_SCRIPTING_JVM_JAR)
+            if (pluginJar.exists() && scriptingJar.exists() && scriptingJvmJar.exists()) {
+                pluginClasspaths.addAll(listOf(pluginJar.canonicalPath, scriptingJar.canonicalPath, scriptingJvmJar.canonicalPath))
+                if (arguments.scriptTemplates?.isNotEmpty() == true) {
+                    pluginOptions.add("-P")
+                    pluginOptions.add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates!!.joinToString(",")}")
+                }
+                if (arguments.scriptResolverEnvironment?.isNotEmpty() == true) {
+                    pluginOptions.add("-P")
+                    pluginOptions.add("plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment!!.joinToString(",")}")
+                }
+            }
+        }
+        return PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, configuration)
+    }
+
     private fun registerJavacIfNeeded(
         environment: KotlinCoreEnvironment,
         arguments: K2JVMCompilerArguments
@@ -257,17 +281,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     private fun createCoreEnvironment(
         rootDisposable: Disposable,
         configuration: CompilerConfiguration,
-        arguments: K2JVMCompilerArguments,
         messageCollector: MessageCollector
     ): KotlinCoreEnvironment? {
-        val scriptResolverEnv = createScriptResolverEnvironment(arguments, messageCollector) ?: return null
-        val templatesFromClasspath = discoverScriptTemplatesInClasspath(configuration, messageCollector)
-        configureScriptDefinitions(
-            arguments.scriptTemplates.orEmpty().asIterable() + templatesFromClasspath,
-            configuration,
-            messageCollector,
-            scriptResolverEnv
-        )
         if (messageCollector.hasErrors()) return null
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -278,55 +293,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             initStartNanos = 0L
         }
 
-        if (!messageCollector.hasErrors()) {
-            scriptResolverEnv.put("projectRoot", environment.project.run { basePath ?: baseDir?.canonicalPath }?.let(::File))
-            return environment
-        }
-
-        return null
-    }
-
-    private fun discoverScriptTemplatesInClasspath(configuration: CompilerConfiguration, messageCollector: MessageCollector): Iterable<String> {
-        val templates = arrayListOf<String>()
-        val templatesPath = "META-INF/kotlin/script/templates/"
-        for (dep in configuration.jvmClasspathRoots) {
-            when {
-                dep.isFile ->
-                    try {
-                        with(JarFile(dep)) {
-                            for (template in entries()) {
-                                if (!template.isDirectory && template.name.startsWith(templatesPath)) {
-                                    val templateClassName = template.name.removePrefix(templatesPath)
-                                    templates.add(templateClassName)
-                                    messageCollector.report(
-                                        CompilerMessageSeverity.LOGGING,
-                                        "Configure scripting: Added template $templateClassName from $dep"
-                                    )
-                                }
-                            }
-                        }
-                    } catch (e: IOException) {
-                        messageCollector.report(
-                            CompilerMessageSeverity.WARNING,
-                            "Configure scripting: unable to process classpath entry $dep: $e"
-                        )
-                    }
-                dep.isDirectory -> {
-                    val dir = File(dep, templatesPath)
-                    if (dir.isDirectory) {
-                        dir.listFiles().forEach {
-                            templates.add(it.name)
-                            messageCollector.report(
-                                CompilerMessageSeverity.LOGGING,
-                                "Configure scripting: Added template ${it.name} from $dep"
-                            )
-                        }
-                    }
-                }
-                else -> messageCollector.report(CompilerMessageSeverity.WARNING, "Configure scripting: Unknown classpath entry $dep")
-            }
-        }
-        return templates
+        return if (messageCollector.hasErrors()) null else environment
     }
 
     override fun setupPlatformSpecificArgumentsAndServices(
@@ -505,73 +472,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
 
             return OK
-        }
-
-        fun configureScriptDefinitions(
-            scriptTemplates: List<String>,
-            configuration: CompilerConfiguration,
-            messageCollector: MessageCollector,
-            scriptResolverEnv: HashMap<String, Any?>
-        ) {
-            val classpath = configuration.jvmClasspathRoots
-            // TODO: consider using escaping to allow kotlin escaped names in class names
-            if (scriptTemplates.isNotEmpty()) {
-                val classloader =
-                    URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), Thread.currentThread().contextClassLoader)
-                var hasErrors = false
-                for (template in scriptTemplates) {
-                    try {
-                        val cls = classloader.loadClass(template)
-                        val def =
-                            if (cls.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null) {
-                                KotlinScriptDefinitionAdapterFromNewAPI(ScriptDefinitionFromAnnotatedBaseClass(cls.kotlin))
-                            } else {
-                                KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, scriptResolverEnv)
-                            }
-                        configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
-                        messageCollector.report(
-                            INFO,
-                            "Added script definition $template to configuration: name = ${def.name}, " +
-                                    "resolver = ${def.dependencyResolver.javaClass.name}"
-                        )
-                    } catch (ex: ClassNotFoundException) {
-                        messageCollector.report(ERROR, "Cannot find script definition template class $template")
-                        hasErrors = true
-                    } catch (ex: Exception) {
-                        messageCollector.report(ERROR, "Error processing script definition template $template: ${ex.message}")
-                        hasErrors = true
-                        break
-                    }
-                }
-                if (hasErrors) {
-                    messageCollector.report(LOGGING, "(Classpath used for templates loading: $classpath)")
-                    return
-                }
-            }
-            configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
-        }
-
-        fun createScriptResolverEnvironment(arguments: K2JVMCompilerArguments, messageCollector: MessageCollector): HashMap<String, Any?>? {
-            val scriptResolverEnv = hashMapOf<String, Any?>()
-            // parses key/value pairs in the form <key>=<value>, where
-            //   <key> - is a single word (\w+ pattern)
-            //   <value> - optionally quoted string with allowed escaped chars (only double-quote and backslash chars are supported)
-            // TODO: implement generic unescaping
-            val envParseRe = """(\w+)=(?:"([^"\\]*(\\.[^"\\]*)*)"|([^\s]*))""".toRegex()
-            val unescapeRe = """\\(["\\])""".toRegex()
-            if (arguments.scriptResolverEnvironment != null) {
-                for (envParam in arguments.scriptResolverEnvironment!!) {
-                    val match = envParseRe.matchEntire(envParam)
-                    if (match == null || match.groupValues.size < 4 || match.groupValues[1].isBlank()) {
-                        messageCollector.report(ERROR, "Unable to parse script-resolver-environment argument $envParam")
-                        return null
-                    }
-                    scriptResolverEnv.put(
-                        match.groupValues[1],
-                        match.groupValues.drop(2).firstOrNull { it.isNotEmpty() }?.let { unescapeRe.replace(it, "\$1") })
-                }
-            }
-            return scriptResolverEnv
         }
     }
 }
