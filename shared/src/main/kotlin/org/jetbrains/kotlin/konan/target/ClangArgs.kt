@@ -89,6 +89,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-fno-asynchronous-unwind-tables",
                         "-fno-pie",
                         "-fno-pic",
+                        "-fshort-enums",
                         "-nostdinc",
                         // TODO: make it a libGcc property? 
                         // We need to get rid of wasm sysroot first.
