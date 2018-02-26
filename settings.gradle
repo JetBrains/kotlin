@@ -150,6 +150,7 @@ include ":kotlin-build-common",
         ":kotlin-annotations-jvm",
         ":kotlin-annotations-android",
         ":pill:generate-all-tests",
+        ":include:kotlin-compiler",
 
         // plugin markers:
         ':kotlin-gradle-plugin:plugin-marker',
