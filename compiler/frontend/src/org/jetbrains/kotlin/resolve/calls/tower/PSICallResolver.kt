@@ -213,6 +213,10 @@ class PSICallResolver(
         return SingleOverloadResolutionResult(resolvedCall)
     }
 
+    val something by lazy {
+        123
+    }
+
     private fun <D : CallableDescriptor> transformManyCandidatesAndRecordTrace(
         diagnostic: ManyCandidatesCallDiagnostic,
         tracingStrategy: TracingStrategy,

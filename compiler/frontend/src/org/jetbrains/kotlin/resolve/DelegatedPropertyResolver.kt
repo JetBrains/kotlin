@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
+import org.jetbrains.kotlin.resolve.calls.model.CallResolutionResult
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.createCommonConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -55,7 +58,8 @@ class DelegatedPropertyResolver(
     private val fakeCallResolver: FakeCallResolver,
     private val expressionTypingServices: ExpressionTypingServices,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val dataFlowValueFactory: DataFlowValueFactory
+    private val dataFlowValueFactory: DataFlowValueFactory,
+    private val callComponents: KotlinCallComponents
 ) {
 
     fun resolvePropertyDelegate(
@@ -545,6 +549,42 @@ class DelegatedPropertyResolver(
             )
         }
 
+        fun resolveWithExtension(
+            delegateExpression: KtExpression,
+            variableDescriptor: VariableDescriptorWithAccessors,
+            scopeForDelegate: LexicalScope,
+            trace: BindingTrace,
+            dataFlowInfo: DataFlowInfo
+        ): KotlinType? {
+            if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return null
+
+            val traceToResolveConventionMethods =
+                TemporaryBindingTrace.create(trace, "Trace to resolve delegated property convention methods")
+
+            val delegateTypeInfo = expressionTypingServices.getTypeInfo(
+                scopeForDelegate, delegateExpression, NO_EXPECTED_TYPE, dataFlowInfo,
+                traceToResolveConventionMethods, false, delegateExpression, ContextDependency.DEPENDENT
+            )
+
+            val contextForConventionMethods = ExpressionTypingContext.newContext(
+                traceToResolveConventionMethods, scopeForDelegate, delegateTypeInfo.dataFlowInfo,
+                NO_EXPECTED_TYPE, ContextDependency.DEPENDENT, StatementFilter.NONE,
+                languageVersionSettings, dataFlowValueFactory, InferenceExtension.none
+            )
+
+            val delegateType = delegateTypeInfo.type ?: return null
+            val delegateDataFlow = delegateTypeInfo.dataFlowInfo
+
+            getGetSetValueMethod(
+                variableDescriptor, delegateExpression, delegateType,
+                traceToResolveConventionMethods, scopeForDelegate, delegateDataFlow,
+                isGet = true, isComplete = true
+            )
+
+
+            return null
+        }
+
         fun resolveViaNewInference(
             delegateExpression: KtExpression,
             variableDescriptor: VariableDescriptorWithAccessors,
@@ -609,6 +649,30 @@ class DelegatedPropertyResolver(
             val pretendReturnType = call.getResolvedCall(traceToResolveConventionMethods.bindingContext)?.resultingDescriptor?.returnType
             val expectedType = pretendReturnType?.takeUnless { it.contains { it.constructor is TypeVariableTypeConstructor } }
             return expectedType?.let { AnonymousTypeSubstitutor.safeSubstitute(it.unwrap()) }
+        }
+    }
+
+    class DelegatesInferenceSession(val callComponents: KotlinCallComponents) : InferenceExtension {
+        private val calls = arrayListOf<CallResolutionResult>()
+
+        override fun shouldRunCompletion(): Boolean {
+            return false
+        }
+
+        override fun addPartiallyResolvedCall(callResolutionResult: CallResolutionResult) {
+            calls.add(callResolutionResult)
+        }
+
+        fun unite() {
+            val kotlinCalls = calls.mapNotNull { it.resultCallAtom?.atom }
+            val commonSystem = createCommonConstraintSystem(callComponents, kotlinCalls)
+
+        }
+    }
+
+    class DelegatesInferenceExtension : InferenceExtension {
+        override fun shouldRunCompletion(): Boolean {
+            return false
         }
     }
 }

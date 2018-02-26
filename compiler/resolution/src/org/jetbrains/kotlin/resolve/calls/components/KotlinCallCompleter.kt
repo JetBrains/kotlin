@@ -41,6 +41,10 @@ class KotlinCallCompleter(
         if (candidate == null || candidate.csBuilder.hasContradiction) {
             val candidateForCompletion = candidate ?: factory.createErrorCandidate().forceResolution()
             candidateForCompletion.prepareForCompletion(expectedType, resolutionCallbacks)
+            if (!resolutionCallbacks.inferenceExtension.shouldRunCompletion()) {
+                return candidate.asCallResolutionResult(CallResolutionResult.Type.ERROR, diagnosticHolder)
+            }
+
             runCompletion(
                 candidateForCompletion.resolvedCall,
                 ConstraintSystemCompletionMode.FULL,
@@ -53,6 +57,11 @@ class KotlinCallCompleter(
         }
 
         val completionType = candidate.prepareForCompletion(expectedType, resolutionCallbacks)
+
+        if (!resolutionCallbacks.inferenceExtension.shouldRunCompletion()) {
+            return candidate.asCallResolutionResult(CallResolutionResult.Type.PARTIAL, diagnosticHolder)
+        }
+
         val constraintSystem = candidate.getSystem()
         runCompletion(candidate.resolvedCall, completionType, diagnosticHolder, constraintSystem, resolutionCallbacks)
 
@@ -160,4 +169,9 @@ interface InferenceExtension {
     companion object {
         val none = object : InferenceExtension {}
     }
+
+    fun shouldRunCompletion(): Boolean = true
+
+    fun addPartiallyResolvedCall(callResolutionResult: CallResolutionResult) {}
 }
+
