@@ -28,28 +28,23 @@ mkdir -p $DIR/build && cd $DIR/build
 export ZEPHYR_GCC_VARIANT=gccarmemb
 export GCCARMEMB_TOOLCHAIN_PATH=$GCC_ARM
 
-# This is a kind of forward declaration for `program.o`. See below.
-touch program.o
-
 [ -f CMakeCache.txt ] || cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DBOARD=$BOARD .. || exit 1
 
+# We need generated headers to be consumed by `cinterop`,
+# so we preconfigure the project with `make zephyr`.
 make zephyr
 
 . $DIR/c_interop/platforms/$BOARD.sh
 
-# We need generated headers to be consumed by `cinterop`, 
-# so we preconfigure the project with `make zephyr`.
-# But `program.o` should exist at that stage to be detected by the configuration tools.
-# So we create an empty `program.o` above, and then override it with the compiler result below.
-# TODO: do something with this mess.
-
 rm -f program.o
+
+mkdir -p $DIR/build/kotlin
 
 konanc $DIR/src/main.kt \
         -target zephyr_$BOARD \
         -r $DIR/c_interop/platforms/build \
         -l $BOARD \
-        -opt -g -o program || exit 1
+        -opt -g -o $DIR/build/kotlin/program || exit 1
 
 make || exit 1
 
