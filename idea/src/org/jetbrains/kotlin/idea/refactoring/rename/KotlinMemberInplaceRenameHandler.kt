@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.lang.Language
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringActionHandler
@@ -24,6 +25,7 @@ import com.intellij.refactoring.rename.inplace.MemberInplaceRenamer
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer
 import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
 class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
@@ -34,6 +36,11 @@ class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
         currentName: String,
         oldName: String
     ) : MemberInplaceRenamer(elementToRename, substitutedElement, editor, currentName, oldName) {
+        override fun isIdentifier(newName: String?, language: Language?): Boolean {
+            if (newName == "" && (variable as? KtObjectDeclaration)?.isCompanion() == true) return true
+            return super.isIdentifier(newName, language)
+        }
+
         override fun acceptReference(reference: PsiReference): Boolean {
             val refElement = reference.element
             val textRange = reference.rangeInElement

@@ -151,6 +151,10 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestMemberInplaceRename("x")
     }
 
+    fun testEraseCompanionName() {
+        doTestMemberInplaceRename("")
+    }
+
     private fun doTestImplicitLambdaParameter(newName: String) {
         configureByFile(getTestName(false) + ".kt")
 
