@@ -72,9 +72,9 @@ private fun getCounterpart(expression: KtCallExpression): String? {
     val callee = expression.calleeExpression as? KtNameReferenceExpression ?: return null
     val calleeName = callee.getReferencedName()
     val counterpartName = counterpartNames[calleeName]
-    val lambdaArgument = expression.lambdaArguments.singleOrNull()
-    if (counterpartName != null && lambdaArgument != null) {
-        if (lambdaArgument.getLambdaExpression().valueParameters.isNotEmpty()) {
+    val lambdaExpression = expression.lambdaArguments.singleOrNull()?.getLambdaExpression()
+    if (counterpartName != null && lambdaExpression != null) {
+        if (lambdaExpression.valueParameters.isNotEmpty()) {
             return null
         }
         val bindingContext = callee.analyze(BodyResolveMode.PARTIAL)
@@ -151,7 +151,7 @@ abstract class ConvertScopeFunctionFix(private val counterpartName: String) : Lo
         val bindingContext = callExpression.analyze()
 
         val lambda = callExpression.lambdaArguments.firstOrNull() ?: return
-        val functionLiteral = lambda.getLambdaExpression().functionLiteral
+        val functionLiteral = lambda.getLambdaExpression()?.functionLiteral ?: return
         val lambdaDescriptor = bindingContext[FUNCTION, functionLiteral] ?: return
 
         val replacements = ReplacementCollection()
@@ -186,13 +186,13 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
     ) {
         val project = lambda.project
         val factory = KtPsiFactory(project)
-        val functionLiteral = lambda.getLambdaExpression().functionLiteral
+        val functionLiteral = lambda.getLambdaExpression()?.functionLiteral
         val lambdaExtensionReceiver = lambdaDescriptor.extensionReceiverParameter
         val lambdaDispatchReceiver = lambdaDescriptor.dispatchReceiverParameter
 
         var parameterName = "it"
         val scopes = mutableSetOf<LexicalScope>()
-        if (needUniqueNameForParameter(lambda, scopes)) {
+        if (functionLiteral != null && needUniqueNameForParameter(lambda, scopes)) {
             val parameterType = lambdaExtensionReceiver?.type ?: lambdaDispatchReceiver?.type
             parameterName = findUniqueParameterName(parameterType, scopes)
             replacements.createParameter = {

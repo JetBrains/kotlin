@@ -164,7 +164,7 @@ private fun UsageReplacementStrategy.specialUsageProcessing(usage: KtSimpleNameE
                 val grandParent = usageParent.parent
                 val specifySignature = SpecifyExplicitLambdaSignatureIntention()
                 for (lambdaArgument in lambdaArguments) {
-                    val lambdaExpression = lambdaArgument.getLambdaExpression()
+                    val lambdaExpression = lambdaArgument.getLambdaExpression() ?: continue
                     val functionDescriptor =
                             lambdaExpression.functionLiteral.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
                     if (functionDescriptor.valueParameters.isNotEmpty()) {

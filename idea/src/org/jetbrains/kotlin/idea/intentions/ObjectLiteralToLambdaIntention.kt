@@ -145,7 +145,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
 
         val callee = replaced.getCalleeExpressionIfAny()!! as KtNameReferenceExpression
         val callExpression = callee.parent as KtCallExpression
-        val functionLiteral = callExpression.lambdaArguments.single().getLambdaExpression()
+        val functionLiteral = callExpression.lambdaArguments.single().getLambdaExpression()!!
 
         val returnLabel = callee.getReferencedNameAsName()
         returnSaver.restore(functionLiteral, returnLabel)

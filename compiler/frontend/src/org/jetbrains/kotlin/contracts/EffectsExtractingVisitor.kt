@@ -173,7 +173,7 @@ class EffectsExtractingVisitor(
         valueArgumentsByIndex?.mapTo(arguments) {
             val valueArgument = (it as? ExpressionValueArgument)?.valueArgument ?: return null
             when (valueArgument) {
-                is KtLambdaArgument -> ESLambda(valueArgument.getLambdaExpression())
+                is KtLambdaArgument -> valueArgument.getLambdaExpression()?.let { ESLambda(it) } ?: return null
                 else -> extractOrGetCached(valueArgument.getArgumentExpression() ?: return null)
             }
         } ?: return null
