@@ -372,6 +372,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("sortModifiers/inspectionData/inspections.test")
+        public void testSortModifiers_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/sortModifiers/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("spelling/inspectionData/inspections.test")
         public void testSpelling_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/spelling/inspectionData/inspections.test");
