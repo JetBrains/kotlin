@@ -195,6 +195,7 @@ internal class IrSerializer(val context: Context,
 
         call.descriptor.valueParameters.forEach {
             val actual = call.getValueArgument(it.index)
+            val argOrNull = KonanIr.NullableIrExpression.newBuilder()
             if (actual == null) {
                 // Am I observing an IR generation regression?
                 // I see a lack of arg for an empty vararg,
@@ -202,9 +203,9 @@ internal class IrSerializer(val context: Context,
                 assert(it.varargElementType != null ||
                     it.declaresDefaultValue())
             } else {
-                val argProto = serializeExpression(actual)
-                proto.addValueArgument(argProto)
+                argOrNull.expression = serializeExpression(actual)
             }
+            proto.addValueArgument(argOrNull)
         }
         return proto.build()
     }
@@ -809,8 +810,11 @@ internal class IrDeserializer(val context: Context,
 
     private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression, proto: KonanIr.MemberAccessCommon) {
 
-        proto.valueArgumentList.mapIndexed { i, expr ->
-            access.putValueArgument(i, deserializeExpression(expr))
+        proto.valueArgumentList.mapIndexed { i, arg ->
+            val exprOrNull = if (arg.hasExpression())
+                deserializeExpression(arg.expression)
+            else null
+            access.putValueArgument(i, exprOrNull)
         }
 
         if (proto.hasDispatchReceiver()) {

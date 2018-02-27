@@ -94,7 +94,7 @@ message MemberAccessCommon {
     required TypeMap type_map = 3;
     optional IrExpression dispatch_receiver = 5;
     optional IrExpression extension_receiver = 6;
-    repeated IrExpression value_argument = 7;
+    repeated NullableIrExpression value_argument = 8;
 }
 
 message IrCall {
@@ -304,6 +304,10 @@ message IrExpression {
     required IrOperation operation = 1;
     required KotlinType type = 2;
     required Coordinates coordinates = 3;
+}
+
+message NullableIrExpression {
+    optional IrExpression expression = 1;
 }
 
 
