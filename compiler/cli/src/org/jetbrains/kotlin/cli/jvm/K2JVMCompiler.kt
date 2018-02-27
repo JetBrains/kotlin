@@ -170,7 +170,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(environment.project)
                 val scriptFile = File(sourcePath)
-                if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)) {
+                if (scriptFile.isDirectory || scriptDefinitionProvider != null && !scriptDefinitionProvider.isScript(scriptFile.name)) {
                     val extensionHint =
                         if (configuration.get(JVMConfigurationKeys.SCRIPT_DEFINITIONS) == listOf(StandardScriptDefinition)) " (.kts)"
                         else ""

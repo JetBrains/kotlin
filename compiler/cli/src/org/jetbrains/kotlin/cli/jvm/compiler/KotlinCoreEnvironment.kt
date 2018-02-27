@@ -202,7 +202,7 @@ class KotlinCoreEnvironment private constructor(
             scriptDefinitionProvider.setScriptDefinitions(
                     configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
 
-            ScriptDependenciesProvider.getInstance(project).let { importsProvider ->
+            ScriptDependenciesProvider.getInstance(project)?.let { importsProvider ->
                 configuration.addJvmClasspathRoots(
                         sourceFiles.mapNotNull(importsProvider::getScriptDependencies)
                                 .flatMap { it.classpath }
