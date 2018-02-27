@@ -514,13 +514,20 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
 
             return when {
-                targetsMatch || resolvedCallsMatch -> AnalyzeQualifiedElementResult.ShortenNow
+                targetsMatch || resolvedCallsMatch ->
+                    AnalyzeQualifiedElementResult.ShortenNow
 
-            // it makes no sense to insert import when there is a conflict with function, property etc
-                targetsWhenShort.any { it !is ClassifierDescriptorWithTypeParameters && it !is PackageViewDescriptor } -> AnalyzeQualifiedElementResult.Skip
+                // Function doesn't conflict with property
+                targets.all { it is FunctionDescriptor } && targetsWhenShort.all { it is PropertyDescriptor } ->
+                    AnalyzeQualifiedElementResult.ImportDescriptors(targets)
+
+                // In other cases it makes no sense to insert import when there is a conflict with function, property etc
+                targetsWhenShort.any { it !is ClassifierDescriptorWithTypeParameters && it !is PackageViewDescriptor } ->
+                    AnalyzeQualifiedElementResult.Skip
 
 
-                else -> AnalyzeQualifiedElementResult.ImportDescriptors(targets)
+                else ->
+                    AnalyzeQualifiedElementResult.ImportDescriptors(targets)
             }
         }
 

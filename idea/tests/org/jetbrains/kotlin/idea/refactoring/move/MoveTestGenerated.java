@@ -613,6 +613,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/functionAndPropertyWithSameName/functionAndPropertyWithSameName.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_functionAndPropertyWithSameName_FunctionAndPropertyWithSameName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/functionAndPropertyWithSameName/functionAndPropertyWithSameName.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/internalReferences/internalReferences.test")
     public void testKotlin_moveTopLevelDeclarations_misc_internalReferences_InternalReferences() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/internalReferences/internalReferences.test");
