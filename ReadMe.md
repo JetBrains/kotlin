@@ -101,6 +101,18 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 * Run the "IDEA" run configuration in the project
 * a child IntelliJ IDEA with the Kotlin plugin will then startup
 
+### Including into composite build
+
+To include kotlin compiler into [composite build](https://docs.gradle.org/current/userguide/composite_builds.html) you need to define `dependencySubstitution` for `kotlin-compiler` module in `settings.gradle`
+
+```
+includeBuild('/path/to/kotlin') {
+    dependencySubstitution {
+        substitute module('org.jetbrains.kotlin:kotlin-compiler') with project(':include:kotlin-compiler')
+    }
+}
+```
+
 # Contributing
 
 We love contributions! There's [lots to do on Kotlin](https://youtrack.jetbrains.com/issues/KT) and on the
