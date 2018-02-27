@@ -33,6 +33,8 @@ artifacts {
     archives javadocJar
 }
 
+GradlePluginPortalPublishingKt.publishToGradlePluginPortal(project)
+
 pluginBundle {
     plugins {
         kotlinAllopenPlugin {
