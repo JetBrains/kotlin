@@ -2246,6 +2246,12 @@ task serialized_vararg(type: LinkKonanTest) {
     goldValue = "17\n19\n23\n29\n31\nsize: 5\n"
 }
 
+task serialized_default_args(type: LinkKonanTest) {
+    source = "serialization/prop.kt"
+    lib = "serialization/default_args.kt"
+    goldValue = "SomeDataClass(first=17, second=666, third=23)\n"
+}
+
 task testing_annotations(type: RunStandaloneKonanTest) {
     source = "testing/annotations.kt"
     flags = ['-tr']
