@@ -4152,6 +4152,18 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("annotationOverrideFinal.kt")
+        public void testAnnotationOverrideFinal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/sortModifiers/annotationOverrideFinal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideFinal.kt")
+        public void testOverrideFinal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/sortModifiers/overrideFinal.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/sortModifiers/simple.kt");
