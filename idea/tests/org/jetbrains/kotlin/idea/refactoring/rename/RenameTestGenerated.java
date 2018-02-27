@@ -421,6 +421,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("overloadsWithDifferentOrigins/overloadsWithDifferentOrigins.test")
+    public void testOverloadsWithDifferentOrigins_OverloadsWithDifferentOrigins() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/overloadsWithDifferentOrigins/overloadsWithDifferentOrigins.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("overloadsWithSameOrigin/overloadsWithSameOrigin.test")
+    public void testOverloadsWithSameOrigin_OverloadsWithSameOrigin() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/overloadsWithSameOrigin/overloadsWithSameOrigin.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("paramererAsReceiverWithNewNameAsSelector/parameterAsReceiverWithNewNameAsSelector.test")
     public void testParamererAsReceiverWithNewNameAsSelector_ParameterAsReceiverWithNewNameAsSelector() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/paramererAsReceiverWithNewNameAsSelector/parameterAsReceiverWithNewNameAsSelector.test");
