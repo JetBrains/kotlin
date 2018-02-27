@@ -19,27 +19,27 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.util.Printer
 
 class CallableMethod(
-        override val owner: Type,
-        private val defaultImplOwner: Type?,
-        private val defaultMethodDesc: String,
-        private val signature: JvmMethodSignature,
-        private val invokeOpcode: Int,
-        override val dispatchReceiverType: Type?,
-        override val dispatchReceiverKotlinType: KotlinType?,
-        override val extensionReceiverType: Type?,
-        override val extensionReceiverKotlinType: KotlinType?,
-        override val generateCalleeType: Type?,
-        override val returnKotlinType: KotlinType?,
-        private val isInterfaceMethod: Boolean = Opcodes.INVOKEINTERFACE == invokeOpcode
+    override val owner: Type,
+    private val defaultImplOwner: Type?,
+    private val defaultMethodDesc: String,
+    private val signature: JvmMethodSignature,
+    private val invokeOpcode: Int,
+    override val dispatchReceiverType: Type?,
+    override val dispatchReceiverKotlinType: KotlinType?,
+    override val extensionReceiverType: Type?,
+    override val extensionReceiverKotlinType: KotlinType?,
+    override val generateCalleeType: Type?,
+    override val returnKotlinType: KotlinType?,
+    private val isInterfaceMethod: Boolean = Opcodes.INVOKEINTERFACE == invokeOpcode
 ) : Callable {
     fun getValueParameters(): List<JvmMethodParameterSignature> =
-            signature.valueParameters
+        signature.valueParameters
 
     override val valueParameterTypes: List<Type>
         get() = signature.valueParameters.filter { it.kind == JvmMethodParameterKind.VALUE }.map { it.asmType }
 
     fun getAsmMethod(): Method =
-            signature.asmMethod
+        signature.asmMethod
 
     override val parameterTypes: Array<Type>
         get() = getAsmMethod().argumentTypes
@@ -47,11 +47,11 @@ class CallableMethod(
 
     override fun genInvokeInstruction(v: InstructionAdapter) {
         v.visitMethodInsn(
-                invokeOpcode,
-                owner.internalName,
-                getAsmMethod().name,
-                getAsmMethod().descriptor,
-                isInterfaceMethod
+            invokeOpcode,
+            owner.internalName,
+            getAsmMethod().name,
+            getAsmMethod().descriptor,
+            isInterfaceMethod
         )
     }
 
@@ -64,10 +64,11 @@ class CallableMethod(
 
         if ("<init>" == method.name) {
             v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.internalName, "<init>", defaultMethodDesc, false)
-        }
-        else {
-            v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.internalName,
-                              method.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, defaultMethodDesc, false)
+        } else {
+            v.visitMethodInsn(
+                INVOKESTATIC, defaultImplOwner.internalName,
+                method.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, defaultMethodDesc, false
+            )
 
             StackValue.coerce(Type.getReturnType(defaultMethodDesc), Type.getReturnType(signature.asmMethod.descriptor), v)
         }
@@ -77,8 +78,8 @@ class CallableMethod(
         get() = signature.returnType
 
     override fun isStaticCall(): Boolean =
-            invokeOpcode == INVOKESTATIC
+        invokeOpcode == INVOKESTATIC
 
     override fun toString(): String =
-            "${Printer.OPCODES[invokeOpcode]} $owner.$signature"
+        "${Printer.OPCODES[invokeOpcode]} $owner.$signature"
 }
