@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.cli
+@file: JvmName("SimpleRunner")
+
+package org.jetbrains.kotlin.cli.js
 
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
@@ -44,13 +46,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import java.io.File
 
-
-private val EXTENSIONS_DIR = "extensions/"
-private val COMMON_CONFIG_FILE = EXTENSIONS_DIR + "common.xml"
-private val JS_CONFIG_FILE = EXTENSIONS_DIR + "kotlin2js.xml"
-
-val JS_CONFIG_FILES = listOf(COMMON_CONFIG_FILE, JS_CONFIG_FILE)
-
 fun main(args: Array<String>) {
     fun Array<String>.getParam(name: String, default: String): String {
         val prefix = "-$name="
@@ -65,7 +60,7 @@ fun main(args: Array<String>) {
     val sources = args.filter { !it.startsWith("-") && it.endsWith(".kt") }
     configuration.put(JSConfigurationKeys.LIBRARIES, libraries.split(":").filter(String::isNotEmpty))
 
-    val env = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, JS_CONFIG_FILES)
+    val env = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, listOf("extensions/compiler.xml"))
     val ktFiles = getKtFiles(env.project, sources) {}
     env.addSourceFiles(ktFiles)
 
@@ -132,9 +127,9 @@ fun reportSyntacticErrors(files: List<KtFile>): Boolean {
 }
 
 fun getKtFiles(
-        project: Project,
-        sourceRoots: Collection<String>,
-        reportError: (String) -> Unit
+    project: Project,
+    sourceRoots: Collection<String>,
+    reportError: (String) -> Unit
 ): List<KtFile> {
     val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
