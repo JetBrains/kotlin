@@ -36,7 +36,6 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
         classpath(kotlinDep("gradle-plugin", bootstrapKotlinVersion))
         classpath("net.sf.proguard:proguard-gradle:5.3.3")
     }
@@ -243,7 +242,6 @@ val gradlePluginProjects = listOf(
 
 apply {
     from("libraries/commonConfiguration.gradle")
-    from("libraries/configureGradleTools.gradle")
 }
 
 apply {

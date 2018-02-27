@@ -56,6 +56,7 @@ repositories {
         maven(url = it)
     }
     maven(url = "https://repo.gradle.org/gradle/libs-releases-local") // for native-platform
+    maven(url = "https://plugins.gradle.org/m2/") // for Gradle plugin publishing plugin
     jcenter()
 }
 
@@ -69,6 +70,7 @@ dependencies {
     // Shadow plugin is used in many projects of the main build. Once it's no longer used in buildSrc, please move this dependency to the root project
     compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
     compile("org.ow2.asm:asm-all:6.0_BETA")
+    compile("com.gradle.publish:plugin-publish-plugin:0.9.10")
 }
 
 samWithReceiver {

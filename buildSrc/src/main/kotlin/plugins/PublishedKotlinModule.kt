@@ -30,20 +30,18 @@ open class PublishedKotlinModule : Plugin<Project> {
 
             plugins.apply("maven")
 
-            if (!project.hasProperty("prebuiltJar")) {
-                plugins.apply("signing")
+            plugins.apply("signing")
 
-                val signingRequired = project.findProperty("signingRequired")?.toString()?.toBooleanOrNull()
-                                      ?: project.property("isSonatypeRelease") as Boolean
+            val signingRequired = project.findProperty("signingRequired")?.toString()?.toBooleanOrNull()
+                                  ?: project.property("isSonatypeRelease") as Boolean
 
-                configure<SigningExtension> {
-                    isRequired = signingRequired
-                    sign(configurations["archives"])
-                }
+            configure<SigningExtension> {
+                isRequired = signingRequired
+                sign(configurations["archives"])
+            }
 
-                (tasks.getByName("signArchives") as Sign).apply {
-                    enabled = signingRequired
-                }
+            (tasks.getByName("signArchives") as Sign).apply {
+                enabled = signingRequired
             }
 
             fun MavenResolver.configurePom() {
