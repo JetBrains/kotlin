@@ -36,8 +36,7 @@ public class InlineUtil {
     public static boolean isInlineParameterExceptNullability(@NotNull ParameterDescriptor valueParameterOrReceiver) {
         return !(valueParameterOrReceiver instanceof ValueParameterDescriptor
                  && ((ValueParameterDescriptor) valueParameterOrReceiver).isNoinline()) &&
-               (FunctionTypesKt.isFunctionType(valueParameterOrReceiver.getOriginal().getType()) ||
-                FunctionTypesKt.isSuspendFunctionType(valueParameterOrReceiver.getOriginal().getType()));
+               FunctionTypesKt.isBuiltinFunctionalType(valueParameterOrReceiver.getOriginal().getType());
     }
 
     public static boolean isInlineParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {

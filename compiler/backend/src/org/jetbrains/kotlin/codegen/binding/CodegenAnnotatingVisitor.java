@@ -70,6 +70,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     private final Stack<ClassDescriptor> classStack = new Stack<>();
     private final Stack<String> nameStack = new Stack<>();
+    private final Stack<FunctionDescriptor> functionsStack = new Stack<>();
     private final Set<ClassDescriptor> uninitializedClasses = new HashSet<>();
 
     private final BindingTrace bindingTrace;
@@ -317,47 +318,14 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             );
             closure.setSuspend(true);
             closure.setSuspendLambda();
-            if (capturesCrossinlineSuspendLambda(functionLiteral)) {
-                bindingTrace.record(
-                        CodegenBinding.CAPTURES_CROSSINLINE_SUSPEND_LAMBDA,
-                        functionDescriptor,
-                        true
-                );
-            }
         }
+        functionsStack.push(functionDescriptor);
 
         super.visitLambdaExpression(lambdaExpression);
+
+        functionsStack.pop();
         nameStack.pop();
         classStack.pop();
-    }
-
-    // If inner lambda captures crossinline suspend lambda, it is unsafe to generate state machine for it.
-    private boolean capturesCrossinlineSuspendLambda(@NotNull PsiElement psiNode) {
-        PsiElement[] children = psiNode.getChildren();
-        boolean res = false;
-        for (PsiElement child : children) {
-            if (child instanceof KtCallElement) {
-                KtExpression callee = ((KtCallElement) child).getCalleeExpression();
-                Call call = bindingContext.get(CALL, callee);
-                ResolvedCall<?> resolvedCall = bindingContext.get(RESOLVED_CALL, call);
-                if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-                    VariableAsFunctionResolvedCall variableAsFunction = (VariableAsFunctionResolvedCall) resolvedCall;
-                    VariableDescriptor variableDescriptor = variableAsFunction.getVariableCall().getResultingDescriptor();
-                    CallableDescriptor callableDescriptor = ((ResolvedCall) variableAsFunction).getResultingDescriptor();
-                    if (variableDescriptor instanceof ValueParameterDescriptor &&
-                        ((ValueParameterDescriptor) variableDescriptor).isCrossinline() &&
-                        callableDescriptor instanceof FunctionDescriptor &&
-                        ((FunctionDescriptor) callableDescriptor).isSuspend()) {
-                        FunctionDescriptor enclosingDescriptor =
-                                bindingContext.get(ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.getCall());
-                        assert(enclosingDescriptor != null);
-                        return true;
-                    }
-                }
-            }
-            res = res || capturesCrossinlineSuspendLambda(child);
-        }
-        return res;
     }
 
     @Override
@@ -573,17 +541,11 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                     recordClassForFunction(function, functionDescriptor, name, functionDescriptor);
             MutableClosure closure = recordClosure(classDescriptor, name);
             closure.setSuspend(true);
-
-            if (capturesCrossinlineSuspendLambda(function)) {
-                bindingTrace.record(
-                        CodegenBinding.CAPTURES_CROSSINLINE_SUSPEND_LAMBDA,
-                        functionDescriptor,
-                        true
-                );
-            }
+            functionsStack.push(functionDescriptor);
 
             super.visitNamedFunction(function);
 
+            functionsStack.pop();
             if (nameForClassOrPackageMember != null) {
                 nameStack.pop();
             }
@@ -593,7 +555,9 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         if (nameForClassOrPackageMember != null) {
             nameStack.push(nameForClassOrPackageMember);
+            functionsStack.push(functionDescriptor);
             super.visitNamedFunction(function);
+            functionsStack.pop();
             nameStack.pop();
         }
         else {
@@ -602,8 +566,10 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             recordClosure(classDescriptor, name);
 
             classStack.push(classDescriptor);
+            functionsStack.push(functionDescriptor);
             nameStack.push(name);
             super.visitNamedFunction(function);
+            functionsStack.pop();
             nameStack.pop();
             classStack.pop();
         }
@@ -631,6 +597,47 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     public void visitCallExpression(@NotNull KtCallExpression expression) {
         super.visitCallExpression(expression);
         checkSamCall(expression);
+        checkCrossinlineSuspendCall(expression);
+    }
+
+    private void checkCrossinlineSuspendCall(@NotNull KtCallExpression expression) {
+        KtExpression callee = expression.getCalleeExpression();
+        Call call = bindingContext.get(CALL, callee);
+        ResolvedCall<?> resolvedCall = bindingContext.get(RESOLVED_CALL, call);
+
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            VariableAsFunctionResolvedCall variableAsFunction = (VariableAsFunctionResolvedCall) resolvedCall;
+            VariableDescriptor variableDescriptor = variableAsFunction.getVariableCall().getResultingDescriptor();
+            CallableDescriptor callableDescriptor = ((ResolvedCall) variableAsFunction).getResultingDescriptor();
+
+            if (variableDescriptor instanceof ValueParameterDescriptor &&
+                ((ValueParameterDescriptor) variableDescriptor).isCrossinline() &&
+                callableDescriptor instanceof FunctionDescriptor &&
+                ((FunctionDescriptor) callableDescriptor).isSuspend()) {
+                FunctionDescriptor enclosingDescriptor =
+                        bindingContext.get(ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.getCall());
+                if (enclosingDescriptor == null) return;
+
+                DeclarationDescriptor functionWithCrossinlineParameter = variableDescriptor.getContainingDeclaration();
+                for (int i = functionsStack.size() - 1; i >= 0; i--) {
+                    if (functionsStack.get(i).isSuspend()) {
+                        Boolean alreadyPutValue = bindingTrace.getBindingContext()
+                                .get(CodegenBinding.CAPTURES_CROSSINLINE_SUSPEND_LAMBDA, functionsStack.get(i));
+                        if (alreadyPutValue != null && alreadyPutValue) {
+                            return;
+                        }
+                        bindingTrace.record(
+                                CodegenBinding.CAPTURES_CROSSINLINE_SUSPEND_LAMBDA,
+                                functionsStack.get(i),
+                                true
+                        );
+                    }
+                    if (functionsStack.get(i) == functionWithCrossinlineParameter) {
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     private void checkSamCall(@NotNull KtCallElement expression) {

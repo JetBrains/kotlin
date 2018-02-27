@@ -15,6 +15,7 @@ suspend inline fun test2(crossinline c: suspend () -> Unit) {
 // FILE: box.kt
 
 import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(object: Continuation<Unit> {
@@ -30,7 +31,10 @@ fun builder(c: suspend () -> Unit) {
     })
 }
 
-suspend fun calculate() = "OK"
+suspend fun calculate() = suspendCoroutineOrReturn<String> {
+    it.resume("OK")
+    COROUTINE_SUSPENDED
+}
 
 fun box() : String {
     var res = "FAIL 1"

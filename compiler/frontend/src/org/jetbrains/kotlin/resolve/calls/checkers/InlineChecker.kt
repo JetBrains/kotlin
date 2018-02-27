@@ -17,13 +17,12 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.contracts.parsing.isFromContractDsl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.contracts.parsing.isFromContractDsl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -239,8 +238,7 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
 
         val containingDeclaration = descriptor.getContainingDeclaration()
         val isInvoke = descriptor.getName() == OperatorNameConventions.INVOKE &&
-                containingDeclaration is ClassDescriptor &&
-                (containingDeclaration.defaultType.isFunctionType || containingDeclaration.defaultType.isSuspendFunctionType)
+                containingDeclaration is ClassDescriptor && containingDeclaration.defaultType.isBuiltinFunctionalType
 
         return isInvoke || InlineUtil.isInline(descriptor)
     }

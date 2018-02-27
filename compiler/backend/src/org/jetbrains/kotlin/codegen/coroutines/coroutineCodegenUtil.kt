@@ -177,19 +177,14 @@ private fun NewResolvedCallImpl<VariableDescriptor>.asDummyOldResolvedCall(bindi
 }
 
 fun ResolvedCall<*>.isSuspendNoInlineCall(codegen: ExpressionCodegen): Boolean {
-    var isCrossinline = false
-    var isInlineLambda = false
-    if (this is VariableAsFunctionResolvedCall) {
-        variableCall.resultingDescriptor.safeAs<ValueParameterDescriptor>()?.let {
-            isCrossinline = it.isCrossinline
-            isInlineLambda = !isCrossinline && !it.isNoinline && codegen.context.functionDescriptor.isInline
-        }
-    }
-    return resultingDescriptor.safeAs<FunctionDescriptor>()
-        ?.let {
-            val inline = it.isInline || isCrossinline || isInlineLambda
-            it.isSuspend && (!inline || it.isBuiltInSuspendCoroutineOrReturnInJvm() || it.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm())
-        } == true
+    val isInlineLambda = this.safeAs<VariableAsFunctionResolvedCall>()
+        ?.variableCall?.resultingDescriptor?.safeAs<ValueParameterDescriptor>()
+        ?.let { it.isCrossinline || (!it.isNoinline && codegen.context.functionDescriptor.isInline) } == true
+
+    val functionDescriptor = resultingDescriptor as? FunctionDescriptor ?: return false
+    if (!functionDescriptor.isSuspend) return false
+    if (functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() || functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm()) return true
+    return !(functionDescriptor.isInline || isInlineLambda)
 }
 
 fun CallableDescriptor.isSuspendFunctionNotSuspensionView(): Boolean {

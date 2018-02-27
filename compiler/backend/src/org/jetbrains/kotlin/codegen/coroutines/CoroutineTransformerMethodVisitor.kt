@@ -67,20 +67,24 @@ class CoroutineTransformerMethodVisitor(
     override fun performTransformations(methodNode: MethodNode) {
         removeFakeContinuationConstructorCall(methodNode)
 
+        replaceFakeContinuationsWithRealOnes(
+            methodNode,
+            if (isForNamedFunction) getLastParameterIndex(methodNode.desc, methodNode.access) else 0
+        )
+
+        FixStackMethodTransformer().transform(containingClassInternalName, methodNode)
+        RedundantLocalsEliminationMethodTransformer().transform(containingClassInternalName, methodNode)
+        updateMaxStack(methodNode)
+
         val suspensionPoints = collectSuspensionPoints(methodNode)
 
         // First instruction in the method node may change in case of named function
         val actualCoroutineStart = methodNode.instructions.first
 
-        FixStackMethodTransformer().transform(containingClassInternalName, methodNode)
-
         if (isForNamedFunction) {
             ReturnUnitMethodTransformer.transform(containingClassInternalName, methodNode)
 
             if (allSuspensionPointsAreTailCalls(containingClassInternalName, methodNode, suspensionPoints)) {
-                continuationIndex = getLastParameterIndex(methodNode.desc, methodNode.access)
-                replaceFakeContinuationsWithRealOnes(methodNode, continuationIndex)
-
                 dropSuspensionMarkers(methodNode, suspensionPoints)
                 return
             }
@@ -100,8 +104,6 @@ class CoroutineTransformerMethodVisitor(
 
         // Actual max stack might be increased during the previous phases
         updateMaxStack(methodNode)
-
-        replaceFakeContinuationsWithRealOnes(methodNode, continuationIndex)
 
         // Remove unreachable suspension points
         // If we don't do this, then relevant frames will not be analyzed, that is unexpected from point of view of next steps (e.g. variable spilling)
@@ -820,7 +822,7 @@ private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode):
 private val SAFE_OPCODES =
     ((Opcodes.DUP..Opcodes.DUP2_X2) + Opcodes.NOP + Opcodes.POP + Opcodes.POP2 + (Opcodes.IFEQ..Opcodes.GOTO)).toSet()
 
-internal fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, continuationIndex: Int) {
+private fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, continuationIndex: Int) {
     val fakeContinuations = methodNode.instructions.asSequence().filter(::isFakeContinuationMarker).toList()
     for (fakeContinuation in fakeContinuations) {
         methodNode.instructions.removeAll(listOf(fakeContinuation.previous.previous, fakeContinuation.previous))

@@ -25,5 +25,8 @@ fun box() : String {
     return res
 }
 
+// When we generate code of suspend function returning unit call
+// we surround it with return unit markers.
+// While denerating state machine, we remove them.
 // 0 ICONST_2
 // 0 ICONST_3
