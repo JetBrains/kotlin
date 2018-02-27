@@ -294,15 +294,3 @@ fun KtCallExpression.isArrayOfMethod(): Boolean {
     return (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
            ARRAY_OF_METHODS.contains(descriptor.name)
 }
-
-fun <T : KtValueArgument> List<T>.findArgumentWithGivenBlock(
-    block: KtBlockExpression
-): T? = firstOrNull {
-    val argumentExpression = it.getArgumentExpression()
-    val lambda = when (argumentExpression) {
-        is KtLambdaExpression -> argumentExpression
-        is KtLabeledExpression -> argumentExpression.baseExpression as? KtLambdaExpression
-        else -> null
-    }
-    lambda?.bodyExpression === block
-}

@@ -390,6 +390,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("multipleBlocks.kt")
+        public void testMultipleBlocks() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addLabeledReturnInLambda/multipleBlocks.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multipleHighOrderFun.kt")
         public void testMultipleHighOrderFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addLabeledReturnInLambda/multipleHighOrderFun.kt");
@@ -13302,6 +13308,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("labeledLambda.kt")
         public void testLabeledLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeLabeledReturnInLambda/labeledLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleBlocks.kt")
+        public void testMultipleBlocks() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeLabeledReturnInLambda/multipleBlocks.kt");
             doTest(fileName);
         }
 

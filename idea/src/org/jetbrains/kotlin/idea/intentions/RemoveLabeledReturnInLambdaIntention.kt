@@ -19,8 +19,11 @@ class RemoveLabeledReturnInLambdaIntention : SelfTargetingIntention<KtReturnExpr
         val labelName = element.getLabelName() ?: return false
         val block = element.getStrictParentOfType<KtBlockExpression>() ?: return false
         if (block.statements.lastOrNull() != element) return false
-        val callExpression = block.getStrictParentOfType<KtCallExpression>() ?: return false
-        val lambdaArgument = callExpression.lambdaArguments.findArgumentWithGivenBlock(block) ?: return false
+        val lambdaExpression = block.getStrictParentOfType<KtLambdaExpression>() ?: return false
+        val callExpression = lambdaExpression.getStrictParentOfType<KtCallExpression>() ?: return false
+        val lambdaArgument = callExpression.lambdaArguments.find {
+            it.getArgumentExpression().unpackFunctionLiteral(allowParentheses = false) === lambdaExpression
+        } ?: return false
         val callName = (lambdaArgument.getArgumentExpression() as? KtLabeledExpression)?.getLabelName()
                 ?: callExpression.getCallNameExpression()?.text ?: return false
         if (labelName != callName) return false

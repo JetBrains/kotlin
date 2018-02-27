@@ -13,35 +13,36 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
-class AddLabeledReturnInLambdaIntention : SelfTargetingRangeIntention<KtLambdaExpression>(
-    KtLambdaExpression::class.java,
+class AddLabeledReturnInLambdaIntention : SelfTargetingRangeIntention<KtBlockExpression>(
+    KtBlockExpression::class.java,
     "Add labeled return to last expression in a lambda"
 ), LowPriorityAction {
-    override fun applicabilityRange(element: KtLambdaExpression): TextRange? {
+    override fun applicabilityRange(element: KtBlockExpression): TextRange? {
         if (!isApplicableTo(element)) return null
         val labelName = createLabelName(element) ?: return null
         text = "Add return@$labelName"
-        return element.bodyExpression?.statements?.last()?.textRange
+        return element.statements.lastOrNull()?.textRange
     }
 
-    override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
+    override fun applyTo(element: KtBlockExpression, editor: Editor?) {
         if (!isApplicableTo(element)) return
         val labelName = createLabelName(element) ?: return
-        val lastStatement = element.bodyExpression?.statements?.last() ?: return
+        val lastStatement = element.statements.lastOrNull() ?: return
         val newExpression = KtPsiFactory(element.project).createExpressionByPattern("return@$labelName $0", lastStatement)
         lastStatement.replace(newExpression)
     }
 
-    private fun isApplicableTo(element: KtLambdaExpression): Boolean {
-        val block = element.bodyExpression ?: return false
-        val lastStatement = block.statements.last()
-        return lastStatement !is KtReturnExpression && lastStatement.isUsedAsExpression(lastStatement.analyze())
+    private fun isApplicableTo(block: KtBlockExpression): Boolean {
+        val lastStatement = block.statements.lastOrNull()
+        return lastStatement !is KtReturnExpression && lastStatement?.isUsedAsExpression(lastStatement.analyze()) == true
     }
 
-    private fun createLabelName(element: KtLambdaExpression): String? {
-        val block = element.bodyExpression ?: return null
-        val callExpression = element.getStrictParentOfType<KtCallExpression>() ?: return null
-        val valueArgument = callExpression.valueArguments.findArgumentWithGivenBlock(block) ?: return null
+    private fun createLabelName(block: KtBlockExpression): String? {
+        val lambdaExpression = block.getStrictParentOfType<KtLambdaExpression>() ?: return null
+        val callExpression = lambdaExpression.getStrictParentOfType<KtCallExpression>() ?: return null
+        val valueArgument = callExpression.valueArguments.find {
+            it.getArgumentExpression()?.unpackFunctionLiteral(allowParentheses = false) === lambdaExpression
+        } ?: return null
         val lambdaLabelName = (valueArgument.getArgumentExpression() as? KtLabeledExpression)?.getLabelName()
         return lambdaLabelName ?: callExpression.getCallNameExpression()?.text
     }
