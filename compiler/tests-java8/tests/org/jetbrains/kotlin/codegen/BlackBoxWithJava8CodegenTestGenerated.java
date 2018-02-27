@@ -395,6 +395,18 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
                 doTest(fileName);
             }
 
+            @TestMetadata("inline.kt")
+            public void testInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/inline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineProperty.kt")
+            public void testInlineProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/inlineProperty.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt11969.kt")
             public void testKt11969() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/kt11969.kt");

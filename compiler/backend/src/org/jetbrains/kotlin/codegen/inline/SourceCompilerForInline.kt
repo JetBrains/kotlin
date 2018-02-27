@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.isCallableMemberWithJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Label
@@ -445,7 +447,9 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 }
                 is ClassDescriptor -> {
                     val kind =
-                        if (DescriptorUtils.isInterface(descriptor) && innerDescriptor !is ClassDescriptor)
+                        if (DescriptorUtils.isInterface(descriptor) &&
+                            innerDescriptor !is ClassDescriptor && !innerDescriptor.isCallableMemberWithJvmDefaultAnnotation()
+                        )
                             OwnerKind.DEFAULT_IMPLS
                         else OwnerKind.IMPLEMENTATION
 
