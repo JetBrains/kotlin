@@ -2,6 +2,8 @@ package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.kotlin.dsl.extra
 import shadow.org.jdom2.input.SAXBuilder
 import shadow.org.jdom2.*
 import shadow.org.jdom2.output.Format
@@ -10,70 +12,54 @@ import java.io.File
 
 class JpsCompatiblePlugin : Plugin<Project> {
     companion object {
+        private const val JPS_LIBRARY_PATH = "jpsLibraryPath"
+
         private fun mapper(module: String, vararg configurations: String): DependencyMapper {
             return DependencyMapper("org.jetbrains.kotlin", module, *configurations) { MappedDependency(PDependency.Library(module)) }
         }
 
-        private val dependencyMappers = listOf(
-            mapper("protobuf-relocated", "default"),
-            mapper("kotlin-test-junit", "distJar", "runtimeElements"),
-            mapper("kotlin-script-runtime", "distJar", "runtimeElements"),
-            mapper("kotlin-reflect", "distJar", "runtimeElements"),
-            mapper("kotlin-test-jvm", "distJar", "runtimeElements"),
-            DependencyMapper("org.jetbrains.kotlin", "kotlin-stdlib", "distJar", "runtimeElements") {
-                MappedDependency(
-                    PDependency.Library("kotlin-stdlib"),
-                    listOf(PDependency.Library("annotations-13.0"))
-                )
-            },
-            DependencyMapper("org.jetbrains.kotlin", "kotlin-reflect-api", "runtimeElements") {
-                MappedDependency(PDependency.Library("kotlin-reflect"))
-            },
-            DependencyMapper("org.jetbrains.kotlin", "kotlin-compiler-embeddable", "runtimeJar") { null },
-            DependencyMapper("org.jetbrains.kotlin", "kotlin-stdlib-js", "distJar") { null },
-            DependencyMapper("org.jetbrains.kotlin", "kotlin-compiler", "runtimeJar") { null },
-            DependencyMapper("org.jetbrains.kotlin", "compiler", "runtimeElements") { null }
-        )
+        private fun getDependencyMappers(projectLibraries: List<PLibrary>): List<DependencyMapper> {
+            val mappersForKotlinLibrariesExeptStdlib = projectLibraries
+                .filter { it.name != "kotlin-stdlib" }
+                .mapTo(mutableListOf()) { mapper(it.name, "default", "distJar", "runtimeElements") }
 
-        fun getProjectLibraries(project: Project): List<PLibrary> {
-            fun distJar(name: String) = File(project.projectDir, "dist/kotlinc/lib/$name.jar")
-            fun projectFile(path: String) = File(project.projectDir, path)
-
-            return listOf(
-                PLibrary(
-                    "kotlin-stdlib",
-                    classes = listOf(distJar("kotlin-stdlib")),
-                    sources = listOf(distJar("kotlin-stdlib-sources"))
-                ),
-                PLibrary(
-                    "kotlin-reflect",
-                    classes = listOf(distJar("kotlin-reflect")),
-                    sources = listOf(distJar("kotlin-reflect-sources"))
-                ),
-                PLibrary(
-                    "annotations-13.0",
-                    classes = listOf(distJar("annotations-13.0"))
-                ),
-                PLibrary(
-                    "kotlin-test-jvm",
-                    classes = listOf(distJar("kotlin-test")),
-                    sources = listOf(distJar("kotlin-test-sources"))
-                ),
-                PLibrary(
-                    "kotlin-test-junit",
-                    classes = listOf(distJar("kotlin-test-junit")),
-                    sources = listOf(distJar("kotlin-test-junit-sources"))
-                ),
-                PLibrary(
-                    "kotlin-script-runtime",
-                    classes = listOf(distJar("kotlin-script-runtime")),
-                    sources = listOf(distJar("kotlin-script-runtime-sources"))
-                ),
-                PLibrary(
-                    "protobuf-relocated",
-                    classes = listOf(projectFile("custom-dependencies/protobuf-relocated/build/libs/protobuf-java-relocated-2.6.1.jar"))
-                )
+            return mappersForKotlinLibrariesExeptStdlib + listOf(
+                DependencyMapper("org.jetbrains.kotlin", "kotlin-stdlib", "distJar", "runtimeElements") {
+                    MappedDependency(
+                        PDependency.Library("kotlin-stdlib"),
+                        listOf(PDependency.Library("annotations-13.0"))
+                    )
+                },
+                DependencyMapper("org.jetbrains.kotlin", "kotlin-reflect-api", "runtimeElements") {
+                    MappedDependency(PDependency.Library("kotlin-reflect"))
+                },
+                DependencyMapper("org.jetbrains.kotlin", "kotlin-compiler-embeddable", "runtimeJar") { null },
+                DependencyMapper("org.jetbrains.kotlin", "kotlin-stdlib-js", "distJar") { null },
+                DependencyMapper("org.jetbrains.kotlin", "kotlin-compiler", "runtimeJar") { null },
+                DependencyMapper("org.jetbrains.kotlin", "compiler", "runtimeElements") { null }
             )
+        }
+
+        fun getProjectLibraries(rootProject: Project): List<PLibrary> {
+            fun distJar(name: String) = File(rootProject.projectDir, "dist/kotlinc/lib/$name.jar")
+            fun projectFile(path: String) = File(rootProject.projectDir, path)
+
+            val libraries = rootProject.allprojects
+                .filter { it.extra.has(JPS_LIBRARY_PATH) }
+                .map { library ->
+                    val libraryPath = library.extra.get(JPS_LIBRARY_PATH).toString()
+                    val archivesBaseName = library.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName ?: library.name
+
+                    fun List<File>.filterExisting() = filter { it.exists() }
+
+                    PLibrary(
+                        library.name,
+                        classes = listOf(File(libraryPath, archivesBaseName + ".jar")).filterExisting(),
+                        sources = listOf(File(libraryPath, archivesBaseName + "-sources.jar")).filterExisting()
+                    )
+                }
+
+            return libraries + PLibrary("annotations-13.0", classes = listOf(distJar("annotations-13.0")))
         }
     }
 
@@ -105,13 +91,16 @@ class JpsCompatiblePlugin : Plugin<Project> {
         platformDir = IntellijRootUtils.getRepositoryRootDir(project)
     }
 
-    private fun pill(project: Project) {
-        initEnvironment(project)
+    private fun pill(rootProject: Project) {
+        initEnvironment(rootProject)
 
-        val jpsProject = parse(project, getProjectLibraries(project), ParserContext(dependencyMappers))
+        val projectLibraries = getProjectLibraries(rootProject)
+        val parserContext = ParserContext(getDependencyMappers(projectLibraries))
+
+        val jpsProject = parse(rootProject, projectLibraries, parserContext)
             .mapLibraries(this::attachPlatformSources, this::attachAsmSources)
 
-        generateKotlinPluginArtifactFile(project).write()
+        generateKotlinPluginArtifactFile(rootProject).write()
 
         val files = render(jpsProject)
 
@@ -119,7 +108,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
         removeJpsRunConfigurations()
 
         copyRunConfigurations()
-        setOptionsForDefaultJunitRunConfiguration(project)
+        setOptionsForDefaultJunitRunConfiguration(rootProject)
 
         files.forEach { it.write() }
     }

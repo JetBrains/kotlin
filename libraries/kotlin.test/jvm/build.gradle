@@ -7,13 +7,14 @@ configureJvm6Project(project)
 configureDist(project)
 configurePublishing(project)
 
+project.ext["jpsLibraryPath"] = rootProject.distLibDir
+
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
     compile project(':kotlin-stdlib')
     testCompile project(":kotlin-test:kotlin-test-junit")
     testCompile('junit:junit:4.12')
 }
-
 
 archivesBaseName = 'kotlin-test'
 

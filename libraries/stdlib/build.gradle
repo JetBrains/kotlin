@@ -6,6 +6,8 @@ configureJvm6Project(project)
 configureDist(project)
 configurePublishing(project)
 
+project.ext["jpsLibraryPath"] = rootProject.distLibDir
+
 sourceSets {
     annotations {
         if(!System.properties.'idea.active') {

@@ -6,6 +6,7 @@ configureJvm6Project(project)
 configureDist(project)
 configurePublishing(project)
 
+project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
