@@ -125,6 +125,10 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
         symbolTable.referenceSimpleFunction(it)
     }
 
+    val ieee754NullableEquals = context.getInternalFunctions("ieee754NullableEquals").map {
+        symbolTable.referenceSimpleFunction(it)
+    }
+
     override val areEqual = symbolTable.referenceSimpleFunction(context.getInternalFunctions("areEqual").single())
 
     override val ThrowNullPointerException = symbolTable.referenceSimpleFunction(

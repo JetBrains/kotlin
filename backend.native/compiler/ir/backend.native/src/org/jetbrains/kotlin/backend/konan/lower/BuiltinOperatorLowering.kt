@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
@@ -72,28 +74,21 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
         return expression
     }
 
-    private fun isIeee754Equals(descriptor: FunctionDescriptor): Boolean =
-            irBuiltins.ieee754equalsFunByOperandType.values.any { it.descriptor == descriptor }
+    private fun ieee754EqualsDescriptors(): List<FunctionDescriptor> =
+            irBuiltins.ieee754equalsFunByOperandType.values.map(IrSimpleFunction::descriptor)
 
-    private fun transformBuiltinOperator(expression: IrCall): IrExpression {
-        val descriptor = expression.descriptor
+    private fun transformBuiltinOperator(expression: IrCall): IrExpression = when (expression.descriptor) {
+        irBuiltins.eqeq, in ieee754EqualsDescriptors() -> lowerEqeq(expression)
 
-        // IEEE754 comparison for floating point values are done by intrinsic
-        if (isIeee754Equals(descriptor)) return lowerEqeq(expression)
+        irBuiltins.eqeqeq -> lowerEqeqeq(expression)
 
-        return when (descriptor) {
-            irBuiltins.eqeq -> lowerEqeq(expression)
+        irBuiltins.throwNpe -> IrCallImpl(expression.startOffset, expression.endOffset,
+                context.ir.symbols.ThrowNullPointerException)
 
-            irBuiltins.eqeqeq -> lowerEqeqeq(expression)
+        irBuiltins.noWhenBranchMatchedException -> IrCallImpl(expression.startOffset, expression.endOffset,
+                context.ir.symbols.ThrowNoWhenBranchMatchedException)
 
-            irBuiltins.throwNpe -> IrCallImpl(expression.startOffset, expression.endOffset,
-                    context.ir.symbols.ThrowNullPointerException)
-
-            irBuiltins.noWhenBranchMatchedException -> IrCallImpl(expression.startOffset, expression.endOffset,
-                    context.ir.symbols.ThrowNoWhenBranchMatchedException)
-
-            else -> expression
-        }
+        else -> expression
     }
 
     private fun lowerEqeqeq(expression: IrCall): IrExpression {
@@ -136,11 +131,11 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
         // and thus can be declared synthetically in the compiler instead of explicitly in the runtime.
 
         // Find a type-compatible `konan.internal.ieee754Equals` intrinsic:
-        if (isIeee754Equals(expression.descriptor)) {
-            // FIXME: intrinsic should be also compatible with nullable types
-            selectIntrinsic(context.ir.symbols.ieee754Equals, lhs.type, rhs.type)?.let {
-                return it
-            }
+        if (expression.descriptor in ieee754EqualsDescriptors()) {
+            return if (lhs.type.isNullable() || rhs.type.isNullable())
+                selectIntrinsic(context.ir.symbols.ieee754NullableEquals, lhs.type, rhs.type)!!
+            else
+                selectIntrinsic(context.ir.symbols.ieee754Equals, lhs.type, rhs.type)!!
         }
 
         // Find a type-compatible `konan.internal.areEqualByValue` intrinsic:
@@ -158,9 +153,7 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
     }
 
     private fun selectIntrinsic(from: List<IrSimpleFunctionSymbol>, lhsType: KotlinType, rhsType: KotlinType):
-            IrSimpleFunctionSymbol? {
-        return from.atMostOne {
-            lhsType.isSubtypeOf(it.owner.valueParameters[0].type) && rhsType.isSubtypeOf(it.owner.valueParameters[1].type)
-        }
+            IrSimpleFunctionSymbol? = from.atMostOne {
+        lhsType.isSubtypeOf(it.owner.valueParameters[0].type) && rhsType.isSubtypeOf(it.owner.valueParameters[1].type)
     }
 }
