@@ -23,10 +23,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider;
 
 public class KotlinParser implements PsiParser {
 
+    @Nullable
     private final ScriptDefinitionProvider scriptDefinitionProvider;
 
     public KotlinParser(Project project) {

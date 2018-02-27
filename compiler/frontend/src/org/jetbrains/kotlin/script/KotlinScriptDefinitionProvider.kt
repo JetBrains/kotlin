@@ -27,13 +27,13 @@ interface ScriptDefinitionProvider {
     fun findScriptDefinition(file: VirtualFile): KotlinScriptDefinition? = findScriptDefinition(file.name)
 
     companion object {
-        fun getInstance(project: Project): ScriptDefinitionProvider =
+        fun getInstance(project: Project): ScriptDefinitionProvider? =
             ServiceManager.getService(project, ScriptDefinitionProvider::class.java)
     }
 }
 
 fun getScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? =
-    ScriptDefinitionProvider.getInstance(project).findScriptDefinition(file)
+    ScriptDefinitionProvider.getInstance(project)?.findScriptDefinition(file)
 
 fun getScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? =
-    ScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile.name)
+    ScriptDefinitionProvider.getInstance(psiFile.project)?.findScriptDefinition(psiFile.name)

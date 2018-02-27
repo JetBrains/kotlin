@@ -27,10 +27,10 @@ interface ScriptDependenciesProvider {
     fun getScriptDependencies(file: PsiFile) = getScriptDependencies(file.virtualFile)
 
     companion object {
-        fun getInstance(project: Project): ScriptDependenciesProvider =
+        fun getInstance(project: Project): ScriptDependenciesProvider? =
             ServiceManager.getService(project, ScriptDependenciesProvider::class.java)
     }
 }
 
 fun getScriptExternalDependencies(file: VirtualFile, project: Project): ScriptDependencies? =
-    ScriptDependenciesProvider.getInstance(project).getScriptDependencies(file)
+    ScriptDependenciesProvider.getInstance(project)?.getScriptDependencies(file)
