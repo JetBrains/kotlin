@@ -18,14 +18,12 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.idea.refactoring.getLineNumber
-import org.jetbrains.kotlin.j2k.isInSingleLine
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.nextLeafs
-import org.jetbrains.kotlin.psi.psiUtil.prevLeafs
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.lang.IllegalArgumentException
 
@@ -59,14 +57,24 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
             element.nextSibling!!.delete()
         }
 
-        val (prevComment, nextComment) = deleteCommentsOnSameLine(expression, element)
+        val nextComment = when {
+            element is KtDoWhileExpression -> null // bound to the closing while
+            element is KtIfExpression && expression === element.then && element.`else` != null -> null // bound to else
+            else -> element.getNextSiblingIgnoringWhitespace().takeIf { it is PsiComment }
+        }
+        val saver = if (nextComment == null) CommentSaver(element) else CommentSaver(PsiChildRange(element, nextComment))
+        element.allChildren.filterIsInstance<PsiComment>().toList().forEach {
+            it.delete()
+        }
+        nextComment?.delete()
 
         val psiFactory = KtPsiFactory(element)
-        expression.replace(psiFactory.createSingleStatementBlock(expression, prevComment, nextComment))
+        val result = expression.replace(psiFactory.createSingleStatementBlock(expression))
 
         if (element is KtDoWhileExpression) { // remove new line between '}' and while
             (element.body!!.parent.nextSibling as? PsiWhiteSpace)?.delete()
         }
+        saver.restore(result)
     }
 
     private fun KtElement.getTargetExpression(caretLocation: Int): KtExpression? {
@@ -86,35 +94,4 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
             else -> null
         }
     }
-
-    private fun deleteCommentsOnSameLine(expression: KtExpression, element: KtElement): Pair<String?, String?> {
-        val lineNumber = expression.getLineNumber()
-
-        val prevComments = getCommentsOnSameLine(lineNumber, expression.prevLeafs).reversed()
-        val prevCommentText = createCommentText(prevComments)
-
-        val nextLeafs = when {
-            expression.parent.node.elementType == KtNodeTypes.THEN && (element as? KtIfExpression)?.`else` != null -> expression.nextLeafs
-            element is KtDoWhileExpression -> expression.nextLeafs
-            else -> expression.nextLeafs
-        }
-        val nextComments = getCommentsOnSameLine(lineNumber, nextLeafs)
-        val nextCommentText = createCommentText(nextComments)
-
-        (prevComments + nextComments).forEach { (it as? PsiComment)?.delete() }
-
-        return prevCommentText to nextCommentText
-    }
-
-    private fun getCommentsOnSameLine(lineNumber: Int, elements: Sequence<PsiElement>): List<PsiElement> {
-        return elements
-            .takeWhile { (it is PsiWhiteSpace || it is PsiComment) && lineNumber == it.getLineNumber() && it.isInSingleLine() }
-            .dropWhile { it is PsiWhiteSpace }
-            .toList()
-            .dropLastWhile { it is PsiWhiteSpace }
-    }
-
-    private fun createCommentText(comments: List<PsiElement>): String? =
-        if (comments.isEmpty()) null else comments.joinToString("") { it.text }
-
 }
