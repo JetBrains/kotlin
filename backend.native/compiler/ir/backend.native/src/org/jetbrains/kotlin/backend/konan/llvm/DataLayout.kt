@@ -37,6 +37,9 @@ private val valueTypes = ValueType.values().associate {
     }!!
 }
 
+internal val ValueType.llvmType
+    get() = valueTypes[this]!!
+
 internal fun RuntimeAware.getLLVMType(type: KotlinType): LLVMTypeRef {
     for ((valueType, llvmType) in valueTypes) {
         if (type.isRepresentedAs(valueType)) {

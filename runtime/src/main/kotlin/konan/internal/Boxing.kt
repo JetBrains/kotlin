@@ -16,6 +16,32 @@
 
 package konan.internal
 
+
+@SymbolName("getCachedBooleanBox")
+external fun getCachedBooleanBox(value: Boolean): BooleanBox
+@SymbolName("inBooleanBoxCache")
+external fun inBooleanBoxCache(value: Boolean): Boolean
+@SymbolName("getCachedByteBox")
+external fun getCachedByteBox(value: Byte): ByteBox
+@SymbolName("inByteBoxCache")
+external fun inByteBoxCache(value: Byte): Boolean
+@SymbolName("getCachedCharBox")
+external fun getCachedCharBox(value: Char): CharBox
+@SymbolName("inCharBoxCache")
+external fun inCharBoxCache(value: Char): Boolean
+@SymbolName("getCachedShortBox")
+external fun getCachedShortBox(value: Short): ShortBox
+@SymbolName("inShortBoxCache")
+external fun inShortBoxCache(value: Short): Boolean
+@SymbolName("getCachedIntBox")
+external fun getCachedIntBox(idx: Int): IntBox
+@SymbolName("inIntBoxCache")
+external fun inIntBoxCache(value: Int): Boolean
+@SymbolName("getCachedLongBox")
+external fun getCachedLongBox(value: Long): LongBox
+@SymbolName("inLongBoxCache")
+external fun inLongBoxCache(value: Long): Boolean
+
 class BooleanBox(val value: Boolean) : Comparable<Boolean> {
     override fun equals(other: Any?): Boolean {
         if (other !is BooleanBox) {
@@ -33,7 +59,11 @@ class BooleanBox(val value: Boolean) : Comparable<Boolean> {
 }
 
 @ExportForCppRuntime("Kotlin_boxBoolean")
-fun boxBoolean(value: Boolean) = BooleanBox(value)
+fun boxBoolean(value: Boolean) = if (inBooleanBoxCache(value)) {
+    getCachedBooleanBox(value)
+} else {
+    BooleanBox(value)
+}
 
 class CharBox(val value: Char) : Comparable<Char> {
     override fun equals(other: Any?): Boolean {

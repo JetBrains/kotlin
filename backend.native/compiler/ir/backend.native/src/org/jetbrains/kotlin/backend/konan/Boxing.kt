@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import kotlinx.cinterop.toByte
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.types.KotlinType
@@ -56,147 +58,51 @@ internal fun KonanSymbols.getUnboxFunction(valueType: ValueType): IrSimpleFuncti
 
 
 /**
- * Represents static array of boxes.
+ * Initialize static boxing.
+ * If output target is native binary then the cache is created.
  */
-
-internal enum class BoxCache(val valueType: ValueType) {
-    BYTE(ValueType.BYTE),
-    SHORT(ValueType.SHORT),
-    CHAR(ValueType.CHAR),
-    INT(ValueType.INT),
-    LONG(ValueType.LONG);
-
-    private val valueTypeName = valueType.name.toLowerCase().capitalize()
-    private val getIntrinsic = "konan.internal.getCached${valueTypeName}Box"
-    private val checkIntrinsic = "konan.internal.in${valueTypeName}BoxCache"
-
-    val cacheName = "${valueTypeName}Boxes"
-    val rangeStartName = "${valueTypeName}RangeStart"
-    val rangeEndName = "${valueTypeName}RangeEnd"
-
-    companion object {
-        /**
-         * returns cache corresponding to the given getIntrinsic name.
-         */
-        fun getCacheByBoxGetter(getBoxMethodName: String): BoxCache? =
-            BoxCache.values().firstOrNull { it.getIntrinsic == getBoxMethodName }
-
-        /**
-         * returns cache corresponding to the given checkIntrinsic name.
-         */
-        fun getCacheByInRangeChecker(checkRangeMethodName: String): BoxCache? =
-            BoxCache.values().firstOrNull { it.checkIntrinsic == checkRangeMethodName }
-
-        /**
-         * Initialize globals.
-         */
-        fun initialize(context: Context) {
-            values().forEach {
-                it.initRange(context)
-                it.initCache(context)
-            }
+internal fun initializeCachedBoxes(context: Context) {
+    if (context.config.produce.isNativeBinary) {
+        val cachedTypes = listOf(ValueType.BOOLEAN, ValueType.BYTE, ValueType.CHAR,
+                ValueType.SHORT, ValueType.INT, ValueType.LONG)
+        cachedTypes.forEach { valueType ->
+            val cacheName = "${valueType.name}_CACHE"
+            val rangeStart = "${valueType.name}_RANGE_FROM"
+            val rangeEnd = "${valueType.name}_RANGE_TO"
+            valueType.initCache(context, cacheName, rangeStart, rangeEnd)
         }
     }
 }
 
 /**
  * Adds global that refers to the cache.
- * If output target is native binary then the cache is created.
  */
-private fun BoxCache.initCache(context: Context): LLVMValueRef {
-    return if (context.config.produce.isNativeBinary) {
-        context.llvm.staticData.createBoxes(this)
-    } else {
-        context.llvm.staticData.addGlobal(cacheName, getLlvmType(context), false)
-    }
+private fun ValueType.initCache(context: Context, cacheName: String,
+                                rangeStartName: String, rangeEndName: String) {
+    val kotlinType = context.ir.symbols.boxClasses[this]!!.owner
+    val (start, end) = context.config.target.getBoxCacheRange(this)
+    // Constancy of these globals allows LLVM's constant propagation and DCE
+    // to remove fast path of boxing function in case of empty range.
+    context.llvm.staticData.placeGlobal(rangeStartName, createConstant(start), true)
+            .setConstant(true)
+    context.llvm.staticData.placeGlobal(rangeEndName, createConstant(end), true)
+            .setConstant(true)
+    val staticData = context.llvm.staticData
+    val values = (start..end).map { staticData.createInitializer(kotlinType, createConstant(it)) }
+    val llvmBoxType = structType(context.llvm.runtime.objHeaderType, this.llvmType)
+    staticData.placeGlobalConstArray(cacheName, llvmBoxType, values, true).llvm
 }
 
-/**
- * Creates globals that defines the smallest and the biggest cached values.
- */
-private fun BoxCache.initRange(context: Context) {
-    if (context.config.produce.isNativeBinary) {
-        val (start, end) = getRange(context)
-        // Constancy of these globals allows LLVM's constant propagation and DCE
-        // to remove fast path of boxing function in case of empty range.
-        context.llvm.staticData.placeGlobal(rangeStartName, createConstant(start), true)
-                .setConstant(true)
-        context.llvm.staticData.placeGlobal(rangeEndName, createConstant(end), true)
-                .setConstant(true)
-    } else {
-        context.llvm.staticData.addGlobal(rangeStartName, valueType.llvmType, false)
-        context.llvm.staticData.addGlobal(rangeEndName, valueType.llvmType, false)
-    }
-}
-
-private fun BoxCache.llvmRange(context: Context): Pair<LLVMValueRef, LLVMValueRef> {
-    val start = LLVMGetNamedGlobal(context.llvmModule, rangeStartName)!!
-    val end = LLVMGetNamedGlobal(context.llvmModule, rangeEndName)!!
-    return Pair(start, end)
-}
-
-/**
- * Checks that box for the given [value] is in the cache.
- */
-internal fun BoxCache.inRange(codegen: FunctionGenerationContext, value: LLVMValueRef): LLVMValueRef {
-    val (startPtr, endPtr) = llvmRange(codegen.context)
-    val start = codegen.load(startPtr)
-    val end = codegen.load(endPtr)
-    val startCheck = codegen.icmpGe(value, start)
-    val endCheck = codegen.icmpLe(value, end)
-    return codegen.and(startCheck, endCheck)
-}
-
-private fun BoxCache.getRange(context: Context) =
-        context.config.target.getBoxCacheRange(valueType)
-
-internal fun BoxCache.getCachedValue(codegen: FunctionGenerationContext, value: LLVMValueRef): LLVMValueRef {
-    val startPtr = llvmRange(codegen.context).first
-    val start = codegen.load(startPtr)
-    // We should subtract range start to get index of the box.
-    val index = if (this == BoxCache.BYTE) {
-        // ByteBox range start has type of i8 and it can't handle values
-        // that are greater than 127. So we need to cast them to i32.
-        val startAsInt = codegen.sext(start, LLVMInt32Type()!!)
-        val valueAsInt = codegen.sext(value, LLVMInt32Type()!!)
-        LLVMBuildSub(codegen.builder, valueAsInt, startAsInt, "index")!!
-    } else {
-        LLVMBuildSub(codegen.builder, value, start, "index")!!
-    }
-    val cache = LLVMGetNamedGlobal(codegen.context.llvmModule, cacheName)!!
-    val elemPtr = codegen.gep(cache, index)
-    return codegen.bitcast(codegen.kObjHeaderPtr, elemPtr)
-}
-
-private fun StaticData.createBoxes(box: BoxCache): LLVMValueRef {
-    val kotlinType = context.ir.symbols.boxClasses[box.valueType]!!.descriptor.defaultType
-    val (start, end) = box.getRange(context)
-    val values = (start..end).map { createInitializer(kotlinType, box.createConstant(it)) }
-    return placeGlobalConstArray(box.cacheName, box.getLlvmType(context), values, true).llvm
-}
-
-private fun BoxCache.createConstant(value: Int) =
-    constValue(when (valueType) {
-        ValueType.BYTE  -> LLVMConstInt(LLVMInt8Type(),  value.toByte().toLong(),  1)!!
-        ValueType.CHAR  -> LLVMConstInt(LLVMInt16Type(), value.toChar().toLong(),  0)!!
-        ValueType.SHORT -> LLVMConstInt(LLVMInt16Type(), value.toShort().toLong(), 1)!!
-        ValueType.INT   -> LLVMConstInt(LLVMInt32Type(), value.toLong(),   1)!!
-        ValueType.LONG  -> LLVMConstInt(LLVMInt64Type(), value.toLong(),             1)!!
-        else            -> error("Cannot box value of type $valueType")
+private fun ValueType.createConstant(value: Int) =
+    constValue(when (this) {
+        ValueType.BOOLEAN   -> LLVMConstInt(LLVMInt1Type(),  (value > 0).toByte().toLong(), 1)!!
+        ValueType.BYTE      -> LLVMConstInt(LLVMInt8Type(),  value.toByte().toLong(),  1)!!
+        ValueType.CHAR      -> LLVMConstInt(LLVMInt16Type(), value.toChar().toLong(),  0)!!
+        ValueType.SHORT     -> LLVMConstInt(LLVMInt16Type(), value.toShort().toLong(), 1)!!
+        ValueType.INT       -> LLVMConstInt(LLVMInt32Type(), value.toLong(),   1)!!
+        ValueType.LONG      -> LLVMConstInt(LLVMInt64Type(), value.toLong(),             1)!!
+        else                -> error("Cannot box value of type $this")
     })
-
-private fun BoxCache.getLlvmType(context: Context) =
-        structType(context.llvm.runtime.objHeaderType, valueType.llvmType)
-
-private val ValueType.llvmType
-    get() = when (this) {
-        ValueType.BYTE  -> LLVMInt8Type()!!
-        ValueType.CHAR  -> LLVMInt16Type()!!
-        ValueType.SHORT -> LLVMInt16Type()!!
-        ValueType.INT   -> LLVMInt32Type()!!
-        ValueType.LONG  -> LLVMInt64Type()!!
-        else            -> error("Cannot box value of type $this")
-    }
 
 // When start is greater than end then `inRange` check is always false
 // and can be eliminated by LLVM.
@@ -204,6 +110,7 @@ private val emptyRange = 1 to 0
 
 // Memory usage is around 20kb.
 private val defaultCacheRanges = mapOf(
+        ValueType.BOOLEAN to (0 to 1),
         ValueType.BYTE  to (-128 to 127),
         ValueType.SHORT to (-128 to 127),
         ValueType.CHAR  to (0 to 255),
@@ -212,7 +119,6 @@ private val defaultCacheRanges = mapOf(
 )
 
 fun KonanTarget.getBoxCacheRange(valueType: ValueType): Pair<Int, Int> = when (this) {
-    // Just an example.
     is KonanTarget.ZEPHYR   -> emptyRange
     else                    -> defaultCacheRanges[valueType]!!
 }
