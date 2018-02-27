@@ -23,6 +23,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.util.getFactoryForImplicitReceiverWithSubtypeOf
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
@@ -53,7 +54,10 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
             val scope = reference.getResolutionScope(context) ?: return
 
             val descriptor = context[BindingContext.REFERENCE_TARGET, reference] as? CallableDescriptor ?: return
-            val receiverDescriptor = descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter ?: return
+            val receiverDescriptor = descriptor.extensionReceiverParameter
+                    ?: descriptor.dispatchReceiverParameter
+                    ?: expression.getCallableDescriptor()?.extensionReceiverParameter
+                    ?: return
             val receiverType = receiverDescriptor.type
 
             val expressionFactory = scope.getFactoryForImplicitReceiverWithSubtypeOf(receiverType) ?: return
