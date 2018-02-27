@@ -41,9 +41,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -138,13 +137,19 @@ sealed class CallablePlacement {
 class CallableBuilder(val config: CallableBuilderConfiguration) {
     private var finished: Boolean = false
 
-    val currentFileContext: BindingContext
+    val currentFileContext = config.currentFile.analyzeWithContent()
+
+    private lateinit var _currentFileModule: ModuleDescriptor
     val currentFileModule: ModuleDescriptor
+        get() {
+            if (!_currentFileModule.isValid) {
+                updateCurrentModule()
+            }
+            return _currentFileModule
+        }
 
     init {
-        val result = config.currentFile.analyzeFullyAndGetResult()
-        currentFileContext = result.bindingContext
-        currentFileModule = result.moduleDescriptor
+        updateCurrentModule()
     }
 
     val pseudocode: Pseudocode? by lazy { config.originalElement.getContainingPseudocode(currentFileContext) }
@@ -154,6 +159,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     var placement: CallablePlacement? = null
 
     private val elementsToShorten = ArrayList<KtElement>()
+
+    private fun updateCurrentModule() {
+        _currentFileModule = config.currentFile.analyzeFullyAndGetResult().moduleDescriptor
+    }
 
     fun computeTypeCandidates(typeInfo: TypeInfo): List<TypeCandidate> =
             typeCandidates.getOrPut(typeInfo) { typeInfo.getPossibleTypes(this).map { TypeCandidate(it) } }
