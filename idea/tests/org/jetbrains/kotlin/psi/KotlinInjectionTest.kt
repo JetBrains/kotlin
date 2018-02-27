@@ -519,6 +519,39 @@ class KotlinInjectionTest : AbstractInjectionTest() {
                                             """)
     }
 
+    fun testInjectionInJavaNestedAnnotation() {
+        myFixture.addClass(
+            """
+                            package myinjection;
+
+                            public @interface InHtml {
+                            String html();
+                            }
+                            """
+        )
+        myFixture.addClass(
+            """
+                            package myinjection;
+
+                            public @interface InHtmls {
+                            InHtml[] htmls();
+                            }
+                            """
+        )
+        doAnnotationInjectionTest(
+            injectedLanguage = HTMLLanguage.INSTANCE.id,
+            pattern = """psiMethod().withName("html").withParameters().definedInClass("myinjection.InHtml")""",
+            kotlinCode = """
+                                            import myinjection.InHtml
+                                            import myinjection.InHtmls
+
+                                            @InHtmls(htmls = [InHtml(html = "<htm<caret>l></html>")])
+                                            fun foo() {
+                                            }
+                                            """
+        )
+    }
+
     fun testInjectionInAliasedJavaAnnotation() {
         myFixture.addClass("""
                                 @interface InHtml {

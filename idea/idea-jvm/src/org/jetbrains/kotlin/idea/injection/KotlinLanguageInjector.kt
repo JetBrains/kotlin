@@ -276,9 +276,14 @@ class KotlinLanguageInjector(
     private fun injectInAnnotationCall(host: KtElement): InjectionInfo? {
         if (!annotationInjectionsEnabled) return null
         val argument = host.parent as? KtValueArgument ?: return null
-        val annotationEntry = argument.parent.parent as? KtAnnotationEntry ?: return null
+        val annotationEntry = argument.parent.parent as? KtCallElement ?: return null
         if (!fastCheckInjectionsExists(annotationEntry)) return null
-        val calleeReference = annotationEntry.calleeExpression?.constructorReferenceExpression?.mainReference
+        val calleeExpression = annotationEntry.calleeExpression ?: return null
+        val calleeReference = when (calleeExpression) {
+            is KtConstructorCalleeExpression -> calleeExpression.constructorReferenceExpression?.mainReference // for top annotations
+            is KtNameReferenceExpression -> calleeExpression.mainReference // for nested annotations
+            else -> return null
+        }
         val callee = calleeReference?.resolve()
         when (callee) {
             is KtFunction -> return injectionForKotlinCall(argument, callee, calleeReference)
@@ -378,8 +383,13 @@ class KotlinLanguageInjector(
                                    }, configuration)
                                }, false)
 
-    private fun fastCheckInjectionsExists(annotationEntry: KtAnnotationEntry): Boolean {
-        val referencedName = (annotationEntry.typeReference?.typeElement as? KtUserType)?.referencedName ?: return false
+    private fun fastCheckInjectionsExists(annotationEntry: KtCallElement): Boolean {
+        val referencedName = when (annotationEntry) {
+            is KtAnnotationEntry -> // for top annotations
+                (annotationEntry.typeReference?.typeElement as? KtUserType)?.referencedName ?: return false
+            else -> // for nested annotations
+                (annotationEntry.calleeExpression as? KtNameReferenceExpression)?.getReferencedName() ?: return false
+        }
         val annotationShortName = annotationEntry.containingKtFile.aliasImportMap()[referencedName].singleOrNull() ?: referencedName
         return annotationShortName in injectableTargetClassShortNames.value
     }
