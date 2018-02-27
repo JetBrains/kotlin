@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 interface ModuleVisibilityHelper {
     fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean
 
-    object EMPTY: ModuleVisibilityHelper {
+    class Empty : ModuleVisibilityHelper {
         override fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor) = true
     }
 }
