@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class RemoveLabeledReturnInLambdaIntention : SelfTargetingIntention<KtReturnExpression>(
@@ -19,13 +18,7 @@ class RemoveLabeledReturnInLambdaIntention : SelfTargetingIntention<KtReturnExpr
         val labelName = element.getLabelName() ?: return false
         val block = element.getStrictParentOfType<KtBlockExpression>() ?: return false
         if (block.statements.lastOrNull() != element) return false
-        val lambdaExpression = block.getStrictParentOfType<KtLambdaExpression>() ?: return false
-        val callExpression = lambdaExpression.getStrictParentOfType<KtCallExpression>() ?: return false
-        val lambdaArgument = callExpression.lambdaArguments.find {
-            it.getArgumentExpression().unpackFunctionLiteral(allowParentheses = false) === lambdaExpression
-        } ?: return false
-        val callName = (lambdaArgument.getArgumentExpression() as? KtLabeledExpression)?.getLabelName()
-                ?: callExpression.getCallNameExpression()?.text ?: return false
+        val callName = block.getParentLambdaLabelName() ?: return false
         if (labelName != callName) return false
         text = "Remove return@$labelName"
         return true

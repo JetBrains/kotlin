@@ -10,7 +10,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
 class AddLabeledReturnInLambdaIntention : SelfTargetingRangeIntention<KtBlockExpression>(
@@ -19,14 +18,13 @@ class AddLabeledReturnInLambdaIntention : SelfTargetingRangeIntention<KtBlockExp
 ), LowPriorityAction {
     override fun applicabilityRange(element: KtBlockExpression): TextRange? {
         if (!isApplicableTo(element)) return null
-        val labelName = createLabelName(element) ?: return null
+        val labelName = element.getParentLambdaLabelName() ?: return null
         text = "Add return@$labelName"
         return element.statements.lastOrNull()?.textRange
     }
 
     override fun applyTo(element: KtBlockExpression, editor: Editor?) {
-        if (!isApplicableTo(element)) return
-        val labelName = createLabelName(element) ?: return
+        val labelName = element.getParentLambdaLabelName() ?: return
         val lastStatement = element.statements.lastOrNull() ?: return
         val newExpression = KtPsiFactory(element.project).createExpressionByPattern("return@$labelName $0", lastStatement)
         lastStatement.replace(newExpression)
@@ -35,15 +33,5 @@ class AddLabeledReturnInLambdaIntention : SelfTargetingRangeIntention<KtBlockExp
     private fun isApplicableTo(block: KtBlockExpression): Boolean {
         val lastStatement = block.statements.lastOrNull()
         return lastStatement !is KtReturnExpression && lastStatement?.isUsedAsExpression(lastStatement.analyze()) == true
-    }
-
-    private fun createLabelName(block: KtBlockExpression): String? {
-        val lambdaExpression = block.getStrictParentOfType<KtLambdaExpression>() ?: return null
-        val callExpression = lambdaExpression.getStrictParentOfType<KtCallExpression>() ?: return null
-        val valueArgument = callExpression.valueArguments.find {
-            it.getArgumentExpression()?.unpackFunctionLiteral(allowParentheses = false) === lambdaExpression
-        } ?: return null
-        val lambdaLabelName = (valueArgument.getArgumentExpression() as? KtLabeledExpression)?.getLabelName()
-        return lambdaLabelName ?: callExpression.getCallNameExpression()?.text
     }
 }
