@@ -81,6 +81,36 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addBraces"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("doWhileWithComment.kt")
+        public void testDoWhileWithComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/doWhileWithComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("elseWithComment.kt")
+        public void testElseWithComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/elseWithComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forWithComment.kt")
+        public void testForWithComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/forWithComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifElseWithComment.kt")
+        public void testIfElseWithComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/ifElseWithComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifWithComment.kt")
+        public void testIfWithComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/ifWithComment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notInsideElseIfBlock.kt")
         public void testNotInsideElseIfBlock() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/notInsideElseIfBlock.kt");
@@ -96,6 +126,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("whenSimple.kt")
         public void testWhenSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/whenSimple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenWithComment.kt")
+        public void testWhenWithComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/whenWithComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whileWithComment.kt")
+        public void testWhileWithComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/whileWithComment.kt");
             doTest(fileName);
         }
     }
