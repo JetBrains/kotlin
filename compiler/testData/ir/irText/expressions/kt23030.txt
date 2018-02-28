@@ -25,8 +25,10 @@ FILE fqName:<root> fileName:/kt23030.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Char
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Char modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -34,8 +36,10 @@ FILE fqName:<root> fileName:/kt23030.kt
             then: CALL 'less(Int, Int): Boolean' type=kotlin.Boolean origin=LT
               arg0: CALL 'compareTo(Char) on Int: Int' type=kotlin.Int origin=LT
                 $receiver: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 c: TYPE_OP type=kotlin.Char origin=IMPLICIT_CAST typeOperand=kotlin.Char
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Char modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -51,8 +55,10 @@ FILE fqName:<root> fileName:/kt23030.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Char
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Char modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -65,6 +71,8 @@ FILE fqName:<root> fileName:/kt23030.kt
             then: CONST Boolean type=kotlin.Boolean value=false
   CLASS CLASS name:C modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:C flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -99,8 +107,10 @@ FILE fqName:<root> fileName:/kt23030.kt
               if: WHEN type=kotlin.Boolean origin=ANDAND
                 BRANCH
                   if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
+                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
                     GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                   then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Char
+                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Char modality:FINAL visibility:public flags:
                     GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
@@ -109,17 +119,25 @@ FILE fqName:<root> fileName:/kt23030.kt
                 arg0: CALL 'compareTo(Char) on Int: Int' type=kotlin.Int origin=LT
                   $this: GET_VAR 'this@C: C' type=C origin=null
                   $receiver: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
                     GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                   c: TYPE_OP type=kotlin.Char origin=IMPLICIT_CAST typeOperand=kotlin.Char
+                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Char modality:FINAL visibility:public flags:
                     GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
                 arg1: CONST Int type=kotlin.Int value=0
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Boolean type=kotlin.Boolean value=false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
