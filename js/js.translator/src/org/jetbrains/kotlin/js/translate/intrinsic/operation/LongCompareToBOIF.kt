@@ -42,21 +42,21 @@ object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
     val LONG_COMPARE_TO_CHAR_PATTERN = pattern("Long.compareTo(Char)")
     val LONG_COMPARE_TO_LONG_PATTERN = pattern("Long.compareTo(Long)")
 
-    private object FLOATING_POINT_COMPARE_TO_LONG : AbstractBinaryOperationIntrinsic() {
+    private object FLOATING_POINT_COMPARE_TO_LONG : BinaryOperationIntrinsic {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             return JsBinaryOperation(operator, left, invokeMethod(right, Namer.LONG_TO_NUMBER))
         }
     }
 
-    private object LONG_COMPARE_TO_FLOATING_POINT : AbstractBinaryOperationIntrinsic() {
+    private object LONG_COMPARE_TO_FLOATING_POINT : BinaryOperationIntrinsic {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             return JsBinaryOperation(operator, invokeMethod(left, Namer.LONG_TO_NUMBER), right)
         }
     }
 
-    private class CompareToBinaryIntrinsic(val toLeft: (JsExpression) -> JsExpression, val toRight: (JsExpression) -> JsExpression) : AbstractBinaryOperationIntrinsic() {
+    private class CompareToBinaryIntrinsic(val toLeft: (JsExpression) -> JsExpression, val toRight: (JsExpression) -> JsExpression) : BinaryOperationIntrinsic {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             val compareInvocation = compareForObject(toLeft(left), toRight(right))

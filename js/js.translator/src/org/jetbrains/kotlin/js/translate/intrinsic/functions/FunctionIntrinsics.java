@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.*;
-import org.jetbrains.kotlin.js.translate.intrinsic.operation.StringPlusCharFIF;
 
 import java.util.List;
 import java.util.Map;
