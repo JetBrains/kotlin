@@ -463,6 +463,21 @@ class KotlinInjectionTest : AbstractInjectionTest() {
         )
     }
 
+    fun testKotlinNestedAnnotationsPattern() {
+        doAnnotationInjectionTest(
+            patternLanguage = "kotlin",
+            injectedLanguage = RegExpLanguage.INSTANCE.id,
+            pattern = """kotlinParameter().ofFunction(0, kotlinFunction().withName("Matches").definedInClass("Matches"))""",
+            kotlinCode = """
+                        annotation class Matches(val pattern: String)
+                        annotation class ManyMatches(val patterns: Array<Matches>)
+
+                        @ManyMatches(patterns = [Matches("[A-Z]<caret>[a-z]+")])
+                        val name = "John"
+                                    """
+        )
+    }
+
     fun testKotlinAnnotationsPatternNamed() {
         doAnnotationInjectionTest(
                 patternLanguage = "kotlin",
