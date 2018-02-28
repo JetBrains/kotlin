@@ -201,6 +201,8 @@ private class ScriptCommandLineState(
         params.mainClass = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
         params.programParametersList.prepend(filePath)
         params.programParametersList.prepend("-script")
+        params.programParametersList.prepend(PathUtil.kotlinPathsForIdeaPlugin.homePath.path)
+        params.programParametersList.prepend("-kotlin-home")
 
         return params
     }
