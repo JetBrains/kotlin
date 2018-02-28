@@ -14,7 +14,19 @@
  * limitations under the License.
  */
 
-buildscript {
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
-}
+package test.numbers
 
+import kotlin.math.*
+import kotlin.test.*
+
+class MathExceptionTest {
+
+    @Test fun exceptions() {
+        assertFails { Double.NaN.roundToLong() }
+        assertFails { Double.NaN.roundToInt() }
+
+        assertFails { Float.NaN.roundToLong() }
+        assertFails { Float.NaN.roundToInt() }
+    }
+
+}

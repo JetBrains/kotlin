@@ -1650,20 +1650,16 @@ task extend_exception(type: RunKonanTest) {
     source = "runtime/exceptions/extend0.kt"
 }
 
-// A special test variant for wasm without exception testing.
-// TODO: Remove when exceptions become available for wasm.
-task runtime_math_wasm(type: RunKonanTest) {
-    disabled = (project.testTarget != 'wasm32')
-    source = "runtime/math/wasm.kt"
+task runtime_math_exceptions(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32')
+    source = "stdlib_external/numbers/MathExceptionTest.kt"
 }
 
 task runtime_math(type: RunKonanTest) {
-    disabled = (project.testTarget == 'wasm32')
     source = "stdlib_external/numbers/MathTest.kt"
 }
 
 task runtime_math_harmony(type: RunKonanTest) {
-    disabled = (project.testTarget == 'wasm32')
     source = "stdlib_external/numbers/HarmonyMathTests.kt"
 }
 

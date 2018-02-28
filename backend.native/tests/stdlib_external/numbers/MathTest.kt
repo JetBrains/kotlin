@@ -247,8 +247,6 @@ class DoubleMathTest {
         assertEquals(Long.MAX_VALUE, Double.POSITIVE_INFINITY.roundToLong())
         assertEquals(Long.MIN_VALUE, Double.NEGATIVE_INFINITY.roundToLong())
 
-        assertFails { Double.NaN.roundToLong() }
-
         assertEquals(1, 1.0.roundToInt())
         assertEquals(1, 1.1.roundToInt())
         assertEquals(2, 1.5.roundToInt())
@@ -260,8 +258,6 @@ class DoubleMathTest {
         assertEquals(Int.MIN_VALUE, (-Double.MAX_VALUE).roundToInt())
         assertEquals(Int.MAX_VALUE, Double.POSITIVE_INFINITY.roundToInt())
         assertEquals(Int.MIN_VALUE, Double.NEGATIVE_INFINITY.roundToInt())
-
-        assertFails { Double.NaN.roundToInt() }
     }
 
     @Test fun absoluteValue() {
@@ -642,8 +638,6 @@ class FloatMathTest {
         assertEquals(Long.MAX_VALUE, Float.POSITIVE_INFINITY.roundToLong())
         assertEquals(Long.MIN_VALUE, Float.NEGATIVE_INFINITY.roundToLong())
 
-        assertFails { Float.NaN.roundToLong() }
-
         assertEquals(1, 1.0F.roundToInt())
         assertEquals(1, 1.1F.roundToInt())
         assertEquals(2, 1.5F.roundToInt())
@@ -655,8 +649,6 @@ class FloatMathTest {
         assertEquals(Int.MIN_VALUE, (-Float.MAX_VALUE).roundToInt())
         assertEquals(Int.MAX_VALUE, Float.POSITIVE_INFINITY.roundToInt())
         assertEquals(Int.MIN_VALUE, Float.NEGATIVE_INFINITY.roundToInt())
-
-        assertFails { Float.NaN.roundToInt() }
     }
 
     @Test fun absoluteValue() {
@@ -784,7 +776,6 @@ class FloatMathTest {
         assertTrue(2.0f.IEEErem(0.0f).isNaN())
         assertEquals(PI.toFloat(), PI.toFloat().IEEErem(Float.NEGATIVE_INFINITY))
     }
-
 }
 
 class IntegerMathTest {
