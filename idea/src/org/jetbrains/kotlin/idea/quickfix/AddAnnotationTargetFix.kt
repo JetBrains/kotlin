@@ -84,7 +84,7 @@ private fun KtAnnotationEntry.getRequiredAnnotationTargets(annotationClass: KtCl
     }.flatten().toSet()
 
     val annotationTargetValueNames = AnnotationTarget.values().map { it.name }
-    return (requiredTargets + otherReferenceRequiredTargets).toSet().filter { it.name in annotationTargetValueNames }
+    return (requiredTargets + otherReferenceRequiredTargets).distinct().filter { it.name in annotationTargetValueNames }
 }
 
 private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
@@ -93,16 +93,14 @@ private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
             ?: getStrictParentOfType<KtFile>()
             ?: return emptyList()
 
+    val targetList = AnnotationChecker.getActualTargetList(annotatedElement, null, BindingTraceContext())
+
     if (useSiteTarget == null) {
-        return AnnotationChecker.getDeclarationSiteActualTargetList(annotatedElement, null, BindingTraceContext())
+        return targetList.defaultTargets
 
     } else {
         val target = KotlinTarget.USE_SITE_MAPPING[useSiteTarget?.getAnnotationUseSiteTarget()] ?: return emptyList()
-
-        val actualTargetList =
-            AnnotationChecker.getDeclarationSiteActualTargetList(annotatedElement, null, BindingTraceContext(), all = true)
-        if (actualTargetList.none { it == target }) return emptyList()
-
+        if (target !in targetList.run { defaultTargets + canBeSubstituted + onlyWithUseSiteTarget }) return emptyList()
         return if (target == KotlinTarget.RECEIVER && !languageVersionSettings.supportsFeature(LanguageFeature.RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes))
             listOf(KotlinTarget.VALUE_PARAMETER)
         else

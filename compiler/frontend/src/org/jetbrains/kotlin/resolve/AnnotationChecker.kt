@@ -221,24 +221,15 @@ class AnnotationChecker(
             }.toSet()
         }
 
-        fun getDeclarationSiteActualTargetList(
-            annotated: KtElement,
-            descriptor: ClassDescriptor?,
-            trace: BindingTrace,
-            all: Boolean = false
-        ):
+        fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?, trace: BindingTrace):
                 List<KotlinTarget> {
-            val actualTargetList = getActualTargetList(annotated, descriptor, trace)
-            return if (all)
-                actualTargetList.defaultTargets + actualTargetList.onlyWithUseSiteTarget + actualTargetList.canBeSubstituted
-            else
-                actualTargetList.defaultTargets
+            return getActualTargetList(annotated, descriptor, trace).defaultTargets
         }
 
         private fun DeclarationDescriptor?.hasBackingField(bindingTrace: BindingTrace) =
             (this as? PropertyDescriptor)?.let { bindingTrace.get(BindingContext.BACKING_FIELD_REQUIRED, it) } ?: false
 
-        private fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?, trace: BindingTrace): TargetList {
+        fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?, trace: BindingTrace): TargetList {
             return when (annotated) {
                 is KtClassOrObject ->
                     (descriptor as? ClassDescriptor)?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
@@ -394,7 +385,7 @@ class AnnotationChecker(
             }
         }
 
-        private class TargetList(
+        class TargetList(
             val defaultTargets: List<KotlinTarget>,
             val canBeSubstituted: List<KotlinTarget> = emptyList(),
             val onlyWithUseSiteTarget: List<KotlinTarget> = emptyList()
