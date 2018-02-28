@@ -2624,11 +2624,11 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.JavaCollectionsStaticMethodOnImmutableListInspection"
-                     displayName="Immutable Kotlin collection may be changed with Java Collections method"
+                     displayName="Call of Java mutator method on immutable Kotlin collection"
                      groupPath="Kotlin"
-                     groupName="Probable bugs"
+                     groupName="Java interop issues"
                      enabledByDefault="true"
-                     level="WEAK WARNING"
+                     level="WARNING"
                      language="kotlin"
     />
 

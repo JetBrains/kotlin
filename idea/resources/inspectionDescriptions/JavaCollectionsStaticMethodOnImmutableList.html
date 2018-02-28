@@ -1,5 +1,6 @@
 <html>
 <body>
-This inspection reports immutable Kotlin collection may be changed with Java Collections method.
+This inspection report calls of Java mutator methods (like fill, reverse, shuffle, sort) on immutable Kotlin collection.
+This will likely produce UnsupportedOperationException at runtime.
 </body>
 </html>
