@@ -247,8 +247,11 @@ class KotlinLanguageInjector(
         val ktHost: KtElement = host
         val argument = ktHost.parent as? KtValueArgument ?: return null
 
-        val callExpression = PsiTreeUtil.getParentOfType(ktHost, KtCallExpression::class.java) ?: return null
-        val callee = callExpression.calleeExpression ?: return null
+        val callExpression = PsiTreeUtil.getParentOfType(ktHost, KtCallElement::class.java) ?: return null
+        var callee = callExpression.calleeExpression ?: return null
+
+        if (callee is KtConstructorCalleeExpression)
+            callee = callee.constructorReferenceExpression ?: return null
 
         if (isAnalyzeOff()) return null
 
@@ -286,7 +289,6 @@ class KotlinLanguageInjector(
         }
         val callee = calleeReference?.resolve()
         when (callee) {
-            is KtFunction -> return injectionForKotlinCall(argument, callee, calleeReference)
             is PsiClass -> {
                 val psiClass = callee as? PsiClass ?: return null
                 val argumentName = argument.getArgumentName()?.asName?.identifier ?: "value"
