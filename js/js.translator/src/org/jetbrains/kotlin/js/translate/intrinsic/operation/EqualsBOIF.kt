@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.util.*
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
-    private object EqualsIntrinsic : AbstractBinaryOperationIntrinsic() {
+    private object EqualsIntrinsic : BinaryOperationIntrinsic {
 
         private val JS_NUMBER_PRIMITIVES =
             EnumSet.of(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT, PrimitiveType.DOUBLE, PrimitiveType.FLOAT)
@@ -99,7 +99,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
-    object EnumEqualsIntrinsic : AbstractBinaryOperationIntrinsic() {
+    object EnumEqualsIntrinsic : BinaryOperationIntrinsic {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsBinaryOperation {
             val operator = if (expression.isNegated()) JsBinaryOperator.REF_NEQ else JsBinaryOperator.REF_EQ
             return JsBinaryOperation(operator, left, right)
@@ -112,11 +112,11 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             when {
                 isEnumIntrinsicApplicable(descriptor, leftType, rightType) -> EnumEqualsIntrinsic
 
-                KotlinBuiltIns.isBuiltIn(descriptor) ||
-                TopLevelFIF.EQUALS_IN_ANY.test(descriptor) -> EqualsIntrinsic
+            KotlinBuiltIns.isBuiltIn(descriptor) ||
+                    TopLevelFIF.EQUALS_IN_ANY.test(descriptor) -> EqualsIntrinsic
 
-                else -> null
-            }
+            else -> null
+        }
 
     private fun isEnumIntrinsicApplicable(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): Boolean {
         return DescriptorUtils.isEnumClass(descriptor.containingDeclaration) && leftType != null && rightType != null &&

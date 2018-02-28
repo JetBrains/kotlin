@@ -35,7 +35,7 @@ class Intrinsics {
     private val binaryOperationIntrinsics = BinaryOperationIntrinsics()
     private val objectIntrinsics = ObjectIntrinsics()
 
-    fun getBinaryOperationIntrinsic(expression: KtBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic {
+    fun getBinaryOperationIntrinsic(expression: KtBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic? {
         return binaryOperationIntrinsics.getIntrinsic(expression, context)
     }
 

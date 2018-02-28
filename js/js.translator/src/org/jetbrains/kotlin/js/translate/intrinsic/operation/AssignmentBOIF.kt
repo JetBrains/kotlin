@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 object AssignmentBOIF : BinaryOperationIntrinsicFactory {
 
-    private object CharAssignmentIntrinsic : AbstractBinaryOperationIntrinsic() {
+    private object CharAssignmentIntrinsic : BinaryOperationIntrinsic {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(PsiUtils.getOperationToken(expression))
             return JsBinaryOperation(operator, left, TranslationUtils.charToBoxedChar(context, right))

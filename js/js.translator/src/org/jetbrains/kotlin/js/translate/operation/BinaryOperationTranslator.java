@@ -101,7 +101,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translate() {
         BinaryOperationIntrinsic intrinsic = getIntrinsicForExpression();
-        if (intrinsic.exists()) {
+        if (intrinsic != null) {
             return applyIntrinsic(intrinsic);
         }
         if (operationToken == KtTokens.ELVIS) {
@@ -158,7 +158,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         return result;
     }
 
-    @NotNull
+    @Nullable
     private BinaryOperationIntrinsic getIntrinsicForExpression() {
         return context().intrinsics().getBinaryOperationIntrinsic(expression, context());
     }

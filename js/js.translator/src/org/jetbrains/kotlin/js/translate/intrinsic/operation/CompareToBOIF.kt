@@ -32,28 +32,28 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 object CompareToBOIF : BinaryOperationIntrinsicFactory {
-    private object CompareToIntrinsic : AbstractBinaryOperationIntrinsic() {
+    private object CompareToIntrinsic : BinaryOperationIntrinsic {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             return JsBinaryOperation(operator, left, right)
         }
     }
 
-    private object CompareToCharIntrinsic : AbstractBinaryOperationIntrinsic() {
+    private object CompareToCharIntrinsic : BinaryOperationIntrinsic {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             return JsBinaryOperation(operator, left, JsAstUtils.charToInt(right))
         }
     }
 
-    private object CompareCharToPrimitiveIntrinsic : AbstractBinaryOperationIntrinsic() {
+    private object CompareCharToPrimitiveIntrinsic : BinaryOperationIntrinsic {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             return JsBinaryOperation(operator, JsAstUtils.charToInt(left), right)
         }
     }
 
-    private object CompareToFunctionIntrinsic : AbstractBinaryOperationIntrinsic() {
+    private object CompareToFunctionIntrinsic : BinaryOperationIntrinsic{
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             val compareTo = JsAstUtils.compareTo(left, right)
