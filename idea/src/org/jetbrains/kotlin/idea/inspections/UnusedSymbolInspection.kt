@@ -19,6 +19,7 @@ import com.intellij.codeInspection.ex.EntryPointsManagerImpl
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
@@ -157,7 +158,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             val psiElement = declaration.nameIdentifier ?: (declaration as? KtConstructor<*>)?.getConstructorKeyword() ?: return
             val problemDescriptor = holder.manager.createProblemDescriptor(
                     psiElement,
-                    null,
+                    null as? TextRange,
                     message,
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     true,

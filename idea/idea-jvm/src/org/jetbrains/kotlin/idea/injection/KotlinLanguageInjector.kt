@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.tools.kompot.api.source.forVersion
 import org.jetbrains.kotlin.util.aliasImportMap
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -380,6 +381,8 @@ class KotlinLanguageInjector(
 
         return InjectionInfo(id, prefix, suffix)
     }
+
+    private val InjectionPlace.elementPattern get() = forVersion("IC-173") { `elementPattern$V0` } ?: forVersion("IC-181") { `elementPattern$V1` } !!
 
     private val injectableTargetClassShortNames = CachedValuesManager.getManager(project)
             .createCachedValue({

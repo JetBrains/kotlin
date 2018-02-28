@@ -21,7 +21,7 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
                 holder.registerProblem(visibilityModifier,
                                        "Redundant visibility modifier",
                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                       IntentionWrapper(RemoveModifierFix(declaration, implicitVisibility, isRedundant = true),
+                                       IntentionWrapper(RemoveModifierFix(declaration, implicitVisibility!!, isRedundant = true),
                                                         declaration.containingFile))
             }
         }

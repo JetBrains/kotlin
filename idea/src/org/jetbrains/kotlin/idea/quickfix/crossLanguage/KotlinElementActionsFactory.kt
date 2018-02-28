@@ -58,9 +58,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.annotations.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.tools.kompot.api.annotations.CompatibleWith
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.supertypes
+
+typealias ExpectedTypes = List<ExpectedType>
 
 class KotlinElementActionsFactory : JvmElementActionsFactory() {
     companion object {
@@ -254,28 +257,32 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         return listOfNotNull(action)
     }
 
-    override fun createAddConstructorActions(targetClass: JvmClass, request: MemberRequest.Constructor): List<IntentionAction> {
+
+//    @CompatibleWith("IC-181.3741.2")
+//    override fun createAddConstructorActions(targetClass: JvmClass, request: CreateConstructorRequest): List<IntentionAction> {
+//        return createAddConstructorActions(targetClass, request.parameters, request.modifiers)
+//    }
+
+    private fun createAddConstructorActions(targetClass: JvmClass, requestParameters: List<JvmParameter>, requestModifiers: Collection<JvmModifier>): List<IntentionAction> {
         val targetKtClass = targetClass.toKtClassOrFile() as? KtClass ?: return emptyList()
 
-        if (request.typeParameters.isNotEmpty()) return emptyList()
-
-        val modifierBuilder = ModifierBuilder(targetKtClass).apply { addJvmModifiers(request.modifiers) }
+        val modifierBuilder = ModifierBuilder(targetKtClass).apply { addJvmModifiers(requestModifiers) }
         if (!modifierBuilder.isValid) return emptyList()
 
         val resolutionFacade = targetKtClass.getResolutionFacade()
         val nullableAnyType = resolutionFacade.moduleDescriptor.builtIns.nullableAnyType
-        val parameterInfos = request.parameters.mapIndexed { index, param ->
+        val parameterInfos = requestParameters.mapIndexed { index, param ->
             val ktType = (param.type as? PsiType)?.resolveToKotlinType(resolutionFacade) ?: nullableAnyType
             val name = param.name ?: "arg${index + 1}"
             ParameterInfo(TypeInfo(ktType, Variance.IN_VARIANCE), listOf(name))
         }
         val needPrimary = !targetKtClass.hasExplicitPrimaryConstructor()
         val constructorInfo = ConstructorInfo(
-                parameterInfos,
-                targetKtClass,
-                isPrimary = needPrimary,
-                modifierList = modifierBuilder.modifierList,
-                withBody = true
+            parameterInfos,
+            targetKtClass,
+            isPrimary = needPrimary,
+            modifierList = modifierBuilder.modifierList,
+            withBody = true
         )
         val addConstructorAction = object : CreateCallableFromUsageFix<KtElement>(targetKtClass, listOf(constructorInfo)) {
             override fun getFamilyName() = "Add method"
@@ -286,19 +293,25 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
             val primaryConstructor = targetKtClass.primaryConstructor ?: return@run null
             val lightMethod = primaryConstructor.toLightMethods().firstOrNull() ?: return@run null
             val project = targetKtClass.project
-            val fakeParametersExpressions = fakeParametersExpressions(request.parameters, project) ?: return@run null
+            val fakeParametersExpressions = fakeParametersExpressions(requestParameters, project) ?: return@run null
             QuickFixFactory.getInstance()
-                    .createChangeMethodSignatureFromUsageFix(
-                            lightMethod,
-                            fakeParametersExpressions,
-                            PsiSubstitutor.EMPTY,
-                            targetKtClass,
-                            false,
-                            2
-                    ).takeIf { it.isAvailable(project, null, targetKtClass.containingFile) }
+                .createChangeMethodSignatureFromUsageFix(
+                    lightMethod,
+                    fakeParametersExpressions,
+                    PsiSubstitutor.EMPTY,
+                    targetKtClass,
+                    false,
+                    2
+                ).takeIf { it.isAvailable(project, null, targetKtClass.containingFile) }
         }
 
         return listOfNotNull(changePrimaryConstructorAction, addConstructorAction)
+    }
+
+    @CompatibleWith("IC-173.4548.28")
+    override fun createAddConstructorActions(targetClass: JvmClass, request: MemberRequest.Constructor): List<IntentionAction> {
+        if (request.typeParameters.isNotEmpty()) return emptyList()
+        return createAddConstructorActions(targetClass, request.parameters, request.modifiers)
     }
 
     override fun createAddPropertyActions(targetClass: JvmClass, request: MemberRequest.Property): List<IntentionAction> {
@@ -367,7 +380,9 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
 
         val resolutionFacade = targetContainer.getResolutionFacade()
         val returnTypeInfo = request.returnType.toKotlinTypeInfo(resolutionFacade)
-        val parameterInfos = request.parameters.map { (suggestedNames, expectedTypes) ->
+        val parameterInfos = request.parameters.map { f ->
+            val (suggestedNames, expectedTypes) = f!!
+
             ParameterInfo(expectedTypes.toKotlinTypeInfo(resolutionFacade), suggestedNames.names.toList())
         }
         val functionInfo = FunctionInfo(
