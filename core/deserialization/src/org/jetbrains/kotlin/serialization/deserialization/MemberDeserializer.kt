@@ -38,11 +38,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
         val property = DeserializedPropertyDescriptor(
             c.containingDeclaration, null,
             getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
-            Deserialization.modality(Flags.MODALITY.get(flags)),
-            Deserialization.visibility(Flags.VISIBILITY.get(flags)),
+            ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
+            ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
             Flags.IS_VAR.get(flags),
             c.nameResolver.getName(proto.name),
-            Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)),
+            ProtoEnumFlags.memberKind(Flags.MEMBER_KIND.get(flags)),
             Flags.IS_LATEINIT.get(flags),
             Flags.IS_CONST.get(flags),
             Flags.IS_EXTERNAL_PROPERTY.get(flags),
@@ -80,8 +80,8 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 PropertyGetterDescriptorImpl(
                     property,
                     annotations,
-                    Deserialization.modality(Flags.MODALITY.get(getterFlags)),
-                    Deserialization.visibility(Flags.VISIBILITY.get(getterFlags)),
+                    ProtoEnumFlags.modality(Flags.MODALITY.get(getterFlags)),
+                    ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags)),
                     /* isDefault = */ !isNotDefault,
                     /* isExternal = */ isExternal,
                     isInline,
@@ -106,8 +106,8 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 val setter = PropertySetterDescriptorImpl(
                     property,
                     annotations,
-                    Deserialization.modality(Flags.MODALITY.get(setterFlags)),
-                    Deserialization.visibility(Flags.VISIBILITY.get(setterFlags)),
+                    ProtoEnumFlags.modality(Flags.MODALITY.get(setterFlags)),
+                    ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags)),
                     /* isDefault = */ !isNotDefault,
                     /* isExternal = */ isExternal,
                     isInline,
@@ -154,7 +154,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         else Annotations.EMPTY
         val function = DeserializedSimpleFunctionDescriptor(
             c.containingDeclaration, /* original = */ null, annotations, c.nameResolver.getName(proto.name),
-            Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, c.versionRequirementTable,
+            ProtoEnumFlags.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, c.versionRequirementTable,
             c.containerSource
         )
         val local = c.childContext(function, proto.typeParameterList)
@@ -165,8 +165,8 @@ class MemberDeserializer(private val c: DeserializationContext) {
             local.typeDeserializer.ownTypeParameters,
             local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
             local.typeDeserializer.type(proto.returnType(c.typeTable)),
-            Deserialization.modality(Flags.MODALITY.get(flags)),
-            Deserialization.visibility(Flags.VISIBILITY.get(flags)),
+            ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
+            ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
             emptyMap<FunctionDescriptor.UserDataKey<*>, Any?>()
         )
         function.isOperator = Flags.IS_OPERATOR.get(flags)
@@ -189,7 +189,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
     fun loadTypeAlias(proto: ProtoBuf.TypeAlias): TypeAliasDescriptor {
         val annotations = AnnotationsImpl(proto.annotationList.map { annotationDeserializer.deserializeAnnotation(it, c.nameResolver) })
 
-        val visibility = Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
+        val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(proto.flags))
         val typeAlias = DeserializedTypeAliasDescriptor(
             c.storageManager, c.containingDeclaration, annotations, c.nameResolver.getName(proto.name),
             visibility, proto, c.nameResolver, c.typeTable, c.versionRequirementTable, c.containerSource
@@ -219,7 +219,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         val local = c.childContext(descriptor, listOf())
         descriptor.initialize(
             local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
-            Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
+            ProtoEnumFlags.visibility(Flags.VISIBILITY.get(proto.flags))
         )
         descriptor.returnType = classDescriptor.defaultType
         return descriptor

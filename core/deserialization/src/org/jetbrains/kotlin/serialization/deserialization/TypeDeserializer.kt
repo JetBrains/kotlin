@@ -201,7 +201,7 @@ class TypeDeserializer(
                 StarProjectionImpl(parameter)
         }
 
-        val variance = Deserialization.variance(typeArgumentProto.projection)
+        val variance = ProtoEnumFlags.variance(typeArgumentProto.projection)
         val type = typeArgumentProto.type(c.typeTable) ?:
                 return TypeProjectionImpl(ErrorUtils.createErrorType("No type recorded"))
 
