@@ -6525,6 +6525,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("blockCommentOnly.kt")
+        public void testBlockCommentOnly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/blockCommentOnly.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("commentsInBody.kt")
         public void testCommentsInBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/commentsInBody.kt");
@@ -6558,6 +6564,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("emptyBody.kt")
         public void testEmptyBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/emptyBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("endOfLineComment1.kt")
+        public void testEndOfLineComment1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/endOfLineComment1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("endOfLineComment2.kt")
+        public void testEndOfLineComment2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/endOfLineComment2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("endOfLineComment3.kt")
+        public void testEndOfLineComment3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/endOfLineComment3.kt");
             doTest(fileName);
         }
 
