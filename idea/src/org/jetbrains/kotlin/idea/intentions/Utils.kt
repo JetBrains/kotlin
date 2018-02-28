@@ -306,3 +306,5 @@ fun KtBlockExpression.getParentLambdaLabelName(): String? {
     val lambdaLabelName = (valueArgument.getArgumentExpression() as? KtLabeledExpression)?.getLabelName()
     return lambdaLabelName ?: callExpression.getCallNameExpression()?.text
 }
+
+internal fun KtExpression.getCallableDescriptor() = resolveToCall()?.resultingDescriptor
