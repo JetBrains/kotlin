@@ -316,12 +316,12 @@ class Collections {
             val sb = StringBuilder("An existing string and a list: ")
             val numbers = listOf(1, 2, 3)
             assertPrints(numbers.joinTo(sb, prefix = "[", postfix = "]").toString(), "An existing string and a list: [1, 2, 3]")
-            
+
             val lotOfNumbers: Iterable<Int> = 1..100
             val firstNumbers = StringBuilder("First five numbers: ")
             assertPrints(lotOfNumbers.joinTo(firstNumbers, limit = 5).toString(), "First five numbers: 1, 2, 3, 4, 5, ...")
         }
-        
+
         @Sample
         fun joinToString() {
             val numbers = listOf(1, 2, 3, 4, 5, 6)
@@ -334,13 +334,30 @@ class Collections {
         }
 
         @Sample
+        fun take() {
+            val chars = ('a'..'z').toList()
+            assertPrints(chars.take(3), "[a, b, c]")
+            assertPrints(chars.takeWhile { it < 'f' }, "[a, b, c, d, e]")
+            assertPrints(chars.takeLast(2), "[y, z]")
+            assertPrints(chars.takeLastWhile { it > 'w' }, "[x, y, z]")
+        }
+
+        @Sample
+        fun drop() {
+            val chars = ('a'..'z').toList()
+            assertPrints(chars.drop(23), "[x, y, z]")
+            assertPrints(chars.dropLast(23), "[a, b, c]")
+            assertPrints(chars.dropWhile { it < 'x' }, "[x, y, z]")
+            assertPrints(chars.dropLastWhile { it > 'c' }, "[a, b, c]")
+        }
+
+        @Sample
         fun chunked() {
             val words = "one two three four five six seven eight nine ten".split(' ')
             val chunks = words.chunked(3)
 
             assertPrints(chunks, "[[one, two, three], [four, five, six], [seven, eight, nine], [ten]]")
         }
-
 
         @Sample
         fun zipWithNext() {

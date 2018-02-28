@@ -33,7 +33,7 @@ fun assertExists(file: File) {
 
 val BUILT_INS_NATIVE_DIR = File("core/builtins/native/")
 val BUILT_INS_SRC_DIR = File("core/builtins/src/")
-val RUNTIME_JVM_DIR = File("core/runtime.jvm/src/")
+val RUNTIME_JVM_DIR = File("libraries/stdlib/jvm/runtime/")
 
 abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
     protected abstract fun generateBody(): Unit

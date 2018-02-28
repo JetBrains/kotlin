@@ -10,7 +10,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -50,7 +50,7 @@ class RedundantNotNullExtensionReceiverOfInlineInspection : AbstractKotlinInspec
                 return
             }
 
-            val context = function.analyzeFully()
+            val context = function.analyzeWithContent()
             val functionDescriptor = context[BindingContext.FUNCTION, function] ?: return
             val receiverParameter = functionDescriptor.extensionReceiverParameter ?: return
             val receiverValue = receiverParameter.value

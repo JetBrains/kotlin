@@ -55,10 +55,11 @@ import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.caches.resolve.NotUnderContentRootModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.productionSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.testSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.moduleInfo
+import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.project.KOTLIN_CONSOLE_KEY
@@ -67,7 +68,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.psi.moduleInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.repl.ReplState
@@ -293,7 +293,8 @@ class KotlinConsoleRunner(
         }
 
     private fun configureFileDependencies(psiFile: KtFile) {
-        psiFile.moduleInfo = module.testSourceInfo() ?: module.productionSourceInfo() ?: NotUnderContentRootModuleInfo
+        psiFile.moduleInfo = module.testSourceInfo() ?: module.productionSourceInfo() ?:
+                NotUnderContentRootModuleInfo
     }
 }
 

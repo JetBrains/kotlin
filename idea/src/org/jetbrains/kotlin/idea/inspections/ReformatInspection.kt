@@ -52,11 +52,13 @@ class ReformatInspection : LocalInspectionTool() {
         }.filterNotNull()
 
         return elements.map {
-            ProblemDescriptorImpl(it, it,
-                                  "File is not properly formatted",
-                                  arrayOf(ReformatQuickFix),
-                                  ProblemHighlightType.WEAK_WARNING, false, null,
-                                  isOnTheFly)
+            ProblemDescriptorImpl(
+                it, it,
+                "File is not properly formatted",
+                arrayOf(ReformatQuickFix),
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, false, null,
+                isOnTheFly
+            )
         }.toTypedArray()
     }
 

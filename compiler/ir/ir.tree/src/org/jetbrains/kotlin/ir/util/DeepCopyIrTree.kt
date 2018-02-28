@@ -24,15 +24,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-inline fun <reified T : IrElement> T.deepCopyOld() =
-    transform(DeepCopyIrTree(), null) as T
+inline fun <reified T : IrElement> T.deepCopyOld(): T =
+    transform(DeepCopyIrTree(), null).patchDeclarationParents() as T
 
 @Deprecated("Creates unbound symbols")
 open class DeepCopyIrTree : IrElementTransformerVoid() {
@@ -96,6 +95,19 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
         ).apply {
             thisReceiver = declaration.thisReceiver?.withDescriptor(descriptor.thisAsReceiverParameter)
             transformTypeParameters(declaration, descriptor.declaredTypeParameters)
+
+            descriptor.typeConstructor.supertypes.forEachIndexed { index, supertype ->
+                val superclassDescriptor = supertype.constructor.declarationDescriptor
+                if (superclassDescriptor is ClassDescriptor) {
+                    val oldSuperclassSymbol = declaration.superClasses.getOrNull(index)
+                    val newSuperclassSymbol =
+                        if (superclassDescriptor == oldSuperclassSymbol?.descriptor)
+                            oldSuperclassSymbol
+                        else
+                            IrClassSymbolImpl(superclassDescriptor)
+                    superClasses.add(newSuperclassSymbol)
+                }
+            }
         }
 
     private fun IrValueParameter.withDescriptor(newDescriptor: ParameterDescriptor) =
@@ -108,13 +120,21 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             mapTypeAliasDeclaration(declaration.descriptor)
         )
 
-    override fun visitFunction(declaration: IrFunction): IrFunction =
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrFunction =
         IrFunctionImpl(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             mapFunctionDeclaration(declaration.descriptor),
             declaration.body?.transform()
-        ).transformParameters(declaration)
+        ).transformParameters(declaration).apply {
+            descriptor.overriddenDescriptors.mapIndexedTo(overriddenSymbols) { index, overriddenDescriptor ->
+                val oldOverriddenSymbol = declaration.overriddenSymbols.getOrNull(index)
+                if (overriddenDescriptor.original == oldOverriddenSymbol?.descriptor?.original)
+                    oldOverriddenSymbol
+                else
+                    IrSimpleFunctionSymbolImpl(overriddenDescriptor.original)
+            }
+        }
 
     override fun visitConstructor(declaration: IrConstructor): IrConstructor =
         IrConstructorImpl(
@@ -166,7 +186,25 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             originalTypeParameter.startOffset, originalTypeParameter.endOffset,
             mapDeclarationOrigin(originalTypeParameter.origin),
             newTypeParameterDescriptor
-        )
+        ).apply {
+            for (i in upperBounds.indices) {
+                val upperBoundClassifier = upperBounds[i].constructor.declarationDescriptor ?: continue
+                val oldSuperClassifierSymbol = originalTypeParameter.superClassifiers[i]
+                val newSuperClassifierSymbol =
+                    if (upperBoundClassifier == oldSuperClassifierSymbol.descriptor)
+                        oldSuperClassifierSymbol
+                    else
+                        createUnboundClassifierSymbol(upperBoundClassifier)
+                superClassifiers.add(newSuperClassifierSymbol)
+            }
+        }
+
+    protected fun createUnboundClassifierSymbol(classifier: ClassifierDescriptor): IrClassifierSymbol =
+        when (classifier) {
+            is TypeParameterDescriptor -> IrTypeParameterSymbolImpl(classifier)
+            is ClassDescriptor -> IrClassSymbolImpl(classifier)
+            else -> throw IllegalArgumentException("Unexpected classifier descriptor: $classifier")
+        }
 
     protected fun copyValueParameter(
         originalValueParameter: IrValueParameter,
@@ -468,7 +506,15 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             expression.type,
             expression.operator,
             expression.typeOperand,
-            expression.argument.transform()
+            expression.argument.transform(),
+            run {
+                val oldTypeDescriptor = expression.typeOperandClassifier.descriptor
+                val newTypeDescriptor = mapClassifierReference(oldTypeDescriptor)
+                if (newTypeDescriptor == oldTypeDescriptor)
+                    expression.typeOperandClassifier
+                else
+                    createUnboundClassifierSymbol(newTypeDescriptor)
+            }
         )
 
     override fun visitWhen(expression: IrWhen): IrWhen =

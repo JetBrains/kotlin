@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.stubindex.resolve
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory

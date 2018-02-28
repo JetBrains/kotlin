@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
@@ -75,8 +76,10 @@ object ReplaceWithAnnotationAnalyzer {
         val module = resolutionFacade.moduleDescriptor
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
         val defaultImportsScopes = buildDefaultImportsScopes(resolutionFacade, module)
+
+        val languageVersionSettings = resolutionFacade.getFrontendService(LanguageVersionSettings::class.java)
         val scope = getResolutionScope(symbolDescriptor, symbolDescriptor,
-                                       listOf(explicitImportsScope) + defaultImportsScopes) ?: return null
+                                       listOf(explicitImportsScope) + defaultImportsScopes, languageVersionSettings) ?: return null
 
         val expressionTypingServices = resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
 
@@ -104,7 +107,12 @@ object ReplaceWithAnnotationAnalyzer {
 
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
         val defaultImportScopes = buildDefaultImportsScopes(resolutionFacade, module)
-        val scope = getResolutionScope(symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope) + defaultImportScopes) ?: return null
+        val scope = getResolutionScope(
+                symbolDescriptor,
+                symbolDescriptor,
+                listOf(explicitImportsScope) + defaultImportScopes,
+                resolutionFacade.getFrontendService(LanguageVersionSettings::class.java)
+        ) ?: return null
 
         val typeResolver = resolutionFacade.getFrontendService(TypeResolver::class.java)
         val bindingTrace = BindingTraceContext()
@@ -155,11 +163,16 @@ object ReplaceWithAnnotationAnalyzer {
                 .map(FqNameUnsafe::toSafe)
     }
 
-    private fun getResolutionScope(descriptor: DeclarationDescriptor, ownerDescriptor: DeclarationDescriptor, additionalScopes: Collection<ImportingScope>): LexicalScope? {
+    private fun getResolutionScope(
+            descriptor: DeclarationDescriptor,
+            ownerDescriptor: DeclarationDescriptor,
+            additionalScopes: Collection<ImportingScope>,
+            languageVersionSettings: LanguageVersionSettings
+    ): LexicalScope? {
         return when (descriptor) {
             is PackageFragmentDescriptor -> {
                 val moduleDescriptor = descriptor.containingDeclaration
-                getResolutionScope(moduleDescriptor.getPackage(descriptor.fqName), ownerDescriptor, additionalScopes)
+                getResolutionScope(moduleDescriptor.getPackage(descriptor.fqName), ownerDescriptor, additionalScopes, languageVersionSettings)
             }
 
             is PackageViewDescriptor -> {
@@ -169,12 +182,12 @@ object ReplaceWithAnnotationAnalyzer {
             }
 
             is ClassDescriptor -> {
-                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
-                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope }).scopeForMemberDeclarationResolution()
+                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes, languageVersionSettings) ?: return null
+                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, languageVersionSettings, { outerScope }).scopeForMemberDeclarationResolution()
             }
 
             is TypeAliasDescriptor -> {
-                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
+                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes, languageVersionSettings) ?: return null
                 LexicalScopeImpl(outerScope, descriptor, false, null, LexicalScopeKind.TYPE_ALIAS_HEADER, LocalRedeclarationChecker.DO_NOTHING) {
                     for (typeParameter in descriptor.declaredTypeParameters) {
                         addClassifierDescriptor(typeParameter)
@@ -183,12 +196,12 @@ object ReplaceWithAnnotationAnalyzer {
             }
 
             is FunctionDescriptor -> {
-                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
+                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes, languageVersionSettings) ?: return null
                 FunctionDescriptorUtil.getFunctionInnerScope(outerScope, descriptor, LocalRedeclarationChecker.DO_NOTHING)
             }
 
             is PropertyDescriptor -> {
-                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
+                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes, languageVersionSettings) ?: return null
                 val propertyHeader = ScopeUtils.makeScopeForPropertyHeader(outerScope, descriptor)
                 LexicalScopeImpl(propertyHeader, descriptor, false, descriptor.extensionReceiverParameter, LexicalScopeKind.PROPERTY_ACCESSOR_BODY)
             }

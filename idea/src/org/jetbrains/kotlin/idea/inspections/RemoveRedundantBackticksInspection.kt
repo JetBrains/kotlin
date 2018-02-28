@@ -15,14 +15,20 @@
  */
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.SharedImplUtil
+import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 
 class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
@@ -44,10 +50,10 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
     }
 
     private fun isRedundantBackticks(node: ASTNode): Boolean {
-        return (node.text.startsWith("`") &&
-                node.text.endsWith("`") &&
-                node.text.isIdentifier() &&
-                !isKeyword(node.text.removePrefix("`").removeSuffix("`")))
+        val text = node.text
+        if (!(text.startsWith("`") && text.endsWith("`"))) return false
+        val unquotedText = text.unquote()
+        return unquotedText.isIdentifier() && !isKeyword(unquotedText)
     }
 
     private fun registerProblem(holder: ProblemsHolder, element: PsiElement) {

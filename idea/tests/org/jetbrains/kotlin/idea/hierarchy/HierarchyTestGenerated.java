@@ -267,6 +267,18 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doSubClassHierarchyTest(fileName);
         }
 
+        @TestMetadata("ConstructorCallCaretAfter")
+        public void testConstructorCallCaretAfter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/ConstructorCallCaretAfter/");
+            doSubClassHierarchyTest(fileName);
+        }
+
+        @TestMetadata("ConstructorCallCaretBefore")
+        public void testConstructorCallCaretBefore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/ConstructorCallCaretBefore/");
+            doSubClassHierarchyTest(fileName);
+        }
+
         @TestMetadata("MultiTypeAlias")
         public void testMultiTypeAlias() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/MultiTypeAlias/");
@@ -282,6 +294,18 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         @TestMetadata("ObjectFromTrait")
         public void testObjectFromTrait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/ObjectFromTrait/");
+            doSubClassHierarchyTest(fileName);
+        }
+
+        @TestMetadata("SecondaryConstructorCallCaretAfter")
+        public void testSecondaryConstructorCallCaretAfter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/SecondaryConstructorCallCaretAfter/");
+            doSubClassHierarchyTest(fileName);
+        }
+
+        @TestMetadata("SecondaryConstructorCallCaretBefore")
+        public void testSecondaryConstructorCallCaretBefore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/SecondaryConstructorCallCaretBefore/");
             doSubClassHierarchyTest(fileName);
         }
 

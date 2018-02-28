@@ -17,12 +17,11 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
-internal fun KtExpression.getCallableDescriptor() = getResolvedCall(analyze())?.resultingDescriptor
+internal fun KtExpression.getCallableDescriptor() = resolveToCall()?.resultingDescriptor
 
 internal fun KtExpression.getArguments() = when (this) {
     is KtBinaryExpression -> this.left to this.right

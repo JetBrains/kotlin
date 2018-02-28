@@ -9,13 +9,13 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
@@ -44,7 +44,7 @@ private fun KtReferenceExpression.isRedundantUnit(): Boolean {
         if (this == parent.lastBlockStatementOrThis()) {
             val prev = this.previousStatement() ?: return true
             if (prev.isUnitLiteral()) return true
-            val prevType = prev.getResolvedCall(analyze())?.resultingDescriptor?.returnType
+            val prevType = prev.resolveToCall(BodyResolveMode.FULL)?.resultingDescriptor?.returnType
             if (prevType != null) {
                 return prevType.isUnit()
             }

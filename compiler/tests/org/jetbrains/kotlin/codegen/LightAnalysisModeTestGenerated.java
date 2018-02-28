@@ -882,6 +882,18 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("kt11163_properIeee754comparisons.kt")
+        public void testKt11163_properIeee754comparisons() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/kt11163_properIeee754comparisons.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt23030_properIeee754comparisons.kt")
+        public void testKt23030_properIeee754comparisons() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/kt23030_properIeee754comparisons.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt6747_identityEquals.kt")
         public void testKt6747_identityEquals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/kt6747_identityEquals.kt");
@@ -5895,6 +5907,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("kt15930.kt")
+        public void testKt15930() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/kt15930.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lastExpressionIsLoop.kt")
         public void testLastExpressionIsLoop() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");
@@ -10104,6 +10122,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("dataClass.kt")
         public void testDataClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/dataClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("differentTypesComparison.kt")
+        public void testDifferentTypesComparison() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/differentTypesComparison.kt");
             doTest(fileName);
         }
 

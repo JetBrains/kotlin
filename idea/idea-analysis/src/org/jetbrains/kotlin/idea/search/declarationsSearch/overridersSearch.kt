@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightMethod
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations

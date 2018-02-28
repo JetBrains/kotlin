@@ -303,8 +303,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"
                     serviceImplementation="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker"/>
@@ -312,11 +312,11 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
                     serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.lightClasses.ClsJavaStubByVirtualFileCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.lightClasses.ClsJavaStubByVirtualFileCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.lightClasses.ClsJavaStubByVirtualFileCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.ClsJavaStubByVirtualFileCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IdeLightClassInheritanceHelper"/>
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.IdeLightClassInheritanceHelper"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.config.KotlinFacetSettingsProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.facet.KotlinFacetSettingsProviderImpl"/>
@@ -329,17 +329,20 @@
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.LibraryDependenciesCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.LibraryDependenciesCacheImpl"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCacheImpl"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.ScriptBinariesScopeCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.ScriptBinariesScopeCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.ScriptBinariesScopeCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.ScriptBinariesScopeCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.util.ProjectJob"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.util.ProjectJob"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptModificationListener"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptModificationListener"/>
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
@@ -1554,6 +1557,16 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveLabeledReturnInLambdaIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddLabeledReturnInLambdaIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupPath="Kotlin"
@@ -1819,7 +1832,7 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="INFO"
+                     level="INFORMATION"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.loopToCallChain.UseWithIndexInspection"
@@ -2607,6 +2620,15 @@
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.JavaCollectionsStaticMethodOnImmutableListInspection"
+                     displayName="Call of Java mutator method on immutable Kotlin collection"
+                     groupPath="Kotlin"
+                     groupName="Java interop issues"
+                     enabledByDefault="true"
+                     level="WARNING"
                      language="kotlin"
     />
 

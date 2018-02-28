@@ -23,9 +23,8 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
@@ -91,15 +90,14 @@ fun PsiParameter.getParameterDescriptor(resolutionFacade: ResolutionFacade = jav
 }
 
 fun PsiClass.resolveToDescriptor(
-        resolutionFacade: ResolutionFacade,
-        declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it }
+    resolutionFacade: ResolutionFacade,
+    declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it }
 ): ClassDescriptor? {
     return if (this is KtLightClass && this !is KtLightClassForDecompiledDeclaration) {
         val origin = this.kotlinOrigin ?: return null
         val declaration = declarationTranslator(origin) ?: return null
         resolutionFacade.resolveToDescriptor(declaration)
-    }
-    else {
+    } else {
         getJavaClassDescriptor(resolutionFacade)
     } as? ClassDescriptor
 }
@@ -143,4 +141,4 @@ private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElemen
 }
 
 fun PsiElement.javaResolutionFacade() =
-        KotlinCacheService.getInstance(project).getResolutionFacadeByFile(this.originalElement.containingFile, JvmPlatform)
+    KotlinCacheService.getInstance(project).getResolutionFacadeByFile(this.originalElement.containingFile, JvmPlatform)

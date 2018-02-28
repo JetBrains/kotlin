@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.debugger.*
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.*
 import java.util.regex.Pattern
@@ -31,8 +32,10 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
     private val exceptionFilter = ExceptionFilter(searchScope)
 
     override fun applyFilter(line: String, entireLength: Int): Filter.Result? {
-        val result = exceptionFilter.applyFilter(line, entireLength)
-        return if (result == null) null else patchResult(result, line)
+        return runReadAction {
+            val result = exceptionFilter.applyFilter(line, entireLength)
+            if (result == null) null else patchResult(result, line)
+        }
     }
 
     private fun patchResult(result: Filter.Result, line: String): Filter.Result {

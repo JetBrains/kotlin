@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral
-import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -33,10 +32,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 object CompareToBOIF : BinaryOperationIntrinsicFactory {
-    val COMPARE_TO_CHAR = pattern("Int|Short|Byte|Double|Float.compareTo(Char)")
-    val CHAR_COMPARE_TO = pattern("Char.compareTo(Int|Short|Byte|Double|Float)")
-    val PRIMITIVE_COMPARE_TO = pattern("Int|Short|Byte|Double|Float|Char|String|Boolean.compareTo")
-
     private object CompareToIntrinsic : AbstractBinaryOperationIntrinsic() {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
@@ -71,17 +66,17 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
     override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? {
         if (descriptor.isDynamic()) return CompareToIntrinsic
 
+        if (leftType == null || rightType == null) return null
+
         if (!KotlinBuiltIns.isBuiltIn(descriptor)) return null
 
+        // Types may be nullable if properIeeeComparisons are switched off, e.g. fun foo(a: Double?) = a != null && a < 0.0
         return when {
-            COMPARE_TO_CHAR.test(descriptor) ->
-                CompareToCharIntrinsic
-            CHAR_COMPARE_TO.test(descriptor) ->
-                CompareCharToPrimitiveIntrinsic
-            PRIMITIVE_COMPARE_TO.test(descriptor) ->
-                CompareToIntrinsic
-            else ->
-                CompareToFunctionIntrinsic
+            KotlinBuiltIns.isCharOrNullableChar(rightType) -> CompareToCharIntrinsic
+            KotlinBuiltIns.isCharOrNullableChar(leftType) -> CompareCharToPrimitiveIntrinsic
+            KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(leftType) &&
+                    KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(rightType) -> CompareToIntrinsic
+            else -> CompareToFunctionIntrinsic
         }
     }
 }

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
 class KotlinPropertyCallUsage(element: KtSimpleNameExpression): KotlinUsageInfo<KtSimpleNameExpression>(element) {
-    private val resolvedCall = element.getResolvedCall(element.analyze())
+    private val resolvedCall = element.resolveToCall(BodyResolveMode.FULL)
 
     override fun processUsage(changeInfo: KotlinChangeInfo, element: KtSimpleNameExpression, allUsages: Array<out UsageInfo>): Boolean {
         updateName(changeInfo, element)

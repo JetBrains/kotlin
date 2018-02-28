@@ -946,6 +946,10 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._long);
     }
 
+    public static boolean isLongOrNullableLong(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._long);
+    }
+
     public static boolean isShort(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._short);
     }

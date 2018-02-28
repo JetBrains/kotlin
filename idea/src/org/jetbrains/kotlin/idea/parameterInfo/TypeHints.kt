@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.containsError
@@ -107,8 +108,7 @@ private fun isUnclearType(type: KotlinType, element: KtCallableDeclaration): Boo
         if (initializer is KtConstantExpression || initializer is KtStringTemplateExpression) return false
         if (initializer is KtUnaryExpression && initializer.baseExpression is KtConstantExpression) return false
         if (initializer is KtCallExpression) {
-            val bindingContext = element.analyze()
-            val resolvedCall = initializer.getResolvedCall(bindingContext)
+            val resolvedCall = initializer.resolveToCall(BodyResolveMode.FULL)
             val resolvedDescriptor = resolvedCall?.candidateDescriptor
             if (resolvedDescriptor is SamConstructorDescriptor) {
                 return false

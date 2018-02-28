@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
@@ -109,7 +110,7 @@ open class KotlinUClass private constructor(
                 else
                     KotlinConstructorUMethod(ktClass, psiMethod, this)
             } else {
-                getLanguagePlugin().convert(psiMethod, this)
+                getLanguagePlugin().convertOpt(psiMethod, this) ?: reportConvertFailure(psiMethod)
             }
         }
 
@@ -253,7 +254,7 @@ class KotlinScriptUClass(
             KotlinScriptConstructorUMethod(psi.script, method as KtLightMethod, this)
         }
         else {
-            getLanguagePlugin().convert(method, this)
+            getLanguagePlugin().convertOpt(method, this) ?: reportConvertFailure(method)
         }
     }
 
@@ -271,4 +272,21 @@ class KotlinScriptUClass(
         override val javaPsi = psi
         override val sourcePsi = psi.kotlinOrigin
     }
+}
+
+private fun reportConvertFailure(psiMethod: PsiMethod): Nothing {
+    val isValid = psiMethod.isValid
+    val report = KotlinExceptionWithAttachments(
+        "cant convert $psiMethod of ${psiMethod.javaClass} to UMethod"
+                + if (!isValid) " (method is not valid)" else ""
+    )
+
+    if (isValid) {
+        report.withAttachment("method", psiMethod.text)
+        psiMethod.containingFile?.let {
+            report.withAttachment("file", it.text)
+        }
+    }
+
+    throw report
 }

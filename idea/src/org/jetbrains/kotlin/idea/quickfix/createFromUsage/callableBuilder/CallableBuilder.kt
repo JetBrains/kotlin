@@ -483,7 +483,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
 
                 val isExpectClassMember by lazy {
-                    containingElement is KtClassOrObject && (containingElement.resolveToDescriptorIfAny() as? ClassDescriptor)?.isExpect ?: false
+                    containingElement is KtClassOrObject && containingElement.resolveToDescriptorIfAny()?.isExpect ?: false
                 }
 
                 val declaration: KtNamedDeclaration = when (callableInfo.kind) {

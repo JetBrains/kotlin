@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.slicer.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPlainWithEscapes
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullabilityFlexible
@@ -53,10 +55,7 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
                 val types = when (element) {
                     is KtCallableDeclaration -> listOfNotNull((element.resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType)
                     is KtDeclaration -> emptyList()
-                    is KtExpression -> {
-                        val (bindingContext, moduleDescriptor) = element.analyzeAndGetResult()
-                        element.guessTypes(bindingContext, moduleDescriptor).toList()
-                    }
+                    is KtExpression -> listOfNotNull(element.analyze(BodyResolveMode.PARTIAL).getType(element))
                     else -> emptyList()
                 }
                 return when {

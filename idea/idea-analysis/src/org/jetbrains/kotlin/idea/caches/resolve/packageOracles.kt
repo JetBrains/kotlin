@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.PackageOracle
 import org.jetbrains.kotlin.analyzer.PackageOracleFactory
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
@@ -64,9 +67,9 @@ class IdePackageOracleFactory(val project: Project) : PackageOracleFactory {
         private val kotlinSourceOracle = KotlinSourceFilesOracle(moduleInfo)
 
         override fun packageExists(fqName: FqName) =
-                javaPackagesOracle.packageExists(fqName)
-                || kotlinSourceOracle.packageExists(fqName)
-                || fqName.isSubpackageOf(ANDROID_SYNTHETIC_PACKAGE_PREFIX)
+            javaPackagesOracle.packageExists(fqName)
+                    || kotlinSourceOracle.packageExists(fqName)
+                    || fqName.isSubpackageOf(ANDROID_SYNTHETIC_PACKAGE_PREFIX)
     }
 }
 

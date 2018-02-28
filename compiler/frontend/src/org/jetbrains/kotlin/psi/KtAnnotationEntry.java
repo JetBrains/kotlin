@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -120,5 +121,29 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
         }
 
         return target;
+    }
+
+    @Nullable
+    public Name getShortName() {
+        KotlinAnnotationEntryStub stub = getStub();
+        if (stub != null) {
+            String shortName = stub.getShortName();
+            if (shortName != null) {
+                return Name.identifier(shortName);
+            }
+            return null;
+        }
+
+        KtTypeReference typeReference = getTypeReference();
+        assert typeReference != null : "Annotation entry hasn't typeReference " + getText();
+        KtTypeElement typeElement = typeReference.getTypeElement();
+        if (typeElement instanceof KtUserType) {
+            KtUserType userType = (KtUserType) typeElement;
+            String shortName = userType.getReferencedName();
+            if (shortName != null) {
+                return Name.identifier(shortName);
+            }
+        }
+        return null;
     }
 }

@@ -34,7 +34,6 @@ private val DO_NOT_ANALYZE_NOTIFICATION = "This file was created by KtPsiFactory
 
 var KtFile.doNotAnalyze: String? by UserDataProperty(Key.create("DO_NOT_ANALYZE"))
 var KtFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS_CONTEXT"))
-var PsiFile.moduleInfo: ModuleInfo? by UserDataProperty(Key.create("MODULE_INFO"))
 var KtFile.targetPlatform: TargetPlatform? by UserDataProperty(Key.create("TARGET_PLATFORM"))
 
 /**
@@ -816,8 +815,10 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return createFunction("fun foo() {\n$bodyText\n}").bodyExpression as KtBlockExpression
     }
 
-    fun createSingleStatementBlock(statement: KtExpression): KtBlockExpression {
-        return createDeclarationByPattern<KtNamedFunction>("fun foo() {\n$0\n}", statement).bodyExpression as KtBlockExpression
+    fun createSingleStatementBlock(statement: KtExpression, prevComment: String? = null, nextComment: String? = null): KtBlockExpression {
+        val prev = if (prevComment == null) "" else " $prevComment "
+        val next = if (nextComment == null) "" else " $nextComment "
+        return createDeclarationByPattern<KtNamedFunction>("fun foo() {\n$prev$0$next\n}", statement).bodyExpression as KtBlockExpression
     }
 
     fun createComment(text: String): PsiComment {

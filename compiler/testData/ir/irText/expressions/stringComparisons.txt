@@ -39,3 +39,4 @@ FILE fqName:<root> fileName:/stringComparisons.kt
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
             other: GET_VAR 'value-parameter b: String' type=kotlin.String origin=null
           arg1: CONST Int type=kotlin.Int value=0
+

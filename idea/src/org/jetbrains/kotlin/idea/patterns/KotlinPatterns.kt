@@ -23,6 +23,7 @@ import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
@@ -119,7 +120,7 @@ class KtParameterPattern : PsiElementPattern<KtParameter, KtParameterPattern>(Kt
         return withPatternCondition("KtParameterPattern-withAnnotation") { ktParameter, _ ->
             if (ktParameter.annotationEntries.isEmpty()) return@withPatternCondition false
 
-            val parameterDescriptor = ktParameter.resolveToDescriptorIfAny()
+            val parameterDescriptor = ktParameter.resolveToParameterDescriptorIfAny()
             parameterDescriptor is ValueParameterDescriptor && parameterDescriptor.annotations.any { annotation ->
                 annotation.fqName?.asString() == fqName
             }

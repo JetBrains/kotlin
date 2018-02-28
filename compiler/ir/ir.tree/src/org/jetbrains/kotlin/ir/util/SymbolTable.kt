@@ -149,10 +149,10 @@ class SymbolTable {
     private val fieldSymbolTable = FlatSymbolTable<PropertyDescriptor, IrField, IrFieldSymbol>()
     private val simpleFunctionSymbolTable = FlatSymbolTable<FunctionDescriptor, IrSimpleFunction, IrSimpleFunctionSymbol>()
 
-    private val typeParameterSymbolTable = ScopedSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
+    private val typeParameterSymbolTable = FlatSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
     private val valueParameterSymbolTable = ScopedSymbolTable<ParameterDescriptor, IrValueParameter, IrValueParameterSymbol>()
     private val variableSymbolTable = ScopedSymbolTable<VariableDescriptor, IrVariable, IrVariableSymbol>()
-    private val scopedSymbolTables = listOf(typeParameterSymbolTable, valueParameterSymbolTable, variableSymbolTable)
+    private val scopedSymbolTables = listOf(valueParameterSymbolTable, variableSymbolTable)
 
     fun declareFile(fileEntry: SourceManager.FileEntry, packageFragmentDescriptor: PackageFragmentDescriptor): IrFile =
         IrFileImpl(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor))
@@ -256,7 +256,7 @@ class SymbolTable {
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor
     ): IrTypeParameter =
-        typeParameterSymbolTable.declareLocal(
+        typeParameterSymbolTable.declare(
             descriptor,
             { IrTypeParameterSymbolImpl(descriptor) },
             { IrTypeParameterImpl(startOffset, endOffset, origin, it) }
@@ -342,7 +342,9 @@ class SymbolTable {
     fun referenceClassifier(classifier: ClassifierDescriptor): IrClassifierSymbol =
         when (classifier) {
             is TypeParameterDescriptor ->
-                typeParameterSymbolTable.referenced(classifier) { throw AssertionError("Undefined type parameter referenced: $classifier") }
+                typeParameterSymbolTable.referenced(classifier) {
+                    throw AssertionError("Undefined type parameter referenced: $classifier")
+                }
             is ClassDescriptor ->
                 classSymbolTable.referenced(classifier) { IrClassSymbolImpl(classifier) }
             else ->

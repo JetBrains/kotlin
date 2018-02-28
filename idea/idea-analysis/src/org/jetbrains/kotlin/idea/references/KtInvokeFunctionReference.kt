@@ -76,7 +76,7 @@ class KtInvokeFunctionReference(expression: KtCallExpression) : KtSimpleReferenc
 
         val functionLiteralArguments = expression.lambdaArguments
         for (functionLiteralArgument in functionLiteralArguments) {
-            val functionLiteralExpression = functionLiteralArgument.getArgumentExpression().unpackFunctionLiteral() ?: continue
+            val functionLiteralExpression = functionLiteralArgument.getLambdaExpression() ?: continue
             list.add(getRange(functionLiteralExpression.leftCurlyBrace))
             val rightCurlyBrace = functionLiteralExpression.rightCurlyBrace
             if (rightCurlyBrace != null) {

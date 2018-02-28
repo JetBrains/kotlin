@@ -5,7 +5,7 @@ internal interface I {
 
 internal open class A : I {
     override fun foo(i: Int, c: Char, s: String) {
-        println("foo" + i + c + s)
+        println("foo$i$c$s")
     }
 
     fun foo(i: Int, c: Char) {

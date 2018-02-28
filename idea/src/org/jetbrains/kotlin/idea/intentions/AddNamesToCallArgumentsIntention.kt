@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallElement>(
         KtCallElement::class.java,
@@ -34,7 +32,7 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
         val arguments = element.valueArguments
         if (arguments.all { it.isNamed() || it is LambdaArgument }) return null
 
-        val resolvedCall = element.getResolvedCall(element.analyze(BodyResolveMode.PARTIAL)) ?: return null
+        val resolvedCall = element.resolveToCall() ?: return null
         if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
 
         for (argument in arguments) {
@@ -52,7 +50,7 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
 
     override fun applyTo(element: KtCallElement, editor: Editor?) {
         val arguments = element.valueArguments
-        val resolvedCall = element.getResolvedCall(element.analyze(BodyResolveMode.PARTIAL)) ?: return
+        val resolvedCall = element.resolveToCall() ?: return
         for (argument in arguments) {
             if (argument !is KtValueArgument || argument is KtLambdaArgument) continue
             val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: continue

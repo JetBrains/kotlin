@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.types.KotlinType
@@ -33,11 +34,11 @@ import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.upperIfFlexible
 
-fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement) {
-    element.transformChildren(InsertImplicitCasts(builtIns), null)
+fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement, symbolTable: SymbolTable) {
+    element.transformChildren(InsertImplicitCasts(builtIns, symbolTable), null)
 }
 
-class InsertImplicitCasts(val builtIns: KotlinBuiltIns) : IrElementTransformerVoid() {
+class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symbolTable: SymbolTable) : IrElementTransformerVoid() {
     override fun visitCallableReference(expression: IrCallableReference): IrExpression =
         expression.transformPostfix {
             transformReceiverArguments()
@@ -175,29 +176,37 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns) : IrElementTransformerVo
 
             valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull() -> {
                 val nonNullValueType = valueType.upperIfFlexible().makeNotNullable()
-                IrTypeOperatorCallImpl(
-                    startOffset, endOffset, nonNullValueType,
-                    IrTypeOperator.IMPLICIT_NOTNULL, nonNullValueType, this
-                ).cast(expectedType)
+                implicitCast(nonNullValueType, IrTypeOperator.IMPLICIT_NOTNULL).cast(expectedType)
             }
 
             KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.makeNotNullable(), expectedType) ->
                 this
 
             KotlinBuiltIns.isInt(valueType) && notNullableExpectedType.isBuiltInIntegerType() ->
-                IrTypeOperatorCallImpl(
-                    startOffset, endOffset, notNullableExpectedType,
-                    IrTypeOperator.IMPLICIT_INTEGER_COERCION, notNullableExpectedType, this
-                )
+                implicitCast(notNullableExpectedType, IrTypeOperator.IMPLICIT_INTEGER_COERCION)
+
+            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType) ->
+                this
 
             else -> {
                 val targetType = if (!valueType.containsNull()) notNullableExpectedType else expectedType
-                IrTypeOperatorCallImpl(
-                    startOffset, endOffset, targetType,
-                    IrTypeOperator.IMPLICIT_CAST, targetType, this
-                )
+                implicitCast(targetType, IrTypeOperator.IMPLICIT_CAST)
             }
         }
+    }
+
+    private fun IrExpression.implicitCast(
+        targetType: KotlinType,
+        typeOperator: IrTypeOperator
+    ): IrExpression {
+        val typeDescriptor = targetType.constructor.declarationDescriptor
+                ?: throw AssertionError("No declaration for target type: $targetType")
+
+        return IrTypeOperatorCallImpl(
+            startOffset, endOffset,
+            targetType, typeOperator, targetType, this,
+            symbolTable.referenceClassifier(typeDescriptor)
+        )
     }
 
     private fun IrExpression.coerceToUnit(): IrExpression {
@@ -208,7 +217,8 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns) : IrElementTransformerVo
         else
             IrTypeOperatorCallImpl(
                 startOffset, endOffset, builtIns.unitType,
-                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, builtIns.unitType, this
+                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, builtIns.unitType, this,
+                symbolTable.referenceClass(builtIns.unit)
             )
     }
 

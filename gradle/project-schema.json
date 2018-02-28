@@ -4772,7 +4772,7 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
-    ":prepare:mock-runtime-for-test": {
+    ":kotlin-stdlib:jvm-minimal-for-test": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
             "java": "org.gradle.api.plugins.JavaPluginConvention"

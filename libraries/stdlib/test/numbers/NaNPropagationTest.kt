@@ -104,7 +104,6 @@ class NaNPropagationTest {
 
 }
 
-@JvmVersion
 class NaNTotalOrderTest {
 
     private fun <T : Comparable<T>> totalOrderMinOf2(f2t: (T, T) -> T, function: String) {

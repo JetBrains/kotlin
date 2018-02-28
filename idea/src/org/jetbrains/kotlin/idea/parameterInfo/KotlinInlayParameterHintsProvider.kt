@@ -15,16 +15,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 enum class HintType(desc: String, enabled: Boolean) {
 
@@ -168,8 +166,7 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         }
 
     private fun getMethodInfo(elem: KtCallElement): HintInfo.MethodInfo? {
-        val ctx = elem.analyze(BodyResolveMode.PARTIAL)
-        val resolvedCall = elem.getResolvedCall(ctx)
+        val resolvedCall = elem.resolveToCall()
         val resolvedCallee = resolvedCall?.candidateDescriptor
         if (resolvedCallee is FunctionDescriptor) {
             val paramNames =

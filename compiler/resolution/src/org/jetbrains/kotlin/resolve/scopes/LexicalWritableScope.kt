@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class LexicalWritableScope(
     parent: LexicalScope,
@@ -73,6 +74,18 @@ class LexicalWritableScope(
 
         override fun getContributedClassifier(name: Name, location: LookupLocation) =
             variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
+
+        // NB. This is important to have this explicit override, otherwise calls will be delegated to `this`-delegate,
+        // which will use default implementation from `ResolutionScope`, which will call `getContributedClassifier` on
+        // the `LexicalWritableScope` instead of calling it on this snapshot
+        override fun getContributedClassifierIncludeDeprecated(
+            name: Name,
+            location: LookupLocation
+        ): DescriptorWithDeprecation<ClassifierDescriptor>? {
+            return variableOrClassDescriptorByName(name, descriptorLimit)
+                ?.safeAs<ClassifierDescriptor>()
+                ?.let { DescriptorWithDeprecation.createNonDeprecated(it) }
+        }
 
         override fun getContributedVariables(name: Name, location: LookupLocation) =
             listOfNotNull(variableOrClassDescriptorByName(name, descriptorLimit) as? VariableDescriptor)

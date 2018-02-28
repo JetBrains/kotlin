@@ -211,6 +211,12 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("protectedConstructorRefInSuperListEntry/protectedConstructorRefInSuperListEntry.test")
+    public void testProtectedConstructorRefInSuperListEntry_ProtectedConstructorRefInSuperListEntry() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/protectedConstructorRefInSuperListEntry/protectedConstructorRefInSuperListEntry.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("refToImportJavaStaticField/refToImportedJavaStaticField.test")
     public void testRefToImportJavaStaticField_RefToImportedJavaStaticField() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/refToImportJavaStaticField/refToImportedJavaStaticField.test");

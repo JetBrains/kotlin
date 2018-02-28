@@ -28,6 +28,10 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 class LeakingThisInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return expressionVisitor { expression ->
+            // We still use analyzeFully() here.
+            // It's possible to use analyze(), but then we should repeat class constructor consistency check
+            // for different class internal elements, like KtProperty and KtClassInitializer.
+            // It can affect performance, so yet we want to avoid this.
             val context = expression.analyzeFully()
             val leakingThisDescriptor = context.get(LEAKING_THIS, expression) ?: return@expressionVisitor
             val description = when (leakingThisDescriptor) {

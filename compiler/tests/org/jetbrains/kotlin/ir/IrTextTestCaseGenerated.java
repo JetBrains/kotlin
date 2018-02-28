@@ -276,6 +276,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("localClassWithOverrides.kt")
+        public void testLocalClassWithOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/localClassWithOverrides.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localDelegatedProperties.kt")
         public void testLocalDelegatedProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/localDelegatedProperties.kt");
@@ -329,6 +335,18 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             @TestMetadata("expectClassInherited.kt")
             public void testExpectClassInherited() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/multiplatform/expectClassInherited.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expectedEnumClass.kt")
+            public void testExpectedEnumClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/multiplatform/expectedEnumClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expectedSealedClass.kt")
+            public void testExpectedSealedClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/multiplatform/expectedSealedClass.kt");
                 doTest(fileName);
             }
         }
@@ -789,6 +807,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("kt23030.kt")
+        public void testKt23030() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/kt23030.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaInCAO.kt")
         public void testLambdaInCAO() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
@@ -1239,9 +1263,21 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("javaMethod.kt")
+        public void testJavaMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/javaMethod.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("javaNestedClass.kt")
         public void testJavaNestedClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/javaNestedClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaStaticMethod.kt")
+        public void testJavaStaticMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/javaStaticMethod.kt");
             doTest(fileName);
         }
 

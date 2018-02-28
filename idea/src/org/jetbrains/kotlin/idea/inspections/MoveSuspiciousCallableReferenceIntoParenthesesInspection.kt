@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.ConvertLambdaToReferenceIntention
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.lambdaExpressionVisitor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -59,7 +60,7 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
             val callableReferenceExpression =
                     element.bodyExpression?.statements?.singleOrNull() as? KtCallableReferenceExpression ?: return null
             val callableReference = callableReferenceExpression.callableReference
-            val resolvedCall = callableReference.getResolvedCall(callableReference.analyze())
+            val resolvedCall = callableReference.resolveToCall(BodyResolveMode.FULL)
             val receiverValue = resolvedCall?.let { it.extensionReceiver ?: it.dispatchReceiver }
             return (receiverValue?.let { "${it.type}" } ?: "") + "::${callableReference.text}"
         }

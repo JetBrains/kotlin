@@ -39,12 +39,12 @@ private class KotlinNodeJsRunConfigurationProducer :
         if (!context.isAcceptable) return false
 
         val psiElement = sourceElement.get() ?: return false
-        val psiFile = psiElement.containingFile
+        val psiFile = psiElement.containingFile ?: return false
         val jsModule = psiFile.module?.jsOrJsImpl() ?: return false
         val project = psiFile.project
 
         if (psiElement is KtNamedFunction) {
-            val detector = MainFunctionDetector { it.resolveToDescriptorIfAny() as? FunctionDescriptor }
+            val detector = MainFunctionDetector { it.resolveToDescriptorIfAny() }
             if (!detector.isMain(psiElement, false)) return false
         }
         else if (!TestElementPath.isModuleAssociatedDir(psiElement, jsModule)) return false

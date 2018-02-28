@@ -244,6 +244,8 @@ public interface BindingContext {
     WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER = Slices.createSimpleSlice();
     WritableSlice<PsiElement, TypeAliasDescriptor> TYPE_ALIAS = Slices.createSimpleSlice();
 
+    WritableSlice<PsiElement, Boolean> DEPRECATED_SHORT_NAME_ACCESS = Slices.createSimpleSlice();
+
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
             CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
             PRIMARY_CONSTRUCTOR_PARAMETER, SCRIPT, TYPE_ALIAS

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
+import org.jetbrains.kotlin.caches.project.LibraryModuleInfo
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext

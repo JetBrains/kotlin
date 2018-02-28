@@ -1,6 +1,5 @@
 // !LANGUAGE: -ProperIeee754Comparisons
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS
 
 import kotlin.test.*
 

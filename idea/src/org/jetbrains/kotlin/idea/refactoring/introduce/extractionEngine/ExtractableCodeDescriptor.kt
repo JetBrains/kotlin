@@ -101,7 +101,7 @@ abstract class WrapInWithReplacement : Replacement {
         val call = (e as? KtSimpleNameExpression)?.getQualifiedElement() ?: return e
         val replacingExpression = KtPsiFactory(e).createExpressionByPattern("with($0) { $1 }", argumentText, call)
         val replace = call.replace(replacingExpression)
-        return (replace as KtCallExpression).lambdaArguments.first().getLambdaExpression().bodyExpression!!.statements.first()
+        return (replace as KtCallExpression).lambdaArguments.first().getLambdaExpression()!!.bodyExpression!!.statements.first()
     }
 }
 

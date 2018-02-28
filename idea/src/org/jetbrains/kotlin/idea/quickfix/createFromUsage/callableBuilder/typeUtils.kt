@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
@@ -148,22 +149,32 @@ fun KtExpression.guessTypes(
         && isUsedAsStatement(context)
         && getNonStrictParentOfType<KtAnnotationEntry>() == null) return arrayOf(module.builtIns.unitType)
 
-    // if we know the actual type of the expression
-    val theType1 = context.getType(this)
-    if (theType1 != null && isAcceptable(theType1)) {
-        val dataFlowInfo = context.getDataFlowInfoAfter(this)
-        val dataFlowValueFactory = this.getResolutionFacade().frontendService<DataFlowValueFactory>()
-        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(this, theType1, context, module)
+    val parent = parent
 
-        val possibleTypes = dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings)
-        return if (possibleTypes.isNotEmpty()) possibleTypes.toTypedArray() else arrayOf(theType1)
+    // Type/Expected type may be wrong for the expression of KtWhenEntry when some branches have unresolved expressions
+    if (parent is KtWhenEntry && parent.expression == this) {
+        return parent
+            .getStrictParentOfType<KtWhenExpression>()
+            ?.guessTypes(context, module, pseudocode, coerceUnusedToUnit, allowErrorTypes) ?: arrayOf()
+    }
+
+    if (this !is KtWhenExpression) {
+        // if we know the actual type of the expression
+        val theType1 = context.getType(this)
+        if (theType1 != null && isAcceptable(theType1)) {
+            val dataFlowInfo = context.getDataFlowInfoAfter(this)
+            val dataFlowValueFactory = this.getResolutionFacade().frontendService<DataFlowValueFactory>()
+            val dataFlowValue = dataFlowValueFactory.createDataFlowValue(this, theType1, context, module)
+
+            val possibleTypes = dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings)
+            return if (possibleTypes.isNotEmpty()) possibleTypes.toTypedArray() else arrayOf(theType1)
+        }
     }
 
     // expression has an expected type
     val theType2 = context[BindingContext.EXPECTED_EXPRESSION_TYPE, this]
     if (theType2 != null && isAcceptable(theType2)) return arrayOf(theType2)
 
-    val parent = parent
     return when {
         this is KtTypeConstraint -> {
             // expression itself is a type assertion

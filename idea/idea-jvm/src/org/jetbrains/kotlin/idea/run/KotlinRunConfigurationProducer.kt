@@ -27,7 +27,6 @@ import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -83,7 +82,7 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
             val psiFile = locationElement.containingFile
             if (!(psiFile is KtFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null
 
-            val mainFunctionDetector = MainFunctionDetector { it.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? FunctionDescriptor }
+            val mainFunctionDetector = MainFunctionDetector { it.resolveToDescriptorIfAny(BodyResolveMode.FULL) }
 
             var currentElement = locationElement.declarationContainer(false)
             while (currentElement != null) {

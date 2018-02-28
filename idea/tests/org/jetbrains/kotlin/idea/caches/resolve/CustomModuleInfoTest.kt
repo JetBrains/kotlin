@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElementFactory
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.junit.Assert

@@ -184,6 +184,7 @@ internal fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
 }
 
 internal fun KtElement.analyze(): BindingContext {
+    if(containingFile !is KtFile) return BindingContext.EMPTY // EA-114080, EA-113475
     return ServiceManager.getService(project, KotlinUastBindingContextProviderService::class.java)
             ?.getBindingContext(this) ?: BindingContext.EMPTY
 }

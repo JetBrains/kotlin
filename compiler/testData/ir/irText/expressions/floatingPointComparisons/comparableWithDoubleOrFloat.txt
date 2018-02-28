@@ -9,16 +9,20 @@ FILE fqName:<root> fileName:/comparableWithDoubleOrFloat.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Comparable<Double>' type=kotlin.Comparable<kotlin.Double> origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Comparable<Double>' type=kotlin.Comparable<kotlin.Double> origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'less(Double, Double): Boolean' type=kotlin.Boolean origin=LT
               arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                 GET_VAR 'value-parameter x: Comparable<Double>' type=kotlin.Comparable<kotlin.Double> origin=null
               arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                 GET_VAR 'value-parameter y: Comparable<Double>' type=kotlin.Comparable<kotlin.Double> origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -33,17 +37,22 @@ FILE fqName:<root> fileName:/comparableWithDoubleOrFloat.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Comparable<Float>' type=kotlin.Comparable<kotlin.Float> origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Comparable<Float>' type=kotlin.Comparable<kotlin.Float> origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'less(Float, Float): Boolean' type=kotlin.Boolean origin=LT
               arg0: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                 GET_VAR 'value-parameter x: Comparable<Float>' type=kotlin.Comparable<kotlin.Float> origin=null
               arg1: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                 GET_VAR 'value-parameter y: Comparable<Float>' type=kotlin.Comparable<kotlin.Float> origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
+

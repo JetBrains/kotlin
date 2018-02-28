@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
@@ -88,8 +89,7 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
 
     override fun fixText(element: KtDotQualifiedExpression): String {
         val callExpression = element.callExpression ?: return defaultFixText
-        val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
-        val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return defaultFixText
+        val resolvedCall = callExpression.resolveToCall() ?: return defaultFixText
         return "Replace '${resolvedCall.resultingDescriptor.name.asString()}' call with indexing operator"
     }
 

@@ -16,7 +16,7 @@
 
 /**
  * This file was copied from the javax.persistence :
- * https://github.com/eclipse/javax.persistence/blob/master/src/javax/persistence/Entity.java
+ * https://github.com/eclipse/javax.persistence/blob/master/src/javax/persistence/Embeddable.java
  */
 package javax.persistence;
 

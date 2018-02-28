@@ -57,7 +57,7 @@ interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {
 }
 
 interface KotlinAnnotationEntryStub : StubElement<KtAnnotationEntry> {
-    fun getShortName(): String
+    fun getShortName(): String?
     fun hasValueArguments(): Boolean
 }
 

@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.idea.highlighter.dsl
 import com.intellij.ide.highlighter.custom.CustomHighlighterColors.*
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.highlighter.HighlighterExtension
+import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -22,12 +24,7 @@ class DslHighlighterExtension : HighlighterExtension() {
     }
 
     override fun highlightCall(elementToHighlight: PsiElement, resolvedCall: ResolvedCall<*>): TextAttributesKey? {
-        val markerAnnotation = resolvedCall.resultingDescriptor.annotations.find { annotation ->
-            annotation.annotationClass?.isDslHighlightingMarker() ?: false
-        }?.annotationClass ?: return null
-
-        val styleId = styleIdByMarkerAnnotation(markerAnnotation) ?: return null
-        return styles[styleId - 1]
+        return dslCustomTextStyle(resolvedCall.resultingDescriptor)
     }
 
     companion object {
@@ -56,11 +53,20 @@ class DslHighlighterExtension : HighlighterExtension() {
             val markerAnnotationFqName = markerAnnotation.fqNameSafe
             return (markerAnnotationFqName.asString().hashCode() % numStyles).absoluteValue + 1
         }
+
+        fun dslCustomTextStyle(callableDescriptor: CallableDescriptor): TextAttributesKey? {
+            val markerAnnotation = callableDescriptor.annotations.find { annotation ->
+                annotation.annotationClass?.isDslHighlightingMarker() ?: false
+            }?.annotationClass ?: return null
+
+            val styleId = styleIdByMarkerAnnotation(markerAnnotation) ?: return null
+            return styles[styleId - 1]
+        }
     }
 }
 
 internal fun ClassDescriptor.isDslHighlightingMarker(): Boolean {
     return annotations.any {
-        it.annotationClass?.fqNameSafe?.asString() == "kotlin.DslMarker"
+        it.annotationClass?.fqNameSafe == DslMarkerUtils.DSL_MARKER_FQ_NAME
     }
 }

@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.moduleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.compareDescriptors
@@ -440,7 +442,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         for (overridingMethod in OverridingMethodsSearch.search(method)) {
             val unwrappedElement = overridingMethod.namedUnwrappedElement as? KtNamedFunction ?: continue
-            val functionDescriptor = unwrappedElement.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
+            val functionDescriptor = unwrappedElement.resolveToDescriptorIfAny() ?: continue
             result.add(DeferredJavaMethodOverrideOrSAMUsage(unwrappedElement, functionDescriptor, null))
             findDeferredUsagesOfParameters(changeInfo, result, unwrappedElement, functionDescriptor)
         }
@@ -712,7 +714,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             callable: PsiElement,
             newReceiverInfo: KotlinParameterInfo?) {
         if (newReceiverInfo != null && (callable is KtNamedFunction) && callable.bodyExpression != null) {
-            val originalContext = callable.analyzeFully()
+            val originalContext = callable.analyzeWithContent()
 
             val noReceiverRefs = ArrayList<KtSimpleNameExpression>()
             callable.forEachDescendantOfType<KtSimpleNameExpression> {

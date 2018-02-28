@@ -10,7 +10,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.MovePropertyToConstructorIntention
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.psi.KtParameter
@@ -28,7 +28,7 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
             if (property.getter != null || property.setter != null || property.delegate != null) return
             val assigned = property.initializer as? KtReferenceExpression ?: return
 
-            val context = property.analyzeFully()
+            val context = assigned.analyze()
             val assignedDescriptor = context.get(BindingContext.REFERENCE_TARGET, assigned) as? ValueParameterDescriptor ?: return
 
             val containingConstructor = assignedDescriptor.containingDeclaration as? ClassConstructorDescriptor ?: return

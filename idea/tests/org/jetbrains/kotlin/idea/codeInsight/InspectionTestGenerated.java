@@ -198,6 +198,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("javaCollectionsStaticMethodOnImmutableList/inspectionData/inspections.test")
+        public void testJavaCollectionsStaticMethodOnImmutableList_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/javaCollectionsStaticMethodOnImmutableList/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt18195/inspectionData/inspections.test")
         public void testKt18195_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/kt18195/inspectionData/inspections.test");

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.lookup.*
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.idea.completion.handlers.KotlinClassifierInsertHandl
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
+import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -37,11 +39,10 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-import javax.swing.Icon
+import java.awt.Font
 
 class BasicLookupElementFactory(
         private val project: Project,
@@ -233,6 +234,14 @@ class BasicLookupElementFactory(
 
         if (descriptor is CallableDescriptor) {
             appendContainerAndReceiverInformation(descriptor) { element = element.appendTailText(it, true) }
+
+            val dslTextAttributes = DslHighlighterExtension.dslCustomTextStyle(descriptor)?.let {
+                EditorColorsManager.getInstance().globalScheme.getAttributes(it)
+            }
+            if (dslTextAttributes != null) {
+                element = element.withBoldness(dslTextAttributes.fontType == Font.BOLD)
+                dslTextAttributes.foregroundColor?.let { element = element.withItemTextForeground(it) }
+            }
         }
 
         if (descriptor is PropertyDescriptor) {

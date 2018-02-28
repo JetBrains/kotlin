@@ -20,9 +20,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ResolveScopeProvider
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.idea.caches.resolve.ScriptDependenciesModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.ScriptDependenciesSourceModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfoByVirtualFile
+import org.jetbrains.kotlin.idea.caches.project.ScriptDependenciesModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ScriptDependenciesSourceModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
 
 class ScriptDependenciesResolveScopeProvider : ResolveScopeProvider() {
     override fun getResolveScope(file: VirtualFile, project: Project): GlobalSearchScope? {

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiNameIdentifierOwner
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.inspections.KotlinUniversalQuickFix
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
@@ -150,8 +150,7 @@ open class AddModifierFix(
             val property = Errors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT.cast(diagnostic).psiElement
             if (!property.isVar) return null
 
-            val context = property.analyze()
-            val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] ?: return null
+            val descriptor = property.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return null
             val type = (descriptor as? PropertyDescriptor)?.type ?: return null
 
             if (TypeUtils.isNullableType(type)) return null

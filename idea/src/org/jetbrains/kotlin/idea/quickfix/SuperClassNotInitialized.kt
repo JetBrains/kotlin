@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.core.moveCaret
@@ -59,8 +60,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
         if (type.isError) return emptyList()
 
         val superClass = (type.constructor.declarationDescriptor as? ClassDescriptor) ?: return emptyList()
-        val classDescriptor = classOrObjectDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? ClassDescriptor
-                              ?: return emptyList()
+        val classDescriptor = classOrObjectDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return emptyList()
         val constructors = superClass.constructors.filter { it.isVisible(classDescriptor) }
         if (constructors.isEmpty()) return emptyList() // no accessible constructor
 
@@ -167,7 +167,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                     val nameString = parameter.name.asString()
                     val existingParameter = oldParameters.firstOrNull { it.name == nameString }
                     if (existingParameter != null) {
-                        val type = (existingParameter.resolveToDescriptorIfAny() as? VariableDescriptor)?.type
+                        val type = (existingParameter.resolveToParameterDescriptorIfAny() as? VariableDescriptor)?.type
                                    ?: return null
                         if (type.isSubtypeOf(parameter.type)) continue // use existing parameter
                     }
