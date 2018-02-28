@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.kotlin.native.interop.gen.wasm.idl
 
 // There are no WebIDL descriptions of Math,
@@ -32,14 +48,11 @@ val idlMath = listOf(
         Operation("expm1",  idlDouble,  true,  Arg("x", idlDouble)),
         Operation("floor",  idlDouble,  true,  Arg("x", idlDouble)),
         Operation("fround", idlDouble,  true,  Arg("x", idlDouble)),
-        //Operation("hypot([x[, y[, …]]]),
         //Operation("imul(x,    y),
         Operation("log",    idlDouble,  true,  Arg("x", idlDouble)),
         Operation("log1p",  idlDouble,  true,  Arg("x", idlDouble)),
         Operation("log10",  idlDouble,  true,  Arg("x", idlDouble)),
         Operation("log2",   idlDouble,  true,  Arg("x", idlDouble)),
-        //Operation("max([x[,   y[, …]]]),  // TODO: Support varargs.
-        //Operation("min([x[,   y[, …]]]),
         Operation("pow",    idlDouble,  true,  Arg("x", idlDouble), Arg("y", idlDouble)),
         Operation("random", idlDouble,  true),
         Operation("round",  idlDouble,  true,  Arg("x", idlDouble)),
@@ -49,7 +62,12 @@ val idlMath = listOf(
         Operation("sqrt",   idlDouble,  true,  Arg("x", idlDouble)),
         Operation("tan",    idlDouble,  true,  Arg("x", idlDouble)),
         Operation("tanh",   idlDouble,  true,  Arg("x", idlDouble)),
-        //Operation("toSource(),
-        Operation("trunc",  idlDouble,  true,  Arg("x", idlDouble))
+        Operation("trunc",  idlDouble,  true,  Arg("x", idlDouble)),
+
+        // Actually these functions have vararg parameter.
+        // But their kotlin analogs have only 2 parameters so we don't need to support varargs here.
+        Operation("hypot",  idlDouble,  true,  Arg("x", idlDouble), Arg("y", idlDouble)),
+        Operation("max",    idlDouble,  true,  Arg("x", idlDouble), Arg("y", idlDouble)),
+        Operation("min",    idlDouble,  true,  Arg("x", idlDouble), Arg("y", idlDouble))
     )
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -324,7 +324,6 @@ class DoubleMathTest {
         }
     }
 
-
     @Test fun nextAndPrev() {
         for (value in listOf(0.0, -0.0, Double.MIN_VALUE, -1.0, 2.0.pow(10))) {
             val next = value.nextUp()
@@ -367,6 +366,63 @@ class DoubleMathTest {
             assertEquals(maxUlp, Double.MAX_VALUE.ulp)
             assertEquals(maxUlp, (-Double.MAX_VALUE).ulp)
         }
+    }
+
+    @Test fun IEEEremainder() {
+        val data = arrayOf(  //  a    a IEEErem 2.5
+                doubleArrayOf(-2.0,   0.5),
+                doubleArrayOf(-1.25, -1.25),
+                doubleArrayOf( 0.0,   0.0),
+                doubleArrayOf( 1.0,   1.0),
+                doubleArrayOf( 1.25,  1.25),
+                doubleArrayOf( 1.5,  -1.0),
+                doubleArrayOf( 2.0,  -0.5),
+                doubleArrayOf( 2.5,   0.0),
+                doubleArrayOf( 3.5,   1.0),
+                doubleArrayOf( 3.75, -1.25),
+                doubleArrayOf( 4.0,  -1.0)
+        )
+        for ((a, r) in data) {
+            assertEquals(r, a.IEEErem(2.5), "($a).IEEErem(2.5)")
+        }
+
+        assertTrue(Double.NaN.IEEErem(2.5).isNaN())
+        assertTrue(2.0.IEEErem(Double.NaN).isNaN())
+        assertTrue(Double.POSITIVE_INFINITY.IEEErem(2.0).isNaN())
+        assertTrue(2.0.IEEErem(0.0).isNaN())
+        assertEquals(PI, PI.IEEErem(Double.NEGATIVE_INFINITY))
+    }
+
+    /*
+     * Special cases:
+     *   - `atan2(0.0, 0.0)` is `0.0`
+     *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
+     *   - `atan2(-0.0, x)` is `-0.0` for 'x > 0` and `-PI` for `x < 0`
+     *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for '-Inf < y < 0`
+     *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
+     *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
+     *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
+     *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
+     *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+     */
+    @Test fun atan2SpecialCases() {
+
+        assertEquals(atan2(0.0, 0.0), 0.0)
+        assertEquals(atan2(0.0, 1.0), 0.0)
+        assertEquals(atan2(0.0, -1.0), PI)
+        assertEquals(atan2(-0.0, 1.0), -0.0)
+        assertEquals(atan2(-0.0, -1.0), -PI)
+        assertEquals(atan2(1.0, Double.POSITIVE_INFINITY), 0.0)
+        assertEquals(atan2(-1.0, Double.POSITIVE_INFINITY), -0.0)
+        assertEquals(atan2(1.0, Double.NEGATIVE_INFINITY), PI)
+        assertEquals(atan2(-1.0, Double.NEGATIVE_INFINITY), -PI)
+        assertEquals(atan2(1.0, 0.0), PI/2)
+        assertEquals(atan2(-1.0, 0.0), -PI/2)
+        assertEquals(atan2(Double.POSITIVE_INFINITY, 1.0), PI/2)
+        assertEquals(atan2(Double.NEGATIVE_INFINITY, 1.0), -PI/2)
+
+        assertTrue(atan2(Double.NaN, 1.0).isNaN())
+        assertTrue(atan2(1.0, Double.NaN).isNaN())
     }
 }
 
@@ -704,63 +760,7 @@ class FloatMathTest {
         }
     }
 
-}
-
-class IntegerMathTest {
-
-    @Test fun intSigns() {
-        val negatives = listOf(Int.MIN_VALUE, -65536, -1)
-        val positives = listOf(1, 100, 256, Int.MAX_VALUE)
-        negatives.forEach { assertEquals(-1, it.sign) }
-        positives.forEach { assertEquals(1, it.sign) }
-        assertEquals(0, 0.sign)
-
-        (negatives - Int.MIN_VALUE).forEach { assertEquals(-it, it.absoluteValue) }
-        assertEquals(Int.MIN_VALUE, Int.MIN_VALUE.absoluteValue)
-
-        positives.forEach { assertEquals(it, it.absoluteValue) }
-    }
-
-
-    @Test fun longSigns() {
-        val negatives = listOf(Long.MIN_VALUE, -65536L, -1L)
-        val positives = listOf(1L, 100L, 256L, Long.MAX_VALUE)
-        negatives.forEach { assertEquals(-1, it.sign) }
-        positives.forEach { assertEquals(1, it.sign) }
-        assertEquals(0, 0L.sign)
-
-        (negatives - Long.MIN_VALUE).forEach { assertEquals(-it, it.absoluteValue) }
-        assertEquals(Long.MIN_VALUE, Long.MIN_VALUE.absoluteValue)
-
-        positives.forEach { assertEquals(it, it.absoluteValue) }
-    }
-
     @Test fun IEEEremainder() {
-        val data = arrayOf(  //  a    a IEEErem 2.5
-                doubleArrayOf(-2.0,   0.5),
-                doubleArrayOf(-1.25, -1.25),
-                doubleArrayOf( 0.0,   0.0),
-                doubleArrayOf( 1.0,   1.0),
-                doubleArrayOf( 1.25,  1.25),
-                doubleArrayOf( 1.5,  -1.0),
-                doubleArrayOf( 2.0,  -0.5),
-                doubleArrayOf( 2.5,   0.0),
-                doubleArrayOf( 3.5,   1.0),
-                doubleArrayOf( 3.75, -1.25),
-                doubleArrayOf( 4.0,  -1.0)
-        )
-        for ((a, r) in data) {
-            assertEquals(r, a.IEEErem(2.5), "($a).IEEErem(2.5)")
-        }
-
-        assertTrue(Double.NaN.IEEErem(2.5).isNaN())
-        assertTrue(2.0.IEEErem(Double.NaN).isNaN())
-        assertTrue(Double.POSITIVE_INFINITY.IEEErem(2.0).isNaN())
-        assertTrue(2.0.IEEErem(0.0).isNaN())
-        assertEquals(PI, PI.IEEErem(Double.NEGATIVE_INFINITY))
-    }
-
-    @Test fun IEEEremainderFloat() {
         val data = arrayOf(  //  a    a IEEErem 2.5
                 floatArrayOf(-2.0f,   0.5f),
                 floatArrayOf(-1.25f, -1.25f),
@@ -785,36 +785,36 @@ class IntegerMathTest {
         assertEquals(PI.toFloat(), PI.toFloat().IEEErem(Float.NEGATIVE_INFINITY))
     }
 
-    /*
-     * Special cases:
-     *   - `atan2(0.0, 0.0)` is `0.0`
-     *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
-     *   - `atan2(-0.0, x)` is `-0.0` for 'x > 0` and `-PI` for `x < 0`
-     *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for '-Inf < y < 0`
-     *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
-     *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
-     *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
-     *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
-     *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
-     */
-    @Test fun atan2SpecialCases() {
+}
 
-        assertEquals(atan2(0.0, 0.0), 0.0)
-        assertEquals(atan2(0.0, 1.0), 0.0)
-        assertEquals(atan2(0.0, -1.0), PI)
-        assertEquals(atan2(-0.0, 1.0), -0.0)
-        assertEquals(atan2(-0.0, -1.0), -PI)
-        assertEquals(atan2(1.0, Double.POSITIVE_INFINITY), 0.0)
-        assertEquals(atan2(-1.0, Double.POSITIVE_INFINITY), -0.0)
-        assertEquals(atan2(1.0, Double.NEGATIVE_INFINITY), PI)
-        assertEquals(atan2(-1.0, Double.NEGATIVE_INFINITY), -PI)
-        assertEquals(atan2(1.0, 0.0), PI/2)
-        assertEquals(atan2(-1.0, 0.0), -PI/2)
-        assertEquals(atan2(Double.POSITIVE_INFINITY, 1.0), PI/2)
-        assertEquals(atan2(Double.NEGATIVE_INFINITY, 1.0), -PI/2)
+class IntegerMathTest {
 
-        assertTrue(atan2(Double.NaN, 1.0).isNaN())
-        assertTrue(atan2(1.0, Double.NaN).isNaN())
+    @Test
+    fun intSigns() {
+        val negatives = listOf(Int.MIN_VALUE, -65536, -1)
+        val positives = listOf(1, 100, 256, Int.MAX_VALUE)
+        negatives.forEach { assertEquals(-1, it.sign) }
+        positives.forEach { assertEquals(1, it.sign) }
+        assertEquals(0, 0.sign)
+
+        (negatives - Int.MIN_VALUE).forEach { assertEquals(-it, it.absoluteValue) }
+        assertEquals(Int.MIN_VALUE, Int.MIN_VALUE.absoluteValue)
+
+        positives.forEach { assertEquals(it, it.absoluteValue) }
     }
 
+
+    @Test
+    fun longSigns() {
+        val negatives = listOf(Long.MIN_VALUE, -65536L, -1L)
+        val positives = listOf(1L, 100L, 256L, Long.MAX_VALUE)
+        negatives.forEach { assertEquals(-1, it.sign) }
+        positives.forEach { assertEquals(1, it.sign) }
+        assertEquals(0, 0L.sign)
+
+        (negatives - Long.MIN_VALUE).forEach { assertEquals(-it, it.absoluteValue) }
+        assertEquals(Long.MIN_VALUE, Long.MIN_VALUE.absoluteValue)
+
+        positives.forEach { assertEquals(it, it.absoluteValue) }
+    }
 }
