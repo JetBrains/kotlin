@@ -1191,7 +1191,8 @@ class ArraysTest {
             checkSorted<ByteArray>( { sortedArray() }, { sortedArrayDescending() }, { iterator() })
         }
 
-        with(arrayData(Double.POSITIVE_INFINITY, 1.0, Double.MAX_VALUE) { toDoubleArray() }) {
+        with(arrayData(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.MAX_VALUE, -Double.MAX_VALUE,
+                       1.0, -1.0, Double.MIN_VALUE, -Double.MIN_VALUE, 0.0, -0.0, Double.NaN) { toDoubleArray() }) {
             checkSorted<List<Double>>( { sorted() }, { sortedDescending() }, { iterator() })
             checkSorted<DoubleArray>( { sortedArray() }, { sortedArrayDescending() }, { iterator() })
         }
