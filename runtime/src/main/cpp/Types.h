@@ -50,6 +50,12 @@ typedef ObjHeader* KRef;
 typedef const ObjHeader* KConstRef;
 typedef const ArrayHeader* KString;
 
+namespace JS {
+typedef KInt Arena;
+typedef KInt Object;
+typedef KInt Pointer;
+}
+
 // Definitions of STL classes used inside Konan runtime.
 typedef std::basic_string<char, std::char_traits<char>,
                           KonanAllocator<char>> KStdString;

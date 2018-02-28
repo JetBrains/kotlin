@@ -291,8 +291,10 @@ targetList.each { target ->
             into("konan/targets/$target/native")
         }
         if (target == 'wasm32') {
-            from(project(':runtime').file('src/launcher/js')) {
-                into("$stdlib/targets/wasm32/included")
+            into("$stdlib/targets/wasm32/included") {
+                from(project(':runtime').file('src/main/js'))
+                from(project(':runtime').file('src/launcher/js'))
+                from(project(':Interop:JsRuntime').file('src/main/js'))
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -192,10 +192,12 @@ targetList.each { target ->
                 '-produce', 'library', '-module_name', 'stdlib',
                 project(':Interop:Runtime').file('src/main/kotlin'),
                 project(':Interop:Runtime').file('src/native/kotlin'),
+                project(':Interop:JsRuntime').file('src/main/kotlin'),
                 project(':runtime').file('src/main/kotlin')]
         inputs.dir(project(':runtime').file('src/main/kotlin'))
         inputs.dir(project(':Interop:Runtime').file('src/main/kotlin'))
         inputs.dir(project(':Interop:Runtime').file('src/native/kotlin'))
+        inputs.dir(project(':Interop:JsRuntime').file('src/main/kotlin'))
         outputs.dir(project(':runtime').file("build/${target}Stdlib"))
 
         dependsOn ":runtime:${target}Runtime"

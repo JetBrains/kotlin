@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 #include <math.h>
 #include <limits.h>
 
+#include "DoubleConversions.h"
 #include "Natives.h"
 #include "Exceptions.h"
 
@@ -381,23 +382,8 @@ KDouble Kotlin_Float_toDouble         (KFloat a           ) { return a; }
 KByte   Kotlin_Float_toByte           (KFloat a           ) { return (KByte)  Kotlin_Float_toInt(a); }
 KShort  Kotlin_Float_toShort          (KFloat a           ) { return (KShort) Kotlin_Float_toInt(a); }
 
-KInt   Kotlin_Float_bits              (KFloat a) {
-  union {
-    KFloat f;
-    KInt i;
-  } alias;
-  alias.f = a;
-  return alias.i;
-}
-
-KFloat Kotlin_Float_fromBits          (KInt a) {
-  union {
-    KFloat f;
-    KInt i;
-  } alias;
-  alias.i = a;
-  return alias.f;
-}
+KInt    Kotlin_Float_bits             (KFloat a           ) { return floatToBits(a); }
+KFloat  Kotlin_Float_fromBits         (KInt a             ) { return bitsToFloat(a); }
 
 KBoolean Kotlin_Float_isNaN           (KFloat a)          { return isnan(a); }
 KBoolean Kotlin_Float_isInfinite      (KFloat a)          { return isinf(a); }
@@ -461,23 +447,8 @@ KLong   Kotlin_Double_toLong           (KDouble a           ) {
 KFloat  Kotlin_Double_toFloat          (KDouble a           ) { return a; }
 KDouble Kotlin_Double_toDouble         (KDouble a           ) { return a; }
 
-KLong   Kotlin_Double_bits             (KDouble a) {
-  union {
-    KDouble d;
-    KLong l;
-  } alias;
-  alias.d = a;
-  return alias.l;
-}
-
-KDouble Kotlin_Double_fromBits         (KLong a) {
-  union {
-    KDouble d;
-    KLong l;
-  } alias;
-  alias.l = a;
-  return alias.d;
-}
+KLong   Kotlin_Double_bits             (KDouble a           ) { return doubleToBits(a); }
+KDouble Kotlin_Double_fromBits         (KLong a             ) { return bitsToDouble(a); }
 
 KBoolean Kotlin_Double_isNaN           (KDouble a)          { return isnan(a); }
 KBoolean Kotlin_Double_isInfinite      (KDouble a)          { return isinf(a); }
