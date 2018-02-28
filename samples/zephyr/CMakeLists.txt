@@ -15,5 +15,7 @@ set_source_files_properties(program.o PROPERTIES EXTERNAL_OBJECT true GENERATED 
 
 add_custom_command(
   OUTPUT program.o
-  COMMAND cp kotlin/program.o program.o
+  COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_BINARY_DIR}/kotlin/program.o
+    ${CMAKE_BINARY_DIR}/program.o
 )

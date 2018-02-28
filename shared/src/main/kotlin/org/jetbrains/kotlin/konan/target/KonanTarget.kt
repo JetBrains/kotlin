@@ -164,7 +164,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
                 KonanTarget.MINGW -> listOf(
                     KonanTarget.MINGW,
                     KonanTarget.WASM32
-                ) 
+                ) + zephyrSubtargets
                 KonanTarget.MACBOOK -> listOf(
                     KonanTarget.MACBOOK,
                     KonanTarget.IPHONE,
