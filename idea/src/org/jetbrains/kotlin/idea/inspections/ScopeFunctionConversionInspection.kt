@@ -55,7 +55,7 @@ class ScopeFunctionConversionInspection : AbstractKotlinInspection() {
             if (counterpartName != null) {
                 holder.registerProblem(
                     expression.calleeExpression!!,
-                    "Call can be replaced with another scope function",
+                    "Call is replaceable with another scope function",
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     if (counterpartName == "also" || counterpartName == "let")
                         ConvertScopeFunctionToParameter(counterpartName)
