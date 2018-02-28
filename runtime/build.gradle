@@ -51,3 +51,29 @@ task clean {
         delete buildDir
     }
 }
+
+task generateJsMath {
+    dependsOn ':dist'
+    doLast {
+        def jsinteropScript = isWindows() ? "jsinterop.bat" : "jsinterop"
+        def jsinterop = "$distDir/bin/$jsinteropScript"
+        def targetDir = "$buildDir/generated"
+        def firstLine = true
+        "$jsinterop -pkg kotlinx.interop.wasm.math -o $targetDir/math -target wasm32".execute().waitFor()
+        copy {
+            from("$targetDir/math-build/natives/js_stubs.js")
+            into('src/main/js')
+            rename { "math.js" }
+            filter { line ->
+                if (firstLine) {
+                    firstLine = false
+                    return "// NOTE: THIS FILE IS AUTO-GENERATED!\n" +
+                           "// Run ':runtime:generateJsMath' to re-generate it.\n\n" +
+                           "$line"
+                } else {
+                    return line
+                }
+            }
+        }
+    }
+}
