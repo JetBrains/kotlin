@@ -37,15 +37,21 @@ dependencies {
     compile("teamcity:markdown")
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) {
-        includeJars("annotations", "openapi", "idea", "velocity", "boot", "gson", "log4j", "asm-all",
-                    "swingx-core", "forms_rt", "util", "jdom", "trove4j", "guava", rootProject = rootProject)
-    }
+//    compileOnly(intellijDep()) {
+//        includeJars("annotations", "openapi", "idea", "velocity", "boot", "gson", "log4j", "asm-all",
+//                    "swingx-core", "forms_rt", "util", "jdom", "trove4j", "guava", rootProject = rootProject)
+//    }
+    intellijKompotDep(project)
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
-    compileOnly(intellijPluginDep("IntelliLang"))
-    compileOnly(intellijPluginDep("copyright"))
-    compileOnly(intellijPluginDep("properties"))
-    compileOnly(intellijPluginDep("java-i18n"))
+//    compileOnly(intellijPluginDep("IntelliLang"))
+//    compileOnly(intellijPluginDep("copyright"))
+//    compileOnly(intellijPluginDep("properties"))
+//    compileOnly(intellijPluginDep("java-i18n"))
+    intellijPluginKompotDep(project, "IntelliLang")
+    intellijPluginKompotDep(project, "copyright")
+    intellijPluginKompotDep(project, "properties")
+    intellijPluginKompotDep(project, "java-i18n")
+
 
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
@@ -83,7 +89,14 @@ dependencies {
     testCompile(intellijPluginDep("java-i18n"))
     testCompileOnly(intellijDep()) { includeJars("groovy-all", "velocity", "gson", "idea_rt", "util", "log4j", rootProject = rootProject) }
     testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
-    testCompileOnly(intellijPluginDep("gradle")) { includeJars("gradle-base-services", "gradle-tooling-extension-impl", "gradle-wrapper", rootProject = rootProject) }
+    testCompileOnly(intellijPluginDep("gradle")) {
+        includeJars(
+            "gradle-base-services",
+            "gradle-tooling-extension-impl",
+            "gradle-wrapper",
+            rootProject = rootProject
+        )
+    }
     testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
     testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
 
@@ -104,16 +117,19 @@ processResources.from("../compiler/cli/src") {
 sourceSets {
     "main" {
         projectDefault()
-        java.srcDirs("idea-completion/src",
-                     "idea-live-templates/src",
-                     "idea-repl/src")
+        java.srcDirs(
+            "idea-completion/src",
+            "idea-live-templates/src",
+            "idea-repl/src"
+        )
         resources.srcDirs("idea-repl/src").apply { include("META-INF/**") }
     }
     "test" {
         projectDefault()
         java.srcDirs(
-                     "idea-completion/tests",
-                     "idea-live-templates/tests")
+            "idea-completion/tests",
+            "idea-live-templates/tests"
+        )
     }
 }
 
@@ -129,4 +145,4 @@ testsJar {}
 
 classesDirsArtifact()
 configureInstrumentation()
-
+configureVerification()

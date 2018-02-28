@@ -290,6 +290,7 @@ allprojects {
         }
         intellijSdkRepo(project)
         androidDxJarRepo(project)
+        mavenLocal()
     }
     configureJvmProject(javaHome!!, jvmTarget!!)
 

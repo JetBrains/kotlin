@@ -58,6 +58,7 @@ repositories {
     maven(url = "https://dl.bintray.com/kotlin/kotlin-dev") // for dex-method-list
     maven(url = "https://repo.gradle.org/gradle/libs-releases-local") // for native-platform
     jcenter()
+    mavenLocal()
 }
 
 dependencies {
@@ -70,6 +71,9 @@ dependencies {
     // Shadow plugin is used in many projects of the main build. Once it's no longer used in buildSrc, please move this dependency to the root project
     compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
     compile("org.ow2.asm:asm-all:6.0_BETA")
+
+    compile("org.jetbrains.kompot:verifier:0.0.1")
+    compile("org.jetbrains.kompot:ide-tool-setup:0.0.1")
 }
 
 samWithReceiver {

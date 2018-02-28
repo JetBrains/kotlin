@@ -54,8 +54,11 @@ fun Project.configureInstrumentation() {
 
     val instrumentationClasspathCfg = configurations.create("instrumentationClasspath")
 
+    val ideaDep = configurations.create("ideaClasspath")
+
     dependencies {
         instrumentationClasspathCfg(intellijDep()) { includeJars("javac2", "jdom", "asm-all", "jgoodies-forms") }
+        ideaDep(intellijDep())
     }
 
     afterEvaluate {
@@ -74,6 +77,7 @@ fun Project.configureInstrumentation() {
                 dependsOn(sourceSetParam.classesTaskName).onlyIf { !classesDirsCopy.isEmpty }
                 sourceSet = sourceSetParam
                 instrumentationClasspath = instrumentationClasspathCfg
+                ideaClasspath = ideaDep
                 originalClassesDirs = classesDirsCopy
                 output = instrumentedClassesDir
             }
@@ -97,6 +101,8 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
     var sourceSet: SourceSet? = null
 
     var instrumentationClasspath: Configuration? = null
+
+    var ideaClasspath: Configuration? = null
 
     @Input
     var originalClassesDirs: FileCollection? = null
@@ -151,10 +157,15 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         // Instrumentation needs to have access to sources of forms for inclusion
         val depSourceDirectorySets = project.configurations["compile"].dependencies.withType(ProjectDependency::class.java)
                 .map { p -> p.dependencyProject.the<JavaPluginConvention>().sourceSets.getByName("main").allSource.sourceDirectories }
+
+        val compileClasspath = sourceSet!!.compileClasspath.filter {
+            "IC-superset" !in it.path
+        }
+
         val instrumentationClasspath =
-                depSourceDirectorySets.fold(sourceSet!!.compileClasspath) { acc, v -> acc + v }.asPath.also {
-                    logger.info("Using following dependency source dirs: $it")
-                }
+            (depSourceDirectorySets.fold(ideaClasspath!! + compileClasspath) { acc, v -> acc + v }).asPath.also {
+                logger.info("Using following dependency source dirs: $it")
+            }
 
         logger.info("Running instrumentIdeaExtensions with srcdir=${srcDirs.asPath}}, destdir=$output and classpath=$instrumentationClasspath")
 
