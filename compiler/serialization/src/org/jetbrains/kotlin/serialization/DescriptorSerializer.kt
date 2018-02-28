@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -54,9 +55,11 @@ class DescriptorSerializer private constructor(
         val builder = ProtoBuf.Class.newBuilder()
 
         val flags = Flags.getClassFlags(
-                hasAnnotations(classDescriptor), normalizeVisibility(classDescriptor), classDescriptor.modality, classDescriptor.kind,
-                classDescriptor.isInner, classDescriptor.isCompanionObject, classDescriptor.isData, classDescriptor.isExternal,
-                classDescriptor.isExpect, classDescriptor.isInline
+            hasAnnotations(classDescriptor),
+            ProtoEnumFlags.visibility(normalizeVisibility(classDescriptor)),
+            ProtoEnumFlags.modality(classDescriptor.modality),
+            ProtoEnumFlags.classKind(classDescriptor.kind, classDescriptor.isCompanionObject),
+            classDescriptor.isInner, classDescriptor.isData, classDescriptor.isExternal, classDescriptor.isExpect, classDescriptor.isInline
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -157,7 +160,12 @@ class DescriptorSerializer private constructor(
 
         val hasAnnotations = descriptor.annotations.getAllAnnotations().isNotEmpty()
 
-        val propertyFlags = Flags.getAccessorFlags(hasAnnotations, normalizeVisibility(descriptor), descriptor.modality, false, false, false)
+        val propertyFlags = Flags.getAccessorFlags(
+            hasAnnotations,
+            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.modality(descriptor.modality),
+            false, false, false
+        )
 
         val getter = descriptor.getter
         if (getter != null) {
@@ -185,9 +193,12 @@ class DescriptorSerializer private constructor(
         }
 
         val flags = Flags.getPropertyFlags(
-                hasAnnotations, normalizeVisibility(descriptor), descriptor.modality, descriptor.kind, descriptor.isVar,
-                hasGetter, hasSetter, hasConstant, descriptor.isConst, descriptor.isLateInit, descriptor.isExternal,
-                @Suppress("DEPRECATION") descriptor.isDelegated, descriptor.isExpect
+            hasAnnotations,
+            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.modality(descriptor.modality),
+            ProtoEnumFlags.memberKind(descriptor.kind),
+            descriptor.isVar, hasGetter, hasSetter, hasConstant, descriptor.isConst, descriptor.isLateInit, descriptor.isExternal,
+            @Suppress("DEPRECATION") descriptor.isDelegated, descriptor.isExpect
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -242,9 +253,12 @@ class DescriptorSerializer private constructor(
         val local = createChildSerializer(descriptor)
 
         val flags = Flags.getFunctionFlags(
-                hasAnnotations(descriptor), normalizeVisibility(descriptor), descriptor.modality, descriptor.kind, descriptor.isOperator,
-                descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal, descriptor.isSuspend,
-                descriptor.isExpect
+            hasAnnotations(descriptor),
+            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.modality(descriptor.modality),
+            ProtoEnumFlags.memberKind(descriptor.kind),
+            descriptor.isOperator, descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal,
+            descriptor.isSuspend, descriptor.isExpect
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -304,7 +318,9 @@ class DescriptorSerializer private constructor(
 
         val local = createChildSerializer(descriptor)
 
-        val flags = Flags.getConstructorFlags(hasAnnotations(descriptor), normalizeVisibility(descriptor), !descriptor.isPrimary)
+        val flags = Flags.getConstructorFlags(
+            hasAnnotations(descriptor), ProtoEnumFlags.visibility(normalizeVisibility(descriptor)), !descriptor.isPrimary
+        )
         if (flags != builder.flags) {
             builder.flags = flags
         }
@@ -340,7 +356,7 @@ class DescriptorSerializer private constructor(
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(descriptor)
 
-        val flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), normalizeVisibility(descriptor))
+        val flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), ProtoEnumFlags.visibility(normalizeVisibility(descriptor)))
         if (flags != builder.flags) {
             builder.flags = flags
         }
@@ -661,16 +677,14 @@ class DescriptorSerializer private constructor(
     private fun getTypeParameterId(descriptor: TypeParameterDescriptor): Int =
             typeParameters.intern(descriptor)
 
-    private fun getAccessorFlags(accessor: PropertyAccessorDescriptor): Int {
-        return Flags.getAccessorFlags(
-                hasAnnotations(accessor),
-                normalizeVisibility(accessor),
-                accessor.modality,
-                !accessor.isDefault,
-                accessor.isExternal,
-                accessor.isInline
-        )
-    }
+    private fun getAccessorFlags(accessor: PropertyAccessorDescriptor): Int = Flags.getAccessorFlags(
+        hasAnnotations(accessor),
+        ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
+        ProtoEnumFlags.modality(accessor.modality),
+        !accessor.isDefault,
+        accessor.isExternal,
+        accessor.isInline
+    )
 
     companion object {
         @JvmStatic

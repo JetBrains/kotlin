@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.protobuf.Internal;
 
 public class Flags {
@@ -86,64 +85,43 @@ public class Flags {
 
     public static int getClassFlags(
             boolean hasAnnotations,
-            Visibility visibility,
-            Modality modality,
-            ClassKind kind,
+            @NotNull ProtoBuf.Visibility visibility,
+            @NotNull ProtoBuf.Modality modality,
+            @NotNull ProtoBuf.Class.Kind kind,
             boolean inner,
-            boolean isCompanionObject,
             boolean isData,
             boolean isExternal,
             boolean isExpect,
             boolean isInline
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
-               | MODALITY.toFlags(modality(modality))
-               | VISIBILITY.toFlags(visibility(visibility))
-               | CLASS_KIND.toFlags(classKind(kind, isCompanionObject))
+               | MODALITY.toFlags(modality)
+               | VISIBILITY.toFlags(visibility)
+               | CLASS_KIND.toFlags(kind)
                | IS_INNER.toFlags(inner)
                | IS_DATA.toFlags(isData)
                | IS_EXTERNAL_CLASS.toFlags(isExternal)
                | IS_EXPECT_CLASS.toFlags(isExpect)
                | IS_INLINE_CLASS.toFlags(isInline)
-               ;
-    }
-
-    private static ProtoBuf.Class.Kind classKind(ClassKind kind, boolean isCompanionObject) {
-        if (isCompanionObject) return ProtoBuf.Class.Kind.COMPANION_OBJECT;
-
-        switch (kind) {
-            case CLASS:
-                return ProtoBuf.Class.Kind.CLASS;
-            case INTERFACE:
-                return ProtoBuf.Class.Kind.INTERFACE;
-            case ENUM_CLASS:
-                return ProtoBuf.Class.Kind.ENUM_CLASS;
-            case ENUM_ENTRY:
-                return ProtoBuf.Class.Kind.ENUM_ENTRY;
-            case ANNOTATION_CLASS:
-                return ProtoBuf.Class.Kind.ANNOTATION_CLASS;
-            case OBJECT:
-                return ProtoBuf.Class.Kind.OBJECT;
-        }
-        throw new IllegalArgumentException("Unknown class kind: " + kind);
+                ;
     }
 
     public static int getConstructorFlags(
             boolean hasAnnotations,
-            @NotNull Visibility visibility,
+            @NotNull ProtoBuf.Visibility visibility,
             boolean isSecondary
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
-               | VISIBILITY.toFlags(visibility(visibility))
+               | VISIBILITY.toFlags(visibility)
                | IS_SECONDARY.toFlags(isSecondary)
                 ;
     }
 
     public static int getFunctionFlags(
             boolean hasAnnotations,
-            @NotNull Visibility visibility,
-            @NotNull Modality modality,
-            @NotNull CallableMemberDescriptor.Kind memberKind,
+            @NotNull ProtoBuf.Visibility visibility,
+            @NotNull ProtoBuf.Modality modality,
+            @NotNull ProtoBuf.MemberKind memberKind,
             boolean isOperator,
             boolean isInfix,
             boolean isInline,
@@ -153,9 +131,9 @@ public class Flags {
             boolean isExpect
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
-               | VISIBILITY.toFlags(visibility(visibility))
-               | MODALITY.toFlags(modality(modality))
-               | MEMBER_KIND.toFlags(memberKind(memberKind))
+               | VISIBILITY.toFlags(visibility)
+               | MODALITY.toFlags(modality)
+               | MEMBER_KIND.toFlags(memberKind)
                | IS_OPERATOR.toFlags(isOperator)
                | IS_INFIX.toFlags(isInfix)
                | IS_INLINE.toFlags(isInline)
@@ -168,9 +146,9 @@ public class Flags {
 
     public static int getPropertyFlags(
             boolean hasAnnotations,
-            @NotNull Visibility visibility,
-            @NotNull Modality modality,
-            @NotNull CallableMemberDescriptor.Kind memberKind,
+            @NotNull ProtoBuf.Visibility visibility,
+            @NotNull ProtoBuf.Modality modality,
+            @NotNull ProtoBuf.MemberKind memberKind,
             boolean isVar,
             boolean hasGetter,
             boolean hasSetter,
@@ -182,9 +160,9 @@ public class Flags {
             boolean isExpect
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
-               | VISIBILITY.toFlags(visibility(visibility))
-               | MODALITY.toFlags(modality(modality))
-               | MEMBER_KIND.toFlags(memberKind(memberKind))
+               | VISIBILITY.toFlags(visibility)
+               | MODALITY.toFlags(modality)
+               | MEMBER_KIND.toFlags(memberKind)
                | IS_VAR.toFlags(isVar)
                | HAS_GETTER.toFlags(hasGetter)
                | HAS_SETTER.toFlags(hasSetter)
@@ -199,80 +177,24 @@ public class Flags {
 
     public static int getAccessorFlags(
             boolean hasAnnotations,
-            @NotNull Visibility visibility,
-            @NotNull Modality modality,
+            @NotNull ProtoBuf.Visibility visibility,
+            @NotNull ProtoBuf.Modality modality,
             boolean isNotDefault,
             boolean isExternal,
             boolean isInlineAccessor
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
-               | MODALITY.toFlags(modality(modality))
-               | VISIBILITY.toFlags(visibility(visibility))
+               | MODALITY.toFlags(modality)
+               | VISIBILITY.toFlags(visibility)
                | IS_NOT_DEFAULT.toFlags(isNotDefault)
                | IS_EXTERNAL_ACCESSOR.toFlags(isExternal)
                | IS_INLINE_ACCESSOR.toFlags(isInlineAccessor)
-               ;
+                ;
     }
 
-    public static int getContractExpressionFlags(
-            @NotNull boolean isNegated,
-            @NotNull boolean isNullCheckPredicate
-    ) {
+    public static int getContractExpressionFlags(boolean isNegated, boolean isNullCheckPredicate) {
         return IS_NEGATED.toFlags(isNegated)
                 | IS_NULL_CHECK_PREDICATE.toFlags(isNullCheckPredicate);
-    }
-
-    @NotNull
-    private static ProtoBuf.Visibility visibility(@NotNull Visibility visibility) {
-        if (visibility == Visibilities.INTERNAL) {
-            return ProtoBuf.Visibility.INTERNAL;
-        }
-        else if (visibility == Visibilities.PUBLIC) {
-            return ProtoBuf.Visibility.PUBLIC;
-        }
-        else if (visibility == Visibilities.PRIVATE) {
-            return ProtoBuf.Visibility.PRIVATE;
-        }
-        else if (visibility == Visibilities.PRIVATE_TO_THIS) {
-            return ProtoBuf.Visibility.PRIVATE_TO_THIS;
-        }
-        else if (visibility == Visibilities.PROTECTED) {
-            return ProtoBuf.Visibility.PROTECTED;
-        }
-        else if (visibility == Visibilities.LOCAL) {
-            return ProtoBuf.Visibility.LOCAL;
-        }
-        throw new IllegalArgumentException("Unknown visibility: " + visibility);
-    }
-
-    @NotNull
-    private static ProtoBuf.Modality modality(@NotNull Modality modality) {
-        switch (modality) {
-            case FINAL:
-                return ProtoBuf.Modality.FINAL;
-            case OPEN:
-                return ProtoBuf.Modality.OPEN;
-            case ABSTRACT:
-                return ProtoBuf.Modality.ABSTRACT;
-            case SEALED:
-                return ProtoBuf.Modality.SEALED;
-        }
-        throw new IllegalArgumentException("Unknown modality: " + modality);
-    }
-
-    @NotNull
-    private static ProtoBuf.MemberKind memberKind(@NotNull CallableMemberDescriptor.Kind kind) {
-        switch (kind) {
-            case DECLARATION:
-                return ProtoBuf.MemberKind.DECLARATION;
-            case FAKE_OVERRIDE:
-                return ProtoBuf.MemberKind.FAKE_OVERRIDE;
-            case DELEGATION:
-                return ProtoBuf.MemberKind.DELEGATION;
-            case SYNTHESIZED:
-                return ProtoBuf.MemberKind.SYNTHESIZED;
-        }
-        throw new IllegalArgumentException("Unknown member kind: " + kind);
     }
 
     public static int getValueParameterFlags(
@@ -285,12 +207,12 @@ public class Flags {
                | DECLARES_DEFAULT_VALUE.toFlags(declaresDefaultValue)
                | IS_CROSSINLINE.toFlags(isCrossinline)
                | IS_NOINLINE.toFlags(isNoinline)
-               ;
+                ;
     }
 
-    public static int getTypeAliasFlags(boolean hasAnnotations, Visibility visibility) {
+    public static int getTypeAliasFlags(boolean hasAnnotations, ProtoBuf.Visibility visibility) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
-                | VISIBILITY.toFlags(visibility(visibility))
+               | VISIBILITY.toFlags(visibility)
                 ;
     }
 

@@ -201,11 +201,11 @@ class TypeDeserializer(
                 StarProjectionImpl(parameter)
         }
 
-        val variance = ProtoEnumFlags.variance(typeArgumentProto.projection)
+        val projection = ProtoEnumFlags.variance(typeArgumentProto.projection)
         val type = typeArgumentProto.type(c.typeTable) ?:
                 return TypeProjectionImpl(ErrorUtils.createErrorType("No type recorded"))
 
-        return TypeProjectionImpl(variance, type(type))
+        return TypeProjectionImpl(projection, type(type))
     }
 
     override fun toString() = debugName + (if (parent == null) "" else ". Child of ${parent.debugName}")
