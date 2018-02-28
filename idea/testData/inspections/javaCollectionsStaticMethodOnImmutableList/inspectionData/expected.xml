@@ -1,0 +1,10 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Immutable Kotlin collection may be changed with Java Collections method</problem_class>
+        <description>The 'immutableList' may be changed with Java Collections method 'reverse'</description>
+    </problem>
+</problems>
