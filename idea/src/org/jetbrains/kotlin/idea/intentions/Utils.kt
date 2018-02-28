@@ -72,7 +72,7 @@ fun resolveToAutoCreatedItDescriptor(expression: KtNameReferenceExpression): Val
 }
 
 fun getLambdaByImplicitItReference(expression: KtNameReferenceExpression) =
-        resolveToAutoCreatedItDescriptor(expression)?.containingDeclaration?.source?.getPsi() as? KtFunctionLiteral
+    resolveToAutoCreatedItDescriptor(expression)?.containingDeclaration?.source?.getPsi() as? KtFunctionLiteral
 
 // returns assignment which replaces initializer
 fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression {
@@ -166,17 +166,19 @@ private fun KtExpression.specialNegation(reformat: Boolean): KtExpression? {
             val left = left ?: return null
             val right = right ?: return null
             return factory.createExpressionByPattern(
-                    "$0 $1 $2", left, getNegatedOperatorText(operator), right,
-                    reformat = reformat
+                "$0 $1 $2", left, getNegatedOperatorText(operator), right,
+                reformat = reformat
             )
         }
 
         is KtIsExpression -> {
-            return factory.createExpressionByPattern("$0 $1 $2",
-                                                     leftHandSide,
-                                                     if (isNegated) "is" else "!is",
-                                                     typeReference ?: return null,
-                                                     reformat = reformat)
+            return factory.createExpressionByPattern(
+                "$0 $1 $2",
+                leftHandSide,
+                if (isNegated) "is" else "!is",
+                typeReference ?: return null,
+                reformat = reformat
+            )
         }
 
         is KtConstantExpression -> {
@@ -190,12 +192,14 @@ private fun KtExpression.specialNegation(reformat: Boolean): KtExpression? {
     return null
 }
 
-private val NEGATABLE_OPERATORS = setOf(KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.EQEQEQ,
-                                        KtTokens.EXCLEQEQEQ, KtTokens.IS_KEYWORD, KtTokens.NOT_IS, KtTokens.IN_KEYWORD,
-                                        KtTokens.NOT_IN, KtTokens.LT, KtTokens.LTEQ, KtTokens.GT, KtTokens.GTEQ)
+private val NEGATABLE_OPERATORS = setOf(
+    KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.EQEQEQ,
+    KtTokens.EXCLEQEQEQ, KtTokens.IS_KEYWORD, KtTokens.NOT_IS, KtTokens.IN_KEYWORD,
+    KtTokens.NOT_IN, KtTokens.LT, KtTokens.LTEQ, KtTokens.GT, KtTokens.GTEQ
+)
 
 private fun getNegatedOperatorText(token: IElementType): String {
-    return when(token) {
+    return when (token) {
         KtTokens.EQEQ -> KtTokens.EXCLEQ.value
         KtTokens.EXCLEQ -> KtTokens.EQEQ.value
         KtTokens.EQEQEQ -> KtTokens.EXCLEQEQEQ.value
@@ -225,9 +229,9 @@ private fun KtExpression.ifBranchesOrThis(): List<KtExpression?> {
 }
 
 fun ResolvedCall<out CallableDescriptor>.resolvedToArrayType(): Boolean =
-        resultingDescriptor.returnType.let { type ->
-            type != null && (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type))
-        }
+    resultingDescriptor.returnType.let { type ->
+        type != null && (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type))
+    }
 
 fun KtElement?.isZero() = this?.text == "0"
 
@@ -244,9 +248,9 @@ fun KtElement?.isSizeOrLength(): Boolean {
     return when (selectorExpression?.text) {
         "size" -> receiverExpression.isExpressionOfTypeOrSubtype { type ->
             KotlinBuiltIns.isArray(type) ||
-            KotlinBuiltIns.isPrimitiveArray(type) ||
-            KotlinBuiltIns.isCollectionOrNullableCollection(type) ||
-            KotlinBuiltIns.isMapOrNullableMap(type)
+                    KotlinBuiltIns.isPrimitiveArray(type) ||
+                    KotlinBuiltIns.isCollectionOrNullableCollection(type) ||
+                    KotlinBuiltIns.isMapOrNullableMap(type)
         }
         "length" -> receiverExpression.isExpressionOfTypeOrSubtype(KotlinBuiltIns::isCharSequenceOrNullableCharSequence)
         else -> false
@@ -255,12 +259,12 @@ fun KtElement?.isSizeOrLength(): Boolean {
 
 
 fun KtDotQualifiedExpression.getLeftMostReceiverExpression(): KtExpression =
-        (receiverExpression as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: receiverExpression
+    (receiverExpression as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: receiverExpression
 
 fun KtDotQualifiedExpression.replaceFirstReceiver(
-        factory: KtPsiFactory,
-        newReceiver: KtExpression,
-        safeAccess: Boolean = false
+    factory: KtPsiFactory,
+    newReceiver: KtExpression,
+    safeAccess: Boolean = false
 ): KtExpression {
     val replaced = (if (safeAccess) {
         this.replaced(factory.createExpressionByPattern("$0?.$1", receiverExpression, selectorExpression!!))
@@ -287,14 +291,14 @@ fun KtDotQualifiedExpression.deleteFirstReceiver(): KtExpression {
 }
 
 private val ARRAY_OF_METHODS = setOf(CollectionLiteralResolver.ARRAY_OF_FUNCTION) +
-                               CollectionLiteralResolver.PRIMITIVE_TYPE_TO_ARRAY.values.toSet() +
-                               Name.identifier("emptyArray")
+        CollectionLiteralResolver.PRIMITIVE_TYPE_TO_ARRAY.values.toSet() +
+        Name.identifier("emptyArray")
 
 fun KtCallExpression.isArrayOfMethod(): Boolean {
     val resolvedCall = resolveToCall() ?: return false
     val descriptor = resolvedCall.candidateDescriptor
     return (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
-           ARRAY_OF_METHODS.contains(descriptor.name)
+            ARRAY_OF_METHODS.contains(descriptor.name)
 }
 
 fun KtBlockExpression.getParentLambdaLabelName(): String? {
