@@ -349,7 +349,7 @@ public class KtPsiUtil {
         KtClassOrObject current = classOrObject;
         while (true) {
             PsiElement parent = current.getParent();
-            assert classOrObject.getParent() != null : "Class with no parent: " + classOrObject.getText();
+            assert parent != null : "Class with no parent: " + current.getText();
 
             if (parent instanceof PsiFile) {
                 return current;
