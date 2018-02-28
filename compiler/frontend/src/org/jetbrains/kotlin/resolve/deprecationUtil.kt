@@ -345,7 +345,7 @@ class DeprecationResolver(
                 ProtoBuf.VersionRequirement.VersionKind.API_VERSION ->
                     languageVersionSettings.apiVersion.version
                 ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION ->
-                    KotlinCompilerVersion.getVersion()?.let(::createVersion)
+                    KotlinCompilerVersion.getVersion()?.takeIf { "SNAPSHOT" !in it }?.let(::createVersion)
                 else -> null
             }
             if (currentVersion != null && currentVersion < requiredVersion) {
