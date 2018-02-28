@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.util.CommentSaver
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contentRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -40,20 +37,18 @@ class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpres
     }
 
     override fun applyTo(element: KtForExpression, editor: Editor?) {
-        val commentSaver = CommentSaver(element)
+        val commentSaver = CommentSaver(element, saveLineBreaks = true)
 
         val labelName = element.getLabelName()
 
         val body = element.body!!
         val loopParameter = element.loopParameter!!
 
-        val blockExpression = body as? KtBlockExpression
-        val functionBodyArgument: Any = blockExpression?.contentRange() ?: body
-        val pattern = if (needLineBreaks(blockExpression)) "$0.forEach{$1->\n$2\n}" else "$0.forEach{$1->$2}"
+        val functionBodyArgument: Any = (body as? KtBlockExpression)?.contentRange() ?: body
 
         val psiFactory = KtPsiFactory(element)
         val foreachExpression = psiFactory.createExpressionByPattern(
-            pattern, element.loopRange!!, loopParameter, functionBodyArgument
+            "$0.forEach{$1->\n$2}", element.loopRange!!, loopParameter, functionBodyArgument
         )
         val result = element.replace(foreachExpression) as KtElement
 
@@ -62,14 +57,6 @@ class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpres
         }
 
         commentSaver.restore(result)
-    }
-
-    private fun needLineBreaks(blockExpression: KtBlockExpression?): Boolean {
-        val contentRange = blockExpression?.contentRange() ?: return false
-        if ((contentRange.last as? PsiComment)?.tokenType != KtTokens.EOL_COMMENT) return false
-        val statements = blockExpression.statements
-        val fistStatementLine = statements.firstOrNull()?.getLineNumber()
-        return statements.all { it.getLineNumber() == fistStatementLine }
     }
 
     private fun KtElement.getContinuesWithLabel(labelName: String?): List<KtContinueExpression> {
