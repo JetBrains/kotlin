@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
+import kotlin.jvm.functions.Function4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
-import org.jetbrains.kotlin.js.translate.intrinsic.operation.BinaryOperationIntrinsic;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.lexer.KtToken;
@@ -100,21 +100,21 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translate() {
-        BinaryOperationIntrinsic intrinsic = getIntrinsicForExpression();
-        if (intrinsic != null) {
-            return applyIntrinsic(intrinsic);
+        JsExpression e = tryApplyIntrinsic();
+        if (e != null) {
+            return e;
         }
         if (operationToken == KtTokens.ELVIS) {
             return translateElvis();
         }
         if (isAssignmentOperator(operationToken)) {
-            return AssignmentTranslator.translate(expression, context());
+            return AssignmentTranslator.translate(this.expression, context());
         }
         if (isNotOverloadable()) {
             return translateAsUnOverloadableBinaryOperation();
         }
         if (isCompareToCall(operationToken, operationDescriptor)) {
-            return CompareToTranslator.translate(expression, context());
+            return CompareToTranslator.translate(this.expression, context());
         }
         if (isEquals()) {
             return translateEquals();
@@ -159,25 +159,25 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    private BinaryOperationIntrinsic getIntrinsicForExpression() {
-        return context().intrinsics().getBinaryOperationIntrinsic(expression, context());
-    }
+    private JsExpression tryApplyIntrinsic() {
+        Function4<KtBinaryExpression, JsExpression, JsExpression, TranslationContext, JsExpression> intrinsic =
+                context().intrinsics().getBinaryOperationIntrinsic(expression, context());
 
-    @NotNull
-    private JsExpression applyIntrinsic(@NotNull BinaryOperationIntrinsic intrinsic) {
+        if (intrinsic == null) return null;
+
         JsExpression leftExpression = Translation.translateAsExpression(leftKtExpression, context());
 
         JsBlock rightBlock = new JsBlock();
         JsExpression rightExpression = Translation.translateAsExpression(rightKtExpression, context(), rightBlock);
 
         if (rightBlock.isEmpty()) {
-            return intrinsic.apply(expression, leftExpression, rightExpression, context());
+            return intrinsic.invoke(expression, leftExpression, rightExpression, context());
         }
 
         leftExpression = context().cacheExpressionIfNeeded(leftExpression);
         context().addStatementsToCurrentBlockFrom(rightBlock);
 
-        return intrinsic.apply(expression, leftExpression, rightExpression, context());
+        return intrinsic.invoke(expression, leftExpression, rightExpression, context());
     }
 
     private boolean isNotOverloadable() {

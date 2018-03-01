@@ -30,19 +30,14 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.types.KotlinType
 
 object AssignmentBOIF : BinaryOperationIntrinsicFactory {
-
-    private object CharAssignmentIntrinsic : BinaryOperationIntrinsic {
-        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
-            val operator = OperatorTable.getBinaryOperator(PsiUtils.getOperationToken(expression))
-            return JsBinaryOperation(operator, left, TranslationUtils.charToBoxedChar(context, right))
-        }
-    }
-
     override fun getSupportTokens() = ImmutableSet.of(KtTokens.EQ)
 
     override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? {
         if (leftType != null && !KotlinBuiltIns.isCharOrNullableChar(leftType) && rightType != null && KotlinBuiltIns.isCharOrNullableChar(rightType)) {
-            return CharAssignmentIntrinsic
+            return { expression, left, right, context ->
+                val operator = OperatorTable.getBinaryOperator(PsiUtils.getOperationToken(expression))
+                JsBinaryOperation(operator, left, TranslationUtils.charToBoxedChar(context, right))
+            }
         }
         return null
     }

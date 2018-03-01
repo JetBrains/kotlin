@@ -205,6 +205,11 @@ public final class JsAstUtils {
     }
 
     @NotNull
+    public static JsExpression longToNumber(@NotNull JsExpression expression) {
+        return invokeMethod(expression, Namer.LONG_TO_NUMBER);
+    }
+
+    @NotNull
     public static JsExpression compareForObject(@NotNull JsExpression left, @NotNull JsExpression right) {
         return invokeMethod(left, Namer.COMPARE_TO_METHOD_NAME, right);
     }

@@ -28,9 +28,8 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-interface BinaryOperationIntrinsic {
-    fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression
-}
+typealias BinaryOperationIntrinsic
+        = (expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext) -> JsExpression
 
 class BinaryOperationIntrinsics {
 
@@ -53,7 +52,7 @@ class BinaryOperationIntrinsics {
         return computeAndCache(IntrinsicKey(token, descriptor, leftType, rightType))
     }
 
-    private val factories = listOf(LongCompareToBOIF, EqualsBOIF, CompareToBOIF, AssignmentBOIF)
+    private val factories = listOf(CompareToBOIF, EqualsBOIF, AssignmentBOIF)
 
     private fun computeAndCache(key: IntrinsicKey): BinaryOperationIntrinsic? {
         if (key in intrinsicCache) return intrinsicCache[key]
