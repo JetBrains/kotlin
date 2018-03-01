@@ -39,7 +39,7 @@ class Intrinsics {
         return binaryOperationIntrinsics.getIntrinsic(expression, context)
     }
 
-    fun getFunctionIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic {
+    fun getFunctionIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic? {
         return functionIntrinsics.getIntrinsic(descriptor)
     }
 

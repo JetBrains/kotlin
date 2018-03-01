@@ -276,7 +276,7 @@ interface DelegateIntrinsic<in I : CallInfo> {
         // Now intrinsic support only FunctionDescriptor. See DelegatePropertyAccessIntrinsic.getDescriptor()
         if (descriptor is FunctionDescriptor) {
             val intrinsic = context.intrinsics().getFunctionIntrinsic(descriptor)
-            if (intrinsic.exists()) {
+            if (intrinsic != null) {
                 return intrinsic.apply(this, getArgs(), context)
             }
         }

@@ -79,7 +79,7 @@ fun generateDelegateCall(
     }
 
     val intrinsic = context.intrinsics().getFunctionIntrinsic(toDescriptor)
-    val invocation = if (intrinsic.exists() && intrinsic is FunctionIntrinsicWithReceiverComputed) {
+    val invocation = if (intrinsic is FunctionIntrinsicWithReceiverComputed) {
         intrinsic.apply(thisObject, args, context)
     } else {
         JsInvocation(overriddenMemberFunctionRef, args)
