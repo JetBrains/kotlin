@@ -18,3 +18,4 @@ class Foo {
 
 // 1 INVOKESTATIC
 // 1 PUTSTATIC
+// 2 GETSTATIC

@@ -129,11 +129,19 @@ public class JvmCodegenUtil {
                     !closure.isSuspend();
     }
 
-    private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {
+    private static boolean isCallInsideSameClassAsFieldRepresentingProperty(
+            @NotNull PropertyDescriptor descriptor,
+            @NotNull CodegenContext context
+    ) {
         boolean isFakeOverride = descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         boolean isDelegate = descriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration().getOriginal();
+        if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) {
+            // For property with backed field, check if the access is done in the same class containing the backed field and
+            // not the class that declared the field.
+            containingDeclaration = containingDeclaration.getContainingDeclaration();
+        }
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
@@ -204,22 +212,10 @@ public class JvmCodegenUtil {
             return false;
         }
 
-        DeclarationDescriptor propertyContainingDeclaration = property.getContainingDeclaration();
-        boolean isCompanionPropBackedInOuter = DescriptorUtils.isCompanionObject(propertyContainingDeclaration) &&
-                                               JvmAbi.isPropertyWithBackingFieldInOuterClass(property);
-        if (!isCallInsideSameClassAsDeclared(property, context)) {
+        if (!isCallInsideSameClassAsFieldRepresentingProperty(property, context)) {
             if (!isDebuggerContext(context)) {
-                // Property with backing field into an outer class could be used directly when access is done into the context of the outer
-                // class if the conditions further afield are respected, otherwise accessors must be used.
-                if (isCompanionPropBackedInOuter) {
-                    if (propertyContainingDeclaration.getContainingDeclaration() !=
-                        context.getContextDescriptor().getContainingDeclaration()) {
-                        return false;
-                    }
-                }
-                else {
-                    return false;
-                }
+                // Unless we are evaluating expression in debugger context, only properties of the same class can be directly accessed
+                return false;
             }
             else {
                 // In debugger we want to access through accessors if they are generated
@@ -236,9 +232,6 @@ public class JvmCodegenUtil {
                 // If property overrides something, accessors must be generated too
                 if (!property.getOverriddenDescriptors().isEmpty()) return false;
             }
-        } else {
-            // Companion object properties with backing field into outer class cannot be accessed directly from companion
-            if (isCompanionPropBackedInOuter) return false;
         }
 
         // Delegated and extension properties have no backing fields

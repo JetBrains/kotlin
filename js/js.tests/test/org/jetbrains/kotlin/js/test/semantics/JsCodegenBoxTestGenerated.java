@@ -5041,21 +5041,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
     }
 
-    @TestMetadata("compiler/testData/codegen/box/companion")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Companion extends AbstractJsCodegenBoxTest {
-        public void testAllFilesPresentInCompanion() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/companion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
-        }
-
-        @TestMetadata("kt14258.kt")
-        public void testKt14258() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/companion/kt14258.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("compiler/testData/codegen/box/compatibility")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

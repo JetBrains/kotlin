@@ -1963,8 +1963,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         else if (isBackingFieldInClassCompanion &&
                  (forceField ||
                   (Visibilities.isPrivate(propertyDescriptor.getVisibility()) &&
-                   (propertyDescriptor.isConst() ||
-                    (isDefaultAccessor(propertyDescriptor.getGetter()) && isDefaultAccessor(propertyDescriptor.getSetter())))))) {
+                   isDefaultAccessor(propertyDescriptor.getGetter()) && isDefaultAccessor(propertyDescriptor.getSetter())))) {
             fieldAccessorKind = FieldAccessorKind.IN_CLASS_COMPANION;
         }
         else if ((syntheticBackingField &&
@@ -1993,9 +1992,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         boolean skipPropertyAccessors;
 
         PropertyDescriptor originalPropertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
-        boolean directAccessToGetterProperty = couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context,
+        boolean directAccessToGetter = couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context,
                                                                               state.getShouldInlineConstVals());
-        boolean directAccessToSetterProperty = couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context,
+        boolean directAccessToSetter = couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context,
                                                                               state.getShouldInlineConstVals());
 
         if (fieldAccessorKind == FieldAccessorKind.LATEINIT_INTRINSIC) {
@@ -2008,9 +2007,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             ownerDescriptor = propertyDescriptor;
         }
         else if (fieldAccessorKind == FieldAccessorKind.IN_CLASS_COMPANION || fieldAccessorKind == FieldAccessorKind.FIELD_FROM_LOCAL) {
-            // Do not use accessor 'access<property name>$cp' when the property can be accessed directly by his backing field.
+            // Do not use accessor 'access<property name>$cp' when the property can be accessed directly by its backing field.
             skipPropertyAccessors = skipAccessorsForPrivateFieldInOuterClass ||
-                                    (directAccessToGetterProperty && (!propertyDescriptor.isVar() || directAccessToSetterProperty));
+                                    (directAccessToGetter && (!propertyDescriptor.isVar() || directAccessToSetter));
 
             if (!skipPropertyAccessors) {
                 //noinspection ConstantConditions
@@ -2031,17 +2030,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (!skipPropertyAccessors) {
-            if (!directAccessToGetterProperty || !directAccessToSetterProperty) {
+            if (!directAccessToGetter || !directAccessToSetter) {
                 propertyDescriptor = context.getAccessorForSuperCallIfNeeded(propertyDescriptor, superCallTarget, state);
                 propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superCallTarget);
                 if (!isConstOrHasJvmFieldAnnotation(propertyDescriptor)) {
-                    if (!directAccessToGetterProperty) {
+                    if (!directAccessToGetter) {
                         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
                         if (getter != null) {
                             callableGetter = typeMapper.mapToCallableMethod(getter, isSuper);
                         }
                     }
-                    if (propertyDescriptor.isVar() && !directAccessToSetterProperty) {
+                    if (propertyDescriptor.isVar() && !directAccessToSetter) {
                         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
                         if (setter != null) {
                             callableSetter = typeMapper.mapToCallableMethod(setter, isSuper);

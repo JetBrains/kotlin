@@ -861,9 +861,33 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/companion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("kt14258.kt")
-        public void testKt14258() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/companion/kt14258.kt");
+        @TestMetadata("kt14258_1.kt")
+        public void testKt14258_1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/companion/kt14258_1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14258_2.kt")
+        public void testKt14258_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/companion/kt14258_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14258_3.kt")
+        public void testKt14258_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/companion/kt14258_3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14258_4.kt")
+        public void testKt14258_4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/companion/kt14258_4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14258_5.kt")
+        public void testKt14258_5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/companion/kt14258_5.kt");
             doTest(fileName);
         }
     }
@@ -2484,12 +2508,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("classObject.kt")
         public void testClassObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/staticFields/classObject.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("classObjectSyntheticAccessor.kt")
-        public void testClassObjectSyntheticAccessor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/staticFields/classObjectSyntheticAccessor.kt");
             doTest(fileName);
         }
 
