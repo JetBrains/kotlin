@@ -19,14 +19,9 @@ package org.jetbrains.kotlin.js.translate.intrinsic.operation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
-import org.jetbrains.kotlin.js.translate.operation.OperatorTable
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
-import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.types.KotlinType
@@ -36,36 +31,15 @@ import org.jetbrains.kotlin.utils.identity
 object CompareToBOIF : BinaryOperationIntrinsicFactory {
     override fun getSupportTokens(): Set<KtSingleValueToken> = OperatorConventions.COMPARISON_OPERATIONS
 
-    // toLeft(L, R) OP toRight(L, R)
-    private fun intrinsic(
-        toLeft: (JsExpression, JsExpression) -> JsExpression,
-        toRight: (JsExpression, JsExpression) -> JsExpression
-    ): BinaryOperationIntrinsic = { expression, left, right, _ ->
-        val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
-        JsBinaryOperation(operator, toLeft(left, right), toRight(left, right))
-    }
-
-    // toLeft(L) OP toRight(R)
-    private fun primitiveIntrinsic(
-        toLeft: (JsExpression) -> JsExpression,
-        toRight: (JsExpression) -> JsExpression
-    ): BinaryOperationIntrinsic = intrinsic({ l, _ -> toLeft(l) }, { _, r -> toRight(r) })
-
-    private fun unboxCharIfNeeded(type: KotlinType): (JsExpression) -> JsExpression = { e ->
-        if (KotlinBuiltIns.isCharOrNullableChar(type)) {
-            charToInt(e)
-        } else e
-    }
-
     private val patterns = listOf(
-        pattern("Int|Short|Byte|Float|Double.compareTo(Long)") to primitiveIntrinsic(identity(), ::longToNumber),
-        pattern("Long.compareTo(Int|Short|Byte|Float|Double)") to primitiveIntrinsic(::longToNumber, identity()),
+        pattern("Int|Short|Byte|Float|Double.compareTo(Long)") to binaryIntrinsic(toRight = { r, _ -> longToNumber(r) }),
+        pattern("Long.compareTo(Int|Short|Byte|Float|Double)") to binaryIntrinsic(toLeft = { l, _ -> longToNumber(l) }),
         // L.compareTo(R) OP 0
-        pattern("Long.compareTo(Long)") to intrinsic({ l, r -> compareForObject(l, r) }, { _, _ -> JsIntLiteral(0) })
+        pattern("Long.compareTo(Long)") to intrinsic({ l, r, _ -> compareForObject(l, r) }, { _, _, _-> JsIntLiteral(0) })
     )
 
     override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? {
-        if (descriptor.isDynamic()) return primitiveIntrinsic(identity(), identity())
+        if (descriptor.isDynamic()) return binaryIntrinsic()
 
         if (leftType == null || rightType == null || !KotlinBuiltIns.isBuiltIn(descriptor)) return null
 
@@ -73,9 +47,10 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
 
         // Types may be nullable if properIeeeComparisons are switched off, e.g. fun foo(a: Double?) = a != null && a < 0.0
         return if (isPrimitiveTypeOrNullablePrimitiveType(leftType) && isPrimitiveTypeOrNullablePrimitiveType(rightType)) {
-            primitiveIntrinsic(unboxCharIfNeeded(leftType), unboxCharIfNeeded(rightType))
+            binaryIntrinsic(coerceTo(leftType), coerceTo(rightType))
         } else {
-            intrinsic({ l, r -> compareTo(l, r) }, { _, _ -> JsIntLiteral(0) })
+            // Kotlin.compareTo(L, R) OP 0
+            intrinsic({ l, r, _ -> compareTo(l, r) }, { _, _, _ -> JsIntLiteral(0) })
         }
     }
 }
