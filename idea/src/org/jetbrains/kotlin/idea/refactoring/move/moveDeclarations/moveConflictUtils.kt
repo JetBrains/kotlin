@@ -34,6 +34,7 @@ import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.usageView.UsageInfo
+import com.intellij.usageView.UsageViewTypeLocation
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
@@ -491,7 +492,14 @@ class MoveConflictChecker(
 
             if (isToBeMoved(rootClass) && subclasses.all { isToBeMoved(it) }) continue
 
-            conflicts.putValue(rootClass, "Sealed class '${rootClass.name}' must be moved with all its subclasses")
+            val message = if (elementToMove == rootClass) {
+                "Sealed class '${rootClass.name}' must be moved with all its subclasses"
+            }
+            else {
+                val type = ElementDescriptionUtil.getElementDescription(elementToMove, UsageViewTypeLocation.INSTANCE).capitalize()
+                "$type '${rootClass.name}' must be moved with sealed parent class and all its subclasses"
+            }
+            conflicts.putValue(elementToMove, message)
         }
     }
 
