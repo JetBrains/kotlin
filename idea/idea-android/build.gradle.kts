@@ -23,7 +23,7 @@ dependencies {
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijDep()) { includeJars("openapi", "java-api", "java-impl", "platform-api", "platform-impl", "idea", "extensions", "util", "guava", "android-base-common", rootProject = rootProject) }
     compileOnly(intellijPluginDep("android")) {
-        includeJars("android", "android-common", "android-base-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
+        includeJars("android", "android-common", "android-base-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api", "lint-api-26.0.0", "lint-checks-26.0.0")
     }
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
