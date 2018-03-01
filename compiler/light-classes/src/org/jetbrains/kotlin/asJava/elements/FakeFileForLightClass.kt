@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -33,6 +34,10 @@ open class FakeFileForLightClass(
         private val stub: () -> PsiClassHolderFileStub<*>,
         private val packageFqName: FqName = ktFile.packageFqName
 ) : ClsFileImpl(ktFile.viewProvider) {
+
+    override fun getVirtualFile(): VirtualFile =
+        ktFile.virtualFile ?: ktFile.originalFile.virtualFile ?: super.getVirtualFile()
+
     override fun getPackageName() = packageFqName.asString()
 
     override fun getStub() = stub()
