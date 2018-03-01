@@ -27,6 +27,8 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.isCallableMemberWithJvmDefaultAnnotation;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -569,8 +571,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         CodegenContext properContext = getFirstCrossInlineOrNonInlineContext();
         DeclarationDescriptor enclosing = descriptor.getContainingDeclaration();
         boolean isInliningContext = properContext.isInlineMethodContext();
-        boolean sameJvmDefault = CodegenUtilKt.hasJvmDefaultAnnotation(descriptor) ==
-                                 CodegenUtilKt.isCallableMemberWithJvmDefaultAnnotation(properContext.contextDescriptor) ||
+        boolean sameJvmDefault = hasJvmDefaultAnnotation(descriptor) ==
+                                 isCallableMemberWithJvmDefaultAnnotation(properContext.contextDescriptor) ||
                                  properContext.contextDescriptor instanceof AccessorForCallableDescriptor;
         if (!isInliningContext && (
                 !properContext.hasThisDescriptor() ||
@@ -627,7 +629,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             return descriptor;
         }
 
-        if (CodegenUtilKt.hasJvmDefaultAnnotation(descriptor) && descriptorContext instanceof DefaultImplsClassContext) {
+        if (hasJvmDefaultAnnotation(descriptor) && descriptorContext instanceof DefaultImplsClassContext) {
             descriptorContext = ((DefaultImplsClassContext) descriptorContext).getInterfaceContext();
         }
 

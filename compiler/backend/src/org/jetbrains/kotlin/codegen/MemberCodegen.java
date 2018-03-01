@@ -69,6 +69,7 @@ import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYN
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -406,8 +407,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             ClassDescriptor classDescriptor = ((ClassContext) outermost).getContextDescriptor();
             if (context instanceof MethodContext) {
                 FunctionDescriptor functionDescriptor = ((MethodContext) context).getFunctionDescriptor();
-                if (isInterface(functionDescriptor.getContainingDeclaration()) && !CodegenUtilKt
-                        .hasJvmDefaultAnnotation(functionDescriptor)) {
+                if (isInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor)) {
                     return typeMapper.mapDefaultImpls(classDescriptor);
                 }
             }
@@ -697,7 +697,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
     protected final void generateSyntheticAccessors() {
         for (AccessorForCallableDescriptor<?> accessor : ((CodegenContext<?>) context).getAccessors()) {
-            boolean hasJvmDefaultAnnotation = CodegenUtilKt.hasJvmDefaultAnnotation(accessor.getCalleeDescriptor());
+            boolean hasJvmDefaultAnnotation = hasJvmDefaultAnnotation(accessor.getCalleeDescriptor());
             OwnerKind kind = context.getContextKind();
 
             if (!isInterface(context.getContextDescriptor()) ||

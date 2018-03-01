@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers
-import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -33,15 +31,12 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils.getDirectMember
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.jvm.checkers.JvmDefaultChecker
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -422,9 +417,3 @@ fun MethodNode.textifyMethodNode(): String {
     text.print(PrintWriter(sw))
     return "$sw"
 }
-
-fun CallableMemberDescriptor.hasJvmDefaultAnnotation() =
-    getDirectMember(this).annotations.hasAnnotation(JvmDefaultChecker.JVM_DEFAULT_FQ_NAME)
-
-fun DeclarationDescriptor.isCallableMemberWithJvmDefaultAnnotation() =
-    (this as? CallableMemberDescriptor)?.hasJvmDefaultAnnotation() ?: false

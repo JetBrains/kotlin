@@ -59,6 +59,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -182,7 +183,7 @@ public class AsmUtil {
 
     public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT ||
-                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !CodegenUtilKt.hasJvmDefaultAnnotation(functionDescriptor)))
+                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor)))
                && !isStaticMethod(kind, functionDescriptor);
     }
 

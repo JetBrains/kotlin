@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.isCallableMemberWithJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addIfNotNull

@@ -74,6 +74,7 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInCl
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.DEFAULT_CONSTRUCTOR_MARKER;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -727,7 +728,7 @@ public class KotlinTypeMapper {
                 descriptor = classCallable;
                 continue;
             }
-            else if (isSuperCall && !CodegenUtilKt.hasJvmDefaultAnnotation(descriptor) && !isInterface(descriptor.getContainingDeclaration())) {
+            else if (isSuperCall && !hasJvmDefaultAnnotation(descriptor) && !isInterface(descriptor.getContainingDeclaration())) {
                 //Don't unwrap fake overrides from class to interface cause substituted override would be implicitly generated
                 return descriptor;
             }
@@ -785,15 +786,15 @@ public class KotlinTypeMapper {
 
             baseMethodDescriptor = findBaseDeclaration(functionDescriptor).getOriginal();
             ClassDescriptor ownerForDefault = (ClassDescriptor) baseMethodDescriptor.getContainingDeclaration();
-            isDefaultMethodInInterface = isJvmInterface(ownerForDefault) && CodegenUtilKt.hasJvmDefaultAnnotation(baseMethodDescriptor);
+            isDefaultMethodInInterface = isJvmInterface(ownerForDefault) && hasJvmDefaultAnnotation(baseMethodDescriptor);
             ownerForDefaultImpl =
-                    isJvmInterface(ownerForDefault) && !CodegenUtilKt.hasJvmDefaultAnnotation(baseMethodDescriptor) ?
+                    isJvmInterface(ownerForDefault) && !hasJvmDefaultAnnotation(baseMethodDescriptor) ?
                     mapDefaultImpls(ownerForDefault) : mapClass(ownerForDefault);
 
             if (isInterface && (superCall || descriptor.getVisibility() == Visibilities.PRIVATE || isAccessor(descriptor))) {
                 thisClass = mapClass(currentOwner);
                 dispatchReceiverKotlinType = currentOwner.getDefaultType();
-                if (declarationOwner instanceof JavaClassDescriptor || CodegenUtilKt.hasJvmDefaultAnnotation(declarationFunctionDescriptor)) {
+                if (declarationOwner instanceof JavaClassDescriptor || hasJvmDefaultAnnotation(declarationFunctionDescriptor)) {
                     invokeOpcode = INVOKESPECIAL;
                     signature = mapSignatureSkipGeneric(functionDescriptor);
                     returnKotlinType = functionDescriptor.getReturnType();
@@ -806,7 +807,7 @@ public class KotlinTypeMapper {
                     signature = mapSignatureSkipGeneric(originalDescriptor, OwnerKind.DEFAULT_IMPLS);
                     returnKotlinType = originalDescriptor.getReturnType();
                     if (descriptor instanceof AccessorForCallableDescriptor &&
-                        CodegenUtilKt.hasJvmDefaultAnnotation(((AccessorForCallableDescriptor) descriptor).getCalleeDescriptor())) {
+                        hasJvmDefaultAnnotation(((AccessorForCallableDescriptor) descriptor).getCalleeDescriptor())) {
                         owner = mapClass(currentOwner);
                         isInterfaceMember = true;
                     }

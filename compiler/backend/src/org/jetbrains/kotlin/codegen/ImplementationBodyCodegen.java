@@ -73,6 +73,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToD
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL;
 import static org.jetbrains.kotlin.types.Variance.INVARIANT;
@@ -1408,7 +1409,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
             FunctionDescriptor interfaceFun = entry.getKey();
             //skip java 8 default methods
-            if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) && !CodegenUtilKt.hasJvmDefaultAnnotation(interfaceFun)) {
+            if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) && !hasJvmDefaultAnnotation(interfaceFun)) {
                 generateDelegationToDefaultImpl(interfaceFun, entry.getValue());
             }
         }
