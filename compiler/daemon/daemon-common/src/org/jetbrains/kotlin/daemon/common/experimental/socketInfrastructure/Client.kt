@@ -21,14 +21,17 @@ class DefaultClient(
     val serverHost : String? = null
 ) : Client {
 
-    @Transient
     lateinit var input: ByteReadChannelWrapper
-    @Transient
+        @Transient get
+        @Transient set
+
     lateinit var output: ByteWriteChannelWrapper
+        @Transient get
+        @Transient set
 
-    override fun sendMessage(msg: Any) = async { output.writeObject(msg) }
+    override fun sendMessage(msg: Any) = async { output!!.writeObject(msg) }
 
-    override fun <T> readMessage() = async { input.nextObject() as T }
+    override fun <T> readMessage() = async { input!!.nextObject() as T }
 
     override fun connectToServer() {
         runBlocking {

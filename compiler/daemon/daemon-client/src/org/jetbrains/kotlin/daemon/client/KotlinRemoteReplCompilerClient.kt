@@ -63,7 +63,7 @@ open class KotlinRemoteReplCompilerClient(
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> =
             RemoteReplCompilerState(compileService.replCreateState(sessionId).get(), lock)
 
-    override suspend fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult =
+    override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult =
             compileService.replCheck(sessionId, state.asState(RemoteReplCompilerState::class.java).replStateFacade.getId(), codeLine).get()
 
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult =

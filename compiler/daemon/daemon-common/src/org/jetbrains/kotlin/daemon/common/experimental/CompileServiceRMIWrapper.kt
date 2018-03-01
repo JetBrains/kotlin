@@ -212,4 +212,5 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
 
 }
 
-fun CompileServiceServerSide.toRMIServer(daemonOptions: DaemonOptions) = CompileServiceRMIWrapper(this, daemonOptions)
+fun CompileServiceServerSide.toRMIServer(daemonOptions: DaemonOptions, compilerId: CompilerId) =
+    CompileServiceRMIWrapper(this, daemonOptions, compilerId)

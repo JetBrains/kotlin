@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.client
 
+import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.common.ReplStateFacade
 import java.util.concurrent.atomic.AtomicInteger
@@ -41,8 +42,10 @@ class RemoteReplCompilerStateHistory(private val state: RemoteReplCompilerState)
         currentGeneration.incrementAndGet()
     }
 
-    override fun resetTo(id: ILineId): Iterable<ILineId> = state.replStateFacade.historyResetTo(id).apply {
-        currentGeneration.incrementAndGet()
+    override fun resetTo(id: ILineId): Iterable<ILineId> = runBlocking {
+        state.replStateFacade.historyResetTo(id).apply {
+            currentGeneration.incrementAndGet()
+        }
     }
 
     val currentGeneration = AtomicInteger(REPL_CODE_LINE_FIRST_GEN)
