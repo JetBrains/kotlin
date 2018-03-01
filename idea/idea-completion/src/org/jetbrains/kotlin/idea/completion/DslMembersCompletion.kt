@@ -23,7 +23,7 @@ class DslMembersCompletion(
     private val indicesHelper: KotlinIndicesHelper,
     private val callTypeAndReceiver: CallTypeAndReceiver<*, *>
 ) {
-    private val nearestReceiver = receiverTypes?.firstOrNull()
+    private val nearestReceiver = receiverTypes?.lastOrNull()
     private val nearestReceiverMarkers = nearestReceiver?.takeIf { it.implicit }
         ?.let { DslMarkerUtils.extractDslMarkerFqNames(it.type) }.orEmpty()
 
@@ -55,7 +55,7 @@ class DslMembersCompletion(
         if (nearestReceiver == null || nearestReceiverMarkers.isEmpty()) return
 
         val receiverMarkersShortNames = nearestReceiverMarkers.map { it.shortName() }.distinct()
-        val extensionDescriptors = indicesHelper.getCallableTopLevelExtensions(
+        indicesHelper.getCallableTopLevelExtensions(
             nameFilter = { prefixMatcher.prefixMatches(it) },
             declarationFilter = {
                 (it as KtModifierListOwner).modifierList?.collectAnnotationEntriesFromStubOrPsi()?.any { it.shortName in receiverMarkersShortNames }
@@ -63,9 +63,8 @@ class DslMembersCompletion(
             },
             callTypeAndReceiver = callTypeAndReceiver,
             receiverTypes = listOf(nearestReceiver.type)
-        )
-        extensionDescriptors.forEach {
-            collector.addDescriptorElements(it, factory, notImported = true, withReceiverCast = false, prohibitDuplicates = true)
+        ).forEach { descriptor: DeclarationDescriptor ->
+            collector.addDescriptorElements(descriptor, factory, notImported = true, withReceiverCast = false, prohibitDuplicates = true)
         }
 
         collector.flushToResultSet()
