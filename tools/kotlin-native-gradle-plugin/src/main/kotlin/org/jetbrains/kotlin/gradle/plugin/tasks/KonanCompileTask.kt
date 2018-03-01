@@ -69,9 +69,8 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     @Input val linkerOpts = mutableListOf<String>()
 
-    @Input var enableDebug =
-            project.properties.containsKey("enableDebug") &&
-            project.properties["enableDebug"].toString().toBoolean()
+    @Input var enableDebug = project.findProperty("enableDebug")?.toString()?.toBoolean()
+            ?: EnvironmentVariables.debuggingSymbols
 
     @Input var noStdLib            = false
     @Input var noMain              = false

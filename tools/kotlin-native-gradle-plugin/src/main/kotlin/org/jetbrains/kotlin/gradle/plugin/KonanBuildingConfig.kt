@@ -93,9 +93,28 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
         targetToTask[toAdd.konanTarget] = toAdd
     }
 
+    data class OutputPlacement(val destinationDir: File, val artifactName: String)
+
+    // There are two options for output placement.
+    //      1. Gradle's build directory. We use it by default, e.g. if user runs gradle from command line.
+    //         In this case all produced files has the same name but are placed in different directories
+    //         depending on their targets (e.g. linux/foo.kexe and macbook/foo.kexe).
+    //      2. Custom path provided by IDE. In this case CONFIGURATION_BUILD_DIR environment variable should
+    //         contain a path to a destination directory. All produced files are placed in this directory and have
+    //         different names depending on their target (e.g. foo/bar/baz_linux.kexe and foo/bar/baz_macbook.kexe).
+    protected fun determineOutputPlacement(target: KonanTarget): OutputPlacement {
+        val configurationBuildDir =  EnvironmentVariables.configurationBuildDir
+        return if (configurationBuildDir != null) {
+            OutputPlacement(configurationBuildDir,  "${name}_${target.visibleName}")
+        } else {
+            OutputPlacement(defaultBaseDir.targetSubdir(target), name)
+        }
+    }
+
     protected fun createTask(target: KonanTarget): T =
             project.tasks.create(generateTaskName(target), type) {
-                it.init(defaultBaseDir.targetSubdir(target), name, target)
+                val outputDescription = determineOutputPlacement(target)
+                it.init(outputDescription.destinationDir, outputDescription.artifactName, target)
                 it.group = BasePlugin.BUILD_GROUP
                 it.description = generateTaskDescription(it)
             } ?: throw Exception("Cannot create task for target: ${target.visibleName}")
