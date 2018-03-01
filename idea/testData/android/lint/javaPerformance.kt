@@ -23,8 +23,8 @@ class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) 
         super.onDraw(canvas)
 
         // Various allocations:
-        java.lang.<warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">String("foo")</warning>
-        val s = java.lang.<warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">String("bar")</warning>
+        <warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">java.lang.String("foo")</warning>
+        val s = <warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">java.lang.String("bar")</warning>
 
         // This one should not be reported:
         @SuppressLint("DrawAllocation")
@@ -69,11 +69,11 @@ class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) 
         // Should use SparseBooleanArray
         val myBoolMap = <warning descr="Use `new SparseBooleanArray(...)` instead for better performance">HashMap<Int, Boolean>()</warning>
         // Should use SparseIntArray
-        val myIntMap = java.util.<warning descr="Use new `SparseIntArray(...)` instead for better performance">HashMap<Int, Int>()</warning>
+        val myIntMap = <warning descr="Use new `SparseIntArray(...)` instead for better performance">java.util.HashMap<Int, Int>()</warning>
 
         // This one should not be reported:
         @SuppressLint("UseSparseArrays")
-        val myOtherMap = HashMap<Int, Any>()
+        val myOtherMap = <warning descr="Use `new SparseArray<Object>(...)` instead for better performance">HashMap<Int, Any>()</warning>
     }
 
     protected fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int,
@@ -100,20 +100,20 @@ class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) 
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int,
                           bottom: Int) {
-        java.lang.<warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">String("flag me")</warning>
+        <warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">java.lang.String("flag me")</warning>
     }
 
     @SuppressWarnings("null") // not real code
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        java.lang.<warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">String("flag me")</warning>
+        <warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">java.lang.String("flag me")</warning>
 
         // Forbidden factory methods:
-        Bitmap.<warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">createBitmap(100, 100, null)</warning>
-        android.graphics.Bitmap.<warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">createScaledBitmap(null, 100, 100, false)</warning>
-        BitmapFactory.<warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">decodeFile(null)</warning>
+        <warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">Bitmap.createBitmap(100, 100, null)</warning>
+        <warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">android.graphics.Bitmap.createScaledBitmap(null, 100, 100, false)</warning>
+        <warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">BitmapFactory.decodeFile(null)</warning>
         val canvas: Canvas? = null
-        canvas!!.<warning descr="Avoid object allocations during draw operations: Use `Canvas.getClipBounds(Rect)` instead of `Canvas.getClipBounds()` which allocates a temporary `Rect`">getClipBounds()</warning> // allocates on your behalf
-        canvas.<warning descr="Avoid object allocations during draw operations: Use `Canvas.getClipBounds(Rect)` instead of `Canvas.getClipBounds()` which allocates a temporary `Rect`">clipBounds</warning> // allocates on your behalf
+        <warning descr="Avoid object allocations during draw operations: Use `Canvas.getClipBounds(Rect)` instead of `Canvas.getClipBounds()` which allocates a temporary `Rect`">canvas!!.getClipBounds()</warning> // allocates on your behalf
+        <warning descr="Avoid object allocations during draw operations: Use `Canvas.getClipBounds(Rect)` instead of `Canvas.getClipBounds()` which allocates a temporary `Rect`">canvas.clipBounds</warning> // allocates on your behalf
         canvas.getClipBounds(null) // NOT an error
 
         val layoutWidth = width
@@ -137,7 +137,7 @@ class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) 
 
         // NOT lazy initialization
         if (!initialized || mOverlay == null) {
-            java.lang.<warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">String("foo")</warning>
+            <warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">java.lang.String("foo")</warning>
         }
     }
 

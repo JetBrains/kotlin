@@ -24,7 +24,7 @@ class ToastTest(context: Context) : Activity() {
         }
 
         Runnable {
-            Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText</warning>(context, "foo", Toast.LENGTH_LONG)
+            <warning descr="Toast created but not shown: did you forget to call `show()` ?">Toast.makeText</warning>(context, "foo", Toast.LENGTH_LONG)
         }
     }
 
@@ -45,13 +45,13 @@ class ToastTest(context: Context) : Activity() {
 
     private fun broken(context: Context) {
         // Errors
-        Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText</warning>(context, "foo", Toast.LENGTH_LONG)
-        val toast = Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText</warning>(context, R.string.app_name, <warning descr="Expected duration `Toast.LENGTH_SHORT` or `Toast.LENGTH_LONG`, a custom duration value is not supported">5000</warning>)
+        <warning descr="Toast created but not shown: did you forget to call `show()` ?">Toast.makeText</warning>(context, "foo", Toast.LENGTH_LONG)
+        val toast = <warning descr="Toast created but not shown: did you forget to call `show()` ?">Toast.makeText</warning>(context, R.string.app_name, <warning descr="Expected duration `Toast.LENGTH_SHORT` or `Toast.LENGTH_LONG`, a custom duration value is not supported">5000</warning>)
         toast.duration
     }
 
     init {
-        Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText</warning>(context, "foo", Toast.LENGTH_LONG)
+        <warning descr="Toast created but not shown: did you forget to call `show()` ?">Toast.makeText</warning>(context, "foo", Toast.LENGTH_LONG)
     }
 
     @android.annotation.SuppressLint("ShowToast")
