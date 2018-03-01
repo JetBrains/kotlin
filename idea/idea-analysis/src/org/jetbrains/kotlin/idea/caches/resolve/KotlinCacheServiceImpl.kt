@@ -376,7 +376,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val notInSourceFiles = files.filterNotInProjectSource(moduleInfo)
         return if (notInSourceFiles.isNotEmpty()) {
             val projectFacade = getFacadeForSyntheticFiles(notInSourceFiles)
-            ResolutionFacadeImpl(projectFacade, moduleInfo)
+            ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
         } else {
             val platform = TargetPlatformDetector.getPlatform(file)
             getResolutionFacadeByModuleInfo(moduleInfo, platform)
@@ -393,7 +393,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private fun getResolutionFacadeByModuleInfo(moduleInfo: IdeaModuleInfo, platform: TargetPlatform): ResolutionFacade {
         val settings = PlatformAnalysisSettings(platform, moduleInfo.sdk, moduleInfo.supportsAdditionalBuiltInsMembers())
         val projectFacade = globalFacade(settings)
-        return ResolutionFacadeImpl(projectFacade, moduleInfo)
+        return ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
     }
 
     override fun getResolutionFacadeByModuleInfo(moduleInfo: ModuleInfo, platform: TargetPlatform): ResolutionFacade? =

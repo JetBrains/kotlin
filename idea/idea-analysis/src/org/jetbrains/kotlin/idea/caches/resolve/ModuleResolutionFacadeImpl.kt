@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
-internal class ResolutionFacadeImpl(
+internal class ModuleResolutionFacadeImpl(
     private val projectFacade: ProjectResolutionFacade,
     private val moduleInfo: IdeaModuleInfo
 ) : ResolutionFacade {
@@ -97,5 +97,5 @@ internal class ResolutionFacadeImpl(
 }
 
 fun ResolutionFacade.findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor? {
-    return (this as? ResolutionFacadeImpl)?.findModuleDescriptor(ideaModuleInfo)
+    return (this as? ModuleResolutionFacadeImpl)?.findModuleDescriptor(ideaModuleInfo)
 }
