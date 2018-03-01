@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.accessors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
@@ -36,7 +37,7 @@ class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate) : KtMult
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val property = expression.getStrictParentOfType<KtProperty>() ?: return emptyList()
-        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? PropertyDescriptor ?: return emptyList()
+        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptorWithAccessors ?: return emptyList()
         return (descriptor.accessors.mapNotNull {
             accessor ->
             context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor)?.candidateDescriptor
