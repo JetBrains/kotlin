@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.QualifiedName
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.util.*
@@ -32,10 +31,15 @@ class NameResolverImpl(
 
     override fun getName(index: Int) = Name.guessByFirstCharacter(strings.getString(index))
 
-    override fun getClassId(index: Int): ClassId {
-        val (packageFqNameSegments, relativeClassNameSegments, isLocal) = traverseIds(index)
-        return ClassId(FqName.fromSegments(packageFqNameSegments), FqName.fromSegments(relativeClassNameSegments), isLocal)
+    override fun getQualifiedClassName(index: Int): String {
+        val (packageFqNameSegments, relativeClassNameSegments) = traverseIds(index)
+        val className = relativeClassNameSegments.joinToString(".")
+        return if (packageFqNameSegments.isEmpty()) className
+        else packageFqNameSegments.joinToString("/") + "/$className"
     }
+
+    override fun isLocalClassName(index: Int): Boolean =
+        traverseIds(index).third
 
     fun getPackageFqName(index: Int): FqName {
         val packageNameSegments = traverseIds(index).first

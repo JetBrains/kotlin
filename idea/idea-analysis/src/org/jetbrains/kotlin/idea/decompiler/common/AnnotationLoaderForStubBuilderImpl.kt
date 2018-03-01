@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
-import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.KotlinType
 
 class AnnotationLoaderForStubBuilderImpl(

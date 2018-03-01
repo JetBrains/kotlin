@@ -27,6 +27,11 @@ public interface NameResolver {
     @NotNull
     Name getName(int index);
 
+    /**
+     * @return the fully qualified name of some class in the format: `org/foo/bar/Test.Inner`
+     */
     @NotNull
-    ClassId getClassId(int index);
+    String getQualifiedClassName(int index);
+
+    boolean isLocalClassName(int index);
 }

@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
-import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.IOException
 

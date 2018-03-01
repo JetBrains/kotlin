@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.StringTableTypes.Record
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.*
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import java.util.*
@@ -85,15 +83,11 @@ class JvmNameResolver(
 
     override fun getName(index: Int) = Name.guessByFirstCharacter(getString(index))
 
-    override fun getClassId(index: Int): ClassId {
-        val string = getString(index)
-        val lastSlash = string.lastIndexOf('/')
-        val packageName =
-                if (lastSlash < 0) FqName.ROOT
-                else FqName(string.substring(0, lastSlash).replace('/', '.'))
-        val className = FqName(string.substring(lastSlash + 1))
-        return ClassId(packageName, className, index in localNameIndices)
-    }
+    override fun getQualifiedClassName(index: Int): String =
+        getString(index)
+
+    override fun isLocalClassName(index: Int): Boolean =
+        index in localNameIndices
 
     companion object {
         val PREDEFINED_STRINGS = listOf(
