@@ -163,7 +163,7 @@ sealed class MoveDeclarationsDelegate {
                         if (lightOuterClass != null) {
                             MoveInnerClassUsagesHandler.EP_NAME
                                     .forLanguage(usage.element!!.language)
-                                    ?.correctInnerClassUsage(usage, lightOuterClass)
+                                    ?.correctInnerClassUsage(usage, lightOuterClass, outerInstanceParameterName)
                         }
                     }
                 }
