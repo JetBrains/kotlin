@@ -31,7 +31,9 @@ import java.net.URLClassLoader
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.jar.Manifest
-import java.util.logging.*
+import java.util.logging.Level
+import java.util.logging.LogManager
+import java.util.logging.Logger
 import kotlin.concurrent.schedule
 
 val DAEMON_PERIODIC_CHECK_INTERVAL_MS = 1000L
@@ -61,15 +63,15 @@ object KotlinCompileDaemon {
         val (logPath: String, fileIsGiven: Boolean) =
                 System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.trimQuotes()?.let { Pair(it, File(it).isFile) } ?: Pair("%t", false)
         val cfg: String =
-                "handlers = java.util.logging.FileHandler\n" +
-                "java.util.logging.FileHandler.level     = ALL\n" +
-                "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
-                "java.util.logging.FileHandler.encoding  = UTF-8\n" +
-                "java.util.logging.FileHandler.limit     = ${if (fileIsGiven) 0 else (1 shl 20)}\n" + // if file is provided - disabled, else - 1Mb
-                "java.util.logging.FileHandler.count     = ${if (fileIsGiven) 1 else 3}\n" +
-                "java.util.logging.FileHandler.append    = $fileIsGiven\n" +
-                "java.util.logging.FileHandler.pattern   = ${if (fileIsGiven) logPath else (logPath + File.separator + "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log")}\n" +
-                "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
+            "handlers = java.util.logging.FileHandler\n" +
+                    "java.util.logging.FileHandler.level     = ALL\n" +
+                    "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
+                    "java.util.logging.FileHandler.encoding  = UTF-8\n" +
+                    "java.util.logging.FileHandler.limit     = ${if (fileIsGiven) 0 else (1 shl 20)}\n" + // if file is provided - disabled, else - 1Mb
+                    "java.util.logging.FileHandler.count     = ${if (fileIsGiven) 1 else 3}\n" +
+                    "java.util.logging.FileHandler.append    = $fileIsGiven\n" +
+                    "java.util.logging.FileHandler.pattern   = ${if (fileIsGiven) logPath else (logPath + File.separator + "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log")}\n" +
+                    "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
 
         LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
     }
@@ -78,13 +80,13 @@ object KotlinCompileDaemon {
 
     private fun loadVersionFromResource(): String? {
         (KotlinCompileDaemon::class.java.classLoader as? URLClassLoader)
-                ?.findResource("META-INF/MANIFEST.MF")
-                ?.let {
-                    try {
-                        return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: null
-                    }
-                    catch (e: IOException) {}
+            ?.findResource("META-INF/MANIFEST.MF")
+            ?.let {
+                try {
+                    return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: null
+                } catch (e: IOException) {
                 }
+            }
         return null
     }
 
@@ -104,11 +106,14 @@ object KotlinCompileDaemon {
         val daemonOptions = DaemonOptions()
 
         try {
-            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true,
-                                                             inheritOtherJvmOptions = true,
-                                                             inheritAdditionalProperties = true)
+            val daemonJVMOptions = configureDaemonJVMOptions(
+                inheritMemoryLimits = true,
+                inheritOtherJvmOptions = true,
+                inheritAdditionalProperties = true
+            )
 
-            val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
+            val filteredArgs =
+                args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
             if (filteredArgs.any()) {
                 val helpLine = "usage: <daemon> <compilerId options> <daemon options>"
@@ -124,9 +129,13 @@ object KotlinCompileDaemon {
             //            if (System.getSecurityManager() == null)
             //                System.setSecurityManager (RMISecurityManager())
             //
-            //            setDaemonPermissions(daemonOptions.port)
+            //            setDaemonPermissions(daemonOptions.socketPort)
 
-            val (registry, port) = findPortAndCreateRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS, COMPILE_DAEMON_PORTS_RANGE_START, COMPILE_DAEMON_PORTS_RANGE_END)
+            val (registry, port) = findPortAndCreateRegistry(
+                COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
+                COMPILE_DAEMON_PORTS_RANGE_START,
+                COMPILE_DAEMON_PORTS_RANGE_END
+            )
 
             val compilerSelector = object : CompilerSelector {
                 private val jvm by lazy { K2JVMCompiler() }
@@ -140,29 +149,29 @@ object KotlinCompileDaemon {
             }
             // timer with a daemon thread, meaning it should not prevent JVM to exit normally
             val timer = Timer(true)
-            val compilerService = CompileServiceImpl(registry = registry,
-                                                     compiler = compilerSelector,
-                                                     compilerId = compilerId,
-                                                     daemonOptions = daemonOptions,
-                                                     daemonJVMOptions = daemonJVMOptions,
-                                                     port = port,
-                                                     timer = timer,
-                                                     onShutdown = {
-                                                         if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_TIMEOUT_INFINITE_MS) {
-                                                             // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
-                                                             timer.schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
-                                                                 cancel()
-                                                                 log.info("force JVM shutdown")
-                                                                 System.exit(0)
-                                                             }
-                                                         }
-                                                         else {
-                                                             timer.cancel()
-                                                         }
-                                                     })
+            val compilerService = CompileServiceImpl(
+                registry = registry,
+                compiler = compilerSelector,
+                compilerId = compilerId,
+                daemonOptions = daemonOptions,
+                daemonJVMOptions = daemonJVMOptions,
+                port = port,
+                timer = timer,
+                onShutdown = {
+                    if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_TIMEOUT_INFINITE_MS) {
+                        // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
+                        timer.schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
+                            cancel()
+                            log.info("force JVM shutdown")
+                            System.exit(0)
+                        }
+                    } else {
+                        timer.cancel()
+                    }
+                })
 
             println(COMPILE_DAEMON_IS_READY_MESSAGE)
-            log.info("daemon is listening on port: $port")
+            log.info("daemon is listening on socketPort: $port")
 
             // this supposed to stop redirected streams reader(s) on the client side and prevent some situations with hanging threads, but doesn't work reliably
             // TODO: implement more reliable scheme
@@ -171,8 +180,7 @@ object KotlinCompileDaemon {
 
             System.setErr(PrintStream(LogStream("stderr")))
             System.setOut(PrintStream(LogStream("stdout")))
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             System.err.println("Exception: " + e.message)
             e.printStackTrace(System.err)
             // repeating it to log for the cases when stderr is not redirected yet

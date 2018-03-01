@@ -86,7 +86,7 @@ interface CompileService : Remote {
     @Throws(RemoteException::class)
     fun registerClient(aliveFlagPath: String?): CallResult<Nothing>
 
-    // TODO: consider adding another client alive checking mechanism, e.g. socket/port
+    // TODO: consider adding another client alive checking mechanism, e.g. socket/socketPort
 
     @Throws(RemoteException::class)
     fun getClients(): CallResult<List<String>>

@@ -107,11 +107,11 @@ fun findPortAndCreateRegistry(attempts: Int, portRangeStart: Int, portRangeEnd: 
             return Pair(LocateRegistry.createRegistry(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory), port)
         }
         catch (e: RemoteException) {
-            // assuming that the port is already taken
+            // assuming that the socketPort is already taken
             lastException = e
         }
     }
-    throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
+    throw IllegalStateException("Cannot find free socketPort in $attempts attempts", lastException)
 }
 
 /**

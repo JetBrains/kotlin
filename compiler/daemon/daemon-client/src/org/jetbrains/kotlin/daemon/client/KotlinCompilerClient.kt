@@ -357,7 +357,7 @@ object KotlinCompilerClient {
         return aliveWithMetadata.maxWith(comparator)?.takeIf { daemonJVMOptions memorywiseFitsInto it.jvmOptions }?.let {
                 Pair(it.daemon, optsCopy.updateMemoryUpperBounds(it.jvmOptions))
             }
-            // else combine all options from running daemon to get fattest option for a new daemon to run
+            // else combine all options from running daemon to get fattest option for a new daemon to runServer
             ?: Pair(null, aliveWithMetadata.fold(optsCopy, { opts, d -> opts.updateMemoryUpperBounds(d.jvmOptions) }))
     }
 
