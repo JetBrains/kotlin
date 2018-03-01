@@ -91,20 +91,20 @@ public final class DebugJavaClassProtoBuf {
     java.lang.String[] descriptorData = {
       "\n-build-common/src/java_descriptors.debu" +
       "g.proto\022\'org.jetbrains.kotlin.serializat" +
-      "ion.java\0320core/deserialization/src/descr" +
-      "iptors.debug.proto:G\n\020is_static_method\022," +
-      ".org.jetbrains.kotlin.serialization.Func" +
-      "tion\030\350\007 \001(\010:P\n\031is_package_private_method" +
-      "\022,.org.jetbrains.kotlin.serialization.Fu" +
-      "nction\030\351\007 \001(\010:F\n\017is_static_field\022,.org.j" +
-      "etbrains.kotlin.serialization.Property\030\350" +
-      "\007 \001(\010:O\n\030is_package_private_field\022,.org.",
-      "jetbrains.kotlin.serialization.Property\030" +
-      "\351\007 \001(\010:L\n\030is_package_private_class\022).org" +
-      ".jetbrains.kotlin.serialization.Class\030\350\007" +
-      " \001(\010:X\n\036is_package_private_constructor\022/" +
-      ".org.jetbrains.kotlin.serialization.Cons" +
-      "tructor\030\350\007 \001(\010B\030B\026DebugJavaClassProtoBuf"
+      "ion.java\032&core/metadata/src/metadata.deb" +
+      "ug.proto:G\n\020is_static_method\022,.org.jetbr" +
+      "ains.kotlin.serialization.Function\030\350\007 \001(" +
+      "\010:P\n\031is_package_private_method\022,.org.jet" +
+      "brains.kotlin.serialization.Function\030\351\007 " +
+      "\001(\010:F\n\017is_static_field\022,.org.jetbrains.k" +
+      "otlin.serialization.Property\030\350\007 \001(\010:O\n\030i" +
+      "s_package_private_field\022,.org.jetbrains.",
+      "kotlin.serialization.Property\030\351\007 \001(\010:L\n\030" +
+      "is_package_private_class\022).org.jetbrains" +
+      ".kotlin.serialization.Class\030\350\007 \001(\010:X\n\036is" +
+      "_package_private_constructor\022/.org.jetbr" +
+      "ains.kotlin.serialization.Constructor\030\350\007" +
+      " \001(\010B\030B\026DebugJavaClassProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

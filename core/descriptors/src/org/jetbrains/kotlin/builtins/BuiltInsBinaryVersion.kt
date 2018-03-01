@@ -22,7 +22,7 @@ import java.io.InputStream
 
 /**
  * The version of the format in which the .kotlin_builtins file is stored. This version also includes the version
- * of the core protobuf messages (descriptors.proto).
+ * of the core protobuf messages (metadata.proto).
  */
 class BuiltInsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     override fun isCompatible() = this.isCompatibleTo(INSTANCE)

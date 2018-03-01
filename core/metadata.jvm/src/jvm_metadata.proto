@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.serialization.jvm;
 
-import "core/deserialization/src/ext_options.proto";
-import "core/deserialization/src/descriptors.proto";
+import "core/metadata/src/ext_options.proto";
+import "core/metadata/src/metadata.proto";
 
 option java_outer_classname = "JvmProtoBuf";
 option optimize_for = LITE_RUNTIME;

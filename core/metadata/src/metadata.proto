@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization;
 
-import "core/deserialization/src/ext_options.proto";
+import "core/metadata/src/ext_options.proto";
 
 option java_outer_classname = "ProtoBuf";
 option optimize_for = LITE_RUNTIME;

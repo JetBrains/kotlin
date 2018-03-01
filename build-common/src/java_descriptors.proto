@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.java;
 
-import "core/deserialization/src/descriptors.proto";
+import "core/metadata/src/metadata.proto";
 
 option java_outer_classname = "JavaClassProtoBuf";
 option optimize_for = LITE_RUNTIME;

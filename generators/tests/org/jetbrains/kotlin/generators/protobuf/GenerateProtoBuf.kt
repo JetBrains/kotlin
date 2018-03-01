@@ -50,17 +50,17 @@ class ProtoPath(val file: String) {
 }
 
 val PROTO_PATHS: List<ProtoPath> = listOf(
-        ProtoPath("core/deserialization/src/descriptors.proto"),
-        ProtoPath("core/deserialization/src/builtins.proto"),
+        ProtoPath("core/metadata/src/metadata.proto"),
+        ProtoPath("core/metadata/src/builtins.proto"),
         ProtoPath("js/js.serializer/src/js.proto"),
         ProtoPath("js/js.serializer/src/js-ast.proto"),
-        ProtoPath("core/descriptors.jvm/src/jvm_descriptors.proto"),
-        ProtoPath("core/descriptors.jvm/src/jvm_module.proto"),
+        ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
+        ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
         ProtoPath("build-common/src/java_descriptors.proto")
 )
 
-private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/deserialization/src/ext_options.proto")
-private val PROTOBUF_PROTO_PATHS = listOf("./", "core/deserialization/src")
+private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/metadata/src/ext_options.proto")
+private val PROTOBUF_PROTO_PATHS = listOf("./", "core/metadata/src")
 
 fun main(args: Array<String>) {
     try {

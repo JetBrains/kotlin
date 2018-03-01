@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 
 /**
  * The version of the metadata serialized by the compiler and deserialized by the compiler and reflection.
- * This version includes the version of the core protobuf messages (descriptors.proto) as well as JVM extensions (jvm_descriptors.proto).
+ * This version includes the version of the core protobuf messages (metadata.proto) as well as JVM extensions (jvm_metadata.proto).
  */
 class JvmMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     // NOTE: 1.1 is incompatible with 1.0 and hence with any other version except 1.1.*
