@@ -105,7 +105,7 @@ public inline fun Int.toBigDecimal(mathContext: MathContext): BigDecimal = BigDe
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
-public inline fun Long.toBigDecimal(): BigDecimal = BigDecimal(this)
+public inline fun Long.toBigDecimal(): BigDecimal = BigDecimal.valueOf(this)
 
 /**
  * Returns the value of this [Long] number as a [BigDecimal].
