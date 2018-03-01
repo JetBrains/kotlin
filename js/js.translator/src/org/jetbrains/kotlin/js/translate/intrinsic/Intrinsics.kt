@@ -43,7 +43,7 @@ class Intrinsics {
         return functionIntrinsics.getIntrinsic(descriptor)
     }
 
-    fun getObjectIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic {
+    fun getObjectIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic? {
         return objectIntrinsics.getIntrinsic(classDescriptor)
     }
 }
