@@ -87,7 +87,7 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
 
     protected val expressionMap = linkedMapOf<Int, LambdaInfo>()
 
-    protected var activeLambda: LambdaInfo? = null
+    var activeLambda: LambdaInfo? = null; protected set
 
     private val defaultSourceMapper = sourceCompiler.lazySourceMapper
 

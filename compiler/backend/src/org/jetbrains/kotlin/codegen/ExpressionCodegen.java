@@ -1103,7 +1103,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (closure.isSuspend()) {
             // resultContinuation
             if (closure.isSuspendLambda()) {
-                v.aconst(null);
+                boolean isCrossinlineLambda = (callGenerator instanceof InlineCodegen<?>) &&
+                                              Objects.requireNonNull(((InlineCodegen) callGenerator).getActiveLambda()).isCrossInline;
+                if (!isCrossinlineLambda) {
+                    v.aconst(null);
+                }
             }
             else {
                 assert context.getFunctionDescriptor().isSuspend() : "Coroutines closure must be created only inside suspend functions";
