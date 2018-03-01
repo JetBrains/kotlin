@@ -414,7 +414,7 @@ private fun ObjCExportCodeGenerator.emitKotlinFunctionAdaptersToBlock() {
 private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
     setObjCExportTypeInfo(
             context.builtIns.string,
-            constPointer(context.llvm.Kotlin_Interop_CreateNSStringFromKString)
+            constPointer(codegen.llvmFunction(context.interopBuiltIns.CreateNSStringFromKString))
     )
 
     setObjCExportTypeInfo(

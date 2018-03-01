@@ -197,6 +197,8 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val exportObjCClass = packageScope.getContributedClass("ExportObjCClass")
 
+    val CreateNSStringFromKString = packageScope.getContributedFunctions("CreateNSStringFromKString").single()
+
 }
 
 private fun MemberScope.getContributedVariables(name: String) =
