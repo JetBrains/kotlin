@@ -1,3 +1,12 @@
+## v0.6.1 (Mar 2018)
+  * Various bugfixes
+  * Support total ordering in FP comparisons
+  * Interop generate string constants from string macrodefinitions
+  * STM32 blinky demo in pure Kotlin/Native
+  * Top level variables initialization redesign (proper dependency order)
+  * Support kotlin.math on WebAssembly targets
+  * Support embedded targets on Windows hosts
+
 ## v0.6 (Feb 2018)
   * Support multiplatform projects (expect/actual) in compiler and Gradle plugin
   * Support first embedded target (STM32 board)
