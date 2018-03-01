@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.serialization.AnnotationSerializer;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.SerializerExtension;
@@ -263,23 +264,8 @@ public class JvmSerializerExtension extends SerializerExtension {
         private String mapTypeDefault(@NotNull KotlinType type) {
             ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
             if (!(classifier instanceof ClassDescriptor)) return null;
-            ClassId classId = classId((ClassDescriptor) classifier);
+            ClassId classId = DescriptorUtilsKt.getClassId((ClassDescriptor) classifier);
             return classId == null ? null : ClassMapperLite.mapClass(classId);
-        }
-
-        @Nullable
-        private ClassId classId(@NotNull ClassDescriptor descriptor) {
-            DeclarationDescriptor container = descriptor.getContainingDeclaration();
-            if (container instanceof PackageFragmentDescriptor) {
-                return ClassId.topLevel(((PackageFragmentDescriptor) container).getFqName().child(descriptor.getName()));
-            }
-            else if (container instanceof ClassDescriptor) {
-                ClassId outerClassId = classId((ClassDescriptor) container);
-                return outerClassId == null ? null : outerClassId.createNestedClassId(descriptor.getName());
-            }
-            else {
-                return null;
-            }
         }
 
         @NotNull
