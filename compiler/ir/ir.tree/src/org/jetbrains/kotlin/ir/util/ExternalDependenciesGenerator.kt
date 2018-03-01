@@ -52,6 +52,6 @@ class ExternalDependenciesGenerator(val symbolTable: SymbolTable, val irBuiltIns
             topLevelDescriptors.mapTo(irExternalPackageFragment.declarations) {
                 stubGenerator.generateMemberStub(it)
             }
-        }
+        }.patchDeclarationParents()
 
 }

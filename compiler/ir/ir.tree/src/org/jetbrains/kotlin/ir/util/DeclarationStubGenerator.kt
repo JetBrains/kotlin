@@ -71,19 +71,33 @@ class DeclarationStubGenerator(
         }
 
     fun generateFunctionStub(descriptor: FunctionDescriptor): IrSimpleFunction =
-        symbolTable.declareSimpleFunctionWithOverrides(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original).also { irFunction ->
+        symbolTable.declareSimpleFunctionWithOverrides(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                IrDeclarationOrigin.FAKE_OVERRIDE
+            } else {
+                origin
+            },
+            descriptor.original
+        ).also { irFunction ->
             generateTypeParameterStubs(descriptor.typeParameters, irFunction)
-            generateValueParametersStubs(descriptor.valueParameters, irFunction)
+            generateValueParametersStubs(irFunction)
         }
 
     private fun generateConstructorStub(descriptor: ClassConstructorDescriptor): IrConstructor =
         symbolTable.declareConstructor(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original).also { irConstructor ->
-            generateValueParametersStubs(descriptor.valueParameters, irConstructor)
+            generateValueParametersStubs(irConstructor)
         }
 
-    private fun generateValueParametersStubs(valueParameters: Collection<ValueParameterDescriptor>, function: IrFunction) {
-        valueParameters.mapTo(function.valueParameters) { generateValueParameterStub(it) }
+    private fun generateValueParametersStubs(function: IrFunction) {
+        val descriptor = function.descriptor
+        function.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.generateReceiverParameterStub()
+        function.extensionReceiverParameter = descriptor.extensionReceiverParameter?.generateReceiverParameterStub()
+        descriptor.valueParameters.mapTo(function.valueParameters) { generateValueParameterStub(it) }
     }
+
+    private fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
+        IrValueParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, this)
 
     private fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter =
         IrValueParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irValueParameter ->
@@ -108,6 +122,7 @@ class DeclarationStubGenerator(
             }
 
             generateTypeParameterStubs(descriptor.declaredTypeParameters, irClass)
+            irClass.thisReceiver = descriptor.thisAsReceiverParameter.generateReceiverParameterStub()
             generateChildStubs(descriptor.constructors, irClass)
             generateMemberStubs(descriptor.defaultType.memberScope, irClass)
             generateMemberStubs(descriptor.staticScope, irClass)
