@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.ClassDataWithSource
+import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
@@ -45,14 +45,14 @@ class DeserializedDescriptorResolver {
         return components.classDeserializer.deserializeClass(kotlinClass.classId, classData)
     }
 
-    internal fun readClassData(kotlinClass: KotlinJvmBinaryClass): ClassDataWithSource? {
+    internal fun readClassData(kotlinClass: KotlinJvmBinaryClass): ClassData? {
         val data = readData(kotlinClass, KOTLIN_CLASS) ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
-        val classData = parseProto(kotlinClass) {
+        val (nameResolver, classProto) = parseProto(kotlinClass) {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         } ?: return null
         val source = KotlinJvmBinarySourceElement(kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible)
-        return ClassDataWithSource(classData, source)
+        return ClassData(nameResolver, classProto, source)
     }
 
     fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {

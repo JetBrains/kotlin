@@ -19,11 +19,12 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
@@ -62,7 +63,7 @@ internal class KPackageImpl(
             }
         }
 
-        val metadata: PackageData? by ReflectProperties.lazy {
+        val metadata: Pair<JvmNameResolver, ProtoBuf.Package>? by ReflectProperties.lazy {
             kotlinClass?.classHeader?.let { header ->
                 val data = header.data
                 val strings = header.strings

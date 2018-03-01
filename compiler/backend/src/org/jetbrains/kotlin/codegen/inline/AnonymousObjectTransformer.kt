@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.codegen.serialization.JvmStringTable
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
-import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -203,7 +202,7 @@ class AnonymousObjectTransformer(
         when (header.kind) {
             KotlinClassHeader.Kind.CLASS -> {
                 val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
-                val newStringTable = JvmStringTable(state.typeMapper, nameResolver as JvmNameResolver)
+                val newStringTable = JvmStringTable(state.typeMapper, nameResolver)
                 val newProto = classProto.toBuilder().apply {
                     setExtension(JvmProtoBuf.anonymousObjectOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
                 }.build()

@@ -41,12 +41,11 @@ data class PackagePartProtoData(val proto: ProtoBuf.Package, val nameResolver: N
 
 fun ProtoMapValue.toProtoData(packageFqName: FqName): ProtoData =
     if (isPackageFacade) {
-        val packageData = JvmProtoBufUtil.readPackageDataFrom(bytes, strings)
-        PackagePartProtoData(packageData.packageProto, packageData.nameResolver, packageFqName)
-    }
-    else {
-        val classData = JvmProtoBufUtil.readClassDataFrom(bytes, strings)
-        ClassProtoData(classData.classProto, classData.nameResolver)
+        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(bytes, strings)
+        PackagePartProtoData(packageProto, nameResolver, packageFqName)
+    } else {
+        val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(bytes, strings)
+        ClassProtoData(classProto, nameResolver)
     }
 
 internal val MessageLite.isPrivate: Boolean

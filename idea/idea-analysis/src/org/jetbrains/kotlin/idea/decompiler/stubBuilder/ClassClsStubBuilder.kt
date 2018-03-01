@@ -242,22 +242,21 @@ private class ClassClsStubBuilder(
     }
 
     private fun createNestedClassStub(classBody: StubElement<out PsiElement>, nestedClassId: ClassId) {
-        val classDataWithSource = c.components.classDataFinder.findClassData(nestedClassId)
-        if (classDataWithSource == null) {
-            val rootFile = c.components.virtualFileForDebug
-            LOG.error(
-                    "Could not find class data for nested class $nestedClassId of class ${nestedClassId.outerClassId}\n" +
-                    "Root file: ${rootFile.canonicalPath}\n" +
-                    "Dir: ${rootFile.parent.canonicalPath}\n" +
-                    "Children:\n" +
-                    rootFile.parent.children.sortedBy { it.name }.joinToString(separator = "\n") {
-                        "${it.name} (valid: ${it.isValid})"
-                    }
-            )
-            return
-        }
-        val (nameResolver, classProto) = classDataWithSource.classData
-        createClassStub(classBody, classProto, nameResolver, nestedClassId, classDataWithSource.sourceElement, c)
+        val (nameResolver, classProto, sourceElement) =
+                c.components.classDataFinder.findClassData(nestedClassId)
+                        ?: c.components.virtualFileForDebug.let { rootFile ->
+                            LOG.error(
+                                "Could not find class data for nested class $nestedClassId of class ${nestedClassId.outerClassId}\n" +
+                                        "Root file: ${rootFile.canonicalPath}\n" +
+                                        "Dir: ${rootFile.parent.canonicalPath}\n" +
+                                        "Children:\n" +
+                                        rootFile.parent.children.sortedBy { it.name }.joinToString(separator = "\n") {
+                                            "${it.name} (valid: ${it.isValid})"
+                                        }
+                            )
+                            return
+                        }
+        createClassStub(classBody, classProto, nameResolver, nestedClassId, sourceElement, c)
     }
 
     companion object {

@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.serialization.ClassData
-import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.deserialization.*
 import java.io.ByteArrayInputStream
 import java.io.InputStream
@@ -30,23 +28,23 @@ object JvmProtoBufUtil {
     val EXTENSION_REGISTRY: ExtensionRegistryLite = ExtensionRegistryLite.newInstance().apply(JvmProtoBuf::registerAllExtensions)
 
     @JvmStatic
-    fun readClassDataFrom(data: Array<String>, strings: Array<String>): ClassData =
+    fun readClassDataFrom(data: Array<String>, strings: Array<String>): Pair<JvmNameResolver, ProtoBuf.Class> =
         readClassDataFrom(BitEncoding.decodeBytes(data), strings)
 
     @JvmStatic
-    fun readClassDataFrom(bytes: ByteArray, strings: Array<String>): ClassData {
+    fun readClassDataFrom(bytes: ByteArray, strings: Array<String>): Pair<JvmNameResolver, ProtoBuf.Class> {
         val input = ByteArrayInputStream(bytes)
-        return ClassData(input.readNameResolver(strings), ProtoBuf.Class.parseFrom(input, EXTENSION_REGISTRY))
+        return Pair(input.readNameResolver(strings), ProtoBuf.Class.parseFrom(input, EXTENSION_REGISTRY))
     }
 
     @JvmStatic
-    fun readPackageDataFrom(data: Array<String>, strings: Array<String>): PackageData =
+    fun readPackageDataFrom(data: Array<String>, strings: Array<String>): Pair<JvmNameResolver, ProtoBuf.Package> =
         readPackageDataFrom(BitEncoding.decodeBytes(data), strings)
 
     @JvmStatic
-    fun readPackageDataFrom(bytes: ByteArray, strings: Array<String>): PackageData {
+    fun readPackageDataFrom(bytes: ByteArray, strings: Array<String>): Pair<JvmNameResolver, ProtoBuf.Package> {
         val input = ByteArrayInputStream(bytes)
-        return PackageData(input.readNameResolver(strings), ProtoBuf.Package.parseFrom(input, EXTENSION_REGISTRY))
+        return Pair(input.readNameResolver(strings), ProtoBuf.Package.parseFrom(input, EXTENSION_REGISTRY))
     }
 
     @JvmStatic

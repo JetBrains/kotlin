@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.ClassData
-import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
@@ -84,7 +82,7 @@ class MetadataPackageFragment(
         message.class_List.firstOrNull { classProto ->
             nameResolver.getClassId(classProto.fqName) == classId
         }?.let { classProto ->
-            ClassDataWithSource(ClassData(nameResolver, classProto), SourceElement.NO_SOURCE)
+            ClassData(nameResolver, classProto, SourceElement.NO_SOURCE)
         }
     }
 
