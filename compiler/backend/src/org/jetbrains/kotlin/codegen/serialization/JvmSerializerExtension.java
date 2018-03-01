@@ -265,7 +265,7 @@ public class JvmSerializerExtension extends SerializerExtension {
             ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
             if (!(classifier instanceof ClassDescriptor)) return null;
             ClassId classId = DescriptorUtilsKt.getClassId((ClassDescriptor) classifier);
-            return classId == null ? null : ClassMapperLite.mapClass(classId);
+            return classId == null ? null : ClassMapperLite.mapClass(classId.asString());
         }
 
         @NotNull

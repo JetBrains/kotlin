@@ -117,6 +117,6 @@ object JvmProtoBufUtil {
     data class PropertySignature(val name: String, val desc: String)
 
     private fun mapTypeDefault(type: ProtoBuf.Type, nameResolver: NameResolver): String? {
-        return if (type.hasClassName()) ClassMapperLite.mapClass(nameResolver.getClassId(type.className)) else null
+        return if (type.hasClassName()) ClassMapperLite.mapClass(nameResolver.getQualifiedClassName(type.className)) else null
     }
 }

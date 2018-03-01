@@ -120,7 +120,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
     override fun loadEnumEntryAnnotations(container: ProtoContainer, proto: ProtoBuf.EnumEntry): List<A> {
         val signature = MemberSignature.fromFieldNameAndDesc(
                 container.nameResolver.getString(proto.name),
-                ClassMapperLite.mapClass((container as ProtoContainer.Class).classId)
+                ClassMapperLite.mapClass((container as ProtoContainer.Class).classId.asString())
         )
         return findClassAndLoadMemberAnnotations(container, signature)
     }
