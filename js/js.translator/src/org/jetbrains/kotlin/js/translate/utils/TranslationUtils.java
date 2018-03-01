@@ -265,7 +265,7 @@ public final class TranslationUtils {
             return false;
         }
 
-        if (context.intrinsics().getFunctionIntrinsic((FunctionDescriptor) operationDescriptor).exists()) return true;
+        if (context.intrinsics().getFunctionIntrinsic((FunctionDescriptor) operationDescriptor) != null) return true;
 
         return false;
     }
