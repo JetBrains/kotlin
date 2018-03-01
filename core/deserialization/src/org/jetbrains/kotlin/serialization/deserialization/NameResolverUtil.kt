@@ -6,7 +6,11 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
 fun NameResolver.getClassId(index: Int): ClassId {
     return ClassId.fromString(getQualifiedClassName(index), isLocalClassName(index))
 }
+
+fun NameResolver.getName(index: Int): Name =
+    Name.guessByFirstCharacter(getString(index))

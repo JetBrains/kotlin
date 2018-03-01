@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.StringTableTypes.Record
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import java.util.*
 
@@ -80,8 +79,6 @@ class JvmNameResolver(
 
         return string
     }
-
-    override fun getName(index: Int) = Name.guessByFirstCharacter(getString(index))
 
     override fun getQualifiedClassName(index: Int): String =
         getString(index)

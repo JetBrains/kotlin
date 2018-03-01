@@ -19,17 +19,13 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.QualifiedName
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import java.util.*
 
 class NameResolverImpl(
-        private val strings: ProtoBuf.StringTable,
-        private val qualifiedNames: ProtoBuf.QualifiedNameTable
+    private val strings: ProtoBuf.StringTable,
+    private val qualifiedNames: ProtoBuf.QualifiedNameTable
 ) : NameResolver {
-
     override fun getString(index: Int): String = strings.getString(index)
-
-    override fun getName(index: Int) = Name.guessByFirstCharacter(strings.getString(index))
 
     override fun getQualifiedClassName(index: Int): String {
         val (packageFqNameSegments, relativeClassNameSegments) = traverseIds(index)

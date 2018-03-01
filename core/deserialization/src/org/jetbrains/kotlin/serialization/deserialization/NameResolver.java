@@ -17,15 +17,10 @@
 package org.jetbrains.kotlin.serialization.deserialization;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.Name;
 
 public interface NameResolver {
     @NotNull
     String getString(int index);
-
-    @NotNull
-    Name getName(int index);
 
     /**
      * @return the fully qualified name of some class in the format: `org/foo/bar/Test.Inner`

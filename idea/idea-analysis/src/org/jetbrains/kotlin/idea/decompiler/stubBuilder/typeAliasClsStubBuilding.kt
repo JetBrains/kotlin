@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.serialization.deserialization.getName
 
 fun createTypeAliasStub(
         parent: StubElement<out PsiElement>,
