@@ -245,17 +245,16 @@ KLong Kotlin_math_absl(KLong x) { return llabs(x); }
 
 #else // KONAN_WASM defined. Use JS math implementation.
 
-#define RETURN_RESULT_OF_JS_CALL(call, doubleArg) {                                 \
-  call(doubleUpper(doubleArg), doubleLower(doubleArg), Konan_js_getCurrentArena()); \
-  return ReturnSlot_getDouble();                                                    \
+#define RETURN_RESULT_OF_JS_CALL(call, doubleArg) {     \
+  call(doubleUpper(doubleArg), doubleLower(doubleArg)); \
+  return ReturnSlot_getDouble();                        \
 }
 
 #define RETURN_RESULT_OF_JS_CALL2(call, doubleArg1, doubleArg2) { \
   call(doubleUpper(doubleArg1),                                   \
        doubleLower(doubleArg1),                                   \
        doubleUpper(doubleArg2),                                   \
-       doubleLower(doubleArg2),                                   \
-       Konan_js_getCurrentArena());                               \
+       doubleLower(doubleArg2));                                  \
   return ReturnSlot_getDouble();                                  \
 }
 

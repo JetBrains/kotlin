@@ -42,12 +42,10 @@ external public fun pushIntToArena(arena: Arena, value: Int)
 
 const val upperWord = 0xffffffff.toLong() shl 32
 
-@Used
 @ExportForCppRuntime
 fun doubleUpper(value: Double): Int =
     ((value.toBits() and upperWord) ushr 32) .toInt()
 
-@Used
 @ExportForCppRuntime
 fun doubleLower(value: Double): Int =
     (value.toBits() and 0x00000000ffffffff) .toInt()
@@ -144,7 +142,3 @@ object ArenaManager {
     val globalArena = allocateArena()
     var currentArena = globalArena
 }
-
-@Used
-@ExportForCppRuntime("Konan_js_getCurrentArena")
-internal fun getCurrentArena() = ArenaManager.currentArena
