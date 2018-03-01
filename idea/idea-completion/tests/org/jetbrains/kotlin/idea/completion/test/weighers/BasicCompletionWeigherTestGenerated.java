@@ -73,12 +73,6 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
-    @TestMetadata("DslCallsWithMultipleReceivers.kt")
-    public void testDslCallsWithMultipleReceivers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/DslCallsWithMultipleReceivers.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("ExactMatchForKeyword.kt")
     public void testExactMatchForKeyword() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/ExactMatchForKeyword.kt");
