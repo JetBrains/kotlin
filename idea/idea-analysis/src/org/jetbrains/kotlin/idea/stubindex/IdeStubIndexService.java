@@ -223,11 +223,15 @@ public class IdeStubIndexService extends StubIndexService {
 
     @Override
     public void indexAnnotation(KotlinAnnotationEntryStub stub, IndexSink sink) {
-        sink.occurrence(KotlinAnnotationsIndex.getInstance().getKey(), stub.getShortName());
+        String name = stub.getShortName();
+        if (name == null) {
+            return;
+        }
+        sink.occurrence(KotlinAnnotationsIndex.getInstance().getKey(), name);
 
         KotlinFileStub fileStub = getContainingFileStub(stub);
         if (fileStub != null) {
-            List<KotlinImportDirectiveStub> aliasImportStubs = fileStub.findImportsByAlias(stub.getShortName());
+            List<KotlinImportDirectiveStub> aliasImportStubs = fileStub.findImportsByAlias(name);
             for (KotlinImportDirectiveStub importStub : aliasImportStubs) {
                 sink.occurrence(KotlinAnnotationsIndex.getInstance().getKey(), importStub.getImportedFqName().shortName().asString());
             }

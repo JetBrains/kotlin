@@ -17,7 +17,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
-          IFLE (L2)
+          IFEQ (L2)
           ICONST_1
           GOTO (L3)
         LABEL (L2)
@@ -36,7 +36,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
-    public final static User$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     private final int age
 
@@ -50,7 +50,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (User$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, LUser$Creator;)
+          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 

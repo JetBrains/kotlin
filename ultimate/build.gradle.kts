@@ -70,7 +70,7 @@ dependencies {
     testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
     testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(projectDist(":kotlin-script-runtime"))
+    testRuntime(project(":kotlin-script-runtime"))
     testRuntime(projectRuntimeJar(":kotlin-compiler"))
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testRuntime(project(":plugins:android-extensions-compiler")) { isTransitive = false }

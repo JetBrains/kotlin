@@ -110,11 +110,16 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
         ideModule.findAndroidModuleModel()?.let { androidModelAny ->
             // We can cast to AndroidModuleModel cause we already checked in findAndroidModuleModel() that the class exists
 
+            val generatedKotlinSources = sourceSet.generatedKotlinSourcesDirFile ?: return
+
             val androidModel = androidModelAny.data as? AndroidModuleModel ?: return
             val variant = androidModel.findVariantByName(sourceSet.sourceSetName) ?: return
 
+            androidModel.registerExtraGeneratedSourceFolder(generatedKotlinSources)
+
+            // TODO remove this when IDEA eventually migrate to the newer Android plugin
             try {
-                sourceSet.generatedKotlinSourcesDirFile?.let { variant.mainArtifact.generatedSourceFolders += it }
+                variant.mainArtifact.generatedSourceFolders += generatedKotlinSources
             } catch (e: Throwable) {
                 // There was an error being thrown here, but the code above doesn't work for the newer versions of Android Studio 3
                 // (generatedSourceFolders returns a wrapped unmodifiable list), and the thrown exception breaks the import.

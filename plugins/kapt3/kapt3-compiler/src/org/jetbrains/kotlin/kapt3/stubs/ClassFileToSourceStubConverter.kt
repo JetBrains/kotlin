@@ -22,6 +22,7 @@ import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
+import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
+import java.io.File
 import javax.lang.model.element.ElementKind
 import com.sun.tools.javac.util.List as JavacList
 
@@ -102,14 +104,14 @@ class ClassFileToSourceStubConverter(
 
     private var done = false
 
-    fun convert(): JavacList<JCCompilationUnit> {
+    fun convert(): List<KaptStub> {
         if (done) error(ClassFileToSourceStubConverter::class.java.simpleName + " can convert classes only once")
         done = true
 
-        var stubs = mapJList(kaptContext.compiledClasses) { convertTopLevelClass(it) }
+        val stubs = kaptContext.compiledClasses.mapNotNullTo(mutableListOf()) { convertTopLevelClass(it) }
 
         if (generateNonExistentClass) {
-            stubs = stubs.append(generateNonExistentClass())
+            stubs += KaptStub(generateNonExistentClass())
         }
 
         return stubs
@@ -132,7 +134,22 @@ class ClassFileToSourceStubConverter(
         return topLevel
     }
 
-    private fun convertTopLevelClass(clazz: ClassNode): JCCompilationUnit? {
+    class KaptStub(val file: JCCompilationUnit, val kaptMetadata: ByteArray? = null) {
+        fun writeMetadataIfNeeded(forSource: File) {
+            if (kaptMetadata == null) {
+                return
+            }
+
+            val metadataFile = File(
+                forSource.parentFile,
+                forSource.nameWithoutExtension + KaptLineMappingCollector.KAPT_METADATA_EXTENSION
+            )
+
+            metadataFile.writeBytes(kaptMetadata)
+        }
+    }
+
+    private fun convertTopLevelClass(clazz: ClassNode): KaptStub? {
         val origin = kaptContext.origins[clazz] ?: return null
         val ktFile = origin.element?.containingFile as? KtFile ?: return null
         val descriptor = origin.descriptor ?: return null
@@ -159,16 +176,47 @@ class ClassFileToSourceStubConverter(
         val classes = JavacList.of<JCTree>(classDeclaration)
 
         val topLevel = treeMaker.TopLevelJava9Aware(packageClause, nonEmptyImports + classes)
-        topLevel.docComments = kdocCommentKeeper.docCommentTable
+        topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
 
         KaptJavaFileObject(topLevel, classDeclaration).apply {
             topLevel.sourcefile = this
             _bindings[clazz.name] = this
         }
 
-        kdocCommentKeeper.saveComment(topLevel, lineMappings.getClassMetadataCommentText())
+        postProcess(topLevel)
 
-        return topLevel
+        return KaptStub(topLevel, lineMappings.serialize())
+    }
+
+    private fun postProcess(topLevel: JCCompilationUnit) {
+        topLevel.accept(object : TreeScanner() {
+            override fun visitClassDef(clazz: JCClassDecl) {
+                // Delete enums inside enum values
+                if (clazz.isEnum()) {
+                    for (child in clazz.defs) {
+                        if (child is JCVariableDecl) {
+                            deleteAllEnumsInside(child)
+                        }
+                    }
+                }
+
+                super.visitClassDef(clazz)
+            }
+
+            private fun JCClassDecl.isEnum() = mods.flags and Opcodes.ACC_ENUM.toLong() != 0L
+
+            private fun deleteAllEnumsInside(def: JCTree) {
+                def.accept(object : TreeScanner() {
+                    override fun visitClassDef(clazz: JCClassDecl) {
+                        clazz.defs = mapJList(clazz.defs) { child ->
+                            if (child is JCClassDecl && child.isEnum()) null else child
+                        }
+
+                        super.visitClassDef(clazz)
+                    }
+                })
+            }
+        })
     }
 
     private fun convertImports(file: KtFile, classDeclaration: JCClassDecl): JavacList<JCTree> {

@@ -27,46 +27,48 @@ import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
 import org.jetbrains.kotlin.analyzer.ResolverForModule
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class ProjectResolutionFacade(
-        private val debugString: String,
-        private val resolverDebugName: String,
-        val project: Project,
-        val globalContext: GlobalContextImpl,
-        val settings: PlatformAnalysisSettings,
-        val reuseDataFrom: ProjectResolutionFacade?,
-        val moduleFilter: (IdeaModuleInfo) -> Boolean,
-        val dependencies: List<Any>,
-        private val invalidateOnOOCB: Boolean = true,
-        val syntheticFiles: Collection<KtFile> = listOf(),
-        val allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
+    private val debugString: String,
+    private val resolverDebugName: String,
+    val project: Project,
+    val globalContext: GlobalContextImpl,
+    val settings: PlatformAnalysisSettings,
+    val reuseDataFrom: ProjectResolutionFacade?,
+    val moduleFilter: (IdeaModuleInfo) -> Boolean,
+    val dependencies: List<Any>,
+    private val invalidateOnOOCB: Boolean,
+    val syntheticFiles: Collection<KtFile> = listOf(),
+    val allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
 ) {
     private val cachedValue = CachedValuesManager.getManager(project).createCachedValue(
-            {
-                val resolverProvider = computeModuleResolverProvider()
-                CachedValueProvider.Result.create(resolverProvider, resolverProvider.cacheDependencies)
-            },
-            /* trackValue = */ false
+        {
+            val resolverProvider = computeModuleResolverProvider()
+            CachedValueProvider.Result.create(resolverProvider, resolverProvider.cacheDependencies)
+        },
+        /* trackValue = */ false
     )
 
     private fun computeModuleResolverProvider(): ModuleResolverProvider {
         val delegateResolverProvider = reuseDataFrom?.moduleResolverProvider
         val delegateResolverForProject = delegateResolverProvider?.resolverForProject ?: EmptyResolverForProject()
         return createModuleResolverProvider(
-                resolverDebugName,
-                project,
-                globalContext,
-                settings,
-                syntheticFiles = syntheticFiles,
-                delegateResolver = delegateResolverForProject, moduleFilter = moduleFilter,
-                allModules = allModules,
-                providedBuiltIns = delegateResolverProvider?.builtIns,
-                dependencies = dependencies,
-                invalidateOnOOCB = invalidateOnOOCB
+            resolverDebugName,
+            project,
+            globalContext,
+            settings,
+            syntheticFiles = syntheticFiles,
+            delegateResolver = delegateResolverForProject,
+            moduleFilter = moduleFilter,
+            allModules = allModules ?: collectAllModuleInfosFromIdeaModel(project),
+            providedBuiltIns = delegateResolverProvider?.builtIns,
+            dependencies = dependencies,
+            invalidateOnOOCB = invalidateOnOOCB
         )
     }
 
@@ -91,17 +93,21 @@ internal class ProjectResolutionFacade(
     }
 
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(
-            {
-                val resolverProvider = moduleResolverProvider
-                val results = object : SLRUCache<KtFile, PerFileAnalysisCache>(2, 3) {
-                    override fun createValue(file: KtFile): PerFileAnalysisCache {
-                        return PerFileAnalysisCache(file, resolverProvider.resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider)
-                    }
+        {
+            val resolverProvider = moduleResolverProvider
+            val results = object : SLRUCache<KtFile, PerFileAnalysisCache>(2, 3) {
+                override fun createValue(file: KtFile): PerFileAnalysisCache {
+                    return PerFileAnalysisCache(
+                        file,
+                        resolverProvider.resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider
+                    )
                 }
+            }
 
-                val allDependencies = resolverProvider.cacheDependencies + listOf(PsiModificationTracker.MODIFICATION_COUNT)
-                CachedValueProvider.Result.create(results, allDependencies)
-            }, false)
+            val allDependencies = resolverProvider.cacheDependencies + listOf(PsiModificationTracker.MODIFICATION_COUNT)
+            CachedValueProvider.Result.create(results, allDependencies)
+        }, false
+    )
 
     fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }

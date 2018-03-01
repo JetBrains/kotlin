@@ -71,7 +71,7 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
         List<String> extraOptions = allowKotlinPackage ? Collections.singletonList("-Xallow-kotlin-package") : emptyList();
         File libraryJar =
                 isJsLibrary
-                ? MockLibraryUtil.compileJsLibraryToJar(sourcesPath, LIBRARY_NAME, withSources)
+                ? MockLibraryUtil.compileJsLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, Collections.emptyList())
                 : MockLibraryUtil.compileJvmLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, true, extraOptions, classpath);
         String jarUrl = getJarUrl(libraryJar);
 

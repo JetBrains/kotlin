@@ -1,7 +1,3 @@
-/**
- * @KaptMetadata
- */
-
 import java.lang.System;
 
 @kotlin.Metadata()
@@ -15,9 +11,6 @@ public class CrashMe {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 
 import java.lang.System;
 
@@ -42,5 +35,31 @@ public final class Kt14997Kt {
     @org.jetbrains.annotations.NotNull()
     public static final CrashMe c() {
         return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.util.List<java.lang.Runnable> d() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.Runnable[] e() {
+        return null;
+    }
+
+    public static final void e1(@org.jetbrains.annotations.NotNull()
+    java.lang.CharSequence[] a) {
+    }
+
+    public static final void e2(@org.jetbrains.annotations.NotNull()
+    java.lang.Object[] a) {
+    }
+
+    public static final void e3(@org.jetbrains.annotations.NotNull()
+    java.lang.CharSequence[] a) {
+    }
+
+    public static final void e3(@org.jetbrains.annotations.NotNull()
+    java.lang.Object[] a) {
     }
 }

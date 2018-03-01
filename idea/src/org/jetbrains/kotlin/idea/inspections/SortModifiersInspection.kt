@@ -44,7 +44,7 @@ class SortModifiersInspection : AbstractKotlinInspection(), CleanupLocalInspecti
                 holder.registerProblem(
                     list,
                     message,
-                    ProblemHighlightType.WEAK_WARNING,
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     SortModifiersFix(sortedModifiers)
                 )
             }

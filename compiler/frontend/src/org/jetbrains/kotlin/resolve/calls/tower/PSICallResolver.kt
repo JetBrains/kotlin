@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.tower
@@ -72,7 +61,8 @@ class PSICallResolver(
     private val typeApproximator: TypeApproximator,
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val effectSystem: EffectSystem,
-    private val constantExpressionEvaluator: ConstantExpressionEvaluator
+    private val constantExpressionEvaluator: ConstantExpressionEvaluator,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
     private val GIVEN_CANDIDATES_NAME = Name.special("<given candidates>")
 
@@ -163,7 +153,7 @@ class PSICallResolver(
         KotlinResolutionCallbacksImpl(
             context, expressionTypingServices, typeApproximator,
             argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
-            constantExpressionEvaluator
+            constantExpressionEvaluator, dataFlowValueFactory
         )
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
@@ -201,19 +191,7 @@ class PSICallResolver(
         }
 
         result.diagnostics.firstIsInstanceOrNull<ManyCandidatesCallDiagnostic>()?.let {
-            val resolvedCalls = it.candidates.map { kotlinToResolvedCallTransformer.onlyTransform<D>(it.resolvedCall, emptyList()) }
-            if (it.candidates.areAllFailed()) {
-                tracingStrategy.noneApplicable(trace, resolvedCalls)
-                tracingStrategy.recordAmbiguity(trace, resolvedCalls)
-            } else {
-                tracingStrategy.recordAmbiguity(trace, resolvedCalls)
-                if (resolvedCalls.first().status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
-                    tracingStrategy.cannotCompleteResolve(trace, resolvedCalls)
-                } else {
-                    tracingStrategy.ambiguity(trace, resolvedCalls)
-                }
-            }
-            return ManyCandidates(resolvedCalls)
+            return transformManyCandidatesAndRecordTrace(it, tracingStrategy, trace)
         }
 
         val isInapplicableReceiver =
@@ -233,6 +211,31 @@ class PSICallResolver(
         resolvedCall.recordEffects(trace)
 
         return SingleOverloadResolutionResult(resolvedCall)
+    }
+
+    private fun <D : CallableDescriptor> transformManyCandidatesAndRecordTrace(
+        diagnostic: ManyCandidatesCallDiagnostic,
+        tracingStrategy: TracingStrategy,
+        trace: BindingTrace
+    ): ManyCandidates<D> {
+        val resolvedCalls = diagnostic.candidates.map { kotlinToResolvedCallTransformer.onlyTransform<D>(it.resolvedCall, emptyList()) }
+
+        if (diagnostic.candidates.areAllFailed()) {
+            if (diagnostic.candidates.areAllFailedWithInapplicableWrongReceiver()) {
+                tracingStrategy.unresolvedReferenceWrongReceiver(trace, resolvedCalls)
+            } else {
+                tracingStrategy.noneApplicable(trace, resolvedCalls)
+                tracingStrategy.recordAmbiguity(trace, resolvedCalls)
+            }
+        } else {
+            tracingStrategy.recordAmbiguity(trace, resolvedCalls)
+            if (resolvedCalls.first().status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
+                tracingStrategy.cannotCompleteResolve(trace, resolvedCalls)
+            } else {
+                tracingStrategy.ambiguity(trace, resolvedCalls)
+            }
+        }
+        return ManyCandidates(resolvedCalls)
     }
 
     private fun ResolvedCall<*>.recordEffects(trace: BindingTrace) {
@@ -257,6 +260,11 @@ class PSICallResolver(
     private fun Collection<KotlinResolutionCandidate>.areAllFailed() =
         all {
             !it.resultingApplicability.isSuccess
+        }
+
+    private fun Collection<KotlinResolutionCandidate>.areAllFailedWithInapplicableWrongReceiver() =
+        all {
+            it.resultingApplicability == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
         }
 
     private fun CallResolutionResult.areAllInapplicable(): Boolean {
@@ -416,7 +424,7 @@ class PSICallResolver(
 
             temporaryTrace.record(BindingContext.REFERENCE_TARGET, calleeExpression, variable.resolvedCall.candidateDescriptor)
             val dataFlowValue =
-                DataFlowValueFactory.createDataFlowValue(variableReceiver, temporaryTrace.bindingContext, context.scope.ownerDescriptor)
+                dataFlowValueFactory.createDataFlowValue(variableReceiver, temporaryTrace.bindingContext, context.scope.ownerDescriptor)
             return ReceiverValueWithSmartCastInfo(
                 variableReceiver,
                 context.dataFlowInfo.getCollectedTypes(dataFlowValue, context.languageVersionSettings),
@@ -454,8 +462,8 @@ class PSICallResolver(
             oldCall.valueArguments.last()
         } else {
             if (externalLambdaArguments.size > 2) {
-                externalLambdaArguments.drop(1).forEach {
-                    context.trace.report(Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(it.getLambdaExpression()))
+                externalLambdaArguments.drop(1).mapNotNull { it.getLambdaExpression() }.forEach {
+                    context.trace.report(Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(it))
                 }
             }
 

@@ -36,7 +36,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
             context.builtIns.unitType, IrStatementOrigin.WHILE_LOOP
         )
 
-        irLoop.condition = statementGenerator.generateExpression(ktWhile.condition!!)
+        irLoop.condition = ktWhile.condition!!.genExpr()
 
         statementGenerator.bodyGenerator.putLoop(ktWhile, irLoop)
 
@@ -44,7 +44,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
             if (ktLoopBody is KtBlockExpression)
                 generateWhileLoopBody(ktLoopBody)
             else
-                statementGenerator.generateExpression(ktLoopBody)
+                ktLoopBody.genExpr()
         }
 
         irLoop.label = getLoopLabel(ktWhile)
@@ -64,10 +64,10 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
             if (ktLoopBody is KtBlockExpression)
                 generateDoWhileLoopBody(ktLoopBody)
             else
-                statementGenerator.generateExpression(ktLoopBody)
+                ktLoopBody.genExpr()
         }
 
-        irLoop.condition = statementGenerator.generateExpression(ktDoWhile.condition!!)
+        irLoop.condition = ktDoWhile.condition!!.genExpr()
 
         irLoop.label = getLoopLabel(ktDoWhile)
 
@@ -79,14 +79,14 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
     private fun generateWhileLoopBody(ktLoopBody: KtBlockExpression): IrExpression =
         IrBlockImpl(
             ktLoopBody.startOffset, ktLoopBody.endOffset, context.builtIns.unitType, null,
-            ktLoopBody.statements.map { statementGenerator.generateStatement(it) }
+            ktLoopBody.statements.map { it.genStmt() }
         )
 
 
     private fun generateDoWhileLoopBody(ktLoopBody: KtBlockExpression): IrExpression =
         IrCompositeImpl(
             ktLoopBody.startOffset, ktLoopBody.endOffset, context.builtIns.unitType, null,
-            ktLoopBody.statements.map { statementGenerator.generateStatement(it) }
+            ktLoopBody.statements.map { it.genStmt() }
         )
 
     fun generateBreak(ktBreak: KtBreakExpression): IrExpression {
@@ -199,7 +199,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         }
 
         if (ktForBody != null) {
-            irInnerBody.statements.add(statementGenerator.generateExpression(ktForBody))
+            irInnerBody.statements.add(ktForBody.genExpr())
         }
 
         return irForBlock

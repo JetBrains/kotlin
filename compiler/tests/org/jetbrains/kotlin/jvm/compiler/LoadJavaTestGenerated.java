@@ -4870,6 +4870,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Generic.kt");
                 doTestCompiledKotlin(fileName);
             }
+
+            @TestMetadata("TypeAliasToExtension.kt")
+            public void testTypeAliasToExtension() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/TypeAliasToExtension.kt");
+                doTestCompiledKotlin(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/visibility")

@@ -44,8 +44,8 @@ private val CODE_BLOCKS = TokenSet.create(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_B
 private val ALIGN_FOR_BINARY_OPERATIONS = TokenSet.create(MUL, DIV, PERC, PLUS, MINUS, ELVIS, LT, GT, LTEQ, GTEQ, ANDAND, OROR)
 private val ANNOTATIONS = TokenSet.create(KtNodeTypes.ANNOTATION_ENTRY, KtNodeTypes.ANNOTATION)
 
-val CodeStyleSettings.kotlinCommonSettings: CommonCodeStyleSettings
-    get() = getCommonSettings(KotlinLanguage.INSTANCE)
+val CodeStyleSettings.kotlinCommonSettings: KotlinCommonCodeStyleSettings
+    get() = getCommonSettings(KotlinLanguage.INSTANCE) as KotlinCommonCodeStyleSettings
 
 val CodeStyleSettings.kotlinCustomSettings: KotlinCodeStyleSettings
     get() = getCustomSettings(KotlinCodeStyleSettings::class.java)!!
@@ -127,7 +127,11 @@ abstract class KotlinCommonBlock(
             // relative to it when it starts from new line (see Indent javadoc).
 
             val isNonFirstChainedCall = operationBlockIndex > 0 && isCallBlock(nodeSubBlocks[operationBlockIndex - 1])
-            val enforceIndentToChildren = isNonFirstChainedCall && hasLineBreakBefore(nodeSubBlocks[operationBlockIndex])
+
+            // enforce indent to children when there's a line break before the dot in any call in the chain (meaning that
+            // the call chain following that call is indented)
+            val enforceIndentToChildren = anyCallInCallChainIsWrapped(nodeSubBlocks[operationBlockIndex - 1])
+
             val indentType = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS) {
                 if (enforceIndentToChildren) Indent.Type.CONTINUATION else Indent.Type.CONTINUATION_WITHOUT_FIRST
             } else {
@@ -157,6 +161,18 @@ abstract class KotlinCommonBlock(
         ) { createSyntheticSpacingNodeBlock(it) }
 
         return subList(0, index) + operationSyntheticBlock
+    }
+
+    private fun anyCallInCallChainIsWrapped(astBlock: ASTBlock): Boolean {
+        var result: ASTBlock? = astBlock
+        while (true) {
+            if (result == null || !isCallBlock(result)) return false
+            val dot = result.node?.findChildByType(QUALIFIED_OPERATION)
+            if (dot != null && hasLineBreakBefore(dot)) {
+                return true
+            }
+            result = result.subBlocks.firstOrNull() as? ASTBlock?
+        }
     }
 
     private fun isCallBlock(astBlock: ASTBlock): Boolean {
@@ -602,9 +618,9 @@ fun needWrapArgumentList(psi: PsiElement): Boolean {
     return args?.singleOrNull()?.getArgumentExpression() !is KtObjectLiteralExpression
 }
 
-private fun hasLineBreakBefore(block: ASTBlock): Boolean {
-    val prevSibling = block.node.leaves(false)
-        .dropWhile { it.psi is PsiComment || it.elementType == KtTokens.RBRACE }
+private fun hasLineBreakBefore(node: ASTNode): Boolean {
+    val prevSibling = node.leaves(false)
+        .dropWhile { it.psi is PsiComment }
         .firstOrNull()
     return prevSibling?.elementType == TokenType.WHITE_SPACE && prevSibling?.textContains('\n') == true
 }
@@ -707,6 +723,7 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Indices")
         .within(KtNodeTypes.INDICES)
+        .notForType(KtTokens.RBRACKET)
         .set(Indent.getContinuationIndent(false)),
 
     strategy("Binary expressions")
@@ -773,7 +790,12 @@ private val INDENT_RULES = arrayOf(
             KtTokens.TYPE_ALIAS_KEYWORD, KtTokens.EOL_COMMENT, KtNodeTypes.MODIFIER_LIST, KtTokens.BLOCK_COMMENT,
             KtTokens.DOC_COMMENT
         )
-        .set(Indent.getContinuationIndent())
+        .set(Indent.getContinuationIndent()),
+
+    strategy("Default parameter values")
+        .within(KtNodeTypes.VALUE_PARAMETER)
+        .forElement { node -> node.psi != null && node.psi == (node.psi.parent as? KtParameter)?.defaultValue }
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES, indentFirst = true)
 )
 
 

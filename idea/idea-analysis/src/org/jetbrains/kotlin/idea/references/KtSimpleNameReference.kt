@@ -22,9 +22,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
+import org.jetbrains.kotlin.idea.codeInsight.shorten.addDelayedImportRequest
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.copied
@@ -152,9 +154,9 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
             bindToElement(element, ShorteningMode.DELAYED_SHORTENING)
 
     fun bindToElement(element: PsiElement, shorteningMode: ShorteningMode): PsiElement =
-            element.getKotlinFqName()?.let { fqName -> bindToFqName(fqName, shorteningMode) } ?: expression
+            element.getKotlinFqName()?.let { fqName -> bindToFqName(fqName, shorteningMode, element) } ?: expression
 
-    fun bindToFqName(fqName: FqName, shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING): PsiElement {
+    fun bindToFqName(fqName: FqName, shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING, targetElement: PsiElement? = null): PsiElement {
         val expression = expression
         if (fqName.isRoot) return expression
 
@@ -162,7 +164,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         if (expression !is KtNameReferenceExpression) return expression
         if (expression.parent is KtThisExpression || expression.parent is KtSuperExpression) return expression // TODO: it's a bad design of PSI tree, we should change it
 
-        val newExpression = expression.changeQualifiedName(fqName.quoteIfNeeded())
+        val newExpression = expression.changeQualifiedName(fqName.quoteIfNeeded(), targetElement)
         val newQualifiedElement = newExpression.getQualifiedElementOrCallableRef()
 
         if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
@@ -184,12 +186,28 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
      * Result is either the same as original element, or [[KtQualifiedExpression]], or [[KtUserType]]
      * Note that FqName may not be empty
      */
-    private fun KtNameReferenceExpression.changeQualifiedName(fqName: FqName): KtNameReferenceExpression {
+    private fun KtNameReferenceExpression.changeQualifiedName(fqName: FqName, targetElement: PsiElement? = null): KtNameReferenceExpression {
         assert(!fqName.isRoot) { "Can't set empty FqName for element $this" }
 
         val shortName = fqName.shortName().asString()
         val psiFactory = KtPsiFactory(this)
         val parent = parent
+
+        if (parent is KtUserType && !fqName.isOneSegmentFQN()) {
+            val qualifier = parent.qualifier
+            val qualifierReference = qualifier?.referenceExpression as? KtNameReferenceExpression
+            if (qualifierReference != null && qualifier.typeArguments.isNotEmpty()) {
+                qualifierReference.changeQualifiedName(fqName.parent(), targetElement)
+                return this
+            }
+        }
+
+        val targetUnwrapped = targetElement?.unwrapped
+
+        if (targetUnwrapped != null && targetUnwrapped.isTopLevelKtOrJavaMember() && fqName.isOneSegmentFQN()) {
+            addDelayedImportRequest(targetUnwrapped, containingKtFile)
+        }
+
         var parentDelimiter = "."
         val fqNameBase = when {
             parent is KtCallElement -> {
@@ -199,7 +217,16 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
             parent is KtCallableReferenceExpression && parent.callableReference == this -> {
                 parentDelimiter = ""
                 val callableRefCopy = parent.copied()
-                callableRefCopy.callableReference.replace(psiFactory.createSimpleName(shortName)).parent!!.text
+                callableRefCopy.receiverExpression?.delete()
+                val newCallableRef = callableRefCopy
+                    .callableReference
+                    .replace(psiFactory.createSimpleName(shortName))
+                    .parent as KtCallableReferenceExpression
+                if (targetUnwrapped != null && targetUnwrapped.isTopLevelKtOrJavaMember()) {
+                    addDelayedImportRequest(targetUnwrapped, parent.containingKtFile)
+                    return parent.replaced(newCallableRef).callableReference as KtNameReferenceExpression
+                }
+                newCallableRef.text
             }
             else -> shortName
         }

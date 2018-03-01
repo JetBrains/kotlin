@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.context.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -35,9 +36,10 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull KotlinType expectedType,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory
     ) {
-        return newContext(trace, scope, dataFlowInfo, expectedType, ContextDependency.INDEPENDENT, StatementFilter.NONE, languageVersionSettings);
+        return newContext(trace, scope, dataFlowInfo, expectedType, ContextDependency.INDEPENDENT, StatementFilter.NONE, languageVersionSettings, dataFlowValueFactory);
     }
 
     @NotNull
@@ -48,10 +50,11 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull KotlinType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull StatementFilter statementFilter,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory
     ) {
         return newContext(trace, scope, dataFlowInfo, expectedType, contextDependency,
-                          new ResolutionResultsCacheImpl(), statementFilter, false, languageVersionSettings);
+                          new ResolutionResultsCacheImpl(), statementFilter, false, languageVersionSettings, dataFlowValueFactory);
     }
 
     @NotNull
@@ -61,7 +64,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
                 context.contextDependency, context.resolutionResultsCache,
                 context.statementFilter,
                 context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
-                context.callPosition, context.expressionContextProvider, context.languageVersionSettings);
+                context.callPosition, context.expressionContextProvider, context.languageVersionSettings,
+                context.dataFlowValueFactory);
     }
 
     @NotNull
@@ -72,7 +76,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
                 context.statementFilter,
                 context.isAnnotationContext, isDebuggerContext, context.collectAllCandidates,
                 context.callPosition, context.expressionContextProvider,
-                context.languageVersionSettings);
+                context.languageVersionSettings,
+                context.dataFlowValueFactory);
     }
 
     @NotNull
@@ -85,12 +90,13 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory
     ) {
         return new ExpressionTypingContext(
                 trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache,
                 statementFilter, isAnnotationContext, false, false,
-                CallPosition.Unknown.INSTANCE, DEFAULT_EXPRESSION_CONTEXT_PROVIDER, languageVersionSettings);
+                CallPosition.Unknown.INSTANCE, DEFAULT_EXPRESSION_CONTEXT_PROVIDER, languageVersionSettings, dataFlowValueFactory);
     }
 
     private ExpressionTypingContext(
@@ -106,11 +112,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition,
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache,
               statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition, expressionContextProvider,
-              languageVersionSettings);
+              languageVersionSettings, dataFlowValueFactory);
     }
 
     @Override
@@ -125,12 +132,13 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition,
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory
     ) {
         return new ExpressionTypingContext(trace, scope, dataFlowInfo,
                                            expectedType, contextDependency, resolutionResultsCache,
                                            statementFilter, isAnnotationContext, isDebuggerContext,
                                            collectAllCandidates, callPosition, expressionContextProvider,
-                                           languageVersionSettings);
+                                           languageVersionSettings, dataFlowValueFactory);
     }
 }

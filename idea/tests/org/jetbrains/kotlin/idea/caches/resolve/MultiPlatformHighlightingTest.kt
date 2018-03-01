@@ -33,6 +33,20 @@ class MultiPlatformHighlightingTest : AbstractMultiModuleHighlightingTest() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
 
+    fun testDepends() {
+        val commonModule = module("common", TestJdkKind.MOCK_JDK)
+        commonModule.createFacet(TargetPlatformKind.Common)
+        commonModule.enableMultiPlatform()
+
+        val jvmPlatform = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        val jvmModule = module("jvm", TestJdkKind.MOCK_JDK)
+        jvmModule.createFacet(jvmPlatform)
+        jvmModule.enableMultiPlatform()
+        jvmModule.addDependency(commonModule)
+
+        checkHighlightingInAllFiles()
+    }
+
     fun testHeaderClass() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
@@ -106,4 +120,40 @@ class MultiPlatformHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInAllFiles()
     }
 
+    fun testTriangle() {
+        val commonModule = module("common_base", TestJdkKind.MOCK_JDK)
+        commonModule.createFacet(TargetPlatformKind.Common, false)
+
+        val derivedModule = module("common_derived", TestJdkKind.MOCK_JDK)
+        derivedModule.createFacet(TargetPlatformKind.Common)
+        derivedModule.enableMultiPlatform()
+
+        val jvmPlatform = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        val jvmModule = module("jvm_derived", TestJdkKind.MOCK_JDK)
+        jvmModule.createFacet(jvmPlatform, implementedModuleName = "common_derived")
+        jvmModule.enableMultiPlatform()
+        jvmModule.addDependency(commonModule)
+        jvmModule.addDependency(derivedModule)
+
+        checkHighlightingInAllFiles()
+    }
+
+    fun testTriangleWithDependency() {
+        val commonModule = module("common_base", TestJdkKind.MOCK_JDK)
+        commonModule.createFacet(TargetPlatformKind.Common, false)
+
+        val derivedModule = module("common_derived", TestJdkKind.MOCK_JDK)
+        derivedModule.createFacet(TargetPlatformKind.Common)
+        derivedModule.enableMultiPlatform()
+        derivedModule.addDependency(commonModule)
+
+        val jvmPlatform = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        val jvmModule = module("jvm_derived", TestJdkKind.MOCK_JDK)
+        jvmModule.createFacet(jvmPlatform, implementedModuleName = "common_derived")
+        jvmModule.enableMultiPlatform()
+        jvmModule.addDependency(commonModule)
+        jvmModule.addDependency(derivedModule)
+
+        checkHighlightingInAllFiles()
+    }
 }

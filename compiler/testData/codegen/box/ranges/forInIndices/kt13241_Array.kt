@@ -13,9 +13,6 @@ fun test(x: Any): Int {
 }
 
 fun box(): String {
-    // Only run this test if primitive array `is` checks work (KT-17137)
-    if ((intArrayOf() as Any) is Array<*>) return "OK"
-
     assertEquals(123, test(intArrayOf(0, 0, 0, 0)))
     return "OK"
 }

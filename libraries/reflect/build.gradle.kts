@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
-import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
+import org.jetbrains.kotlin.serialization.jvm.JvmModuleProtoBuf
 import proguard.gradle.ProGuardTask
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
@@ -87,11 +87,11 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
         val version = IntArray(input.readInt()) { input.readInt() }
         logger.info("Transforming ${context.path} with version ${version.toList()}")
 
-        val table = JvmPackageTable.PackageTable.parseFrom(context.`is`).toBuilder()
+        val table = JvmModuleProtoBuf.Module.parseFrom(context.`is`).toBuilder()
 
-        val newTable = JvmPackageTable.PackageTable.newBuilder().apply {
+        val newTable = JvmModuleProtoBuf.Module.newBuilder().apply {
             for (packageParts in table.packagePartsList + table.metadataPartsList) {
-                addPackageParts(JvmPackageTable.PackageParts.newBuilder(packageParts).apply {
+                addPackageParts(JvmModuleProtoBuf.PackageParts.newBuilder(packageParts).apply {
                     packageFqName = relocate(packageFqName)
                 })
             }

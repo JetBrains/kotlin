@@ -164,13 +164,29 @@ private val DEFAULT_IMPLS_CLASS_NAME = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLAS
 fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)
 
 @Suppress("unused")
-fun KtAnnotationEntry.toLightAnnotation(): PsiAnnotation? {
+fun KtElement.toLightAnnotation(): PsiAnnotation? {
     val ktDeclaration = getStrictParentOfType<KtModifierList>()?.parent as? KtDeclaration ?: return null
     for (lightElement in ktDeclaration.toLightElements()) {
         if (lightElement !is PsiModifierListOwner) continue
-        lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotationForSourceEntry && it.kotlinOrigin == this }?.let { return it }
+        for (rootAnnotation in lightElement.modifierList?.annotations ?: continue) {
+            for (annotation in rootAnnotation.withNestedAnnotations()) {
+                if (annotation is KtLightAnnotationForSourceEntry && annotation.kotlinOrigin == this)
+                    return annotation
+            }
+        }
     }
     return null
+}
+
+private fun PsiAnnotation.withNestedAnnotations(): Sequence<PsiAnnotation> {
+    fun handleValue(memberValue: PsiAnnotationMemberValue?): Sequence<PsiAnnotation> =
+        when (memberValue) {
+            is PsiArrayInitializerMemberValue ->
+                memberValue.initializers.asSequence().flatMap { handleValue(it) }
+            is PsiAnnotation -> memberValue.withNestedAnnotations()
+            else -> emptySequence()
+        }
+    return sequenceOf(this) + parameterList.attributes.asSequence().flatMap { handleValue(it.value) }
 }
 
 fun propertyNameByAccessor(name: String, accessor: KtLightMethod): String? {

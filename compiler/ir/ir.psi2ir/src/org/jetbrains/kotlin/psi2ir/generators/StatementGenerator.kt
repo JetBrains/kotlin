@@ -407,4 +407,7 @@ class StatementGenerator(
 abstract class StatementGeneratorExtension(val statementGenerator: StatementGenerator) : GeneratorWithScope {
     override val scope: Scope get() = statementGenerator.scope
     override val context: GeneratorContext get() = statementGenerator.context
+
+    fun KtExpression.genExpr() = statementGenerator.generateExpression(this)
+    fun KtExpression.genStmt() = statementGenerator.generateStatement(this)
 }

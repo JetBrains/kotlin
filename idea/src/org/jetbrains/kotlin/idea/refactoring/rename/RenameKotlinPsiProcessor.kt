@@ -27,8 +27,6 @@ import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
 import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
@@ -37,7 +35,9 @@ import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.ImportPath
 
 abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
@@ -74,7 +74,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
 
         val safeNewName = newName.quoteIfNeeded()
 
-        if (!KotlinNameSuggester.isIdentifier(newName)) {
+        if (!newName.isIdentifier()) {
             allRenames[element] = safeNewName
         }
 

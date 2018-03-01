@@ -57,9 +57,8 @@ fun parse(lineText: String, reader: OutputLineReader, messages: MutableList<Mess
                 val column = if (matcher.groupCount() >= 2) matcher.group(2)?.toInt() ?: 1 else 1
 
                 if (line != null) {
-                    val mainPosition = SourceFilePosition(file, SourcePosition(line, column, column))
-                    val kotlinKaptPosition = findAdditionalKotlinLocationFromKapt(message)
-                    return addMessage(Message(getMessageKind(severity), message.trim(), kotlinKaptPosition ?: mainPosition), messages)
+                    val position = SourceFilePosition(file, SourcePosition(line, column, column))
+                    return addMessage(Message(getMessageKind(severity), message.trim(), position), messages)
                 }
             }
 
@@ -73,26 +72,9 @@ fun parse(lineText: String, reader: OutputLineReader, messages: MutableList<Mess
     return false
 }
 
-private fun findAdditionalKotlinLocationFromKapt(message: String): SourceFilePosition? {
-    for (lineText in message.lines()) {
-        val matcher = ADDITIONAL_KOTLIN_POSITION_FROM_KAPT_PATTERN.matcher(lineText.trim()).takeIf { it.matches() } ?: continue
-        val filePath = matcher.group(1) ?: break
-
-        // Check both Unix (/...) and Windows (C:\...) patterns
-        if (!filePath.startsWith("/") && !filePath.drop(1).startsWith(":\\")) break
-
-        val line = matcher.group(2).toIntOrNull() ?: break
-        val column = matcher.group(3).toIntOrNull() ?: break
-        return SourceFilePosition(File(filePath), SourcePosition(line, column, column))
-    }
-
-    return null
-}
-
 private val COLON = ":"
 private val KOTLIN_POSITION_PATTERN = Pattern.compile("\\(([0-9]*), ([0-9]*)\\)")
 private val JAVAC_POSITION_PATTERN = Pattern.compile("([0-9]+)")
-private val ADDITIONAL_KOTLIN_POSITION_FROM_KAPT_PATTERN = Pattern.compile("^Kotlin location: (.+): \\((\\d+), (\\d+)\\)$")
 
 private fun String.amendNextLinesIfNeeded(reader: OutputLineReader): String {
     var nextLine = reader.readLine()

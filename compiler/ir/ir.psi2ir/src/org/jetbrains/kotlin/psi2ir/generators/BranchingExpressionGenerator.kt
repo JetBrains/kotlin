@@ -40,8 +40,8 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         var irElseBranch: IrExpression? = null
 
         whenBranches@ while (true) {
-            val irCondition = statementGenerator.generateExpression(ktLastIf.condition!!)
-            val irThenBranch = statementGenerator.generateExpression(ktLastIf.then!!)
+            val irCondition = ktLastIf.condition!!.genExpr()
+            val irThenBranch = ktLastIf.then!!.genExpr()
             irBranches.add(IrBranchImpl(irCondition, irThenBranch))
 
             val ktElse = ktLastIf.`else`?.deparenthesize()
@@ -49,7 +49,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
                 null -> break@whenBranches
                 is KtIfExpression -> ktLastIf = ktElse
                 is KtExpression -> {
-                    irElseBranch = statementGenerator.generateExpression(ktElse)
+                    irElseBranch = ktElse.genExpr()
                     break@whenBranches
                 }
                 else -> throw AssertionError("Unexpected else expression: ${ktElse.text}")
@@ -85,7 +85,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
 
     fun generateWhenExpression(expression: KtWhenExpression): IrExpression {
         val irSubject = expression.subjectExpression?.let {
-            scope.createTemporaryVariable(statementGenerator.generateExpression(it), "subject")
+            scope.createTemporaryVariable(it.genExpr(), "subject")
         }
 
 
@@ -104,7 +104,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
 
         for (ktEntry in expression.entries) {
             if (ktEntry.isElse) {
-                val irElseResult = statementGenerator.generateExpression(ktEntry.expression!!)
+                val irElseResult = ktEntry.expression!!.genExpr()
                 irWhen.branches.add(IrBranchImpl.elseBranch(irElseResult))
                 break
             }
@@ -117,10 +117,9 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
                     else
                         generateWhenConditionNoSubject(ktCondition)
                 irBranchCondition = irBranchCondition?.let { context.whenComma(it, irCondition) } ?: irCondition
-
             }
 
-            val irBranchResult = statementGenerator.generateExpression(ktEntry.expression!!)
+            val irBranchResult = ktEntry.expression!!.genExpr()
             irWhen.branches.add(IrBranchImpl(irBranchCondition!!, irBranchResult))
         }
         addElseBranchForExhaustiveWhenIfNeeded(irWhen, expression)
@@ -163,7 +162,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     }
 
     private fun generateWhenConditionNoSubject(ktCondition: KtWhenCondition): IrExpression =
-        statementGenerator.generateExpression((ktCondition as KtWhenConditionWithExpression).expression!!)
+        (ktCondition as KtWhenConditionWithExpression).expression!!.genExpr()
 
     private fun generateWhenConditionWithSubject(ktCondition: KtWhenCondition, irSubject: IrVariable): IrExpression {
         return when (ktCondition) {
@@ -204,10 +203,13 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         }
     }
 
-    private fun generateEqualsCondition(irSubject: IrVariable, ktCondition: KtWhenConditionWithExpression): IrBinaryPrimitiveImpl =
-        IrBinaryPrimitiveImpl(
-            ktCondition.startOffset, ktCondition.endOffset,
-            IrStatementOrigin.EQEQ, context.irBuiltIns.eqeqSymbol,
-            irSubject.defaultLoad(), statementGenerator.generateExpression(ktCondition.expression!!)
+    private fun generateEqualsCondition(irSubject: IrVariable, ktCondition: KtWhenConditionWithExpression): IrExpression {
+        val ktExpression = ktCondition.expression
+        val irExpression = ktExpression!!.genExpr()
+        return OperatorExpressionGenerator(statementGenerator).generateEquality(
+            ktCondition.startOffset, ktCondition.endOffset, IrStatementOrigin.EQEQ,
+            irSubject.defaultLoad(), irExpression,
+            context.bindingContext[BindingContext.PRIMITIVE_NUMERIC_COMPARISON_INFO, ktExpression]
         )
+    }
 }

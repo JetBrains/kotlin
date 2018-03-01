@@ -58,13 +58,11 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.core.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
-import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClassesSafely
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
 import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
@@ -76,6 +74,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -142,14 +141,10 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 extractAndCompile(fragment, position, context)
             }
 
-            val classLoaderHandler = loadClassesSafely(context, compiledData.classes)
+            val classLoaderRef = loadClassesSafely(context, compiledData.classes)
 
-            val result = if (classLoaderHandler != null) {
-                try {
-                    evaluateWithCompilation(context, compiledData) ?: runEval4j(context, compiledData)
-                } finally {
-                    classLoaderHandler.dispose()
-                }
+            val result = if (classLoaderRef != null) {
+                evaluateWithCompilation(context, compiledData, classLoaderRef) ?: runEval4j(context, compiledData)
             }
             else {
                 runEval4j(context, compiledData)
@@ -157,14 +152,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
             // If bytecode was taken from cache and exception was thrown - recompile bytecode and run eval4j again
             if (isCompiledDataFromCache && result is ExceptionThrown && result.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE) {
-                // We need only lambda classes here cause we using only eval4j evaluation method
-                val classLoaderHandler = loadClasses(context, compiledData.classes.filter { !it.isMainClass() })
-
-                try {
-                    return runEval4j(context, extractAndCompile(codeFragment, sourcePosition, context)).toJdiValue(context)
-                } finally {
-                    classLoaderHandler?.dispose()
-                }
+                return runEval4j(context, extractAndCompile(codeFragment, sourcePosition, context)).toJdiValue(context)
             }
 
             return if (result is InterpreterResult) {
@@ -262,35 +250,37 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             get() = classes.firstOrNull { it.isMainClass() } ?: error(
                     "Can't find main class for " + sourcePosition.elementAt.getParentOfType<KtDeclaration>(strict = false))
 
-        private fun evaluateWithCompilation(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): Any? {
+        private fun evaluateWithCompilation(
+            context: EvaluationContextImpl,
+            compiledData: CompiledDataDescriptor,
+            classLoader: ClassLoaderReference
+        ): Any? {
             val vm = context.debugProcess.virtualMachineProxy.virtualMachine
-            val classLoader = context.classLoader ?: return null
             val mainClassBytecode = compiledData.mainClass.bytes
 
             try {
                 val mainClassAsmNode = ClassNode().apply { ClassReader(mainClassBytecode).accept(this, ClassReader.SKIP_CODE) }
-                val mainClassJdiName = mainClassAsmNode.name.replace('/', '.')
                 assert(mainClassAsmNode.methods.size == 1)
 
                 val methodToInvoke = mainClassAsmNode.methods[0]
                 assert(methodToInvoke.parameters == null || methodToInvoke.parameters.isEmpty())
 
-                val mainClass = context.debugProcess.findClass(context, mainClassJdiName, classLoader) as ClassType
-
                 val thread = context.suspendContext.thread?.threadReference!!
                 val invokePolicy = context.suspendContext.getInvokePolicy()
                 val eval = JDIEval(vm, classLoader, thread, invokePolicy)
 
+                val mainClassValue = (eval.loadClass(Type.getObjectType(mainClassAsmNode.name), classLoader) as? ObjectValue)
+                val mainClass = (mainClassValue?.value as? ClassObjectReference)?.reflectedType() as? ClassType ?: return null
+
                 return vm.executeWithBreakpointsDisabled {
                     // Prepare the main class
-                    eval.loadClass(Type.getObjectType(mainClassAsmNode.name), classLoader)
 
                     val argumentTypes = Type.getArgumentTypes(methodToInvoke.desc)
                     val args = context.getArgumentsForEval4j(compiledData.parameters, argumentTypes)
                             .zip(argumentTypes)
                             .map { (value, type) ->
                                 // Make argument type classes prepared for sure
-                                eval.loadClass(type, classLoader)
+                                eval.loadClassByName(type.className, classLoader)
                                 boxOrUnboxArgumentIfNeeded(eval, value, type).asJdiValue(vm, type)
                             }
 
@@ -298,7 +288,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     mainClass.invokeMethod(thread, mainClass.methods().single(), args, invokePolicy)
                 }
             } catch (e: Throwable) {
-                LOG.debug("Unable to evaluate expression with compilation", e)
+                LOG.error("Unable to evaluate expression with compilation", e)
                 return null
             }
         }

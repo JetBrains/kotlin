@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
@@ -63,7 +64,8 @@ class DelegatedPropertyResolver(
     private val builtIns: KotlinBuiltIns,
     private val fakeCallResolver: FakeCallResolver,
     private val expressionTypingServices: ExpressionTypingServices,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
 
     fun resolvePropertyDelegate(
@@ -314,7 +316,7 @@ class DelegatedPropertyResolver(
         else
             TypeUtils.NO_EXPECTED_TYPE
 
-        val context = ExpressionTypingContext.newContext(trace, delegateFunctionsScope, dataFlowInfo, expectedType, languageVersionSettings)
+        val context = ExpressionTypingContext.newContext(trace, delegateFunctionsScope, dataFlowInfo, expectedType, languageVersionSettings, dataFlowValueFactory)
 
         val hasThis = propertyDescriptor.extensionReceiverParameter != null || propertyDescriptor.dispatchReceiverParameter != null
 
@@ -352,7 +354,7 @@ class DelegatedPropertyResolver(
         initializerScope: LexicalScope,
         dataFlowInfo: DataFlowInfo
     ): OverloadResolutionResults<FunctionDescriptor> {
-        val context = ExpressionTypingContext.newContext(trace, initializerScope, dataFlowInfo, NO_EXPECTED_TYPE, languageVersionSettings)
+        val context = ExpressionTypingContext.newContext(trace, initializerScope, dataFlowInfo, NO_EXPECTED_TYPE, languageVersionSettings, dataFlowValueFactory)
         return getProvideDelegateMethod(propertyDescriptor, delegateExpression, delegateExpressionType, context)
     }
 
@@ -573,7 +575,7 @@ class DelegatedPropertyResolver(
             val contextForProvideDelegate = ExpressionTypingContext.newContext(
                 traceToResolveConventionMethods, scopeForDelegate, delegateTypeInfo.dataFlowInfo,
                 NO_EXPECTED_TYPE, ContextDependency.DEPENDENT, StatementFilter.NONE,
-                languageVersionSettings
+                languageVersionSettings, dataFlowValueFactory
             )
 
             val delegateTypeConstructor = delegateTypeInfo.type?.constructor

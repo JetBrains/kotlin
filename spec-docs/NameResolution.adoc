@@ -241,7 +241,7 @@ That doesn't mean that a local extension function might be prioritized over a me
 Now let's discuss the specific steps the compiler performs to resolve a call:
 
 * First the Kotlin compiler collects all possibly applicable functions in ordered groups.
-Members is an example of a such group - the one with the highest priority.
+Members is an example of such a group - the one with the highest priority.
 
 * Then for each group the most specific function is chosen; if many are applicable and no one is the most specific, then an `ambiguity` error is reported.
 
@@ -312,7 +312,7 @@ Two implicit receivers are available.
 The first one of type `B` is a receiver in a lambda with receiver (lambda is the argument of the `with` function).
 The second one of type `C` is an extension receiver of the function `test`.
 Each receiver adds the corresponding group (a group containing function #2 goes first, then a group with function #3).
-Note that if several overloaded member extensions `foo` were declared in the class `B`, they all went in one group.
+Note that if several overloaded member extensions `foo` were declared in the class `B`, they would all go in one group.
 
 4. _Top-level extensions_.
 One group containing an extension function #4 is created.
@@ -342,14 +342,14 @@ fun C.test(a: A) {
 We removed local functions and added different parameters to remaining functions `foo`.
 For each of the calls `a.foo("abc")` and `a.foo(i)` three groups of functions are created.
 The function from the first group #0 is inapplicable in both cases, so the Kotlin compiler tries to find the first applicable function from the next groups.
-It's function #1 for `String` argument and #2 for nullable argument (both functions #0 and #1 expect non-null parameter).
+It's function #1 for `String` argument and #2 for nullable argument (both functions #0 and #1 expect a non-null parameter).
 
 [NOTE]
 .Top-level scope chain
 ====
 In Kotlin you can declare a function at the top-level.
-Such function might be declared at the same package as the usage or imported (explicitly or via star-import).
-Top-level functions are prioritizes in the following order:
+Such a function might be declared at the same package as the usage or imported (explicitly or via star-import).
+Top-level functions are prioritized in the following order:
 
 1. _Explicit imports_.
 If you import the necessary function by name, it has the highest priority.
@@ -361,15 +361,15 @@ Such function may be located in the same file as the usage or in the other files
 By using `*` you import all contents of a package.
 Note that the functions imported in this way have lower priority then the functions imported directly.
 
-4. _Function from stdlib_.
+4. _Functions from stdlib_.
 The Kotlin standard library contains lots of extension functions.
-They all are implicitly imported in any Kotlin file.
+They are all implicitly imported in any Kotlin file.
 If you declare the function with the same name as in stdlib, then use it from the same package or import it, your function will have higher priority then the library function.
 
 Note that explicit import has the highest priority.
 That means it might be unsafe to replace an explicit import with star import, because the resolution for the call of imported function might change.
 If a function with the same name is declared in the same package and is applicable, it might be chosen instead of the function that was explicitly imported.
-The action "Optimize imports" in IntelliJ IDEA does everything correct, so prefer using it.
+The action "Optimize imports" in IntelliJ IDEA does everything correctly, so prefer using it.
 
 In the example below the function `foo` from another package `a` is chosen because it is imported explicitly.
 The function `foo` from the same package has lower priority:
@@ -482,9 +482,9 @@ fun test(a: A, b: B) {
 ----
 
 These `foo` calls look very similar, they differ only in the order of implicit receivers available in the context.
-However, the different functions are called: the function #1 in the first case and the function #2 in the second one.
+However, different functions are called: function #1 in the first case and function #2 in the second one.
 
-Two implicit receivers are available for each `foo` invocation: for simplicity let's say `a` and `b`; in the code we may reference the closest on by `this@with`.
+Two implicit receivers are available for each `foo` invocation: for simplicity let's say `a` and `b`; in the code we may reference the closest one by `this@with`.
 In the first case `a` is closer and has more priority than `b`, so a member of `A` is called (function #1).
 In the second case it's a member of `B` (function #2).
 
@@ -534,14 +534,14 @@ The list of implicit receivers for the context in which `foo()` is called will b
 * `this@C`.
 
 If `A` is declared in Java, there's no implicit receiver corresponding to its companion object, because there is no companion object.
-However, all static Java methods are added with the same order as they were members of the `companion object`: they go right after the members of the class.
+However, all static Java methods are added with the same order as if they were members of the `companion object`: they go right after the members of the class.
 ====
 
 
 === Name resolution for the `invoke` convention
 
 This section describes how hidden `invoke` calls are resolved.
-At first we'll describe the `invoke` convention, and then go into details of the name resolution process.
+First we'll describe the `invoke` convention, and then go into details of the name resolution process.
 
 This convention in Kotlin lets you call a value as a function if it has the appropriate `invoke` method, which can be a member or an extension:
 
@@ -559,7 +559,7 @@ fun test(f: MyFunction) {
 The `invoke` function should be applicable on the arguments passed.
 
 When you call a value of function type as a regular function in Kotlin, the same convention takes place.
-The function type `(Int) -> Int` is a syntactic sugar over `Function1<Int, Int>`, which is a regular interface declared in the standard library:
+The function type `(Int) -> Int` is syntactic sugar for `Function1<Int, Int>`, which is a regular interface declared in the standard library:
 
 [source,kotlin]
 ----
@@ -583,7 +583,7 @@ The resolution of such call works through the `invoke` convention as well, but i
 That means the call `1.f()` might be rewritten as `f(1)`, which is the short form for `f.invoke(1)`.
 
 
-The Kotlin compiler has to take this convention into account every time when it resolves a call `a.foo()`, because `foo` might be either a regular function, or a value that is called via the `invoke` convention.
+The Kotlin compiler has to take this convention into account every time it resolves a call `a.foo()`, because `foo` might be either a regular function, or a value that is called via the `invoke` convention.
 
 Earlier we described how the calls `a.foo()` and `foo()` are resolved.
 Just to remind you, the compiler builds several groups of possibly applicable functions according to different categories of functions.
@@ -628,12 +628,12 @@ The `invoke` function is a member of the `Function0` interface from the standard
 
 Note that there is no member function named `foo`, but if it was present, it would be put into a separate group with the highest priority.
 
-Let's see the example of how group priorities are determined:
+Let's see an example of how group priorities are determined:
 
-* Function go before property of the same category, so a top-level extension named `foo` has higher priority then a top-level extension property `foo` of function type.
+* Functions go before properties of the same category, so a top-level extension named `foo` has higher priority then a top-level extension property `foo` of function type.
 
 * The priority of both the property and the `invoke` function matters.
-Thus if the `invoke` function is declared as an extension, the member property with this function goes after the group "extensions functions".
+Thus if the `invoke` function is declared as an extension, the member property with this function goes after the group "extension functions".
 
 [source,kotlin]
 ----
@@ -744,7 +744,7 @@ public class J {
 }
 ----
 
-Both these methods (original and syntactic) participate in the regular name resolution process.
+Both of these methods (original and syntactic) participate in the regular name resolution process.
 Thus if you call `foo` and pass lambda as a parameter, the syntactic method will be chosen:
 
 [source, kotlin]
@@ -785,12 +785,12 @@ Step 1.
 
 The most specific candidate is found for the group consisting of both members and syntactic members.
 If such candidate exists, it's the result.
-Otherwise, the result is determined in the step 2.
+Otherwise, the result is determined in step 2.
 
 Step 2.
 `members -> most specific`
 
-The most specific candidate is found for only members (without syntactic members).
+The most specific candidate is found only for members (without syntactic members).
 
 If no appropriate member is found, the name resolution algorithm proceeds as described earlier in this document
 (tries to find the appropriate function among local extensions, member extensions, etc.).

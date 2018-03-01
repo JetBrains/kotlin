@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isPreRelease
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
@@ -224,7 +227,7 @@ object KotlinJavascriptSerializationUtil {
                 version.forEach(this::writeInt)
             }
 
-            serializeHeader(fqName, languageVersionSettings).writeDelimitedTo(stream)
+            serializeHeader(module, fqName, languageVersionSettings).writeDelimitedTo(stream)
             part.writeTo(stream)
 
             contentMap[JsSerializerProtocol.getKjsmFilePath(fqName)] = stream.toByteArray()
@@ -236,7 +239,9 @@ object KotlinJavascriptSerializationUtil {
     private fun ProtoBuf.PackageFragment.isEmpty(): Boolean =
             class_Count == 0 && `package`.let { it.functionCount == 0 && it.propertyCount == 0 && it.typeAliasCount == 0 }
 
-    fun serializeHeader(packageFqName: FqName?, languageVersionSettings: LanguageVersionSettings): JsProtoBuf.Header {
+    fun serializeHeader(
+        module: ModuleDescriptor, packageFqName: FqName?, languageVersionSettings: LanguageVersionSettings
+    ): JsProtoBuf.Header {
         val header = JsProtoBuf.Header.newBuilder()
 
         if (packageFqName != null) {
@@ -245,6 +250,20 @@ object KotlinJavascriptSerializationUtil {
 
         if (languageVersionSettings.isPreRelease()) {
             header.flags = 1
+        }
+
+        val experimentalAnnotationFqNames = languageVersionSettings.getFlag(AnalysisFlag.experimental)
+        if (experimentalAnnotationFqNames.isNotEmpty()) {
+            val stringTable = StringTableImpl()
+            for (fqName in experimentalAnnotationFqNames) {
+                val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_ALREADY_TRACKED) ?: continue
+                header.addAnnotation(ProtoBuf.Annotation.newBuilder().apply {
+                    id = stringTable.getFqNameIndex(descriptor)
+                })
+            }
+            val (strings, qualifiedNames) = stringTable.buildProto()
+            header.strings = strings
+            header.qualifiedNames = qualifiedNames
         }
 
         // TODO: write JS code binary version
@@ -278,7 +297,7 @@ object KotlinJavascriptSerializationUtil {
     ): ByteArray {
         return ByteArrayOutputStream().apply {
             GZIPOutputStream(this).use { stream ->
-                serializeHeader(null, languageVersionSettings).writeDelimitedTo(stream)
+                serializeHeader(data, null, languageVersionSettings).writeDelimitedTo(stream)
                 serializeMetadata(bindingContext, data, kind, imported).writeTo(stream)
             }
         }.toByteArray()

@@ -233,6 +233,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             args.verbose = true
         }
 
+        args.multiPlatform = project.plugins.any { it is KotlinPlatformPluginBase }
+
         setupPlugins(args)
     }
 

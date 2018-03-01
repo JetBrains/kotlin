@@ -217,7 +217,9 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
         List<KtLambdaArgument> functionLiterals = callExpression.getLambdaArguments();
         if (functionLiterals.isEmpty()) return null;
 
-        return functionLiterals.get(0).getLambdaExpression().getBodyExpression();
+        KtLambdaExpression lambdaExpression = functionLiterals.get(0).getLambdaExpression();
+        if (lambdaExpression == null) return null;
+        return lambdaExpression.getBodyExpression();
     }
 
     @Nullable

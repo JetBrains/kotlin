@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSaf
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -59,9 +60,10 @@ class CallCompleter(
     private val candidateResolver: CandidateResolver,
     private val dataFlowAnalyzer: DataFlowAnalyzer,
     private val callCheckers: Iterable<CallChecker>,
-    private val builtIns: KotlinBuiltIns,
+    private val moduleDescriptor: ModuleDescriptor,
     private val deprecationResolver: DeprecationResolver,
-    private val effectSystem: EffectSystem
+    private val effectSystem: EffectSystem,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
     fun <D : CallableDescriptor> completeCall(
         context: BasicCallResolutionContext,
@@ -87,7 +89,7 @@ class CallCompleter(
                 if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
                 else resolvedCall.call.callElement
 
-            val callCheckerContext = CallCheckerContext(context, deprecationResolver)
+            val callCheckerContext = CallCheckerContext(context, deprecationResolver, moduleDescriptor)
             for (callChecker in callCheckers) {
                 callChecker.check(resolvedCall, reportOn, callCheckerContext)
 
@@ -202,7 +204,7 @@ class CallCompleter(
             updateSystemIfNeeded { builder ->
                 val returnTypeInSystem = builder.typeInSystem(returnType)
                 if (returnTypeInSystem != null) {
-                    builder.addSubtypeConstraint(returnTypeInSystem, builtIns.unitType, EXPECTED_TYPE_POSITION.position())
+                    builder.addSubtypeConstraint(returnTypeInSystem, moduleDescriptor.builtIns.unitType, EXPECTED_TYPE_POSITION.position())
                     val system = builder.build()
                     if (system.status.isSuccessful()) system else null
                 } else null

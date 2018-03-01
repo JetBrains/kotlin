@@ -537,6 +537,8 @@ public inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Iterable<T>.drop(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -572,6 +574,8 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> List<T>.dropLast(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -580,6 +584,8 @@ public fun <T> List<T>.dropLast(n: Int): List<T> {
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun <T> List<T>.dropLastWhile(predicate: (T) -> Boolean): List<T> {
     if (!isEmpty()) {
@@ -595,6 +601,8 @@ public inline fun <T> List<T>.dropLastWhile(predicate: (T) -> Boolean): List<T> 
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T> {
     var yielding = false
@@ -729,6 +737,8 @@ public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun <T> Iterable<T>.take(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -749,6 +759,8 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun <T> List<T>.takeLast(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -769,6 +781,8 @@ public fun <T> List<T>.takeLast(n: Int): List<T> {
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun <T> List<T>.takeLastWhile(predicate: (T) -> Boolean): List<T> {
     if (isEmpty())
@@ -790,6 +804,8 @@ public inline fun <T> List<T>.takeLastWhile(predicate: (T) -> Boolean): List<T> 
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> {
     val list = ArrayList<T>()
@@ -1115,14 +1131,14 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): java.util.SortedSet<T> {
     return toCollection(java.util.TreeSet<T>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  * 
  * Elements in the set returned are sorted according to the given [comparator].
  */
@@ -1383,6 +1399,8 @@ public infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
     if (this is Collection && isEmpty()) return true
@@ -1392,6 +1410,8 @@ public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if collection has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun <T> Iterable<T>.any(): Boolean {
     if (this is Collection) return !isEmpty()
@@ -1400,6 +1420,8 @@ public fun <T> Iterable<T>.any(): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
     if (this is Collection && isEmpty()) return false
@@ -1679,6 +1701,8 @@ public fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T? {
 
 /**
  * Returns `true` if the collection has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun <T> Iterable<T>.none(): Boolean {
     if (this is Collection) return isEmpty()
@@ -1687,6 +1711,8 @@ public fun <T> Iterable<T>.none(): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean {
     if (this is Collection && isEmpty()) return true
@@ -2171,6 +2197,8 @@ public inline fun <T, R> Iterable<T>.zipWithNext(transform: (a: T, b: T) -> R): 
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -2191,6 +2219,8 @@ public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: CharSequ
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun <T> Iterable<T>.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()

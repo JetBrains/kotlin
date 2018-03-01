@@ -311,9 +311,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
             field: Boolean = false,
             synthetic: Boolean = false
     ): MemberSignature? {
-        val signature =
-                if (proto.hasExtension(propertySignature)) proto.getExtension(propertySignature)
-                else return null
+        val signature = proto.getExtensionOrNull(propertySignature) ?: return null
 
         if (field) {
             val (name, desc) = JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable) ?: return null
@@ -339,8 +337,8 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
             proto is ProtoBuf.Function -> {
                 MemberSignature.fromMethodNameAndDesc(JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver, typeTable) ?: return null)
             }
-            proto is ProtoBuf.Property && proto.hasExtension(propertySignature) -> {
-                val signature = proto.getExtension(propertySignature)
+            proto is ProtoBuf.Property -> {
+                val signature = proto.getExtensionOrNull(propertySignature) ?: return null
                 when (kind) {
                     AnnotatedCallableKind.PROPERTY_GETTER -> MemberSignature.fromMethod(nameResolver, signature.getter)
                     AnnotatedCallableKind.PROPERTY_SETTER -> MemberSignature.fromMethod(nameResolver, signature.setter)

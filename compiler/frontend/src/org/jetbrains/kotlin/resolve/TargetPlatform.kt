@@ -90,11 +90,15 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
     CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker, MissingDependencyClassChecker,
     CallableReferenceCompatibilityChecker(), LateinitIntrinsicApplicabilityChecker,
-    UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker()
+    UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker(),
+    PrimitiveNumericComparisonCallChecker, LambdaWithSuspendModifierCallChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
     DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker, MissingDependencyClassChecker.ClassifierUsage
+)
+private val DEFAULT_ANNOTATION_CHECKERS = listOf<AdditionalAnnotationChecker>(
+    ExperimentalMarkerDeclarationAnnotationChecker
 )
 
 
@@ -104,7 +108,7 @@ abstract class PlatformConfigurator(
     additionalCallCheckers: List<CallChecker>,
     additionalTypeCheckers: List<AdditionalTypeChecker>,
     additionalClassifierUsageCheckers: List<ClassifierUsageChecker>,
-    private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
+    additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
     private val identifierChecker: IdentifierChecker,
     private val overloadFilter: OverloadFilter,
     private val platformToKotlinClassMap: PlatformToKotlinClassMap,
@@ -117,6 +121,7 @@ abstract class PlatformConfigurator(
     private val typeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
     private val classifierUsageCheckers: List<ClassifierUsageChecker> =
         DEFAULT_CLASSIFIER_USAGE_CHECKERS + additionalClassifierUsageCheckers
+    private val annotationCheckers: List<AdditionalAnnotationChecker> = DEFAULT_ANNOTATION_CHECKERS + additionalAnnotationCheckers
 
     abstract fun configureModuleComponents(container: StorageComponentContainer)
 
@@ -126,7 +131,7 @@ abstract class PlatformConfigurator(
         callCheckers.forEach { useInstance(it) }
         typeCheckers.forEach { useInstance(it) }
         classifierUsageCheckers.forEach { useInstance(it) }
-        additionalAnnotationCheckers.forEach { useInstance(it) }
+        annotationCheckers.forEach { useInstance(it) }
         useInstance(identifierChecker)
         useInstance(overloadFilter)
         useInstance(platformToKotlinClassMap)

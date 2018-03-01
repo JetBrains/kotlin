@@ -132,7 +132,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             if (quickNavigation) return renderedDecl
 
             val declarationDescriptor = element.resolveToDescriptorIfAny()
-            val enumDescriptor = (declarationDescriptor as? ClassDescriptor)?.getSuperClassNotAny() ?: return renderedDecl
+            val enumDescriptor = declarationDescriptor?.getSuperClassNotAny() ?: return renderedDecl
 
             val enumDeclaration =
                     DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, enumDescriptor) as? KtDeclaration ?: return renderedDecl

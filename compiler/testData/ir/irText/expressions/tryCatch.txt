@@ -23,6 +23,7 @@ FILE fqName:<root> fileName:/tryCatch.kt
               CALL 'println(): Unit' type=kotlin.Unit origin=null
               CONST Int type=kotlin.Int value=24
           finally: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
             BLOCK type=kotlin.Int origin=null
               CALL 'println(): Unit' type=kotlin.Unit origin=null
               CONST Int type=kotlin.Int value=555

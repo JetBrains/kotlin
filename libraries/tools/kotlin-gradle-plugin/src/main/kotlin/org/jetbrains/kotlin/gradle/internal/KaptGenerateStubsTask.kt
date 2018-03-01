@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import com.intellij.openapi.util.io.FileUtil
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinWarn
+import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.incremental.ChangedFiles
@@ -44,7 +47,11 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     lateinit var generatedSourcesDir: File
 
     @get:Classpath @get:InputFiles
-    lateinit var kaptClasspath: List<File>
+    val kaptClasspath: FileCollection
+        get() = project.files(*kaptClasspathConfigurations.toTypedArray())
+
+    @get:Internal
+    internal lateinit var kaptClasspathConfigurations: List<Configuration>
 
     @get:Classpath @get:InputFiles @Suppress("unused")
     internal val kotlinTaskPluginClasspath get() = kotlinCompileTask.pluginClasspath
@@ -66,8 +73,12 @@ open class KaptGenerateStubsTask : KotlinCompile() {
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
         kotlinCompileTask.setupCompilerArgs(args)
+
         args.pluginClasspaths = (pluginClasspath + args.pluginClasspaths!!).toSet().toTypedArray()
-        args.pluginOptions = (pluginOptions.arguments + args.pluginOptions!!).toTypedArray()
+
+        val pluginOptionsWithKapt = pluginOptions.withWrappedKaptOptions(withApClasspath = kaptClasspath)
+        args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()
+
         args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
         args.classpathAsList = this.compileClasspath.toList()
         args.destinationAsFile = this.destinationDir

@@ -10,10 +10,10 @@ import org.junit.Test
 import java.io.File
 
 
-class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "3.4", androidGradlePluginVersion = "2.3.0")
-class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.4", androidGradlePluginVersion = "2.3.+")
+class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionRequired.AtLeast("3.4"), androidGradlePluginVersion = "2.3.0")
+class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(androidGradlePluginVersion = "2.3.+")
 
-class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "4.1-rc-1", androidGradlePluginVersion = "3.0.0-beta1") {
+class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionRequired.AtLeast("4.1"), androidGradlePluginVersion = "3.0.0-beta1") {
 
     @Test
     fun testApplyWithFeaturePlugin() {
@@ -43,8 +43,8 @@ class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion =
 }
 
 abstract class AbstractKotlinAndroidGradleTests(
-        protected val gradleVersion: String,
-        private val androidGradlePluginVersion: String
+    protected val gradleVersion: GradleVersionRequired,
+    private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
@@ -186,6 +186,8 @@ fun getSomething() = 10
     @Test
     fun testKaptKt15814() {
         val project = Project("kaptKt15814", gradleVersion)
+        project.allowOriginalKapt()
+
         val options = defaultBuildOptions().copy(incremental = false)
 
         project.build("assembleDebug", "test", options = options) {
@@ -252,6 +254,7 @@ fun getSomething() = 10
     @Test
     fun testAndroidKaptChangingDependencies() {
         val project = Project("AndroidKaptChangingDependencies", gradleVersion)
+        project.allowOriginalKapt()
 
         project.build("assembleDebug") {
             assertSuccessful()
@@ -276,7 +279,7 @@ fun getSomething() = 10
                 ":libAndroid:compileReleaseUnitTestKotlin"
             )
 
-            val kotlinFolder = if (VersionNumber.parse(gradleVersion).major > 3) "kotlin" else ""
+            val kotlinFolder = if (project.testGradleVersionAtLeast("4.0")) "kotlin" else ""
 
             assertFileExists("lib/build/classes/$kotlinFolder/main/foo/PlatformClass.kotlin_metadata")
             assertFileExists("lib/build/classes/$kotlinFolder/test/foo/PlatformTest.kotlin_metadata")
@@ -293,7 +296,6 @@ fun getSomething() = 10
 
 
 abstract class AbstractKotlinAndroidWithJackGradleTests(
-        private val gradleVersion: String,
         private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
@@ -305,7 +307,7 @@ abstract class AbstractKotlinAndroidWithJackGradleTests(
 
     @Test
     fun testSimpleCompile() {
-        val project = Project("AndroidJackProject", gradleVersion)
+        val project = Project("AndroidJackProject", GradleVersionRequired.Exact("3.4"))
 
         project.build("assemble") {
             assertFailed()

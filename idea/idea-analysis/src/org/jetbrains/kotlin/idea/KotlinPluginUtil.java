@@ -15,7 +15,15 @@ import java.util.Arrays;
 
 public class KotlinPluginUtil {
 
-    public static final PluginId KOTLIN_PLUGIN_ID = PluginId.getId("org.jetbrains.kotlin");
+    public static final PluginId KOTLIN_PLUGIN_ID;
+
+    static {
+        PluginId pluginId = PluginManagerCore.getPluginByClassName(KotlinPluginUtil.class.getName());
+        if (pluginId == null) {
+            pluginId = PluginId.getId("org.jetbrains.kotlin");
+        }
+        KOTLIN_PLUGIN_ID = pluginId;
+    }
 
     @NotNull
     public static String getPluginVersion() {
@@ -26,5 +34,9 @@ public class KotlinPluginUtil {
 
     public static boolean isSnapshotVersion() {
         return "@snapshot@".equals(getPluginVersion());
+    }
+
+    public static boolean isDevVersion() {
+        return getPluginVersion().contains("-dev-");
     }
 }

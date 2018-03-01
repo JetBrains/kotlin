@@ -67,7 +67,11 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     @Override
     public KtFile getContainingKtFile() {
         PsiFile file = getContainingFile();
-        assert file instanceof KtFile : "KtElement not inside KtFile: " + file + " " + (file.isValid() ? file.getText() : "<invalid>");
+        if(!(file instanceof KtFile))  {
+            String fileString = file.isValid() ? file.getText() : "";
+            throw new IllegalStateException("KtElement not inside KtFile: " + file + fileString +
+                                            "for element " + this + " of type " + this.getClass() + " node = " + getNode());
+        }
         return (KtFile) file;
     }
 

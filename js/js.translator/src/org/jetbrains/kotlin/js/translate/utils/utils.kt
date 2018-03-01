@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.js.translate.utils
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -31,15 +34,14 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 
 fun generateDelegateCall(
     classDescriptor: ClassDescriptor,
@@ -242,4 +244,34 @@ fun TranslationContext.createCoroutineResult(resolvedCall: ResolvedCall<*>): JsE
         coroutineResult = true
         synthetic = true
     }
+}
+
+/**
+ * Tries to get precise statically known primitive type. Takes generic supertypes into account. Doesn't handle smart-casts.
+ * This is needed to be compatible with JVM NaN behaviour:
+ *
+ * // Generics with Double super-type
+ * fun <T: Double> foo(v: T) = println(v == v)
+ * foo(Double.NaN) // false
+ *
+ * Also see org/jetbrains/kotlin/codegen/codegenUtil.kt#calcTypeForIEEE754ArithmeticIfNeeded
+ */
+fun TranslationContext.getPrecisePrimitiveType(expression: KtExpression): KotlinType? {
+    val bindingContext = bindingContext()
+    val ktType = bindingContext.getType(expression) ?: return null
+
+    return TypeUtils.getAllSupertypes(ktType).find(KotlinBuiltIns::isPrimitiveTypeOrNullablePrimitiveType) ?: ktType
+}
+
+fun TranslationContext.getPrecisePrimitiveTypeNotNull(expression: KtExpression): KotlinType {
+    return getPrecisePrimitiveType(expression) ?: throw IllegalStateException("Type must be not null for " + expression)
+}
+
+fun TranslationContext.getPrimitiveNumericComparisonInfo(expression: KtExpression) =
+    config.configuration.languageVersionSettings.let {
+        if (it.supportsFeature(LanguageFeature.ProperIeee754Comparisons)) {
+            bindingContext().get(BindingContext.PRIMITIVE_NUMERIC_COMPARISON_INFO, expression)
+        } else {
+            null
+        }
 }

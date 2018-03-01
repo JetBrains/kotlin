@@ -31,6 +31,7 @@ import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -67,6 +68,8 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     @Throws(Exception::class)
     override fun initApplication() {
         super.initApplication()
+
+        KotlinSdkType.setUpIfNeeded()
 
         ApplicationManager.getApplication().runWriteAction {
             ProjectJdkTable.getInstance().addJdk(PluginTestCaseBase.mockJdk6())

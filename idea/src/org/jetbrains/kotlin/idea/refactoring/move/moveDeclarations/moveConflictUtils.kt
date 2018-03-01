@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
+import org.jetbrains.kotlin.idea.caches.project.moduleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -52,16 +54,14 @@ import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.contains
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -94,7 +94,10 @@ class MoveConflictChecker(
     }
 
     private fun getModuleDescriptor(sourceFile: VirtualFile) =
-            getModuleInfoByVirtualFile(project, sourceFile)?.let { resolutionFacade.findModuleDescriptor(it) }
+            getModuleInfoByVirtualFile(
+                project,
+                sourceFile
+            )?.let { resolutionFacade.findModuleDescriptor(it) }
 
     private fun KotlinMoveTarget.getContainerDescriptor(): DeclarationDescriptor? {
         return when (this) {
@@ -291,6 +294,7 @@ class MoveConflictChecker(
             if (declaration.module == targetModule) continue
 
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
+                // NB: for unknown reason, refExpr.resolveToCall() does not work here
                 val targetDescriptor = refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] ?: return@forEachDescendantOfType
 
                 if (KotlinBuiltIns.isBuiltIn(targetDescriptor)) return@forEachDescendantOfType
@@ -331,7 +335,9 @@ class MoveConflictChecker(
             val referencedDescriptor = resolutionFacade.resolveToDescriptor(referencedElement)
 
             if (referencedDescriptor is DeclarationDescriptorWithVisibility
-                && referencedDescriptor.visibility == Visibilities.PUBLIC) continue
+                && referencedDescriptor.visibility == Visibilities.PUBLIC
+                && moveTarget is KotlinMoveTargetForExistingElement
+                && moveTarget.targetElement.parentsWithSelf.filterIsInstance<KtClassOrObject>().all { it.isPublic }) continue
 
             val container = element.getUsageContext()
             if (!declarationToContainers.getOrPut(referencedElement) { HashSet<PsiElement>() }.add(container)) continue
@@ -386,8 +392,12 @@ class MoveConflictChecker(
             val targetVisibility = visibility.normalize()
             if (targetVisibility == Visibilities.PUBLIC) return true
 
-            val referrer = ref.element.getStrictParentOfType<KtNamedDeclaration>()
-            val referrerDescriptor = referrer?.unsafeResolveToDescriptor() ?: return true
+            val refElement = ref.element
+            val referrer = refElement.getStrictParentOfType<KtNamedDeclaration>()
+            var referrerDescriptor = referrer?.resolveToDescriptorIfAny() ?: return true
+            if (referrerDescriptor is ClassDescriptor && refElement.getParentOfTypeAndBranch<KtSuperTypeListEntry> { typeReference } != null) {
+                referrerDescriptor.unsubstitutedPrimaryConstructor?.let { referrerDescriptor = it }
+            }
 
             if (!isVisibleIn(referrerDescriptor)) return true
 
@@ -452,6 +462,38 @@ class MoveConflictChecker(
         }
     }
 
+    private fun checkSealedClassMove(conflicts: MultiMap<PsiElement, String>) {
+        val visited = HashSet<PsiElement>()
+        for (elementToMove in elementsToMove) {
+            if (!visited.add(elementToMove)) continue
+            if (elementToMove !is KtClassOrObject) continue
+
+            val rootClass: KtClass
+            val rootClassDescriptor: ClassDescriptor
+            if (elementToMove is KtClass && elementToMove.isSealed()) {
+                rootClass = elementToMove
+                rootClassDescriptor = rootClass.resolveToDescriptorIfAny() ?: return
+            }
+            else {
+                val classDescriptor = elementToMove.resolveToDescriptorIfAny() ?: return
+                val superClassDescriptor = classDescriptor.getSuperClassNotAny() ?: return
+                if (superClassDescriptor.modality != Modality.SEALED) return
+                rootClassDescriptor = superClassDescriptor
+                rootClass = rootClassDescriptor.source.getPsi() as? KtClass ?: return
+            }
+
+            val subclasses = rootClassDescriptor.sealedSubclasses.mapNotNull { it.source.getPsi() }
+            if (subclasses.isEmpty()) continue
+
+            visited.add(rootClass)
+            visited.addAll(subclasses)
+
+            if (isToBeMoved(rootClass) && subclasses.all { isToBeMoved(it) }) continue
+
+            conflicts.putValue(rootClass, "Sealed class '${rootClass.name}' must be moved with all its subclasses")
+        }
+    }
+
     fun checkAllConflicts(
             externalUsages: MutableSet<UsageInfo>,
             internalUsages: MutableSet<UsageInfo>,
@@ -462,6 +504,7 @@ class MoveConflictChecker(
         checkVisibilityInUsages(externalUsages, conflicts)
         checkVisibilityInDeclarations(conflicts)
         checkInternalMemberUsages(conflicts)
+        checkSealedClassMove(conflicts)
     }
 }
 

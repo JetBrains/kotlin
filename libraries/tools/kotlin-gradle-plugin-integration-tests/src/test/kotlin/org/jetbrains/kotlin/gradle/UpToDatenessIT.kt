@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert
 import org.junit.Assume
@@ -32,7 +33,7 @@ class UpToDateIT : BaseGradleIT() {
     }
 
     private fun testMutations(vararg mutations: ProjectMutation) {
-        val project = Project("simpleProject", "4.1")
+        val project = Project("simpleProject")
         project.setupWorkingDir()
         mutations.forEach {
             it.initProject(project)
@@ -119,7 +120,14 @@ class UpToDateIT : BaseGradleIT() {
         lateinit var helloWorldKtClass: File
 
         override fun mutateProject(project: Project) = with(project) {
-            helloWorldKtClass = File(projectDir, "build/classes/kotlin/main/demo/KotlinGreetingJoiner.class")
+            val kotlinOutputPath =
+                if (testGradleVersionAtLeast("4.0"))
+                    project.classesDir()
+                else
+                    // Before 4.0, we should delete the classes from the temporary dir to make compileKotlin rerun:
+                    "build/kotlin-classes/main/"
+
+            helloWorldKtClass = File(projectDir, kotlinOutputPath + "demo/KotlinGreetingJoiner.class")
             Assume.assumeTrue(helloWorldKtClass.exists())
             helloWorldKtClass.delete(); Unit
         }

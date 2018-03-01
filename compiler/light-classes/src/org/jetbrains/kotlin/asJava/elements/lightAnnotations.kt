@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -93,12 +95,11 @@ class KtLightAnnotationForSourceEntry(
         override fun getReferences() = originalExpression?.references.orEmpty()
         override fun getLanguage() = KotlinLanguage.INSTANCE
         override fun getNavigationElement() = originalExpression
-        override fun isPhysical(): Boolean = false
+        override fun isPhysical(): Boolean = originalExpression?.containingFile == kotlinOrigin.containingFile
         override fun getTextRange() = originalExpression?.textRange ?: TextRange.EMPTY_RANGE
         override fun getParent() = parent
         override fun getText() = originalExpression?.text.orEmpty()
-        override fun getContainingFile(): PsiFile? = if (originalExpression?.containingFile == kotlinOrigin.containingFile)
-            kotlinOrigin.containingFile else delegate.containingFile
+        override fun getContainingFile(): PsiFile? = if (isPhysical) kotlinOrigin.containingFile else delegate.containingFile
 
         override fun replace(newElement: PsiElement): PsiElement {
             val value = (newElement as? PsiLiteral)?.value as? String ?: return this
@@ -175,7 +176,7 @@ class KtLightAnnotationForSourceEntry(
         override fun getType(): PsiType? = delegate.type
     }
 
-    inner class LightStringLiteral(
+    inner class LightPsiLiteral(
             delegate: PsiLiteralExpression,
             parent: PsiElement,
             valueOrigin: AnnotationValueOrigin
@@ -202,6 +203,9 @@ class KtLightAnnotationForSourceEntry(
                 wrapAnnotationValue(memberValue, this, {
                     originalExpression.let { ktOrigin ->
                         when {
+                            ktOrigin is KtCallExpression
+                                    && memberValue is PsiAnnotation
+                                    && isAnnotationConstructorCall(ktOrigin, memberValue) -> ktOrigin
                             ktOrigin is KtValueArgumentList -> ktOrigin.arguments.getOrNull(i)?.getArgumentExpression()
                             ktOrigin is KtCallElement -> ktOrigin.valueArguments.getOrNull(i)?.getArgumentExpression()
                             ktOrigin is KtCollectionLiteralExpression -> ktOrigin.getInnerExpressions().getOrNull(i)
@@ -226,7 +230,7 @@ class KtLightAnnotationForSourceEntry(
 
     private fun wrapAnnotationValue(value: PsiAnnotationMemberValue, parent: PsiElement, ktOrigin: AnnotationValueOrigin): PsiAnnotationMemberValue =
             when {
-                value is PsiLiteralExpression && value.value is String -> LightStringLiteral(value, parent, ktOrigin)
+                value is PsiLiteralExpression -> LightPsiLiteral(value, parent, ktOrigin)
                 value is PsiClassObjectAccessExpression -> LightClassLiteral(value, parent, ktOrigin)
                 value is PsiExpression -> LightExpressionValue(value, parent, ktOrigin)
                 value is PsiArrayInitializerMemberValue -> LightArrayInitializerValue(value, parent, ktOrigin)
@@ -245,6 +249,8 @@ class KtLightAnnotationForSourceEntry(
                 else -> LightElementValue(value, parent, ktOrigin)
             }
 
+    override fun isPhysical() = true
+
     override fun getName() = null
 
     private fun wrapAnnotationValue(value: PsiAnnotationMemberValue): PsiAnnotationMemberValue = wrapAnnotationValue(value, this, {
@@ -254,6 +260,25 @@ class KtLightAnnotationForSourceEntry(
     override fun findAttributeValue(name: String?) = clsDelegate.findAttributeValue(name)?.let { wrapAnnotationValue(it) }
 
     override fun findDeclaredAttributeValue(name: String?) = clsDelegate.findDeclaredAttributeValue(name)?.let { wrapAnnotationValue(it) }
+
+    override fun getParameterList(): PsiAnnotationParameterList = KtLightAnnotationParameterList(super.getParameterList())
+
+    inner class KtLightAnnotationParameterList(private val list: PsiAnnotationParameterList) : KtLightElementBase(this),
+        PsiAnnotationParameterList {
+        override val kotlinOrigin get() = null
+        override fun getAttributes(): Array<PsiNameValuePair> = list.attributes.map { KtLightPsiNameValuePair(it) }.toTypedArray()
+
+        inner class KtLightPsiNameValuePair(private val psiNameValuePair: PsiNameValuePair) : KtLightElementBase(this),
+            PsiNameValuePair {
+            override fun setValue(newValue: PsiAnnotationMemberValue): PsiAnnotationMemberValue = psiNameValuePair.setValue(newValue)
+            override fun getNameIdentifier(): PsiIdentifier? = psiNameValuePair.nameIdentifier
+            override fun getLiteralValue(): String? = (value as? PsiLiteralValue)?.value?.toString()
+            override val kotlinOrigin: KtElement? = null
+
+            override fun getValue(): PsiAnnotationMemberValue? = psiNameValuePair.value?.let { wrapAnnotationValue(it) }
+        }
+    }
+
 
     override fun delete() = kotlinOrigin.delete()
 
@@ -336,6 +361,9 @@ private fun KtElement.getResolvedCall(): ResolvedCall<out CallableDescriptor>? {
     val context = LightClassGenerationSupport.getInstance(this.project).analyze(this)
     return this.getResolvedCall(context)
 }
+
+private fun isAnnotationConstructorCall(callExpression: KtCallExpression, psiAnnotation: PsiAnnotation) =
+    (callExpression.getResolvedCall()?.resultingDescriptor as? ClassConstructorDescriptor)?.constructedClass?.fqNameUnsafe?.toString() == psiAnnotation.qualifiedName
 
 private fun PsiElement.asKtCall(): KtCallElement? = (this as? KtElement)?.getResolvedCall()?.call?.callElement as? KtCallElement
 

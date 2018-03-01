@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.MessageLite;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
@@ -125,6 +126,12 @@ public class AsmUtil {
     @Nullable
     public static Type unboxPrimitiveTypeOrNull(@NotNull Type boxedType) {
         return primitiveTypeByBoxedType.get(boxedType);
+    }
+
+    @NotNull
+    public static Type unboxUnlessPrimitive(@NotNull Type boxedOrPrimitiveType) {
+        if (isPrimitive(boxedOrPrimitiveType)) return boxedOrPrimitiveType;
+        return unboxType(boxedOrPrimitiveType);
     }
 
     public static boolean isBoxedTypeOf(@NotNull Type boxedType, @NotNull Type unboxedType) {
@@ -677,7 +684,7 @@ public class AsmUtil {
             @NotNull String name
     ) {
         KotlinType type = parameter.getType();
-        if (isNullableType(type)) return;
+        if (isNullableType(type) || InlineClassesUtilsKt.isNullableUnderlyingType(type)) return;
 
         int index = frameMap.getIndex(parameter);
         Type asmType = typeMapper.mapType(type);
@@ -702,7 +709,7 @@ public class AsmUtil {
         return new StackValue(stackValue.type) {
 
             @Override
-            public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
+            public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
                 Type innerType = stackValue.type;
                 stackValue.put(innerType, v);
                 if (innerType.getSort() == Type.OBJECT || innerType.getSort() == Type.ARRAY) {

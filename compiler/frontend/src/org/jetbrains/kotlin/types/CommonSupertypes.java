@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types;
@@ -24,11 +13,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.utils.DFS;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.types.Variance.IN_VARIANCE;
 import static org.jetbrains.kotlin.types.Variance.OUT_VARIANCE;
@@ -147,7 +138,23 @@ public class CommonSupertypes {
             }
             commonSupertypes = computeCommonRawSupertypes(merge);
         }
-        assert !commonSupertypes.isEmpty() : commonSupertypes + " <- " + types;
+
+        if (commonSupertypes.isEmpty()) {
+            StringBuilder info = new StringBuilder();
+            for (SimpleType type : types) {
+                String superTypes = type.getConstructor().getSupertypes().stream()
+                        .map(CommonSupertypes::renderTypeFully)
+                        .collect(Collectors.joining(", "));
+
+                info
+                        .append("Info about ").append(renderTypeFully(type)).append(": ").append('\n')
+                        .append("- Supertypes: ").append(superTypes).append('\n')
+                        .append("- DeclarationDescriptor class: ").append(classOfDeclarationDescriptor(type)).append('\n')
+                        .append("- TypeConstructor class: ").append(type.getConstructor().getClass()).append('\n')
+                        .append('\n');
+            }
+            throw new IllegalStateException("There is no common supertype for: " + types + " \n" + info.toString());
+        }
 
         // constructor of the supertype -> all of its instantiations occurring as supertypes
         Map.Entry<TypeConstructor, Set<SimpleType>> entry = commonSupertypes.entrySet().iterator().next();
@@ -155,6 +162,21 @@ public class CommonSupertypes {
         // Reconstructing type arguments if possible
         SimpleType result = computeSupertypeProjections(entry.getKey(), entry.getValue(), recursionDepth, maxDepth);
         return TypeUtils.makeNullableIfNeeded(result, nullable);
+    }
+
+    @NotNull
+    private static String renderTypeFully(@NotNull KotlinType type) {
+        return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
+    }
+
+    @Nullable
+    private static Class<?> classOfDeclarationDescriptor(@NotNull KotlinType type) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (descriptor != null) {
+            return descriptor.getClass();
+        }
+
+        return null;
     }
 
     // Raw supertypes are superclasses w/o type arguments

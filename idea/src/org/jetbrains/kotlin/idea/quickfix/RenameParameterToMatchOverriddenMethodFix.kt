@@ -20,9 +20,8 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.rename.RenameProcessor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -45,8 +44,7 @@ class RenameParameterToMatchOverriddenMethodFix(
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val parameter = diagnostic.psiElement.getNonStrictParentOfType<KtParameter>() ?: return null
-            val parameterDescriptor = parameter.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? ValueParameterDescriptor
-                                      ?: return null
+            val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return null
             val parameterFromSuperclassName = parameterDescriptor
                     .overriddenDescriptors
                     .map { it.name.asString() }

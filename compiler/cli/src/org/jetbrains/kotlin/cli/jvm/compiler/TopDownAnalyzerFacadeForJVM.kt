@@ -227,10 +227,10 @@ object TopDownAnalyzerFacadeForJVM {
         }
 
         // TODO: remove dependencyModule from friends
-        module.setDependencies(ModuleDependenciesImpl(
+        module.setDependencies(
                 listOfNotNull(module, dependencyModule, optionalBuiltInsModule),
                 if (dependencyModule != null) setOf(dependencyModule) else emptySet()
-        ))
+        )
         module.initialize(CompositePackageFragmentProvider(
                 listOf(container.get<KotlinCodeAnalyzer>().packageFragmentProvider) +
                 additionalProviders

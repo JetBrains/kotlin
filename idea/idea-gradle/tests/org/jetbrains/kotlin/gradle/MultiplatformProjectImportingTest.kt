@@ -119,6 +119,68 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
     }
 
     @Test
+    fun testPlatformToCommonExpectedByDependencyInComposite() {
+        createProjectSubFile("toInclude/settings.gradle", "include ':common', ':jvm', ':js'")
+
+        val kotlinVersion = "1.2.0-beta-74"
+
+        createProjectSubFile("toInclude/build.gradle", """
+             buildscript {
+                repositories {
+                    mavenCentral()
+                    maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                }
+            }
+
+            project('common') {
+                apply plugin: 'kotlin-platform-common'
+            }
+
+            project('jvm') {
+                apply plugin: 'kotlin-platform-jvm'
+
+                dependencies {
+                    expectedBy project(':common')
+                }
+            }
+
+            project('js') {
+                apply plugin: 'kotlin-platform-js'
+
+                dependencies {
+                    expectedBy project(':common')
+                }
+            }
+        """)
+
+        createProjectSubFile("settings.gradle", "includeBuild('toInclude')")
+        createProjectSubFile("build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                }
+            }
+
+            apply plugin: 'kotlin'
+        """.trimIndent())
+
+        importProject()
+        assertModuleModuleDepScope("jvm_main", "common_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm_test", "common_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("js_main", "common_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("js_test", "common_test", DependencyScope.COMPILE)
+    }
+
+    @Test
     fun testPlatformToCommonDependencyRoot() {
         createProjectSubFile("settings.gradle", "rootProject.name = 'foo'\ninclude ':jvm', ':js'")
 
@@ -367,29 +429,43 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
         """)
 
-        importProject()
+        val isResolveModulePerSourceSet = getCurrentExternalProjectSettings().isResolveModulePerSourceSet
 
-        assertModuleModuleDepScope("project1_test", "project1_main", DependencyScope.COMPILE)
+        try {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = true
+            importProject()
 
-        assertModuleModuleDepScope("project2_main", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project1_test", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project2_test", "project2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project2_test", "project1_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project2_test", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_main", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project2_custom", "project1_custom", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_test", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_test", "project1_test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_test", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project3_main", "project2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_main", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_custom", "project1_custom", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project3_test", "project3_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project2_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project1_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_main", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_main", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project3_custom", "project1_custom", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_custom", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project3_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project2_test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project1_test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project1_main", DependencyScope.COMPILE)
+
+            assertModuleModuleDepScope("project3_custom", "project1_custom", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_custom", "project2_main", DependencyScope.COMPILE)
+
+            currentExternalProjectSettings.isResolveModulePerSourceSet = false
+            importProject()
+
+            assertModuleModuleDepScope("project2", "project1", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3", "project2", DependencyScope.TEST, DependencyScope.PROVIDED, DependencyScope.RUNTIME)
+            assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+        } finally {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
+        }
     }
 
     @Test

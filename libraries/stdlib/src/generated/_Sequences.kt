@@ -696,7 +696,7 @@ public fun <T> Sequence<T>.toSet(): Set<T> {
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  *
  * The operation is _terminal_.
  */
@@ -705,7 +705,7 @@ public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): java.util.SortedSet<T> 
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  * 
  * Elements in the set returned are sorted according to the given [comparator].
  *
@@ -963,6 +963,8 @@ public fun <T> Sequence<T>.toMutableSet(): MutableSet<T> {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  *
  * The operation is _terminal_.
  */
@@ -973,6 +975,8 @@ public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if sequence has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  *
  * The operation is _terminal_.
  */
@@ -982,6 +986,8 @@ public fun <T> Sequence<T>.any(): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  *
  * The operation is _terminal_.
  */
@@ -1251,6 +1257,8 @@ public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T? {
 
 /**
  * Returns `true` if the sequence has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  *
  * The operation is _terminal_.
  */
@@ -1260,6 +1268,8 @@ public fun <T> Sequence<T>.none(): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  *
  * The operation is _terminal_.
  */
@@ -1269,7 +1279,7 @@ public inline fun <T> Sequence<T>.none(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns a sequence which performs the given [action] on each element of the original sequence as they pass though it.
+ * Returns a sequence which performs the given [action] on each element of the original sequence as they pass through it.
  *
  * The operation is _intermediate_ and _stateless_.
  */
@@ -1648,6 +1658,8 @@ public fun <T, R> Sequence<T>.zipWithNext(transform: (a: T, b: T) -> R): Sequenc
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  *
  * The operation is _terminal_.
  */
@@ -1670,6 +1682,8 @@ public fun <T, A : Appendable> Sequence<T>.joinTo(buffer: A, separator: CharSequ
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  *
  * The operation is _terminal_.
  */

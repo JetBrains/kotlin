@@ -52,12 +52,14 @@ FILE fqName:<root> fileName:/elvis.kt
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:
             GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null
           then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
             CONST String type=kotlin.String value=
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String?
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
           then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
             CONST String type=kotlin.String value=
@@ -71,10 +73,12 @@ FILE fqName:<root> fileName:/elvis.kt
                 arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:
                 GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:
                 GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
   FUN name:test4 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:Any flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:

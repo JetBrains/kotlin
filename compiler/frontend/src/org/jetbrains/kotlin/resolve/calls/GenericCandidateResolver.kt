@@ -68,7 +68,8 @@ private val SPECIAL_FUNCTION_NAMES = ResolveConstruct.values().map { it.specialF
 class GenericCandidateResolver(
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val coroutineInferenceSupport: CoroutineInferenceSupport,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
     fun <D : CallableDescriptor> inferTypeArguments(context: CallCandidateResolutionContext<D>): ResolutionStatus {
         val candidateCall = context.candidateCall
@@ -328,7 +329,7 @@ class GenericCandidateResolver(
         val deparenthesizedArgument = KtPsiUtil.getLastElementDeparenthesized(argumentExpression, context.statementFilter)
         if (deparenthesizedArgument == null || type == null) return type
 
-        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context)
+        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context)
         if (!dataFlowValue.isStable) return type
 
         val possibleTypes = context.dataFlowInfo.getCollectedTypes(dataFlowValue, context.languageVersionSettings)

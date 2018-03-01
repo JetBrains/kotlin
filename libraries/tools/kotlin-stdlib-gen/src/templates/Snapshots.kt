@@ -100,7 +100,7 @@ object Snapshots : TemplateGroupBase() {
         platforms(Platform.JVM)
     } builder {
         typeParam("T: Comparable<T>")
-        doc { "Returns a [SortedSet] of all ${f.element.pluralize()}." }
+        doc { "Returns a [SortedSet][java.util.SortedSet] of all ${f.element.pluralize()}." }
         returns("java.util.SortedSet<T>")
         body { "return toCollection(java.util.TreeSet<T>())" }
     }
@@ -111,7 +111,7 @@ object Snapshots : TemplateGroupBase() {
     } builder {
         doc {
             """
-                Returns a [SortedSet] of all ${f.element.pluralize()}.
+                Returns a [SortedSet][java.util.SortedSet] of all ${f.element.pluralize()}.
 
                 Elements in the set returned are sorted according to the given [comparator].
             """

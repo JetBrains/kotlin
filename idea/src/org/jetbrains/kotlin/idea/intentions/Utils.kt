@@ -23,15 +23,17 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -56,7 +58,7 @@ fun KtContainerNode.description(): String? {
 }
 
 fun KtCallExpression.isMethodCall(fqMethodName: String): Boolean {
-    val resolvedCall = this.getResolvedCall(this.analyze()) ?: return false
+    val resolvedCall = this.resolveToCall() ?: return false
     return resolvedCall.resultingDescriptor.fqNameUnsafe.asString() == fqMethodName
 }
 
@@ -103,7 +105,7 @@ val KtQualifiedExpression.calleeName: String?
 
 fun KtQualifiedExpression.toResolvedCall(bodyResolveMode: BodyResolveMode): ResolvedCall<out CallableDescriptor>? {
     val callExpression = callExpression ?: return null
-    return callExpression.getResolvedCall(callExpression.analyze(bodyResolveMode)) ?: return null
+    return callExpression.resolveToCall(bodyResolveMode) ?: return null
 }
 
 fun KtExpression.isExitStatement(): Boolean = when (this) {
@@ -232,7 +234,7 @@ fun KtElement?.isZero() = this?.text == "0"
 fun KtElement?.isOne() = this?.text == "1"
 
 private fun KtExpression.isExpressionOfTypeOrSubtype(predicate: (KotlinType) -> Boolean): Boolean {
-    val returnType = getResolvedCall(analyze())?.resultingDescriptor?.returnType
+    val returnType = resolveToCall()?.resultingDescriptor?.returnType
     return returnType != null && (returnType.constructor.supertypes + returnType).any(predicate)
 }
 
@@ -289,8 +291,18 @@ private val ARRAY_OF_METHODS = setOf(CollectionLiteralResolver.ARRAY_OF_FUNCTION
                                Name.identifier("emptyArray")
 
 fun KtCallExpression.isArrayOfMethod(): Boolean {
-    val resolvedCall = getResolvedCall(analyze()) ?: return false
+    val resolvedCall = resolveToCall() ?: return false
     val descriptor = resolvedCall.candidateDescriptor
     return (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
            ARRAY_OF_METHODS.contains(descriptor.name)
+}
+
+fun KtBlockExpression.getParentLambdaLabelName(): String? {
+    val lambdaExpression = getStrictParentOfType<KtLambdaExpression>() ?: return null
+    val callExpression = lambdaExpression.getStrictParentOfType<KtCallExpression>() ?: return null
+    val valueArgument = callExpression.valueArguments.find {
+        it.getArgumentExpression()?.unpackFunctionLiteral(allowParentheses = false) === lambdaExpression
+    } ?: return null
+    val lambdaLabelName = (valueArgument.getArgumentExpression() as? KtLabeledExpression)?.getLabelName()
+    return lambdaLabelName ?: callExpression.getCallNameExpression()?.text
 }

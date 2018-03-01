@@ -92,7 +92,7 @@ class DeserializerForClassfileDecompiler(
         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
         val membersScope = DeserializedPackageMemberScope(
                 createDummyPackageFragment(header.packageName?.let(::FqName) ?: facadeFqName.parent()), packageProto, nameResolver,
-                JvmPackagePartSource(binaryClassForPackageClass), deserializationComponents
+                JvmPackagePartSource(binaryClassForPackageClass, packageProto, nameResolver), deserializationComponents
         ) { emptyList() }
         return membersScope.getContributedDescriptors().toList()
     }

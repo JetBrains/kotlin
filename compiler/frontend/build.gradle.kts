@@ -11,7 +11,7 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:container"))
     compile(project(":compiler:resolution"))
-    compile(projectDist(":kotlin-script-runtime"))
+    compile(project(":kotlin-script-runtime"))
     compile(commonDep("io.javaslang","javaslang"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("annotations", "trove4j", "guava", rootProject = rootProject) }

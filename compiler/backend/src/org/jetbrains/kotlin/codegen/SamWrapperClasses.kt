@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.org.objectweb.asm.Type
@@ -27,10 +29,15 @@ class SamWrapperClasses(private val state: GenerationState) {
 
     private val samInterfaceToWrapperClass = hashMapOf<WrapperKey, Type>()
 
-    fun getSamWrapperClass(samType: SamType, file: KtFile, expressionCodegen: ExpressionCodegen): Type {
+    fun getSamWrapperClass(
+        samType: SamType,
+        file: KtFile,
+        expressionCodegen: ExpressionCodegen,
+        contextDescriptor: CallableMemberDescriptor
+    ): Type {
         val isInsideInline = InlineUtil.isInlineOrContainingInline(expressionCodegen.context.contextDescriptor)
         return samInterfaceToWrapperClass.getOrPut(WrapperKey(samType, file, isInsideInline)) {
-            SamWrapperCodegen(state, samType, expressionCodegen.parentCodegen, isInsideInline).genWrapper(file)
+            SamWrapperCodegen(state, samType, expressionCodegen.parentCodegen, isInsideInline).genWrapper(file, contextDescriptor)
         }
     }
 }

@@ -124,7 +124,8 @@ public class PropertyCodegen {
             @Nullable KtPropertyAccessor getter,
             @Nullable KtPropertyAccessor setter
     ) {
-        assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DEFAULT_IMPLS
+        assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION ||
+               kind == OwnerKind.DEFAULT_IMPLS || kind == OwnerKind.ERASED_INLINE_CLASS
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
         genBackingFieldAndAnnotations(declaration, descriptor, false);
@@ -155,7 +156,7 @@ public class PropertyCodegen {
     private void genBackingFieldAndAnnotations(
             @Nullable KtNamedDeclaration declaration, @NotNull PropertyDescriptor descriptor, boolean isParameter
     ) {
-        boolean hasBackingField = hasBackingField(descriptor);
+        boolean hasBackingField = JvmCodegenUtil.hasBackingField(descriptor, kind, bindingContext);
         boolean hasDelegate = declaration instanceof KtProperty && ((KtProperty) declaration).hasDelegate();
 
         AnnotationSplitter annotationSplitter =
@@ -302,12 +303,6 @@ public class PropertyCodegen {
         return null;
     }
 
-    private boolean hasBackingField(@NotNull PropertyDescriptor descriptor) {
-        return !isJvmInterface(descriptor.getContainingDeclaration()) &&
-               kind != OwnerKind.DEFAULT_IMPLS &&
-               !Boolean.FALSE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor));
-    }
-
     private boolean generateBackingField(
             @NotNull KtNamedDeclaration p,
             @NotNull PropertyDescriptor descriptor,
@@ -315,6 +310,10 @@ public class PropertyCodegen {
             @NotNull Annotations delegateAnnotations
     ) {
         if (isJvmInterface(descriptor.getContainingDeclaration()) || kind == OwnerKind.DEFAULT_IMPLS) {
+            return false;
+        }
+
+        if (kind == OwnerKind.ERASED_INLINE_CLASS) {
             return false;
         }
 
@@ -585,7 +584,7 @@ public class PropertyCodegen {
         StackValue.Field array = StackValue.field(
                 Type.getType("[" + K_PROPERTY_TYPE), owner, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, true, StackValue.none()
         );
-        return StackValue.arrayElement(K_PROPERTY_TYPE, array, StackValue.constant(index, Type.INT_TYPE));
+        return StackValue.arrayElement(K_PROPERTY_TYPE, null, array, StackValue.constant(index, Type.INT_TYPE));
     }
 
     private static class DelegatedPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {

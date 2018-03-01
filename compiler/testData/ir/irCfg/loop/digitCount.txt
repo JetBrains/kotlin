@@ -39,18 +39,17 @@ CONTENT
       1 SET_VAR 'number: Int' type=kotlin.Unit origin=DIVEQ
       2 GET_VAR 'number: Int' type=kotlin.Int origin=null
       3 CONST Int type=kotlin.Int value=0
-      4 CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
 OUTGOING -> BB 4, 5
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 BB 4
 INCOMING <- BB 3
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
 OUTGOING -> BB 1
     Do..while entry: DO_WHILE label=null origin=DO_WHILE_LOOP
 BB 5
 INCOMING <- BB 3
-    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
 OUTGOING -> BB 6
     Do..while exit: DO_WHILE label=null origin=DO_WHILE_LOOP

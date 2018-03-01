@@ -1,6 +1,6 @@
 object O
 
 fun foo(arg: Any) {
-    if (arg == O) {
+    if (arg === O) {
     }
 }

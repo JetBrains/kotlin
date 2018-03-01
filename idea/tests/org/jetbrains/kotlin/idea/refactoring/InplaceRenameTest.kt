@@ -55,7 +55,7 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     }
 
     fun testLocalFunction() {
-        doTestInplaceRename("bar")
+        doTestMemberInplaceRename("bar")
     }
 
     fun testFunctionParameterNotInplace() {
@@ -71,7 +71,7 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     }
 
     fun testLabelFromFunction() {
-        doTestInplaceRename("foo")
+        doTestMemberInplaceRename("foo")
     }
 
     fun testMultiDeclaration() {
@@ -94,6 +94,14 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestMemberInplaceRename("get")
     }
 
+    fun testInvokeToGetWithQualifiedExpr() {
+        doTestMemberInplaceRename("get")
+    }
+
+    fun testInvokeToGetWithSafeQualifiedExpr() {
+        doTestMemberInplaceRename("get")
+    }
+
     fun testInvokeToPlus() {
         doTestMemberInplaceRename("plus")
     }
@@ -106,8 +114,24 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestMemberInplaceRename("invoke")
     }
 
+    fun testGetToInvokeWithQualifiedExpr() {
+        doTestMemberInplaceRename("invoke")
+    }
+
+    fun testGetToInvokeWithSafeQualifiedExpr() {
+        doTestMemberInplaceRename("invoke")
+    }
+
     fun testGetToPlus() {
         doTestMemberInplaceRename("plus")
+    }
+
+    fun testAddQuotes() {
+        doTestMemberInplaceRename("is")
+    }
+
+    fun testAddThis() {
+        doTestMemberInplaceRename("foo")
     }
 
     private fun doTestImplicitLambdaParameter(newName: String) {

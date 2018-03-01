@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
-import org.jetbrains.kotlin.codegen.inline.MaxStackFrameSizeAndLocalsCalculator
-import org.jetbrains.kotlin.codegen.inline.isAfterSuspendMarker
-import org.jetbrains.kotlin.codegen.inline.isBeforeSuspendMarker
-import org.jetbrains.kotlin.codegen.inline.isInlineMarker
+import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
@@ -81,6 +78,13 @@ class CoroutineTransformerMethodVisitor(
             ReturnUnitMethodTransformer.transform(containingClassInternalName, methodNode)
 
             if (allSuspensionPointsAreTailCalls(containingClassInternalName, methodNode, suspensionPoints)) {
+                continuationIndex =
+                        if (isStatic(methodNode.access))
+                            Type.getArgumentTypes(methodNode.desc).size - 1
+                        else
+                            Type.getArgumentTypes(methodNode.desc).size
+                replaceFakeContinuationsWithRealOnes(methodNode, continuationIndex)
+
                 dropSuspensionMarkers(methodNode, suspensionPoints)
                 return
             }
@@ -98,6 +102,8 @@ class CoroutineTransformerMethodVisitor(
 
         // Actual max stack might be increased during the previous phases
         updateMaxStack(methodNode)
+
+        replaceFakeContinuationsWithRealOnes(methodNode, continuationIndex)
 
         // Remove unreachable suspension points
         // If we don't do this, then relevant frames will not be analyzed, that is unexpected from point of view of next steps (e.g. variable spilling)
@@ -151,6 +157,14 @@ class CoroutineTransformerMethodVisitor(
 
         dropSuspensionMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
+    }
+
+    private fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, continuationIndex: Int) {
+        val fakeContinuations = methodNode.instructions.asSequence().filter(::isFakeContinuationMarker)
+        for (fakeContinuation in fakeContinuations) {
+            methodNode.instructions.removeAll(listOf(fakeContinuation.previous.previous, fakeContinuation.previous))
+            methodNode.instructions.set(fakeContinuation, VarInsnNode(Opcodes.ALOAD, continuationIndex))
+        }
     }
 
     private fun createInsnForReadingLabel() =

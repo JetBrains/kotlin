@@ -29,7 +29,7 @@ public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creato
 }
 
 public final class Test : java/lang/Object, android/os/Parcelable {
-    public final static Test$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     private final android.util.Size nullable
 
@@ -119,7 +119,7 @@ public final class TestF$Creator : java/lang/Object, android/os/Parcelable$Creat
 }
 
 public final class TestF : java/lang/Object, android/os/Parcelable {
-    public final static TestF$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     private final android.util.SizeF nullable
 

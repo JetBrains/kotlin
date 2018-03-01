@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.rename.DirectoryAsPackageRenameHandler
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 
 class KotlinDirectoryAsPackageRenameHandler : DirectoryAsPackageRenameHandler() {
-    override fun isIdentifier(name: String, project: Project) = KotlinNameSuggester.isIdentifier(name.quoteIfNeeded())
+    override fun isIdentifier(name: String, project: Project): Boolean = name.quoteIfNeeded().isIdentifier()
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -200,10 +201,8 @@ class DeprecationResolver(
         descriptor.checkSinceKotlinVersionAccessibility(languageVersionSettings)
     }
 
-    fun getDeprecations(
-        descriptor: DeclarationDescriptor
-    ) = deprecations(descriptor.original)
-
+    fun getDeprecations(descriptor: DeclarationDescriptor): List<Deprecation> =
+        deprecations(descriptor.original)
 
     fun isDeprecatedHidden(descriptor: DeclarationDescriptor): Boolean =
         getDeprecations(descriptor).any { it.deprecationLevel == HIDDEN }
@@ -301,7 +300,7 @@ class DeprecationResolver(
                     ProtoBuf.VersionRequirement.VersionKind.API_VERSION ->
                         languageVersionSettings.apiVersion
                     ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION ->
-                        ApiVersion.LATEST_STABLE
+                        KotlinCompilerVersion.getVersion()?.let((ApiVersion)::parse)
                     else -> null
                 }
                 if (currentVersion != null && currentVersion < requiredVersion) {

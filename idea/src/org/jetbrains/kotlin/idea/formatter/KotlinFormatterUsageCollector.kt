@@ -19,9 +19,21 @@ class KotlinFormatterUsageCollector : AbstractProjectsUsagesCollector() {
     override fun getProjectUsages(project: Project): Set<UsageDescriptor> {
         val usedFormatter = getKotlinFormatterKind(project)
 
+        val settings = CodeStyleSettingsManager.getSettings(project)
+        val kotlinCommonSettings = settings.kotlinCommonSettings
+        val kotlinCustomSettings = settings.kotlinCustomSettings
+
         return setOf(
-            getEnumUsage("kotlin.formatter.kind", usedFormatter)
+            getEnumUsage("kotlin.formatter.kind", usedFormatter),
+            getEnumStringPropertyUsage(
+                "kotlin.formatter.defaults",
+                kotlinCustomSettings.CODE_STYLE_DEFAULTS ?: kotlinCommonSettings.CODE_STYLE_DEFAULTS
+            )
         )
+    }
+
+    private fun getEnumStringPropertyUsage(key: String, value: String?): UsageDescriptor {
+        return UsageDescriptor(key + "." + value.toString().toLowerCase(java.util.Locale.ENGLISH), 1)
     }
 
     companion object {

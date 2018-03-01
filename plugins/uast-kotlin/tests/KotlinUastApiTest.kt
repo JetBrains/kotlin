@@ -1,10 +1,12 @@
 package org.jetbrains.uast.test.kotlin
 
+import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifier
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.uast.*
@@ -275,6 +277,36 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
         }
     }
+
+    @Test
+    fun testTypeAliases() {
+        doTest("TypeAliases") { _, file ->
+            val g = (file.psi as KtFile).declarations.single { it.name == "G" } as KtTypeAlias
+            val originalType = g.getTypeReference()!!.typeElement as KtFunctionType
+            val originalTypeParameters = originalType.parameterList.toUElement() as UDeclarationsExpression
+            Assert.assertTrue((originalTypeParameters.declarations.single() as UParameter).type.isValid)
+        }
+    }
+
+    @Test
+    fun testNestedAnnotation() = doTest("AnnotationComplex") { _, file ->
+        file.findElementByTextFromPsi<UElement>("@AnnotationArray(value = Annotation())")
+            .findElementByTextFromPsi<UElement>("Annotation()")
+            .sourcePsiElement
+            .let { referenceExpression ->
+                val convertedUAnnotation = referenceExpression
+                    .cast<KtReferenceExpression>()
+                    .toUElementOfType<UAnnotation>()
+                        ?: throw AssertionError("haven't got annotation from $referenceExpression(${referenceExpression?.javaClass})")
+
+                assertEquals("Annotation", convertedUAnnotation.qualifiedName)
+                val lightAnnotation = convertedUAnnotation.getAsJavaPsiElement(PsiAnnotation::class.java)
+                        ?: throw AssertionError("can't get lightAnnotation from $convertedUAnnotation")
+                assertEquals("Annotation", lightAnnotation.qualifiedName)
+            }
+    }
+
+
 }
 
 fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T = find { transform(it) == value } ?: throw AssertionError("'$value' not found, only ${this.joinToString { transform(it).toString() }}")

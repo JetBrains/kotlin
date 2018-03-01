@@ -8,8 +8,8 @@ import kotlin.collections.HashSet
 
 fun main(args: Array<String>) {
     val mdnCacheFile = File("target/mdn-cache.txt")
-    val outDir = File("../../../js/js.libraries/src/generated")
-    val srcDir = File("../../idl")
+    val outDir = File("../../stdlib/js/src/org.w3c")
+    val srcDir = File("../../stdlib/js/idl")
     if (!srcDir.exists()) {
         System.err?.println("Directory ${srcDir.absolutePath} doesn't exist")
         System.exit(1)

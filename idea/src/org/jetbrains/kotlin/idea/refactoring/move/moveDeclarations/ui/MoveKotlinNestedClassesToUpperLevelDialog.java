@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -320,11 +321,11 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         String parameterName = getParameterName();
 
         if (className != null && className.isEmpty()) throw new ConfigurationException(RefactoringBundle.message("no.class.name.specified"));
-        if (!KotlinNameSuggester.INSTANCE.isIdentifier(className)) throw new ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(className));
+        if (!KtPsiUtilKt.isIdentifier(className)) throw new ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(className));
 
         if (passOuterClassCheckBox.isSelected()) {
             if (parameterName != null && parameterName.isEmpty()) throw new ConfigurationException(RefactoringBundle.message("no.parameter.name.specified"));
-            if (!KotlinNameSuggester.INSTANCE.isIdentifier(parameterName)) throw new ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(parameterName));
+            if (!KtPsiUtilKt.isIdentifier(parameterName)) throw new ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(parameterName));
         }
 
         PsiElement targetContainer = getTargetContainer();

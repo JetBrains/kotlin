@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
-import org.jetbrains.kotlin.resolve.calls.checkers.DslScopeViolationCallChecker.extractDslMarkerFqNames
+import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
@@ -246,7 +246,8 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
                     is DoubleColonLHS.Expression -> {
                         val receiverValue = ExpressionReceiver.create(receiver, lhs.type, bindingContext)
                         return receiverValueTypes(receiverValue, lhs.dataFlowInfo, bindingContext,
-                                                  moduleDescriptor, stableSmartCastsOnly, languageVersionSettings)
+                                                  moduleDescriptor, stableSmartCastsOnly, languageVersionSettings,
+                                                  resolutionFacade.frontendService<DataFlowValueFactory>())
                                 .map { ReceiverType(it, 0) }
                     }
                 }
@@ -304,7 +305,8 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
     var receiverIndex = 0
 
     fun addReceiverType(receiverValue: ReceiverValue, implicit: Boolean) {
-        val types = receiverValueTypes(receiverValue, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly, languageVersionSettings)
+        val types = receiverValueTypes(receiverValue, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly, languageVersionSettings,
+                                       resolutionFacade.frontendService<DataFlowValueFactory>())
         types.mapTo(result) { ReceiverType(it, receiverIndex, implicit) }
         receiverIndex++
     }
@@ -323,16 +325,18 @@ private fun receiverValueTypes(
         bindingContext: BindingContext,
         moduleDescriptor: ModuleDescriptor,
         stableSmartCastsOnly: Boolean,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        dataFlowValueFactory: DataFlowValueFactory
 ): List<KotlinType> {
-    val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
+    val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
     return if (dataFlowValue.isStable || !stableSmartCastsOnly) { // we don't include smart cast receiver types for "unstable" receiver value to mark members grayed
         SmartCastManager().getSmartCastVariantsWithLessSpecificExcluded(
                 receiverValue,
                 bindingContext,
                 moduleDescriptor,
                 dataFlowInfo,
-                languageVersionSettings
+                languageVersionSettings,
+                dataFlowValueFactory
         )
     }
     else {
@@ -346,7 +350,7 @@ fun Collection<ReceiverType>.shadowedByDslMarkers(): Set<ReceiverType> {
 
     this
             .mapNotNull { receiver ->
-                val dslMarkers = receiver.type.extractDslMarkerFqNames()
+                val dslMarkers = DslMarkerUtils.extractDslMarkerFqNames(receiver.type)
                 (receiver to dslMarkers).takeIf { dslMarkers.isNotEmpty() }
             }
             .forEach { (v, dslMarkers) -> dslMarkers.forEach { typesByDslScopes.getOrPut(it, { mutableListOf() }) += v } }

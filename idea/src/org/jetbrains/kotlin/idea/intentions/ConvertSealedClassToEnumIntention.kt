@@ -25,7 +25,6 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
@@ -46,7 +45,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
         val nameIdentifier = element.nameIdentifier ?: return null
         val sealedKeyword = element.modifierList?.getModifier(KtTokens.SEALED_KEYWORD) ?: return null
 
-        val classDescriptor = element.resolveToDescriptorIfAny() as? ClassDescriptor ?: return null
+        val classDescriptor = element.resolveToDescriptorIfAny() ?: return null
         if (classDescriptor.getSuperClassNotAny() != null) return null
 
         return TextRange(sealedKeyword.startOffset, nameIdentifier.endOffset)

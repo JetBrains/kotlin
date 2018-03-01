@@ -161,6 +161,8 @@ object ExpectedActualResolver {
         sealed class Incompatible(val reason: String?, val kind: IncompatibilityKind = IncompatibilityKind.WEAK) : Compatibility() {
             // Callables
 
+            object CallableKind : Incompatible("callable kinds are different (function vs property)", IncompatibilityKind.STRONG)
+
             object ParameterShape : Incompatible("parameter shapes are different (extension vs non-extension)", IncompatibilityKind.STRONG)
 
             object ParameterCount : Incompatible("number of value parameters is different", IncompatibilityKind.STRONG)
@@ -226,6 +228,9 @@ object ExpectedActualResolver {
         assert(a.containingDeclaration is ClassifierDescriptorWithTypeParameters == b.containingDeclaration is ClassifierDescriptorWithTypeParameters) {
             "This function should be invoked only for declarations in the same kind of container (both members or both top level): $a, $b"
         }
+
+        if (a is FunctionDescriptor && b !is FunctionDescriptor ||
+            a !is FunctionDescriptor && b is FunctionDescriptor) return Incompatible.CallableKind
 
         val aExtensionReceiver = a.extensionReceiverParameter
         val bExtensionReceiver = b.extensionReceiverParameter

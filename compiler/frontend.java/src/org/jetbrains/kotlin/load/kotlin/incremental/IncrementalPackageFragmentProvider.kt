@@ -90,7 +90,9 @@ class IncrementalPackageFragmentProvider(
 
                             DeserializedPackageMemberScope(
                                     this, packageProto, nameResolver,
-                                    JvmPackagePartSource(partName, facadeName, knownJvmBinaryClass = jvmBinaryClass),
+                                    JvmPackagePartSource(
+                                            partName, facadeName, packageProto, nameResolver, knownJvmBinaryClass = jvmBinaryClass
+                                    ),
                                     deserializationComponents, classNames = { emptyList() }
                             )
                         }

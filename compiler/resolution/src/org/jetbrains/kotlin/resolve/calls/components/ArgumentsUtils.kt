@@ -74,7 +74,7 @@ fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     )
 }
 
-private val ValueParameterDescriptor.isActualParameterWithExpectedDefault: Boolean
+val ValueParameterDescriptor.isActualParameterWithExpectedDefault: Boolean
     get() {
         val function = containingDeclaration
         if (function is FunctionDescriptor && function.isActual) {

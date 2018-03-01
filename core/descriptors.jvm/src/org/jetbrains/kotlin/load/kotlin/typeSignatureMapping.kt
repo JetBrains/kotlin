@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.resolve.underlyingRepresentation
+import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
+import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
@@ -130,15 +132,10 @@ fun <T : Any> mapType(
 
         descriptor is ClassDescriptor -> {
             if (descriptor.isInline && !mode.needInlineClassWrapping) {
-                val underlyingType = descriptor.underlyingRepresentation()?.type
-                if (underlyingType != null) {
-                    if (!kotlinType.isMarkedNullable) {
-                        return mapType(underlyingType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
-                    }
-
-                    if (!underlyingType.isMarkedNullable && !KotlinBuiltIns.isPrimitiveType(underlyingType)) {
-                        return mapType(underlyingType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
-                    }
+                val typeForMapping = computeUnderlyingType(kotlinType)
+                if (typeForMapping != null) {
+                    val newMode = if (typeForMapping.isInlineClassType()) mode else mode.wrapInlineClassesMode()
+                    return mapType(typeForMapping, factory, newMode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
                 }
             }
 
@@ -212,6 +209,23 @@ private fun <T : Any> mapBuiltInType(type: KotlinType, typeFactory: JvmTypeFacto
     }
 
     return null
+}
+
+private fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
+    if (!shouldUseUnderlyingType(inlineClassType)) return null
+
+    val descriptor = inlineClassType.unsubstitutedUnderlyingType()?.constructor?.declarationDescriptor ?: return null
+    return if (descriptor is TypeParameterDescriptor)
+        getRepresentativeUpperBound(descriptor)
+    else
+        inlineClassType.substitutedUnderlyingType()
+}
+
+private fun shouldUseUnderlyingType(inlineClassType: KotlinType): Boolean {
+    val underlyingType = inlineClassType.unsubstitutedUnderlyingType() ?: return false
+
+    return !inlineClassType.isMarkedNullable ||
+            !TypeUtils.isNullableType(underlyingType) && !KotlinBuiltIns.isPrimitiveType(underlyingType)
 }
 
 fun computeInternalName(

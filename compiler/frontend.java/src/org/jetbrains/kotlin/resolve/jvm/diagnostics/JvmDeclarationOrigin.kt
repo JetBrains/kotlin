@@ -30,7 +30,8 @@ enum class JvmDeclarationOriginKind {
     SYNTHETIC, // this means that there's no proper descriptor for this jvm declaration,
     COLLECTION_STUB,
     AUGMENTED_BUILTIN_API,
-    ERASED_INLINE_CLASS
+    ERASED_INLINE_CLASS,
+    UNBOX_METHOD_OF_INLINE_CLASS
 }
 
 class JvmDeclarationOrigin(
@@ -83,3 +84,6 @@ fun AugmentedBuiltInApi(descriptor: CallableDescriptor): JvmDeclarationOrigin = 
 
 fun ErasedInlineClassOrigin(element: PsiElement?, descriptor: ClassDescriptor): JvmDeclarationOrigin =
     JvmDeclarationOrigin(ERASED_INLINE_CLASS, element, descriptor)
+
+fun UnboxMethodOfInlineClass(descriptor: FunctionDescriptor): JvmDeclarationOrigin =
+    JvmDeclarationOrigin(UNBOX_METHOD_OF_INLINE_CLASS, null, descriptor)

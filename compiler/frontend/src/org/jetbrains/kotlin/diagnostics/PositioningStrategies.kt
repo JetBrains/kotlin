@@ -153,6 +153,10 @@ object PositioningStrategies {
                 TypeParameterUpperBounds, TypeParameterVariance, TypeParameterReified -> {
                     (element as? KtTypeParameterListOwner)?.typeParameterList
                 }
+                CallableKind -> {
+                    (callableDeclaration as? KtNamedFunction)?.funKeyword
+                            ?: (callableDeclaration as? KtProperty)?.valOrVarKeyword
+                }
                 ParameterShape -> {
                     callableDeclaration?.let { it.receiverTypeReference ?: it.valueParameterList }
                 }

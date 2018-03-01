@@ -1452,181 +1452,253 @@ public expect inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean): C
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun <T> Array<out T>.drop(n: Int): List<T>
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun ByteArray.drop(n: Int): List<Byte>
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun ShortArray.drop(n: Int): List<Short>
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun IntArray.drop(n: Int): List<Int>
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun LongArray.drop(n: Int): List<Long>
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun FloatArray.drop(n: Int): List<Float>
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun DoubleArray.drop(n: Int): List<Double>
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun BooleanArray.drop(n: Int): List<Boolean>
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun CharArray.drop(n: Int): List<Char>
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun <T> Array<out T>.dropLast(n: Int): List<T>
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun ByteArray.dropLast(n: Int): List<Byte>
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun ShortArray.dropLast(n: Int): List<Short>
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun IntArray.dropLast(n: Int): List<Int>
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun LongArray.dropLast(n: Int): List<Long>
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun FloatArray.dropLast(n: Int): List<Float>
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun DoubleArray.dropLast(n: Int): List<Double>
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun BooleanArray.dropLast(n: Int): List<Boolean>
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect fun CharArray.dropLast(n: Int): List<Char>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun <T> Array<out T>.dropLastWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun ByteArray.dropLastWhile(predicate: (Byte) -> Boolean): List<Byte>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun ShortArray.dropLastWhile(predicate: (Short) -> Boolean): List<Short>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun IntArray.dropLastWhile(predicate: (Int) -> Boolean): List<Int>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun LongArray.dropLastWhile(predicate: (Long) -> Boolean): List<Long>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun FloatArray.dropLastWhile(predicate: (Float) -> Boolean): List<Float>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun DoubleArray.dropLastWhile(predicate: (Double) -> Boolean): List<Double>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun BooleanArray.dropLastWhile(predicate: (Boolean) -> Boolean): List<Boolean>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun CharArray.dropLastWhile(predicate: (Char) -> Boolean): List<Char>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun <T> Array<out T>.dropWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun ByteArray.dropWhile(predicate: (Byte) -> Boolean): List<Byte>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Short>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun IntArray.dropWhile(predicate: (Int) -> Boolean): List<Int>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun LongArray.dropWhile(predicate: (Long) -> Boolean): List<Long>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun FloatArray.dropWhile(predicate: (Float) -> Boolean): List<Float>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun DoubleArray.dropWhile(predicate: (Double) -> Boolean): List<Double>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun BooleanArray.dropWhile(predicate: (Boolean) -> Boolean): List<Boolean>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public expect inline fun CharArray.dropWhile(predicate: (Char) -> Boolean): List<Char>
 
@@ -2138,181 +2210,253 @@ public expect fun CharArray.sliceArray(indices: IntRange): CharArray
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun <T> Array<out T>.take(n: Int): List<T>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun ByteArray.take(n: Int): List<Byte>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun ShortArray.take(n: Int): List<Short>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun IntArray.take(n: Int): List<Int>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun LongArray.take(n: Int): List<Long>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun FloatArray.take(n: Int): List<Float>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun DoubleArray.take(n: Int): List<Double>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun BooleanArray.take(n: Int): List<Boolean>
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun CharArray.take(n: Int): List<Char>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun <T> Array<out T>.takeLast(n: Int): List<T>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun ByteArray.takeLast(n: Int): List<Byte>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun ShortArray.takeLast(n: Int): List<Short>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun IntArray.takeLast(n: Int): List<Int>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun LongArray.takeLast(n: Int): List<Long>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun FloatArray.takeLast(n: Int): List<Float>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun DoubleArray.takeLast(n: Int): List<Double>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun BooleanArray.takeLast(n: Int): List<Boolean>
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect fun CharArray.takeLast(n: Int): List<Char>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun <T> Array<out T>.takeLastWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun ByteArray.takeLastWhile(predicate: (Byte) -> Boolean): List<Byte>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun ShortArray.takeLastWhile(predicate: (Short) -> Boolean): List<Short>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun IntArray.takeLastWhile(predicate: (Int) -> Boolean): List<Int>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun LongArray.takeLastWhile(predicate: (Long) -> Boolean): List<Long>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun FloatArray.takeLastWhile(predicate: (Float) -> Boolean): List<Float>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun DoubleArray.takeLastWhile(predicate: (Double) -> Boolean): List<Double>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun BooleanArray.takeLastWhile(predicate: (Boolean) -> Boolean): List<Boolean>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun CharArray.takeLastWhile(predicate: (Char) -> Boolean): List<Char>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun ByteArray.takeWhile(predicate: (Byte) -> Boolean): List<Byte>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Short>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun IntArray.takeWhile(predicate: (Int) -> Boolean): List<Int>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun LongArray.takeWhile(predicate: (Long) -> Boolean): List<Long>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun FloatArray.takeWhile(predicate: (Float) -> Boolean): List<Float>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun DoubleArray.takeWhile(predicate: (Double) -> Boolean): List<Double>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun BooleanArray.takeWhile(predicate: (Boolean) -> Boolean): List<Boolean>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public expect inline fun CharArray.takeWhile(predicate: (Char) -> Boolean): List<Char>
 
@@ -5611,136 +5755,190 @@ public expect infix fun CharArray.union(other: Iterable<Char>): Set<Char>
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public expect inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun <T> Array<out T>.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun ByteArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun ShortArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun IntArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun LongArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun FloatArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun DoubleArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun BooleanArray.any(): Boolean
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public expect fun CharArray.any(): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public expect inline fun CharArray.any(predicate: (Char) -> Boolean): Boolean
 
@@ -6487,91 +6685,127 @@ public expect fun CharArray.minWith(comparator: Comparator<in Char>): Char?
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun <T> Array<out T>.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun ByteArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun ShortArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun IntArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun LongArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun FloatArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun DoubleArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun BooleanArray.none(): Boolean
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public expect fun CharArray.none(): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun <T> Array<out T>.none(predicate: (T) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun ByteArray.none(predicate: (Byte) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun ShortArray.none(predicate: (Short) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun IntArray.none(predicate: (Int) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun LongArray.none(predicate: (Long) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun FloatArray.none(predicate: (Float) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun DoubleArray.none(predicate: (Double) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun BooleanArray.none(predicate: (Boolean) -> Boolean): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public expect inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean
 
@@ -7232,6 +7466,8 @@ public expect inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -7252,6 +7488,8 @@ public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSeq
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Byte) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -7275,6 +7513,8 @@ public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence 
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Short) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -7298,6 +7538,8 @@ public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Int) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -7321,6 +7563,8 @@ public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence =
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Long) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -7344,6 +7588,8 @@ public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence 
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Float) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -7367,6 +7613,8 @@ public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Double) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -7390,6 +7638,8 @@ public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequenc
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Boolean) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -7413,6 +7663,8 @@ public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequen
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Char) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -7436,6 +7688,8 @@ public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: CharSequence 
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun <T> Array<out T>.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -7446,6 +7700,8 @@ public fun <T> Array<out T>.joinToString(separator: CharSequence = ", ", prefix:
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun ByteArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Byte) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -7456,6 +7712,8 @@ public fun ByteArray.joinToString(separator: CharSequence = ", ", prefix: CharSe
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun ShortArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Short) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -7466,6 +7724,8 @@ public fun ShortArray.joinToString(separator: CharSequence = ", ", prefix: CharS
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun IntArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Int) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -7476,6 +7736,8 @@ public fun IntArray.joinToString(separator: CharSequence = ", ", prefix: CharSeq
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun LongArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Long) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -7486,6 +7748,8 @@ public fun LongArray.joinToString(separator: CharSequence = ", ", prefix: CharSe
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun FloatArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Float) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -7496,6 +7760,8 @@ public fun FloatArray.joinToString(separator: CharSequence = ", ", prefix: CharS
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun DoubleArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Double) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -7506,6 +7772,8 @@ public fun DoubleArray.joinToString(separator: CharSequence = ", ", prefix: Char
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun BooleanArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Boolean) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -7516,6 +7784,8 @@ public fun BooleanArray.joinToString(separator: CharSequence = ", ", prefix: Cha
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun CharArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Char) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()

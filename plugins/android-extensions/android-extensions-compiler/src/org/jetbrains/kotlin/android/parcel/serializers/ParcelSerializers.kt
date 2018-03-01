@@ -534,7 +534,7 @@ internal class EfficientParcelableParcelSerializer(override val asmType: Type, p
 
     override fun readValue(v: InstructionAdapter) {
         // -> parcel
-        v.getstatic(asmType.internalName, "CREATOR", creatorAsmType.descriptor) // -> parcel, creator
+        v.getstatic(asmType.internalName, "CREATOR", "Landroid/os/Parcelable\$Creator;") // -> parcel, creator
         v.swap() // -> creator, parcel
         v.invokeinterface("android/os/Parcelable\$Creator", "createFromParcel", "(Landroid/os/Parcel;)Ljava/lang/Object;")
         v.castIfNeeded(asmType)

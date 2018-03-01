@@ -416,6 +416,24 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             )
     )
 
+    fun testSuffixPrefixWithAnnotation() = doInjectionPresentTest(
+        """
+            @org.intellij.lang.annotations.Language("TEXT", prefix = "abc", suffix = "ghi")
+            val test = "<caret>def"
+            """,
+        languageId = PlainTextLanguage.INSTANCE.id, unInjectShouldBePresent = false,
+        shreds = listOf(ShredInfo(range(0, 9), hostRange=range(1, 4), prefix = "abc", suffix = "ghi"))
+    )
+
+    fun testSuffixPrefixInComment() = doInjectionPresentTest(
+        """
+            // language="TEXT" prefix="abc" suffix=ghi
+            val test = "<caret>def"
+            """,
+        languageId = PlainTextLanguage.INSTANCE.id, unInjectShouldBePresent = false,
+        shreds = listOf(ShredInfo(range(0, 9), hostRange=range(1, 4), prefix = "abc", suffix = "ghi"))
+    )
+
     fun testJavaAnnotationsPattern() {
         myFixture.addClass("""
                 @interface Matches { String value(); }
@@ -440,6 +458,21 @@ class KotlinInjectionTest : AbstractInjectionTest() {
                         annotation class Matches(val pattern: String)
 
                         @Matches("[A-Z]<caret>[a-z]+")
+                        val name = "John"
+                                    """
+        )
+    }
+
+    fun testKotlinNestedAnnotationsPattern() {
+        doAnnotationInjectionTest(
+            patternLanguage = "kotlin",
+            injectedLanguage = RegExpLanguage.INSTANCE.id,
+            pattern = """kotlinParameter().ofFunction(0, kotlinFunction().withName("Matches").definedInClass("Matches"))""",
+            kotlinCode = """
+                        annotation class Matches(val pattern: String)
+                        annotation class ManyMatches(val patterns: Array<Matches>)
+
+                        @ManyMatches(patterns = [Matches("[A-Z]<caret>[a-z]+")])
                         val name = "John"
                                     """
         )
@@ -499,6 +532,39 @@ class KotlinInjectionTest : AbstractInjectionTest() {
                                             fun foo() {
                                             }
                                             """)
+    }
+
+    fun testInjectionInJavaNestedAnnotation() {
+        myFixture.addClass(
+            """
+                            package myinjection;
+
+                            public @interface InHtml {
+                            String html();
+                            }
+                            """
+        )
+        myFixture.addClass(
+            """
+                            package myinjection;
+
+                            public @interface InHtmls {
+                            InHtml[] htmls();
+                            }
+                            """
+        )
+        doAnnotationInjectionTest(
+            injectedLanguage = HTMLLanguage.INSTANCE.id,
+            pattern = """psiMethod().withName("html").withParameters().definedInClass("myinjection.InHtml")""",
+            kotlinCode = """
+                                            import myinjection.InHtml
+                                            import myinjection.InHtmls
+
+                                            @InHtmls(htmls = [InHtml(html = "<htm<caret>l></html>")])
+                                            fun foo() {
+                                            }
+                                            """
+        )
     }
 
     fun testInjectionInAliasedJavaAnnotation() {

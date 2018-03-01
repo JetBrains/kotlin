@@ -89,6 +89,18 @@ class JDIEval(
         }
     }
 
+    fun loadClassByName(name: String, classLoader: ClassLoaderReference): jdi_Type {
+        val dimensions = name.count { it == '[' }
+        val baseTypeName = if (dimensions > 0) name.substring(0, name.indexOf('[')) else name
+
+        val baseType = primitiveTypes[baseTypeName] ?: Type.getType("L$baseTypeName;").asReferenceType(classLoader)
+
+        return if (dimensions == 0)
+            baseType
+        else
+            Type.getType("[".repeat(dimensions) + baseType.asType().descriptor).asReferenceType(classLoader)
+    }
+
     override fun loadString(str: String): Value = vm.mirrorOf(str).asValue()
 
     override fun newInstance(classType: Type): Value {
@@ -413,18 +425,7 @@ class JDIEval(
             return argumentTypes()
         }
         catch (e: ClassNotLoadedException) {
-            return argumentTypeNames()!!.map {
-                name ->
-                val dimensions = name.count { it == '[' }
-                val baseTypeName = if (dimensions > 0) name.substring(0, name.indexOf('[')) else name
-
-                val baseType = primitiveTypes[baseTypeName] ?: Type.getType("L$baseTypeName;").asReferenceType(declaringType().classLoader())
-
-                if (dimensions == 0)
-                    baseType
-                else
-                    Type.getType("[".repeat(dimensions) + baseType.asType().descriptor).asReferenceType(declaringType().classLoader())
-            }
+            return argumentTypeNames()!!.map { name -> loadClassByName(name, declaringType().classLoader()) }
         }
     }
 }

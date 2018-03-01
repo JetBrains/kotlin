@@ -112,7 +112,7 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
           NEW
           DUP
           ALOAD (1)
-          GETSTATIC (CREATOR, Lk/KotlinParcelable$Creator;)
+          GETSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
           SWAP
           INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
           CHECKCAST
@@ -125,7 +125,7 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
 }
 
 public final class test/Foo : java/lang/Object, android/os/Parcelable {
-    public final static test.Foo$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     private final k.KotlinParcelable kp
 
@@ -133,7 +133,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, Ltest/Foo$Creator;)
+          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 

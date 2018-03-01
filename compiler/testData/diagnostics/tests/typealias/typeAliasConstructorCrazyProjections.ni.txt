@@ -12,6 +12,6 @@ public final class Bound</*0*/ X, /*1*/ Y : X> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias B</*0*/ X, /*1*/ Y>  = Bound<X, Y>
-public typealias BInIn</*0*/ T>  = Bound<in kotlin.collections.List<T>, in T>
-public typealias BOutIn</*0*/ T>  = Bound<out kotlin.collections.List<T>, in T>
+public typealias B</*0*/ X, /*1*/ Y> = Bound<X, Y>
+public typealias BInIn</*0*/ T> = Bound<in kotlin.collections.List<T>, in T>
+public typealias BOutIn</*0*/ T> = Bound<out kotlin.collections.List<T>, in T>

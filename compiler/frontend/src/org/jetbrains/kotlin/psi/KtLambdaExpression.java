@@ -77,7 +77,11 @@ public class KtLambdaExpression extends LazyParseablePsiElement implements KtExp
     @Override
     public KtFile getContainingKtFile() {
         PsiFile file = getContainingFile();
-        assert file instanceof KtFile : "KtElement not inside KtFile: " + file + " " + file.getText();
+        if(!(file instanceof KtFile))  {
+            String fileString = (file != null && file.isValid()) ? file.getText() : "";
+            throw new IllegalStateException("KtElement not inside KtFile: " + file + fileString +
+                                            "for element " + this + " of type " + this.getClass() + " node = " + getNode());
+        }
         return (KtFile) file;
     }
 

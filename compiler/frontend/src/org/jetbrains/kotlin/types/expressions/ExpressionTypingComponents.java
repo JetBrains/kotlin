@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionChecker;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.WrappedTypeFactory;
 
@@ -70,6 +71,7 @@ public class ExpressionTypingComponents {
     /*package*/ DeprecationResolver deprecationResolver;
     /*package*/ EffectSystem effectSystem;
     /*package*/ ContractParsingServices contractParsingServices;
+    /*package*/ DataFlowValueFactory dataFlowValueFactory;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -239,5 +241,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setContractParsingServices(@NotNull ContractParsingServices contractParsingServices) {
         this.contractParsingServices = contractParsingServices;
+    }
+
+    @Inject
+    public void setDataFlowValueFactory(@NotNull DataFlowValueFactory dataFlowValueFactory) {
+        this.dataFlowValueFactory = dataFlowValueFactory;
     }
 }

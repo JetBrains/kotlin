@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.android.synthetic.idea.androidExtensionsIsEnabled
 import org.jetbrains.kotlin.android.synthetic.idea.androidExtensionsIsExperimental
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.AndroidPackageFragmentProviderExtension
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 
 class IDEAndroidPackageFragmentProviderExtension(val project: Project) : AndroidPackageFragmentProviderExtension() {
     override fun isExperimental(moduleInfo: ModuleInfo?): Boolean {

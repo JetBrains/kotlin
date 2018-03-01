@@ -193,7 +193,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     fun testAutomaticModuleNames() {
         // This name should be sanitized to just "auto.mat1c.m0d.ule"
-        val m1 = File(tmpdir, ".auto--mat1c-_-!@#\$%^&*()m0d_ule--1.0..0-release..jar")
+        val m1 = File(tmpdir, ".auto--mat1c-_-!@#\$%^&()m0d_ule--1.0..0-release..jar")
         module("automatic-module1").renameTo(m1)
 
         val m2 = module("automatic-module2", manifest = Manifest().apply {

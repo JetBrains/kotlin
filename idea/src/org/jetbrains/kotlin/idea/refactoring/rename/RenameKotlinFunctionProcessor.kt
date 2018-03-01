@@ -96,7 +96,11 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         val declaration = element.unwrapped as? KtNamedFunction ?: return
         val descriptor = declaration.unsafeResolveToDescriptor()
         checkConflictsAndReplaceUsageInfos(element, allRenames, result)
-        checkRedeclarations(descriptor, newName, result)
+        result += SmartList<UsageInfo>().also { collisions ->
+            checkRedeclarations(descriptor, newName, collisions)
+            checkOriginalUsagesRetargeting(declaration, newName, result, collisions)
+            checkNewNameUsagesRetargeting(declaration, newName, collisions)
+        }
     }
 
     class FunctionWithSupersWrapper(
@@ -228,6 +232,8 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         element.ambiguousImportUsages = ambiguousImportUsages
 
         RenameUtil.doRenameGenericNamedElement(element, newName, simpleUsages.toTypedArray(), listener)
+
+        usages.forEach { (it as? KtResolvableCollisionUsageInfo)?.apply() }
 
         (element.unwrapped as? KtNamedDeclaration)?.let(::dropOverrideKeywordIfNecessary)
     }

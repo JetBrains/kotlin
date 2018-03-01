@@ -39,7 +39,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         return if (lhs is DoubleColonLHS.Expression && !lhs.isObjectQualifier) {
             IrGetClassImpl(
                 ktClassLiteral.startOffset, ktClassLiteral.endOffset, resultType,
-                statementGenerator.generateExpression(ktArgument)
+                ktArgument.genExpr()
             )
         } else {
             val typeConstructorDeclaration = lhs.type.constructor.declarationDescriptor

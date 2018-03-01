@@ -1,4 +1,4 @@
 // PROBLEM: none
 fun foo() {
-    <caret>val ` two words ` = "two words"
+    val <caret>` two words ` = "two words"
 }

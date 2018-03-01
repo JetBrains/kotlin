@@ -292,8 +292,14 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                                             TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
     }
 
-    private static boolean isModified(@NotNull TextFieldWithBrowseButton chooser, @Nullable String currentValue) {
-        return !StringUtil.equals(StringUtil.nullize(chooser.getText(), true), currentValue);
+    private static boolean isModifiedWithNullize(@NotNull TextFieldWithBrowseButton chooser, @Nullable String currentValue) {
+        return !StringUtil.equals(
+                StringUtil.nullize(chooser.getText(), true),
+                StringUtil.nullize(currentValue, true));
+    }
+
+    private static boolean isModified(@NotNull TextFieldWithBrowseButton chooser, @NotNull String currentValue) {
+        return !StringUtil.equals(chooser.getText(), currentValue);
     }
 
     private void updateOutputDirEnabled() {
@@ -430,8 +436,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                  isModified(keepAliveCheckBox, compilerWorkspaceSettings.getEnableDaemon()))) ||
 
                isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.getSourceMap()) ||
-               isModified(outputPrefixFile, StringUtil.notNullize(k2jsCompilerArguments.getOutputPrefix())) ||
-               isModified(outputPostfixFile, StringUtil.notNullize(k2jsCompilerArguments.getOutputPostfix())) ||
+               isModifiedWithNullize(outputPrefixFile, k2jsCompilerArguments.getOutputPrefix()) ||
+               isModifiedWithNullize(outputPostfixFile, k2jsCompilerArguments.getOutputPostfix()) ||
                !getSelectedModuleKind().equals(getModuleKindOrDefault(k2jsCompilerArguments.getModuleKind())) ||
                isModified(sourceMapPrefix, StringUtil.notNullize(k2jsCompilerArguments.getSourceMapPrefix())) ||
                !getSelectedSourceMapSourceEmbedding().equals(

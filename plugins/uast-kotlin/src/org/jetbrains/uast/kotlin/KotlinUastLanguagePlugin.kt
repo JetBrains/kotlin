@@ -27,14 +27,19 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.expressions.*
@@ -58,11 +63,23 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return fileName.endsWith(".kt", false) || fileName.endsWith(".kts", false)
     }
 
+    private val PsiElement.isJvmElement
+        get() = try {
+            // Workaround for UAST used without full-fledged IDEA when ProjectFileIndex is not available
+            // If we can't get the module (or don't have one), act as if the current platform is JVM
+            val module = module
+            module == null || TargetPlatformDetector.getPlatform(module) is JvmPlatform
+        } catch (e: Exception) {
+            true
+        }
+
     override fun convertElement(element: PsiElement, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
+        if (!element.isJvmElement) return null
         return convertDeclarationOrElement(element, parent, requiredType)
     }
 
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
+        if (!element.isJvmElement) return null
         if (element is PsiFile) return convertDeclaration(element, null, requiredType)
         if (element is KtLightClassForFacade) return convertDeclaration(element, null, requiredType)
 
@@ -206,6 +223,17 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                 is KtFile -> el<UFile> { KotlinUFile(original, this@KotlinUastLanguagePlugin) }
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement, this@KotlinUastLanguagePlugin) }
                 is KtAnnotationEntry -> el<UAnnotation>(build(::KotlinUAnnotation))
+                is KtCallExpression ->
+                    if (requiredType != null && UAnnotation::class.java.isAssignableFrom(requiredType)) {
+                        el<UAnnotation> {
+                            val classDescriptor =
+                                (original.getResolvedCall(original.analyze())?.resultingDescriptor as? ClassConstructorDescriptor)?.constructedClass
+                            if (classDescriptor?.kind == ClassKind.ANNOTATION_CLASS)
+                                KotlinUNestedAnnotation(original, givenParent, classDescriptor)
+                            else
+                                null
+                        }
+                    } else null
                 is KtLightAnnotationForSourceEntry -> convertElement(original.kotlinOrigin, givenParent, requiredType)
                 else -> null
             }
@@ -300,7 +328,7 @@ internal object KotlinConverter {
                 }
 
             is KtExpression -> KotlinConverter.convertExpression(element, givenParent, requiredType)
-            is KtLambdaArgument -> KotlinConverter.convertExpression(element.getLambdaExpression(), givenParent, requiredType)
+            is KtLambdaArgument -> element.getLambdaExpression()?.let { KotlinConverter.convertExpression(it, givenParent, requiredType) }
             is KtLightAnnotationForSourceEntry.LightExpressionValue<*> -> {
                 val expression = element.originalExpression
                 when (expression) {

@@ -40,6 +40,8 @@ interface ModuleDescriptor : DeclarationDescriptor {
      */
     val allDependencyModules: List<ModuleDescriptor>
 
+    val expectedByModule: ModuleDescriptor?
+
     fun <T> getCapability(capability: Capability<T>): T?
 
     class Capability<T>(val name: String) {

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
@@ -55,11 +44,15 @@ class DefaultCallArgs(val size: Int) {
         val toInts = toInts()
         if (!toInts.isEmpty()) {
             for (mask in toInts) {
-                callGenerator.putValueIfNeeded(Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE), ValueKind.DEFAULT_MASK)
+                callGenerator.putValueIfNeeded(
+                    JvmKotlinType(Type.INT_TYPE), StackValue.constant(mask, Type.INT_TYPE), ValueKind.DEFAULT_MASK
+                )
             }
 
             val parameterType = if (isConstructor) AsmTypes.DEFAULT_CONSTRUCTOR_MARKER else AsmTypes.OBJECT_TYPE
-            callGenerator.putValueIfNeeded(parameterType, StackValue.constant(null, parameterType), ValueKind.METHOD_HANDLE_IN_DEFAULT)
+            callGenerator.putValueIfNeeded(
+                JvmKotlinType(parameterType), StackValue.constant(null, parameterType), ValueKind.METHOD_HANDLE_IN_DEFAULT
+            )
         }
         return toInts.isNotEmpty()
     }

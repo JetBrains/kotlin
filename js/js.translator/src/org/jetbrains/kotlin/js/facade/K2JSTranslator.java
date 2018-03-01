@@ -184,7 +184,7 @@ public final class K2JSTranslator {
             }
 
             LanguageVersionSettings settings = CommonConfigurationKeysKt.getLanguageVersionSettings(config.getConfiguration());
-            incrementalResults.processHeader(serializationUtil.serializeHeader(null, settings).toByteArray());
+            incrementalResults.processHeader(serializationUtil.serializeHeader(moduleDescriptor, null, settings).toByteArray());
         }
 
         RemoveDuplicateImportsKt.removeDuplicateImports(translationResult.getProgram());

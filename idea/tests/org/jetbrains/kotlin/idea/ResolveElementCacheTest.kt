@@ -20,10 +20,7 @@ import com.intellij.psi.PsiDocumentManager
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
@@ -389,7 +386,9 @@ class C(param1: String = "", param2: Int = 0) {
         """) as KtFile
 
         val defaultValue = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.valueParameters[0].defaultValue!!
-        defaultValue.analyzeFullyAndGetResult()
+        // Kept to preserve correct behaviour of analyzeFully() on class internal elements
+        // TODO: delete after removal of KtElement.analyzeFully()
+        defaultValue.analyzeFully()
     }
 
     fun testPrimaryConstructorAnnotationFullAnalysis() {
@@ -398,7 +397,7 @@ class C(param1: String = "", param2: Int = 0) {
         """) as KtFile
 
         val annotationArguments = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.annotationEntries[0].valueArgumentList!!
-        annotationArguments.analyzeFullyAndGetResult()
+        annotationArguments.analyzeFully()
     }
 
     fun testFunctionParameterAnnotation() {

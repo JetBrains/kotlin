@@ -22,11 +22,11 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.canMoveLambdaOutsideParentheses
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -36,7 +36,10 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.contentRange
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -57,7 +60,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
 
         if (!SingleAbstractMethodUtils.isSamType(baseType)) return null
 
-        val functionDescriptor = singleFunction.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? FunctionDescriptor ?: return null
+        val functionDescriptor = singleFunction.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return null
         val overridden = functionDescriptor.overriddenDescriptors.singleOrNull() ?: return null
         if (overridden.modality != Modality.ABSTRACT) return null
 
@@ -142,7 +145,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
 
         val callee = replaced.getCalleeExpressionIfAny()!! as KtNameReferenceExpression
         val callExpression = callee.parent as KtCallExpression
-        val functionLiteral = callExpression.lambdaArguments.single().getLambdaExpression()
+        val functionLiteral = callExpression.lambdaArguments.single().getLambdaExpression()!!
 
         val returnLabel = callee.getReferencedNameAsName()
         returnSaver.restore(functionLiteral, returnLabel)
@@ -152,7 +155,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
                                  ?.parent as? KtCallExpression
         if (parentCall != null && RedundantSamConstructorInspection.samConstructorCallsToBeConverted(parentCall).singleOrNull() == callExpression) {
             RedundantSamConstructorInspection.replaceSamConstructorCall(callExpression)
-            if (MoveLambdaOutsideParenthesesIntention.canMove(parentCall)) {
+            if (parentCall.canMoveLambdaOutsideParentheses()) {
                 parentCall.moveFunctionLiteralOutsideParentheses()
             }
         }

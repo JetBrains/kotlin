@@ -13,6 +13,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
+import com.intellij.util.Function
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -30,6 +31,10 @@ private val navHandler = GutterIconNavigationHandler<PsiElement> { event, elemen
     ColorAndFontOptions.selectOrEditColor(dataContext, DslHighlighterExtension.styleOptionDisplayName(styleId), KotlinLanguage.NAME)
 }
 
+private val toolTipHandler = Function<PsiElement, String> {
+    "Marker annotation for DSL"
+}
+
 fun collectHighlightingColorsMarkers(
     ktClass: KtClass,
     result: MutableCollection<LineMarkerInfo<*>>
@@ -44,7 +49,7 @@ fun collectHighlightingColorsMarkers(
             anchor.textRange,
             AllIcons.Gutter.Colors,
             Pass.LINE_MARKERS,
-            null, navHandler,
+            toolTipHandler, navHandler,
             GutterIconRenderer.Alignment.RIGHT
         )
     )

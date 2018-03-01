@@ -19,12 +19,16 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
-import org.jetbrains.kotlin.incremental.storage.*
+import org.jetbrains.kotlin.incremental.storage.BasicStringMap
+import org.jetbrains.kotlin.incremental.storage.DirtyClassesFqNameMap
+import org.jetbrains.kotlin.incremental.storage.SourceToFqNameMap
+import org.jetbrains.kotlin.incremental.storage.StringToLongMapExternalizer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.serialization.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import java.io.DataInput
@@ -177,11 +181,7 @@ fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>
     }
 
     proto.`package`.apply {
-        val packageFqName = if (hasExtension(JsProtoBuf.packageFqName)) {
-            nameResolver.getPackageFqName(getExtension(JsProtoBuf.packageFqName))
-        }
-        else FqName.ROOT
-
+        val packageFqName = getExtensionOrNull(JsProtoBuf.packageFqName)?.let(nameResolver::getPackageFqName) ?: FqName.ROOT
         val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalize() + "Kt"))
         classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
     }

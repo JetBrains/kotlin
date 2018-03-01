@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.actionSystem.DataContext
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 
 class RenameDynamicMemberHandler: VariableInplaceRenameHandler() {
@@ -34,7 +33,7 @@ class RenameDynamicMemberHandler: VariableInplaceRenameHandler() {
         val callee = PsiTreeUtil.findElementOfClassAtOffset(
                 file, editor.caretModel.offset, KtSimpleNameExpression::class.java, false
         ) ?: return false
-        val calleeDescriptor = callee.analyze()[BindingContext.REFERENCE_TARGET, callee] ?: return false
+        val calleeDescriptor = callee.resolveToCall()?.resultingDescriptor ?: return false
         return calleeDescriptor.isDynamic()
     }
 

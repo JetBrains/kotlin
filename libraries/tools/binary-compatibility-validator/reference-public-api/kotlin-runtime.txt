@@ -445,9 +445,9 @@ public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/Clas
 	public fun toString ()Ljava/lang/String;
 }
 
-public class kotlin/jvm/internal/CollectionToArray {
-	public static fun toArray (Ljava/util/Collection;)[Ljava/lang/Object;
-	public static fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
+public final class kotlin/jvm/internal/CollectionToArray {
+	public static final fun toArray (Ljava/util/Collection;)[Ljava/lang/Object;
+	public static final fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
 public final class kotlin/jvm/internal/DoubleCompanionObject {

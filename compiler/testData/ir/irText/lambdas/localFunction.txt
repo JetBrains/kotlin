@@ -6,6 +6,7 @@ FILE fqName:<root> fileName:/localFunction.kt
       FUN name:local visibility:local modality:FINAL <> () returnType:Unit flags:
         BLOCK_BODY
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
             BLOCK type=kotlin.Int origin=POSTFIX_INCR
               VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:val
                 GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR

@@ -24,6 +24,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.psi.*
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class UnnecessaryVariableInspection : AbstractApplicabilityBasedInspection<KtProperty>(KtProperty::class.java) {
 
@@ -69,8 +71,8 @@ class UnnecessaryVariableInspection : AbstractApplicabilityBasedInspection<KtPro
 
             fun isExactCopy(): Boolean {
                 if (!property.isVar && initializer is KtNameReferenceExpression && property.typeReference == null) {
-                    val context = property.analyze()
-                    val initializerDescriptor = context[REFERENCE_TARGET, initializer] as? VariableDescriptor ?: return false
+                    val initializerDescriptor = initializer.resolveToCall(BodyResolveMode.FULL)?.resultingDescriptor as? VariableDescriptor
+                            ?: return false
                     if (initializerDescriptor.isVar) return false
                     if (initializerDescriptor.containingDeclaration !is FunctionDescriptor) return false
 

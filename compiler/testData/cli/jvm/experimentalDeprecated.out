@@ -1,0 +1,6 @@
+warning: language version 1.3 is experimental, there are no backwards compatibility guarantees for new language and library features
+error: experimental API marker org.test.BinaryError is deprecated. BinaryError
+error: experimental API marker org.test.BinaryHidden is deprecated. BinaryHidden
+error: experimental API marker org.test.SourceError is deprecated. SourceError
+error: experimental API marker org.test.SourceHidden is deprecated. SourceHidden
+COMPILATION_ERROR

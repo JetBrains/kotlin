@@ -20,11 +20,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -174,5 +177,30 @@ object CodegenUtil {
             descriptor.findCompatibleExpectedForActual(DescriptorUtils.getContainingModule(descriptor))
         }
         return compatibleExpectedFunctions.firstOrNull() as FunctionDescriptor?
+    }
+
+    @JvmStatic
+    fun getFunctionParametersForDefaultValueGeneration(
+        descriptor: FunctionDescriptor,
+        trace: DiagnosticSink?
+    ): List<ValueParameterDescriptor> {
+        if (descriptor.isActual) {
+            val expected = CodegenUtil.findExpectedFunctionForActual(descriptor)
+            if (expected != null && expected.valueParameters.any(ValueParameterDescriptor::declaresDefaultValue)) {
+                val element = DescriptorToSourceUtils.descriptorToDeclaration(expected)
+                if (element == null) {
+                    if (trace != null) {
+                        val actualDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
+                                ?: error("Not a source declaration: $descriptor")
+                        trace.report(Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND.on(actualDeclaration))
+                    }
+                    return descriptor.valueParameters
+                }
+
+                return expected.valueParameters
+            }
+        }
+
+        return descriptor.valueParameters
     }
 }

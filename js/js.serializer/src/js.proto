@@ -31,6 +31,13 @@ message Header {
   optional int32 js_code_binary_version = 2 [default = 1];
 
   optional string package_fq_name = 3;
+
+  optional StringTable strings = 4;
+
+  optional QualifiedNameTable qualified_names = 5;
+
+  // Annotations on the whole module
+  repeated Annotation annotation = 6;
 }
 
 message File {

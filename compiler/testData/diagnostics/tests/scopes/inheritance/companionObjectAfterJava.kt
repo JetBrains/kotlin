@@ -1,3 +1,5 @@
+// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+
 // FILE: 1.kt
 interface A {
     companion object {
@@ -41,7 +43,7 @@ class D: C() {
         C.<!UNRESOLVED_REFERENCE!>bar<!>()
         D.<!UNRESOLVED_REFERENCE!>bar<!>()
 
-        B_()
+        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B_()<!>
         B.<!UNRESOLVED_REFERENCE!>B_<!>()
         B.Companion.B_()
         C.<!UNRESOLVED_REFERENCE!>B_<!>()

@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.core.script
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.isProjectOrWorkspaceFile
 import com.intellij.openapi.roots.ProjectRootManager
@@ -29,18 +31,20 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.openapi.wm.WindowManager
+import com.intellij.openapi.wm.ex.StatusBarEx
+import com.intellij.openapi.wm.ex.WindowManagerEx
 import kotlinx.coroutines.experimental.CoroutineDispatcher
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.asCoroutineDispatcher
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.core.util.cancelOnDisposal
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
@@ -48,54 +52,58 @@ import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class ScriptDependenciesUpdater(
-        private val project: Project,
-        private val cache: ScriptDependenciesCache,
-        private val scriptDefinitionProvider: ScriptDefinitionProvider
+    private val project: Project,
+    private val cache: ScriptDependenciesCache,
+    private val scriptDefinitionProvider: ScriptDefinitionProvider
 ) {
     private val requests = ConcurrentHashMap<String, ModStampedRequest>()
     private val contentLoader = ScriptContentLoader(project)
     private val asyncUpdatesDispatcher = Executors.newFixedThreadPool(1).asCoroutineDispatcher()
     private val legacyUpdatesDispatcher =
-            Executors.newFixedThreadPool(
-                    (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
-            ).asCoroutineDispatcher()
+        Executors.newFixedThreadPool(
+            (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
+        ).asCoroutineDispatcher()
+
+    private val modifiedScripts = mutableSetOf<VirtualFile>()
 
     init {
         listenToVfsChanges()
     }
 
-    private class TimeStampedJob(val actualJob: Job, val timeStamp: TimeStamp) {
+    private class TimeStampedJob(val actualJob: Task.Backgroundable, val timeStamp: TimeStamp) {
         fun stampBy(virtualFile: VirtualFile) = ModStampedRequest(virtualFile.modificationStamp, this)
     }
 
     private class ModStampedRequest(
-            val modificationStamp: Long,
-            val job: TimeStampedJob?
+        val modificationStamp: Long,
+        val job: TimeStampedJob?
     ) {
-        fun cancel() = job?.actualJob?.cancel()
+        fun cancel() {
+            val actualJob = job?.actualJob ?: return
+            val frame = (WindowManager.getInstance() as? WindowManagerEx)?.findFrameFor(actualJob.project)
+            val statusBar = frame?.statusBar as? StatusBarEx ?: return
+            statusBar.backgroundProcesses.find { it.first == actualJob }?.second?.cancel()
+        }
     }
 
     fun getCurrentDependencies(file: VirtualFile): ScriptDependencies {
         cache[file]?.let { return it }
 
-        val loaded = tryLoadingFromDisk(file)
-
-        if (!loaded) {
-            tryUsingDefault(file)
-        }
-
+        tryLoadingFromDisk(file)
         performUpdate(file)
 
         return cache[file] ?: ScriptDependencies.Empty
     }
 
-    private fun tryUsingDefault(file: VirtualFile) {
-        val defaults = DefaultScriptDependenciesProvider.getInstances(project).firstNotNullResult { it.defaultDependenciesFor(file) } ?: return
-        saveToCache(defaults, file)
+    fun reloadModifiedScripts() {
+        for (it in modifiedScripts) {
+            performUpdate(it)
+        }
+        modifiedScripts.clear()
     }
 
     private fun tryLoadingFromDisk(file: VirtualFile): Boolean {
-        val deserializedDependencies = ScriptDependenciesFileAttribute.read(file) ?: return false
+        val deserializedDependencies = file.scriptDependencies ?: return false
         saveToCache(deserializedDependencies, file)
         return true
     }
@@ -108,34 +116,33 @@ class ScriptDependenciesUpdater(
         }
     }
 
-    private fun requestUpdate(files: Iterable<VirtualFile>) =
-            files.map { file ->
-                if (!file.isValid) {
-                    return cache.delete(file)
-                }
-                else if (cache[file] != null) { // only update dependencies for scripts that were touched recently
-                    performUpdate(file)
-                }
-                else {
-                    false
-                }
-            }.contains(true)
+    fun requestUpdate(files: Iterable<VirtualFile>) {
+        files.forEach { file ->
+            if (!file.isValid) {
+                cache.delete(file)
+            } else if (cache[file] != null) { // only update dependencies for scripts that were touched recently
+                modifiedScripts.add(file)
+            }
+        }
+    }
 
-    private fun performUpdate(file: VirtualFile): Boolean {
-        val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return false
+    private fun performUpdate(file: VirtualFile) {
+        if (ScriptDefinitionsManager.getInstance(project).hasFailedDefinitions && !ProjectRootsUtil.isProjectSourceFile(project, file)) {
+            return
+        }
 
-        return when (scriptDef.dependencyResolver) {
+        val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
+        when (scriptDef.dependencyResolver) {
             is AsyncDependenciesResolver, is LegacyResolverWrapper -> {
                 updateAsync(file, scriptDef)
-                return false
             }
             else -> updateSync(file, scriptDef)
         }
     }
 
     private fun updateAsync(
-            file: VirtualFile,
-            scriptDefinition: KotlinScriptDefinition
+        file: VirtualFile,
+        scriptDefinition: KotlinScriptDefinition
     ) {
         val path = file.path
         val lastRequest = requests[path]
@@ -157,39 +164,32 @@ class ScriptDependenciesUpdater(
     }
 
     private fun sendRequest(
-            file: VirtualFile,
-            scriptDef: KotlinScriptDefinition
+        file: VirtualFile,
+        scriptDef: KotlinScriptDefinition
     ): TimeStampedJob {
         val currentTimeStamp = TimeStamps.next()
 
-        val dependenciesResolver = scriptDef.dependencyResolver
-        val scriptContents = contentLoader.getScriptContents(scriptDef, file)
-        val environment = contentLoader.getEnvironment(scriptDef)
-        val newJob = if (dependenciesResolver is AsyncDependenciesResolver) {
-            launchAsyncUpdate(asyncUpdatesDispatcher, file, currentTimeStamp, scriptDef) {
-                    dependenciesResolver.resolveAsync(scriptContents, environment)
+        val newJob = object : Task.Backgroundable(project, "Kotlin: Loading dependencies for ${file.name} ...", true) {
+            override fun run(indicator: ProgressIndicator) {
+                if (updateSync(file, scriptDef)) {
+                    notifyRootsChanged()
+                }
             }
         }
-        else {
-            assert(dependenciesResolver is LegacyResolverWrapper)
-            launchAsyncUpdate(legacyUpdatesDispatcher, file, currentTimeStamp, scriptDef) {
-                dependenciesResolver.resolve(scriptContents, environment)
-            }
-        }
+        newJob.queue()
         return TimeStampedJob(newJob, currentTimeStamp)
     }
 
     private fun launchAsyncUpdate(
-            dispatcher: CoroutineDispatcher,
-            file: VirtualFile,
-            currentTimeStamp: TimeStamp,
-            scriptDef: KotlinScriptDefinition,
-            doResolve: suspend () -> DependenciesResolver.ResolveResult
+        dispatcher: CoroutineDispatcher,
+        file: VirtualFile,
+        currentTimeStamp: TimeStamp,
+        scriptDef: KotlinScriptDefinition,
+        doResolve: suspend () -> DependenciesResolver.ResolveResult
     ) = launch(dispatcher + project.cancelOnDisposal) {
         val result = try {
             doResolve()
-        }
-        catch (t: Throwable) {
+        } catch (t: Throwable) {
             t.asResolveFailure(scriptDef)
         }
 
@@ -197,10 +197,10 @@ class ScriptDependenciesUpdater(
     }
 
     private fun processResult(
-            file: VirtualFile,
-            currentTimeStamp: TimeStamp,
-            result: DependenciesResolver.ResolveResult,
-            scriptDef: KotlinScriptDefinition
+        file: VirtualFile,
+        currentTimeStamp: TimeStamp,
+        result: DependenciesResolver.ResolveResult,
+        scriptDef: KotlinScriptDefinition
     ) {
         val lastRequest = requests[file.path]
         val lastTimeStamp = lastRequest?.job?.timeStamp
@@ -225,12 +225,12 @@ class ScriptDependenciesUpdater(
     }
 
     private fun saveNewDependencies(
-            new: ScriptDependencies,
-            file: VirtualFile
+        new: ScriptDependencies,
+        file: VirtualFile
     ): Boolean {
         val rootsChanged = cache.hasNotCachedRoots(new)
         if (cache.save(file, new)) {
-            ScriptDependenciesFileAttribute.write(file, new)
+            file.scriptDependencies = new
         }
         return rootsChanged
     }
@@ -247,9 +247,8 @@ class ScriptDependenciesUpdater(
 
         val application = ApplicationManager.getApplication()
         if (application.isUnitTestMode) {
-            rootsChangesRunnable.invoke()
-        }
-        else {
+            rootsChangesRunnable()
+        } else {
             launch(EDT(project)) {
                 rootsChangesRunnable()
             }
@@ -266,16 +265,16 @@ class ScriptDependenciesUpdater(
                     return
                 }
 
-                if (requestUpdate(events.mapNotNull {
+                val modifiedScripts = events.mapNotNull {
                     // The check is partly taken from the BuildManager.java
                     it.file?.takeIf {
                         // the isUnitTestMode check fixes ScriptConfigurationHighlighting & Navigation tests, since they are not trigger proper update mechanims
                         // TODO: find out the reason, then consider to fix tests and remove this check
-                        (application.isUnitTestMode || projectFileIndex.isInContent(it)) && !isProjectOrWorkspaceFile(it)
+                        (application.isUnitTestMode ||
+                                scriptDefinitionProvider.isScript(it.name) && projectFileIndex.isInContent(it)) && !isProjectOrWorkspaceFile(it)
                     }
-                })) {
-                    notifyRootsChanged()
                 }
+                requestUpdate(modifiedScripts)
             }
         })
     }
@@ -297,14 +296,17 @@ private object TimeStamps {
 }
 
 @set: TestOnly
-var Application.isScriptDependenciesUpdaterDisabled by NotNullableUserDataProperty(Key.create("SCRIPT_DEPENDENCIES_UPDATER_DISABLED"), false)
+var Application.isScriptDependenciesUpdaterDisabled by NotNullableUserDataProperty(
+    Key.create("SCRIPT_DEPENDENCIES_UPDATER_DISABLED"),
+    false
+)
 
 interface DefaultScriptDependenciesProvider {
     fun defaultDependenciesFor(scriptFile: VirtualFile): ScriptDependencies?
 
     companion object : ProjectExtensionDescriptor<DefaultScriptDependenciesProvider>(
-            "org.jetbrains.kotlin.defaultScriptDependenciesProvider",
-            DefaultScriptDependenciesProvider::class.java
+        "org.jetbrains.kotlin.defaultScriptDependenciesProvider",
+        DefaultScriptDependenciesProvider::class.java
     )
 
 }

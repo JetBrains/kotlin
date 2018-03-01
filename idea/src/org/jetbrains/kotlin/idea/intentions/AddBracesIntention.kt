@@ -17,8 +17,13 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.lang.IllegalArgumentException
 
@@ -52,12 +57,24 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
             element.nextSibling!!.delete()
         }
 
+        val nextComment = when {
+            element is KtDoWhileExpression -> null // bound to the closing while
+            element is KtIfExpression && expression === element.then && element.`else` != null -> null // bound to else
+            else -> element.getNextSiblingIgnoringWhitespace().takeIf { it is PsiComment }
+        }
+        val saver = if (nextComment == null) CommentSaver(element) else CommentSaver(PsiChildRange(element, nextComment))
+        element.allChildren.filterIsInstance<PsiComment>().toList().forEach {
+            it.delete()
+        }
+        nextComment?.delete()
+
         val psiFactory = KtPsiFactory(element)
-        expression.replace(psiFactory.createSingleStatementBlock(expression))
+        val result = expression.replace(psiFactory.createSingleStatementBlock(expression))
 
         if (element is KtDoWhileExpression) { // remove new line between '}' and while
             (element.body!!.parent.nextSibling as? PsiWhiteSpace)?.delete()
         }
+        saver.restore(result)
     }
 
     private fun KtElement.getTargetExpression(caretLocation: Int): KtExpression? {
@@ -67,8 +84,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
                 val elseExpr = `else`
                 if (elseExpr != null && caretLocation >= elseKeyword!!.startOffset) {
                     elseExpr
-                }
-                else {
+                } else {
                     thenExpr
                 }
             }

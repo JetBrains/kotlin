@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.and
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.getAllAccessibleFunctions
 import org.jetbrains.kotlin.idea.util.getAllAccessibleVariables
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -98,7 +99,7 @@ internal fun checkRedeclarations(
 
     fun MemberScope.findSiblingsByName(): List<DeclarationDescriptor> {
         val descriptorKindFilter = when (descriptor) {
-            is ClassDescriptor -> DescriptorKindFilter.CLASSIFIERS
+            is ClassifierDescriptor -> DescriptorKindFilter.CLASSIFIERS
             is PropertyDescriptor -> DescriptorKindFilter.VARIABLES
             is FunctionDescriptor -> DescriptorKindFilter.FUNCTIONS
             else -> return emptyList()
@@ -166,6 +167,7 @@ private fun LexicalScope.getRelevantDescriptors(
     val nameAsName = Name.identifier(name)
     return when (declaration) {
         is KtProperty, is KtParameter, is PsiField -> getAllAccessibleVariables(nameAsName)
+        is KtNamedFunction -> getAllAccessibleFunctions(nameAsName)
         is KtClassOrObject, is PsiClass -> listOfNotNull(findClassifier(nameAsName, NoLookupLocation.FROM_IDE))
         else -> emptyList()
     }

@@ -16,9 +16,8 @@
 
 package org.jetbrains.kotlin.android.synthetic.idea
 
-import kotlinx.android.extensions.CacheImplementation
 import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidOnDestroyClassBuilderInterceptorExtension
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.psi.KtElement
 
 class IDEAndroidOnDestroyClassBuilderInterceptorExtension : AbstractAndroidOnDestroyClassBuilderInterceptorExtension() {

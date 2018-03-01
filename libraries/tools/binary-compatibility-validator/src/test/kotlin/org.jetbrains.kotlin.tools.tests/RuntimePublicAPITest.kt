@@ -29,7 +29,7 @@ class RuntimePublicAPITest {
     val testName = TestName()
 
     @Test fun kotlinRuntime() {
-        snapshotAPIAndCompare("../../tools/runtime/build/libs", "kotlin-runtime", listOf("../runtime-declarations.json"), listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../stdlib/runtime/build/libs", "kotlin-runtime", listOf("../runtime-declarations.json"), listOf("kotlin.jvm.internal"))
     }
 
     //@Ignore("No more original stdlib jar is produced")
@@ -38,7 +38,11 @@ class RuntimePublicAPITest {
     }
 
     @Test fun kotlinStdlibRuntimeMerged() {
-        snapshotAPIAndCompare("../../stdlib/build/libs", "kotlin-stdlib", listOf("../stdlib-declarations.json", "../runtime-declarations.json"), listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare(
+            "../../stdlib/build/libs", "kotlin-stdlib",
+            listOf("../stdlib-declarations.json", "../runtime-declarations.json", "../stdlib-experimental-declarations.json"),
+            listOf("kotlin.jvm.internal")
+        )
     }
 
     @Test fun kotlinStdlibJdk7() {

@@ -123,4 +123,37 @@ public class IrOnlyBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTest
             doTest(fileName);
         }
     }
+
+    @TestMetadata("compiler/testData/ir/box/primitiveNumberComparisons")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PrimitiveNumberComparisons extends AbstractIrBlackBoxCodegenTest {
+        public void testAllFilesPresentInPrimitiveNumberComparisons() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/box/primitiveNumberComparisons"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("comparableToDouble.kt")
+        public void testComparableToDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/primitiveNumberComparisons/comparableToDouble.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doubleEqeq.kt")
+        public void testDoubleEqeq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/primitiveNumberComparisons/doubleEqeq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("floatEqeq.kt")
+        public void testFloatEqeq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/primitiveNumberComparisons/floatEqeq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mixedNumberTypes.kt")
+        public void testMixedNumberTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/primitiveNumberComparisons/mixedNumberTypes.kt");
+            doTest(fileName);
+        }
+    }
 }

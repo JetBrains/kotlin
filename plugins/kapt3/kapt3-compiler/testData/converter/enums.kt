@@ -11,3 +11,13 @@ enum class Enum2(@Anno1("first") val col: String, @Anno1("second") val col2: Int
     private fun privateEnumFun() {}
     public fun publicEnumFun() {}
 }
+
+enum class Nested1 {
+    WHITE {
+        enum class Nested2 {
+            BLACK {
+                enum class Nested3 { RED }
+            }
+        }
+    };
+}

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Parame
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -51,8 +50,7 @@ object CreateSetFunctionActionFactory : CreateGetSetFunctionActionFactory(isGet 
             is KtUnaryExpression -> {
                 if (assignmentExpr.operationToken !in OperatorConventions.INCREMENT_OPERATIONS) return null
 
-                val context = assignmentExpr.analyze()
-                val rhsType = assignmentExpr.getResolvedCall(context)?.resultingDescriptor?.returnType
+                val rhsType = assignmentExpr.resolveToCall()?.resultingDescriptor?.returnType
                 TypeInfo(if (rhsType == null || ErrorUtils.containsErrorType(rhsType)) builtIns.anyType else rhsType, Variance.IN_VARIANCE)
             }
             else -> return null

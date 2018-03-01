@@ -203,7 +203,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
     }
 
-    fun build() {
+    fun build(onFinish: () -> Unit = {}) {
         try {
             assert(config.currentEditor != null) { "Can't run build() without editor" }
             if (finished) throw IllegalStateException("Current builder has already finished")
@@ -211,6 +211,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
         finally {
             finished = true
+            onFinish()
         }
     }
 
@@ -482,7 +483,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
 
                 val isExpectClassMember by lazy {
-                    containingElement is KtClassOrObject && (containingElement.resolveToDescriptorIfAny() as? ClassDescriptor)?.isExpect ?: false
+                    containingElement is KtClassOrObject && containingElement.resolveToDescriptorIfAny()?.isExpect ?: false
                 }
 
                 val declaration: KtNamedDeclaration = when (callableInfo.kind) {

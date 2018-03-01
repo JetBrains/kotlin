@@ -1,0 +1,9 @@
+    open class Bar {
+        companion object {
+            class FromBarCompanion
+        }
+    }
+
+class Foo : Bar() {
+    val a = Companion.FromBarCompanion()
+}

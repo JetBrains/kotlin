@@ -157,6 +157,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("classAndTypeAliasRedeclaration/classAndTypeAliasRedeclaration.test")
+    public void testClassAndTypeAliasRedeclaration_ClassAndTypeAliasRedeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/classAndTypeAliasRedeclaration/classAndTypeAliasRedeclaration.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("classByPrimaryConstructor/classByPrimaryConstructor.test")
     public void testClassByPrimaryConstructor_ClassByPrimaryConstructor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/classByPrimaryConstructor/classByPrimaryConstructor.test");

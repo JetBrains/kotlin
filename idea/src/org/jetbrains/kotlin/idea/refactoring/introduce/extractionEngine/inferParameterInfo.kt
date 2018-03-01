@@ -27,10 +27,12 @@ import org.jetbrains.kotlin.cfg.pseudocode.getExpectedTypePredicate
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithReceivers
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.*
@@ -328,9 +330,11 @@ private fun suggestParameterType(
                    val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
                        val callElement = resolvedCall!!.call.callElement
                        val dataFlowInfo = bindingContext.getDataFlowInfoAfter(callElement)
+
+                       val dataFlowValueFactory = callElement.getResolutionFacade().frontendService<DataFlowValueFactory>()
                        val possibleTypes = dataFlowInfo.getCollectedTypes(
-                               DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract),
-                               callElement.languageVersionSettings
+                           dataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract),
+                           callElement.languageVersionSettings
                        )
                        if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
                    } else null

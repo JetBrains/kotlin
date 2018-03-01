@@ -134,9 +134,18 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                         gradleIdeaProject.modules.firstOrNull { it.gradleProject.path == moduleNodeForGradleModel?.data?.id }
                     }
                     else gradleModule
+                    val implementsModuleId = resolverCtx.getExtraProject(ideaModule, KotlinGradleModel::class.java)?.implements
 
-                    val implementsInfo = resolverCtx.getExtraProject(ideaModule, KotlinGradleModel::class.java)?.implements
-                    val targetModule = implementsInfo?.let { findModule(ideProject, it) }
+                    val targetModule = implementsModuleId?.let {
+                        val compositePrefix = if (resolverCtx.models.ideaProject != gradleModule.project
+                                                  && it.startsWith(":")) {
+                            gradleModule.project.name
+                        } else {
+                            ""
+                        }
+
+                        findModuleById(ideProject, compositePrefix + it)
+                    }
                     if (targetModule != null) {
                         if (useModulePerSourceSet()) {
                             val targetSourceSetsByName = ExternalSystemApiUtil
@@ -161,6 +170,10 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             }
         }
 
+        if (!useModulePerSourceSet()) {
+            super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+        }
+
         addTransitiveDependenciesOnImplementedModules()
 
         ideModule.isResolved = true
@@ -170,7 +183,9 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.platformPluginId = gradleModel.platformPluginId
         addImplementedModuleNames(ideModule, ideProject, gradleModel)
 
-        super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+        if (useModulePerSourceSet()) {
+            super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+        }
     }
 
     private fun addImplementedModuleNames(
@@ -178,7 +193,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             ideProject: DataNode<ProjectData>,
             gradleModel: KotlinGradleModel
     ) {
-        val implementedModule = gradleModel.implements?.let { findModule(ideProject, it) } ?: return
+        val implementedModule = gradleModel.implements?.let { findModuleById(ideProject, it) } ?: return
         if (resolverCtx.isResolveModulePerSourceSet) {
             val dependentSourceSets = dependentModule.getSourceSetsMap()
             val implementedSourceSets = implementedModule.getSourceSetsMap()
@@ -205,7 +220,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.createChild(ProjectKeys.MODULE_DEPENDENCY, moduleDependencyData)
     }
 
-    private fun findModule(ideProject: DataNode<ProjectData>, moduleId: String): DataNode<ModuleData>? {
+    private fun findModuleById(ideProject: DataNode<ProjectData>, moduleId: String): DataNode<ModuleData>? {
         return ideProject.children.find { (it.data as? ModuleData)?.id == moduleId } as DataNode<ModuleData>?
     }
 }

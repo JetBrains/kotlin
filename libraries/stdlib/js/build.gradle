@@ -1,5 +1,5 @@
 plugins {
-    id 'com.craigburke.karma' version '1.4.4'
+    id "com.moowork.node" version "1.2.0"
 }
 
 description = 'Kotlin Standard Library for JS'
@@ -16,9 +16,10 @@ def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
 def commonSrcDir = "${buildDir}/common-sources"
 def commonTestSrcDir = "${buildDir}/common-test-sources"
 def builtinsDir = "${rootDir}/core/builtins"
-def jsLibrariesDir = "${rootDir}/js/js.libraries"
-def jsSrcDir = "${jsLibrariesDir}/src"
-def jsTestSrcDir = "${jsLibrariesDir}/test"
+def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
+def jsSrcGeneratedDir = "${rootDir}/js/js.libraries/src/core/generated" // to be removed soon
+def jsSrcDir = "src"
+def jsTestSrcDir = "test"
 def jsSrcJsDir = "${jsSrcDir}/js"
 def jsOutputFile = "${buildDir}/classes/kotlin.js"
 
@@ -33,7 +34,7 @@ sourceSets {
     builtins {
         kotlin {
             srcDir builtinsSrcDir2
-            srcDir "${jsSrcDir}/builtins"
+            srcDir 'runtime'
         }
     }
 
@@ -41,8 +42,14 @@ sourceSets {
         kotlin {
             srcDir builtinsSrcDir
             srcDir jsSrcDir
-            exclude "builtins"
+            srcDir jsSrcGeneratedDir
             srcDir commonSrcDir
+        }
+    }
+
+    experimental {
+        kotlin {
+            srcDir experimentalSrcDir
         }
     }
 
@@ -136,33 +143,50 @@ compileKotlin2Js {
         outputFile = "${buildDir}/classes/main/kotlin.js"
         sourceMap = true
         sourceMapPrefix = "./"
-        freeCompilerArgs += [ "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir ].join(File.pathSeparator) ]
+        freeCompilerArgs += [ "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir].collect { file(it).absoluteFile }.join(File.pathSeparator) ]
+    }
+}
+
+compileExperimentalKotlin2Js {
+    dependsOn compileKotlin2Js
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        outputFile = "${buildDir}/classes/main/kotlin-experimental.js"
+        sourceMap = true
+        sourceMapPrefix = "./"
+        freeCompilerArgs += [ "-source-map-base-dirs", [experimentalSrcDir].join(File.pathSeparator) ]
     }
 }
 
 compileTestKotlin2Js {
     dependsOn preprocessSourcesTest
     kotlinOptions {
-        moduleKind = "plain"
+        moduleKind = "umd"
     }
 }
 
 task compileJs(type: JavaExec) {
-    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js
+    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js, compileExperimentalKotlin2Js
     inputs.files(compileBuiltinsKotlin2Js.outputs.files)
     inputs.files(compileKotlin2Js.outputs.files)
+    inputs.files(compileExperimentalKotlin2Js.outputs.files)
     inputs.dir(jsSrcDir)
     outputs.file(jsOutputFile)
     outputs.file("${jsOutputFile}.map")
 
-    def inputFiles = fileTree("${jsSrcJsDir}") {
+    def inputFiles = fileTree(jsSrcJsDir) {
         include '**/*.js'
     }
 
     main = "org.jetbrains.kotlin.js.FileMergerKt"
     doFirst {
         args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path } +
-               ["$buildDir/classes/builtins/kotlin.js", "$buildDir/classes/main/kotlin.js"]
+               (compileBuiltinsKotlin2Js.outputs.files.collect { it.path } +
+               compileKotlin2Js.outputs.files.collect { it.path } +
+               compileExperimentalKotlin2Js.outputs.files.collect { it.path }).findAll {
+                   it.endsWith(".js") && !it.endsWith(".meta.js")
+               }
     }
     classpath = configurations.merger
 
@@ -188,17 +212,20 @@ task compileJs(type: JavaExec) {
 
         def sourceMapBasePaths = [
                 "./",
-                "/js.libraries/src/js/"
+                "libraries/stdlib/js/src/js/",
+                "libraries/stdlib/js/src/",
         ]
         sourceMap.sources = sourceMap.sources.collect { sourcePath ->
             def prefixToRemove = sourceMapBasePaths.find { basePath -> sourcePath.startsWith(basePath) }
             if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
         }
 
-        def sourceMapSourcesBaseDirs = [ jsSrcDir, builtinsSrcDir2, builtinsSrcDir, commonSrcDir, rootDir ]
+        def sourceMapSourcesBaseDirs = [jsSrcDir, jsSrcJsDir, jsSrcGeneratedDir, builtinsSrcDir, commonSrcDir, projectDir]
 
         sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
-            sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() && it.name != "kotlin.js" }?.text
+            def text = sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() }?.text
+            if (text == null) logger.warn("Sources missing for file $sourceName")
+            text
         }
 
         sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
@@ -239,7 +266,14 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from (sourceSets.main.allSource) {
         into 'kotlin'
         exclude '**/*.java'
+        exclude 'org.w3c/**'
         exclude 'js/**'
+    }
+    from (sourceSets.main.allSource) {
+        include 'org.w3c/**'
+    }
+    from (sourceSets.experimental.allSource) {
+        into 'kotlin'
     }
 }
 
@@ -267,33 +301,39 @@ dist {
     }
 }
 
+task populateNodeModules(type: Copy, dependsOn: [compileJs, compileTestKotlin2Js]) {
+    from jsOutputFile
+    from kotlinTestJsOutputFile
 
-karma {
-    dependencies(['qunitjs@1.23.1', 'karma-teamcity-reporter@0.1.2'])
+    into "${buildDir}/node_modules"
+}
 
-    frameworks = ['qunit']
-    browsers = ['PhantomJS']
+node {
+    download = true
+    version = '8.9.4' // The default 6.9.1 has buggy hyperbolic functions implementation
+    nodeModulesDir = buildDir
+}
+
+task installMocha(type: NpmTask, dependsOn: [populateNodeModules]) {
+    args = ['install', 'mocha']
+}
+
+task installTeamcityReporter(type: NpmTask, dependsOn: [populateNodeModules]) {
+    args = ['install', 'mocha-teamcity-reporter']
+}
+
+task runMocha(type: NodeTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, installMocha]) {
+    script = file("${buildDir}/node_modules/mocha/bin/mocha")
+    args = [jsTestOutputFile]
 
     if (project.hasProperty("teamcity")) {
-        reporters = ['teamcity']
-    }
+        dependsOn installTeamcityReporter
+        args = ['--reporter', 'mocha-teamcity-reporter'] + args
 
-    profile('default') {
-        libraryBases = ['']
-        libraryFiles = [jsOutputFile, kotlinTestJsOutputFile]
-
-        sourceBases = []
-        sourceFiles = []
-
-        testBases = ['']
-        testFiles = [jsTestOutputFile, kotlinTestJsTestOutputFile]
+        execOverrides {
+            it.ignoreExitValue = true
+        }
     }
 }
 
-karmaGenerateConfig.outputs.upToDateWhen { false }
-karmaRun {
-    ignoreExitValue = Boolean.valueOf(ignoreTestFailures)
-    dependsOn testClasses
-    dependsOn tasks.getByPath(':kotlin-test:kotlin-test-js:testClasses')
-}
-clean.dependsOn karmaClean
+test.dependsOn runMocha

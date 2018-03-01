@@ -62,7 +62,7 @@ class IrConstructorImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ClassConstructorDescriptor,
-        body: IrBody
+        body: IrBody?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.body = body
     }

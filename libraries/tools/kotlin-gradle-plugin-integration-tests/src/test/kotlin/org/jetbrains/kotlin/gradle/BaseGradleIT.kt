@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.After
 import org.junit.AfterClass
@@ -27,6 +28,21 @@ abstract class BaseGradleIT {
     @After
     fun tearDown() {
         workingDir.deleteRecursively()
+    }
+
+    fun Project.allowOriginalKapt() {
+        if (!projectDir.exists()) {
+            setupWorkingDir()
+        }
+
+        val allowOriginalKaptOption = "allow.original.kapt = true"
+
+        val gradleProperties = File(projectDir, "gradle.properties")
+        if (gradleProperties.exists()) {
+            gradleProperties.appendText("\n$allowOriginalKaptOption")
+        } else {
+            gradleProperties.writeText(allowOriginalKaptOption)
+        }
     }
 
     // https://developer.android.com/studio/intro/update.html#download-with-gradle
@@ -104,14 +120,21 @@ abstract class BaseGradleIT {
         }
 
         private fun createNewWrapperDir(version: String): File =
-            createTempDir("GradleWrapper-$version")
+            createTempDir("GradleWrapper-$version-")
                         .apply {
                             File(BaseGradleIT.resourcesRootFile, "GradleWrapper").copyRecursively(this)
                             val wrapperProperties = File(this, "gradle/wrapper/gradle-wrapper.properties")
                             wrapperProperties.modify { it.replace("<GRADLE_WRAPPER_VERSION>", version) }
                         }
 
+        private val runnerGradleVersion = System.getProperty("runnerGradleVersion")
+
         private fun stopDaemon(version: String, environmentVariables: Map<String, String>) {
+            if (version == runnerGradleVersion) {
+                println("Not stopping Gradle daemon v$version as it matches the runner version")
+                return
+            }
+
             println("Stopping gradle daemon v$version")
 
             val wrapperDir = gradleWrappers[version] ?: error("Was asked to stop unknown daemon $version")
@@ -129,7 +152,9 @@ abstract class BaseGradleIT {
             for (version in wrapperVersions) {
                 stopDaemon(version, environmentVariables)
             }
-            assert(daemonRunCount.isEmpty()) { "Could not stop some daemons ${daemonRunCount.keys.joinToString()}" }
+            assert(daemonRunCount.keys.none { it != runnerGradleVersion }) {
+                "Could not stop some daemons ${(daemonRunCount.keys - runnerGradleVersion).joinToString()}"
+            }
         }
     }
 
@@ -151,10 +176,10 @@ abstract class BaseGradleIT {
     )
 
     open inner class Project(
-            val projectName: String,
-            val wrapperVersion: String,
-            directoryPrefix: String? = null,
-            val minLogLevel: LogLevel = LogLevel.DEBUG
+        val projectName: String,
+        val gradleVersionRequirement: GradleVersionRequired = GradleVersionRequired.None,
+        directoryPrefix: String? = null,
+        val minLogLevel: LogLevel = LogLevel.DEBUG
     ) {
         val resourceDirName = if (directoryPrefix != null) "$directoryPrefix/$projectName" else projectName
         open val resourcesRoot = File(resourcesRootFile, "testProject/$resourceDirName")
@@ -213,6 +238,8 @@ abstract class BaseGradleIT {
     }
 
     fun Project.build(vararg params: String, options: BuildOptions = defaultBuildOptions(), check: CompiledProject.() -> Unit) {
+        val wrapperVersion = chooseWrapperVersionOrFinishTest()
+
         val env = createEnvironmentVariablesMap(options)
         val wrapperDir = prepareWrapper(wrapperVersion, env)
         val cmd = createBuildCommand(wrapperDir, params, options)
@@ -356,7 +383,7 @@ abstract class BaseGradleIT {
 
     fun CompiledProject.assertTasksExecuted(tasks: Iterable<String>) {
         for (task in tasks) {
-            assertContains("Executing task '$task'")
+            assertContainsRegex("(Executing actions for task|Executing task) '$task'".toRegex())
         }
     }
 
@@ -367,18 +394,11 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.getOutputForTask(taskName: String): String {
-        fun String.substringAfter(delimiter: String, missingDelimiterValue: () -> String): String {
-            val index = indexOf(delimiter)
-            return if (index == -1) missingDelimiterValue() else substring(index + delimiter.length, length)
-        }
+        val taskOutputRegex = ("\\[LIFECYCLE] \\[class org\\.gradle(?:\\.internal\\.buildevents)?\\.TaskExecutionLogger] :$taskName" +
+                               "([\\s\\S]+?)" +
+                               "Finished executing task ':$taskName'").toRegex()
 
-        fun String.substringBefore(delimiter: String, missingDelimiterValue: () -> String): String {
-            val index = indexOf(delimiter)
-            return if (index == -1) missingDelimiterValue() else substring(0, index)
-        }
-
-        return output.substringAfter("[LIFECYCLE] [class org.gradle.TaskExecutionLogger] :$taskName") { error("Can't find start for task $taskName") }
-              .substringBefore("Finished executing task ':$taskName'") { error("Can't find completion for task $taskName") }
+        return taskOutputRegex.find(output)?.run { groupValues[1] } ?: error("Cannot find output for task $taskName")
     }
 
     fun CompiledProject.assertCompiledKotlinSources(
@@ -421,8 +441,32 @@ abstract class BaseGradleIT {
             else
                 assertSameFiles(sources, compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
 
+    fun Project.resourcesDir(subproject: String? = null, sourceSet: String = "main"): String =
+            (subproject?.plus("/") ?: "") + "build/" +
+            (if (testGradleVersionBelow("4.0")) "classes/" else "resources/") +
+            sourceSet + "/"
+
+    fun Project.classesDir(subproject: String? = null, sourceSet: String = "main", language: String = "kotlin"): String =
+            (subproject?.plus("/") ?: "") + "build/classes/" +
+            (if (testGradleVersionAtLeast("4.0")) "$language/" else "") +
+            sourceSet + "/"
+
+    fun Project.testGradleVersionAtLeast(version: String): Boolean =
+        GradleVersion.version(chooseWrapperVersionOrFinishTest()) >= GradleVersion.version(version)
+
+    fun Project.testGradleVersionBelow(version: String): Boolean = !testGradleVersionAtLeast(version)
+
+    fun CompiledProject.kotlinClassesDir(subproject: String? = null, sourceSet: String = "main"): String =
+            project.classesDir(subproject, sourceSet, language = "kotlin")
+
+    fun CompiledProject.javaClassesDir(subproject: String? = null, sourceSet: String = "main"): String =
+            project.classesDir(subproject, sourceSet, language = "java")
+
     private fun Project.createBuildCommand(wrapperDir: File, params: Array<out String>, options: BuildOptions): List<String> =
             createGradleCommand(wrapperDir, createGradleTailParameters(options, params))
+
+    fun Project.gradleBuildScript(subproject: String? = null): File =
+        File(projectDir, subproject?.plus("/").orEmpty() + "build.gradle")
 
     private fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
             params.toMutableList().apply {
@@ -454,9 +498,17 @@ abstract class BaseGradleIT {
                 System.getProperty("maven.repo.local")?.let {
                     add("-Dmaven.repo.local=$it") // TODO: proper escaping
                 }
+
                 if (options.withBuildCache) {
                     add("--build-cache")
+                } else {
+                    // Override possibly enabled system-wide caching:
+                    add("-Dorg.gradle.caching=false")
                 }
+
+                // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
+                add("--console=plain")
+
                 addAll(options.freeCommandLineArgs)
             }
 

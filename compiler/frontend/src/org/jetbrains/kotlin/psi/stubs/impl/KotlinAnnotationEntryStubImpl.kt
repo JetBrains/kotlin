@@ -25,11 +25,11 @@ import com.intellij.psi.PsiElement
 
 class KotlinAnnotationEntryStubImpl(
     parent: StubElement<out PsiElement>?,
-    private val shortName: StringRef,
+    private val shortName: StringRef?,
     private val hasValueArguments: Boolean
 ) : KotlinStubBaseImpl<KtAnnotationEntry>(parent, KtStubElementTypes.ANNOTATION_ENTRY), KotlinAnnotationEntryStub {
 
-    override fun getShortName() = shortName.string
+    override fun getShortName() = shortName?.string
 
     override fun hasValueArguments() = hasValueArguments
 }

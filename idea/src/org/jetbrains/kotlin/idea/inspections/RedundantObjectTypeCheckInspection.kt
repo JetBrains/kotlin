@@ -38,23 +38,14 @@ class RedundantObjectTypeCheckInspection : AbstractKotlinInspection() {
                 super.visitIsExpression(expression)
                 val typeReference = expression.typeReference ?: return
                 if (!typeReference.isObject()) return
-                registerProblem(expression.operationReference, ReplaceWithEqualityFix(expression.isNegated))
+                holder.registerProblem(
+                    expression.operationReference,
+                    TextRange(0, if (expression.isNegated) 3 else 2),
+                    "Redundant type checks for object",
+                    ReplaceWithEqualityFix(expression.isNegated)
+                )
             }
 
-            override fun visitWhenConditionIsPattern(condition: KtWhenConditionIsPattern) {
-                super.visitWhenConditionIsPattern(condition)
-                val typeReference = condition.typeReference ?: return
-                if (!typeReference.isObject()) return
-                if (condition.isNegated) return
-                registerProblem(condition, RemoveIsOperator())
-            }
-
-            private fun registerProblem(element: KtElement, quickFix: LocalQuickFix) {
-                holder.registerProblem(element,
-                                       TextRange(0, 2),
-                                       "Redundant type checks for object",
-                                       quickFix)
-            }
         }
     }
 }
@@ -67,7 +58,7 @@ private fun KtTypeReference.isObject(): Boolean {
 private class ReplaceWithEqualityFix(isNegated: Boolean) : LocalQuickFix {
     private val isOperator = if (isNegated) "!is" else "is"
 
-    private val equality = if (isNegated) "!=" else "=="
+    private val equality = if (isNegated) "!==" else "==="
 
     override fun getName() = "Replace '$isOperator' with '$equality'"
 
@@ -81,18 +72,3 @@ private class ReplaceWithEqualityFix(isNegated: Boolean) : LocalQuickFix {
         element.replace(newElement)
     }
 }
-
-private class RemoveIsOperator : LocalQuickFix {
-    override fun getName() = "Remove 'is' operator"
-
-    override fun getFamilyName() = name
-
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val element = descriptor.psiElement.getParentOfType<KtWhenConditionIsPattern>(strict = false) ?: return
-        val typeReference = element.typeReference ?: return
-        val factory = KtPsiFactory(project)
-        val newElement = factory.createWhenCondition(typeReference.text)
-        element.replace(newElement)
-    }
-}
-

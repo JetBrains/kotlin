@@ -110,8 +110,11 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_BINARY_OPERATIONS =
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, BINARY_OPERATIONS);
 
+    private static final DescriptorPredicate PRIMITIVE_INTEGRAL_NUMBERS_COMPARE_TO_INTEGRAL_OPERATIONS =
+            pattern("Byte|Short|Int.compareTo(Byte|Short|Int)");
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS =
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, "compareTo");
+
     private static final Predicate<FunctionDescriptor> INT_WITH_BIT_OPERATIONS = pattern("Int.or|and|xor|shl|shr|ushr")
             .or(pattern("Short|Byte.or|and|xor"));
     private static final DescriptorPredicate BOOLEAN_OPERATIONS = pattern("Boolean.or|and|xor");
@@ -140,10 +143,12 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             return new RangeToIntrinsic(descriptor);
         }
 
-        if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.test(descriptor)) {
+        if (PRIMITIVE_INTEGRAL_NUMBERS_COMPARE_TO_INTEGRAL_OPERATIONS.test(descriptor)) {
             return PRIMITIVE_NUMBER_COMPARE_TO_INTRINSIC;
         }
-
+        if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.test(descriptor)) {
+            return BUILTINS_COMPARE_TO_INTRINSIC;
+        }
 
         if (KotlinBuiltIns.isBuiltIn(descriptor) && descriptor.getName().equals(OperatorNameConventions.COMPARE_TO)) {
             return BUILTINS_COMPARE_TO_INTRINSIC;

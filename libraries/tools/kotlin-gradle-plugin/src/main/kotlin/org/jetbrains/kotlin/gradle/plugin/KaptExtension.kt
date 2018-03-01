@@ -30,6 +30,8 @@ open class KaptExtension {
 
     open var correctErrorTypes: Boolean = false
 
+    open var mapDiagnosticLocations: Boolean = false
+
     open var processors: String = ""
 
     /** Explicit opt-in switch for Kapt caching. Should be used when annotation processors used by this project are
