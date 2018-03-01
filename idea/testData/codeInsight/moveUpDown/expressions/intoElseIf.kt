@@ -1,0 +1,10 @@
+// MOVE: up
+fun test(i: Int) {
+    if (i == 1) {
+        run {
+        }
+    } else if (i == 2) {
+    } else if (i == 3) {
+    }
+    <caret>println()
+}
