@@ -2519,7 +2519,7 @@ if (isMac()) {
 task jsinterop_math(type: RunStandaloneKonanTest) {
     doFirst {
         def jsinteropScript = isWindows() ? "jsinterop.bat" : "jsinterop"
-        def jsinterop = "$distDir/bin/$jsinteropScript"
+        def jsinterop = "$dist/bin/$jsinteropScript"
         // TODO: We probably need a NativeInteropPlugin for jsinterop?
         "$jsinterop -pkg kotlinx.interop.wasm.math -o $buildDir/jsmath -target wasm32".execute().waitFor()
 
