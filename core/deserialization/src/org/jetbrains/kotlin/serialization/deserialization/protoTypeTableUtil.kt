@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.utils.ifEmpty
 
 fun ProtoBuf.Class.supertypes(typeTable: TypeTable): List<ProtoBuf.Type> {
-    return supertypeList.ifEmpty { supertypeIdList.map { typeTable[it] } }
+    return supertypeList.takeIf(Collection<*>::isNotEmpty) ?: supertypeIdList.map { typeTable[it] }
 }
 
 fun ProtoBuf.Type.Argument.type(typeTable: TypeTable): ProtoBuf.Type? {
@@ -40,7 +39,7 @@ fun ProtoBuf.Type.flexibleUpperBound(typeTable: TypeTable): ProtoBuf.Type? {
 }
 
 fun ProtoBuf.TypeParameter.upperBounds(typeTable: TypeTable): List<ProtoBuf.Type> {
-    return upperBoundList.ifEmpty { upperBoundIdList.map { typeTable[it] } }
+    return upperBoundList.takeIf(Collection<*>::isNotEmpty) ?: upperBoundIdList.map { typeTable[it] }
 }
 
 fun ProtoBuf.Function.returnType(typeTable: TypeTable): ProtoBuf.Type {
