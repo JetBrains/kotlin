@@ -16780,6 +16780,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("crossTypeEquals.kt")
+        public void testCrossTypeEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/crossTypeEquals.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ea35963.kt")
         public void testEa35963() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/ea35963.kt");

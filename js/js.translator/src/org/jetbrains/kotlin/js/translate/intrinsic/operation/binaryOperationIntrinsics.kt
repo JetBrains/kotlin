@@ -18,9 +18,13 @@ package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.operation.OperatorTable
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.getPrecisePrimitiveType
 import org.jetbrains.kotlin.js.translate.utils.getPrimitiveNumericComparisonInfo
 import org.jetbrains.kotlin.lexer.KtToken
@@ -43,7 +47,8 @@ class BinaryOperationIntrinsics {
     private val intrinsicCache = mutableMapOf<IntrinsicKey, BinaryOperationIntrinsic?>()
 
     fun getIntrinsic(expression: KtBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic? {
-        val descriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression) as? FunctionDescriptor ?: return null
+        val descriptor =
+            getCallableDescriptorForOperationExpression(context.bindingContext(), expression) as? FunctionDescriptor ?: return null
 
         val (leftType, rightType) = binaryOperationTypes(expression, context)
 
@@ -84,3 +89,29 @@ interface BinaryOperationIntrinsicFactory {
 
     fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic?
 }
+
+typealias OperatorSelector = (KtBinaryExpression) -> JsBinaryOperator
+
+val defaultOperatorSelector: OperatorSelector = { OperatorTable.getBinaryOperator(getOperationToken(it)) }
+
+// toLeft(L, R) OP toRight(L, R)
+fun intrinsic(
+    toLeft: (JsExpression, JsExpression, TranslationContext) -> JsExpression,
+    toRight: (JsExpression, JsExpression, TranslationContext) -> JsExpression,
+    operator: (KtBinaryExpression) -> JsBinaryOperator = defaultOperatorSelector
+): BinaryOperationIntrinsic = { expression, left, right, context ->
+    JsBinaryOperation(operator(expression), toLeft(left, right, context), toRight(left, right, context))
+}
+
+// toLeft(L, C) OP toRight(R, C)
+fun binaryIntrinsic(
+    toLeft: (JsExpression, TranslationContext) -> JsExpression = { l, _ -> l },
+    toRight: (JsExpression, TranslationContext) -> JsExpression = { r, _ -> r },
+    operator: OperatorSelector = defaultOperatorSelector
+): BinaryOperationIntrinsic = intrinsic({ l, _, c -> toLeft(l, c) }, { _, r, c -> toRight(r, c) }, operator)
+
+
+fun coerceTo(type: KotlinType): (JsExpression, TranslationContext) -> JsExpression =
+    { e, c ->
+        TranslationUtils.coerce(c, e, type)
+    }
