@@ -34,7 +34,7 @@
 #if KONAN_NEED_ASINH_ACOSH
 namespace {
 
-    // MinGW's implmenetation if asinh/acosh function returns NaN for large arguments so we use another implementation.
+    // MinGW's implmenetation of asinh/acosh function returns NaN for large arguments so we use another implementation.
     // Both implementations derived from boost special math functions and are also used by Kotlin/JVM.
     // Copyright Eric Ford & Hubert Holin 2001.
 

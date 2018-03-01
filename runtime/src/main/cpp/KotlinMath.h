@@ -23,6 +23,8 @@
 
 extern "C" {
 
+// TODO: consider auto-generating this header file.
+
 // Bridges for JS math.
 void knjs__Math_abs(KInt xUpper, KInt xLower);
 void knjs__Math_acos(KInt xUpper, KInt xLower);
