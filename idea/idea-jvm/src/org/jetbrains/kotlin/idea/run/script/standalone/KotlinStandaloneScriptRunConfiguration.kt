@@ -23,18 +23,27 @@ import com.intellij.execution.configurations.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.util.JavaParametersUtil
 import com.intellij.execution.util.ProgramParametersUtil
+import com.intellij.ide.projectView.impl.ProjectRootsUtil
+import com.intellij.openapi.compiler.CompilerPaths
+import com.intellij.openapi.compiler.ex.CompilerPathsEx
 import com.intellij.openapi.components.PathMacroManager
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.options.SettingsEditorGroup
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.util.DefaultJDOMExternalizer
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.listeners.RefactoringElementAdapter
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.run.KotlinRunConfiguration
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer.Companion.pathFromPsiElement
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isProjectSourceFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -44,7 +53,7 @@ class KotlinStandaloneScriptRunConfiguration(
         project: Project,
         factory: ConfigurationFactory,
         name: String?
-) : LocatableConfigurationBase(project, factory, name), CommonJavaRunConfigurationParameters, RefactoringListenerProvider {
+) : KotlinRunConfiguration(name, JavaRunConfigurationModule(project, true), factory), CommonJavaRunConfigurationParameters, RefactoringListenerProvider {
     @JvmField
     var filePath: String? = null
     @JvmField
@@ -122,6 +131,11 @@ class KotlinStandaloneScriptRunConfiguration(
         JavaRunConfigurationExtensionManager.getInstance().readExternal(this, element)
         DefaultJDOMExternalizer.readExternal(this, element)
         EnvironmentVariablesComponent.readExternal(element, getEnvs())
+    }
+
+    override fun getModules(): Array<Module> {
+        val scriptVFile = LocalFileSystem.getInstance().findFileByIoFile(File(filePath))
+        return scriptVFile?.module(project)?.let { arrayOf(it) } ?: emptyArray()
     }
 
     override fun checkConfiguration() {
@@ -204,6 +218,19 @@ private class ScriptCommandLineState(
         params.programParametersList.prepend(PathUtil.kotlinPathsForIdeaPlugin.homePath.path)
         params.programParametersList.prepend("-kotlin-home")
 
+        val module = scriptVFile.module(environment.project)
+        if (module != null) {
+            val orderEnumerator = OrderEnumerator.orderEntries(module).recursively().let {
+                if (!ProjectRootsUtil.isInTestSource(scriptVFile, environment.project)) it.productionOnly() else it
+            }
+
+            val moduleDependencies = orderEnumerator.classes().pathsList.pathsString
+            if (moduleDependencies.isNotBlank()) {
+                params.programParametersList.prepend(moduleDependencies)
+                params.programParametersList.prepend("-cp")
+            }
+        }
+
         return params
     }
 
@@ -214,4 +241,11 @@ private class ScriptCommandLineState(
         JavaParametersUtil.configureProject(environment.project, params, JavaParameters.JDK_ONLY, jreHome)
         return params
     }
+}
+
+private fun VirtualFile.module(project: Project): Module? {
+    if (isProjectSourceFile(project, this)) {
+        return ModuleUtilCore.findModuleForFile(this, project)
+    }
+    return null
 }
