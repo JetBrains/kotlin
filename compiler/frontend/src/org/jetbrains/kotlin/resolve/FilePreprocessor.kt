@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve
 import com.google.common.collect.Sets
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext.PACKAGE_TO_FILES
+import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
 interface FilePreprocessorExtension {
     fun preprocessFile(file: KtFile)
@@ -28,9 +29,14 @@ class FilePreprocessor(
     private fun registerFileByPackage(file: KtFile) {
         // Register files corresponding to this package
         // The trace currently does not support bi-di multimaps that would handle this task nicer
-        val fqName = file.packageFqName
-        val files = trace.get(PACKAGE_TO_FILES, fqName) ?: Sets.newIdentityHashSet()
-        files.add(file)
-        trace.record(PACKAGE_TO_FILES, fqName, files)
+        trace.addElementToSlice(PACKAGE_TO_FILES, file.packageFqName, file)
     }
+}
+
+fun <K, T> BindingTrace.addElementToSlice(
+    slice: WritableSlice<K, MutableCollection<T>>, key: K, element: T
+) {
+    val elements = get(slice, key) ?: Sets.newIdentityHashSet()
+    elements.add(element)
+    record(slice, key, elements)
 }
