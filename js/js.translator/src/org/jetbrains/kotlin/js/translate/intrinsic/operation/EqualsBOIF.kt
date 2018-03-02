@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
+import org.jetbrains.kotlin.js.translate.utils.PsiUtils.isNegatedOperation
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.util.*
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
@@ -49,9 +49,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
         val anyType = context.currentModule.builtIns.anyType
         if (right is JsNullLiteral || left is JsNullLiteral) {
             val (subject, ktSubject) = if (right is JsNullLiteral) Pair(left, expression.left!!) else Pair(right, expression.right!!)
-            val type = context.bindingContext().getType(ktSubject) ?: anyType
-            val coercedSubject = TranslationUtils.coerce(context, subject, type.makeNullable())
-            return TranslationUtils.nullCheck(coercedSubject, isNegated)
+            return TranslationUtils.nullCheck(ktSubject, subject, context, isNegatedOperation(expression))
         }
 
         val (leftKotlinType, rightKotlinType) = binaryOperationTypes(expression, context)
