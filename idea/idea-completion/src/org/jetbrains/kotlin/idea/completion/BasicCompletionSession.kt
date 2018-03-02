@@ -501,11 +501,6 @@ class BasicCompletionSession(
             })
             collector.restartCompletionOnPrefixChange(prefixPattern)
 
-            collector.addLookupElementPostProcessor { lookupElement ->
-                lookupElement.putUserData(KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON, Unit)
-                lookupElement
-            }
-
             variableNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
             flushToResultSet()
 
@@ -693,11 +688,6 @@ class BasicCompletionSession(
                 override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
             })
             collector.restartCompletionOnPrefixChange(prefixPattern)
-
-            collector.addLookupElementPostProcessor { lookupElement ->
-                lookupElement.putUserData(KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON, Unit)
-                lookupElement
-            }
 
             parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
             flushToResultSet()
