@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.generators.protobuf
 
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf
+import org.jetbrains.kotlin.metadata.DebugProtoBuf
+import org.jetbrains.kotlin.metadata.builtins.DebugBuiltInsProtoBuf
+import org.jetbrains.kotlin.metadata.java.DebugJavaClassProtoBuf
+import org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf
 import org.jetbrains.kotlin.protobuf.Descriptors
-import org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf
-import org.jetbrains.kotlin.serialization.DebugProtoBuf
-import org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf
-import org.jetbrains.kotlin.serialization.java.DebugJavaClassProtoBuf
-import org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.util.*
@@ -80,13 +80,13 @@ class GenerateProtoBufCompare {
         p.println("package org.jetbrains.kotlin.incremental")
         p.println()
 
+        p.println("import org.jetbrains.kotlin.metadata.ProtoBuf")
+        p.println("import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf")
+        p.println("import org.jetbrains.kotlin.metadata.java.JavaClassProtoBuf")
+        p.println("import org.jetbrains.kotlin.metadata.js.JsProtoBuf")
+        p.println("import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf")
         p.println("import org.jetbrains.kotlin.name.ClassId")
-        p.println("import org.jetbrains.kotlin.serialization.ProtoBuf")
         p.println("import org.jetbrains.kotlin.serialization.deserialization.NameResolver")
-        p.println("import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf")
-        p.println("import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf")
-        p.println("import org.jetbrains.kotlin.serialization.js.JsProtoBuf")
-        p.println("import org.jetbrains.kotlin.serialization.java.JavaClassProtoBuf")
         p.println("import org.jetbrains.kotlin.utils.Interner")
         p.println("import java.util.*")
         p.println()

@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.QualifiedName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.Interner
 import java.io.OutputStream

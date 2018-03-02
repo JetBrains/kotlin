@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.idea.decompiler.common
 
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.ClassIdWithTarget
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader

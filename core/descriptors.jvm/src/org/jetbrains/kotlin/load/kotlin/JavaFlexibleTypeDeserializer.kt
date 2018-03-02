@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
-import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory

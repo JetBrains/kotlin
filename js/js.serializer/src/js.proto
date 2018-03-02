@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.js;
+package org.jetbrains.kotlin.metadata.js;
 
 import "core/metadata/src/metadata.proto";
 

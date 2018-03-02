@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf
 
 class TypeTable(typeTable: ProtoBuf.TypeTable) {
     val types: List<ProtoBuf.Type> = run {

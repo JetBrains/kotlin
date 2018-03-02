@@ -31,12 +31,12 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
+import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;

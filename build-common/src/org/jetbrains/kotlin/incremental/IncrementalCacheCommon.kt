@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.kotlin.incremental.storage.*
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.supertypes

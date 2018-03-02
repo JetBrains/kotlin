@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.contracts.description.expressions.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.metadata.ProtoBuf
 
 class ContractSerializer {
     fun serializeContractOfFunctionIfAny(

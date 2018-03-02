@@ -17,6 +17,7 @@
 @file:Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.utils.Interner
 import java.util.*

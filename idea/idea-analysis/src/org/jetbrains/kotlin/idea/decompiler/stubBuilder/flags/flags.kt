@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags
 
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
 
 abstract class FlagsToModifiers {
     abstract fun getModifiers(flags: Int): KtModifierKeywordToken?

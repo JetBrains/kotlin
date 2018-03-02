@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 
 data class ClassData(

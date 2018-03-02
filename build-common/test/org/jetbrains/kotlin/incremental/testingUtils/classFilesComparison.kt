@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.incremental.testingUtils
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.DebugProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf
 import org.jetbrains.kotlin.protobuf.ExtensionRegistry
-import org.jetbrains.kotlin.serialization.DebugProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
-import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
@@ -34,7 +34,6 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
 import java.util.zip.CRC32
-import kotlin.comparisons.compareBy
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 private val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"

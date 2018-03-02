@@ -35,15 +35,15 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
+import org.jetbrains.kotlin.metadata.ProtoBuf;
+import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.StringTableImpl;
-import org.jetbrains.kotlin.serialization.jvm.JvmModuleProtoBuf;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.io.File;

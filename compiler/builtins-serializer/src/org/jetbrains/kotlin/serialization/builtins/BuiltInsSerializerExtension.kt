@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.serialization.builtins
 
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnresolvedType
 

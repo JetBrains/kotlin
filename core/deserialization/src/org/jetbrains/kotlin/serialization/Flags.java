@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.protobuf.Internal;
 
 public class Flags {

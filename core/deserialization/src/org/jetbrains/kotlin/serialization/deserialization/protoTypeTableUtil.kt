@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.utils.ifEmpty
 
 fun ProtoBuf.Class.supertypes(typeTable: TypeTable): List<ProtoBuf.Type> {
