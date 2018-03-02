@@ -44,7 +44,10 @@ import kotlin.script.dependencies.Environment
 abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfigurationTest() {
     fun doTest(path: String) {
         configureScriptFile(path)
-        checkHighlighting(editor, false, false)
+        checkHighlighting(
+            editor,
+            InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_WARNINGS"),
+            InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_INFOS"))
     }
 }
 
