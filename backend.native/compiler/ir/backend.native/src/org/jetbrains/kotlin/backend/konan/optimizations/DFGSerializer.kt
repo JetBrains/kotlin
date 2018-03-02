@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import sun.misc.Unsafe
 import kotlin.reflect.KClass
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmName
 
@@ -70,6 +68,11 @@ internal object DFGSerializer {
             index++
         }
 
+        private fun writeCharUnsafe(value: Char) {
+            theUnsafe.putChar(array, byteArrayDataOffset + index, value)
+            index += 2
+        }
+
         inline fun <T> writeNullable(value: T?, valueWriter: ArraySlice.(T) -> Unit) {
             writeBoolean(value != null)
             if (value != null)
@@ -111,6 +114,14 @@ internal object DFGSerializer {
 
         //------------Write arrays------------------------------------------------------------------//
 
+        fun writeCharArray(source: CharArray) {
+            writeInt(source.size)
+            val dataSize = source.size * 2
+            ensureSize(dataSize)
+            theUnsafe.copyMemory(source, charArrayDataOffset, array, byteArrayDataOffset + index, dataSize.toLong())
+            index += dataSize
+        }
+
         fun writeIntArray(source: IntArray) {
             writeInt(source.size)
             val dataSize = source.size * 4
@@ -120,12 +131,17 @@ internal object DFGSerializer {
         }
 
         fun writeString(s: String) {
-            val value = theUnsafe.getObject(s, stringValueOffset) as CharArray
-            writeInt(value.size)
-            val dataSize = value.size * 2
-            ensureSize(dataSize)
-            theUnsafe.copyMemory(value, charArrayDataOffset, array, byteArrayDataOffset + index, dataSize.toLong())
-            index += dataSize
+            val value = theUnsafe.getObject(s, stringValueOffset)
+            val isCompactString = value is ByteArray
+            if (!isCompactString)
+                writeCharArray(value as CharArray)
+            else {
+                val size = s.length
+                writeInt(size)
+                ensureSize(size * 2)
+                for (i in 0 until size)
+                    writeCharUnsafe(s[i])
+            }
         }
 
         inline fun <reified T> writeArray(array: Array<T>, itemWriter: ArraySlice.(T) -> Unit) {
@@ -134,6 +150,16 @@ internal object DFGSerializer {
         }
 
         //------------Read arrays------------------------------------------------------------------//
+
+        fun readCharArray(): CharArray {
+            val size = readInt()
+            val result = CharArray(size)
+            val dataSize = size * 2
+            checkSize(dataSize)
+            theUnsafe.copyMemory(array, byteArrayDataOffset + index, result, charArrayDataOffset, dataSize.toLong())
+            index += dataSize
+            return result
+        }
 
         fun readIntArray(): IntArray {
             val size = readInt()
@@ -145,17 +171,7 @@ internal object DFGSerializer {
             return result
         }
 
-        fun readString(): String {
-            val size = readInt()
-            val data = CharArray(size)
-            val dataSize = size * 2
-            checkSize(dataSize)
-            theUnsafe.copyMemory(array, byteArrayDataOffset + index, data, charArrayDataOffset, dataSize.toLong())
-            index += dataSize
-            val str = theUnsafe.allocateInstance(String::class.java) as String
-            theUnsafe.putObject(str, stringValueOffset, data)
-            return str
-        }
+        fun readString() = String(readCharArray())
 
         inline fun <reified T> readArray(itemReader: ArraySlice.() -> T) =
                 Array(readInt()) { this.itemReader() }
