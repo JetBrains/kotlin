@@ -82,11 +82,11 @@ class GenerateProtoBufCompare {
 
         p.println("import org.jetbrains.kotlin.metadata.ProtoBuf")
         p.println("import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf")
+        p.println("import org.jetbrains.kotlin.metadata.deserialization.NameResolver")
         p.println("import org.jetbrains.kotlin.metadata.java.JavaClassProtoBuf")
         p.println("import org.jetbrains.kotlin.metadata.js.JsProtoBuf")
         p.println("import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf")
         p.println("import org.jetbrains.kotlin.name.ClassId")
-        p.println("import org.jetbrains.kotlin.serialization.deserialization.NameResolver")
         p.println("import org.jetbrains.kotlin.serialization.deserialization.getClassId")
         p.println("import org.jetbrains.kotlin.utils.Interner")
         p.println("import java.util.*")

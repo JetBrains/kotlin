@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils

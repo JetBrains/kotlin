@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 
 class VersionRequirementTable private constructor(private val infos: List<ProtoBuf.VersionRequirement>) {
     operator fun get(id: Int): ProtoBuf.VersionRequirement? = infos.getOrNull(id)
