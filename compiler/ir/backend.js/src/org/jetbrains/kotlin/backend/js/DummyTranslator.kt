@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.js.backend.ast.JsScope
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.backend.js.translate.context.StaticContext
 import org.jetbrains.kotlin.backend.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.backend.js.facade.exceptions.TranslationRuntimeException
 import org.jetbrains.kotlin.backend.js.translate.declaration.FileDeclarationVisitor
+import org.jetbrains.kotlin.js.facade.exceptions.TranslationRuntimeException
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
