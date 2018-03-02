@@ -1,0 +1,5 @@
+// "Create actual function for platform JVM" "true"
+
+expect fun bar()
+
+expect fun <caret>foo(arg: Int): String

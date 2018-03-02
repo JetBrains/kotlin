@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.facet.implementingModules
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
@@ -94,6 +96,15 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
 
     private fun getOrCreateImplementationFile(): KtFile? {
         val declaration = element as? KtNamedDeclaration ?: return null
+        val parent = declaration.parent
+        if (parent is KtFile) {
+            for (otherDeclaration in parent.declarations) {
+                if (otherDeclaration === declaration) continue
+                if (!otherDeclaration.hasExpectModifier()) continue
+                val actualDeclaration = otherDeclaration.actualsForExpected(actualPlatform).singleOrNull() ?: continue
+                return actualDeclaration.containingKtFile
+            }
+        }
         val name = declaration.name ?: return null
 
         val expectedDir = declaration.containingFile.containingDirectory
