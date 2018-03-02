@@ -30,7 +30,7 @@ import kotlin.reflect.KProperty
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 var VirtualFile.scriptDependencies: ScriptDependencies? by ScriptDependenciesProperty()
-private val scriptDependencies = FileAttribute("kotlin-script-dependencies", 2, false)
+private val scriptDependencies = FileAttribute("kotlin-script-dependencies", 3, false)
 
 private class ScriptDependenciesProperty {
 
