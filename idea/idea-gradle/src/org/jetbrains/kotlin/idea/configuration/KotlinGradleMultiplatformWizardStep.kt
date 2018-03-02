@@ -37,19 +37,18 @@ class KotlinGradleMultiplatformWizardStep(
     private val wizardContext: WizardContext
 ) : ModuleWizardStep() {
 
-    private val mainModuleNameComponent: LabeledComponent<JTextField>
-    private val jvmModuleNameComponent: LabeledComponent<JTextField>
-    private val jsModuleNameComponent: LabeledComponent<JTextField>
+    private val mainModuleNameComponent: LabeledComponent<JTextField> =
+        LabeledComponent.create(JTextField(), "Main module name:", BorderLayout.WEST)
+    private val jvmModuleNameComponent: LabeledComponent<JTextField> =
+        LabeledComponent.create(JTextField(), "JVM module name:", BorderLayout.WEST)
+    private val jsModuleNameComponent: LabeledComponent<JTextField> =
+        LabeledComponent.create(JTextField(), "JS module name:", BorderLayout.WEST)
 
     private val panel: JPanel
     private var syncEditing: Boolean = true
     private var inSyncUpdate: Boolean = false
 
     init {
-        mainModuleNameComponent = LabeledComponent.create(JTextField(), "Main module name:", BorderLayout.WEST)
-        jvmModuleNameComponent = LabeledComponent.create(JTextField(), "JVM module name:", BorderLayout.WEST)
-        jsModuleNameComponent = LabeledComponent.create(JTextField(), "JS module name:", BorderLayout.WEST)
-
         panel = object : JPanel(GridBagLayout()), PanelWithAnchor {
             private var anchor: JComponent? = mainModuleNameComponent.anchor
 
@@ -62,7 +61,6 @@ class KotlinGradleMultiplatformWizardStep(
                 jsModuleNameComponent.anchor = anchor
             }
         }
-
         val baseDir = wizardContext.projectFileDirectory
         val projectName = wizardContext.projectName
         val initialProjectName = projectName ?: ProjectWizardUtil.findNonExistingFileName(baseDir, "untitled", "")
@@ -90,21 +88,48 @@ class KotlinGradleMultiplatformWizardStep(
         jsModuleNameComponent.component.document.addDocumentListener(stopSyncEditingListener)
 
         panel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        panel.add(mainModuleNameComponent, GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, JBUI.insets(10, 0, 0, 0), 0, 0))
-        panel.add(jvmModuleNameComponent, GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0))
-        panel.add(jsModuleNameComponent, GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0))
-        panel.add(JLabel(""), GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0))
+        panel.add(
+            mainModuleNameComponent,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.insets(10, 0, 0, 0), 0, 0
+            )
+        )
+        panel.add(
+            jvmModuleNameComponent,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
+        panel.add(
+            jsModuleNameComponent,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
+        panel.add(
+            JLabel(""),
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
         UIUtil.mergeComponentsWithAnchor(panel)
     }
 
     private fun updateDerivedModuleNames() {
         inSyncUpdate = true
         try {
-            jvmModuleNameComponent.component.text = mainModuleName + "-jvm"
-            jsModuleNameComponent.component.text = mainModuleName + "-js"
+            jvmModuleNameComponent.component.text = "$mainModuleName-jvm"
+            jsModuleNameComponent.component.text = "$mainModuleName-js"
 
-        }
-        finally {
+        } finally {
             inSyncUpdate = false
         }
     }
