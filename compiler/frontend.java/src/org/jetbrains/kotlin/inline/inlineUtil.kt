@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.inline
 
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.JvmMethodSignature
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.deserialization.getExtensionOrNull
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 
 fun inlineFunctionsJvmNames(header: KotlinClassHeader): Set<String> {
     val annotationData = header.data ?: return emptySet()

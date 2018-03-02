@@ -23,10 +23,10 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 open class KotlinMetadataStubBuilder(

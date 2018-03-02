@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 
 interface ContractDeserializer {
     fun deserializeContractFromFunction(

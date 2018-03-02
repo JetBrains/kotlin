@@ -20,9 +20,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags.VISIBILITY
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
-import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName

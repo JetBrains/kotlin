@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.incremental.storage.SourceToFqNameMap
 import org.jetbrains.kotlin.incremental.storage.StringToLongMapExternalizer
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import org.jetbrains.kotlin.serialization.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import java.io.DataInput
 import java.io.DataOutput

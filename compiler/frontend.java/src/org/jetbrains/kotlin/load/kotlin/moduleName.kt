@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.getExtensionOrNull
 
 fun getJvmModuleNameForDeserializedDescriptor(descriptor: DeclarationDescriptor): String? {
     val parent = DescriptorUtils.getParentOfType(descriptor, ClassOrPackageFragmentDescriptor::class.java, false)

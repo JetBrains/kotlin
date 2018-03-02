@@ -20,10 +20,10 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import org.jetbrains.kotlin.serialization.deserialization.supertypes
 import java.io.File
 
 /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.jvm
+package org.jetbrains.kotlin.metadata.jvm.deserialization
 
 import java.util.*
 

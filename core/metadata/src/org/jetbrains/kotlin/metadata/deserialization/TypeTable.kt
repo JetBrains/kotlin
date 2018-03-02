@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.deserialization
+package org.jetbrains.kotlin.metadata.deserialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
 

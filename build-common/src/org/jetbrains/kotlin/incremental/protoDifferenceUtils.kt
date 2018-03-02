@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufClassKind
 import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufPackageKind
 import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import java.util.*
 
 data class Difference(

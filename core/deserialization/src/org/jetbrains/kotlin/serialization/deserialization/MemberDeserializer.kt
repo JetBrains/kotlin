@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 
 class MemberDeserializer(private val c: DeserializationContext) {

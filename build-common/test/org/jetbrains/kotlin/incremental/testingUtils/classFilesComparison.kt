@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.DebugProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
 import org.jetbrains.kotlin.protobuf.ExtensionRegistry
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
