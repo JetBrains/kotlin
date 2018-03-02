@@ -41,8 +41,12 @@ class KotlinGradleMultiplatformWizardStep(
         LabeledComponent.create(JTextField(), "Root module name:", BorderLayout.WEST)
     private val commonModuleNameComponent: LabeledComponent<JTextField> =
         LabeledComponent.create(JTextField(), "Common module name:", BorderLayout.WEST)
+    private val jvmCheckBox: JCheckBox =
+        JCheckBox("Create JVM module", true)
     private val jvmModuleNameComponent: LabeledComponent<JTextField> =
         LabeledComponent.create(JTextField(), "JVM module name:", BorderLayout.WEST)
+    private val jsCheckBox: JCheckBox =
+        JCheckBox("Create JS module", true)
     private val jsModuleNameComponent: LabeledComponent<JTextField> =
         LabeledComponent.create(JTextField(), "JS module name:", BorderLayout.WEST)
 
@@ -91,6 +95,13 @@ class KotlinGradleMultiplatformWizardStep(
         jvmModuleNameComponent.component.document.addDocumentListener(stopSyncEditingListener)
         jsModuleNameComponent.component.document.addDocumentListener(stopSyncEditingListener)
 
+        jvmCheckBox.addItemListener {
+            jvmModuleNameComponent.isEnabled = jvmCheckBox.isSelected
+        }
+        jsCheckBox.addItemListener {
+            jsModuleNameComponent.isEnabled = jsCheckBox.isSelected
+        }
+
         panel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
         panel.add(
             rootModuleNameComponent,
@@ -109,7 +120,23 @@ class KotlinGradleMultiplatformWizardStep(
             )
         )
         panel.add(
+            jvmCheckBox,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
+        panel.add(
             jvmModuleNameComponent,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
+        panel.add(
+            jsCheckBox,
             GridBagConstraints(
                 0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
                 GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
@@ -164,9 +191,9 @@ class KotlinGradleMultiplatformWizardStep(
     private val commonModuleName: String
         get() = commonModuleNameComponent.component.text
     private val jvmModuleName: String
-        get() = jvmModuleNameComponent.component.text
+        get() = if (jvmCheckBox.isSelected) jvmModuleNameComponent.component.text else ""
     private val jsModuleName: String
-        get() = jsModuleNameComponent.component.text
+        get() = if (jsCheckBox.isSelected) jsModuleNameComponent.component.text else ""
 
     override fun validate(): Boolean {
         if (rootModuleName.isEmpty()) {
