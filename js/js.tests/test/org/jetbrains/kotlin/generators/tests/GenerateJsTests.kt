@@ -34,7 +34,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIrBoxJsTest> {
-            model("irbox/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
+            model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
         }
 
         testClass<AbstractSourceMapGenerationSmokeTest> {

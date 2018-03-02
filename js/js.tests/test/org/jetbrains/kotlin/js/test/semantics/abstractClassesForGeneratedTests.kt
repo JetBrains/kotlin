@@ -59,7 +59,7 @@ abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(
 )
 
 abstract class AbstractIrBoxJsTest : BasicBoxTest(
-        BasicBoxTest.TEST_DATA_DIR_PATH + "irbox/",
+        BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
         BasicBoxTest.TEST_DATA_DIR_PATH + "out/irbox/",
         ir = true
 )
