@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import kotlin.script.experimental.dependencies.ScriptReport
 
 class ScriptExternalHighlightingPass(
-        private val file: KtFile,
-        document: Document
+    private val file: KtFile,
+    document: Document
 ) : TextEditorHighlightingPass(file.project, document), DumbAware {
     override fun doCollectInformation(progress: ProgressIndicator) = Unit
 
@@ -50,11 +50,11 @@ class ScriptExternalHighlightingPass(
         val annotations = reports.mapNotNull { (message, severity, position) ->
             val (startOffset, endOffset) = computeOffsets(document, position) ?: return@mapNotNull null
             Annotation(
-                    startOffset,
-                    endOffset,
-                    severity.convertSeverity() ?: return@mapNotNull null,
-                    message,
-                    message
+                startOffset,
+                endOffset,
+                severity.convertSeverity() ?: return@mapNotNull null,
+                message,
+                message
             )
         }
 
@@ -74,8 +74,8 @@ class ScriptExternalHighlightingPass(
 
         val endLine = position.endLine?.coerceAtLeast(startLine)?.coerceLineIn(document) ?: startLine
         val endOffset = document.offsetBy(
-                endLine,
-                position.endColumn ?: document.getLineEndOffset(endLine)
+            endLine,
+            position.endColumn ?: document.getLineEndOffset(endLine)
         ).coerceAtLeast(startOffset)
 
         // TODO: presentation when range is empty?
@@ -85,8 +85,7 @@ class ScriptExternalHighlightingPass(
     private fun Int.coerceLineIn(document: Document) = coerceIn(0, document.lineCount - 1)
 
     private fun Document.offsetBy(line: Int, col: Int): Int {
-        return (getLineStartOffset(line) + col).
-                coerceIn(getLineStartOffset(line), getLineEndOffset(line))
+        return (getLineStartOffset(line) + col).coerceIn(getLineStartOffset(line), getLineEndOffset(line))
     }
 
     private fun ScriptReport.Severity.convertSeverity(): HighlightSeverity? {
@@ -98,10 +97,16 @@ class ScriptExternalHighlightingPass(
         }
     }
 
-    class Factory(project: Project, registrar: TextEditorHighlightingPassRegistrar)
-        : AbstractProjectComponent(project), TextEditorHighlightingPassFactory {
+    class Factory(project: Project, registrar: TextEditorHighlightingPassRegistrar) : AbstractProjectComponent(project),
+        TextEditorHighlightingPassFactory {
         init {
-            registrar.registerTextEditorHighlightingPass(this, TextEditorHighlightingPassRegistrar.Anchor.BEFORE, Pass.UPDATE_FOLDING, false, false)
+            registrar.registerTextEditorHighlightingPass(
+                this,
+                TextEditorHighlightingPassRegistrar.Anchor.BEFORE,
+                Pass.UPDATE_FOLDING,
+                false,
+                false
+            )
         }
 
         override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {
