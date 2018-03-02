@@ -7,12 +7,21 @@
 
 package kotlin.script.experimental.api
 
-object ScriptEvaluationEnvironmentParams {
-    val implicitReceivers by typedKey<List<Any>>()
-    val contextVariables by typedKey<Map<String, Any?>>() // external variables
-    val constructorArgs by typedKey<List<Any?>>()
-    val runArgs by typedKey<List<Any?>>()
+open class ScriptEvaluationEnvironmentParams : HeterogeneousMapBuilder() {
+    companion object {
+        val implicitReceivers by typedKey<List<Any>>()
+
+        val contextVariables by typedKey<Map<String, Any?>>() // external variables
+
+        val constructorArgs by typedKey<List<Any?>>()
+
+        val runArgs by typedKey<List<Any?>>()
+    }
 }
+
+inline
+fun scriptEvaluationEnvironment(from: HeterogeneousMap = HeterogeneousMap(), body: ScriptEvaluationEnvironmentParams.() -> Unit) =
+    ScriptEvaluationEnvironmentParams().build(from, body)
 
 typealias ScriptEvaluationEnvironment = HeterogeneousMap
 
