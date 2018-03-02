@@ -1176,6 +1176,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doCustomTest(fileName);
         }
 
+        @TestMetadata("finallyBlock.kt")
+        public void testFinallyBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/finallyBlock.kt");
+            doCustomTest(fileName);
+        }
+
         @TestMetadata("funLiteral.kt")
         public void testFunLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/funLiteral.kt");
