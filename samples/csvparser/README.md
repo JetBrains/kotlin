@@ -13,7 +13,7 @@ or pass `-PrunArgs="./European_Mammals_Red_List_Nov_2009.csv 4 100"` to gradle r
 
 Alternatively you can run artifact directly 
 
-    ./build/konan/bin/CsvParser/CsvParser.kexe ./European_Mammals_Red_List_Nov_2009.csv 4 100
+    ./build/konan/bin/<target>/CsvParser.kexe ./European_Mammals_Red_List_Nov_2009.csv 4 100
 
 It will print number of all unique entries in fifth column
 (Family, zero-based index) in first 100 rows of the CSV file.

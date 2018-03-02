@@ -18,7 +18,7 @@ or pass `-PrunArgs="3000"` to gradle run.
 
 Alternatively you can run artifact directly 
 
-    ./build/konan/bin/EchoServer/EchoServer.kexe 3000 &
+    ./build/konan/bin/<platform>/EchoServer.kexe 3000 &
 
 Test the server by connecting to it, for example with telnet:
 

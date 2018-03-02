@@ -14,7 +14,7 @@ To run on Mac also install XQuartz X server (https://www.xquartz.org/), and then
 
 Alternatively you can run artifact directly
 
-    ./build/konan/bin/Gtk3Demo/Gtk3Demo.kexe
+    ./build/konan/bin/<platform>/Gtk3Demo.kexe
 
 Dialog box with the button will be shown, and application will print message
 and terminate on button click.

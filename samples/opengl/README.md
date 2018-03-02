@@ -9,7 +9,7 @@ To run use `../gradlew run`
 
 Alternatively you can run artifact directly 
  
-    ./build/konan/bin/OpenGlTeapot${target}/OpenGlTeapot${target}.kexe
+    ./build/konan/bin/<platform>/OpenGlTeapot.kexe
 
 It will render 3D model of teapot. Feel free to experiment with it, the whole power of OpenGL
 is at your hands.

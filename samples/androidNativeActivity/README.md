@@ -8,5 +8,6 @@ See https://developer.android.com/studio/index.html for more details on Android 
 
 To build use `ANDROID_HOME=<your path to android sdk> ../gradlew buildApk`.
 
-Run `$ANDROID_HOME/sdk/platform-tools/adb install -r build/outputs/apk/androidNativeActivity-arm-debug.apk`
+Run `$ANDROID_HOME/platform-tools/adb install -r build/outputs/apk/debug/androidNativeActivity-debug.apk`
 to deploy the apk on the Android device or emulator (note that only ARM-based devices are currently supported).
+

@@ -12,6 +12,6 @@ or pass `-PrunArgs="https://www.jetbrains.com"` to gradle run.
 
 Alternatively you can run artifact directly 
 
-    ./build/konan/bin/Curl/Curl.kexe https://www.jetbrains.com
+    ./build/konan/bin/<platform>/Curl.kexe https://www.jetbrains.com
 
 It will perform HTTP get and print out the data obtained.

@@ -1,7 +1,7 @@
 ## v0.6.1 (Mar 2018)
   * Various bugfixes
   * Support total ordering in FP comparisons
-  * Interop generate string constants from string macrodefinitions
+  * Interop generates string constants from string macrodefinitions
   * STM32 blinky demo in pure Kotlin/Native
   * Top level variables initialization redesign (proper dependency order)
   * Support kotlin.math on WebAssembly targets

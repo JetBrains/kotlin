@@ -12,6 +12,6 @@ or pass `-PrunArgs="../../"` to gradle run.
 
 Alternatively you can run artifact directly 
 
-    ./build/konan/bin/GitChurn/GitChurn.kexe ../../
+    ./build/konan/bin/<target>/GitChurn.kexe ../../
 
 It will print most frequently modified (by number of commits) files in repository.
