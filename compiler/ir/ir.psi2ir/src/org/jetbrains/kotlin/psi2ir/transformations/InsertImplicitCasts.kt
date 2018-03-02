@@ -17,13 +17,17 @@
 package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
@@ -33,12 +37,43 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.upperIfFlexible
+import java.util.*
 
 fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement, symbolTable: SymbolTable) {
     element.transformChildren(InsertImplicitCasts(builtIns, symbolTable), null)
 }
 
 class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symbolTable: SymbolTable) : IrElementTransformerVoid() {
+    private val typeParameterScopes = ArrayDeque<Map<TypeParameterDescriptor, IrTypeParameterSymbol>>()
+
+    private inline fun <T> runInTypeParameterScope(typeParametersContainer: IrTypeParametersContainer, fn: () -> T): T {
+        enterTypeParameterScope(typeParametersContainer)
+        val result = fn()
+        leaveTypeParameterScope()
+        return result
+    }
+
+    private fun enterTypeParameterScope(typeParametersContainer: IrTypeParametersContainer) {
+        typeParameterScopes.addFirst(
+            typeParametersContainer.typeParameters.associate {
+                it.descriptor to it.symbol
+            }
+        )
+    }
+
+    private fun leaveTypeParameterScope() {
+        typeParameterScopes.removeFirst()
+    }
+
+    private fun resolveScopedTypeParameter(classifier: ClassifierDescriptor): IrTypeParameterSymbol? {
+        if (classifier !is TypeParameterDescriptor) return null
+        for (scope in typeParameterScopes) {
+            val local = scope[classifier]
+            if (local != null) return local
+        }
+        return null
+    }
+
     override fun visitCallableReference(expression: IrCallableReference): IrExpression =
         expression.transformPostfix {
             transformReceiverArguments()
@@ -110,9 +145,11 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
         }
 
     override fun visitFunction(declaration: IrFunction): IrStatement =
-        declaration.transformPostfix {
-            valueParameters.forEach {
-                it.defaultValue?.coerceInnerExpression(it.descriptor.type)
+        runInTypeParameterScope(declaration) {
+            declaration.transformPostfix {
+                valueParameters.forEach {
+                    it.defaultValue?.coerceInnerExpression(it.descriptor.type)
+                }
             }
         }
 
@@ -205,7 +242,7 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
         return IrTypeOperatorCallImpl(
             startOffset, endOffset,
             targetType, typeOperator, targetType, this,
-            symbolTable.referenceClassifier(typeDescriptor)
+            resolveScopedTypeParameter(typeDescriptor) ?: symbolTable.referenceClassifier(typeDescriptor)
         )
     }
 

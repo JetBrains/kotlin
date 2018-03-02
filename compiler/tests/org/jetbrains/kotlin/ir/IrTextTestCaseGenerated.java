@@ -621,6 +621,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("castToTypeParameter.kt")
+        public void testCastToTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/castToTypeParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("catchParameterAccess.kt")
         public void testCatchParameterAccess() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/catchParameterAccess.kt");
@@ -762,6 +768,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("implicitCastOnPlatformType.kt")
         public void testImplicitCastOnPlatformType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/implicitCastOnPlatformType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitCastToTypeParameter.kt")
+        public void testImplicitCastToTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/implicitCastToTypeParameter.kt");
             doTest(fileName);
         }
 
@@ -978,6 +990,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("typeOperators.kt")
         public void testTypeOperators() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/typeOperators.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeParameterClassLiteral.kt")
+        public void testTypeParameterClassLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/typeParameterClassLiteral.kt");
             doTest(fileName);
         }
 

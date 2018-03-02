@@ -1,6 +1,9 @@
 FILE fqName:<root> fileName:/genericPropertyCall.kt
   PROPERTY name:id type:T visibility:public modality:FINAL flags:val
-    FUN name:<get-id> visibility:public modality:FINAL <> ($receiver:T) returnType:T flags:
+    FUN name:<get-id> visibility:public modality:FINAL <T> ($receiver:T) returnType:T flags:
+      TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+        superClassifiers:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       $receiver: VALUE_PARAMETER name:<this> type:T flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-id>() on T: T'

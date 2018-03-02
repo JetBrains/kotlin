@@ -59,7 +59,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
                 irClass.descriptor.thisAsReceiverParameter
             )
 
-            declarationGenerator.generateTypeParameterDeclarations(irClass, descriptor.declaredTypeParameters)
+            declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, descriptor.declaredTypeParameters)
 
             val irPrimaryConstructor = generatePrimaryConstructor(irClass, ktClassOrObject)
             if (irPrimaryConstructor != null) {

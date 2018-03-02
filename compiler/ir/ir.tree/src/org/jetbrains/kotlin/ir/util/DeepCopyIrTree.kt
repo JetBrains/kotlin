@@ -154,9 +154,15 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             }
         }
 
+    private fun FunctionDescriptor.getTypeParametersToTransform() =
+        when {
+            this is PropertyAccessorDescriptor -> correspondingProperty.typeParameters
+            else -> typeParameters
+        }
+
     protected fun <T : IrFunction> T.transformParameters(original: T): T =
         apply {
-            transformTypeParameters(original, descriptor.typeParameters)
+            transformTypeParameters(original, descriptor.getTypeParametersToTransform())
             transformValueParameters(original)
         }
 

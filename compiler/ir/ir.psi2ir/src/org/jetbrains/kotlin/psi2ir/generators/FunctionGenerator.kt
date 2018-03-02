@@ -83,7 +83,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktParameterOwner: KtElement?,
         ktReceiverParameterElement: KtElement?
     ) {
-        declarationGenerator.generateTypeParameterDeclarations(irFunction, irFunction.descriptor.typeParameters)
+        declarationGenerator.generateScopedTypeParameterDeclarations(irFunction, irFunction.descriptor.typeParameters)
         generateValueParameterDeclarations(irFunction, ktParameterOwner, ktReceiverParameterElement)
     }
 
@@ -98,6 +98,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             if (ktAccessor != null) IrDeclarationOrigin.DEFINED else IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR,
             descriptor
         ).buildWithScope { irAccessor ->
+            declarationGenerator.generateScopedTypeParameterDeclarations(irAccessor, descriptor.correspondingProperty.typeParameters)
             generateFunctionParameterDeclarations(irAccessor, ktAccessor ?: ktProperty, ktProperty.receiverTypeReference)
             val ktBodyExpression = ktAccessor?.bodyExpression
             irAccessor.body =
@@ -117,7 +118,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR,
             descriptor
         ).buildWithScope { irAccessor ->
-            declarationGenerator.generateTypeParameterDeclarations(irAccessor, descriptor.typeParameters)
+            declarationGenerator.generateScopedTypeParameterDeclarations(irAccessor, descriptor.typeParameters)
             FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irAccessor)
             irAccessor.body = generateDefaultAccessorBody(ktParameter, descriptor, irAccessor)
         }
@@ -229,7 +230,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         }
 
     fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
-        declarationGenerator.generateTypeParameterDeclarations(irFunction, irFunction.descriptor.typeParameters)
+        declarationGenerator.generateGlobalTypeParametersDeclarations(irFunction, irFunction.descriptor.typeParameters)
         generateValueParameterDeclarations(irFunction, null, null, withDefaultValues = false)
     }
 
