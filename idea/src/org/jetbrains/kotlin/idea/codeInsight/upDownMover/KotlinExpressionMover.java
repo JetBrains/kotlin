@@ -209,7 +209,7 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
     }
 
     @Nullable
-    private static KtBlockExpression getDSLLambdaBlock(@NotNull PsiElement element, boolean down) {
+    private static KtBlockExpression getDSLLambdaBlock(@NotNull Editor editor, @NotNull PsiElement element, boolean down) {
         KtCallExpression callExpression =
                 (KtCallExpression) KtPsiUtil.getOutermostDescendantElement(element, down, IS_CALL_EXPRESSION);
         if (callExpression == null) return null;
@@ -219,6 +219,11 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
 
         KtLambdaExpression lambdaExpression = functionLiterals.get(0).getLambdaExpression();
         if (lambdaExpression == null) return null;
+
+        Document document = editor.getDocument();
+        TextRange range = lambdaExpression.getTextRange();
+        if (document.getLineNumber(range.getStartOffset()) == document.getLineNumber(range.getEndOffset())) return null;
+
         return lambdaExpression.getBodyExpression();
     }
 
@@ -279,7 +284,7 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
         else {
             PsiElement blockLikeElement;
 
-            KtBlockExpression dslBlock = getDSLLambdaBlock(sibling, down);
+            KtBlockExpression dslBlock = getDSLLambdaBlock(editor, sibling, down);
             if (dslBlock != null) {
                 // Use JetFunctionLiteral (since it contains braces)
                 blockLikeElement = dslBlock.getParent();
@@ -417,7 +422,8 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
         return block.getLBrace() == null && block.getRBrace() == null;
     }
 
-    protected static PsiElement adjustSibling(
+    private static PsiElement adjustSibling(
+            @NotNull Editor editor,
             @NotNull LineRange sourceRange,
             @NotNull MoveInfo info,
             boolean down
@@ -452,7 +458,7 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
         if (sibling == null) {
             KtCallExpression callExpression = PsiTreeUtil.getParentOfType(element, KtCallExpression.class);
             if (callExpression != null) {
-                KtBlockExpression dslBlock = getDSLLambdaBlock(callExpression, down);
+                KtBlockExpression dslBlock = getDSLLambdaBlock(editor, callExpression, down);
                 if (PsiTreeUtil.isAncestor(dslBlock, element, false)) {
                     //noinspection ConstantConditions
                     PsiElement blockParent = dslBlock.getParent();
@@ -510,7 +516,7 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
         LineRange sourceRange = getSourceRange(firstElement, lastElement, editor, oldRange);
         if (sourceRange == null) return false;
 
-        PsiElement sibling = getLastNonWhiteSiblingInLine(adjustSibling(sourceRange, info, down), editor, down);
+        PsiElement sibling = getLastNonWhiteSiblingInLine(adjustSibling(editor, sourceRange, info, down), editor, down);
 
         // Either reached last sibling, or jumped over multi-line whitespace
         if (sibling == null) return true;

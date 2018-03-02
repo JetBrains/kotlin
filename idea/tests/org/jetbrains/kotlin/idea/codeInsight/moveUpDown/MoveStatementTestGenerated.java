@@ -1089,6 +1089,18 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             doTestExpression(fileName);
         }
 
+        @TestMetadata("multilineExpressionWithClosure1.kt")
+        public void testMultilineExpressionWithClosure1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/multilineExpressionWithClosure1.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("multilineExpressionWithClosure2.kt")
+        public void testMultilineExpressionWithClosure2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/multilineExpressionWithClosure2.kt");
+            doTestExpression(fileName);
+        }
+
         @TestMetadata("outOfClosure1.kt")
         public void testOutOfClosure1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfClosure1.kt");
