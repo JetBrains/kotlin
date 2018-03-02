@@ -115,7 +115,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     }
 
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
-        return this == targetModule || targetModule in dependencies!!.modulesWhoseInternalsAreVisible
+        return this == targetModule || targetModule in dependencies!!.modulesWhoseInternalsAreVisible || expectedByModule == targetModule
     }
 
     private val id: String
