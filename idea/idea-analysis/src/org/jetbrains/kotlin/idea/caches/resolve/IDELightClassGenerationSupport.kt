@@ -26,6 +26,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
+import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -55,16 +56,16 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     private val psiManager: PsiManager = PsiManager.getInstance(project)
 
     override fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass {
-        return if (classOrObject.isLocal) {
-            LazyLightClassDataHolder.ForClass(
+        return when {
+            classOrObject.shouldNotBeVisibleAsLightClass() -> InvalidLightClassDataHolder
+            classOrObject.isLocal -> LazyLightClassDataHolder.ForClass(
                 builder,
                 classOrObject.project,
                 exactContextProvider = { IDELightClassContexts.contextForLocalClassOrObject(classOrObject) },
                 dummyContextProvider = null,
                 isLocal = true
             )
-        } else {
-            LazyLightClassDataHolder.ForClass(
+            else -> LazyLightClassDataHolder.ForClass(
                 builder,
                 classOrObject.project,
                 exactContextProvider = { IDELightClassContexts.contextForNonLocalClassOrObject(classOrObject) },

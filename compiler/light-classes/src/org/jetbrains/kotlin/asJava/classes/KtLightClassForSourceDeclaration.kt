@@ -341,7 +341,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                 }
 
         fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
-            if (classOrObject.parentsWithSelf.filterIsInstance<KtClassOrObject>().any { it.hasExpectModifier() }) {
+            if (classOrObject.shouldNotBeVisibleAsLightClass()) {
                 return null
             }
 
@@ -515,3 +515,6 @@ fun KtClassOrObject.defaultJavaAncestorQualifiedName(): String? {
         else -> CommonClassNames.JAVA_LANG_OBJECT
     }
 }
+
+fun KtClassOrObject.shouldNotBeVisibleAsLightClass() =
+    parentsWithSelf.filterIsInstance<KtClassOrObject>().any { it.hasExpectModifier() }
