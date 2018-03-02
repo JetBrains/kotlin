@@ -22,6 +22,7 @@ import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModule
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -54,6 +55,16 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
             KotlinGradleMultiplatformWizardStep(this, wizardContext),
             ExternalModuleSettingsStep(wizardContext, this, GradleProjectSettingsControl(externalProjectSettings))
         )
+    }
+
+    override fun setupRootModel(modifiableRootModel: ModifiableRootModel) {
+        super.setupRootModel(modifiableRootModel)
+        if (commonModuleName.isNullOrEmpty()) {
+            val module = modifiableRootModel.module
+            val buildScriptData = getBuildScriptData(module) ?: return
+            val sdk = modifiableRootModel.sdk
+            GradleKotlinMPPCommonFrameworkSupportProvider().addSupport(buildScriptData, sdk)
+        }
     }
 
     override fun setupModule(module: Module) {

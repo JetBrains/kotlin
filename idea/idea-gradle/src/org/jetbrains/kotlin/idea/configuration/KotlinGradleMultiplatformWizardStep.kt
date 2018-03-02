@@ -42,6 +42,15 @@ class KotlinGradleMultiplatformWizardStep(
     private val wizardContext: WizardContext
 ) : ModuleWizardStep() {
 
+    private val hierarchyKindComponent: LabeledComponent<JComboBox<String>> =
+        LabeledComponent.create(
+            JComboBox(
+                arrayOf(
+                    "Root empty module with common and platform modules as children",
+                    "Root common module with children platform modules"
+                )
+            ), "Hierarchy kind", BorderLayout.WEST
+        )
     private val rootModuleNameComponent: LabeledComponent<JTextField> =
         LabeledComponent.create(JTextField(), "Root module name:", BorderLayout.WEST)
     private val commonModuleNameComponent: LabeledComponent<JTextField> =
@@ -66,12 +75,13 @@ class KotlinGradleMultiplatformWizardStep(
 
     init {
         panel = object : JPanel(GridBagLayout()), PanelWithAnchor {
-            private var anchor: JComponent? = rootModuleNameComponent.anchor
+            private var anchor: JComponent? = hierarchyKindComponent.anchor
 
             override fun getAnchor(): JComponent? = anchor
 
             override fun setAnchor(anchor: JComponent?) {
                 this.anchor = anchor
+                hierarchyKindComponent.anchor = anchor
                 rootModuleNameComponent.anchor = anchor
                 commonModuleNameComponent.anchor = anchor
                 jvmModuleNameComponent.anchor = anchor
@@ -107,6 +117,9 @@ class KotlinGradleMultiplatformWizardStep(
 
         jdkComboBox.selectedJdk = jdkModel.projectSdk
 
+        hierarchyKindComponent.component.addActionListener {
+            commonModuleNameComponent.isEnabled = !commonModuleIsRoot
+        }
         jvmCheckBox.addItemListener {
             jvmModuleNameComponent.isEnabled = jvmCheckBox.isSelected
             jdkComboBox.isEnabled = jvmCheckBox.isSelected
@@ -116,6 +129,14 @@ class KotlinGradleMultiplatformWizardStep(
         }
 
         panel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        panel.add(
+            hierarchyKindComponent,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
         panel.add(
             rootModuleNameComponent,
             GridBagConstraints(
@@ -208,10 +229,12 @@ class KotlinGradleMultiplatformWizardStep(
 
     override fun getComponent() = panel
 
+    private val commonModuleIsRoot: Boolean
+        get() = hierarchyKindComponent.component.selectedIndex != 0
     private val rootModuleName: String
         get() = rootModuleNameComponent.component.text
     private val commonModuleName: String
-        get() = commonModuleNameComponent.component.text
+        get() = if (commonModuleIsRoot) "" else commonModuleNameComponent.component.text
     private val jvmModuleName: String
         get() = if (jvmCheckBox.isSelected) jvmModuleNameComponent.component.text else ""
     private val jdk: Sdk?
@@ -222,6 +245,15 @@ class KotlinGradleMultiplatformWizardStep(
     override fun validate(): Boolean {
         if (rootModuleName.isEmpty()) {
             throw ConfigurationException("Please specify the root module name")
+        }
+        if (!commonModuleIsRoot && commonModuleName.isEmpty()) {
+            throw ConfigurationException("Please specify the common module name")
+        }
+        if (jvmCheckBox.isSelected && jvmModuleName.isEmpty()) {
+            throw ConfigurationException("Please specify the JVM module name")
+        }
+        if (jsCheckBox.isSelected && jsModuleName.isEmpty()) {
+            throw ConfigurationException("Please specify the JS module name")
         }
         if (commonModuleName.isNotEmpty()
             && (commonModuleName == rootModuleName || commonModuleName == jvmModuleName || commonModuleName == jsModuleName)
