@@ -58,10 +58,8 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
@@ -166,7 +164,16 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             // have been merged into one), but it's impossible to correctly map locations to actual source expressions now.
             val locationIndex = sameLineLocations.indexOf(location)
             if (locationIndex > 0) {
-                return KotlinReentrantSourcePosition(SourcePosition.createFromLine(psiFile, sourceLineNumber))
+                /*
+                    `finally {}` block code is placed in the class file twice.
+                    Unless the debugger metadata is available, we can't figure out if we are inside `finally {}`, so we have to check it using PSI.
+                    This is conceptually wrong and won't work in some cases, but it's still better than nothing.
+                */
+                val elementAt = psiFile.getLineStartOffset(lineNumber)?.let { psiFile.findElementAt(it) }
+                val isInsideDuplicatedFinally = elementAt != null && elementAt.getStrictParentOfType<KtFinallySection>() != null
+                if (!isInsideDuplicatedFinally) {
+                    return KotlinReentrantSourcePosition(SourcePosition.createFromLine(psiFile, sourceLineNumber))
+                }
             }
         }
 
