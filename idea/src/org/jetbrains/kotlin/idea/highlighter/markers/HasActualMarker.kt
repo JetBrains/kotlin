@@ -21,6 +21,7 @@ import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.facet.implementingDescriptors
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import java.awt.event.MouseEvent
 
@@ -87,8 +89,11 @@ private fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDe
     return emptyList()
 }
 
-internal fun KtDeclaration.actualsForExpected(): Set<KtDeclaration> {
-    return unsafeResolveToDescriptor().actualsForExpected().mapNotNullTo(LinkedHashSet()) {
-        DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
-    }
-}
+// null means "any platform" here
+internal fun KtDeclaration.actualsForExpected(platform: MultiTargetPlatform? = null): Set<KtDeclaration> =
+    resolveToDescriptorIfAny(BodyResolveMode.FULL)
+        ?.actualsForExpected()
+        ?.filter { platform == null || it.module.getMultiTargetPlatform() == platform }
+        ?.mapNotNullTo(LinkedHashSet()) {
+            DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
+        } ?: emptySet()

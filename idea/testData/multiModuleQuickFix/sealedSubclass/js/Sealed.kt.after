@@ -1,0 +1,6 @@
+// Sealed: to be implemented
+
+actual sealed class Sealed
+
+actual object Obj : Sealed()
+actual class Klass actual constructor(x: Int) : Sealed

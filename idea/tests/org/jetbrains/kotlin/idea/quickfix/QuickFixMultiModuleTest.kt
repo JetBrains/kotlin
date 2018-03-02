@@ -23,9 +23,9 @@ import org.junit.Test
 
 class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     private fun doMultiPlatformTest(
-            expectName: String = "header", // todo: change dir name
-            vararg impls: Pair<String, TargetPlatformKind<*>> = arrayOf("jvm" to TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]),
-            withTests: Boolean = false
+        expectName: String = "header", // todo: change dir name
+        vararg impls: Pair<String, TargetPlatformKind<*>> = arrayOf("jvm" to TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]),
+        withTests: Boolean = false
     ) {
         val commonModule = module(expectName, hasTestRoot = withTests)
         commonModule.createFacet(TargetPlatformKind.Common, false)
@@ -40,7 +40,7 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
         doQuickFixTest()
     }
 
-    private fun doTestHeaderWithJvmAndJs(expectName: String = "header") {
+    private fun doTestHeaderWithJvmAndJs() {
         doMultiPlatformTest(impls = *arrayOf("jvm" to TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], "js" to TargetPlatformKind.JavaScript))
     }
 
@@ -110,6 +110,11 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
+    fun testFunctionSameFile() {
+        doMultiPlatformTest()
+    }
+
+    @Test
     fun testInterface() {
         doMultiPlatformTest()
     }
@@ -166,6 +171,11 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testSealed() {
+        doMultiPlatformTest(impls = *arrayOf("js" to TargetPlatformKind.JavaScript))
+    }
+
+    @Test
+    fun testSealedSubclass() {
         doMultiPlatformTest(impls = *arrayOf("js" to TargetPlatformKind.JavaScript))
     }
 
@@ -265,14 +275,14 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     fun testCreateVarInExpectClass() = doMultiPlatformTest()
 
     @Test
-    fun testConvertExpectSealedClassToEnum() = doTestHeaderWithJvmAndJs("header")
+    fun testConvertExpectSealedClassToEnum() = doTestHeaderWithJvmAndJs()
 
     @Test
-    fun testConvertActualSealedClassToEnum() = doTestHeaderWithJvmAndJs("js")
+    fun testConvertActualSealedClassToEnum() = doTestHeaderWithJvmAndJs()
 
     @Test
-    fun testConvertExpectEnumToSealedClass() = doTestHeaderWithJvmAndJs("header")
+    fun testConvertExpectEnumToSealedClass() = doTestHeaderWithJvmAndJs()
 
     @Test
-    fun testConvertActualEnumToSealedClass() = doTestHeaderWithJvmAndJs("js")
+    fun testConvertActualEnumToSealedClass() = doTestHeaderWithJvmAndJs()
 }
