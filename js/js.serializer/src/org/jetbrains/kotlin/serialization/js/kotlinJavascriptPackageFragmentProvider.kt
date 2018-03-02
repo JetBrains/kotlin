@@ -89,7 +89,7 @@ private val ProtoBuf.PackageFragment.fqName: FqName?
     get() {
         val nameResolver = NameResolverImpl(strings, qualifiedNames)
         return when {
-            hasPackage() -> nameResolver.getPackageFqName(`package`.getExtension(JsProtoBuf.packageFqName))
+            hasPackage() -> FqName(nameResolver.getPackageFqName(`package`.getExtension(JsProtoBuf.packageFqName)))
             class_Count > 0 -> nameResolver.getClassId(class_OrBuilderList.first().fqName).packageFqName
             else -> null
         }

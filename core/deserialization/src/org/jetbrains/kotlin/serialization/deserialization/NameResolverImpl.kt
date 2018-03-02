@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.QualifiedName
-import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
 class NameResolverImpl(
@@ -37,10 +36,8 @@ class NameResolverImpl(
     override fun isLocalClassName(index: Int): Boolean =
         traverseIds(index).third
 
-    fun getPackageFqName(index: Int): FqName {
-        val packageNameSegments = traverseIds(index).first
-        return FqName.fromSegments(packageNameSegments)
-    }
+    fun getPackageFqName(index: Int): String =
+        traverseIds(index).first.joinToString(".")
 
     private fun traverseIds(startingIndex: Int): Triple<List<String>, List<String>, Boolean> {
         var index = startingIndex
