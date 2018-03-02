@@ -44,8 +44,7 @@ open class HeterogeneousMapBuilder {
     }
 }
 
-inline
-fun <T : HeterogeneousMapBuilder> T.build(from: HeterogeneousMap = HeterogeneousMap(), body: T.() -> Unit): HeterogeneousMap {
+inline fun <T : HeterogeneousMapBuilder> T.build(from: HeterogeneousMap = HeterogeneousMap(), body: T.() -> Unit): HeterogeneousMap {
     body()
     return HeterogeneousMap(from, pairs)
 }

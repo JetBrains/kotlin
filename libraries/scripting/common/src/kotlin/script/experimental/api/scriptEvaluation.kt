@@ -19,8 +19,7 @@ open class ScriptEvaluationEnvironmentParams : HeterogeneousMapBuilder() {
     }
 }
 
-inline
-fun scriptEvaluationEnvironment(from: HeterogeneousMap = HeterogeneousMap(), body: ScriptEvaluationEnvironmentParams.() -> Unit) =
+inline fun scriptEvaluationEnvironment(from: HeterogeneousMap = HeterogeneousMap(), body: ScriptEvaluationEnvironmentParams.() -> Unit) =
     ScriptEvaluationEnvironmentParams().build(from, body)
 
 typealias ScriptEvaluationEnvironment = HeterogeneousMap

@@ -13,6 +13,5 @@ class ProcessedScriptDataParams : HeterogeneousMapBuilder() {
     }
 }
 
-inline
-fun processedScriptData(from: HeterogeneousMap = HeterogeneousMap(), body: ProcessedScriptDataParams.() -> Unit) =
+inline fun processedScriptData(from: HeterogeneousMap = HeterogeneousMap(), body: ProcessedScriptDataParams.() -> Unit) =
     ProcessedScriptDataParams().build(from, body)

@@ -8,12 +8,16 @@ package kotlin.script.experimental.jvm
 import kotlinx.coroutines.experimental.runBlocking
 import kotlin.script.experimental.api.*
 import java.io.File
+import kotlin.script.experimental.jvm.JvmScriptCompileConfigurationParams.javaHomeDir
 
-fun jvmConfigWithJavaHome(vararg params: Pair<TypedKey<*>, Any?>): ScriptCompileConfiguration =
-    ScriptCompileConfiguration(
-        JvmScriptCompileConfigurationParams.javaHomeDir to File(System.getProperty("java.home")),
-        *params
-    )
+inline fun jvmConfigWithJavaHome(
+    from: HeterogeneousMap = HeterogeneousMap(),
+    crossinline body: JvmScriptCompileConfigurationParams.Builder.() -> Unit = {}
+) =
+    jvmScriptConfiguration(from) {
+        javaHomeDir(File(System.getProperty("java.home")))
+        body()
+    }
 
 val ScriptConfigurator?.defaultConfiguration: ScriptCompileConfiguration
     get() = this?.let { runBlocking { baseConfiguration(null) } }?.resultOrNull() ?: ScriptCompileConfiguration()

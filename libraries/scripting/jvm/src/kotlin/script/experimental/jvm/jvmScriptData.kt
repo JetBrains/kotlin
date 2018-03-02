@@ -6,13 +6,19 @@
 package kotlin.script.experimental.jvm
 
 import java.io.File
-import kotlin.script.experimental.api.ScriptDependency
-import kotlin.script.experimental.api.TypedKey
+import kotlin.script.experimental.api.*
 
 object JvmScriptCompileConfigurationParams {
+    val javaHomeDir by typedKey<File>()
 
-    val javaHomeDir = TypedKey<File>("javaHomeDir")
+    open class Builder : ScriptCompileConfigurationParams.Builder() {
+        fun dependencies(vararg classpath: Iterable<File>) =
+            add(ScriptCompileConfigurationParams.dependencies to classpath.map(::JvmDependency))
+    }
 }
 
-class JvmDependency(val classpath: Iterable<File>): ScriptDependency
+inline fun jvmScriptConfiguration(from: HeterogeneousMap = HeterogeneousMap(), body: JvmScriptCompileConfigurationParams.Builder.() -> Unit) =
+    JvmScriptCompileConfigurationParams.Builder().build(from, body)
+
+class JvmDependency(val classpath: Iterable<File>) : ScriptDependency
 

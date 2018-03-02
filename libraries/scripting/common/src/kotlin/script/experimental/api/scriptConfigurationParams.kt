@@ -36,8 +36,7 @@ object ScriptCompileConfigurationParams {
 }
 
 // DSL
-inline
-fun scriptConfiguration(from: HeterogeneousMap = HeterogeneousMap(), body: ScriptCompileConfigurationParams.Builder.() -> Unit) =
+inline fun scriptConfiguration(from: HeterogeneousMap = HeterogeneousMap(), body: ScriptCompileConfigurationParams.Builder.() -> Unit) =
     ScriptCompileConfigurationParams.Builder().build(from, body)
 
 
