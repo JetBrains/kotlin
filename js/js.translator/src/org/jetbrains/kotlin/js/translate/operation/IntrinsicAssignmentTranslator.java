@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isAssignment;
+import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.coerce;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.isSimpleNameExpressionNotDelegatedLocalVar;
 
 public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
@@ -62,6 +63,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
         JsExpression result = TranslationUtils.translateRightExpression(context, expression, rightBlock);
         KotlinType leftType = context.bindingContext().getType(expression.getLeft());
         KotlinType rightType = context.bindingContext().getType(expression.getRight());
+
         if (rightType != null && KotlinBuiltIns.isCharOrNullableChar(rightType)) {
             if (leftType != null && KotlinBuiltIns.isStringOrNullableString(leftType)) {
                 result = JsAstUtils.charToString(result);

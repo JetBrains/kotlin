@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -155,6 +156,30 @@ public final class TranslationUtils {
     public static JsBinaryOperation nullCheck(@NotNull JsExpression expressionToCheck, boolean isNegated) {
         JsBinaryOperator operator = isNegated ? JsBinaryOperator.NEQ : JsBinaryOperator.EQ;
         return new JsBinaryOperation(operator, expressionToCheck, new JsNullLiteral());
+    }
+
+    @NotNull
+    private static JsExpression prepareForNullCheck(
+            @NotNull KtExpression ktSubject,
+            @NotNull JsExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        KotlinType type = context.bindingContext().getType(ktSubject);
+        if (type == null) {
+            type = context.getCurrentModule().getBuiltIns().getAnyType();
+        }
+
+        return coerce(context, expression, TypeUtils.makeNullable(type));
+    }
+
+    @NotNull
+    public static JsBinaryOperation nullCheck(
+            @NotNull KtExpression ktSubject,
+            @NotNull JsExpression expressionToCheck,
+            @NotNull TranslationContext context,
+            boolean isNegated
+    ) {
+        return nullCheck(prepareForNullCheck(ktSubject, expressionToCheck, context), isNegated);
     }
 
     @NotNull
@@ -310,8 +335,9 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsExpression sure(@NotNull JsExpression expression, @NotNull TranslationContext context) {
-        return new JsInvocation(context.getReferenceToIntrinsic(Namer.NULL_CHECK_INTRINSIC_NAME), expression);
+    public static JsExpression sure(@NotNull KtExpression ktExpression, @NotNull JsExpression expression, @NotNull TranslationContext context) {
+        return new JsInvocation(context.getReferenceToIntrinsic(Namer.NULL_CHECK_INTRINSIC_NAME),
+                                prepareForNullCheck(ktExpression, expression, context));
     }
 
     public static boolean isSimpleNameExpressionNotDelegatedLocalVar(@Nullable KtExpression expression, @NotNull TranslationContext context) {
@@ -491,14 +517,19 @@ public final class TranslationUtils {
         }
         else if (KotlinBuiltIns.isUnit(from)) {
             if (!KotlinBuiltIns.isUnit(to) && !MetadataProperties.isUnit(value)) {
-                ClassDescriptor unit = context.getCurrentModule().getBuiltIns().getUnit();
-                JsExpression unitRef = ReferenceTranslator.translateAsValueReference(unit, context);
-                value = JsAstUtils.newSequence(Arrays.asList(value, unitRef));
+                value = voidToUnit(context, value);
             }
         }
 
         MetadataProperties.setType(value, to);
         return value;
+    }
+
+    @NotNull
+    public static JsExpression voidToUnit(@NotNull TranslationContext context, @NotNull JsExpression expression) {
+        ClassDescriptor unit = context.getCurrentModule().getBuiltIns().getUnit();
+        JsExpression unitRef = ReferenceTranslator.translateAsValueReference(unit, context);
+        return JsAstUtils.newSequence(Arrays.asList(expression, unitRef));
     }
 
     @NotNull
