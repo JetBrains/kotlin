@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
-import org.jetbrains.kotlin.backend.js.sourceMap.SourceFilePathResolver
-import org.jetbrains.kotlin.backend.js.sourceMap.SourceMap3Builder
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
+import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.util.TextOutput
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile

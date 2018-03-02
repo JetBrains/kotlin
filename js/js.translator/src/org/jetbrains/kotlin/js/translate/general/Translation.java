@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.general;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.js.DummyTranslator;
 import org.jetbrains.kotlin.backend.js.IrBasedTranslator;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -306,8 +307,10 @@ public final class Translation {
         }
 
         if (config.getConfiguration().getBoolean(JSConfigurationKeys.IR_USED)) {
-            IrBasedTranslator irTranslator = new IrBasedTranslator(bindingTrace, moduleDescriptor);
-            newFragments.addAll(irTranslator.translate(inputFiles, program.getScope()));
+            DummyTranslator translator = new DummyTranslator(bindingTrace, moduleDescriptor, config, sourceFilePathResolver);
+            newFragments.addAll(translator.translate(inputFiles, program.getScope()));
+            //IrBasedTranslator irTranslator = new IrBasedTranslator(bindingTrace, moduleDescriptor);
+            //newFragments.addAll(irTranslator.translate(inputFiles, program.getScope()));
         }
         else {
             for (KtFile file : inputFiles) {

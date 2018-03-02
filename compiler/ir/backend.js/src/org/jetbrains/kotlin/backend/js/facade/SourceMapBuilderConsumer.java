@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.SourceLocationConsumer;
 import org.jetbrains.kotlin.js.backend.ast.JsLocation;
 import org.jetbrains.kotlin.js.backend.ast.JsLocationWithSource;
-import org.jetbrains.kotlin.backend.js.sourceMap.SourceFilePathResolver;
-import org.jetbrains.kotlin.backend.js.sourceMap.SourceMapMappingConsumer;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
+import org.jetbrains.kotlin.js.sourceMap.SourceMapMappingConsumer;
 import org.jetbrains.kotlin.backend.js.translate.utils.PsiUtils;
 
 import java.io.*;

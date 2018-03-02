@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.js.inline.clean.LabeledBlockToDoWhileTransformation;
 import org.jetbrains.kotlin.js.inline.clean.RemoveDuplicateImportsKt;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedImportsKt;
 import org.jetbrains.kotlin.js.inline.clean.ResolveTemporaryNamesKt;
-import org.jetbrains.kotlin.backend.js.sourceMap.SourceFilePathResolver;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.backend.js.translate.general.AstGenerationResult;
 import org.jetbrains.kotlin.backend.js.translate.general.Translation;
 import org.jetbrains.kotlin.backend.js.translate.utils.ExpandIsCallsKt;

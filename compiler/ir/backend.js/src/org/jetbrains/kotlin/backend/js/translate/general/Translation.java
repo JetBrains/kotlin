@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.backend.js.facade.TranslationUnit;
 import org.jetbrains.kotlin.backend.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.backend.js.facade.exceptions.TranslationRuntimeException;
 import org.jetbrains.kotlin.backend.js.facade.exceptions.UnsupportedFeatureException;
-import org.jetbrains.kotlin.backend.js.sourceMap.SourceFilePathResolver;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.backend.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.backend.js.translate.context.Namer;
 import org.jetbrains.kotlin.backend.js.translate.context.StaticContext;

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.NameSuggestionKt;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsBuiltinNameClashChecker;
-import org.jetbrains.kotlin.backend.js.sourceMap.SourceFilePathResolver;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.backend.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.backend.js.translate.context.generator.Rule;
 import org.jetbrains.kotlin.backend.js.translate.declaration.ClassModelGenerator;
