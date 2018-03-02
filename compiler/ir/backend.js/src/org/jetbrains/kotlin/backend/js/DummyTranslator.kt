@@ -27,7 +27,7 @@ class DummyTranslator(private val bindingTrace: BindingTrace,
                       private val sourceFilePathResolver: SourceFilePathResolver
 ) {
 
-    fun translate(files: Collection<KtFile>, scope: JsScope): Collection<JsProgramFragment> {
+    fun translate(files: Collection<KtFile>, fileMemberScopes: MutableMap<KtFile, MutableList<DeclarationDescriptor>>): Collection<JsProgramFragment> {
 
         val fragments = mutableListOf<JsProgramFragment>()
 
@@ -37,6 +37,7 @@ class DummyTranslator(private val bindingTrace: BindingTrace,
             val fileMemberScope = ArrayList<DeclarationDescriptor>()
             translateFile(context, file, fileMemberScope)
             fragments += staticContext.fragment
+            fileMemberScopes[file] = fileMemberScope
         }
 
         return fragments
