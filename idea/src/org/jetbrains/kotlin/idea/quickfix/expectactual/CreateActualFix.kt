@@ -44,9 +44,9 @@ import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
 sealed class CreateActualFix<out D : KtNamedDeclaration>(
-        declaration: D,
-        private val actualPlatform: MultiTargetPlatform.Specific,
-        private val generateIt: KtPsiFactory.(Project, D) -> D?
+    declaration: D,
+    private val actualPlatform: MultiTargetPlatform.Specific,
+    private val generateIt: KtPsiFactory.(Project, D) -> D?
 ) : KotlinQuickFixAction<D>(declaration) {
 
     override fun getFamilyName() = text
@@ -57,7 +57,7 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
 
     override fun startInWriteAction() = false
 
-    override final fun invoke(project: Project, editor: Editor?, file: KtFile) {
+    final override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val factory = KtPsiFactory(project)
 
@@ -66,15 +66,15 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
 
         runWriteAction {
             if (actualFile.packageDirective?.fqName != file.packageDirective?.fqName &&
-                actualFile.declarations.isEmpty()) {
+                actualFile.declarations.isEmpty()
+            ) {
                 val packageDirective = file.packageDirective
                 packageDirective?.let {
                     val oldPackageDirective = actualFile.packageDirective
                     val newPackageDirective = factory.createPackageDirective(it.fqName)
                     if (oldPackageDirective != null) {
                         oldPackageDirective.replace(newPackageDirective)
-                    }
-                    else {
+                    } else {
                         actualFile.add(newPackageDirective)
                     }
                 }
@@ -87,10 +87,10 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
     }
 
     private fun implementationModuleOf(expectedModule: Module) =
-            expectedModule.implementingModules.firstOrNull {
-                PackageUtil.checkSourceRootsConfigured(it, false) &&
-                TargetPlatformDetector.getPlatform(it).multiTargetPlatform == actualPlatform
-            }
+        expectedModule.implementingModules.firstOrNull {
+            PackageUtil.checkSourceRootsConfigured(it, false) &&
+                    TargetPlatformDetector.getPlatform(it).multiTargetPlatform == actualPlatform
+        }
 
     private fun getOrCreateImplementationFile(): KtFile? {
         val declaration = element as? KtNamedDeclaration ?: return null
@@ -102,29 +102,28 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
         val expectedModule = ModuleUtilCore.findModuleForPsiElement(declaration) ?: return null
         val actualModule = implementationModuleOf(expectedModule) ?: return null
         val actualDirectory = PackageUtil.findOrCreateDirectoryForPackage(
-                actualModule, expectedPackage?.qualifiedName ?: "", null, false
+            actualModule, expectedPackage?.qualifiedName ?: "", null, false
         ) ?: return null
         return runWriteAction {
             val fileName = "$name.kt"
             val existingFile = actualDirectory.findFile(fileName)
             val packageDirective = declaration.containingKtFile.packageDirective
             val packageName =
-                    if (packageDirective?.packageNameExpression == null) actualDirectory.getPackage()?.qualifiedName
-                    else packageDirective.fqName.asString()
+                if (packageDirective?.packageNameExpression == null) actualDirectory.getPackage()?.qualifiedName
+                else packageDirective.fqName.asString()
             if (existingFile is KtFile) {
                 val existingPackageDirective = existingFile.packageDirective
                 if (existingFile.declarations.isNotEmpty() &&
-                    existingPackageDirective?.fqName != packageDirective?.fqName) {
+                    existingPackageDirective?.fqName != packageDirective?.fqName
+                ) {
                     val newName = KotlinNameSuggester.suggestNameByName(name) {
                         actualDirectory.findFile("$it.kt") == null
                     } + ".kt"
                     createKotlinFile(newName, actualDirectory, packageName)
-                }
-                else {
+                } else {
                     existingFile
                 }
-            }
-            else {
+            } else {
                 createKotlinFile(fileName, actualDirectory, packageName)
             }
         }
@@ -149,8 +148,8 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
 }
 
 class CreateActualClassFix(
-        klass: KtClassOrObject,
-        actualPlatform: MultiTargetPlatform.Specific
+    klass: KtClassOrObject,
+    actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtClassOrObject>(klass, actualPlatform, { project, element ->
     generateClassOrObjectByExpectedClass(project, element, actualNeeded = true)
 }) {
@@ -171,8 +170,8 @@ class CreateActualClassFix(
 }
 
 class CreateActualPropertyFix(
-        property: KtProperty,
-        actualPlatform: MultiTargetPlatform.Specific
+    property: KtProperty,
+    actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtProperty>(property, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
     descriptor?.let { generateProperty(project, element, descriptor, actualNeeded = true) }
@@ -182,8 +181,8 @@ class CreateActualPropertyFix(
 }
 
 class CreateActualFunctionFix(
-        function: KtFunction,
-        actualPlatform: MultiTargetPlatform.Specific
+    function: KtFunction,
+    actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtFunction>(function, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
     descriptor?.let { generateFunction(project, element, descriptor, actualNeeded = true) }
@@ -195,18 +194,17 @@ class CreateActualFunctionFix(
 private fun KtModifierListOwner.replaceExpectModifier(actualNeeded: Boolean) {
     if (actualNeeded) {
         addModifier(KtTokens.ACTUAL_KEYWORD)
-    }
-    else {
+    } else {
         removeModifier(KtTokens.HEADER_KEYWORD)
         removeModifier(KtTokens.EXPECT_KEYWORD)
     }
 }
 
 internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
-        project: Project,
-        expectedClass: KtClassOrObject,
-        actualNeeded: Boolean,
-        existingDeclarations: List<KtDeclaration> = emptyList()
+    project: Project,
+    expectedClass: KtClassOrObject,
+    actualNeeded: Boolean,
+    existingDeclarations: List<KtDeclaration> = emptyList()
 ): KtClassOrObject {
     fun KtDeclaration.exists() =
         existingDeclarations.any {
@@ -215,10 +213,10 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
                 is KtFunction -> {
                     it as KtFunction
                     valueParameters.size == it.valueParameters.size &&
-                    valueParameters.zip(it.valueParameters).all { (parameter, existingParameter) ->
-                        parameter.name == existingParameter.name &&
-                        parameter.typeReference?.text == existingParameter.typeReference?.text
-                    }
+                            valueParameters.zip(it.valueParameters).all { (parameter, existingParameter) ->
+                                parameter.name == existingParameter.name &&
+                                        parameter.typeReference?.text == existingParameter.typeReference?.text
+                            }
                 }
                 else -> true
             }
@@ -246,8 +244,7 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
             is KtCallableDeclaration -> {
                 if (!isInterface && !it.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                     it.delete()
-                }
-                else {
+                } else {
                     it.addModifier(KtTokens.ACTUAL_KEYWORD)
                 }
             }
@@ -260,8 +257,7 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
             is KtClassOrObject ->
                 if (expectedDeclaration !is KtEnumEntry) {
                     generateClassOrObjectByExpectedClass(project, expectedDeclaration, actualNeeded = true)
-                }
-                else {
+                } else {
                     continue@declLoop
                 }
             is KtCallableDeclaration -> {
@@ -294,32 +290,30 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
 }
 
 private fun KtPsiFactory.generateFunction(
-        project: Project,
-        expectedFunction: KtFunction,
-        descriptor: FunctionDescriptor,
-        actualNeeded: Boolean
+    project: Project,
+    expectedFunction: KtFunction,
+    descriptor: FunctionDescriptor,
+    actualNeeded: Boolean
 ): KtFunction {
     val returnType = descriptor.returnType
     val body = run {
         if (returnType != null && !KotlinBuiltIns.isUnit(returnType)) {
             val delegation = getFunctionBodyTextFromTemplate(
-                    project,
-                    TemplateKind.FUNCTION,
-                    descriptor.name.asString(),
-                    IdeDescriptorRenderers.SOURCE_CODE.renderType(returnType)
+                project,
+                TemplateKind.FUNCTION,
+                descriptor.name.asString(),
+                IdeDescriptorRenderers.SOURCE_CODE.renderType(returnType)
             )
 
             "{$delegation\n}"
-        }
-        else {
+        } else {
             "{}"
         }
     }
 
     return (if (expectedFunction is KtSecondaryConstructor) {
         createSecondaryConstructor(expectedFunction.text + " " + body)
-    }
-    else {
+    } else {
         createFunction(expectedFunction.text + " " + body)
     } as KtFunction).apply {
         replaceExpectModifier(actualNeeded)
@@ -330,19 +324,19 @@ private fun KtPsiFactory.generateFunction(
 }
 
 private fun KtPsiFactory.generateProperty(
-        project: Project,
-        expectedProperty: KtProperty,
-        descriptor: PropertyDescriptor,
-        actualNeeded: Boolean
+    project: Project,
+    expectedProperty: KtProperty,
+    descriptor: PropertyDescriptor,
+    actualNeeded: Boolean
 ): KtProperty {
     val body = buildString {
         append("\nget()")
         append(" = ")
         append(getFunctionBodyTextFromTemplate(
-                project,
-                TemplateKind.FUNCTION,
-                descriptor.name.asString(),
-                descriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: ""
+            project,
+            TemplateKind.FUNCTION,
+            descriptor.name.asString(),
+            descriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: ""
         ))
         if (descriptor.isVar) {
             append("\nset(value) {}")
