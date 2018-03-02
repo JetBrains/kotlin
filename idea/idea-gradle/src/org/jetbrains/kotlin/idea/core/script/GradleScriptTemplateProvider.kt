@@ -22,12 +22,16 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.gradle.tooling.ProjectConnection
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
@@ -39,9 +43,14 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.reflect.KClass
 import kotlin.script.dependencies.Environment
+import kotlin.script.dependencies.ScriptContents
+import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.experimental.dependencies.ScriptDependencies
-
+import kotlin.script.experimental.dependencies.ScriptReport
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class GradleScriptDefinitionsContributor(private val project: Project) : ScriptDefinitionContributor {
 
@@ -109,7 +118,12 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             return kotlinDslTemplates
         }
 
-        return tryToLoadOldBuildScriptDefinition()
+        val default = tryToLoadOldBuildScriptDefinition()
+        if (default.isNotEmpty()) {
+            return default
+        }
+
+        return listOf(ErrorGradleScriptDefinition())
     }
 
     private fun tryToLoadOldBuildScriptDefinition(): List<KotlinScriptDefinition> {
@@ -137,7 +151,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
     } catch (t: Throwable) {
         // TODO: review exception handling
         failedToLoad.set(true)
-        emptyList()
+        listOf(ErrorGradleScriptDefinition(t.message))
     }
 
 
@@ -168,10 +182,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         }
 
         val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-        if (gradleSettings.getLinkedProjectsSettings().isEmpty()) return emptyList()
+        if (gradleSettings.getLinkedProjectsSettings().isEmpty()) error("Project '${project.name}' isn't linked with Gradle")
 
-        val projectSettings =
-            gradleSettings.getLinkedProjectsSettings().filterIsInstance<GradleProjectSettings>().firstOrNull() ?: return emptyList()
+        val projectSettings = gradleSettings.getLinkedProjectsSettings().filterIsInstance<GradleProjectSettings>().firstOrNull()
+                ?: error("Project '${project.name}' isn't linked with Gradle")
 
         val gradleExeSettings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
             project,
@@ -207,6 +221,30 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         ScriptDefinitionsManager.getInstance(project).reloadDefinitionsBy(this)
     }
 
+    private class ErrorGradleScriptDefinition(message: String? = null) : KotlinScriptDefinition(ScriptTemplateWithArgs::class) {
+        override val name: String = "Default Kotlin Gradle Script"
+        override val fileType: LanguageFileType = KotlinFileType.INSTANCE
+        override val annotationsForSamWithReceivers: List<String> = emptyList()
+        override val acceptedAnnotations: List<KClass<out Annotation>> = emptyList()
+
+        override val dependencyResolver: DependenciesResolver = ErrorScriptDependenciesResolver(message)
+
+        override fun getScriptName(script: KtScript) =
+            Name.identifier(script.containingKtFile.name.removeSuffix(GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION))
+
+        override fun isScript(fileName: String): Boolean =
+            fileName.endsWith(GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION)
+    }
+
+    private class ErrorScriptDependenciesResolver(private val message: String? = null) : DependenciesResolver {
+        override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
+            return ResolveResult.Failure(
+                ScriptReport(
+                    message ?: "Failed to load script definitions by ${GradleScriptDefinitionsContributor::class.java.name}"
+                )
+            )
+        }
+    }
 }
 
 class ReloadGradleTemplatesOnSync : ExternalSystemTaskNotificationListenerAdapter() {

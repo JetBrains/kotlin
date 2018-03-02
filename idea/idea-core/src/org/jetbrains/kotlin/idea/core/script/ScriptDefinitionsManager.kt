@@ -46,9 +46,6 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     private var definitionsByContributor = mutableMapOf<ScriptDefinitionContributor, List<KotlinScriptDefinition>>()
     private var definitions: List<KotlinScriptDefinition> = emptyList()
 
-    var hasFailedDefinitions = false
-        private set
-
     fun reloadDefinitionsBy(contributor: ScriptDefinitionContributor) = lock.write {
         val notLoadedYet = definitions.isEmpty()
         if (notLoadedYet) return
@@ -56,8 +53,6 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
         if (contributor !in definitionsByContributor) error("Unknown contributor: ${contributor.id}")
 
         definitionsByContributor[contributor] = contributor.safeGetDefinitions()
-
-        hasFailedDefinitions = getContributors().any { it.isError() }
 
         updateDefinitions()
     }
@@ -70,6 +65,13 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
 
         if (contributor.isError()) return emptyList()
         return definitionsByContributor[contributor] ?: emptyList()
+    }
+
+    fun getContributorForDefinition(scriptDefinition: KotlinScriptDefinition): ScriptDefinitionContributor {
+        for ((contributor, definitions) in definitionsByContributor) {
+            if (definitions.contains(scriptDefinition)) return contributor
+        }
+        throw error("Unknown definition: ${scriptDefinition.name}")
     }
 
     private fun currentDefinitions(): List<KotlinScriptDefinition> {
@@ -104,8 +106,6 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
             val definitions = contributor.safeGetDefinitions()
             definitionsByContributor[contributor] = definitions
         }
-
-        hasFailedDefinitions = getContributors().any { it.isError() }
 
         updateDefinitions()
     }

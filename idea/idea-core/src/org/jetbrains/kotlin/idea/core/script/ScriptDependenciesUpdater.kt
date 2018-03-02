@@ -41,7 +41,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.core.util.cancelOnDisposal
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.*
@@ -127,10 +126,6 @@ class ScriptDependenciesUpdater(
     }
 
     private fun performUpdate(file: VirtualFile) {
-        if (ScriptDefinitionsManager.getInstance(project).hasFailedDefinitions && !ProjectRootsUtil.isProjectSourceFile(project, file)) {
-            return
-        }
-
         val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
         when (scriptDef.dependencyResolver) {
             is AsyncDependenciesResolver, is LegacyResolverWrapper -> {
@@ -212,7 +207,7 @@ class ScriptDependenciesUpdater(
             }
             ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
             val resultingDependencies = (result.dependencies ?: ScriptDependencies.Empty).adjustByDefinition(scriptDef)
-            if (saveNewDependencies(resultingDependencies, file)) {
+            if (saveNewDependencies(resultingDependencies, file, scriptDef)) {
                 notifyRootsChanged()
             }
         }
@@ -221,15 +216,16 @@ class ScriptDependenciesUpdater(
 
     fun updateSync(file: VirtualFile, scriptDef: KotlinScriptDefinition): Boolean {
         val newDeps = contentLoader.loadContentsAndResolveDependencies(scriptDef, file) ?: ScriptDependencies.Empty
-        return saveNewDependencies(newDeps, file)
+        return saveNewDependencies(newDeps, file, scriptDef)
     }
 
     private fun saveNewDependencies(
         new: ScriptDependencies,
-        file: VirtualFile
+        file: VirtualFile,
+        scriptDef: KotlinScriptDefinition
     ): Boolean {
         val rootsChanged = cache.hasNotCachedRoots(new)
-        if (cache.save(file, new)) {
+        if (cache.save(file, new) && !ScriptDefinitionsManager.getInstance(project).getContributorForDefinition(scriptDef).isError()) {
             file.scriptDependencies = new
         }
         return rootsChanged
