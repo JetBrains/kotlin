@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -67,7 +65,8 @@ import java.util.*;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.CONSTRUCTOR;
+import static org.jetbrains.kotlin.resolve.BindingContext.TYPE_ALIAS;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveMemberModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
@@ -1342,17 +1341,5 @@ public class DescriptorResolver {
     @Nullable
     public static ClassDescriptor getContainingClass(@NotNull LexicalScope scope) {
         return getParentOfType(scope.getOwnerDescriptor(), ClassDescriptor.class, false);
-    }
-
-    public static void registerFileInPackage(@NotNull BindingTrace trace, @NotNull KtFile file) {
-        // Register files corresponding to this package
-        // The trace currently does not support bi-di multimaps that would handle this task nicer
-        FqName fqName = file.getPackageFqName();
-        Collection<KtFile> files = trace.get(PACKAGE_TO_FILES, fqName);
-        if (files == null) {
-            files = Sets.newIdentityHashSet();
-        }
-        files.add(file);
-        trace.record(BindingContext.PACKAGE_TO_FILES, fqName, files);
     }
 }
