@@ -36,8 +36,8 @@ class MyConfigurator(val baseClass: KClass<Any>? = null) : ScriptConfigurator {
 
     private val resolver = FilesAndMavenResolver()
 
-    override suspend fun baseConfiguration(scriptSource: ScriptSource?) : ResultWithDiagnostics<ScriptCompileConfiguration> =
-        myJvmConfig(scriptSource.toConfigEntry()).asSuccess()
+    override suspend fun baseConfiguration(scriptSource: ScriptSource?): ResultWithDiagnostics<ScriptCompileConfiguration> =
+        myJvmConfig { add(scriptSource.toConfigEntry()) }.asSuccess()
 
     override suspend fun refineConfiguration(
         configuration: ScriptCompileConfiguration,
@@ -69,18 +69,20 @@ class MyConfigurator(val baseClass: KClass<Any>? = null) : ScriptConfigurator {
     }
 }
 
-fun myJvmConfig(vararg params: Pair<TypedKey<*>, Any?>): ScriptCompileConfiguration =
-    jvmConfigWithJavaHome(
-        ScriptCompileConfigurationParams.scriptSignature to ScriptSignature(MyScriptWithMavenDeps::class, ProvidedDeclarations()),
-        ScriptCompileConfigurationParams.importedPackages to listOf(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!),
-        ScriptCompileConfigurationParams.dependencies to listOf(
-            JvmDependency(listOf(stdlibFile)),
-            JvmDependency(listOf(selfFile)),
-            JvmDependency(listOf(scriptUtilsJarFile))
-        ),
-        ScriptCompileConfigurationParams.updateConfigurationOnAnnotations to listOf(DependsOn::class, Repository::class),
-        *params
+inline fun myJvmConfig(
+    from: HeterogeneousMap = HeterogeneousMap(),
+    crossinline body: JvmScriptCompileConfigurationParams.Builder.() -> Unit = {}
+) = jvmConfigWithJavaHome(from) {
+    signature<MyScriptWithMavenDeps>()
+    ScriptCompileConfigurationParams.importedPackages(listOf(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!))
+    dependencies(
+        listOf(stdlibFile),
+        listOf(selfFile),
+        listOf(scriptUtilsJarFile)
     )
+    ScriptCompileConfigurationParams.updateConfigurationOnAnnotations(listOf(DependsOn::class, Repository::class))
+    body()
+}
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
     val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(), DummyCompiledJvmScriptCache())
@@ -92,7 +94,7 @@ fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
         scriptDefinition.runner
     )
 
-    return host.eval(myJvmConfig(scriptFile.toScriptSource().toConfigEntry()), ScriptEvaluationEnvironment())
+    return host.eval(myJvmConfig { add(scriptFile.toScriptSource().toConfigEntry()) }, ScriptEvaluationEnvironment())
 }
 
 fun main(vararg args: String) {

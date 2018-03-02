@@ -24,15 +24,14 @@ val selfFile: File by lazy {
             ?: throw Exception("Unable to get path to the script base")
 }
 
-fun myJvmConfig(vararg params: Pair<TypedKey<*>, Any?>): ScriptCompileConfiguration =
-    jvmConfigWithJavaHome(
-        ScriptCompileConfigurationParams.scriptSignature to ScriptSignature(MyScript::class, ProvidedDeclarations.Empty),
-        ScriptCompileConfigurationParams.dependencies to listOf(
-            JvmDependency(listOf(stdlibFile)),
-            JvmDependency(listOf(selfFile))
-        ),
-        *params
-    )
+inline fun myJvmConfig(
+    from: HeterogeneousMap = HeterogeneousMap(),
+    crossinline body: JvmScriptCompileConfigurationParams.Builder.() -> Unit = {}
+) = jvmConfigWithJavaHome(from) {
+    signature<MyScript>()
+    dependencies(listOf(stdlibFile), listOf(selfFile))
+    body()
+}
 
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
@@ -45,7 +44,7 @@ fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
         scriptDefinition.runner
     )
 
-    return host.eval(myJvmConfig(scriptFile.toScriptSource().toConfigEntry()), ScriptEvaluationEnvironment())
+    return host.eval(myJvmConfig { add(scriptFile.toScriptSource().toConfigEntry()) }, ScriptEvaluationEnvironment())
 }
 
 fun main(vararg args: String) {
