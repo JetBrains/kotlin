@@ -36,6 +36,7 @@ import javax.swing.Icon
 class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
     var commonModuleName: String? = null
     var jvmModuleName: String? = null
+    var jdk: Sdk? = null
     var jsModuleName: String? = null
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform"
@@ -60,7 +61,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
 
         val contentRoot = module.rootManager.contentRoots.firstOrNull() ?: return
         setupCommonModule(module, contentRoot)
-        setupPlatformModule(module, contentRoot, jvmModuleName, GradleKotlinMPPJavaFrameworkSupportProvider())
+        setupPlatformModule(module, contentRoot, jvmModuleName, GradleKotlinMPPJavaFrameworkSupportProvider(), jdk)
         setupPlatformModule(module, contentRoot, jsModuleName, GradleKotlinMPPJSFrameworkSupportProvider())
 
         val settingsGradle = contentRoot.findChild("settings.gradle")
@@ -78,13 +79,14 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         rootModule: Module,
         contentRoot: VirtualFile,
         childModuleName: String?,
+        sdk: Sdk? = null,
         extendScript: (BuildScriptDataBuilder, Sdk?) -> Unit = { _, _ -> }
     ) {
         if (childModuleName.isNullOrEmpty()) return
         val moduleDir = contentRoot.createChildDirectory(this, childModuleName!!)
         val buildGradle = moduleDir.createChildData(null, "build.gradle")
         val buildScriptData = BuildScriptDataBuilder(buildGradle)
-        extendScript(buildScriptData, rootModule.rootManager.sdk)
+        extendScript(buildScriptData, sdk ?: rootModule.rootManager.sdk)
         VfsUtil.saveText(buildGradle, buildScriptData.buildConfigurationPart() + buildScriptData.buildMainPart())
     }
 
@@ -99,9 +101,10 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         rootModule: Module,
         contentRoot: VirtualFile,
         platformModuleName: String?,
-        supportProvider: GradleKotlinFrameworkSupportProvider
-    ) = setupChildModule(rootModule, contentRoot, platformModuleName) { builder, sdk ->
-        supportProvider.addSupport(builder, sdk)
+        supportProvider: GradleKotlinFrameworkSupportProvider,
+        sdk: Sdk? = null
+    ) = setupChildModule(rootModule, contentRoot, platformModuleName, sdk) { builder, finalSdk ->
+        supportProvider.addSupport(builder, finalSdk)
         val dependency = commonModuleName ?: ""
         builder.addDependencyNotation("expectedBy project(\":$dependency\")")
     }

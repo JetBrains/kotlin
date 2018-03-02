@@ -21,6 +21,10 @@ import com.intellij.ide.util.projectWizard.ProjectWizardUtil
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.externalSystem.model.project.ProjectId
 import com.intellij.openapi.options.ConfigurationException
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ui.configuration.JdkComboBox
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.PanelWithAnchor
@@ -43,6 +47,10 @@ class KotlinGradleMultiplatformWizardStep(
         LabeledComponent.create(JTextField(), "Common module name:", BorderLayout.WEST)
     private val jvmCheckBox: JCheckBox =
         JCheckBox("Create JVM module", true)
+    private val jdkComboBox: JdkComboBox =
+        JdkComboBox(ProjectSdksModel().also {
+            it.reset(null)
+        }) { it is JavaSdk }
     private val jvmModuleNameComponent: LabeledComponent<JTextField> =
         LabeledComponent.create(JTextField(), "JVM module name:", BorderLayout.WEST)
     private val jsCheckBox: JCheckBox =
@@ -97,6 +105,7 @@ class KotlinGradleMultiplatformWizardStep(
 
         jvmCheckBox.addItemListener {
             jvmModuleNameComponent.isEnabled = jvmCheckBox.isSelected
+            jdkComboBox.isEnabled = jvmCheckBox.isSelected
         }
         jsCheckBox.addItemListener {
             jsModuleNameComponent.isEnabled = jsCheckBox.isSelected
@@ -121,6 +130,14 @@ class KotlinGradleMultiplatformWizardStep(
         )
         panel.add(
             jvmCheckBox,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
+        panel.add(
+            jdkComboBox,
             GridBagConstraints(
                 0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
                 GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
@@ -181,6 +198,7 @@ class KotlinGradleMultiplatformWizardStep(
         builder.projectId = ProjectId("", rootModuleName, "")
         builder.commonModuleName = commonModuleName
         builder.jvmModuleName = jvmModuleName
+        builder.jdk = jdk
         builder.jsModuleName = jsModuleName
     }
 
@@ -192,6 +210,8 @@ class KotlinGradleMultiplatformWizardStep(
         get() = commonModuleNameComponent.component.text
     private val jvmModuleName: String
         get() = if (jvmCheckBox.isSelected) jvmModuleNameComponent.component.text else ""
+    private val jdk: Sdk?
+        get() = if (jvmCheckBox.isSelected) jdkComboBox.selectedJdk else null
     private val jsModuleName: String
         get() = if (jsCheckBox.isSelected) jsModuleNameComponent.component.text else ""
 
