@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.backend.js.translate.general;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.backend.js.IrBasedTranslator;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.backend.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.backend.js.facade.TranslationUnit;
@@ -305,19 +303,14 @@ public final class Translation {
             index++;
         }
 
-        if (config.getConfiguration().getBoolean(JSConfigurationKeys.IR_USED)) {
-            IrBasedTranslator irTranslator = new IrBasedTranslator(bindingTrace, moduleDescriptor);
-            newFragments.addAll(irTranslator.translate(inputFiles, program.getScope()));
-        }
-        else {
-            for (KtFile file : inputFiles) {
-                StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor, sourceFilePathResolver);
-                TranslationContext context = TranslationContext.rootContext(staticContext);
-                List<DeclarationDescriptor> fileMemberScope = new ArrayList<>();
-                translateFile(context, file, fileMemberScope);
-                newFragments.add(staticContext.getFragment());
-                fileMemberScopes.put(file, fileMemberScope);
-            }
+
+        for (KtFile file : inputFiles) {
+            StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor, sourceFilePathResolver);
+            TranslationContext context = TranslationContext.rootContext(staticContext);
+            List<DeclarationDescriptor> fileMemberScope = new ArrayList<>();
+            translateFile(context, file, fileMemberScope);
+            newFragments.add(staticContext.getFragment());
+            fileMemberScopes.put(file, fileMemberScope);
         }
 
         index = 0;
