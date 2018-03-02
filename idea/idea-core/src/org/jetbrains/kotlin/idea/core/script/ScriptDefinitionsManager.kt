@@ -63,15 +63,7 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
 
         if (contributor !in definitionsByContributor) error("Unknown contributor: ${contributor.id}")
 
-        if (contributor.isError()) return emptyList()
         return definitionsByContributor[contributor] ?: emptyList()
-    }
-
-    fun getContributorForDefinition(scriptDefinition: KotlinScriptDefinition): ScriptDefinitionContributor {
-        for ((contributor, definitions) in definitionsByContributor) {
-            if (definitions.contains(scriptDefinition)) return contributor
-        }
-        throw error("Unknown definition: ${scriptDefinition.name}")
     }
 
     private fun currentDefinitions(): List<KotlinScriptDefinition> {
@@ -169,8 +161,6 @@ interface ScriptDefinitionContributor {
     val id: String
 
     fun getDefinitions(): List<KotlinScriptDefinition>
-
-    fun isError(): Boolean = false
 
     companion object {
         val EP_NAME: ExtensionPointName<ScriptDefinitionContributor> =

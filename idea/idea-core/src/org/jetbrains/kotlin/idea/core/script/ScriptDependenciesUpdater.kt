@@ -206,8 +206,8 @@ class ScriptDependenciesUpdater(
                 requests.replace(file.path, lastRequest, ModStampedRequest(lastRequest.modificationStamp, job = null))
             }
             ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
-            val resultingDependencies = (result.dependencies ?: ScriptDependencies.Empty).adjustByDefinition(scriptDef)
-            if (saveNewDependencies(resultingDependencies, file, scriptDef)) {
+            val resultingDependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
+            if (saveNewDependencies(resultingDependencies, file)) {
                 notifyRootsChanged()
             }
         }
@@ -215,17 +215,13 @@ class ScriptDependenciesUpdater(
 
 
     fun updateSync(file: VirtualFile, scriptDef: KotlinScriptDefinition): Boolean {
-        val newDeps = contentLoader.loadContentsAndResolveDependencies(scriptDef, file) ?: ScriptDependencies.Empty
-        return saveNewDependencies(newDeps, file, scriptDef)
+        val newDeps = contentLoader.loadContentsAndResolveDependencies(scriptDef, file) ?: return false
+        return saveNewDependencies(newDeps, file)
     }
 
-    private fun saveNewDependencies(
-        new: ScriptDependencies,
-        file: VirtualFile,
-        scriptDef: KotlinScriptDefinition
-    ): Boolean {
+    private fun saveNewDependencies(new: ScriptDependencies, file: VirtualFile): Boolean {
         val rootsChanged = cache.hasNotCachedRoots(new)
-        if (cache.save(file, new) && !ScriptDefinitionsManager.getInstance(project).getContributorForDefinition(scriptDef).isError()) {
+        if (cache.save(file, new)) {
             file.scriptDependencies = new
         }
         return rootsChanged
