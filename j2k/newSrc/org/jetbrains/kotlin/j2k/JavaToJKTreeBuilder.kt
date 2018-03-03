@@ -23,22 +23,46 @@ import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.conveersionCache.JKMultiverseClass
+import org.jetbrains.kotlin.j2k.tree.conveersionCache.ReferenceTargetProvider
 import org.jetbrains.kotlin.j2k.tree.impl.*
+import java.util.*
 
 
 class JavaToJKTreeBuilder : ReferenceTargetProvider {
-    override val resolveCache: Map<JKElement, PsiElement>
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val conversionCache: Map<PsiElement, JKElement>
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override fun resolveClassReference(clazz: PsiClass): JKClass {
+        val name = clazz.qualifiedName ?: TODO()
+        return universe[name] ?: multiverse[name] ?: run {
+            val clazz = JKMultiverseClass(JKNameIdentifierImpl(name), mutableListOf(), JKClass.ClassKind.CLASS, JKModifierListImpl())
+            multiverse[name] = clazz
+            clazz
+        }
+    }
+
+    override fun resolveClassReference(identifier: String): JKClass {
+        return universe[identifier] ?: multiverse[identifier] ?: run {
+            val clazz = JKMultiverseClass(JKNameIdentifierImpl(identifier), mutableListOf(), JKClass.ClassKind.CLASS, JKModifierListImpl())
+            multiverse[identifier] = clazz
+            clazz
+        }
+    }
+
+    override fun putUniverseClass(clazz: JKClass) {
+        universe[clazz.name.name] = clazz
+    }
+
+    override fun putMultiverseClass(clazz: JKMultiverseClass) {
+        multiverse[clazz.name.name] = clazz
+    }
+
+    private val universe = mutableMapOf<String, JKClass>()
+    private val multiverse = mutableMapOf<String, JKMultiverseClass>()
 
     private val expressionTreeMapper = ExpressionTreeMapper()
 
     private val declarationMapper = DeclarationMapper(expressionTreeMapper)
 
     private val modifierMapper = ModifierMapper()
-
-    private val javaToJKTreeBuilder = this
 
     private inner class ExpressionTreeMapper {
         fun PsiExpression.toJK(): JKExpression {
@@ -107,8 +131,9 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
 
         fun PsiMethodCallExpression.toJK(): JKExpression {
             val method = methodExpression as PsiReferenceExpressionImpl
-            val identifier = (method.referenceNameElement as PsiIdentifier).convertMethodReference()
-            val call = JKJavaMethodCallExpressionImpl(identifier, argumentList.toJK())
+
+            val identifier = method.resolve().convertReference()
+            val call = JKJavaMethodCallExpressionImpl(identifier as JKMethodReference, argumentList.toJK())
             return if (method.findChildByRole(ChildRole.DOT) != null) {
                 JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualificationIdentifierImpl.DOT, call)
             }
@@ -119,7 +144,7 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
 
         fun PsiReferenceExpression.toJK(): JKExpression {
             val impl = this as PsiReferenceExpressionImpl
-            val identifier = (impl.referenceNameElement as PsiIdentifier).convertFieldReference()
+            val identifier = impl.resolve().convertReference()
             val access = JKJavaFieldAccessExpressionImpl(identifier)
             return if (impl.findChildByRole(ChildRole.DOT) != null) {
                 JKQualifiedExpressionImpl((impl.qualifier as PsiExpression).toJK(), JKJavaQualificationIdentifierImpl.DOT, access)
@@ -154,7 +179,7 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
                     return JKJavaNewEmptyArrayImpl(dimensions.map { it?.toJK() })
                 }
             }
-            return JKJavaNewExpressionImpl((classReference as PsiIdentifier).convertType(), argumentList.toJK())
+            return JKJavaNewExpressionImpl(classReference?.resolve().convertReference() as JKClassReference, argumentList.toJK())
         }
 
         fun PsiArrayAccessExpression.toJK(): JKExpression {
@@ -173,31 +198,33 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
             return JKExpressionListImpl(this?.expressions?.map { it.toJK() }?.toTypedArray() ?: emptyArray())
         }
 
-        fun PsiIdentifier.toJK(): JKNameIdentifier {
-            return JKNameIdentifierImpl(this.text)
+        fun PsiElement?.convertReference(): JKReference = when(this){
+            is PsiMethod -> convertMethodReference()
+            is PsiField -> convertFieldReference()
+            is PsiClass -> convertType()
+            else -> throw Exception("Invalid PSI")
         }
 
-        fun PsiIdentifier.convertMethodReference(): JKJavaMethodReference {
-            return JKJavaMethodReferenceImpl(this.toJK(), javaToJKTreeBuilder)
+        fun PsiMethod.convertMethodReference(): JKJavaMethodReference {
+            val clazz = this@JavaToJKTreeBuilder.resolveClassReference(containingClass ?: TODO())
+            return JKMethodReferenceImpl(clazz, this@JavaToJKTreeBuilder.resolveMethodReference(clazz, this))
         }
 
-        fun PsiIdentifier.convertFieldReference(): JKJavaFieldReference {
-            return JKJavaFieldReferenceImpl(this.toJK(), javaToJKTreeBuilder)
+        fun PsiField.convertFieldReference(): JKJavaFieldReference {
+            val clazz = this@JavaToJKTreeBuilder.resolveClassReference(containingClass ?: TODO())
+            return JKFieldReferenceImpl(clazz, this@JavaToJKTreeBuilder.resolveFieldReference(clazz, this))
         }
 
-        fun PsiIdentifier.convertType(): JKJavaClassReference {
-            return JKJavaClassReferenceImpl(this.toJK(), javaToJKTreeBuilder)
+        fun PsiClass.convertType(): JKJavaClassReference {
+            return JKClassReferenceImpl(this@JavaToJKTreeBuilder.resolveClassReference(this))
         }
 
         fun PsiTypeElement.toJK(): JKType? {
             return innermostComponentReferenceElement?.convertType()
         }
 
-
         fun PsiJavaCodeReferenceElement.convertType(): JKType {
-            val classReference = JKJavaClassReferenceImpl(
-                    JKNameIdentifierImpl(this.referenceName ?: throw RuntimeException("Can't be null: referenceName")),
-                    javaToJKTreeBuilder)
+            val classReference = JKClassReferenceImpl(this@JavaToJKTreeBuilder.resolveClassReference(this.resolve() as? PsiClass ?: TODO()))
             val typeArguments = ArrayList<JKType>()
             parameterList?.typeParameterElements?.forEach { it ->
                 kotlin.run {
@@ -263,11 +290,15 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
         }
 
         fun PsiCodeBlock.toJK(): JKBlock {
-            //TODO block mapping
-            return JKBlockImpl(listOf(JKStringLiteralExpressionImpl("")))
+            return JKBlockImpl(statements.map { it.toJK() })
         }
 
-
+        fun PsiStatement.toJK(): JKStatement {
+            if (this is PsiExpressionStatement) {
+                return JKExpressionStatementImpl(with(expressionTreeMapper) { expression.toJK() })
+            }
+            TODO()
+        }
     }
 
     private inner class ModifierMapper {
@@ -311,6 +342,10 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
 
         override fun visitField(field: PsiField) {
             resultElement = with(declarationMapper) { field.toJK() }
+        }
+
+        override fun visitMethod(method: PsiMethod) {
+            resultElement = with(declarationMapper) { method.toJK() }
         }
 
         override fun visitFile(file: PsiFile) {

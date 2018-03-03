@@ -22,12 +22,7 @@ interface JKJavaField : JKDeclaration, JKModifierListOwner {
     val initializer: JKExpression?
 }
 
-interface JKJavaMethod : JKDeclaration {
-    val modifierList: JKModifierList
-    val name: JKNameIdentifier
-    val valueArguments: List<JKValueArgument>
-    val block: JKBlock?
-}
+interface JKJavaMethod : JKMethod
 
 interface JKJavaForLoop : JKLoop
 
@@ -86,8 +81,4 @@ interface JKJavaNewEmptyArray : JKExpression {
 
 interface JKJavaNewArray : JKExpression {
     val initializer: List<JKExpression>
-}
-
-interface JKJavaExternalReference : JKExternalReference {
-
 }

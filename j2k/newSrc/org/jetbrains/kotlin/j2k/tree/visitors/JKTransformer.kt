@@ -19,15 +19,10 @@ interface JKTransformer<in D> : JKVisitor<JKElement, D> {
     override fun visitTypeCastExpression(typeCastExpression: JKTypeCastExpression, data: D): JKTypeCastExpression = visitExpression(typeCastExpression, data) as JKTypeCastExpression
     override fun visitExpressionList(expressionList: JKExpressionList, data: D): JKExpressionList = visitElement(expressionList, data) as JKExpressionList
     override fun visitReference(reference: JKReference, data: D): JKReference = visitElement(reference, data) as JKReference
-    override fun visitExternalReference(externalReference: JKExternalReference, data: D): JKExternalReference = visit(externalReference, data) as JKExternalReference
     override fun visitMethodReference(methodReference: JKMethodReference, data: D): JKMethodReference = visitReference(methodReference, data) as JKMethodReference
     override fun visitFieldReference(fieldReference: JKFieldReference, data: D): JKFieldReference = visitReference(fieldReference, data) as JKFieldReference
     override fun visitClassReference(classReference: JKClassReference, data: D): JKClassReference = visitReference(classReference, data) as JKClassReference
     override fun visitType(type: JKType, data: D): JKType = visitElement(type, data) as JKType
-    override fun visitExternalMethodReference(externalMethodReference: JKExternalMethodReference, data: D): JKExternalMethodReference = visitExternalReference(externalMethodReference, data) as JKExternalMethodReference
-    override fun visitExternalFieldReference(externalFieldReference: JKExternalFieldReference, data: D): JKExternalFieldReference = visitExternalReference(externalFieldReference, data) as JKExternalFieldReference
-    override fun visitExternalClassReference(externalClassReference: JKExternalClassReference, data: D): JKExternalClassReference = visitExternalReference(externalClassReference, data) as JKExternalClassReference
-    override fun visitExternalTypeReference(externalTypeReference: JKExternalTypeReference, data: D): JKExternalTypeReference = visitExternalReference(externalTypeReference, data) as JKExternalTypeReference
     override fun visitOperatorIdentifier(operatorIdentifier: JKOperatorIdentifier, data: D): JKOperatorIdentifier = visitIdentifier(operatorIdentifier, data) as JKOperatorIdentifier
     override fun visitQualificationIdentifier(qualificationIdentifier: JKQualificationIdentifier, data: D): JKQualificationIdentifier = visitIdentifier(qualificationIdentifier, data) as JKQualificationIdentifier
     override fun visitLoop(loop: JKLoop, data: D): JKLoop = visitStatement(loop, data) as JKLoop
@@ -43,8 +38,10 @@ interface JKTransformer<in D> : JKVisitor<JKElement, D> {
     override fun visitValueArgument(valueArgument: JKValueArgument, data: D): JKValueArgument = visitElement(valueArgument, data) as JKValueArgument
     override fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression, data: D): JKStringLiteralExpression = visitLiteralExpression(stringLiteralExpression, data) as JKStringLiteralExpression
     override fun visitModalityModifier(modalityModifier: JKModalityModifier, data: D): JKModalityModifier = visitModifier(modalityModifier, data) as JKModalityModifier
+    override fun visitMethod(method: JKMethod, data: D): JKMethod = visitDeclaration(method, data) as JKMethod
+    override fun visitExpressionStatement(expressionStatement: JKExpressionStatement, data: D): JKExpressionStatement = visitStatement(expressionStatement, data) as JKExpressionStatement
     override fun visitJavaField(javaField: JKJavaField, data: D): JKDeclaration = visitDeclaration(javaField, data) 
-    override fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): JKDeclaration = visitDeclaration(javaMethod, data) 
+    override fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): JKMethod = visitMethod(javaMethod, data) 
     override fun visitJavaForLoop(javaForLoop: JKJavaForLoop, data: D): JKLoop = visitLoop(javaForLoop, data) 
     override fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: D): JKExpression = visitExpression(javaAssignmentExpression, data) 
     override fun visitJavaTypeIdentifier(javaTypeIdentifier: JKJavaTypeIdentifier, data: D): JKTypeIdentifier = visitTypeIdentifier(javaTypeIdentifier, data) 
@@ -61,7 +58,6 @@ interface JKTransformer<in D> : JKVisitor<JKElement, D> {
     override fun visitJavaModifier(javaModifier: JKJavaModifier, data: D): JKModifier = visitModifier(javaModifier, data) 
     override fun visitJavaNewEmptyArray(javaNewEmptyArray: JKJavaNewEmptyArray, data: D): JKExpression = visitExpression(javaNewEmptyArray, data) 
     override fun visitJavaNewArray(javaNewArray: JKJavaNewArray, data: D): JKExpression = visitExpression(javaNewArray, data) 
-    override fun visitJavaExternalReference(javaExternalReference: JKJavaExternalReference, data: D): JKExternalReference = visitExternalReference(javaExternalReference, data) 
     override fun visitKtFun(ktFun: JKKtFun, data: D): JKDeclaration = visitDeclaration(ktFun, data) 
     override fun visitKtConstructor(ktConstructor: JKKtConstructor, data: D): JKDeclaration = visitDeclaration(ktConstructor, data) 
     override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor, data: D): JKDeclaration = visitKtConstructor(ktPrimaryConstructor, data) 

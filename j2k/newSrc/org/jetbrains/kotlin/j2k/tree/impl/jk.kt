@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiJavaCodeReferenceElement
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.conveersionCache.JKMultiverseClass
 import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
@@ -35,6 +34,8 @@ abstract class JKElementBase : JKElement {
 
 
 class JKClassImpl(override var modifierList: JKModifierList, override var name: JKNameIdentifier, override var classKind: JKClass.ClassKind) : JKClass, JKElementBase() {
+    override val valid: Boolean
+        get() = true
     override var declarations: List<JKDeclaration> = mutableListOf()
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
@@ -82,6 +83,9 @@ class JKBlockImpl(override var statements: List<JKStatement>) : JKBlock, JKEleme
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlock(this, data)
     override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
         statements = statements.map { it.transform<JKStatement, D>(transformer, data) }
+    }
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        statements.forEach { it.accept(visitor, data) }
     }
 }
 
@@ -161,6 +165,13 @@ class JKQualifiedExpressionImpl(override var receiver: JKExpression, override va
     }
 }
 
+class JKExpressionStatementImpl(override val expression: JKExpression) : JKExpressionStatement, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitExpressionStatement(this, data)
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        expression.accept(visitor, data)
+    }
+}
+
 class JKArrayAccessExpressionImpl(override var expression: JKExpression, override var indexExpression: JKExpression?) : JKArrayAccessExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitArrayAccessExpression(this, data)
 
@@ -203,8 +214,43 @@ class JKTypeCastExpressionImpl(override var expression: JKExpression?, override 
 
 class JKTypeReferenceImpl(override val parameters: List<JKType>) : JKType, JKElementBase() {
 
-
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitType(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+
+    }
+}
+
+sealed class JKReferenceType {
+    object U2U : JKReferenceType()
+    object U2M : JKReferenceType()
+    object M2U : JKReferenceType()
+}
+
+class JKFieldReferenceImpl(override val containerClass: JKClass, override val target: JKJavaField) : JKJavaFieldReference, JKElementBase() {
+    override val referenceType: JKReferenceType = if (containerClass is JKMultiverseClass) JKReferenceType.U2M else JKReferenceType.U2U
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaFieldReference(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+
+    }
+}
+
+class JKClassReferenceImpl(override val target: JKClass) : JKJavaClassReference, JKElementBase() {
+    override val referenceType: JKReferenceType = if (target is JKMultiverseClass) JKReferenceType.U2M else JKReferenceType.U2U
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaClassReference(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+
+    }
+}
+
+class JKMethodReferenceImpl(override val containerClass: JKClass, override val target: JKMethod) : JKJavaMethodReference, JKElementBase() {
+    override val referenceType: JKReferenceType = if (containerClass is JKMultiverseClass) JKReferenceType.U2M else JKReferenceType.U2U
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodReference(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
 

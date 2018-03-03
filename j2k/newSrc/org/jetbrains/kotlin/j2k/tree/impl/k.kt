@@ -51,5 +51,6 @@ class JKKtFunctionImpl(override var returnType: JKTypeIdentifier,
                        override var valueArguments: List<JKValueArgument>,
                        override var block: JKBlock?,
                        override var modifierList: JKModifierList) : JKElementBase(), JKKtFunction {
-
+    override val valid: Boolean
+        get() = true
 }
