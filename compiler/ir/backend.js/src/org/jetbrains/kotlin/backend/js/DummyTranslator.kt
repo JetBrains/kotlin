@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.backend.js
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
-import org.jetbrains.kotlin.js.backend.ast.JsScope
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.backend.js.translate.context.StaticContext
 import org.jetbrains.kotlin.backend.js.translate.context.TranslationContext
@@ -19,42 +17,35 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
-import java.util.ArrayList
 
-class DummyTranslator(private val bindingTrace: BindingTrace,
-                      private val module: ModuleDescriptor,
-                      private val config: JsConfig,
-                      private val sourceFilePathResolver: SourceFilePathResolver
+class DummyTranslator(
+    private val bindingTrace: BindingTrace,
+    private val module: ModuleDescriptor,
+    private val config: JsConfig,
+    private val sourceFilePathResolver: SourceFilePathResolver
 ) {
 
-    fun translate(files: Collection<KtFile>, fileMemberScopes: MutableMap<KtFile, MutableList<DeclarationDescriptor>>): Collection<JsProgramFragment> {
+    fun translate(files: Collection<KtFile>): Collection<JsProgramFragment> {
 
         val fragments = mutableListOf<JsProgramFragment>()
 
         for (file in files) {
             val staticContext = StaticContext(bindingTrace, config, module, sourceFilePathResolver)
             val context = TranslationContext.rootContext(staticContext)
-            val fileMemberScope = ArrayList<DeclarationDescriptor>()
-            translateFile(context, file, fileMemberScope)
+            translateFile(context, file)
             fragments += staticContext.fragment
-            fileMemberScopes[file] = fileMemberScope
         }
 
         return fragments
     }
 
 
-    private fun translateFile(
-        context: TranslationContext,
-        file: KtFile,
-        fileMemberScope: MutableList<DeclarationDescriptor>
-    ) {
+    private fun translateFile(context: TranslationContext, file: KtFile) {
         val fileVisitor = FileDeclarationVisitor(context)
 
         try {
             for (declaration in file.declarations) {
                 val descriptor = BindingUtils.getDescriptorForElement(context.bindingContext(), declaration)
-                fileMemberScope.add(descriptor)
                 if (!AnnotationsUtils.isPredefinedObject(descriptor)) {
                     declaration.accept(fileVisitor, context)
                 }

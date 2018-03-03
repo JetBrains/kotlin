@@ -307,17 +307,24 @@ public final class Translation {
 
         if (config.getConfiguration().getBoolean(JSConfigurationKeys.IR_USED)) {
             DummyTranslator translator = new DummyTranslator(bindingTrace, moduleDescriptor, config, sourceFilePathResolver);
-            newFragments.addAll(translator.translate(inputFiles, fileMemberScopes));
+            newFragments.addAll(translator.translate(inputFiles));
         }
         else {
             for (KtFile file : inputFiles) {
                 StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor, sourceFilePathResolver);
                 TranslationContext context = TranslationContext.rootContext(staticContext);
-                List<DeclarationDescriptor> fileMemberScope = new ArrayList<>();
-                translateFile(context, file, fileMemberScope);
+                translateFile(context, file);
                 newFragments.add(staticContext.getFragment());
-                fileMemberScopes.put(file, fileMemberScope);
             }
+        }
+
+        for (KtFile file : inputFiles) {
+            List<DeclarationDescriptor> fileMemberScope = new ArrayList<>();
+            for (KtDeclaration declaration : file.getDeclarations()) {
+                DeclarationDescriptor descriptor = BindingUtils.getDescriptorForElement(bindingTrace.getBindingContext(), declaration);
+                fileMemberScope.add(descriptor);
+            }
+            fileMemberScopes.put(file, fileMemberScope);
         }
 
         index = 0;
@@ -400,15 +407,13 @@ public final class Translation {
 
     private static void translateFile(
             @NotNull TranslationContext context,
-            @NotNull KtFile file,
-            @NotNull List<DeclarationDescriptor> fileMemberScope
+            @NotNull KtFile file
     ) {
         FileDeclarationVisitor fileVisitor = new FileDeclarationVisitor(context);
 
         try {
             for (KtDeclaration declaration : file.getDeclarations()) {
                 DeclarationDescriptor descriptor = BindingUtils.getDescriptorForElement(context.bindingContext(), declaration);
-                fileMemberScope.add(descriptor);
                 if (!AnnotationsUtils.isPredefinedObject(descriptor)) {
                     declaration.accept(fileVisitor, context);
                 }
