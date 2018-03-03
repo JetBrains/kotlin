@@ -63,3 +63,9 @@ abstract class AbstractIrBoxJsTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "out/irbox/",
         ir = true
 )
+
+abstract class AbstractIrJsCodegenBoxTest : BasicBoxTest(
+    "compiler/testData/codegen/box/",
+    "codegen/irbox/",
+    ir = true
+)

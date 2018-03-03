@@ -59,6 +59,10 @@ fun main(args: Array<String>) {
             model("codegen/box", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractIrJsCodegenBoxTest> {
+            model("codegen/box", targetBackend = TargetBackend.JS)
+        }
+
         testClass<AbstractNonLocalReturnsTest> {
             model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS)
         }
