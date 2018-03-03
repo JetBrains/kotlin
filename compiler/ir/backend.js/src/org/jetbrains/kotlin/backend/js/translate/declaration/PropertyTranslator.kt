@@ -199,9 +199,9 @@ fun TranslationContext.contextWithPropertyMetadataCreationIntrinsified(
 ): TranslationContext {
     // 0th argument is instance, 1st is KProperty, 2nd (for setter) is value
     val hostExpression =
-            (delegatedCall.valueArgumentsByIndex!![0] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()
+            (delegatedCall.valueArgumentsByIndex!![0] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()!!
     val fakeArgumentExpression =
-            (delegatedCall.valueArgumentsByIndex!![1] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()
+            (delegatedCall.valueArgumentsByIndex!![1] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()!!
     val metadataRef = pureFqn(getVariableForPropertyMetadata(property), null).apply { synthetic = true }
     return innerContextWithAliasesForExpressions(mapOf(
             hostExpression to host,

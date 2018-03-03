@@ -168,7 +168,7 @@ class StaticContext(
 
     private val classOrConstructorClosure = hashMapOf<MemberDescriptor, List<DeclarationDescriptor>>()
 
-    val deferredCallSites: Map<ClassDescriptor, List<DeferredCallSite>> = HashMap()
+    val deferredCallSites: MutableMap<ClassDescriptor, MutableList<DeferredCallSite>> = HashMap()
 
     val nameSuggestion = NameSuggestion()
 
@@ -206,10 +206,10 @@ class StaticContext(
     val bindingContext: BindingContext
         get() = bindingTrace.bindingContext
 
-    val topLevelStatements: List<JsStatement>
+    val topLevelStatements: MutableList<JsStatement>
         get() = fragment.initializerBlock.statements
 
-    val declarationStatements: List<JsStatement>
+    val declarationStatements: MutableList<JsStatement>
         get() = fragment.declarationBlock.statements
 
     init {
