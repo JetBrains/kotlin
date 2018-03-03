@@ -3433,6 +3433,33 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/removeRedundantConstructorParentheses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveRedundantConstructorParentheses extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInRemoveRedundantConstructorParentheses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/removeRedundantConstructorParentheses"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantConstructorParentheses/basic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functions.kt")
+        public void testFunctions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantConstructorParentheses/functions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noFunction.kt")
+        public void testNoFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantConstructorParentheses/noFunction.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
