@@ -38,6 +38,62 @@ private class DebugTreePrinter : JKVisitorVoid {
     override fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier) {
         printer.println(javaAccessModifier.classNameWithoutJK(), "(", javaAccessModifier.type, ")")
     }
+
+    override fun visitJavaMethod(javaMethod: JKJavaMethod) {
+        printer.println(javaMethod.classNameWithoutJK(), " [")
+        printer.indented {
+            javaMethod.block?.accept(this, null)
+            javaMethod.modifierList.accept(this, null)
+        }
+        printer.println("]")
+    }
+
+    override fun visitExpressionStatement(expressionStatement: JKExpressionStatement) {
+        printer.println(expressionStatement.classNameWithoutJK(), " [")
+        printer.indented {
+            expressionStatement.acceptChildren(this, null)
+        }
+        printer.println("]")
+    }
+
+    override fun visitQualifiedExpression(qualifiedExpression: JKQualifiedExpression) {
+        printer.println(qualifiedExpression.classNameWithoutJK(), " [")
+        printer.indented {
+            qualifiedExpression.acceptChildren(this, null)
+        }
+        printer.println("]")
+    }
+
+    override fun visitBlock(block: JKBlock) {
+        printer.println(block.classNameWithoutJK(), " [")
+        printer.indented {
+            block.acceptChildren(this, null)
+        }
+        printer.println("]")
+    }
+
+    override fun visitMethodReference(methodReference: JKMethodReference) {
+        printer.println(methodReference.classNameWithoutJK())
+        printer.println(methodReference.containerClass.name.name, "@", methodReference.target.name.name)
+    }
+
+    override fun visitFieldReference(fieldReference: JKFieldReference) {
+        printer.println(fieldReference.classNameWithoutJK())
+        printer.println(fieldReference.containerClass.name.name, "@", fieldReference.target.name.name)
+    }
+
+    override fun visitClassReference(classReference: JKClassReference) {
+        printer.println(classReference.classNameWithoutJK())
+        printer.println(classReference.target.name.name)
+    }
+
+    override fun visitJavaStringLiteralExpression(javaStringLiteralExpression: JKJavaStringLiteralExpression) {
+        printer.println(javaStringLiteralExpression.classNameWithoutJK(), " \"")
+        printer.indented {
+            printer.println(javaStringLiteralExpression.text)
+        }
+        printer.println("\"")
+    }
 }
 
 private fun Any.classNameWithoutJK(): String = this.javaClass.simpleName.removePrefix("JK")
@@ -49,5 +105,4 @@ private inline fun Printer.indented(block: () -> Unit) {
 }
 
 
-fun JKElement.prettyDebugPrintTree(): String
-        = DebugTreePrinter().apply { accept(this, null) }.stringBuilder.toString()
+fun JKElement.prettyDebugPrintTree(): String = DebugTreePrinter().apply { accept(this, null) }.stringBuilder.toString()

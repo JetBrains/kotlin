@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
-import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
@@ -25,6 +24,8 @@ class JKJavaFieldImpl(override var modifierList: JKModifierList,
                       override var type: JKTypeIdentifier,
                       override var name: JKNameIdentifier,
                       override var initializer: JKExpression?) : JKJavaField, JKElementBase() {
+    override val valid: Boolean
+        get() = true
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaField(this, data)
 
@@ -60,6 +61,8 @@ class JKJavaMethodImpl(override var modifierList: JKModifierList,
                        override var name: JKNameIdentifier,
                        override var valueArguments: List<JKValueArgument>,
                        override var block: JKBlock?) : JKJavaMethod, JKElementBase() {
+    override val valid: Boolean
+        get() = true
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
     override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
@@ -98,7 +101,7 @@ class JKJavaMethodCallExpressionImpl(override var identifier: JKMethodReference,
     }
 }
 
-class JKJavaFieldAccessExpressionImpl(override var identifier: JKFieldReference) : JKJavaFieldAccessExpression, JKElementBase() {
+class JKJavaFieldAccessExpressionImpl(override var identifier: JKReference) : JKJavaFieldAccessExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaFieldAccessExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
@@ -124,58 +127,7 @@ class JKJavaNewExpressionImpl(override var identifier: JKClassReference,
     }
 }
 
-class JKJavaMethodReferenceImpl(override val nameIdentifier: JKNameIdentifier, override val targetProvider: ReferenceTargetProvider) : JKJavaMethodReference, JKElementBase() {
-    override fun resolve(): JKElement {
-        val resolveCache = targetProvider.resolveCache
-        val conversionCache = targetProvider.conversionCache
-        val psiIdentifier = resolveCache[this] as PsiIdentifier
-        val methodReferenceExpression = psiIdentifier.parent as PsiMethodReferenceExpression
-        val psiMethod = methodReferenceExpression.resolve() as PsiMethod
-        return conversionCache[psiMethod] ?: throw Exception("Resolved to null")
-    }
-
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodReference(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
-}
-
-class JKJavaFieldReferenceImpl(override val nameIdentifier: JKNameIdentifier, override val targetProvider: ReferenceTargetProvider) : JKJavaFieldReference, JKElementBase() {
-    override fun resolve(): JKElement {
-        val resolveCache = targetProvider.resolveCache
-        val conversionCache = targetProvider.conversionCache
-        val psiIdentifier = resolveCache[this] as PsiIdentifier
-        val psiReferenceExpression = psiIdentifier.parent as PsiReferenceExpression
-        val psiField = psiReferenceExpression.resolve() as PsiField
-        return conversionCache[psiField] ?: throw Exception("Resolved to null")
-    }
-
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaFieldReference(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
-}
-
-class JKJavaClassReferenceImpl(override val nameIdentifier: JKNameIdentifier, override val targetProvider: ReferenceTargetProvider) : JKJavaClassReference, JKElementBase() {
-    override fun resolve(): JKElement {
-        val resolveCache = targetProvider.resolveCache
-        val conversionCache = targetProvider.conversionCache
-        val psiIdentifier = resolveCache[this] as PsiIdentifier
-        val codeReferenceElement = psiIdentifier.parent as PsiJavaCodeReferenceElement
-        val psiClass = codeReferenceElement.resolve() as PsiClass
-        return conversionCache[psiClass] ?: throw Exception("Resolved to null")
-    }
-
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaClassReference(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
-}
-
-class JKJavaNewEmptyArrayImpl(override var initializer: List<JKLiteralExpression?>) : JKJavaNewEmptyArray, JKElementBase() {
+class JKJavaNewEmptyArrayImpl(override val initializer: List<JKLiteralExpression?>) : JKJavaNewEmptyArray, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewEmptyArray(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {

@@ -19,3 +19,7 @@ package org.jetbrains.kotlin.j2k.tree
 interface JKModifierListOwner {
     var modifierList: JKModifierList
 }
+
+interface JKReferenceTarget {
+    val valid: Boolean
+}

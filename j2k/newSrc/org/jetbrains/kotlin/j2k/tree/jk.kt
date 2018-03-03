@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.j2k.tree.impl.JKReferenceType
 import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
@@ -73,7 +73,7 @@ interface JKMethodCallExpression : JKExpression {
 }
 
 interface JKFieldAccessExpression : JKExpression {
-    val identifier: JKFieldReference
+    val identifier: JKReference
 }
 
 interface JKArrayAccessExpression : JKExpression {
@@ -95,24 +95,22 @@ interface JKExpressionList : JKElement {
 }
 
 interface JKReference : JKElement {
-    val targetProvider:ReferenceTargetProvider
-    fun resolve(): JKElement
-}
-
-interface JKExternalReference {
-    fun resolve(): PsiElement
+    val target: JKReferenceTarget
+    val referenceType: JKReferenceType
 }
 
 interface JKMethodReference : JKReference {
-    val nameIdentifier: JKNameIdentifier
+    val containerClass: JKClass
+    override val target: JKMethod
 }
 
 interface JKFieldReference : JKReference {
-    val nameIdentifier: JKNameIdentifier
+    val containerClass: JKClass
+    override val target: JKJavaField
 }
 
 interface JKClassReference : JKReference {
-    val nameIdentifier: JKNameIdentifier
+    override val target: JKClass
 }
 
 interface JKType : JKElement {
@@ -121,23 +119,6 @@ interface JKType : JKElement {
     val parameters: List<JKType>
 }
 
-interface JKExternalMethodReference : JKExternalReference {
-    val nameIdentifier: JKNameIdentifier
-}
-
-interface JKExternalFieldReference : JKExternalReference {
-    val nameIdentifier: JKNameIdentifier
-}
-
-interface JKExternalClassReference : JKExternalReference {
-    val nameIdentifier: JKNameIdentifier
-}
-
-interface JKExternalTypeReference : JKExternalReference {
-    val classReference: JKClassReference
-    val nullability: Nullability
-    val parameters: List<JKType>
-}
 
 interface JKOperatorIdentifier : JKIdentifier
 
@@ -145,7 +126,7 @@ interface JKQualificationIdentifier : JKIdentifier
 
 interface JKLoop : JKStatement
 
-interface JKDeclaration : JKElement
+interface JKDeclaration : JKElement, JKReferenceTarget
 
 interface JKBlock : JKElement {
     val statements: List<JKStatement>
@@ -180,7 +161,13 @@ interface JKStringLiteralExpression : JKLiteralExpression {
 
 interface JKModalityModifier : JKModifier
 
-interface ReferenceTargetProvider {
-    val resolveCache: Map<JKElement, PsiElement>
-    val conversionCache: Map<PsiElement, JKElement>
+interface JKMethod : JKDeclaration {
+    var modifierList: JKModifierList
+    var name: JKNameIdentifier
+    var valueArguments: List<JKValueArgument>
+    var block: JKBlock?
+}
+
+interface JKExpressionStatement : JKStatement {
+    val expression: JKExpression
 }
