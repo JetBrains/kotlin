@@ -122,12 +122,7 @@ class StaticContext(
             } else null
         },
         // generateNewScopesForPackageDescriptors
-        { fragment.scope },
-        // TODO: never get there
-        // generateInnerScopesForMembers
-        { descriptor ->
-            fragment.scope.innerObjectScope("Scope for member " + descriptor.name)
-        }
+        { fragment.scope }
     )
 
     private val innerNames = Generator({ descriptor ->
