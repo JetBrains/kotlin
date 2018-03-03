@@ -66,7 +66,7 @@ fun generateDelegateCall(
     val args = SmartList<JsExpression>()
 
     if (DescriptorUtils.isExtension(fromDescriptor)) {
-        val extensionFunctionReceiverName = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
+        val extensionFunctionReceiverName = JsScope.declareTemporaryName(Namer.receiverParameterName)
         parameters.add(JsParameter(extensionFunctionReceiverName))
         args.add(JsNameRef(extensionFunctionReceiverName))
     }

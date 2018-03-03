@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.backend.js.translate.context.Namer
-import org.jetbrains.kotlin.backend.js.translate.context.Namer.getCapturedVarAccessor
+import org.jetbrains.kotlin.backend.js.translate.context.Namer.Companion.getCapturedVarAccessor
 import org.jetbrains.kotlin.backend.js.translate.declaration.contextWithPropertyMetadataCreationIntrinsified
 import org.jetbrains.kotlin.backend.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.backend.js.translate.utils.JsAstUtils
@@ -179,7 +179,7 @@ object SuperPropertyAccessCase : VariableAccessCase() {
         return if (descriptor is PropertyDescriptor && TranslationUtils.shouldAccessViaFunctions(descriptor)) {
             val accessor = getAccessDescriptorIfNeeded()
             val containingRef = ReferenceTranslator.translateAsValueReference(descriptor.containingDeclaration, context)
-            val prototype = pureFqn(Namer.getPrototypeName(), containingRef)
+            val prototype = pureFqn(Namer.Companion.prototypeName, containingRef)
             val funRef = Namer.getFunctionCallRef(pureFqn(context.getNameForDescriptor(accessor), prototype))
             val arguments = listOf(dispatchReceiver!!) + additionalArguments
             JsInvocation(funRef, *arguments.toTypedArray())

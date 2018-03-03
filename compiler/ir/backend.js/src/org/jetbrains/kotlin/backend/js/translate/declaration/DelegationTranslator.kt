@@ -61,7 +61,7 @@ class DelegationTranslator(
             else {
                 val classFqName = DescriptorUtils.getFqName(classDescriptor)
                 val idForMangling = classFqName.asString()
-                val suggestedName = NameSuggestion.getStableMangledName(Namer.getDelegatePrefix(), idForMangling)
+                val suggestedName = NameSuggestion.getStableMangledName(Namer.delegatePrefix, idForMangling)
                 val delegateName = context.getScopeForDescriptor(classDescriptor).declareFreshName("${suggestedName}_0")
                 fields[specifier] = Field(delegateName, true)
             }
@@ -121,7 +121,7 @@ class DelegationTranslator(
 
             val returnExpression: JsExpression = if (DescriptorUtils.isExtension(descriptor)) {
                 val getterName = context().getNameForDescriptor(getterDescriptor)
-                val receiver = Namer.getReceiverParameterName()
+                val receiver = Namer.receiverParameterName
                 JsInvocation(JsNameRef(getterName, delegateRef), JsNameRef(receiver))
             }
             else {
@@ -133,7 +133,7 @@ class DelegationTranslator(
             val jsFunction = simpleReturnFunction(context().getScopeForDescriptor(getterDescriptor.containingDeclaration), returnExpression)
             jsFunction.source = specifier
             if (DescriptorUtils.isExtension(descriptor)) {
-                val receiverName = jsFunction.scope.declareName(Namer.getReceiverParameterName())
+                val receiverName = jsFunction.scope.declareName(Namer.receiverParameterName)
                 jsFunction.parameters.add(JsParameter(receiverName))
             }
             return jsFunction
@@ -154,7 +154,7 @@ class DelegationTranslator(
             val setExpression: JsExpression = if (DescriptorUtils.isExtension(descriptor)) {
                 val setterName = context().getNameForDescriptor(setterDescriptor)
                 val setterNameRef = JsNameRef(setterName, delegateRef)
-                val extensionFunctionReceiverName = jsFunction.scope.declareName(Namer.getReceiverParameterName())
+                val extensionFunctionReceiverName = jsFunction.scope.declareName(Namer.receiverParameterName)
                 jsFunction.parameters.add(JsParameter(extensionFunctionReceiverName))
                 JsInvocation(setterNameRef, JsNameRef(extensionFunctionReceiverName), defaultParameterRef)
             }

@@ -310,7 +310,7 @@ public class TranslationContext {
         JsExpression imported = createInlineLocalImportExpression(descriptor);
         if (imported instanceof JsNameRef) {
             JsNameRef importedNameRef = (JsNameRef) imported;
-            if (importedNameRef.getQualifier() == null && importedNameRef.getIdent().equals(Namer.getRootPackageName()) &&
+            if (importedNameRef.getQualifier() == null && importedNameRef.getIdent().equals(Namer.rootPackageName) &&
                 (descriptor instanceof PackageFragmentDescriptor || descriptor instanceof ModuleDescriptor)) {
                 return importedNameRef.getName();
             }

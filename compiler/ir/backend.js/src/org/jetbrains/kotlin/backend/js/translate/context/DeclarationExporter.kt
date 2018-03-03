@@ -131,7 +131,7 @@ internal class DeclarationExporter(val context: StaticContext) {
 
     fun getLocalPackageName(packageName: FqName): JsName {
         if (packageName.isRoot) {
-            return context.fragment.scope.declareName(Namer.getRootPackageName())
+            return context.fragment.scope.declareName(Namer.rootPackageName)
         }
         var name = localPackageNames[packageName]
         if (name == null) {

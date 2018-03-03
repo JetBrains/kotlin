@@ -309,7 +309,7 @@ public final class StaticContext {
         if (suggested == null) {
             ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
             JsExpression result = getModuleExpressionFor(module);
-            return result != null ? result : pureFqn(Namer.getRootPackageName(), null);
+            return result != null ? result : pureFqn(Namer.rootPackageName, null);
         }
 
         if (config.getModuleKind() != ModuleKind.PLAIN) {
@@ -690,7 +690,7 @@ public final class StaticContext {
     private JsName getModuleInnerName(@NotNull DeclarationDescriptor descriptor) {
         ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
         if (currentModule == module) {
-            return rootScope.declareName(Namer.getRootPackageName());
+            return rootScope.declareName(Namer.rootPackageName);
         }
         String moduleName = suggestModuleName(module);
 

@@ -59,7 +59,7 @@ fun TranslationContext.translateAndAliasParameters(
     }
 
     if (descriptor.requiresExtensionReceiverParameter) {
-        val receiverParameterName = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
+        val receiverParameterName = JsScope.declareTemporaryName(Namer.receiverParameterName)
         val receiverRef = receiverParameterName.makeRef()
         receiverRef.type = descriptor.extensionReceiverParameter!!.type
         aliases[descriptor.extensionReceiverParameter!!] = receiverRef

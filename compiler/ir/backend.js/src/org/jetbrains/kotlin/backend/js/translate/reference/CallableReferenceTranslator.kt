@@ -109,7 +109,7 @@ object CallableReferenceTranslator {
         val receiverParam = if (descriptor.dispatchReceiverParameter != null ||
                                 descriptor.extensionReceiverParameter != null ||
                                 receiver != null) {
-            val paramName = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
+            val paramName = JsScope.declareTemporaryName(Namer.receiverParameterName)
             function.parameters += JsParameter(paramName)
             paramName.makeRef()
         }
@@ -191,7 +191,7 @@ object CallableReferenceTranslator {
         accessorFunction.source = expression.finalElement
         val accessorContext = context.innerBlock(accessorFunction.body)
         val receiverParam = if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) {
-            val name = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
+            val name = JsScope.declareTemporaryName(Namer.receiverParameterName)
             accessorFunction.parameters += JsParameter(name)
             name.makeRef()
         }

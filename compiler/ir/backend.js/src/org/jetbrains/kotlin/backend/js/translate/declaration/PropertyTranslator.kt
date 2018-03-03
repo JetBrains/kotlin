@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.backend.ast.metadata.type
 import org.jetbrains.kotlin.backend.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.backend.js.translate.context.Namer
-import org.jetbrains.kotlin.backend.js.translate.context.Namer.getReceiverParameterName
 import org.jetbrains.kotlin.backend.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.backend.js.translate.expression.translateAndAliasParameters
 import org.jetbrains.kotlin.backend.js.translate.expression.translateFunction
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.backend.js.translate.utils.TranslationUtils.*
 import org.jetbrains.kotlin.backend.js.translate.utils.finalElement
 import org.jetbrains.kotlin.backend.js.translate.utils.jsAstUtils.addParameter
 import org.jetbrains.kotlin.backend.js.translate.utils.jsAstUtils.addStatement
+import org.jetbrains.kotlin.js.translate.context.Namer.getReceiverParameterName
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.BindingContext
