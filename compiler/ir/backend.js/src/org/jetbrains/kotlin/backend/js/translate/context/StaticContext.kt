@@ -3,22 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-/*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.jetbrains.kotlin.backend.js.translate.context
 
 import com.google.common.collect.Lists
@@ -86,78 +70,69 @@ class StaticContext(
     private val rootScope = fragment.scope
 
     private val scopes = Generator(
-        // scopeForPackage
         { descriptor ->
-            (descriptor as? PackageFragmentDescriptor)?.let {
-                getScopeForPackage(it.fqName)
+            when (descriptor) {
+                is PackageFragmentDescriptor -> getScopeForPackage(descriptor.fqName)
+                is CallableDescriptor -> {
+                    val correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(fragment.scope)
+                    assert(!scopeToFunction.containsKey(correspondingFunction.scope)) { "Scope to function value overridden for " + descriptor }
+                    scopeToFunction[correspondingFunction.scope] = correspondingFunction
+                    correspondingFunction.source = descriptor.source.getPsi()
+                    correspondingFunction.scope
+                }
+                is ClassDescriptor -> {
+                    val superclass = getSuperclass(descriptor)
+                    if (superclass != null) {
+                        getScopeForDescriptor(superclass).innerObjectScope("Scope for class " + descriptor.getName())
+                    } else {
+                        val function = JsFunction(JsRootScope(program), JsBlock(), descriptor.toString())
+                        for (builtinName in BUILTIN_JS_PROPERTIES) {
+                            function.scope.declareName(builtinName)
+                        }
+                        scopeToFunction[function.scope] = function
+                        function.scope
+                    }
+                }
+                else -> fragment.scope
             }
-        },
-        // createFunctionObjectsForCallableDescriptors
-        { descriptor ->
-            if (descriptor is CallableDescriptor) {
-                val correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(fragment.scope)
-                assert(!scopeToFunction.containsKey(correspondingFunction.scope)) { "Scope to function value overridden for " + descriptor }
-                scopeToFunction[correspondingFunction.scope] = correspondingFunction
-                correspondingFunction.source = descriptor.source.getPsi()
-                correspondingFunction.scope
-            } else null
-        },
-        // generateNewScopesForClassesWithNoAncestors
-        { descriptor ->
-            if (descriptor is ClassDescriptor && getSuperclass(descriptor) == null) {
-                val function = JsFunction(JsRootScope(program), JsBlock(), descriptor.toString())
-                for (builtinName in BUILTIN_JS_PROPERTIES) {
-                    function.scope.declareName(builtinName)
-                }
-                scopeToFunction[function.scope] = function
-                function.scope
-            } else null
-        },
-        // generateInnerScopesForDerivedClasses
-        { descriptor ->
-            if (descriptor is ClassDescriptor) {
-                getSuperclass(descriptor)?.let { superclass ->
-                    getScopeForDescriptor(superclass).innerObjectScope("Scope for class " + descriptor.getName())
-                }
-            } else null
-        },
-        // generateNewScopesForPackageDescriptors
-        { fragment.scope }
+        }
     )
 
-    private val innerNames = Generator({ descriptor ->
-                                           if (descriptor is PackageFragmentDescriptor && DescriptorUtils.getContainingModule(descriptor) === currentModule) {
-                                               return@Generator exporter.getLocalPackageName(descriptor.fqName)
-                                           }
-                                           if (descriptor is FunctionDescriptor) {
-                                               val initialDescriptor = descriptor.initialSignatureDescriptor
-                                               if (initialDescriptor != null) {
-                                                   return@Generator getInnerNameForDescriptor(initialDescriptor)
-                                               }
-                                           }
-                                           if (descriptor is ModuleDescriptor) {
-                                               return@Generator getModuleInnerName(descriptor)
-                                           }
-                                           if (descriptor is LocalVariableDescriptor || descriptor is ParameterDescriptor) {
-                                               return@Generator getNameForDescriptor(descriptor)
-                                           }
-                                           if (descriptor is ConstructorDescriptor) {
-                                               if (descriptor.isPrimary) {
-                                                   return@Generator getInnerNameForDescriptor(descriptor.constructedClass)
-                                               }
-                                           }
-                                           localOrImportedName(descriptor, getSuggestedName(descriptor))
-                                       })
+    private val innerNames = Generator(
+        { descriptor ->
+            if (descriptor is PackageFragmentDescriptor && DescriptorUtils.getContainingModule(descriptor) === currentModule) {
+                return@Generator exporter.getLocalPackageName(descriptor.fqName)
+            }
+            if (descriptor is FunctionDescriptor) {
+                val initialDescriptor = descriptor.initialSignatureDescriptor
+                if (initialDescriptor != null) {
+                    return@Generator getInnerNameForDescriptor(initialDescriptor)
+                }
+            }
+            if (descriptor is ModuleDescriptor) {
+                return@Generator getModuleInnerName(descriptor)
+            }
+            if (descriptor is LocalVariableDescriptor || descriptor is ParameterDescriptor) {
+                return@Generator getNameForDescriptor(descriptor)
+            }
+            if (descriptor is ConstructorDescriptor) {
+                if (descriptor.isPrimary) {
+                    return@Generator getInnerNameForDescriptor(descriptor.constructedClass)
+                }
+            }
+            localOrImportedName(descriptor, getSuggestedName(descriptor))
+        })
 
-    private val objectInstanceNames = Generator({ descriptor ->
-                                                    val suggested = getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_FUNCTION_SUFFIX
-                                                    val result = JsScope.declareTemporaryName(suggested)
-                                                    val tag = generateSignature(descriptor)
-                                                    if (tag != null) {
-                                                        fragment.nameBindings.add(JsNameBinding("object:" + tag, result))
-                                                    }
-                                                    result
-                                                })
+    private val objectInstanceNames = Generator(
+        { descriptor ->
+            val suggested = getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_FUNCTION_SUFFIX
+            val result = JsScope.declareTemporaryName(suggested)
+            val tag = generateSignature(descriptor)
+            if (tag != null) {
+                fragment.nameBindings.add(JsNameBinding("object:" + tag, result))
+            }
+            result
+        })
 
     private val scopeToFunction = hashMapOf<JsScope, JsFunction>()
 
