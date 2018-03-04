@@ -301,7 +301,12 @@ class StaticContext(
 
         for (partName in partNames) {
             expression = JsNameRef(partName, expression)
-            applySideEffects(expression, suggested.descriptor)
+            if (suggested.descriptor is FunctionDescriptor ||
+                suggested.descriptor is PackageFragmentDescriptor ||
+                suggested.descriptor is ClassDescriptor
+            ) {
+                expression.sideEffects = SideEffectKind.PURE
+            }
         }
         assert(expression != null) { "Since partNames is not empty, expression must be non-null" }
         return expression!!
@@ -368,19 +373,19 @@ class StaticContext(
         } else {
             // TODO: consider using sealed class to represent FQNs
             assert(suggested.names.size == 1) { "Private names must always consist of exactly one name" }
-            var name: JsName? = nameCache[suggested.descriptor]
-            if (name == null) {
+
+            val name = nameCache.getOrPut(suggested.descriptor) {
                 var baseName = NameSuggestion.sanitizeName(suggested.names[0])
                 if (suggested.descriptor is LocalVariableDescriptor || suggested.descriptor is ValueParameterDescriptor) {
-                    name = JsScope.declareTemporaryName(baseName)
+                    JsScope.declareTemporaryName(baseName)
                 } else {
                     if (!DescriptorUtils.isDescriptorWithLocalVisibility(suggested.descriptor)) {
                         baseName += "_0"
                     }
-                    name = scope.declareFreshName(baseName)
+                    scope.declareFreshName(baseName)
                 }
             }
-            nameCache[suggested.descriptor] = name
+
             name.descriptor = suggested.descriptor
             val tag = getTag(suggested.descriptor)
             if (tag != null) {
@@ -676,13 +681,5 @@ class StaticContext(
             }
         }
 
-        private fun applySideEffects(expression: JsExpression, descriptor: DeclarationDescriptor) {
-            if (descriptor is FunctionDescriptor ||
-                descriptor is PackageFragmentDescriptor ||
-                descriptor is ClassDescriptor
-            ) {
-                expression.sideEffects = SideEffectKind.PURE
-            }
-        }
     }
 }
