@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.js.naming.*
 import org.jetbrains.kotlin.js.naming.SuggestedName
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsBuiltinNameClashChecker
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
-import org.jetbrains.kotlin.backend.js.translate.context.generator.Generator
 import org.jetbrains.kotlin.backend.js.translate.declaration.ClassModelGenerator
 import org.jetbrains.kotlin.backend.js.translate.intrinsic.Intrinsics
 import org.jetbrains.kotlin.backend.js.translate.utils.*
@@ -69,70 +68,78 @@ class StaticContext(
 
     private val rootScope = fragment.scope
 
-    private val scopes = Generator(
-        { descriptor ->
-            when (descriptor) {
-                is PackageFragmentDescriptor -> getScopeForPackage(descriptor.fqName)
-                is CallableDescriptor -> {
-                    val correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(fragment.scope)
-                    assert(!scopeToFunction.containsKey(correspondingFunction.scope)) { "Scope to function value overridden for $descriptor" }
-                    scopeToFunction[correspondingFunction.scope] = correspondingFunction
-                    correspondingFunction.source = descriptor.source.getPsi()
-                    correspondingFunction.scope
-                }
-                is ClassDescriptor -> {
-                    val superclass = getSuperclass(descriptor)
-                    if (superclass != null) {
-                        getScopeForDescriptor(superclass).innerObjectScope("Scope for class " + descriptor.getName())
-                    } else {
-                        val function = JsFunction(JsRootScope(program), JsBlock(), descriptor.toString())
-                        for (builtinName in BUILTIN_JS_PROPERTIES) {
-                            function.scope.declareName(builtinName)
-                        }
-                        scopeToFunction[function.scope] = function
-                        function.scope
-                    }
-                }
-                else -> fragment.scope
+    private fun <T : Any> cached(body: (DeclarationDescriptor) -> T?): (DeclarationDescriptor) -> T? {
+        val cache = mutableMapOf<DeclarationDescriptor, T?>()
+
+        return { descriptor ->
+            if (descriptor in cache) {
+                cache[descriptor]
+            } else {
+                body(descriptor).also { cache[descriptor] = it }
             }
         }
-    )
+    }
 
-    private val innerNames = Generator(
-        { descriptor ->
-            if (descriptor is PackageFragmentDescriptor && DescriptorUtils.getContainingModule(descriptor) === currentModule) {
-                return@Generator exporter.getLocalPackageName(descriptor.fqName)
+    private val scopes = cached { descriptor ->
+        when (descriptor) {
+            is PackageFragmentDescriptor -> getScopeForPackage(descriptor.fqName)
+            is CallableDescriptor -> {
+                val correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(fragment.scope)
+                assert(!scopeToFunction.containsKey(correspondingFunction.scope)) { "Scope to function value overridden for $descriptor" }
+                scopeToFunction[correspondingFunction.scope] = correspondingFunction
+                correspondingFunction.source = descriptor.source.getPsi()
+                correspondingFunction.scope
             }
-            if (descriptor is FunctionDescriptor) {
-                val initialDescriptor = descriptor.initialSignatureDescriptor
-                if (initialDescriptor != null) {
-                    return@Generator getInnerNameForDescriptor(initialDescriptor)
+            is ClassDescriptor -> {
+                val superclass = getSuperclass(descriptor)
+                if (superclass != null) {
+                    getScopeForDescriptor(superclass).innerObjectScope("Scope for class " + descriptor.getName())
+                } else {
+                    val function = JsFunction(JsRootScope(program), JsBlock(), descriptor.toString())
+                    for (builtinName in BUILTIN_JS_PROPERTIES) {
+                        function.scope.declareName(builtinName)
+                    }
+                    scopeToFunction[function.scope] = function
+                    function.scope
                 }
             }
-            if (descriptor is ModuleDescriptor) {
-                return@Generator getModuleInnerName(descriptor)
-            }
-            if (descriptor is LocalVariableDescriptor || descriptor is ParameterDescriptor) {
-                return@Generator getNameForDescriptor(descriptor)
-            }
-            if (descriptor is ConstructorDescriptor) {
-                if (descriptor.isPrimary) {
-                    return@Generator getInnerNameForDescriptor(descriptor.constructedClass)
-                }
-            }
-            localOrImportedName(descriptor, getSuggestedName(descriptor))
-        })
+            else -> fragment.scope
+        }
+    }
 
-    private val objectInstanceNames = Generator(
-        { descriptor ->
-            val suggested = getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_FUNCTION_SUFFIX
-            val result = JsScope.declareTemporaryName(suggested)
-            val tag = generateSignature(descriptor)
-            if (tag != null) {
-                fragment.nameBindings.add(JsNameBinding("object:$tag", result))
+    private val innerNames = cached { descriptor ->
+        if (descriptor is PackageFragmentDescriptor && DescriptorUtils.getContainingModule(descriptor) === currentModule) {
+            return@cached exporter.getLocalPackageName(descriptor.fqName)
+        }
+        if (descriptor is FunctionDescriptor) {
+            val initialDescriptor = descriptor.initialSignatureDescriptor
+            if (initialDescriptor != null) {
+                return@cached getInnerNameForDescriptor(initialDescriptor)
             }
-            result
-        })
+        }
+        if (descriptor is ModuleDescriptor) {
+            return@cached getModuleInnerName(descriptor)
+        }
+        if (descriptor is LocalVariableDescriptor || descriptor is ParameterDescriptor) {
+            return@cached getNameForDescriptor(descriptor)
+        }
+        if (descriptor is ConstructorDescriptor) {
+            if (descriptor.isPrimary) {
+                return@cached getInnerNameForDescriptor(descriptor.constructedClass)
+            }
+        }
+        localOrImportedName(descriptor, getSuggestedName(descriptor))
+    }
+
+    private val objectInstanceNames = cached { descriptor ->
+        val suggested = getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_FUNCTION_SUFFIX
+        val result = JsScope.declareTemporaryName(suggested)
+        val tag = generateSignature(descriptor)
+        if (tag != null) {
+            fragment.nameBindings.add(JsNameBinding("object:$tag", result))
+        }
+        result
+    }
 
     private val scopeToFunction = hashMapOf<JsScope, JsFunction>()
 
@@ -190,7 +197,7 @@ class StaticContext(
     fun getScopeForDescriptor(descriptor: DeclarationDescriptor): JsScope {
         return if (descriptor is ModuleDescriptor) {
             rootScope
-        } else scopes[descriptor.original] ?: error("Must have a scope for descriptor")
+        } else scopes(descriptor.original) ?: error("Must have a scope for descriptor")
     }
 
     fun getFunctionWithScope(descriptor: CallableDescriptor): JsFunction {
@@ -328,11 +335,11 @@ class StaticContext(
     }
 
     fun getInnerNameForDescriptor(descriptor: DeclarationDescriptor): JsName {
-        return innerNames.get(descriptor.original) ?: error("Must have inner name for descriptor")
+        return innerNames(descriptor.original) ?: error("Must have inner name for descriptor")
     }
 
     fun getNameForObjectInstance(descriptor: ClassDescriptor): JsName {
-        return objectInstanceNames.get(descriptor.original) ?: error("Must have inner name for object instance")
+        return objectInstanceNames(descriptor.original) ?: error("Must have inner name for object instance")
     }
 
     private fun getActualNameFromSuggested(suggested: SuggestedName): List<JsName> {
