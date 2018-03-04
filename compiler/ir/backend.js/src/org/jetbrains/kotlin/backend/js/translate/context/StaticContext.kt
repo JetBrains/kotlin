@@ -643,37 +643,25 @@ class StaticContext(
 
         @JvmStatic
         fun getSuggestedName(descriptor: DeclarationDescriptor): String {
-            var descriptor = descriptor
-            var suggestedName: String =
-                if (descriptor is PropertyGetterDescriptor) {
-                    "get_" + getSuggestedName(descriptor.correspondingProperty)
-                } else if (descriptor is PropertySetterDescriptor) {
-                    "set_" + getSuggestedName(descriptor.correspondingProperty)
-                } else if (descriptor is ConstructorDescriptor) {
-                    descriptor = descriptor.containingDeclaration
-                    getSuggestedName(descriptor) + "_init"
-                } else {
-                    if (descriptor.name.isSpecial) {
-                        if (descriptor is ClassDescriptor) {
-                            if (DescriptorUtils.isAnonymousObject(descriptor)) {
-                                "ObjectLiteral"
-                            } else {
-                                "Anonymous"
-                            }
-                        } else if (descriptor is FunctionDescriptor) {
-                            "lambda"
-                        } else {
-                            "anonymous"
-                        }
-                    } else {
-                        NameSuggestion.sanitizeName(descriptor.name.asString())
-                    }
+            val suggestedName = when {
+                descriptor is PropertyGetterDescriptor -> "get_" + getSuggestedName(descriptor.correspondingProperty)
+                descriptor is PropertySetterDescriptor -> "set_" + getSuggestedName(descriptor.correspondingProperty)
+                descriptor is ConstructorDescriptor -> "init"
+                descriptor.name.isSpecial -> when (descriptor) {
+                    is ClassDescriptor -> if (DescriptorUtils.isAnonymousObject(descriptor)) "ObjectLiteral" else "Anonymous"
+                    is FunctionDescriptor -> "lambda"
+                    else -> "anonymous"
                 }
+                else -> NameSuggestion.sanitizeName(descriptor.name.asString())
+            }
 
             if (descriptor !is PackageFragmentDescriptor && !DescriptorUtils.isTopLevelDeclaration(descriptor)) {
                 val container = descriptor.containingDeclaration
                         ?: error("We just figured out that descriptor is not for a top-level declaration: " + descriptor)
-                suggestedName = getSuggestedName(container) + "$" + NameSuggestion.sanitizeName(suggestedName)
+
+                val separator = if (descriptor is ConstructorDescriptor) "_" else "$"
+
+                return getSuggestedName(container) + separator + suggestedName
             }
 
             return suggestedName
