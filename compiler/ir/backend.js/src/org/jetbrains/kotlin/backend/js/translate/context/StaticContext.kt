@@ -75,7 +75,7 @@ class StaticContext(
                 is PackageFragmentDescriptor -> getScopeForPackage(descriptor.fqName)
                 is CallableDescriptor -> {
                     val correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(fragment.scope)
-                    assert(!scopeToFunction.containsKey(correspondingFunction.scope)) { "Scope to function value overridden for " + descriptor }
+                    assert(!scopeToFunction.containsKey(correspondingFunction.scope)) { "Scope to function value overridden for $descriptor" }
                     scopeToFunction[correspondingFunction.scope] = correspondingFunction
                     correspondingFunction.source = descriptor.source.getPsi()
                     correspondingFunction.scope
@@ -129,7 +129,7 @@ class StaticContext(
             val result = JsScope.declareTemporaryName(suggested)
             val tag = generateSignature(descriptor)
             if (tag != null) {
-                fragment.nameBindings.add(JsNameBinding("object:" + tag, result))
+                fragment.nameBindings.add(JsNameBinding("object:$tag", result))
             }
             result
         })
@@ -190,7 +190,7 @@ class StaticContext(
     fun getScopeForDescriptor(descriptor: DeclarationDescriptor): JsScope {
         return if (descriptor is ModuleDescriptor) {
             rootScope
-        } else scopes.get(descriptor.original) ?: error("Must have a scope for descriptor")
+        } else scopes[descriptor.original] ?: error("Must have a scope for descriptor")
     }
 
     fun getFunctionWithScope(descriptor: CallableDescriptor): JsFunction {
@@ -268,14 +268,12 @@ class StaticContext(
             }
         }
 
-        var expression: JsExpression?
         val partNames = getActualNameFromSuggested(suggested)
-        if (isLibraryObject(suggested.descriptor)) {
-            expression = Namer.kotlinObject()
-        } else if (isNativeObject(suggested.descriptor) && !isNativeObject(suggested.scope) || suggested.descriptor is CallableDescriptor && suggested.scope is FunctionDescriptor) {
-            expression = null
-        } else {
-            expression = getQualifiedExpression(suggested.scope)
+        var expression = when {
+            isLibraryObject(suggested.descriptor) -> Namer.kotlinObject()
+            isNativeObject(suggested.descriptor) && !isNativeObject(suggested.scope) ||
+                    suggested.descriptor is CallableDescriptor && suggested.scope is FunctionDescriptor -> null
+            else -> getQualifiedExpression(suggested.scope)
         }// Don't generate qualifier for top-level native declarations
         // Don't generate qualifier for local declarations
 
@@ -516,8 +514,7 @@ class StaticContext(
     }
 
     fun addInlineCall(descriptor: CallableDescriptor) {
-        var descriptor = descriptor
-        descriptor = JsDescriptorUtils.findRealInlineDeclaration(descriptor) as CallableDescriptor
+        var descriptor = JsDescriptorUtils.findRealInlineDeclaration(descriptor) as CallableDescriptor
         val tag = Namer.getFunctionTag(descriptor, config)
         var moduleExpression = exportModuleForInline(DescriptorUtils.getContainingModule(descriptor))
         if (moduleExpression == null) {
@@ -640,33 +637,31 @@ class StaticContext(
         @JvmStatic
         fun getSuggestedName(descriptor: DeclarationDescriptor): String {
             var descriptor = descriptor
-            var suggestedName: String
-            if (descriptor is PropertyGetterDescriptor) {
-                suggestedName = "get_" + getSuggestedName(descriptor.correspondingProperty)
-            } else if (descriptor is PropertySetterDescriptor) {
-                suggestedName = "set_" + getSuggestedName(descriptor.correspondingProperty)
-            } else if (descriptor is ConstructorDescriptor) {
-                val constructor = descriptor
-                suggestedName = getSuggestedName(constructor.containingDeclaration) + "_init"
-                descriptor = descriptor.containingDeclaration
-                assert(descriptor != null) { "ConstructorDescriptor should have containing declaration: " + constructor }
-            } else {
-                if (descriptor.name.isSpecial) {
-                    if (descriptor is ClassDescriptor) {
-                        if (DescriptorUtils.isAnonymousObject(descriptor)) {
-                            suggestedName = "ObjectLiteral"
-                        } else {
-                            suggestedName = "Anonymous"
-                        }
-                    } else if (descriptor is FunctionDescriptor) {
-                        suggestedName = "lambda"
-                    } else {
-                        suggestedName = "anonymous"
-                    }
+            var suggestedName: String =
+                if (descriptor is PropertyGetterDescriptor) {
+                    "get_" + getSuggestedName(descriptor.correspondingProperty)
+                } else if (descriptor is PropertySetterDescriptor) {
+                    "set_" + getSuggestedName(descriptor.correspondingProperty)
+                } else if (descriptor is ConstructorDescriptor) {
+                    descriptor = descriptor.containingDeclaration
+                    getSuggestedName(descriptor) + "_init"
                 } else {
-                    suggestedName = NameSuggestion.sanitizeName(descriptor.name.asString())
+                    if (descriptor.name.isSpecial) {
+                        if (descriptor is ClassDescriptor) {
+                            if (DescriptorUtils.isAnonymousObject(descriptor)) {
+                                "ObjectLiteral"
+                            } else {
+                                "Anonymous"
+                            }
+                        } else if (descriptor is FunctionDescriptor) {
+                            "lambda"
+                        } else {
+                            "anonymous"
+                        }
+                    } else {
+                        NameSuggestion.sanitizeName(descriptor.name.asString())
+                    }
                 }
-            }
 
             if (descriptor !is PackageFragmentDescriptor && !DescriptorUtils.isTopLevelDeclaration(descriptor)) {
                 val container = descriptor.containingDeclaration
