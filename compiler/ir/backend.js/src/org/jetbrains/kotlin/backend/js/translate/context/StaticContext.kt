@@ -80,6 +80,51 @@ class StaticContext(
         }
     }
 
+    private val scopeToFunction = hashMapOf<JsScope, JsFunction>()
+
+    private val classOrConstructorClosure = hashMapOf<MemberDescriptor, List<DeclarationDescriptor>>()
+
+    val deferredCallSites: MutableMap<ClassDescriptor, MutableList<DeferredCallSite>> = HashMap()
+
+    val nameSuggestion = NameSuggestion()
+
+    private val nameCache = HashMap<DeclarationDescriptor, JsName>()
+
+    private val importedModules = LinkedHashMap<JsImportedModuleKey, JsImportedModule>()
+
+    private val exporter = DeclarationExporter(this)
+
+    fun export(descriptor: MemberDescriptor, force: Boolean) {
+        exporter.export(descriptor, force)
+    }
+
+    private val classModelGenerator = ClassModelGenerator(TranslationContext.rootContext(this))
+
+    private val nameForImportsForInline: JsName by lazy {
+        JsScope.declareTemporaryName(Namer.IMPORTS_FOR_INLINE_PROPERTY).also {
+            fragment.nameBindings.add(JsNameBinding(Namer.IMPORTS_FOR_INLINE_PROPERTY, it))
+        }
+    }
+
+    private val isStdlib = run {
+        val exceptionClass = currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("kotlin.Exception")))
+        exceptionClass != null && DescriptorUtils.getContainingModule(exceptionClass) === currentModule
+    }
+
+    val bindingContext: BindingContext
+        get() = bindingTrace.bindingContext
+
+    val topLevelStatements: MutableList<JsStatement>
+        get() = fragment.initializerBlock.statements
+
+    val declarationStatements: MutableList<JsStatement>
+        get() = fragment.declarationBlock.statements
+
+    init {
+        val kotlinName = rootScope.declareName(Namer.KOTLIN_NAME)
+        createImportedModule(JsImportedModuleKey(Namer.KOTLIN_LOWER_NAME, null), Namer.KOTLIN_LOWER_NAME, kotlinName, null)
+    }
+
     private val scopes = cached { descriptor ->
         when (descriptor) {
             is PackageFragmentDescriptor -> getScopeForPackage(descriptor.fqName)
@@ -107,93 +152,6 @@ class StaticContext(
         }
     }
 
-    private val innerNames = cached { descriptor ->
-        if (descriptor is PackageFragmentDescriptor && DescriptorUtils.getContainingModule(descriptor) === currentModule) {
-            return@cached exporter.getLocalPackageName(descriptor.fqName)
-        }
-        if (descriptor is FunctionDescriptor) {
-            val initialDescriptor = descriptor.initialSignatureDescriptor
-            if (initialDescriptor != null) {
-                return@cached getInnerNameForDescriptor(initialDescriptor)
-            }
-        }
-        if (descriptor is ModuleDescriptor) {
-            return@cached getModuleInnerName(descriptor)
-        }
-        if (descriptor is LocalVariableDescriptor || descriptor is ParameterDescriptor) {
-            return@cached getNameForDescriptor(descriptor)
-        }
-        if (descriptor is ConstructorDescriptor) {
-            if (descriptor.isPrimary) {
-                return@cached getInnerNameForDescriptor(descriptor.constructedClass)
-            }
-        }
-        localOrImportedName(descriptor, getSuggestedName(descriptor))
-    }
-
-    private val objectInstanceNames = cached { descriptor ->
-        val suggested = getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_FUNCTION_SUFFIX
-        val result = JsScope.declareTemporaryName(suggested)
-        val tag = generateSignature(descriptor)
-        if (tag != null) {
-            fragment.nameBindings.add(JsNameBinding("object:$tag", result))
-        }
-        result
-    }
-
-    private val scopeToFunction = hashMapOf<JsScope, JsFunction>()
-
-    private val classOrConstructorClosure = hashMapOf<MemberDescriptor, List<DeclarationDescriptor>>()
-
-    val deferredCallSites: MutableMap<ClassDescriptor, MutableList<DeferredCallSite>> = HashMap()
-
-    val nameSuggestion = NameSuggestion()
-
-    private val nameCache = HashMap<DeclarationDescriptor, JsName>()
-
-    private val backingFieldNameCache = HashMap<VariableDescriptorWithAccessors, JsName>()
-
-    private val fqnCache = HashMap<DeclarationDescriptor, JsExpression>()
-
-    private val tagCache = HashMap<DeclarationDescriptor, String?>()
-
-    private val importedModules = LinkedHashMap<JsImportedModuleKey, JsImportedModule>()
-
-    private val exporter = DeclarationExporter(this)
-
-    private val packageScopes = HashMap<FqName, JsScope>()
-
-    private val classModelGenerator = ClassModelGenerator(TranslationContext.rootContext(this))
-
-    private var nameForImportsForInline: JsName? = null
-
-    private val modulesImportedForInline = HashMap<String, JsExpression>()
-
-    private val specialFunctions = EnumMap<SpecialFunction, JsName>(SpecialFunction::class.java)
-
-    private val intrinsicNames = HashMap<String, JsName>()
-
-    private val propertyMetadataVariables = HashMap<VariableDescriptorWithAccessors, JsName>()
-
-    private val isStdlib = run {
-        val exceptionClass = currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("kotlin.Exception")))
-        exceptionClass != null && DescriptorUtils.getContainingModule(exceptionClass) === currentModule
-    }
-
-    val bindingContext: BindingContext
-        get() = bindingTrace.bindingContext
-
-    val topLevelStatements: MutableList<JsStatement>
-        get() = fragment.initializerBlock.statements
-
-    val declarationStatements: MutableList<JsStatement>
-        get() = fragment.declarationBlock.statements
-
-    init {
-        val kotlinName = rootScope.declareName(Namer.KOTLIN_NAME)
-        createImportedModule(JsImportedModuleKey(Namer.KOTLIN_LOWER_NAME, null), Namer.KOTLIN_LOWER_NAME, kotlinName, null)
-    }
-
     fun getScopeForDescriptor(descriptor: DeclarationDescriptor): JsScope {
         return if (descriptor is ModuleDescriptor) {
             rootScope
@@ -211,24 +169,12 @@ class StaticContext(
         return getQualifiedExpression(descriptor) as JsNameRef
     }
 
-    fun getTag(descriptor: DeclarationDescriptor): String? {
-        val tag: String?
-        if (!tagCache.containsKey(descriptor)) {
-            tag = generateSignature(descriptor)
-            tagCache[descriptor] = tag
-        } else {
-            tag = tagCache[descriptor]
-        }
-        return tag
-    }
+    val getTag = cached { generateSignature(it) }
+
+    private val fqnCache = cached { buildQualifiedExpression(it) }
 
     private fun getQualifiedExpression(descriptor: DeclarationDescriptor): JsExpression {
-        var fqn: JsExpression? = fqnCache[descriptor]
-        if (fqn == null) {
-            fqn = buildQualifiedExpression(descriptor)
-            fqnCache[descriptor] = fqn
-        }
-        return fqn.deepCopy()
+        return fqnCache(descriptor)!!.deepCopy()
     }
 
     fun suggestName(descriptor: DeclarationDescriptor): SuggestedName? {
@@ -323,6 +269,8 @@ class StaticContext(
         return getActualNameFromSuggested(suggested)[0]
     }
 
+    private val backingFieldNameCache = HashMap<VariableDescriptorWithAccessors, JsName>()
+
     fun getNameForBackingField(property: VariableDescriptorWithAccessors): JsName {
         var name: JsName? = backingFieldNameCache[property]
 
@@ -339,13 +287,53 @@ class StaticContext(
         return name
     }
 
+
+
+    private val innerNames = cached { descriptor ->
+        if (descriptor is PackageFragmentDescriptor && DescriptorUtils.getContainingModule(descriptor) === currentModule) {
+            return@cached exporter.getLocalPackageName(descriptor.fqName)
+        }
+        if (descriptor is FunctionDescriptor) {
+            val initialDescriptor = descriptor.initialSignatureDescriptor
+            if (initialDescriptor != null) {
+                return@cached getInnerNameForDescriptor(initialDescriptor)
+            }
+        }
+        if (descriptor is ModuleDescriptor) {
+            return@cached getModuleInnerName(descriptor)
+        }
+        if (descriptor is LocalVariableDescriptor || descriptor is ParameterDescriptor) {
+            return@cached getNameForDescriptor(descriptor)
+        }
+        if (descriptor is ConstructorDescriptor) {
+            if (descriptor.isPrimary) {
+                return@cached getInnerNameForDescriptor(descriptor.constructedClass)
+            }
+        }
+        localOrImportedName(descriptor, getSuggestedName(descriptor))
+    }
+
     fun getInnerNameForDescriptor(descriptor: DeclarationDescriptor): JsName {
         return innerNames(descriptor.original) ?: error("Must have inner name for descriptor")
+    }
+
+
+
+    private val objectInstanceNames = cached { descriptor ->
+        val suggested = getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_FUNCTION_SUFFIX
+        val result = JsScope.declareTemporaryName(suggested)
+        val tag = generateSignature(descriptor)
+        if (tag != null) {
+            fragment.nameBindings.add(JsNameBinding("object:$tag", result))
+        }
+        result
     }
 
     fun getNameForObjectInstance(descriptor: ClassDescriptor): JsName {
         return objectInstanceNames(descriptor.original) ?: error("Must have inner name for object instance")
     }
+
+
 
     private fun getActualNameFromSuggested(suggested: SuggestedName): List<JsName> {
         var scope = getScopeForDescriptor(suggested.scope)
@@ -446,18 +434,17 @@ class StaticContext(
         return localDescriptor != null && DescriptorUtils.getContainingModule(localDescriptor) === currentModule
     }
 
+    private val packageScopes = HashMap<FqName, JsScope>()
+
     private fun getScopeForPackage(fqName: FqName): JsScope {
-        var scope: JsScope? = packageScopes[fqName]
-        if (scope == null) {
+        return packageScopes.getOrPut(fqName) {
             if (fqName.isRoot) {
-                scope = JsRootScope(program)
+                JsRootScope(program)
             } else {
                 val parentScope = getScopeForPackage(fqName.parent())
-                scope = parentScope.innerObjectScope(fqName.shortName().asString())
+                parentScope.innerObjectScope(fqName.shortName().asString())
             }
-            packageScopes[fqName] = scope
         }
-        return scope
     }
 
     private fun getModuleExpressionFor(descriptor: DeclarationDescriptor): JsExpression? {
@@ -521,10 +508,6 @@ class StaticContext(
         }
     }
 
-    fun export(descriptor: MemberDescriptor, force: Boolean) {
-        exporter.export(descriptor, force)
-    }
-
     fun addInlineCall(descriptor: CallableDescriptor) {
         var descriptor = JsDescriptorUtils.findRealInlineDeclaration(descriptor) as CallableDescriptor
         val tag = Namer.getFunctionTag(descriptor, config)
@@ -533,15 +516,6 @@ class StaticContext(
             moduleExpression = getModuleExpressionFor(descriptor)
         }
         fragment.inlineModuleMap[tag] = moduleExpression
-    }
-
-    private fun getNameForImportsForInline(): JsName {
-        return nameForImportsForInline ?: run {
-            val name = JsScope.declareTemporaryName(Namer.IMPORTS_FOR_INLINE_PROPERTY)
-            fragment.nameBindings.add(JsNameBinding(Namer.IMPORTS_FOR_INLINE_PROPERTY, name))
-            nameForImportsForInline = name
-            name
-        }
     }
 
     fun exportModuleForInline(declaration: ModuleDescriptor): JsExpression? {
@@ -555,12 +529,14 @@ class StaticContext(
 
     }
 
+    private val modulesImportedForInline = HashMap<String, JsExpression>()
+
     fun exportModuleForInline(moduleId: String, moduleName: JsName): JsExpression {
         var moduleRef: JsExpression? = modulesImportedForInline[moduleId]
         if (moduleRef == null) {
             val currentModuleRef = pureFqn(getInnerNameForDescriptor(currentModule), null)
             val importsRef = pureFqn(Namer.IMPORTS_FOR_INLINE_PROPERTY, currentModuleRef)
-            val currentImports = pureFqn(getNameForImportsForInline(), null)
+            val currentImports = pureFqn(nameForImportsForInline, null)
 
             val lhsModuleRef: JsExpression
             if (moduleId.isValidES5Identifier()) {
@@ -583,6 +559,8 @@ class StaticContext(
         return moduleRef.deepCopy()
     }
 
+    private val specialFunctions = EnumMap<SpecialFunction, JsName>(SpecialFunction::class.java)
+
     fun getNameForSpecialFunction(specialFunction: SpecialFunction): JsName {
         return specialFunctions.getOrPut(specialFunction) {
             val expression = Namer.createSpecialFunction(specialFunction)
@@ -593,6 +571,7 @@ class StaticContext(
         }
     }
 
+    private val intrinsicNames = HashMap<String, JsName>()
 
     fun getReferenceToIntrinsic(name: String): JsExpression {
         val resultName = intrinsicNames.getOrPut(name) {
@@ -618,6 +597,8 @@ class StaticContext(
         )
 
     }
+
+    private val propertyMetadataVariables = HashMap<VariableDescriptorWithAccessors, JsName>()
 
     fun getVariableForPropertyMetadata(property: VariableDescriptorWithAccessors): JsName {
         return propertyMetadataVariables.getOrPut(property) {

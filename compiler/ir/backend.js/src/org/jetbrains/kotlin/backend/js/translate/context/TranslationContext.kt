@@ -719,11 +719,11 @@ class TranslationContext private constructor(
             return staticContext.getNameForSpecialFunction(function)
         } else {
             val tag = TranslationUtils.getTagForSpecialFunction(function)
-            return (inlineFunctionContext!!.imports as java.util.Map<String, JsName>).computeIfAbsent(tag) { t ->
+            return inlineFunctionContext!!.imports.getOrPut(tag) {
                 val imported = Namer.createSpecialFunction(function)
                 val result = JsScope.declareTemporaryName(function.suggestedName)
-                (result).imported = true
-                (result).specialFunction = function
+                result.imported = true
+                result.specialFunction = function
                 inlineFunctionContext!!.importBlock.statements.add(JsAstUtils.newVar(result, imported))
                 result
             }
