@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.SourceInfo
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -49,6 +50,9 @@ class IrSourceCompilerForInline(
     //TODO
     override val callElementText: String
         get() = callElement.toString()
+
+    override val callableDescriptor: CallableDescriptor
+        get() = callElement.descriptor
 
     override val callsiteFile: PsiFile?
         get() = TODO("not implemented")
