@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
+import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -90,10 +92,10 @@ private fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDe
 }
 
 // null means "any platform" here
-internal fun KtDeclaration.actualsForExpected(platform: MultiTargetPlatform? = null): Set<KtDeclaration> =
+internal fun KtDeclaration.actualsForExpected(module: Module? = null): Set<KtDeclaration> =
     resolveToDescriptorIfAny(BodyResolveMode.FULL)
         ?.actualsForExpected()
-        ?.filter { platform == null || it.module.getMultiTargetPlatform() == platform }
+        ?.filter { module == null || (it.module.getCapability(ModuleInfo.Capability) as? ModuleSourceInfo)?.module == module }
         ?.mapNotNullTo(LinkedHashSet()) {
             DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
         } ?: emptySet()

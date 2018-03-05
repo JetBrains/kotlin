@@ -1,4 +1,4 @@
-// "Create actual function for platform JVM" "true"
+// "Create actual function for module jvm (JVM)" "true"
 
 expect fun bar()
 
