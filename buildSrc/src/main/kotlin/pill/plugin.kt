@@ -88,7 +88,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
         platformVersion = project.extensions.extraProperties.get("versions.intellijSdk").toString()
         platformBaseNumber = platformVersion.substringBefore(".", "").takeIf { it.isNotEmpty() }
                 ?: error("Invalid platform version: $platformVersion")
-        platformDir = IntellijRootUtils.getRepositoryRootDir(project)
+        platformDir = IntellijRootUtils.getIntellijRootDir(project)
     }
 
     private fun pill(rootProject: Project) {
@@ -216,7 +216,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     }
 
     private fun attachPlatformSources(library: PLibrary): PLibrary {
-        val platformSourcesJar = File(platformDir, "sources/ideaIC-$platformVersion-sources.jar")
+        val platformSourcesJar = File(platformDir, "../sources/ideaIC-$platformVersion-sources.jar")
 
         if (library.classes.any { it.startsWith(platformDir) }) {
             return library.attachSource(platformSourcesJar)
@@ -226,8 +226,8 @@ class JpsCompatiblePlugin : Plugin<Project> {
     }
 
     private fun attachAsmSources(library: PLibrary): PLibrary {
-        val asmSourcesJar = File(platformDir, "asm-shaded-sources/asm-src-$platformBaseNumber.jar")
-        val asmAllJar = File(platformDir, "intellij/lib/asm-all.jar")
+        val asmSourcesJar = File(platformDir, "../asm-shaded-sources/asm-src-$platformBaseNumber.jar")
+        val asmAllJar = File(platformDir, "lib/asm-all.jar")
 
         if (library.classes.any { it == asmAllJar }) {
             return library.attachSource(asmSourcesJar)

@@ -83,6 +83,10 @@ object IntellijRootUtils {
     fun getRepositoryRootDir(project: Project): File = with (project.rootProject) {
         return File(intellijRepoDir(), "kotlin.build.custom.deps/${extra["versions.intellijSdk"]}")
     }
+
+    fun getIntellijRootDir(project: Project): File = with (project.rootProject) {
+        return File(getRepositoryRootDir(this), "intellij${if (isIntellijCommunityAvailable()) "" else "Ultimate"}")
+    }
 }
 
 fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project) =
@@ -95,8 +99,7 @@ fun Project.isIntellijCommunityAvailable() = !(rootProject.extra["intellijUltima
 
 fun Project.isIntellijUltimateSdkAvailable() = (rootProject.extra["intellijUltimateEnabled"] as Boolean)
 
-fun Project.intellijRootDir() =
-        File(IntellijRootUtils.getRepositoryRootDir(this), "intellij${if (isIntellijCommunityAvailable()) "" else "Ultimate"}")
+fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
 
 fun Project.intellijUltimateRootDir() =
         if (isIntellijUltimateSdkAvailable())
