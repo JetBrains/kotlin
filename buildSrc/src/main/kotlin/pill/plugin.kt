@@ -190,10 +190,15 @@ class JpsCompatiblePlugin : Plugin<Project> {
             getOrCreateChild("option", "name" to "VM_PARAMETERS").also { vmParams ->
                 val ideaHomePathOptionKey = "-Didea.home.path="
                 val ideaHomePathOption = ideaHomePathOptionKey + platformDirProjectRelative
-                val existingOptions = vmParams.getAttributeValue("value", "").split(' ')
-                if (existingOptions.none { it.startsWith(ideaHomePathOptionKey) }) {
-                    vmParams.setAttribute("value", (vmParams.getAttributeValue("value", "") + " " + ideaHomePathOption).trim())
-                }
+
+                val existingOptions = vmParams.getAttributeValue("value", "")
+                    .split(' ')
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() && !it.startsWith(ideaHomePathOptionKey) }
+
+                val newOptions = existingOptions.joinToString(" ") + " " + ideaHomePathOption
+
+                vmParams.setAttribute("value", newOptions)
             }
         }
 
