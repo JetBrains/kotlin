@@ -337,20 +337,19 @@ class DeprecationResolver(
         val versionRequirement =
             (target as? DeserializedMemberDescriptor)?.versionRequirement
                     ?: (target as? DeserializedClassDescriptor)?.versionRequirement
-        if (versionRequirement != null) {
-            val requiredVersion = createVersion(versionRequirement.version.asString())
-            val currentVersion = when (versionRequirement.kind) {
-                ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION ->
-                    MavenComparableVersion(languageVersionSettings.languageVersion.versionString)
-                ProtoBuf.VersionRequirement.VersionKind.API_VERSION ->
-                    languageVersionSettings.apiVersion.version
-                ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION ->
-                    KotlinCompilerVersion.getVersion()?.takeIf { "SNAPSHOT" !in it }?.let(::createVersion)
-                else -> null
-            }
-            if (currentVersion != null && currentVersion < requiredVersion) {
-                return DeprecatedByVersionRequirement(versionRequirement, target)
-            }
+                    ?: return null
+        val requiredVersion = createVersion(versionRequirement.version.asString())
+        val currentVersion = when (versionRequirement.kind) {
+            ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION ->
+                MavenComparableVersion(languageVersionSettings.languageVersion.versionString)
+            ProtoBuf.VersionRequirement.VersionKind.API_VERSION ->
+                languageVersionSettings.apiVersion.version
+            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION ->
+                KotlinCompilerVersion.getVersion()?.takeIf { "SNAPSHOT" !in it }?.let(::createVersion)
+            else -> null
+        }
+        if (currentVersion != null && currentVersion < requiredVersion) {
+            return DeprecatedByVersionRequirement(versionRequirement, target)
         }
         return null
     }
