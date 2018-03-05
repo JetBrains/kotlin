@@ -59,6 +59,7 @@ class LogStream(name: String) : OutputStream() {
 object KotlinCompileDaemon {
 
     init {
+
         val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
         val (logPath: String, fileIsGiven: Boolean) =
                 System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.trimQuotes()?.let { Pair(it, File(it).isFile) } ?: Pair("%t", false)
@@ -92,6 +93,7 @@ object KotlinCompileDaemon {
 
     @JvmStatic
     fun main(args: Array<String>) {
+
         ensureServerHostnameIsSetUp()
 
         val jvmArguments = ManagementFactory.getRuntimeMXBean().inputArguments
@@ -112,8 +114,13 @@ object KotlinCompileDaemon {
                 inheritAdditionalProperties = true
             )
 
-            val filteredArgs =
-                args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
+            val filteredArgs = args
+                .asIterable()
+                .filterExtractProps(
+                    compilerId,
+                    daemonOptions,
+                    prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX
+                )
 
             if (filteredArgs.any()) {
                 val helpLine = "usage: <daemon> <compilerId options> <daemon options>"

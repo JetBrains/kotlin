@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
+import io.ktor.network.sockets.Socket
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
 import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_FIND_PORT_ATTEMPTS
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.daemon.common.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 
 @Suppress("UNCHECKED_CAST")
 class RemoteReplStateFacadeServerSide(
@@ -24,7 +22,16 @@ class RemoteReplStateFacadeServerSide(
         REPL_SERVER_PORTS_RANGE_START,
         REPL_SERVER_PORTS_RANGE_END
     )
-) : ReplStateFacadeServerSide, Server<ReplStateFacadeServerSide> by DefaultServer(port) {
+) : ReplStateFacadeServerSide {
+
+    private val delegate = DefaultServer(port, this)
+
+    override suspend fun processMessage(msg: Server.AnyMessage<in ReplStateFacadeServerSide>, output: ByteWriteChannelWrapper) =
+        delegate.processMessage(msg, output)
+
+    override suspend fun attachClient(client: Socket) = delegate.attachClient(client)
+
+    override fun runServer() = delegate.runServer()
 
     override suspend fun getId(): Int = _id
 

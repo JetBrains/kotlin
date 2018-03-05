@@ -178,8 +178,8 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
 
         val (registry, port) = findPortAndCreateRegistry(
             COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
-            COMPILE_DAEMON_PORTS_RANGE_START,
-            COMPILE_DAEMON_PORTS_RANGE_END
+            RMI_WRAPPER_PORTS_RANGE_START,
+            RMI_WRAPPER_PORTS_RANGE_END
         )
 
         val stub = UnicastRemoteObject.exportObject(

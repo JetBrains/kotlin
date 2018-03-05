@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.build.JvmSourceRoot
@@ -33,7 +34,9 @@ import org.jetbrains.kotlin.daemon.KotlinJvmReplService
 import org.jetbrains.kotlin.daemon.LazyClasspathWatcher
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Report
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteAnnotationsFileUpdaterAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteArtifactChangesProviderAsync
@@ -63,9 +66,6 @@ import kotlin.concurrent.write
 
 fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
 
-interface CompilerSelector {
-    operator fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*>
-}
 
 interface EventManager {
     fun onCompilationFinished(f: () -> Unit)
@@ -97,15 +97,46 @@ class CompileServiceServerSideImpl(
     val port: Int,
     val timer: Timer,
     val onShutdown: () -> Unit
-) : CompileServiceServerSide, Server<CompileServiceServerSide> by DefaultServer(serverPort) {
+) : CompileServiceServerSide {
+
+    constructor(
+        serverPort: Int,
+        compilerId: CompilerId,
+        daemonOptions: DaemonOptions,
+        daemonJVMOptions: DaemonJVMOptions,
+        port: Int,
+        timer: Timer,
+        onShutdown: () -> Unit
+    ) : this(
+        serverPort,
+        CompilerSelector.getDefault(),
+        compilerId,
+        daemonOptions,
+        daemonJVMOptions,
+        port,
+        timer,
+        onShutdown
+    )
+
+    private val delegate = DefaultServer(serverPort, this)
+
+    override suspend fun processMessage(msg: Server.AnyMessage<in CompileServiceServerSide>, output: ByteWriteChannelWrapper) =
+        delegate.processMessage(msg, output)
+
+    override suspend fun attachClient(client: Socket) = delegate.attachClient(client)
+
+    override fun runServer() = delegate.runServer()
 
     private val log by lazy { Logger.getLogger("compiler") }
 
     init {
+
+        Report.log("init(port= $serverPort)", "CompileServiceServerSideImpl")
+
         // assuming logically synchronized
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
-        this.toRMIServer(daemonOptions, compilerId) // also create RMI server in order to support old clients
+        // TODO UNCOMMENT THIS : this.toRMIServer(daemonOptions, compilerId) // also create RMI server in order to support old clients
 
         timer.schedule(10) {
             exceptionLoggingTimerThread { initiateElections() }
@@ -116,9 +147,6 @@ class CompileServiceServerSideImpl(
         timer.schedule(delay = DAEMON_PERIODIC_SELDOM_CHECK_INTERVAL_MS + 100, period = DAEMON_PERIODIC_SELDOM_CHECK_INTERVAL_MS) {
             exceptionLoggingTimerThread { periodicSeldomCheck() }
         }
-
-        // server stuff :
-        runServer()
 
     }
 
@@ -250,6 +278,7 @@ class CompileServiceServerSideImpl(
     init {
         val runFileDir = File(daemonOptions.runFilesPathOrDefault)
         runFileDir.mkdirs()
+        Report.log("port.toString() = $port | serverPort = $serverPort", "CompileServiceServerSideImpl")
         runFile = File(
             runFileDir,
             makeRunFilenameString(
@@ -264,6 +293,7 @@ class CompileServiceServerSideImpl(
             throw IllegalStateException("Unable to create runServer file '${runFile.absolutePath}'", e)
         }
         runFile.deleteOnExit()
+        Report.log("last_init_end", "CompileServiceServerSideImpl")
     }
 
     // RMI-exposed API
@@ -689,7 +719,7 @@ class CompileServiceServerSideImpl(
                     runFile,
                     filter = { _, p -> p != port },
                     report = { _, msg -> log.info(msg) }, useRMI = false
-                ).await().toList()
+                )
                 val comparator = compareByDescending<DaemonWithMetadataAsync, DaemonJVMOptions>(
                     DaemonJVMOptionsMemoryComparator(),
                     { it.jvmOptions }

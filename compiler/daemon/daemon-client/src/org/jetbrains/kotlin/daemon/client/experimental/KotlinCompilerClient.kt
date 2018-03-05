@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.client.experimental
 
+import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -73,16 +75,19 @@ object KotlinCompilerClient {
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean = true
     ): CompileServiceClientSide? =
-        connectAndLease(
-            compilerId,
-            clientAliveFlagFile,
-            daemonJVMOptions,
-            daemonOptions,
-            reportingTargets,
-            autostart,
-            leaseSession = false,
-            sessionAliveFlagFile = null
-        )?.compileService
+        println("connectToCompileService")
+            .let {
+                connectAndLease(
+                    compilerId,
+                    clientAliveFlagFile,
+                    daemonJVMOptions,
+                    daemonOptions,
+                    reportingTargets,
+                    autostart,
+                    leaseSession = false,
+                    sessionAliveFlagFile = null
+                )?.compileService
+            }
 
 
     fun connectAndLease(
@@ -95,6 +100,8 @@ object KotlinCompilerClient {
         leaseSession: Boolean,
         sessionAliveFlagFile: File? = null
     ): CompileServiceSession? = connectLoop(reportingTargets, autostart) { isLastAttempt ->
+
+        println("connectAndLease")
 
         fun CompileServiceClientSide.leaseImpl(): CompileServiceSession? = runBlocking {
             // the newJVMOptions could be checked here for additional parameters, if needed
@@ -110,6 +117,7 @@ object KotlinCompilerClient {
                     }
         }
 
+        ensureServerHostnameIsSetUp()
         val (service, newJVMOptions) = runBlocking {
             tryFindSuitableDaemonOrNewOpts(
                 File(daemonOptions.runFilesPath),
@@ -118,11 +126,15 @@ object KotlinCompilerClient {
                 { cat, msg -> reportingTargets.report(cat, msg) })
         }
         if (service != null) {
+            println("service != null => service.connectToServer()")
             service.connectToServer()
             service.leaseImpl()
         } else {
+            println("service == null <==> no suitable daemons found")
             if (!isLastAttempt && autostart) {
+                println("starting daemon...")
                 if (startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)) {
+                    println("daemon successfully started!!!")
                     reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
                 }
             }
@@ -166,8 +178,9 @@ object KotlinCompilerClient {
         port: Int = findCallbackServerSocket(),
         profiler: Profiler = DummyProfiler()
     ): Int = profiler.withMeasure(this) {
-        val services = BasicCompilerServicesWithResultsFacadeServerServerSide(messageCollector, outputsCollector, port)
         runBlocking {
+            val services = BasicCompilerServicesWithResultsFacadeServerServerSide(messageCollector, outputsCollector, port)
+            val serverRun = services.runServer()
             compilerService.compile(
                 sessionId,
                 args,
@@ -274,21 +287,33 @@ object KotlinCompilerClient {
                     }}"
                 )
             }
-            else -> {
+            else -> runBlocking {
                 println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
                 val servicesFacade = CompilerCallbackServicesFacadeServerSide()
-                servicesFacade.runServer()
+                val serverRun = servicesFacade.runServer()
                 try {
                     val memBefore = runBlocking { daemon.getUsedMemory().get() } / 1024
                     val startTime = System.nanoTime()
 
-                    val resultsPort = findPortForSocket(
-                        COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
-                        RESULTS_SERVER_PORTS_RANGE_START,
-                        RESULTS_SERVER_PORTS_RANGE_END
-                    )
-                    val compResults = object : CompilationResultsServerSide,
-                        Server<CompilationResultsServerSide> by DefaultServer(resultsPort) {
+                    val compResults = object : CompilationResultsServerSide {
+
+                        private val resultsPort = findPortForSocket(
+                            COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
+                            RESULTS_SERVER_PORTS_RANGE_START,
+                            RESULTS_SERVER_PORTS_RANGE_END
+                        )
+
+                        private val delegate = DefaultServer(resultsPort, this)
+
+                        override suspend fun processMessage(
+                            msg: Server.AnyMessage<in CompilationResultsServerSide>,
+                            output: ByteWriteChannelWrapper
+                        ) =
+                            delegate.processMessage(msg, output)
+
+                        override suspend fun attachClient(client: Socket) = delegate.attachClient(client)
+
+                        override fun runServer() = delegate.runServer()
 
                         private val resultsMap = hashMapOf<Int, MutableList<Serializable>>()
 
@@ -302,27 +327,27 @@ object KotlinCompilerClient {
                         }
 
                     }
-                    runBlocking {
-                        val res = daemon.compile(
-                            CompileService.NO_SESSION,
-                            filteredArgs.toList().toTypedArray(),
-                            CompilationOptions(
-                                CompilerMode.NON_INCREMENTAL_COMPILER,
-                                CompileService.TargetPlatform.JVM,
-                                arrayOf(),  // TODO ???
-                                ReportSeverity.INFO.code,  // TODO ???
-                                arrayOf() // TODO ???
-                            ),
-                            servicesFacade.clientSide,
-                            compResults.clientSide
-                        )
+                    val compResultsServerRun = compResults.runServer()
+                    val res = daemon.compile(
+                        CompileService.NO_SESSION,
+                        filteredArgs.toList().toTypedArray(),
+                        CompilationOptions(
+                            CompilerMode.NON_INCREMENTAL_COMPILER,
+                            CompileService.TargetPlatform.JVM,
+                            arrayOf(),  // TODO ???
+                            ReportSeverity.INFO.code,  // TODO ???
+                            arrayOf() // TODO ???
+                        ),
+                        servicesFacade.clientSide,
+                        compResults.clientSide
+                    )
 
-                        val endTime = System.nanoTime()
-                        println("Compilation ${if (res.isGood) "succeeded" else "failed"}, result code: ${res.get()}")
-                        val memAfter = daemon.getUsedMemory().get() / 1024
-                        println("Compilation time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
-                        println("Used memory $memAfter (${"%+d".format(memAfter - memBefore)} kb)")
-                    }
+                    val endTime = System.nanoTime()
+                    println("Compilation ${if (res.isGood) "succeeded" else "failed"}, result code: ${res.get()}")
+                    val memAfter = daemon.getUsedMemory().get() / 1024
+                    println("Compilation time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
+                    println("Used memory $memAfter (${"%+d".format(memAfter - memBefore)} kb)")
+//                    serverRun.await()
                 } finally {
                     // TODO ??
                 }
@@ -389,10 +414,18 @@ object KotlinCompilerClient {
         daemonJVMOptions: DaemonJVMOptions,
         report: (DaemonReportCategory, String) -> Unit
     ): Pair<CompileServiceClientSide?, DaemonJVMOptions> {
+        println("tryFindSuitableDaemonOrNewOpts")
+
         registryDir.mkdirs()
         val timestampMarker = createTempFile("kotlin-daemon-client-tsmarker", directory = registryDir)
         val aliveWithMetadata = try {
-            walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report).await().toList()
+            walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report).also {
+                println(
+                    "daemons : ${it.map { "daemon(params : " + it.jvmOptions.jvmParams.joinToString(", ") + ")" }.joinToString(
+                        ", ", "[", "]"
+                    )}"
+                )
+            }
         } finally {
             timestampMarker.delete()
         }
@@ -416,25 +449,32 @@ object KotlinCompilerClient {
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets
     ): Boolean {
+        println("in startDaemon() - 0")
         val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
+        println("in startDaemon() - 0.1")
         val serverHostname = System.getProperty(JAVA_RMI_SERVER_HOSTNAME) ?: error("$JAVA_RMI_SERVER_HOSTNAME is not set!")
+        println("in startDaemon() - 0.2")
         val platformSpecificOptions = listOf(
             // hide daemon window
             "-Djava.awt.headless=true",
             "-D$JAVA_RMI_SERVER_HOSTNAME=$serverHostname"
         )
+        println("in startDaemon() - 0.3")
         val args = listOf(
             javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)
         ) +
                 platformSpecificOptions +
                 daemonJVMOptions.mappers.flatMap { it.toArgs("-") } +
-                COMPILER_DAEMON_CLASS_FQN +
+                COMPILER_DAEMON_CLASS_FQN_EXPERIMENTAL +
                 daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                 compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
+        println("in startDaemon() - 1")
         reportingTargets.report(DaemonReportCategory.DEBUG, "starting the daemon as: " + args.joinToString(" "))
         val processBuilder = ProcessBuilder(args)
+        println("in startDaemon() - 2")
         processBuilder.redirectErrorStream(true)
         // assuming daemon process is deaf and (mostly) silent, so do not handle streams
+        println("daemon = launchProcessWithFallback")
         val daemon = launchProcessWithFallback(processBuilder, reportingTargets, "daemon client")
 
         val isEchoRead = Semaphore(1)
@@ -446,6 +486,7 @@ object KotlinCompilerClient {
                     daemon.inputStream
                         .reader()
                         .forEachLine {
+                            println("daemon_process_report : $it")
                             if (it == COMPILE_DAEMON_IS_READY_MESSAGE) {
                                 reportingTargets.report(
                                     DaemonReportCategory.DEBUG,
@@ -478,9 +519,12 @@ object KotlinCompilerClient {
                 }
             } ?: DAEMON_DEFAULT_STARTUP_TIMEOUT_MS
             if (daemonOptions.runFilesPath.isNotEmpty()) {
+                println("daemonOptions.runFilesPath.isNotEmpty")
                 val succeeded = isEchoRead.tryAcquire(daemonStartupTimeout, TimeUnit.MILLISECONDS)
+                println("succeeded : $succeeded")
                 return when {
                     !isProcessAlive(daemon) -> {
+                        println("!isProcessAlive(daemon)")
                         reportingTargets.report(
                             DaemonReportCategory.INFO,
                             "Daemon terminated unexpectedly with error code: ${daemon.exitValue()}"
@@ -488,14 +532,16 @@ object KotlinCompilerClient {
                         false
                     }
                     !succeeded -> {
+                        println("isProcessAlive!")
                         reportingTargets.report(DaemonReportCategory.INFO, "Unable to get response from daemon in $daemonStartupTimeout ms")
                         false
                     }
                     else -> true
                 }
             } else
+                println("!daemonOptions.runFilesPath.isNotEmpty")
             // without startEcho defined waiting for max timeout
-                Thread.sleep(daemonStartupTimeout)
+            Thread.sleep(daemonStartupTimeout)
             return true
         } finally {
             // assuming that all important output is already done, the rest should be routed to the log by the daemon itself

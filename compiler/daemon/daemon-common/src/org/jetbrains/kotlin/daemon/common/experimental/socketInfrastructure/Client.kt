@@ -3,13 +3,17 @@ package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.handleCoroutineException
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
 import java.beans.Transient
 import java.io.Serializable
 import java.net.InetSocketAddress
+import java.util.ArrayList
+import java.util.function.Function
 
 interface Client : Serializable {
+    @Throws(Exception::class)
     fun connectToServer()
     fun sendMessage(msg: Any): Deferred<Unit>
     fun <T> readMessage(): Deferred<T>
@@ -29,17 +33,27 @@ class DefaultClient(
         @Transient get
         @Transient set
 
-    override fun sendMessage(msg: Any) = async { output!!.writeObject(msg) }
+    override fun sendMessage(msg: Any) = async { output.writeObject(msg) }
 
-    override fun <T> readMessage() = async { input!!.nextObject() as T }
+    override fun <T> readMessage() = async { input.nextObject() as T }
 
     override fun connectToServer() {
         runBlocking {
-            aSocket().tcp().connect(
-                serverHost?.let { InetSocketAddress(it, serverPort) } ?: InetSocketAddress(serverPort)
-            ).openIO().also {
-                input = it.input
-                output = it.output
+            Report.log("connectToServer(port =$serverPort | host = $serverHost)", "DefaultClient")
+            try {
+                aSocket().tcp().connect(
+                    serverHost?.let { InetSocketAddress(it, serverPort) } ?: InetSocketAddress(serverPort)
+                ).use { serv ->
+                    Report.log("connected (port = $serverPort, serv =$serverPort)", "DefaultClient")
+                    serv.openIO().also {
+                        Report.log("OK serv.openIO() |port=$serverPort|", "DefaultClient")
+                        input = it.input
+                        output = it.output
+                    }
+                }
+            } catch (e: Throwable) {
+                Report.log("EXCEPTION ($e)", "DefaultClient")
+                throw e
             }
         }
     }

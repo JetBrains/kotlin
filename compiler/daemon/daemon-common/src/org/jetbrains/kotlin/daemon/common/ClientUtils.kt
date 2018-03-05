@@ -61,8 +61,12 @@ fun walkDaemons(
     val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     return registryDir.walk()
         .map { Pair(it, portExtractor(it.name)) }
+        .also { it.forEach { println("[fileWalk 1/3] : daemon, port=${it.second}") } }
         .filter { (file, port) -> port != null && filter(file, port) }
+        .also { it.forEach { println("[fileWalk 2/3] : daemon, port=${it.second}") } }
         .mapNotNull { (file, port) ->
+            println("[fileWalk 3/3] : daemon, port=${port}")
+            println("[fileWalk] : daemon, port=$port")
             assert(port!! in 1..(MAX_PORT_NUMBER - 1))
             val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
             report(DaemonReportCategory.DEBUG, "found daemon on socketPort $port ($relativeAge ms old), trying to connect")
@@ -103,8 +107,7 @@ private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, 
             LoopbackNetworkInterface.loopbackInetAddressName,
             port,
             LoopbackNetworkInterface.clientLoopbackSocketFactory
-        )
-            ?.lookup(COMPILER_SERVICE_RMI_NAME)
+        )?.lookup(COMPILER_SERVICE_RMI_NAME)
         when (daemon) {
             null -> report(DaemonReportCategory.INFO, "daemon not found")
             is CompileService -> return daemon

@@ -21,8 +21,8 @@ import java.io.File
 interface CompileServiceClientSide : CompileServiceAsync, Client
 
 class CompileServiceClientSideImpl(
-    val serverHost: String,
-    val serverPort: Int
+    val serverPort: Int,
+    val serverHost: String? = null
 ) : CompileServiceClientSide, Client by DefaultClient(serverPort, serverHost) {
 
     override suspend fun compile(
@@ -85,8 +85,14 @@ class CompileServiceClientSideImpl(
     }
 
     override suspend fun getDaemonJVMOptions(): CallResult<DaemonJVMOptions> {
+        println("sending message (GetDaemonJVMOptionsMessage) ... (deaemon port = $serverPort)")
         sendMessage(GetDaemonJVMOptionsMessage()).await()
-        return readMessage<CallResult<DaemonJVMOptions>>().await()
+        println("message is sent!")
+        val resAsync = readMessage<CallResult<DaemonJVMOptions>>()
+        println("reading message...")
+        val res = resAsync.await()
+        println("reply : $res")
+        return res
     }
 
     override suspend fun registerClient(aliveFlagPath: String?): CallResult<Nothing> {

@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-val REPL_SERVER_PORTS_RANGE_START: Int = 14000
+val RMI_WRAPPER_PORTS_RANGE_START: Int = 13001
+val RMI_WRAPPER_PORTS_RANGE_END: Int = 14000
+
+val REPL_SERVER_PORTS_RANGE_START: Int = 14001
 val REPL_SERVER_PORTS_RANGE_END: Int = 15000
 
 
@@ -14,3 +17,5 @@ val CALLBACK_SERVER_PORTS_RANGE_END: Int = 16000
 
 val RESULTS_SERVER_PORTS_RANGE_START: Int = 16001
 val RESULTS_SERVER_PORTS_RANGE_END: Int = 17000
+
+val COMPILER_DAEMON_CLASS_FQN_EXPERIMENTAL: String = "org.jetbrains.kotlin.daemon.experimental.KotlinCompileDaemon"

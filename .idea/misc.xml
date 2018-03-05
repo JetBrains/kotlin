@@ -53,6 +53,7 @@
   <component name="SuppressABINotification">
     <option name="modulesWithSuppressedNotConfigured">
       <set>
+        <option value="daemon-common" />
         <option value="kotlin-stdlib-common" />
         <option value="kotlin-stdlib-js" />
         <option value="kotlin-test-common" />
