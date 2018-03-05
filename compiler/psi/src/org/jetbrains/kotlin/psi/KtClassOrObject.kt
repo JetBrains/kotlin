@@ -137,3 +137,6 @@ fun KtClassOrObject.getOrCreateBody(): KtClassBody {
     if (this is KtEnumEntry) return addAfter(newBody, initializerList ?: nameIdentifier) as KtClassBody
     return add(newBody) as KtClassBody
 }
+
+val KtClassOrObject.allConstructors
+    get() = listOfNotNull(primaryConstructor) + secondaryConstructors
