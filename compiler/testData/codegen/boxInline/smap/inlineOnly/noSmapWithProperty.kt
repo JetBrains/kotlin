@@ -25,6 +25,16 @@ Kotlin
 *F
 + 1 2.kt
 _2Kt
++ 2 1.kt
+test/_1Kt
 *L
 1#1,8:1
+10#2:9
+*E
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt
+*L
+5#1:9
 *E
