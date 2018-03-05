@@ -424,7 +424,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "doResume" }.symbol
 
     private val getContinuationSymbol = context.ir.symbols.getContinuation
-    private val continuationType = getContinuationSymbol.descriptor.returnType!!
 
     private val arrayGetSymbol = context.ir.symbols.arrayGet
     private val arraySetSymbol = context.ir.symbols.arraySet
@@ -471,12 +470,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 )
         }
 
-        private fun choosePrimary(erasure: List<ClassDescriptor>): ClassDescriptor {
-            if (erasure.size == 1) return erasure[0]
-            // A parameter with constraints - choose class if exists.
-            return erasure.singleOrNull { !it.isInterface } ?: context.ir.symbols.any.owner
-        }
-
         fun build(): DataFlowIR.Function {
             val isSuspend = descriptor is IrSimpleFunction && descriptor.isSuspend
 
@@ -506,14 +499,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             val allNodes = nodes.values + variables.values + templateParameters.values + returnsNode + throwsNode +
                     (if (isSuspend) listOf(continuationParameter!!) else emptyList())
 
-            val parameterTypes = (allParameters.map { it.type } + (if (isSuspend) listOf(continuationType) else emptyList()))
-                    .map { symbolTable.mapClass(choosePrimary(it.erasure(context))) }
-                    .toTypedArray()
-            val returnType = if (isSuspend) context.builtIns.anyType else returnNodeType
             return DataFlowIR.Function(
                     symbol         = symbolTable.mapFunction(descriptor),
-                    parameterTypes = parameterTypes,
-                    returnType     = symbolTable.mapType(returnType),
                     body           = DataFlowIR.FunctionBody(allNodes.distinct().toList(), returnsNode, throwsNode)
             )
         }
@@ -606,7 +593,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                         symbolTable.mapClass(owner),
                                                         callee.functionName.localHash.value,
                                                         arguments,
-                                                        symbolTable.mapType(callee.returnType),
                                                         value
                                                 )
                                             } else {
@@ -617,7 +603,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                         symbolTable.mapClass(owner),
                                                         vtableIndex,
                                                         arguments,
-                                                        symbolTable.mapType(callee.returnType),
                                                         value
                                                 )
                                             }
@@ -626,7 +611,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                             DataFlowIR.Node.StaticCall(
                                                     symbolTable.mapFunction(actualCallee),
                                                     arguments,
-                                                    symbolTable.mapType(actualCallee.returnType),
                                                     actualCallee.dispatchReceiverParameter?.let { symbolTable.mapType(it.type) },
                                                     value
                                             )
@@ -642,7 +626,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 DataFlowIR.Node.StaticCall(
                                         symbolTable.mapFunction(value.symbol.owner),
                                         arguments.map { expressionToEdge(it) },
-                                        symbolTable.mapClass(context.ir.symbols.unit.owner),
                                         symbolTable.mapType(thiz.type),
                                         value
                                 )

@@ -266,7 +266,7 @@ internal object EscapeAnalysis {
             }
 
             for (functionSymbol in callGraph.directEdges.keys) {
-                val numberOfParameters = intraproceduralAnalysisResult[functionSymbol]!!.function.parameterTypes.size
+                val numberOfParameters = functionSymbol.parameterTypes.size
                 escapeAnalysisResults[functionSymbol] = FunctionEscapeAnalysisResult(
                         // Assume no edges at the beginning.
                         // Then iteratively add needed.
@@ -321,7 +321,7 @@ internal object EscapeAnalysis {
             for (graph in pointsToGraphs.values) {
                 graph.nodes.keys
                         .filterIsInstance<DataFlowIR.Node.Call>()
-                        .forEach { call -> call.callSite?.let { lifetimes.put(it, graph.lifetimeOf(call)) } }
+                        .forEach { call -> call.irCallSite?.let { lifetimes.put(it, graph.lifetimeOf(call)) } }
             }
         }
 
@@ -355,7 +355,7 @@ internal object EscapeAnalysis {
         }
 
         private fun getConservativeFunctionEAResult(symbol: DataFlowIR.FunctionSymbol): FunctionEscapeAnalysisResult {
-            val numberOfParameters = symbol.numberOfParameters
+            val numberOfParameters = symbol.parameterTypes.size
             return FunctionEscapeAnalysisResult((0..numberOfParameters).map {
                 ParameterEscapeAnalysisResult(
                         escapes = true,
@@ -378,7 +378,7 @@ internal object EscapeAnalysis {
 
                 FunctionEscapeAnalysisResult.fromBits(
                         callee.escapes ?: 0,
-                        (0..callee.numberOfParameters).map { callee.pointsTo?.elementAtOrNull(it) ?: 0 }
+                        (0..callee.parameterTypes.size).map { callee.pointsTo?.elementAtOrNull(it) ?: 0 }
                 )
             }
 

@@ -226,8 +226,7 @@ internal object Devirtualization {
             }
         }
 
-        private inner class InstantiationsSearcher(val functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                                                   val rootSet: List<DataFlowIR.FunctionSymbol>,
+        private inner class InstantiationsSearcher(val rootSet: List<DataFlowIR.FunctionSymbol>,
                                                    val typeHierarchy: TypeHierarchy) {
             private val visited = mutableSetOf<DataFlowIR.FunctionSymbol>()
             private val typesVirtualCallSites = mutableMapOf<DataFlowIR.Type.Declared, MutableList<DataFlowIR.Node.VirtualCall>>()
@@ -236,13 +235,12 @@ internal object Devirtualization {
             fun search(): Set<DataFlowIR.Type.Declared> {
                 // Rapid Type Analysis: find all instantiations and conservatively estimate call graph.
                 // Add all final parameters of the roots.
-                rootSet.map { functions[it]!! }
-                        .forEach {
-                            it.parameterTypes
-                                    .map { it.resolved() }
-                                    .filter { it.isFinal }
-                                    .forEach { addInstantiatingClass(it) }
-                        }
+                rootSet.forEach {
+                    it.parameterTypes
+                            .map { it.resolved() }
+                            .filter { it.isFinal }
+                            .forEach { addInstantiatingClass(it) }
+                }
                 if (entryPoint == null) {
                     // For library assume all public non-abstract classes could be instantiated.
                     moduleDFG.symbolTable.classMap.values
@@ -252,7 +250,7 @@ internal object Devirtualization {
                             .forEach { addInstantiatingClass(it) }
                 }
                 // Traverse call graph from the roots.
-                rootSet.forEach { dfs(it, functions[it]!!.returnType) }
+                rootSet.forEach { dfs(it) }
                 return instantiatingClasses
             }
 
@@ -281,7 +279,7 @@ internal object Devirtualization {
 
                     else -> error("Unreachable")
                 }
-                dfs(callee, virtualCall.returnType)
+                dfs(callee)
             }
 
             private fun checkSupertypes(type: DataFlowIR.Type.Declared,
@@ -316,13 +314,13 @@ internal object Devirtualization {
                         .forEach { checkSupertypes(it, inheritor, seenTypes) }
             }
 
-            private fun dfs(symbol: DataFlowIR.FunctionSymbol, returnType: DataFlowIR.Type) {
+            private fun dfs(symbol: DataFlowIR.FunctionSymbol) {
                 val resolvedFunctionSymbol = symbol.resolved()
                 if (resolvedFunctionSymbol is DataFlowIR.FunctionSymbol.External) {
 
                     DEBUG_OUTPUT(1) { println("Function $resolvedFunctionSymbol is external") }
 
-                    val resolvedReturnType = returnType.resolved()
+                    val resolvedReturnType = symbol.returnType.resolved()
                     if (resolvedReturnType.isFinal) {
 
                         DEBUG_OUTPUT(1) { println("Adding return type as it is final") }
@@ -342,25 +340,25 @@ internal object Devirtualization {
                 nodeLoop@for (node in function.body.nodes) {
                     when (node) {
                         is DataFlowIR.Node.NewObject -> {
-                            addInstantiatingClass(node.returnType)
-                            dfs(node.callee, node.returnType)
+                            addInstantiatingClass(node.constructedType)
+                            dfs(node.callee)
                         }
 
                         is DataFlowIR.Node.Singleton -> {
                             addInstantiatingClass(node.type)
-                            node.constructor?.let { dfs(it, node.type) }
+                            node.constructor?.let { dfs(it) }
                         }
 
                         is DataFlowIR.Node.Const -> addInstantiatingClass(node.type)
 
                         is DataFlowIR.Node.StaticCall ->
-                            dfs(node.callee, node.returnType)
+                            dfs(node.callee)
 
                         is DataFlowIR.Node.VirtualCall -> {
                             if (node.receiverType == DataFlowIR.Type.Virtual)
                                 continue@nodeLoop
                             val receiverType = node.receiverType.resolved()
-                            val vCallReturnType = node.returnType.resolved()
+                            val vCallReturnType = node.callee.returnType.resolved()
 
                             DEBUG_OUTPUT(1) {
                                 println("Adding virtual callsite:")
@@ -399,7 +397,7 @@ internal object Devirtualization {
             val rootSet = computeRootSet(context, moduleDFG, externalModulesDFG)
 
             val instantiatingClasses =
-                    InstantiationsSearcher(functions, rootSet, typeHierarchy).search()
+                    InstantiationsSearcher(rootSet, typeHierarchy).search()
                             .withIndex()
                             .associate { it.value to (it.index + 1 /* 0 is reserved for [DataFlowIR.Type.Virtual] */) }
             val allTypes = listOf(DataFlowIR.Type.Virtual) + instantiatingClasses.asSequence().sortedBy { it.value }.map { it.key }
@@ -531,7 +529,7 @@ internal object Devirtualization {
                         if (virtualCallSiteReceivers == null || virtualCallSiteReceivers.receiver.types[VIRTUAL_TYPE_ID]) {
 
                             DEBUG_OUTPUT(0) {
-                                println("Unable to devirtualize callsite ${virtualCall.callSite?.let { ir2stringWhole(it) } ?: virtualCall.toString() }")
+                                println("Unable to devirtualize callsite ${virtualCall.irCallSite?.let { ir2stringWhole(it) } ?: virtualCall.toString() }")
                                 println("    receiver is Virtual")
                             }
 
@@ -542,16 +540,16 @@ internal object Devirtualization {
                                 .map { it.value }
                                 .filter { it != nothing }
                         val map = virtualCallSiteReceivers.devirtualizedCallees.associateBy({ it.receiverType }, { it })
-                        result[virtualCall] = DevirtualizedCallSite(possibleReceivers.map { receiverType ->
+                        result[virtualCall] = DevirtualizedCallSite(virtualCall.callee.resolved(), possibleReceivers.map { receiverType ->
                             assert (map[receiverType] != null) {
                                 "Non-expected receiver type $receiverType at call site: " +
-                                        (virtualCall.callSite?.let { ir2stringWhole(it) } ?: virtualCall.toString())
+                                        (virtualCall.irCallSite?.let { ir2stringWhole(it) } ?: virtualCall.toString())
                             }
                             val devirtualizedCallee = map[receiverType]!!
                             val callee = devirtualizedCallee.callee
                             if (callee is DataFlowIR.FunctionSymbol.Declared && callee.symbolTableIndex < 0)
                                 error("Function ${devirtualizedCallee.receiverType}.$callee cannot be called virtually," +
-                                        " but actually is at call site: ${virtualCall.callSite?.let { ir2stringWhole(it) } ?: virtualCall.toString() }")
+                                        " but actually is at call site: ${virtualCall.irCallSite?.let { ir2stringWhole(it) } ?: virtualCall.toString() }")
                             devirtualizedCallee
                         }) to virtualCallSiteReceivers.caller
                     }
@@ -559,10 +557,10 @@ internal object Devirtualization {
             DEBUG_OUTPUT(0) {
                 println("Devirtualized from current module:")
                 result.forEach { virtualCall, devirtualizedCallSite ->
-                    if (virtualCall.callSite != null) {
+                    if (virtualCall.irCallSite != null) {
                         println("DEVIRTUALIZED")
                         println("FUNCTION: ${devirtualizedCallSite.second}")
-                        println("CALL SITE: ${virtualCall.callSite?.let { ir2stringWhole(it) } ?: virtualCall.toString()}")
+                        println("CALL SITE: ${virtualCall.irCallSite?.let { ir2stringWhole(it) } ?: virtualCall.toString()}")
                         println("POSSIBLE RECEIVERS:")
                         devirtualizedCallSite.first.possibleCallees.forEach { println("    TYPE: ${it.receiverType}") }
                         devirtualizedCallSite.first.possibleCallees.forEach { println("    FUN: ${it.callee}") }
@@ -571,10 +569,10 @@ internal object Devirtualization {
                 }
                 println("Devirtualized from external modules:")
                 result.forEach { virtualCall, devirtualizedCallSite ->
-                    if (virtualCall.callSite == null) {
+                    if (virtualCall.irCallSite == null) {
                         println("DEVIRTUALIZED")
                         println("FUNCTION: ${devirtualizedCallSite.second}")
-                        println("CALL SITE: ${virtualCall.callSite?.let { ir2stringWhole(it) } ?: virtualCall.toString()}")
+                        println("CALL SITE: ${virtualCall.irCallSite?.let { ir2stringWhole(it) } ?: virtualCall.toString()}")
                         println("POSSIBLE RECEIVERS:")
                         devirtualizedCallSite.first.possibleCallees.forEach { println("    TYPE: ${it.receiverType}") }
                         devirtualizedCallSite.first.possibleCallees.forEach { println("    FUN: ${it.callee}") }
@@ -647,11 +645,10 @@ internal object Devirtualization {
                 if (symbol is DataFlowIR.FunctionSymbol.External) return null
                 constraintGraph.functions[symbol]?.let { return it }
 
-                val function = functions[symbol] ?: error("Unknown function: $symbol")
-                val parameters = Array(symbol.numberOfParameters) { ordinaryNode { "Param#$it\$$symbol" } }
+                val parameters = Array(symbol.parameterTypes.size) { ordinaryNode { "Param#$it\$$symbol" } }
                 if (isRoot) {
                     // Exported function from the current module.
-                    function.parameterTypes.forEachIndexed { index, type ->
+                    symbol.parameterTypes.forEachIndexed { index, type ->
                         val resolvedType = type.resolved()
                         val node = if (!resolvedType.isFinal)
                                        constraintGraph.virtualNode
@@ -769,10 +766,10 @@ internal object Devirtualization {
                             function.parameters[node.index]
 
                         is DataFlowIR.Node.StaticCall ->
-                            doCall(node.callee, node.arguments, node.returnType.resolved(), node.receiverType?.resolved())
+                            doCall(node.callee, node.arguments, node.callee.returnType.resolved(), node.receiverType?.resolved())
 
                         is DataFlowIR.Node.NewObject -> {
-                            val returnType = node.returnType.resolved()
+                            val returnType = node.constructedType.resolved()
                             val instanceNode = concreteClass(returnType)
                             doCall(node.callee, listOf(instanceNode) + node.arguments, returnType, null)
                             instanceNode
@@ -812,7 +809,7 @@ internal object Devirtualization {
                                 println()
                             }
 
-                            val returnType = node.returnType.resolved()
+                            val returnType = node.callee.returnType.resolved()
                             val receiverNode = edgeToConstraintNode(node.arguments[0])
                             if (receiverType == DataFlowIR.Type.Virtual)
                                 constraintGraph.virtualNode.addEdge(receiverNode)
@@ -891,7 +888,7 @@ internal object Devirtualization {
 
     class DevirtualizedCallee(val receiverType: DataFlowIR.Type, val callee: DataFlowIR.FunctionSymbol)
 
-    class DevirtualizedCallSite(val possibleCallees: List<DevirtualizedCallee>)
+    class DevirtualizedCallSite(val callee: DataFlowIR.FunctionSymbol, val possibleCallees: List<DevirtualizedCallee>)
 
     class AnalysisResult(val devirtualizedCallSites: Map<DataFlowIR.Node.VirtualCall, DevirtualizedCallSite>)
 
@@ -901,8 +898,8 @@ internal object Devirtualization {
         val devirtualizedCallSites =
                 devirtualizationAnalysisResult
                         .asSequence()
-                        .filter { it.key.callSite != null }
-                        .associate { it.key.callSite!! to it.value }
+                        .filter { it.key.irCallSite != null }
+                        .associate { it.key.irCallSite!! to it.value }
         Devirtualization.devirtualize(irModule, context, devirtualizedCallSites)
         return AnalysisResult(devirtualizationAnalysisResult)
     }
