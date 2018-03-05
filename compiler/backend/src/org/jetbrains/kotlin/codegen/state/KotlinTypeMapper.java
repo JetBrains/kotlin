@@ -1684,7 +1684,7 @@ public class KotlinTypeMapper {
         @Nullable
         public static String getModuleNameSuffix(@NotNull String name) {
             int indexOfDollar = name.indexOf('$');
-            return indexOfDollar >=0 ? name.substring(indexOfDollar + 1) : null;
+            return indexOfDollar >= 0 ? name.substring(indexOfDollar + 1) : null;
         }
 
         @Nullable

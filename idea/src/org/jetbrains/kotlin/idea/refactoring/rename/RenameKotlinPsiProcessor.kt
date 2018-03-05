@@ -46,19 +46,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.ArrayList
-import kotlin.collections.Collection
-import kotlin.collections.HashSet
-import kotlin.collections.List
-import kotlin.collections.MutableMap
-import kotlin.collections.flatMapTo
-import kotlin.collections.forEach
-import kotlin.collections.isEmpty
-import kotlin.collections.mapNotNullTo
-import kotlin.collections.none
-import kotlin.collections.plusAssign
-import kotlin.collections.set
-import kotlin.collections.toMutableList
-import kotlin.collections.toTypedArray
+import kotlin.collections.*
 
 abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     class MangledJavaRefUsageInfo(
@@ -151,15 +139,16 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
                && ref.multiResolve(false).mapNotNullTo(HashSet()) { it.element?.unwrapped }.size > 1
     }
 
-    protected fun renameUsageIfPossible(usage: UsageInfo, element: PsiElement, newName: String): Boolean {
-        var chosenName: String? = null
-        if (usage is MangledJavaRefUsageInfo) {
-            chosenName = KotlinTypeMapper.InternalNameMapper.mangleInternalName(newName, usage.manglingSuffix)
+    protected fun renameMangledUsageIfPossible(usage: UsageInfo, element: PsiElement, newName: String): Boolean {
+        val chosenName = if (usage is MangledJavaRefUsageInfo) {
+            KotlinTypeMapper.InternalNameMapper.mangleInternalName(newName, usage.manglingSuffix)
         } else {
             val reference = usage.reference
             if (reference is KtReference) {
-                chosenName = (if (element is KtLightMethod && element.isMangled) KotlinTypeMapper.InternalNameMapper.demangleInternalName(newName) else null) ?: newName
-            }
+                if (element is KtLightMethod && element.isMangled) {
+                    KotlinTypeMapper.InternalNameMapper.demangleInternalName(newName)
+                } else null
+            } else null
         }
         if (chosenName == null) return false
         usage.reference?.handleElementRename(chosenName)
@@ -174,7 +163,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     ) {
         val simpleUsages = ArrayList<UsageInfo>(usages.size)
         for (usage in usages) {
-            if (renameUsageIfPossible(usage, element, newName)) continue
+            if (renameMangledUsageIfPossible(usage, element, newName)) continue
             simpleUsages += usage
         }
 
@@ -186,7 +175,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
             element.ambiguousImportUsages?.forEach {
                 val ref = it.reference as? PsiPolyVariantReference ?: return@forEach
                 if (ref.multiResolve(false).isEmpty()) {
-                    if (!renameUsageIfPossible(it, element, newName)) {
+                    if (!renameMangledUsageIfPossible(it, element, newName)) {
                         ref.handleElementRename(newName)
                     }
                 }

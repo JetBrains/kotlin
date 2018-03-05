@@ -234,6 +234,16 @@ public class RenameTestGenerated extends AbstractRenameTest {
         runTest("idea/testData/refactoring/rename/javaEnumValueOf/javaEnumValueOf.test");
     }
 
+    @TestMetadata("javaGetterToOrdinaryMethod/javaGetterToOrdinaryMethod.test")
+    public void testJavaGetterToOrdinaryMethod_JavaGetterToOrdinaryMethod() throws Exception {
+        runTest("idea/testData/refactoring/rename/javaGetterToOrdinaryMethod/javaGetterToOrdinaryMethod.test");
+    }
+
+    @TestMetadata("javaSetterToOrdinaryMethod/javaSetterToOrdinaryMethod.test")
+    public void testJavaSetterToOrdinaryMethod_JavaSetterToOrdinaryMethod() throws Exception {
+        runTest("idea/testData/refactoring/rename/javaSetterToOrdinaryMethod/javaSetterToOrdinaryMethod.test");
+    }
+
     @TestMetadata("labeledAnonymousFunByLabel/labeledLambdaByLabel.test")
     public void testLabeledAnonymousFunByLabel_LabeledLambdaByLabel() throws Exception {
         runTest("idea/testData/refactoring/rename/labeledAnonymousFunByLabel/labeledLambdaByLabel.test");
