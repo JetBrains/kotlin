@@ -103,6 +103,8 @@ class KtLightClassForFacade private constructor(
 
     override val kotlinOrigin: KtClassOrObject? get() = null
 
+    override fun getSourceElement(): PsiElement = files.single()
+
     val fqName: FqName
         get() = facadeClassFqName
 

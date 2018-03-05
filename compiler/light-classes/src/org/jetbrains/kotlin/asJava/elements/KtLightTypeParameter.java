@@ -66,6 +66,12 @@ public class KtLightTypeParameter
     }
 
     @NotNull
+    @Override
+    public PsiElement getSourceElement() {
+        return getKotlinOrigin();
+    }
+
+    @NotNull
     private PsiTypeParameterListOwner getOwnerDelegate() {
         if (owner instanceof KtLightClass) return ((KtLightClass) owner).getClsDelegate();
         if (owner instanceof KtLightMethod) return ((KtLightMethod) owner).getClsDelegate();

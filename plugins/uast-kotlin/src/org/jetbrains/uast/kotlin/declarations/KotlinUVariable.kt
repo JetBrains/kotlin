@@ -289,7 +289,7 @@ open class KotlinUField(
         override val sourcePsi: KtElement?,
         givenParent: UElement?
 ) : AbstractKotlinUVariable(givenParent), UField, PsiField by psi {
-    override fun getSourceElement() = sourcePsi ?: this
+    override fun getSourceElement() = sourcePsi ?: error("no source psi")
 
     override val javaPsi  = unwrap<UField, PsiField>(psi)
 

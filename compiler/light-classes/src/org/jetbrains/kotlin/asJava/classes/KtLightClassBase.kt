@@ -81,4 +81,6 @@ abstract class KtLightClassBase protected constructor(manager: PsiManager)
     abstract override fun hashCode(): Int
 
     override fun getContext() = parent
+
+    override fun getSourceElement(): PsiElement = kotlinOrigin ?: error("no kotlinOrigin in ${this.javaClass}")
 }

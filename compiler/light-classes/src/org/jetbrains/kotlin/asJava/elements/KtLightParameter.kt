@@ -56,6 +56,8 @@ class KtLightParameter(
             return setter?.parameter
         }
 
+    override fun getSourceElement(): PsiElement = kotlinOrigin ?: error("no source element for $this")
+
     init {
         if (method.lightMemberOrigin is LightMemberOriginForDeclaration) {
             this.modifierList = KtLightSimpleModifierList(this, emptySet())

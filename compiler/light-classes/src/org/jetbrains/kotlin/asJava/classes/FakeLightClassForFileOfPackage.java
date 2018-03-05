@@ -64,6 +64,12 @@ public class FakeLightClassForFileOfPackage extends AbstractLightClass implement
         return file;
     }
 
+    @NotNull
+    @Override
+    public PsiElement getSourceElement() {
+        return file;
+    }
+
     @Override
     public boolean isValid() {
         // This is intentionally false to prevent using this as a real class

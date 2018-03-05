@@ -36,6 +36,8 @@ interface KtLightMember<out D : PsiMember> : PsiMember, KtLightDeclaration<KtDec
     val lightMemberOrigin: LightMemberOrigin?
 
     override fun getContainingClass(): KtLightClass
+
+    override fun getSourceElement(): PsiElement = kotlinOrigin ?: error("not sourceElement for ${javaClass}")
 }
 
 interface KtLightField : PsiField, KtLightMember<PsiField>, PsiVariableEx

@@ -72,9 +72,9 @@ open class KotlinUClass private constructor(
 
     override val psi = unwrap<UClass, PsiClass>(psi)
 
-    override fun getSourceElement() = sourcePsi ?: this
+    override fun getSourceElement() = sourcePsi ?: error("no source psi")
 
-    override fun getOriginalElement(): PsiElement? = super.getOriginalElement()
+    override fun getOriginalElement(): PsiElement? = javaPsi.originalElement
 
     override fun getNameIdentifier(): PsiIdentifier? = UastLightIdentifier(psi, ktClass)
 
@@ -217,6 +217,8 @@ class KotlinUAnonymousClass(
 
     override fun getOriginalElement(): PsiElement? = super<AbstractKotlinUClass>.getOriginalElement()
 
+    override fun getSourceElement(): PsiElement = sourcePsi ?: error("no source psi, javaPsi class: ${javaPsi.javaClass}")
+
     override fun getSuperClass(): UClass? = super<AbstractKotlinUClass>.getSuperClass()
     override fun getFields(): Array<UField> = super<AbstractKotlinUClass>.getFields()
     override fun getMethods(): Array<UMethod> = super<AbstractKotlinUClass>.getMethods()
@@ -245,6 +247,9 @@ class KotlinScriptUClass(
     override val javaPsi: PsiClass = psi
 
     override val sourcePsi: KtClassOrObject? = psi.kotlinOrigin
+
+    override fun getSourceElement(): PsiElement =
+        sourcePsi ?: error("not source element in KotlinScriptUClass, javaPsi = $javaPsi")
 
     override val psi = unwrap<UClass, KtLightClassForScript>(psi)
 
