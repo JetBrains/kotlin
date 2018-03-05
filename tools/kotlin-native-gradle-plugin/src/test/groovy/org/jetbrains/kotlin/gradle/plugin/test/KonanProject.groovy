@@ -77,7 +77,7 @@ class KonanProject {
             throw new IllegalStateException("konan.home doesn't exist or is not a directory: $konanHomeDir.canonicalPath")
         }
         // Escape windows path separator
-        this.konanHome = konanHomeDir.canonicalPath.replace('\\', '\\\\')
+        this.konanHome = escapeBackSlashes(konanHomeDir.canonicalPath)
     }
 
     GradleRunner createRunner(boolean withDebug = true) {
@@ -220,7 +220,7 @@ class KonanProject {
      *  $container.$section.$parameter ${value.canonicalPath.replace(\, \\)}
      */
     protected void addSetting(String container, String section, String parameter, File value) {
-        addSetting(container, section, parameter, "'${value.canonicalPath.replace('\\', '\\\\')}'")
+        addSetting(container, section, parameter, "'${escapeBackSlashes(value.canonicalPath)}'")
     }
 
     /** Sets the given setting of the given konanArtifact */
@@ -340,6 +340,10 @@ class KonanProject {
         def result = createEmpty(projectDir, targets)
         config(result)
         return result
+    }
+
+    static String escapeBackSlashes(String value) {
+        return value.replace('\\', '\\\\')
     }
 
 }

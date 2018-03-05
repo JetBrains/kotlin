@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import spock.lang.Unroll
 
+import static org.jetbrains.kotlin.gradle.plugin.test.KonanProject.escapeBackSlashes
 
 class EnvVariableSpecification extends BaseKonanSpecification {
 
@@ -32,12 +33,12 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         def project = KonanProject.createEmpty(projectDirectory)
         def runner = project.createRunner()
 
-        // Gradle TestKid doesn't support setting environment variables for runners.
+        // Gradle TestKit doesn't support setting environment variables for runners.
         // So we use the following hack: we create a gradle wrapper, start it as a separate
         // process with custom environment variables and check its exit code.
         runner.withArguments("wrapper").build()
 
-        def classpath = runner.pluginClasspath.collect { "'$it.absolutePath'" }.join(", ")
+        def classpath = runner.pluginClasspath.collect { "'${escapeBackSlashes(it.absolutePath)}'" }.join(", ")
         project.buildFile.write("""\
                 buildscript {
                     dependencies {
@@ -136,9 +137,9 @@ class EnvVariableSpecification extends BaseKonanSpecification {
                 doLast {
                     konanArtifacts.forEach { artifact ->
                         artifact.forEach {
-                            if (it.destinationDir.absolutePath != '$newDestinationPath'){
+                            if (it.destinationDir.absolutePath != '${escapeBackSlashes(newDestinationPath)}'){
                                 throw new AssertionError("Unexpected destination dir for \$it.name\\n" +
-                                                         "expected: $newDestinationPath\\n" +
+                                                         "expected: ${escapeBackSlashes(newDestinationPath)}\\n" +
                                                          "actual: \$it.destinationDir")
                             }
                         }
