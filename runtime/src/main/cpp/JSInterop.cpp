@@ -37,6 +37,13 @@ RUNTIME_NORETURN void Konan_js_pushIntToArena(Arena arena, KInt value) {
   RuntimeAssert(false, "JavaScript interop is disabled");
 }
 
+RUNTIME_NORETURN KInt Konan_js_getInt(Arena arena,
+                                      Object obj,
+                                      Pointer propertyPtr,
+                                      KInt propertyLen) {
+  RuntimeAssert(false, "JavaScript interop is disabled");
+}
+
 RUNTIME_NORETURN KInt Konan_js_getProperty(Arena arena,
                                            Object obj,
                                            Pointer propertyPtr,
