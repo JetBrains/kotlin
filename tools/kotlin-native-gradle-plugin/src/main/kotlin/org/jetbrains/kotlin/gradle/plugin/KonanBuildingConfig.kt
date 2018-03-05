@@ -100,12 +100,12 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     //         In this case all produced files has the same name but are placed in different directories
     //         depending on their targets (e.g. linux/foo.kexe and macbook/foo.kexe).
     //      2. Custom path provided by IDE. In this case CONFIGURATION_BUILD_DIR environment variable should
-    //         contain a path to a destination directory. All produced files are placed in this directory and have
-    //         different names depending on their target (e.g. foo/bar/baz_linux.kexe and foo/bar/baz_macbook.kexe).
+    //         contain a path to a destination directory. All produced files are placed in this directory so IDE
+    //         should take care about setting different CONFIGURATION_BUILD_DIR for different targets.
     protected fun determineOutputPlacement(target: KonanTarget): OutputPlacement {
-        val configurationBuildDir =  EnvironmentVariables.configurationBuildDir
+        val configurationBuildDir = project.environmentVariables.configurationBuildDir
         return if (configurationBuildDir != null) {
-            OutputPlacement(configurationBuildDir,  "${name}_${target.visibleName}")
+            OutputPlacement(configurationBuildDir,  name)
         } else {
             OutputPlacement(defaultBaseDir.targetSubdir(target), name)
         }

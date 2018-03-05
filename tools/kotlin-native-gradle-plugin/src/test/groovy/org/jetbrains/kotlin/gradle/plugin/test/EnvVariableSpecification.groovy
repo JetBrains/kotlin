@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.jetbrains.kotlin.konan.target.Family
@@ -6,6 +22,8 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import spock.lang.Unroll
 
 import static org.jetbrains.kotlin.gradle.plugin.test.KonanProject.escapeBackSlashes
+
+// TODO: Rewrite tests using Kotlin.
 
 class EnvVariableSpecification extends BaseKonanSpecification {
 
@@ -49,10 +67,14 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         return project
     }
 
-    private WrapperResult runWrapper(KonanProject project, List<String> tasks, Map<String, String> environment = [:]) {
+    private WrapperResult runWrapper(KonanProject project,
+                                     List<String> tasks,
+                                     Map<String, String> environment = [:],
+                                     Map<String, String> properties = ["konan.useEnvironmentVariables": 'true']) {
         def wrapper = (HostManager.host.family == Family.WINDOWS) ? "gradlew.bat" : "gradlew"
         def command = ["$project.projectDir.absolutePath/$wrapper".toString()]
         command.addAll(tasks)
+        command.addAll(properties.collect { "-P${it.key}=${it.value}".toString() })
         def projectBuilder = new ProcessBuilder()
                 .directory(project.projectDir)
                 .command(command)
@@ -62,8 +84,11 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         return new WrapperResult(process)
     }
 
-    private WrapperResult runWrapper(KonanProject project, String task, Map<String, String> environment = [:]) {
-        return runWrapper(project, [task], environment)
+    private WrapperResult runWrapper(KonanProject project,
+                                     String task,
+                                     Map<String, String> environment = [:],
+                                     Map<String, String> properties = ["konan.useEnvironmentVariables": 'true']) {
+        return runWrapper(project, [task], environment, properties)
     }
 
     private String artifactFileName(String baseName, ArtifactType type, KonanTarget target = HostManager.host) {
@@ -85,7 +110,7 @@ class EnvVariableSpecification extends BaseKonanSpecification {
                 suffix = target.family.dynamicSuffix
                 break
         }
-        return "$prefix${baseName}_${target.visibleName}.$suffix"
+        return "$prefix${baseName}.$suffix"
     }
 
     @Unroll("Plugin should support #action debug via an env variable")
@@ -212,6 +237,101 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         destination2.exists()
         files1.contains(artifactFileName("main", ArtifactType.LIBRARY))
         files2.contains(artifactFileName("main", ArtifactType.LIBRARY))
+    }
+
+    def 'Plugin should ignore environmentVariables if konan.useEnvironmentVariables is false or is not set'() {
+        when:
+        def project = createProjectWithWrapper()
+        def newDestinationDir = project.createSubDir("newDestination")
+        def newDestinationPath = newDestinationDir.absolutePath
+        project.buildFile.append("""\
+            apply plugin: 'konan'
+            konanArtifacts {
+                program('program')
+                library('library')
+                dynamic('dynamic')
+                framework('framework')
+            }
+
+            task assertNoOverrides {
+                doLast {
+                    konanArtifacts.forEach { artifact ->
+                        artifact.forEach {
+                            if (it.destinationDir.absolutePath == '${escapeBackSlashes(newDestinationPath)}'){
+                                throw new AssertionError("CONFIGURATION_BUILD_DIR overrides a default output path " +
+                                                         "when it shouldn't.\\n" +
+                                                         "Task: \${it.name}, Path: \${it.destinationDir}")
+                            }
+                            
+                            if (it.enableDebug) {
+                                throw new AssertionError("DEBUGGING_SYMBOLS overrides a default value " +
+                                                         "when it shouldn't\\n" +
+                                                         "Task: \${it.name}")
+                            }
+                        }
+                    }
+                }
+            }
+            """.stripIndent())
+        def resultNoProp = runWrapper(project,
+                "assertNoOverrides",
+                ["DEBUGGING_SYMBOLS": "true", "CONFIGURATION_BUILD_DIR": newDestinationPath], [:])
+                .printStderr()
+                .getExitValue()
+        def resultFalseValue = runWrapper(project,
+                "assertNoOverrides",
+                ["DEBUGGING_SYMBOLS": "true", "CONFIGURATION_BUILD_DIR": newDestinationPath],
+                ["konan.useEnvironmentVariables": "false"])
+                .printStderr()
+                .getExitValue()
+
+        then:
+        resultNoProp == 0
+        resultFalseValue == 0
+    }
+
+    def 'Up-to-date checks should work with different directories for different targets'() {
+        when:
+        def project = createProjectWithWrapper()
+        def fooDir = project.createSubDir("foo")
+        def barDir = project.createSubDir("bar")
+        project.buildFile.append("""\
+            apply plugin: 'konan'
+            
+            konanArtifacts {
+                library('foo')
+                library('bar')
+            }
+            
+            task assertUpToDate {
+                dependsOn 'compileKonanFoo'
+                doLast {
+                    if (!konanArtifacts.foo.getByTarget('host').state.upToDate) {
+                        throw new AssertionError("Compilation task is not up-to-date")
+                    }
+                }
+            }
+            """.stripIndent())
+        project.generateSrcFile("main.kt")
+
+        def buildResult1 = runWrapper(project, "compileKonanFoo",
+                ["CONFIGURATION_BUILD_DIR": fooDir.absolutePath])
+                .printStderr()
+                .getExitValue()
+        def buildResult2 = runWrapper(project, "compileKonanBar",
+                ["CONFIGURATION_BUILD_DIR": barDir.absolutePath])
+                .printStderr()
+                .getExitValue()
+        def buildResult3 = runWrapper(project,
+                "assertUpToDate",
+                ["CONFIGURATION_BUILD_DIR": fooDir.absolutePath])
+                .printStderr()
+                .getExitValue()
+
+        then:
+        buildResult1 == 0
+        buildResult2 == 0
+        buildResult3 == 0
     }
 
 }
