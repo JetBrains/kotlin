@@ -1,4 +1,4 @@
-// "Create actual enum class for platform JS" "true"
+// "Create actual enum class for module js (JS)" "true"
 
 expect enum class <caret>MyEnum {
     FIRST,

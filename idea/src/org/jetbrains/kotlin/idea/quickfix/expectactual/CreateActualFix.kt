@@ -21,19 +21,18 @@ import com.intellij.ide.util.EditorHelper
 import com.intellij.ide.util.PackageUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.facet.implementingModules
 import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
@@ -47,6 +46,7 @@ import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
 sealed class CreateActualFix<out D : KtNamedDeclaration>(
     declaration: D,
+    private val actualModule: Module,
     private val actualPlatform: MultiTargetPlatform.Specific,
     private val generateIt: KtPsiFactory.(Project, D) -> D?
 ) : KotlinQuickFixAction<D>(declaration) {
@@ -55,7 +55,7 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
 
     protected abstract val elementType: String
 
-    override fun getText() = "Create actual $elementType for platform ${actualPlatform.platform}"
+    override fun getText() = "Create actual $elementType for module ${actualModule.name} (${actualPlatform.platform})"
 
     override fun startInWriteAction() = false
 
@@ -88,12 +88,6 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
         }
     }
 
-    private fun implementationModuleOf(expectedModule: Module) =
-        expectedModule.implementingModules.firstOrNull {
-            PackageUtil.checkSourceRootsConfigured(it, false) &&
-                    TargetPlatformDetector.getPlatform(it).multiTargetPlatform == actualPlatform
-        }
-
     private fun getOrCreateImplementationFile(): KtFile? {
         val declaration = element as? KtNamedDeclaration ?: return null
         val parent = declaration.parent
@@ -101,7 +95,7 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
             for (otherDeclaration in parent.declarations) {
                 if (otherDeclaration === declaration) continue
                 if (!otherDeclaration.hasExpectModifier()) continue
-                val actualDeclaration = otherDeclaration.actualsForExpected(actualPlatform).singleOrNull() ?: continue
+                val actualDeclaration = otherDeclaration.actualsForExpected(actualModule).singleOrNull() ?: continue
                 return actualDeclaration.containingKtFile
             }
         }
@@ -110,8 +104,6 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
         val expectedDir = declaration.containingFile.containingDirectory
         val expectedPackage = JavaDirectoryService.getInstance().getPackage(expectedDir)
 
-        val expectedModule = ModuleUtilCore.findModuleForPsiElement(declaration) ?: return null
-        val actualModule = implementationModuleOf(expectedModule) ?: return null
         val actualDirectory = PackageUtil.findOrCreateDirectoryForPackage(
             actualModule, expectedPackage?.qualifiedName ?: "", null, false
         ) ?: return null
@@ -147,11 +139,13 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
             val compatibility = d.c
             // For function we allow it, because overloads are possible
             if (compatibility.isNotEmpty() && declaration !is KtFunction) return null
-            val actualPlatform = d.b.getMultiTargetPlatform() as? MultiTargetPlatform.Specific ?: return null
+            val actualModuleDescriptor = d.b
+            val actualModule = (actualModuleDescriptor.getCapability(ModuleInfo.Capability) as? ModuleSourceInfo)?.module ?: return null
+            val actualPlatform = actualModuleDescriptor.getMultiTargetPlatform() as? MultiTargetPlatform.Specific ?: return null
             return when (declaration) {
-                is KtClassOrObject -> CreateActualClassFix(declaration, actualPlatform)
-                is KtFunction -> CreateActualFunctionFix(declaration, actualPlatform)
-                is KtProperty -> CreateActualPropertyFix(declaration, actualPlatform)
+                is KtClassOrObject -> CreateActualClassFix(declaration, actualModule, actualPlatform)
+                is KtFunction -> CreateActualFunctionFix(declaration, actualModule, actualPlatform)
+                is KtProperty -> CreateActualPropertyFix(declaration, actualModule, actualPlatform)
                 else -> null
             }
         }
@@ -160,8 +154,9 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
 
 class CreateActualClassFix(
     klass: KtClassOrObject,
+    actualModule: Module,
     actualPlatform: MultiTargetPlatform.Specific
-) : CreateActualFix<KtClassOrObject>(klass, actualPlatform, { project, element ->
+) : CreateActualFix<KtClassOrObject>(klass, actualModule, actualPlatform, { project, element ->
     generateClassOrObjectByExpectedClass(project, element, actualNeeded = true)
 }) {
 
@@ -182,8 +177,9 @@ class CreateActualClassFix(
 
 class CreateActualPropertyFix(
     property: KtProperty,
+    actualModule: Module,
     actualPlatform: MultiTargetPlatform.Specific
-) : CreateActualFix<KtProperty>(property, actualPlatform, { project, element ->
+) : CreateActualFix<KtProperty>(property, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
     descriptor?.let { generateProperty(project, element, descriptor, actualNeeded = true) }
 }) {
@@ -193,8 +189,9 @@ class CreateActualPropertyFix(
 
 class CreateActualFunctionFix(
     function: KtFunction,
+    actualModule: Module,
     actualPlatform: MultiTargetPlatform.Specific
-) : CreateActualFix<KtFunction>(function, actualPlatform, { project, element ->
+) : CreateActualFix<KtFunction>(function, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
     descriptor?.let { generateFunction(project, element, descriptor, actualNeeded = true) }
 }) {
