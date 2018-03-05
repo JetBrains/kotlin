@@ -28,13 +28,17 @@ dependencies {
     compileOnly(project(":compiler:daemon-common"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":js:js.frontend"))
-    compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
     embeddedComponents(project(":compiler:daemon-common")) { isTransitive = false }
     embeddedComponents(commonDep("net.rubygrapefruit", "native-platform"))
     nativePlatformVariants.forEach {
         embeddedComponents(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
+    }
+    compile(projectDist(":kotlin-reflect"))
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
+    compile("io.ktor:ktor-network:0.9.1-alpha-10") {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-reflect")
     }
 }
 
