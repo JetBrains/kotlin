@@ -1,0 +1,154 @@
+<project xmlns:if="ant:if" xmlns:unless="ant:unless" name="Update Dependencies" default="update">
+    <!--181 -> 182-->
+    <import file="common.xml" optional="false"/>
+
+    <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
+
+    <property name="kotlin.bootstrap.branch" value=""/>
+    <property name="kotlin.bootstrap.branch.locator" value=""/>
+    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
+    <property name="kotlin.bootstrap.locator.force" value="false"/>
+
+    <property name="bootstrap.build.no.tests" value="false"/>
+
+    <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
+    <!--
+    <property name="override.version.branch" value="${kotlin.bootstrap.branch.locator}"/>
+    <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,count:1,branch:${override.version.branch}"/>
+    -->
+    <!--<property name="override.version.disabled" value="true"/>-->
+
+    <condition property="kotlinc.executable.path" value="kotlinc.bat" else="kotlinc">
+        <os family="windows"/>
+    </condition>
+
+    <property name="kotlinx.coroutines.version" value="0.20"/>
+
+    <property name="generators" value="${basedir}/generators"/>
+
+    <property name="dependencies.info.file" value="${dependencies}/dependencies.properties"/>
+
+    <property name="gradle.libs.repo" value="http://repo.gradle.org/gradle/libs-releases-local"/>
+
+    <property file="${dependencies.info.file}" prefix="dependencies.info.prev"/>
+
+    <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies">
+    </target>
+
+    <!--<target name="update_teamcity" depends="fetch-third-party,fetch-annotations">-->
+        <!--<execute_update_with_idea_teamcity_artifacts-->
+            <!--teamcity.server.url="https://teamcity.jetbrains.com"-->
+            <!--build.locator.request="buildType:bt410,status:SUCCESS,branch:idea/${ideaVersion}-${idea.kotlin.branch}"/>-->
+    <!--</target>-->
+
+    <target name="fetch-third-party" depends="make-dependency-dirs">
+
+    </target>
+
+    <!--
+    Currently we use empty annotations.
+    Future options are:
+      - Drop the target when will be sure that custom annotations are unneeded
+      - Fill the target with downloading correct annotations
+    -->
+    <target name="fetch-annotations"/>
+
+    <target name="get_android_studio">
+        <condition property="android.os.tag" value="windows">
+            <os family="windows"/>
+        </condition>
+
+        <condition property="android.os.tag" value="mac">
+            <os family="mac"/>
+        </condition>
+
+        <condition property="android.os.tag" value="linux">
+            <and>
+                <os family="unix"/>
+                <not>
+                    <os family="mac"/>
+                </not>
+            </and>
+        </condition>
+
+        <local name="have.android.version"/>
+        <condition property="have.android.version">
+            <and>
+                <isset property="android.version"/>
+                <isset property="android.build.version"/>
+            </and>
+        </condition>
+
+        <sequential unless:set="have.android.version">
+            <loadresource property="android.version">
+                <url url="http://tools.android.com/download/studio/canary/latest"/>
+                <filterchain>
+                    <tokenfilter>
+                        <filetokenizer/>
+                        <replaceregex
+                            pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/([\d\.]+)/android-studio-ide(.*)$"
+                            replace="\2" flags="s"/>
+                    </tokenfilter>
+                </filterchain>
+            </loadresource>
+            <loadresource property="android.build.version">
+                <url url="http://tools.android.com/download/studio/canary/latest"/>
+                <filterchain>
+                    <tokenfilter>
+                        <filetokenizer/>
+                        <replaceregex
+                            pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/[\d\.]+/android-studio-ide-([\d\.]+)-(.*)$"
+                            replace="\2" flags="s"/>
+                    </tokenfilter>
+                </filterchain>
+            </loadresource>
+        </sequential>
+
+        <echo message="Download android studio: ${android.version} ${android.build.version}"/>
+
+        <property name="android.file.name" value="android-studio-ide-${android.build.version}-${android.os.tag}.zip"/>
+        <property name="android.studio.url"
+                  value="http://dl.google.com/dl/android/studio/ide-zips/${android.version}/${android.file.name}"/>
+        <property name="android.destination.dir" value="android-studio/sdk"/>
+
+        <mkdir dir="${dependencies}/download"/>
+
+        <get src="${android.studio.url}" dest="${dependencies}/download" usetimestamp="true"/>
+
+        <delete dir="${android.destination.dir}" failonerror="false" includeemptydirs="true">
+            <exclude name="config/**"/>
+            <exclude name="system/**"/>
+        </delete>
+
+        <unzip src="${dependencies}/download/${android.file.name}" dest="${android.destination.dir}">
+            <cutdirsmapper dirs="1"/>
+        </unzip>
+
+        <local name="android.studio.mac"/>
+        <condition property="android.studio.mac">
+            <matches pattern=".+mac\.zip" string="${android.file.name}"/>
+        </condition>
+
+        <local name="android.studio.linux"/>
+        <condition property="android.studio.linux">
+            <matches pattern=".+linux\.zip" string="${android.file.name}"/>
+        </condition>
+
+        <exec executable="chmod" if:set="android.studio.mac">
+            <arg value="a+x"/>
+            <arg path="${android.destination.dir}/bin/fsnotifier"/>
+            <arg path="${android.destination.dir}/bin/inspect.sh"/>
+            <arg path="${android.destination.dir}/bin/printenv.py"/>
+            <arg path="${android.destination.dir}/bin/update_studio.sh"/>
+        </exec>
+
+        <exec executable="chmod" if:set="android.studio.linux">
+            <arg value="a+x"/>
+            <arg path="${android.destination.dir}/bin/fsnotifier"/>
+            <arg path="${android.destination.dir}/bin/fsnotifier64"/>
+            <arg path="${android.destination.dir}/bin/inspect.sh"/>
+            <arg path="${android.destination.dir}/bin/studio.sh"/>
+            <arg path="${android.destination.dir}/bin/update_studio.sh"/>
+        </exec>
+    </target>
+</project>
