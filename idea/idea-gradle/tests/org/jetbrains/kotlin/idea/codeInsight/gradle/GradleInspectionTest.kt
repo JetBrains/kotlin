@@ -62,6 +62,39 @@ class GradleInspectionTest : GradleImportingTestCase() {
     }
 
     @Test
+    fun testDifferentStdlibGradleVersionWithImplementation() {
+        val localFile = createProjectSubFile(
+            "build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.2")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib:1.0.3"
+            }
+        """
+        )
+        importProject()
+
+        val tool = DifferentStdlibGradleVersionInspection()
+        val problems = getInspectionResult(tool, localFile)
+
+        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals("Plugin version (1.0.2) is not the same as library version (1.0.3)", problems.single())
+    }
+
+    @Test
     fun testDifferentStdlibJre7GradleVersion() {
         val localFile = createProjectSubFile(
             "build.gradle", """
@@ -259,6 +292,42 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.0"
+            }
+        """
+        )
+        importProject()
+
+        val tool = DeprecatedGradleDependencyInspection()
+        val problems = getInspectionResult(tool, localFile)
+
+        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals(
+            "kotlin-stdlib-jre7 is deprecated since 1.2.0 and should be replaced with kotlin-stdlib-jdk7",
+            problems.single()
+        )
+    }
+
+    @Test
+    fun testJreIsDeprecatedWithImplementation() {
+        val localFile = createProjectSubFile(
+            "build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.0"
             }
         """
         )

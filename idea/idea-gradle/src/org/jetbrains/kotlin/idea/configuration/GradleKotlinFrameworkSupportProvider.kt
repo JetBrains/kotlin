@@ -89,7 +89,7 @@ abstract class GradleKotlinFrameworkSupportProvider(
             .addBuildscriptPropertyDefinition("ext.kotlin_version = '$kotlinVersion'")
 
         for (dependency in getDependencies(sdk)) {
-            buildScriptData.addDependencyNotation(KotlinWithGradleConfigurator.getGroovyDependencySnippet(dependency))
+            buildScriptData.addDependencyNotation(KotlinWithGradleConfigurator.getGroovyDependencySnippet(dependency, "compile"))
         }
         for (dependency in getTestDependencies()) {
             buildScriptData.addDependencyNotation(

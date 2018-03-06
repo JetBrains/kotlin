@@ -25,6 +25,7 @@ import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.idea.configuration.allModules
 import org.jetbrains.kotlin.idea.configuration.getWholeModuleGroup
 import org.jetbrains.kotlin.idea.inspections.ReplaceStringInDocumentFix
+import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
 import org.jetbrains.kotlin.idea.versions.DEPRECATED_LIBRARIES_INFORMATION
 import org.jetbrains.kotlin.idea.versions.DeprecatedLibInfo
 import org.jetbrains.kotlin.idea.versions.LibInfo
@@ -47,7 +48,8 @@ class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
             val dependenciesCall = closure.getStrictParentOfType<GrMethodCall>() ?: return
             if (dependenciesCall.invokedExpression.text != "dependencies") return
 
-            val dependencyEntries = GradleHeuristicHelper.findStatementWithPrefix(closure, "compile")
+            val dependencyEntries = GradleHeuristicHelper.findStatementWithPrefixes(
+                closure, PRODUCTION_DEPENDENCY_STATEMENTS)
             for (dependencyStatement in dependencyEntries) {
                 visitDependencyEntry(dependencyStatement)
             }

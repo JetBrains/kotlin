@@ -30,6 +30,8 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrC
 import java.util.*
 
 object GradleHeuristicHelper {
+    val PRODUCTION_DEPENDENCY_STATEMENTS = setOf("classpath", "compile", "api", "implementation", "compileOnly", "runtimeOnly")
+
     fun getHeuristicVersionInBuildScriptDependency(classpathStatement: GrCallExpression): String? {
         val argumentList = when (classpathStatement) {
             is GrMethodCall -> classpathStatement.argumentList // classpath('argument')
@@ -83,14 +85,18 @@ object GradleHeuristicHelper {
         return null
     }
 
-    fun findStatementWithPrefix(closure: GrClosableBlock, prefix: String): List<GrCallExpression> {
+    fun findStatementWithPrefix(closure: GrClosableBlock, prefix: String) =
+        findStatementWithPrefixes(closure, setOf(prefix))
+
+    fun findStatementWithPrefixes(closure: GrClosableBlock, prefixes: Set<String>): List<GrCallExpression> {
         val applicationStatements = closure.getChildrenOfType<GrCallExpression>()
 
         val classPathStatements = ArrayList<GrCallExpression>()
 
         for (statement in applicationStatements) {
             val startExpression = statement.getChildrenOfType<GrReferenceExpression>().firstOrNull() ?: continue
-            if (prefix == startExpression.text) {
+            val expressionText = startExpression.text ?: continue
+            if (expressionText in prefixes) {
                 classPathStatements.add(statement)
             }
         }

@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -105,10 +106,10 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
     override fun getKotlinStdlibVersion(): String? = kotlinScript.getKotlinStdlibVersion()
 
     private fun KtBlockExpression.addCompileStdlibIfMissing(stdlibArtifactName: String): KtCallExpression? =
-        findCompileStdLib() ?: addExpressionIfMissing(getCompileDependencySnippet(KOTLIN_GROUP_ID, stdlibArtifactName)) as? KtCallExpression
+        findStdLibDependency() ?: addExpressionIfMissing(getCompileDependencySnippet(KOTLIN_GROUP_ID, stdlibArtifactName)) as? KtCallExpression
 
     private fun KtFile.containsCompileStdLib(): Boolean =
-        findScriptInitializer("dependencies")?.getBlock()?.findCompileStdLib() != null
+        findScriptInitializer("dependencies")?.getBlock()?.findStdLibDependency() != null
 
     private fun KtFile.containsApplyKotlinPlugin(pluginName: String): Boolean =
         findScriptInitializer("apply")?.getBlock()?.findPlugin(pluginName) != null
@@ -137,7 +138,7 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
 
     private fun KtFile.getKotlinStdlibVersion(): String? {
         return findScriptInitializer("dependencies")?.getBlock()?.let {
-            val expression = it.findCompileStdLib()?.valueArguments?.firstOrNull()?.getArgumentExpression()
+            val expression = it.findStdLibDependency()?.valueArguments?.firstOrNull()?.getArgumentExpression()
             when (expression) {
                 is KtCallExpression -> expression.valueArguments[1].text.trim('\"')
                 is KtStringTemplateExpression -> expression.text?.trim('\"')?.substringAfterLast(":")?.removePrefix("$")
@@ -146,9 +147,10 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
         }
     }
 
-    private fun KtBlockExpression.findCompileStdLib(): KtCallExpression? {
+    private fun KtBlockExpression.findStdLibDependency(): KtCallExpression? {
         return PsiTreeUtil.getChildrenOfType(this, KtCallExpression::class.java)?.find {
-            it.calleeExpression?.text == "compile" && (it.valueArguments.firstOrNull()?.getArgumentExpression()?.isKotlinStdLib() ?: false)
+            val calleeText = it.calleeExpression?.text
+            calleeText in PRODUCTION_DEPENDENCY_STATEMENTS && (it.valueArguments.firstOrNull()?.getArgumentExpression()?.isKotlinStdLib() ?: false)
         }
     }
 

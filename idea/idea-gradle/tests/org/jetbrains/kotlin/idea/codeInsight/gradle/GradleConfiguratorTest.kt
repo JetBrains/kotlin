@@ -255,6 +255,39 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
+    fun testListNonConfiguredModules_ConfiguredWithImplementation() {
+        createProjectSubFile("settings.gradle", "include ':app'")
+        createProjectSubFile(
+            "app/build.gradle", """
+        buildscript {
+            repositories {
+                jcenter()
+                mavenCentral()
+            }
+        }
+
+        apply plugin: 'java'
+
+        repositories {
+            jcenter()
+            mavenCentral()
+        }
+
+        dependencies {
+            implementation "org.jetbrains.kotlin:kotlin-stdlib:1.1.3"
+        }
+        """.trimIndent()
+        )
+        createProjectSubFile("app/src/main/java/foo.kt", "")
+
+        importProject()
+
+        runReadAction {
+            assertEmpty(getCanBeConfiguredModulesWithKotlinFiles(myProject))
+        }
+    }
+
+    @Test
     fun testListNonConfiguredModules_ConfiguredOnlyTest() {
         createProjectSubFile("settings.gradle", "include ':app'")
         createProjectSubFile(

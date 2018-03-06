@@ -20,8 +20,8 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
 import org.jetbrains.kotlin.idea.versions.*
-import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
@@ -29,7 +29,6 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyFileBase
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElement
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrCallExpression
 import java.util.*
 
@@ -70,8 +69,6 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
     }
 
     companion object {
-        val COMPILE_DEPENDENCY_STATEMENTS = listOf("classpath", "compile")
-
         fun getKotlinStdlibVersions(gradleFile: GroovyFileBase, libraryId: List<String>): Collection<String> {
             val versions = LinkedHashSet<String>()
             val visitor = object : VersionFinder(libraryId) {
@@ -88,18 +85,9 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
         }
 
         private fun findLibraryStatement(closure: GrClosableBlock, libraryGroup: String, libraryIds: List<String>): GrCallExpression? {
-            val applicationStatements = closure.getChildrenOfType<GrCallExpression>()
-
-            for (statement in applicationStatements) {
-                val startExpression = statement.getChildrenOfType<GrReferenceExpression>().firstOrNull() ?: continue
-                if (startExpression.text in COMPILE_DEPENDENCY_STATEMENTS) {
-                    if (libraryIds.any { it in statement.text } && statement.text.contains(libraryGroup)) {
-                        return statement
-                    }
-                }
+            return GradleHeuristicHelper.findStatementWithPrefixes(closure, PRODUCTION_DEPENDENCY_STATEMENTS).firstOrNull { statement ->
+                libraryIds.any { it in statement.text } && statement.text.contains(libraryGroup)
             }
-
-            return null
         }
 
         fun getResolvedKotlinStdlibVersion(file: PsiFile, libraryIds: List<String>): String? {
