@@ -34,22 +34,22 @@ class KotlinRenameDispatcherHandler : RenameHandler {
         private val handlers: Array<out RenameHandler> get() = Extensions.getExtensions(EP_NAME)
     }
 
-    internal fun getRenameHandler(dataContext: DataContext?): RenameHandler? {
+    internal fun getRenameHandler(dataContext: DataContext): RenameHandler? {
         val availableHandlers = handlers.filterTo(LinkedHashSet()) { it.isRenaming(dataContext) }
         availableHandlers.singleOrNull()?.let { return it }
         availableHandlers.firstIsInstanceOrNull<KotlinMemberInplaceRenameHandler>()?.let { availableHandlers -= it }
         return availableHandlers.firstOrNull()
     }
 
-    override fun isAvailableOnDataContext(dataContext: DataContext?) = handlers.any { it.isAvailableOnDataContext(dataContext) }
+    override fun isAvailableOnDataContext(dataContext: DataContext) = handlers.any { it.isAvailableOnDataContext(dataContext) }
 
-    override fun isRenaming(dataContext: DataContext?) = isAvailableOnDataContext(dataContext)
+    override fun isRenaming(dataContext: DataContext) = isAvailableOnDataContext(dataContext)
 
-    override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
+    override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
         getRenameHandler(dataContext)?.invoke(project, editor, file, dataContext)
     }
 
-    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
+    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
         getRenameHandler(dataContext)?.invoke(project, elements, dataContext)
     }
 }

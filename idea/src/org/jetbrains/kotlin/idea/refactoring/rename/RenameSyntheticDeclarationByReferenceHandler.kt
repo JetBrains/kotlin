@@ -18,15 +18,14 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
 
 class RenameSyntheticDeclarationByReferenceHandler : RenameHandler {
-    override fun isAvailableOnDataContext(dataContext: DataContext?): Boolean {
-        if (dataContext == null) return false
+    override fun isAvailableOnDataContext(dataContext: DataContext): Boolean {
         val file = CommonDataKeys.PSI_FILE.getData(dataContext) ?: return false
         val editor = CommonDataKeys.EDITOR.getData(dataContext) ?: return false
         val refExpression = file.findElementForRename<KtSimpleNameExpression>(editor.caretModel.offset) ?: return false
         return (refExpression.resolveToCall()?.resultingDescriptor)?.isSynthesized ?: false
     }
 
-    override fun isRenaming(dataContext: DataContext?) = isAvailableOnDataContext(dataContext)
+    override fun isRenaming(dataContext: DataContext) = isAvailableOnDataContext(dataContext)
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         CodeInsightUtils.showErrorHint(project, editor, "Rename is not applicable to synthetic declaration", "Rename", null)
