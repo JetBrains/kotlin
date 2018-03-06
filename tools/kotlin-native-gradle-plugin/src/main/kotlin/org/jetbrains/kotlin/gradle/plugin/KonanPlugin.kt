@@ -238,7 +238,7 @@ open class KonanExtension {
     var targets = mutableListOf("host")
     var languageVersion: String? = null
     var apiVersion: String? = null
-    val jvmArgs = mutableListOf<String>()
+    var jvmArgs = mutableListOf<String>()
 }
 
 class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderRegistry)

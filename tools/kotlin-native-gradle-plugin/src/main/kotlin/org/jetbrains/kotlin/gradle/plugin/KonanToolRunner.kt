@@ -53,6 +53,10 @@ internal abstract class KonanCliRunner(val toolName: String, val fullName: Strin
             "-ea",
             "-Dkonan.home=${project.konanHome}",
             "-Djava.library.path=${project.konanHome}/konan/nativelib").apply {
+        if (project.konanExtension.jvmArgs.none { it.startsWith("-Xmx") } &&
+            project.jvmArgs.none { it.startsWith("-Xmx") }) {
+            add("-Xmx3G")
+        }
         addAll(project.konanExtension.jvmArgs)
         addAll(project.jvmArgs)
     }
