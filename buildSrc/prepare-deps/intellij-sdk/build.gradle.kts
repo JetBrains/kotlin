@@ -97,7 +97,7 @@ dependencies {
         }
     }
     sources("com.jetbrains.intellij.idea:ideaIC:$intellijVersion:sources@jar")
-    `asm-shaded-sources`("asmsources:asm-src:$platformBaseVersion@zip")
+    `asm-shaded-sources`("asmsources:asm-src:181@zip")
     `jps-standalone`("com.jetbrains.intellij.idea:jps-standalone:$intellijVersion")
     `jps-build-test`("com.jetbrains.intellij.idea:jps-build-test:$intellijVersion")
     `intellij-core`("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
