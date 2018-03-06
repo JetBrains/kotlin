@@ -96,7 +96,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     data class OutputPlacement(val destinationDir: File, val artifactName: String)
 
     // There are two options for output placement.
-    //      1. Gradle's build directory. We use it by default, e.g. if user runs gradle from command line.
+    //      1. Gradle's build directory. We use it by default, e.g. if user runs Gradle from command line.
     //         In this case all produced files has the same name but are placed in different directories
     //         depending on their targets (e.g. linux/foo.kexe and macbook/foo.kexe).
     //      2. Custom path provided by IDE. In this case CONFIGURATION_BUILD_DIR environment variable should
