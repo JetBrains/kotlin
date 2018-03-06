@@ -285,11 +285,12 @@ allprojects {
 
     val repos: List<String> by rootProject.extra
     repositories {
+        intellijSdkRepo(project)
+
         for (repo in repos) {
             maven(repo)
         }
 
-        intellijSdkRepo(project)
         androidDxJarRepo(project)
     }
 
