@@ -19,8 +19,14 @@ val androidStudioVersion = if (extra.has("versions.androidStudioRelease"))
 else
     null
 
-val platform = androidStudioVersion?.let { "AS" + it }
-        ?: extra["versions.intellijSdk"].toString().substringBefore('.')
+val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
+val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
+if (intellijVersionDelimiterIndex == -1) {
+    error("Invalid IDEA version $intellijVersion")
+}
+
+val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterIndex)
+val platform = androidStudioVersion?.let { "AS$it" } ?: platformBaseVersion
 
 when (platform) {
     "181" -> {
