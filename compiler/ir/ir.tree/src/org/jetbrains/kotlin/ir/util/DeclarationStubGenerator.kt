@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -80,7 +81,7 @@ class DeclarationStubGenerator(
             },
             descriptor.original
         ).also { irFunction ->
-            generateTypeParameterStubs(descriptor.typeParameters, irFunction)
+            generateTypeParameterStubs(descriptor.propertyIfAccessor.typeParameters, irFunction)
             generateValueParametersStubs(irFunction)
         }
 
