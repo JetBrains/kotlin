@@ -16,13 +16,10 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.backend.common.descriptors.allParameters
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.backend.konan.isObjCClass
-import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
@@ -43,8 +40,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 
@@ -52,7 +47,7 @@ internal object DataFlowIR {
 
     abstract class Type {
         // Special marker type forbidding devirtualization on its instances.
-        object Virtual : Declared(false, true, null, -1)
+        object Virtual : Declared(false, true, null, null, -1)
 
         class External(val hash: Long, val name: String? = null) : Type() {
             override fun equals(other: Any?): Boolean {
@@ -71,14 +66,16 @@ internal object DataFlowIR {
             }
         }
 
-        abstract class Declared(val isFinal: Boolean, val isAbstract: Boolean, val module: Module?, val symbolTableIndex: Int) : Type() {
+        abstract class Declared(val isFinal: Boolean, val isAbstract: Boolean, val correspondingValueType: ValueType?,
+                                val module: Module?, val symbolTableIndex: Int) : Type() {
             val superTypes = mutableListOf<Type>()
             val vtable = mutableListOf<FunctionSymbol>()
             val itable = mutableMapOf<Long, FunctionSymbol>()
         }
 
-        class Public(val hash: Long, isFinal: Boolean, isAbstract: Boolean, module: Module, symbolTableIndex: Int, val name: String? = null)
-            : Declared(isFinal, isAbstract, module, symbolTableIndex) {
+        class Public(val hash: Long, isFinal: Boolean, isAbstract: Boolean, correspondingValueType: ValueType?,
+                     module: Module, symbolTableIndex: Int, val name: String? = null)
+            : Declared(isFinal, isAbstract, correspondingValueType, module, symbolTableIndex) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
@@ -95,8 +92,9 @@ internal object DataFlowIR {
             }
         }
 
-        class Private(val index: Int, isFinal: Boolean, isAbstract: Boolean, module: Module, symbolTableIndex: Int, val name: String? = null)
-            : Declared(isFinal, isAbstract, module, symbolTableIndex) {
+        class Private(val index: Int, isFinal: Boolean, isAbstract: Boolean, correspondingValueType: ValueType?,
+                      module: Module, symbolTableIndex: Int, val name: String? = null)
+            : Declared(isFinal, isAbstract, correspondingValueType, module, symbolTableIndex) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -481,12 +479,13 @@ internal object DataFlowIR {
 
             val isFinal = descriptor.isFinal()
             val isAbstract = descriptor.isAbstract()
-            val placeToClassTable = !descriptor.defaultType.isValueType()
+            val correspondingValueType = descriptor.defaultType.correspondingValueType
+            val placeToClassTable = correspondingValueType == null
             val symbolTableIndex = if (placeToClassTable) module.numberOfClasses++ else -1
             val type = if (descriptor.isExported())
-                           Type.Public(name.localHash.value, isFinal, isAbstract, module, symbolTableIndex, takeName { name })
+                           Type.Public(name.localHash.value, isFinal, isAbstract, correspondingValueType, module, symbolTableIndex, takeName { name })
                        else
-                           Type.Private(privateTypeIndex++, isFinal, isAbstract, module, symbolTableIndex, takeName { name })
+                           Type.Private(privateTypeIndex++, isFinal, isAbstract, correspondingValueType, module, symbolTableIndex, takeName { name })
             if (!isAbstract) {
                 val vtableBuilder = context.getVtableBuilder(descriptor)
                 type.vtable += vtableBuilder.vtableEntries.map { mapFunction(it.getImplementation(context)!!) }

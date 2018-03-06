@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import sun.misc.Unsafe
 import kotlin.reflect.KClass
@@ -223,15 +224,16 @@ internal object DFGSerializer {
         }
     }
 
-    class DeclaredType(val isFinal: Boolean, val isAbstract: Boolean, val index: Int, val superTypes: IntArray,
-                       val vtable: IntArray, val itable: Array<ItableSlot>) {
+    class DeclaredType(val isFinal: Boolean, val isAbstract: Boolean, val correspondingValueType: ValueType?,
+                       val index: Int, val superTypes: IntArray, val vtable: IntArray, val itable: Array<ItableSlot>) {
 
-        constructor(data: ArraySlice) : this(data.readBoolean(), data.readBoolean(), data.readInt(), data.readIntArray(),
-                data.readIntArray(), data.readArray { ItableSlot(this) })
+        constructor(data: ArraySlice) : this(data.readBoolean(), data.readBoolean(), data.readNullableInt()?.let { ValueType.values()[it] },
+                data.readInt(), data.readIntArray(), data.readIntArray(), data.readArray { ItableSlot(this) })
 
         fun write(result: ArraySlice) {
             result.writeBoolean(isFinal)
             result.writeBoolean(isAbstract)
+            result.writeNullableInt(correspondingValueType?.ordinal)
             result.writeInt(index)
             result.writeIntArray(superTypes)
             result.writeIntArray(vtable)
@@ -759,10 +761,12 @@ internal object DFGSerializer {
         val types = typeMap.entries
                 .sortedBy { it.value }
                 .map {
+
                     fun buildTypeIntestines(type: DataFlowIR.Type.Declared) =
                             DeclaredType(
                                     type.isFinal,
                                     type.isAbstract,
+                                    type.correspondingValueType,
                                     type.symbolTableIndex,
                                     type.superTypes.map { typeMap[it]!! }.toIntArray(),
                                     type.vtable.map { functionSymbolMap[it]!! }.toIntArray(),
@@ -927,8 +931,8 @@ internal object DFGSerializer {
                                 val symbolTableIndex = public.intestines.index
                                 if (symbolTableIndex >= 0)
                                     ++module.numberOfClasses
-                                DataFlowIR.Type.Public(public.hash, public.intestines.isFinal,
-                                        public.intestines.isAbstract, module, symbolTableIndex, public.name).also {
+                                DataFlowIR.Type.Public(public.hash, public.intestines.isFinal, public.intestines.isAbstract,
+                                         public.intestines.correspondingValueType, module, symbolTableIndex, public.name).also {
                                     publicTypesMap.put(it.hash, it)
                                     allTypes += it
                                 }
@@ -939,7 +943,8 @@ internal object DFGSerializer {
                                 if (symbolTableIndex >= 0)
                                     ++module.numberOfClasses
                                 DataFlowIR.Type.Private(privateTypeIndex++, private.intestines.isFinal,
-                                        private.intestines.isAbstract, module, symbolTableIndex, private.name).also {
+                                        private.intestines.isAbstract, private.intestines.correspondingValueType,
+                                        module, symbolTableIndex, private.name).also {
                                     allTypes += it
                                 }
                             }
