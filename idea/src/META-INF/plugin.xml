@@ -777,6 +777,7 @@
     <annotationSupport language="kotlin" implementationClass="com.intellij.psi.impl.source.tree.java.JavaAnnotationSupport"/>
 
     <createFromTemplateHandler implementation="org.jetbrains.kotlin.idea.actions.KotlinCreateFromTemplateHandler"/>
+    <defaultTemplatePropertiesProvider implementation="org.jetbrains.kotlin.idea.actions.KotlinDefaultTemplatePropertiesProvider" order="last"/>
 
     <nameSuggestionProvider implementation="org.jetbrains.kotlin.idea.core.KotlinNameSuggestionProvider"/>
 

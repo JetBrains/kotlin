@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.move.changePackage
@@ -28,7 +17,8 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackages
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.RefactoringMessageUtil
 import org.jetbrains.kotlin.idea.core.getFqNameByDirectory
-import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
+import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
+import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.isInjectedFragment
@@ -40,34 +30,38 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
 class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            object : KtVisitorVoid() {
-                override fun visitPackageDirective(directive: KtPackageDirective) {
-                    super.visitPackageDirective(directive)
-                    if (directive.text.isEmpty()) return
+        object : KtVisitorVoid() {
+            override fun visitPackageDirective(directive: KtPackageDirective) {
+                super.visitPackageDirective(directive)
+                if (directive.text.isEmpty()) return
 
-                    val file = directive.containingKtFile
-                    if (file.isInjectedFragment || file.packageMatchesDirectory()) return
+                val file = directive.containingKtFile
+                if (file.isInjectedFragment || file.packageMatchesDirectoryOrImplicit()) return
 
-                    val fixes = mutableListOf<LocalQuickFix>()
-                    val qualifiedName = directive.qualifiedName
-                    val dirName = if (qualifiedName.isEmpty()) "source root" else "'${qualifiedName.replace('.', '/')}'"
-                    fixes += MoveFileToPackageFix(dirName)
-                    val fqNameByDirectory = file.getFqNameByDirectory()
-                    when {
-                        fqNameByDirectory.isRoot ->
-                            fixes += ChangePackageFix("source root")
-                        fqNameByDirectory.hasIdentifiersOnly() ->
-                            fixes += ChangePackageFix("'${fqNameByDirectory.asString()}'")
-                    }
-
-                    holder.registerProblem(
-                            directive,
-                            "Package directive doesn't match file location",
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            *fixes.toTypedArray()
-                    )
+                val fixes = mutableListOf<LocalQuickFix>()
+                val qualifiedName = directive.qualifiedName
+                val dirName = if (qualifiedName.isEmpty()) "source root" else "'${qualifiedName.replace('.', '/')}'"
+                fixes += MoveFileToPackageFix(dirName)
+                val fqNameByDirectory = file.getFqNameByDirectory()
+                when {
+                    fqNameByDirectory.isRoot ->
+                        fixes += ChangePackageFix("source root", fqNameByDirectory)
+                    fqNameByDirectory.hasIdentifiersOnly() ->
+                        fixes += ChangePackageFix("'${fqNameByDirectory.asString()}'", fqNameByDirectory)
                 }
+                val fqNameWithImplicitPrefix = file.parent?.getFqNameWithImplicitPrefix()
+                if (fqNameWithImplicitPrefix != null && fqNameWithImplicitPrefix != fqNameByDirectory) {
+                    fixes += ChangePackageFix("'${fqNameWithImplicitPrefix.asString()}'", fqNameWithImplicitPrefix)
+                }
+
+                holder.registerProblem(
+                    directive,
+                    "Package directive doesn't match file location",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    *fixes.toTypedArray()
+                )
             }
+        }
 
     private class MoveFileToPackageFix(val dirName: String) : LocalQuickFix {
         override fun getFamilyName() = "Move file to package-matching directory"
@@ -84,10 +78,9 @@ class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
             val packageWrapper = PackageWrapper(PsiManager.getInstance(project), directive.qualifiedName)
             val fileToMove = directive.containingFile
             val chosenRoot =
-                    sourceRoots.singleOrNull()
-                    ?: MoveClassesOrPackagesUtil.chooseSourceRoot(packageWrapper, sourceRoots,
-                                                                  fileToMove.containingDirectory)
-                    ?: return
+                sourceRoots.singleOrNull()
+                        ?: MoveClassesOrPackagesUtil.chooseSourceRoot(packageWrapper, sourceRoots, fileToMove.containingDirectory)
+                        ?: return
             val targetDirFactory = AutocreatingSingleSourceRootMoveDestination(packageWrapper, chosenRoot)
             targetDirFactory.verify(fileToMove)?.let {
                 Messages.showMessageDialog(project, it, CommonBundle.getErrorTitle(), Messages.getErrorIcon())
@@ -108,7 +101,7 @@ class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
         }
     }
 
-    private class ChangePackageFix(val packageName: String) : LocalQuickFix {
+    private class ChangePackageFix(val packageName: String, val packageFqName: FqName) : LocalQuickFix {
         override fun getFamilyName() = "Change file's package to match directory"
 
         override fun getName() = "Change file's package to $packageName"
@@ -116,10 +109,7 @@ class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val directive = descriptor.psiElement as? KtPackageDirective ?: return
             val file = directive.containingKtFile
-            val newFqName = file.getFqNameByDirectory()
-            if (!newFqName.hasIdentifiersOnly()) return
-            KotlinChangePackageRefactoring(file).run(newFqName)
-
+            KotlinChangePackageRefactoring(file).run(packageFqName)
         }
     }
 }

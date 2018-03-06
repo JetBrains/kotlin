@@ -63,7 +63,7 @@ class PluginDeclarationProviderFactory(
     private fun stubBasedPackageExists(name: FqName): Boolean {
         // We're only looking for source-based declarations
         val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return false
-        return ServiceManager.getService(project, PerModulePackageCacheService::class.java).packageExists(name, moduleInfo)
+        return PerModulePackageCacheService.getInstance(project).packageExists(name, moduleInfo)
     }
 
     private fun getStubBasedPackageMemberDeclarationProvider(name: FqName): PackageMemberDeclarationProvider? {
