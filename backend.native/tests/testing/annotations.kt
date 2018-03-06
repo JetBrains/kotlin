@@ -20,16 +20,16 @@ object IgnoredObject {
 
 class A {
     companion object {
-        @BeforeEach fun before() { println("before (A.companion)") }
-        @AfterEach fun after() { println("after (A.companion)") }
+        @BeforeTest fun before() { println("before (A.companion)") }
+        @AfterTest fun after() { println("after (A.companion)") }
         @Test fun test1() { println("test1 (A.companion)") }
 
         @BeforeClass fun beforeClass() { println("beforeClass (A.companion)") }
         @AfterClass fun afterClass() { println("afterClass (A.companion)") }
     }
 
-    @BeforeEach fun before() { println("before (A)") }
-    @AfterEach fun after() { println("after (A)") }
+    @BeforeTest fun before() { println("before (A)") }
+    @AfterTest fun after() { println("after (A)") }
     @Test fun test1() { println("test1 (A)") }
     @Ignore @Test fun ignoredTest() { throw AssertionError("Ignored test") }
 

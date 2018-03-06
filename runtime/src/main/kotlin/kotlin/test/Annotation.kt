@@ -58,3 +58,6 @@ annotation class AfterEach
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 annotation class Ignore
+
+typealias AfterTest = AfterEach
+typealias BeforeTest = BeforeEach
