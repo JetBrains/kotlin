@@ -65,6 +65,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addBracesForIfWithSemicolonAndExpression.kt")
+        public void testAddBracesForIfWithSemicolonAndExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/addBracesForIfWithSemicolonAndExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("addBracesForWhile.kt")
         public void testAddBracesForWhile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/addBracesForWhile.kt");

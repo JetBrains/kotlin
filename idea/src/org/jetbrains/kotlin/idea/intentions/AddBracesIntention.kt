@@ -19,12 +19,11 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import java.lang.IllegalArgumentException
 
 class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Add braces") {
@@ -53,8 +52,15 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val expression = element.getTargetExpression(editor.caretModel.offset)!!
 
-        if (element.nextSibling?.text == ";") {
-            element.nextSibling!!.delete()
+        val psiFactory = KtPsiFactory(element)
+
+        val semicolon = element.getNextSiblingIgnoringWhitespaceAndComments()?.takeIf { it.node.elementType == KtTokens.SEMICOLON }
+        if (semicolon != null) {
+            val afterSemicolon = semicolon.getNextSiblingIgnoringWhitespace()
+            if (semicolon.getLineNumber() == afterSemicolon?.getLineNumber())
+                semicolon.replace(psiFactory.createNewLine())
+            else
+                semicolon.delete()
         }
 
         val nextComment = when {
@@ -68,7 +74,6 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         }
         nextComment?.delete()
 
-        val psiFactory = KtPsiFactory(element)
         val result = expression.replace(psiFactory.createSingleStatementBlock(expression))
 
         if (element is KtDoWhileExpression) { // remove new line between '}' and while
