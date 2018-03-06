@@ -113,12 +113,13 @@ interface JKClassReference : JKReference {
     override val target: JKClass
 }
 
-interface JKType : JKElement {
+interface JKType : JKElement
+
+interface JKClassType : JKType {
     val classReference: JKClassReference
     val nullability: Nullability
     val parameters: List<JKType>
 }
-
 
 interface JKOperatorIdentifier : JKIdentifier
 
@@ -133,8 +134,6 @@ interface JKBlock : JKElement {
 }
 
 interface JKIdentifier : JKElement
-
-interface JKTypeIdentifier : JKIdentifier
 
 interface JKNameIdentifier : JKIdentifier {
     val name: String
@@ -151,7 +150,7 @@ interface JKModifier : JKElement
 interface JKAccessModifier : JKModifier
 
 interface JKValueArgument : JKElement {
-    val type: JKTypeIdentifier
+    val type: JKType
     val name: String
 }
 

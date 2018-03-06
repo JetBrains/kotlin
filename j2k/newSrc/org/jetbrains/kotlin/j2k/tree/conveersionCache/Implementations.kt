@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k.tree.conveersionCache
 
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKElementBase
-import org.jetbrains.kotlin.j2k.tree.impl.JKJavaTypeIdentifierImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKModifierListImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKReferenceType
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 class JKMultiverseField(override var name: JKNameIdentifier) : JKMultiverseDeclaration, JKJavaField {
     override var initializer: JKExpression? = null
     override var modifierList: JKModifierList = JKModifierListImpl()
-    override var type: JKTypeIdentifier = JKJavaTypeIdentifierImpl("") //TODO
+    override var type: JKType = JKJavaPrimitiveTypeImpl.BOOLEAN //TODO
     override val valid: Boolean
         get() = true
 }

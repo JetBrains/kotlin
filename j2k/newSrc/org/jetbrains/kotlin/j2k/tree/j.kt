@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.j2k.tree
 
 interface JKJavaField : JKDeclaration, JKModifierListOwner {
-    val type: JKTypeIdentifier
+    val type: JKType
     val name: JKNameIdentifier
     val initializer: JKExpression?
 }
@@ -28,8 +28,13 @@ interface JKJavaForLoop : JKLoop
 
 interface JKJavaAssignmentExpression : JKExpression
 
-interface JKJavaTypeIdentifier : JKTypeIdentifier {
-    val typeName: String
+interface JKJavaPrimitiveType : JKType {
+    val name: String
+}
+
+interface JKJavaArrayType : JKType {
+    val type: JKType
+    val dimensionCount : Int
 }
 
 interface JKJavaStringLiteralExpression : JKLiteralExpression {

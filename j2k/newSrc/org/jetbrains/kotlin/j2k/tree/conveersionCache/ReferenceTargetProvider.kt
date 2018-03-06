@@ -30,20 +30,12 @@ interface ReferenceTargetProvider {
     fun putUniverseClass(clazz: JKClass)
     fun putMultiverseClass(clazz: JKMultiverseClass)
     fun resolveMethodReference(clazz: JKClass, method: PsiMethod): JKMethod {
-        return clazz.declarations.asSequence().filter { it is JKMethod && it.name.name == method.name }.firstOrNull() as JKMethod? ?: run {
-            val met = JKMultiverseMethod(JKNameIdentifierImpl(method.name))
-            clazz.declarations += met
-            met
-        }
+        return clazz.declarations.asSequence().filter { it is JKMethod && it.name.name == method.name }.firstOrNull() as JKMethod?
+               ?: JKMultiverseMethod(JKNameIdentifierImpl(method.name)).also { clazz.declarations += it }
     }
 
-    
     fun resolveFieldReference(clazz: JKClass, field: PsiField): JKJavaField {
         return clazz.declarations.asSequence().filter { it is JKJavaField && it.name.name == field.name }.firstOrNull() as JKJavaField?
-               ?: run {
-                   val field = JKMultiverseField(JKNameIdentifierImpl(field.name!!))
-                   clazz.declarations += field
-                   field
-               }
+               ?: JKMultiverseField(JKNameIdentifierImpl(field.name!!)).also { clazz.declarations += it }
     }
 }

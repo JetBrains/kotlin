@@ -75,10 +75,8 @@ class JKModifierListImpl : JKModifierList, JKElementBase() {
     }
 }
 
-class JKValueArgumentImpl(
-    override var type: JKTypeIdentifier,
-    override val name: String
-) : JKValueArgument, JKElementBase() {
+class JKValueArgumentImpl(override var type: JKType,
+                          override val name: String) : JKValueArgument, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitValueArgument(this, data)
     override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
         type = type.transform(transformer, data)
@@ -228,12 +226,9 @@ class JKTypeCastExpressionImpl(override var expression: JKExpression?, override 
     }
 }
 
-class JKTypeImpl(
-    override val classReference: JKClassReference, override val parameters: List<JKType>,
-    override val nullability: Nullability = Nullability.Default
-) : JKType, JKElementBase() {
+class JKClassTypeImpl(override val classReference: JKClassReference, override val parameters: List<JKType>, override val nullability: Nullability = Nullability.Default) : JKClassType, JKElementBase() {
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitType(this, data)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassType(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
 

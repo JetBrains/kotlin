@@ -20,12 +20,10 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
-class JKJavaFieldImpl(
-    override var modifierList: JKModifierList,
-    override var type: JKTypeIdentifier,
-    override var name: JKNameIdentifier,
-    override var initializer: JKExpression?
-) : JKJavaField, JKElementBase() {
+class JKJavaFieldImpl(override var modifierList: JKModifierList,
+                      override var type: JKType,
+                      override var name: JKNameIdentifier,
+                      override var initializer: JKExpression?) : JKJavaField, JKElementBase() {
     override val valid: Boolean
         get() = true
 
@@ -40,12 +38,6 @@ class JKJavaFieldImpl(
         initializer = initializer?.transform(transformer, data)
     }
 }
-
-
-class JKJavaTypeIdentifierImpl(override val typeName: String) : JKJavaTypeIdentifier, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaTypeIdentifier(this, data)
-}
-
 
 class JKJavaStringLiteralExpressionImpl(override val text: String) : JKJavaStringLiteralExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaStringLiteralExpression(this, data)
@@ -157,5 +149,27 @@ class JKJavaNewArrayImpl(override var initializer: List<JKExpression>) : JKJavaN
 
     override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
         initializer = initializer.map { it.transform<JKLiteralExpression, D>(transformer, data) }
+    }
+}
+
+sealed class JKJavaPrimitiveTypeImpl(override val name: String) : JKJavaPrimitiveType, JKElementBase() {
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaPrimitiveType(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+
+    }
+
+    object BYTE : JKJavaPrimitiveTypeImpl("byte")
+    object BOOLEAN : JKJavaPrimitiveTypeImpl("boolean")
+    object INT : JKJavaPrimitiveTypeImpl("int")
+}
+
+class JKJavaArrayTypeImpl(override val type: JKType, override val dimensionCount: Int) : JKJavaArrayType, JKElementBase() {
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaArrayType(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+
     }
 }
