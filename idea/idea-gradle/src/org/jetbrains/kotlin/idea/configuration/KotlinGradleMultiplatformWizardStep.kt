@@ -21,6 +21,7 @@ import com.intellij.ide.util.projectWizard.ProjectWizardUtil
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.externalSystem.model.project.ProjectId
 import com.intellij.openapi.options.ConfigurationException
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
@@ -47,10 +48,11 @@ class KotlinGradleMultiplatformWizardStep(
         LabeledComponent.create(JTextField(), "Common module name:", BorderLayout.WEST)
     private val jvmCheckBox: JCheckBox =
         JCheckBox("Create JVM module", true)
+    private val jdkModel = ProjectSdksModel().also {
+        it.reset(ProjectManager.getInstance().defaultProject)
+    }
     private val jdkComboBox: JdkComboBox =
-        JdkComboBox(ProjectSdksModel().also {
-            it.reset(null)
-        }) { it is JavaSdk }
+        JdkComboBox(jdkModel) { it is JavaSdk }
     private val jvmModuleNameComponent: LabeledComponent<JTextField> =
         LabeledComponent.create(JTextField(), "JVM module name:", BorderLayout.WEST)
     private val jsCheckBox: JCheckBox =
@@ -102,6 +104,8 @@ class KotlinGradleMultiplatformWizardStep(
         commonModuleNameComponent.component.document.addDocumentListener(stopSyncEditingListener)
         jvmModuleNameComponent.component.document.addDocumentListener(stopSyncEditingListener)
         jsModuleNameComponent.component.document.addDocumentListener(stopSyncEditingListener)
+
+        jdkComboBox.selectedJdk = jdkModel.projectSdk
 
         jvmCheckBox.addItemListener {
             jvmModuleNameComponent.isEnabled = jvmCheckBox.isSelected
