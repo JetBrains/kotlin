@@ -79,8 +79,10 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         settingsGradle?.let {
             module.project.executeCommand("Update settings.gradle") {
                 val doc = FileDocumentManager.getInstance().getDocument(it) ?: return@executeCommand
-                val commonPrefix = commonModuleName?.let { "'$it', " } ?: ""
-                doc.insertString(doc.textLength, "include $commonPrefix'$jvmModuleName', '$jsModuleName'")
+                val includedModules = listOfNotNull(commonModuleName, jvmModuleName, jsModuleName).filter { it.isNotEmpty() }
+                if (includedModules.isNotEmpty()) {
+                    doc.insertString(doc.textLength, includedModules.joinToString(prefix = "include ") { "'$it'" })
+                }
                 FileDocumentManager.getInstance().saveDocument(doc)
             }
         }
