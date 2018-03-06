@@ -4,8 +4,9 @@ description = "Kotlin Serialization Compiler Plugin"
 apply { plugin("kotlin") }
 
 dependencies {
-    compileOnly(ideaSdkCoreDeps("intellij-core"))
-    compileOnly(ideaPluginDeps("maven", plugin = "maven"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("asm-all", "openapi", "jps-builders") }
+    compileOnly(intellijPluginDep("maven"))
     compileOnly(project(":jps-plugin"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:frontend"))
