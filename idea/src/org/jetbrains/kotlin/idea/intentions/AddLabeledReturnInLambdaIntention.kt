@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
@@ -19,6 +20,7 @@ class AddLabeledReturnInLambdaIntention : SelfTargetingRangeIntention<KtBlockExp
     override fun applicabilityRange(element: KtBlockExpression): TextRange? {
         if (!isApplicableTo(element)) return null
         val labelName = element.getParentLambdaLabelName() ?: return null
+        if (labelName == KtTokens.SUSPEND_KEYWORD.value) return null
         text = "Add return@$labelName"
         return element.statements.lastOrNull()?.textRange
     }
