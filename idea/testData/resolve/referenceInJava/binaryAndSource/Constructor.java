@@ -1,6 +1,6 @@
 public class Constructor {
     public static void foo() {
-        new k.Clas<caret>s();
+        new k.<caret>class();
     }
 }
 

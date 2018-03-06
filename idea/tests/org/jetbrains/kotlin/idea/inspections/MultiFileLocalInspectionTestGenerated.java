@@ -25,6 +25,12 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileLocalInspections"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
+    @TestMetadata("convertSealedSubClassToObject/convertInOtherFiles/convertInOtherFiles.test")
+    public void testConvertSealedSubClassToObject_convertInOtherFiles_ConvertInOtherFiles() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileLocalInspections/convertSealedSubClassToObject/convertInOtherFiles/convertInOtherFiles.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("moveFileToPackageMatchingDirectory/moveToDefaultDirectory/moveToDefaultDirectory.test")
     public void testMoveFileToPackageMatchingDirectory_moveToDefaultDirectory_MoveToDefaultDirectory() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileLocalInspections/moveFileToPackageMatchingDirectory/moveToDefaultDirectory/moveToDefaultDirectory.test");
