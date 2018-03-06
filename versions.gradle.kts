@@ -29,6 +29,18 @@ val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterI
 val platform = androidStudioVersion?.let { "AS$it" } ?: platformBaseVersion
 
 when (platform) {
+    "182" -> {
+        extra["versions.jar.guava"] = "21.0"
+        extra["versions.jar.groovy-all"] = "2.4.12"
+        extra["versions.jar.lombok-ast"] = "0.2.3"
+        extra["versions.jar.swingx-core"] = "1.6.2-2"
+        extra["versions.jar.kxml2"] = "2.3.0"
+        extra["versions.jar.streamex"] = "0.6.5"
+        extra["versions.jar.gson"] = "2.8.2"
+        for (jar in gradleJars) {
+            extra["versions.jar.$jar"] = "4.5.1"
+        }
+    }
     "181" -> {
         extra["versions.jar.guava"] = "21.0"
         extra["versions.jar.groovy-all"] = "2.4.12"
