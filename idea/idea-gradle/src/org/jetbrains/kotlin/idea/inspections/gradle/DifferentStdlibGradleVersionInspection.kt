@@ -35,10 +35,11 @@ import java.util.*
 
 class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
     override fun buildVisitor(): BaseInspectionVisitor = MyVisitor(
-            listOf(MAVEN_STDLIB_ID, MAVEN_STDLIB_ID_JRE7, MAVEN_STDLIB_ID_JDK7, MAVEN_STDLIB_ID_JRE8, MAVEN_STDLIB_ID_JDK8))
+        listOf(MAVEN_STDLIB_ID, MAVEN_STDLIB_ID_JRE7, MAVEN_STDLIB_ID_JDK7, MAVEN_STDLIB_ID_JRE8, MAVEN_STDLIB_ID_JDK8)
+    )
 
     override fun buildErrorString(vararg args: Any) =
-            "Plugin version (${args[0]}) is not the same as library version (${args[1]})"
+        "Plugin version (${args[0]}) is not the same as library version (${args[1]})"
 
     private abstract class VersionFinder(private val libraryIds: List<String>) : KotlinGradleInspectionVisitor() {
         protected abstract fun onFound(stdlibVersion: String, stdlibStatement: GrCallExpression)
@@ -58,7 +59,7 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
         }
     }
 
-    private inner class MyVisitor(libraryIds: List<String>): VersionFinder(libraryIds) {
+    private inner class MyVisitor(libraryIds: List<String>) : VersionFinder(libraryIds) {
         override fun onFound(stdlibVersion: String, stdlibStatement: GrCallExpression) {
             val gradlePluginVersion = getResolvedKotlinGradleVersion(stdlibStatement.containingFile)
 
@@ -116,6 +117,6 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
 
 internal fun DataNode<*>.getResolvedKotlinStdlibVersionByModuleData(libraryIds: List<String>): String? {
     return KotlinGradleModelFacade.EP_NAME.extensions.asSequence()
-            .mapNotNull { it.getResolvedKotlinStdlibVersionByModuleData(this, libraryIds) }
-            .firstOrNull()
+        .mapNotNull { it.getResolvedKotlinStdlibVersionByModuleData(this, libraryIds) }
+        .firstOrNull()
 }

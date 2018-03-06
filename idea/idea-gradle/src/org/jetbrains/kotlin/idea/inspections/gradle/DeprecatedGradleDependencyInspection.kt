@@ -25,9 +25,9 @@ import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.idea.configuration.allModules
 import org.jetbrains.kotlin.idea.configuration.getWholeModuleGroup
 import org.jetbrains.kotlin.idea.inspections.ReplaceStringInDocumentFix
-import org.jetbrains.kotlin.idea.versions.LibInfo
 import org.jetbrains.kotlin.idea.versions.DEPRECATED_LIBRARIES_INFORMATION
 import org.jetbrains.kotlin.idea.versions.DeprecatedLibInfo
+import org.jetbrains.kotlin.idea.versions.LibInfo
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
@@ -60,19 +60,24 @@ class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
 
                 if (dependencyText.contains(libMarker)) {
                     // Should be generified for any library, not exactly Kotlin stdlib
-                   val libVersion =
-                            DifferentStdlibGradleVersionInspection.getResolvedKotlinStdlibVersion(
-                                    dependencyStatement.containingFile, listOf(outdatedInfo.old.name)) ?:
-                            libraryVersionFromOrderEntry(dependencyStatement.containingFile, outdatedInfo.old.name)
+                    val libVersion =
+                        DifferentStdlibGradleVersionInspection.getResolvedKotlinStdlibVersion(
+                            dependencyStatement.containingFile, listOf(outdatedInfo.old.name)
+                        ) ?: libraryVersionFromOrderEntry(dependencyStatement.containingFile, outdatedInfo.old.name)
 
 
-                    if (libVersion != null && VersionComparatorUtil.COMPARATOR.compare(libVersion, outdatedInfo.outdatedAfterVersion) >= 0) {
+                    if (libVersion != null && VersionComparatorUtil.COMPARATOR.compare(
+                            libVersion,
+                            outdatedInfo.outdatedAfterVersion
+                        ) >= 0
+                    ) {
                         val reportOnElement = reportOnElement(dependencyStatement, outdatedInfo)
 
                         registerError(
-                                reportOnElement, outdatedInfo.message,
-                                arrayOf(ReplaceStringInDocumentFix(reportOnElement, outdatedInfo.old.name, outdatedInfo.new.name)),
-                                ProblemHighlightType.LIKE_DEPRECATED)
+                            reportOnElement, outdatedInfo.message,
+                            arrayOf(ReplaceStringInDocumentFix(reportOnElement, outdatedInfo.old.name, outdatedInfo.new.name)),
+                            ProblemHighlightType.LIKE_DEPRECATED
+                        )
 
                         break
                     }

@@ -23,10 +23,12 @@ import com.intellij.psi.PsiElement
 interface GradleBuildScriptManipulator {
     fun isConfigured(kotlinPluginName: String): Boolean
 
-    fun configureModuleBuildScript(kotlinPluginName: String,
-                                   stdlibArtifactName: String,
-                                   version: String,
-                                   jvmTarget: String?): Boolean
+    fun configureModuleBuildScript(
+        kotlinPluginName: String,
+        stdlibArtifactName: String,
+        version: String,
+        jvmTarget: String?
+    ): Boolean
 
     fun configureProjectBuildScript(version: String): Boolean
 
@@ -37,9 +39,10 @@ interface GradleBuildScriptManipulator {
     fun changeApiVersion(version: String, forTests: Boolean): PsiElement?
 
     fun addKotlinLibraryToModuleBuildScript(
-            scope: DependencyScope,
-            libraryDescriptor: ExternalLibraryDescriptor,
-            isAndroidModule: Boolean)
+        scope: DependencyScope,
+        libraryDescriptor: ExternalLibraryDescriptor,
+        isAndroidModule: Boolean
+    )
 
     fun getKotlinStdlibVersion(): String?
 }

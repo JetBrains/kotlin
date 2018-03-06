@@ -25,8 +25,6 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
@@ -43,7 +41,6 @@ import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import org.junit.Test
-import java.io.File
 
 internal fun GradleImportingTestCase.facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings
 
@@ -56,7 +53,8 @@ internal val GradleImportingTestCase.testFacetSettings: KotlinFacetSettings
 class GradleFacetImportTest : GradleImportingTestCase() {
     @Test
     fun testJvmImport() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             buildscript {
                 repositories {
                     mavenCentral()
@@ -86,28 +84,33 @@ class GradleFacetImportTest : GradleImportingTestCase() {
                 kotlinOptions.apiVersion = "1.0"
                 kotlinOptions.freeCompilerArgs = ["-Xdump-declarations-to", "tmpTest"]
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
             Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], targetPlatformKind)
             Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to=tmp -Xsingle-module",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-Xdump-declarations-to=tmp -Xsingle-module",
+                compilerSettings!!.additionalArguments
+            )
         }
-        with (testFacetSettings) {
+        with(testFacetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
             Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
             Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to=tmpTest",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-Xdump-declarations-to=tmpTest",
+                compilerSettings!!.additionalArguments
+            )
         }
 
         assertAllModulesConfigured()
@@ -115,7 +118,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJvmImportWithPlugin() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
 buildscript {
     repositories {
         mavenCentral()
@@ -147,7 +151,8 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
-        """)
+        """
+        )
         importProject()
 
         assertAllModulesConfigured()
@@ -155,7 +160,8 @@ compileTestKotlin {
 
     @Test
     fun testJvmImport_1_1_2() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -193,30 +199,36 @@ compileTestKotlin {
                 kotlinOptions.apiVersion = "1.0"
                 kotlinOptions.freeCompilerArgs = ["-Xdump-declarations-to", "tmpTest"]
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], targetPlatformKind)
             Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to=tmp -Xsingle-module",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-Xdump-declarations-to=tmp -Xsingle-module",
+                compilerSettings!!.additionalArguments
+            )
         }
-        with (testFacetSettings) {
+        with(testFacetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
             Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to=tmpTest",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-Xdump-declarations-to=tmpTest",
+                compilerSettings!!.additionalArguments
+            )
         }
     }
 
     @Test
     fun testJvmImportWithCustomSourceSets() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -262,24 +274,29 @@ compileTestKotlin {
                 kotlinOptions.apiVersion = "1.0"
                 kotlinOptions.freeCompilerArgs = ["-Xdump-declarations-to", "tmpTest"]
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings("project_myMain")) {
+        with(facetSettings("project_myMain")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], targetPlatformKind)
             Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to=tmp -Xsingle-module",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-Xdump-declarations-to=tmp -Xsingle-module",
+                compilerSettings!!.additionalArguments
+            )
         }
-        with (facetSettings("project_myTest")) {
+        with(facetSettings("project_myTest")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
             Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to=tmpTest",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-Xdump-declarations-to=tmpTest",
+                compilerSettings!!.additionalArguments
+            )
         }
 
         assertAllModulesConfigured()
@@ -287,7 +304,8 @@ compileTestKotlin {
 
     @Test
     fun testJvmImportWithCustomSourceSets_1_1_2() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -336,30 +354,36 @@ compileTestKotlin {
                 kotlinOptions.apiVersion = "1.0"
                 kotlinOptions.freeCompilerArgs = ["-Xdump-declarations-to", "tmpTest"]
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings("project_myMain")) {
+        with(facetSettings("project_myMain")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], targetPlatformKind)
             Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to=tmp -Xsingle-module",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-Xdump-declarations-to=tmp -Xsingle-module",
+                compilerSettings!!.additionalArguments
+            )
         }
-        with (facetSettings("project_myTest")) {
+        with(facetSettings("project_myTest")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
             Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to=tmpTest",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-Xdump-declarations-to=tmpTest",
+                compilerSettings!!.additionalArguments
+            )
         }
     }
 
     @Test
     fun testCoroutineImportByOptions() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -387,10 +411,11 @@ compileTestKotlin {
                     coroutines 'enable'
                 }
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
         }
     }
@@ -398,7 +423,8 @@ compileTestKotlin {
     @Test
     fun testCoroutineImportByProperties() {
         createProjectSubFile("gradle.properties", "kotlin.coroutines=enable")
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -420,17 +446,19 @@ compileTestKotlin {
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
         }
     }
 
     @Test
     fun testJsImport() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -466,10 +494,11 @@ compileTestKotlin {
                 kotlinOptions.apiVersion = "1.0"
                 kotlinOptions.freeCompilerArgs = ["-module-kind", "umd", "-main", "callTest"]
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
@@ -479,11 +508,13 @@ compileTestKotlin {
                 Assert.assertEquals(true, sourceMap)
                 Assert.assertEquals("plain", moduleKind)
             }
-            Assert.assertEquals("-main callMain",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-main callMain",
+                compilerSettings!!.additionalArguments
+            )
         }
 
-        with (testFacetSettings) {
+        with(testFacetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
@@ -493,8 +524,10 @@ compileTestKotlin {
                 Assert.assertEquals(false, sourceMap)
                 Assert.assertEquals("umd", moduleKind)
             }
-            Assert.assertEquals("-main callTest",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-main callTest",
+                compilerSettings!!.additionalArguments
+            )
         }
 
         val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
@@ -510,7 +543,8 @@ compileTestKotlin {
 
     @Test
     fun testJsImportTransitive() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -536,10 +570,11 @@ compileTestKotlin {
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-test-js:1.1.0"
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
@@ -547,9 +582,9 @@ compileTestKotlin {
 
         val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
         val stdlib = rootManager.orderEntries
-                .filterIsInstance<LibraryOrderEntry>()
-                .map { it.library as LibraryEx }
-                .first { "kotlin-stdlib-js" in it.name!! }
+            .filterIsInstance<LibraryOrderEntry>()
+            .map { it.library as LibraryEx }
+            .first { "kotlin-stdlib-js" in it.name!! }
         assertEquals(JSLibraryKind, stdlib.kind)
 
         assertAllModulesConfigured()
@@ -557,7 +592,8 @@ compileTestKotlin {
 
     @Test
     fun testJsImportWithCustomSourceSets() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -602,10 +638,11 @@ compileTestKotlin {
                 kotlinOptions.apiVersion = "1.0"
                 kotlinOptions.freeCompilerArgs = ["-module-kind", "umd", "-main", "callTest"]
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings("project_myMain")) {
+        with(facetSettings("project_myMain")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
@@ -613,11 +650,13 @@ compileTestKotlin {
                 Assert.assertEquals(true, sourceMap)
                 Assert.assertEquals("plain", moduleKind)
             }
-            Assert.assertEquals("-main callMain",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-main callMain",
+                compilerSettings!!.additionalArguments
+            )
         }
 
-        with (facetSettings("project_myTest")) {
+        with(facetSettings("project_myTest")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
@@ -625,8 +664,10 @@ compileTestKotlin {
                 Assert.assertEquals(false, sourceMap)
                 Assert.assertEquals("umd", moduleKind)
             }
-            Assert.assertEquals("-main callTest",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals(
+                "-main callTest",
+                compilerSettings!!.additionalArguments
+            )
         }
 
         assertAllModulesConfigured()
@@ -634,7 +675,8 @@ compileTestKotlin {
 
     @Test
     fun testDetectOldJsStdlib() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -656,17 +698,19 @@ compileTestKotlin {
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-js-library:1.0.6"
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
         }
     }
 
     @Test
     fun testJvmImportByPlatformPlugin() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -684,10 +728,11 @@ compileTestKotlin {
             }
 
             apply plugin: 'kotlin-platform-jvm'
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
@@ -696,7 +741,8 @@ compileTestKotlin {
 
     @Test
     fun testJsImportByPlatformPlugin() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -720,10 +766,11 @@ compileTestKotlin {
                 compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
                 compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
@@ -737,7 +784,8 @@ compileTestKotlin {
 
     @Test
     fun testCommonImportByPlatformPlugin() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -764,10 +812,11 @@ compileTestKotlin {
                 compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
             }
 
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Common, targetPlatformKind)
@@ -780,7 +829,8 @@ compileTestKotlin {
 
     @Test
     fun testCommonImportByPlatformPlugin_SingleModule() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -806,10 +856,11 @@ compileTestKotlin {
                 compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
             }
 
-        """)
+        """
+        )
         importProjectUsingSingeModulePerGradleProject()
 
-        with (facetSettings("project")) {
+        with(facetSettings("project")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Common, targetPlatformKind)
@@ -822,7 +873,8 @@ compileTestKotlin {
 
     @Test
     fun testJvmImportByKotlinPlugin() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -840,10 +892,11 @@ compileTestKotlin {
             }
 
             apply plugin: 'kotlin'
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
@@ -852,7 +905,8 @@ compileTestKotlin {
 
     @Test
     fun testJsImportByKotlin2JsPlugin() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -870,10 +924,11 @@ compileTestKotlin {
             }
 
             apply plugin: 'kotlin2js'
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
@@ -882,7 +937,8 @@ compileTestKotlin {
 
     @Test
     fun testArgumentEscaping() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -904,20 +960,22 @@ compileTestKotlin {
             compileKotlin {
                 kotlinOptions.freeCompilerArgs = ["-module", "module with spaces"]
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals(
-                    listOf("-Xbuild-file=module with spaces"),
-                    compilerSettings!!.additionalArgumentsAsList
+                listOf("-Xbuild-file=module with spaces"),
+                compilerSettings!!.additionalArgumentsAsList
             )
         }
     }
 
     @Test
     fun testNoPluginsInAdditionalArgs() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -934,29 +992,33 @@ compileTestKotlin {
 
             apply plugin: 'kotlin'
             apply plugin: "kotlin-spring"
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals(
-                    "-version",
-                    compilerSettings!!.additionalArguments
+                "-version",
+                compilerSettings!!.additionalArguments
             )
             Assert.assertEquals(
-                    listOf("plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.stereotype.Component",
-                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional",
-                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async",
-                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable",
-                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.boot.test.context.SpringBootTest",
-                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.validation.annotation.Validated"),
-                    compilerArguments!!.pluginOptions!!.toList()
+                listOf(
+                    "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.stereotype.Component",
+                    "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional",
+                    "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async",
+                    "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable",
+                    "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.boot.test.context.SpringBootTest",
+                    "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.validation.annotation.Validated"
+                ),
+                compilerArguments!!.pluginOptions!!.toList()
             )
         }
     }
 
     @Test
     fun testNoArgInvokeInitializers() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -978,25 +1040,29 @@ compileTestKotlin {
                 invokeInitializers = true
                 annotation("NoArg")
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals(
-                    "-version",
-                    compilerSettings!!.additionalArguments
+                "-version",
+                compilerSettings!!.additionalArguments
             )
             Assert.assertEquals(
-                    listOf("plugin:org.jetbrains.kotlin.noarg:annotation=NoArg",
-                           "plugin:org.jetbrains.kotlin.noarg:invokeInitializers=true"),
-                    compilerArguments!!.pluginOptions!!.toList()
+                listOf(
+                    "plugin:org.jetbrains.kotlin.noarg:annotation=NoArg",
+                    "plugin:org.jetbrains.kotlin.noarg:invokeInitializers=true"
+                ),
+                compilerArguments!!.pluginOptions!!.toList()
             )
         }
     }
 
     @Test
     fun testAndroidGradleJsDetection() {
-        createProjectSubFile("android-module/build.gradle", """
+        createProjectSubFile(
+            "android-module/build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -1042,14 +1108,18 @@ compileTestKotlin {
                     }
                 }
             }
-        """)
-        createProjectSubFile("android-module/src/main/AndroidManifest.xml", """
+        """
+        )
+        createProjectSubFile(
+            "android-module/src/main/AndroidManifest.xml", """
             <manifest xmlns:android="http://schemas.android.com/apk/res/android"
                       xmlns:tools="http://schemas.android.com/tools"
                       package="my.test.project" >
             </manifest>
-        """)
-        createProjectSubFile("js-module/build.gradle", """
+        """
+        )
+        createProjectSubFile(
+            "js-module/build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -1071,8 +1141,10 @@ compileTestKotlin {
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
             }
-        """)
-        createProjectSubFile("build.gradle", """
+        """
+        )
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -1103,18 +1175,23 @@ compileTestKotlin {
                     jcenter()
                 }
             }
-        """)
-        createProjectSubFile("settings.gradle", """
+        """
+        )
+        createProjectSubFile(
+            "settings.gradle", """
             rootProject.name = "android-js-test"
             include ':android-module'
             include ':js-module'
-        """)
-        createProjectSubFile("local.properties", """
+        """
+        )
+        createProjectSubFile(
+            "local.properties", """
             sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings("js-module")) {
+        with(facetSettings("js-module")) {
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
         }
 
@@ -1126,7 +1203,8 @@ compileTestKotlin {
 
     @Test
     fun testKotlinAndroidPluginDetection() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -1177,16 +1255,21 @@ compileTestKotlin {
                     }
                 }
             }
-        """)
-        createProjectSubFile("local.properties", """
+        """
+        )
+        createProjectSubFile(
+            "local.properties", """
             sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
-        """)
-        createProjectSubFile("src/main/AndroidManifest.xml", """
+        """
+        )
+        createProjectSubFile(
+            "src/main/AndroidManifest.xml", """
             <manifest xmlns:android="http://schemas.android.com/apk/res/android"
                       xmlns:tools="http://schemas.android.com/tools"
                       package="my.test.project" >
             </manifest>
-        """)
+        """
+        )
         importProject()
 
         Assert.assertNotNull(KotlinFacet.get(getModule("project")))
@@ -1194,7 +1277,8 @@ compileTestKotlin {
 
     @Test
     fun testNoFacetInModuleWithoutKotlinPlugin() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'gr01'
             version '1.0-SNAPSHOT'
 
@@ -1218,12 +1302,16 @@ compileTestKotlin {
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.1"
             }
-        """)
-        createProjectSubFile("settings.gradle", """
+        """
+        )
+        createProjectSubFile(
+            "settings.gradle", """
             rootProject.name = 'gr01'
             include 'm1'
-        """)
-        createProjectSubFile("m1/build.gradle", """
+        """
+        )
+        createProjectSubFile(
+            "m1/build.gradle", """
             group 'gr01'
             version '1.0-SNAPSHOT'
 
@@ -1243,7 +1331,8 @@ compileTestKotlin {
             dependencies {
                 testCompile group: 'junit', name: 'junit', version: '4.11'
             }
-        """)
+        """
+        )
         importProject()
 
         Assert.assertNotNull(KotlinFacet.get(getModule("gr01_main")))
@@ -1254,7 +1343,8 @@ compileTestKotlin {
 
     @Test
     fun testClasspathWithDependenciesImport() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -1281,17 +1371,19 @@ compileTestKotlin {
             compileKotlin {
                 kotlinOptions.freeCompilerArgs += ["-cp", "tmp.jar"]
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("tmp.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
         }
     }
 
     @Test
     fun testDependenciesClasspathImport() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -1314,10 +1406,11 @@ compileTestKotlin {
                 compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
                 compile "org.apache.logging.log4j:log4j-core:2.7"
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals(null, (compilerArguments as K2JVMCompilerArguments).classpath)
         }
     }
@@ -1332,7 +1425,8 @@ compileTestKotlin {
         }.execute()
 
         try {
-            createProjectSubFile("build.gradle", """
+            createProjectSubFile(
+                "build.gradle", """
                 group 'Again'
                 version '1.0-SNAPSHOT'
 
@@ -1359,15 +1453,15 @@ compileTestKotlin {
                 compileKotlin {
                     kotlinOptions.jdkHome = "my/path/to/jdk"
                 }
-            """)
+            """
+            )
             importProject()
 
             val moduleSDK = ModuleRootManager.getInstance(getModule("project_main")).sdk!!
             Assert.assertTrue(moduleSDK.sdkType is JavaSdk)
             Assert.assertEquals("myJDK", moduleSDK.name)
             Assert.assertEquals("my/path/to/jdk", moduleSDK.homePath)
-        }
-        finally {
+        } finally {
             object : WriteAction<Unit>() {
                 override fun run(result: Result<Unit>) {
                     val jdkTable = ProjectJdkTable.getInstance()
@@ -1380,8 +1474,8 @@ compileTestKotlin {
     @Test
     fun testImplementsDependency() {
         createProjectSubFile(
-                "build.gradle",
-                """
+            "build.gradle",
+            """
                 buildscript {
                     repositories {
                         mavenCentral()
@@ -1410,15 +1504,15 @@ compileTestKotlin {
                 """.trimIndent()
         )
         createProjectSubFile(
-                "settings.gradle",
-                """
+            "settings.gradle",
+            """
                     rootProject.name = 'MultiTest'
                     include 'MultiTest-jvm', 'MultiTest-js'
                 """.trimIndent()
         )
         createProjectSubFile(
-                "MultiTest-js/build.gradle",
-                """
+            "MultiTest-js/build.gradle",
+            """
                 buildscript {
                     repositories {
                         mavenCentral()
@@ -1448,8 +1542,8 @@ compileTestKotlin {
                 """.trimIndent()
         )
         createProjectSubFile(
-                "MultiTest-jvm/build.gradle",
-                """
+            "MultiTest-jvm/build.gradle",
+            """
                 buildscript {
                     repositories {
                         mavenCentral()
@@ -1490,8 +1584,8 @@ compileTestKotlin {
     @Test
     fun testImplementsDependencyWithCustomSourceSets() {
         createProjectSubFile(
-                "build.gradle",
-                """
+            "build.gradle",
+            """
                 buildscript {
                     repositories {
                         mavenCentral()
@@ -1533,15 +1627,15 @@ compileTestKotlin {
                 """.trimIndent()
         )
         createProjectSubFile(
-                "settings.gradle",
-                """
+            "settings.gradle",
+            """
                     rootProject.name = 'MultiTest'
                     include 'MultiTest-jvm', 'MultiTest-js'
                 """.trimIndent()
         )
         createProjectSubFile(
-                "MultiTest-js/build.gradle",
-                """
+            "MultiTest-js/build.gradle",
+            """
                 buildscript {
                     repositories {
                         mavenCentral()
@@ -1584,8 +1678,8 @@ compileTestKotlin {
                 """.trimIndent()
         )
         createProjectSubFile(
-                "MultiTest-jvm/build.gradle",
-                """
+            "MultiTest-jvm/build.gradle",
+            """
                 buildscript {
                     repositories {
                         mavenCentral()
@@ -1638,7 +1732,8 @@ compileTestKotlin {
 
     @Test
     fun testAPIVersionExceedingLanguageVersion() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             buildscript {
                 repositories {
                     mavenCentral()
@@ -1662,10 +1757,11 @@ compileTestKotlin {
                 kotlinOptions.languageVersion = "1.1"
                 kotlinOptions.apiVersion = "1.2"
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
         }
@@ -1680,7 +1776,8 @@ compileTestKotlin {
             apiVersion = "1.0"
         }
 
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             buildscript {
                 repositories {
                     mavenCentral()
@@ -1699,10 +1796,11 @@ compileTestKotlin {
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
             }
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
         }
@@ -1712,7 +1810,8 @@ compileTestKotlin {
 
     @Test
     fun testCommonArgumentsImport() {
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             group 'Again'
             version '1.0-SNAPSHOT'
 
@@ -1760,10 +1859,11 @@ compileTestKotlin {
                 }
             }
 
-        """)
+        """
+        )
         importProject()
 
-        with (facetSettings) {
+        with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
@@ -1773,7 +1873,7 @@ compileTestKotlin {
             Assert.assertEquals("my/destination", (compilerArguments as K2MetadataCompilerArguments).destination)
         }
 
-        with (facetSettings("project_test")) {
+        with(facetSettings("project_test")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)

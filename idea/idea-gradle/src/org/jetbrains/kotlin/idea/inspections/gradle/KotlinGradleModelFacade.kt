@@ -49,7 +49,8 @@ class DefaultGradleModelFacade : KotlinGradleModelFacade {
 
     override fun getDependencyModules(ideModule: DataNode<ModuleData>, gradleIdeaProject: IdeaProject): Collection<DataNode<ModuleData>> {
         val ideProject = ideModule.parent as DataNode<ProjectData>
-        val dependencyModuleNames = ExternalSystemApiUtil.getChildren(ideModule, ProjectKeys.MODULE_DEPENDENCY).map { it.data.target.externalName }.toHashSet()
+        val dependencyModuleNames =
+            ExternalSystemApiUtil.getChildren(ideModule, ProjectKeys.MODULE_DEPENDENCY).map { it.data.target.externalName }.toHashSet()
         return findModulesByNames(dependencyModuleNames, gradleIdeaProject, ideProject)
     }
 }
@@ -64,7 +65,11 @@ fun getDependencyModules(moduleData: DataNode<ModuleData>, gradleIdeaProject: Id
     return emptyList()
 }
 
-fun findModulesByNames(dependencyModuleNames: Set<String>, gradleIdeaProject: IdeaProject, ideProject: DataNode<ProjectData>): LinkedHashSet<DataNode<ModuleData>> {
+fun findModulesByNames(
+    dependencyModuleNames: Set<String>,
+    gradleIdeaProject: IdeaProject,
+    ideProject: DataNode<ProjectData>
+): LinkedHashSet<DataNode<ModuleData>> {
     val modules = ExternalSystemApiUtil.getChildren(ideProject, ProjectKeys.MODULE)
     return modules.filterTo(LinkedHashSet()) { it.data.externalName in dependencyModuleNames }
 }

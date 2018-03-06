@@ -48,23 +48,22 @@ import kotlin.concurrent.getOrSet
 class MultiplatformGradleProjectTaskRunner : GradleProjectTaskRunner() {
 
     override fun canRun(projectTask: ProjectTask) =
-            when (projectTask) {
-                is ModuleBuildTask ->
-                    projectTask.module.isMultiplatformModule()
+        when (projectTask) {
+            is ModuleBuildTask ->
+                projectTask.module.isMultiplatformModule()
 
-                is ExecuteRunConfigurationTask -> {
-                    val runProfile = projectTask.runProfile
-                    if (runProfile is ModuleBasedConfiguration<*>) {
-                        runProfile.configurationModule.module?.isMultiplatformModule() == true
-                    }
-                    else {
-                        false
-                    }
+            is ExecuteRunConfigurationTask -> {
+                val runProfile = projectTask.runProfile
+                if (runProfile is ModuleBasedConfiguration<*>) {
+                    runProfile.configurationModule.module?.isMultiplatformModule() == true
+                } else {
+                    false
                 }
-
-
-                else -> false
             }
+
+
+            else -> false
+        }
 
     override fun run(
         project: Project,
@@ -74,7 +73,8 @@ class MultiplatformGradleProjectTaskRunner : GradleProjectTaskRunner() {
     ) {
         val configuration = context.runConfiguration
         if (configuration is ModuleBasedConfiguration<*> &&
-            (configuration.configurationModule is JavaRunConfigurationModule || configuration is KotlinRunConfiguration)) {
+            (configuration.configurationModule is JavaRunConfigurationModule || configuration is KotlinRunConfiguration)
+        ) {
 
             val module = configuration.configurationModule.module
             if (module?.targetPlatform == TargetPlatformKind.Common) {
@@ -91,21 +91,28 @@ class MultiplatformGradleProjectTaskRunner : GradleProjectTaskRunner() {
     }
 
     private fun ProjectTask.replaceModule(origin: Module, replacement: Module): ProjectTask =
-            when (this) {
-                is ModuleFilesBuildTask -> this
+        when (this) {
+            is ModuleFilesBuildTask -> this
 
-                is ModuleBuildTask ->
-                        if (module == origin)
-                            ModuleBuildTaskImpl(replacement, isIncrementalBuild, isIncludeDependentModules, isIncludeRuntimeDependencies)
-                        else
-                            this
+            is ModuleBuildTask ->
+                if (module == origin)
+                    ModuleBuildTaskImpl(replacement, isIncrementalBuild, isIncludeDependentModules, isIncludeRuntimeDependencies)
+                else
+                    this
 
-                else -> this
-            }
+            else -> this
+        }
 }
 
-class MultiplatformGradleOrderEnumeratorHandler(val factory: MultiplatformGradleOrderEnumeratorHandler.FactoryImpl) : OrderEnumerationHandler() {
-    override fun addCustomModuleRoots(type: OrderRootType, rootModel: ModuleRootModel, result: MutableCollection<String>, includeProduction: Boolean, includeTests: Boolean): Boolean {
+class MultiplatformGradleOrderEnumeratorHandler(val factory: MultiplatformGradleOrderEnumeratorHandler.FactoryImpl) :
+    OrderEnumerationHandler() {
+    override fun addCustomModuleRoots(
+        type: OrderRootType,
+        rootModel: ModuleRootModel,
+        result: MutableCollection<String>,
+        includeProduction: Boolean,
+        includeTests: Boolean
+    ): Boolean {
         if (factory.isEnumerating(rootModel.module)) return false
         factory.startEnumerating(rootModel.module)
         try {
@@ -113,10 +120,13 @@ class MultiplatformGradleOrderEnumeratorHandler(val factory: MultiplatformGradle
             if (!ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, rootModel.module)) return false
 
             if (!GradleSystemRunningSettings.getInstance().isUseGradleAwareMake) {
-                val gradleProjectPath = ExternalSystemModulePropertyManager.getInstance(rootModel.module).getRootProjectPath() ?: return false
+                val gradleProjectPath =
+                    ExternalSystemModulePropertyManager.getInstance(rootModel.module).getRootProjectPath() ?: return false
                 val externalProjectDataCache = ExternalProjectDataCache.getInstance(rootModel.module.project)!!
-                val externalRootProject = externalProjectDataCache.getRootExternalProject(GradleConstants.SYSTEM_ID,
-                                                                                          File(gradleProjectPath)) ?: return false
+                val externalRootProject = externalProjectDataCache.getRootExternalProject(
+                    GradleConstants.SYSTEM_ID,
+                    File(gradleProjectPath)
+                ) ?: return false
 
                 val externalSourceSets = externalProjectDataCache.findExternalProject(externalRootProject, rootModel.module)
 
@@ -132,12 +142,12 @@ class MultiplatformGradleOrderEnumeratorHandler(val factory: MultiplatformGradle
 
             val implModule = rootModel.module.findJvmImplementationModule()
             implModule
-                    ?.rootManager
-                    ?.orderEntries()
-                    ?.satisfying { orderEntry -> (orderEntry as? ModuleOrderEntry)?.module != rootModel.module }
-                    ?.compileOnly()
-                    ?.classesRoots
-                    ?.mapTo(result) { it.url }
+                ?.rootManager
+                ?.orderEntries()
+                ?.satisfying { orderEntry -> (orderEntry as? ModuleOrderEntry)?.module != rootModel.module }
+                ?.compileOnly()
+                ?.classesRoots
+                ?.mapTo(result) { it.url }
 
         } finally {
             factory.doneEnumerating(rootModel.module)
@@ -164,8 +174,8 @@ class MultiplatformGradleOrderEnumeratorHandler(val factory: MultiplatformGradle
 
         override fun isApplicable(module: Module): Boolean {
             return ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module) &&
-                   module.isMultiplatformModule() &&
-                   !isEnumerating(module)
+                    module.isMultiplatformModule() &&
+                    !isEnumerating(module)
         }
 
         override fun createHandler(module: Module): OrderEnumerationHandler =

@@ -32,16 +32,16 @@ import java.util.*
 object GradleHeuristicHelper {
     fun getHeuristicVersionInBuildScriptDependency(classpathStatement: GrCallExpression): String? {
         val argumentList = when (classpathStatement) {
-                               is GrMethodCall -> classpathStatement.argumentList // classpath('argument')
-                               else -> classpathStatement.getChildrenOfType<GrCommandArgumentList>().singleOrNull() // classpath 'argument'
-                           } ?: return null
+            is GrMethodCall -> classpathStatement.argumentList // classpath('argument')
+            else -> classpathStatement.getChildrenOfType<GrCommandArgumentList>().singleOrNull() // classpath 'argument'
+        } ?: return null
         val grLiteral = argumentList.children.firstOrNull() as? GrLiteral ?: return null
 
         if (grLiteral is GrString && grLiteral.injections.size == 1) {
             val versionInjection = grLiteral.injections.first() ?: return null
             val expression = versionInjection.expression as? GrReferenceExpression ?: // $some_variable
-                             versionInjection.closableBlock?.getChildrenOfType<GrReferenceExpression>()?.singleOrNull() ?: // ${some_variable}
-                             return null
+            versionInjection.closableBlock?.getChildrenOfType<GrReferenceExpression>()?.singleOrNull() ?: // ${some_variable}
+            return null
 
             return resolveVariableInBuildScript(classpathStatement, expression.text)
         }

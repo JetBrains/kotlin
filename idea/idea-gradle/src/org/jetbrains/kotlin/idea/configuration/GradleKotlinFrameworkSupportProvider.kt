@@ -32,9 +32,11 @@ import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JLabel
 
-abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
-                                                    val displayName: String,
-                                                    val frameworkIcon: Icon) : GradleFrameworkSupportProvider() {
+abstract class GradleKotlinFrameworkSupportProvider(
+    val frameworkTypeId: String,
+    val displayName: String,
+    val frameworkIcon: Icon
+) : GradleFrameworkSupportProvider() {
     override fun getFrameworkType(): FrameworkTypeEx = object : FrameworkTypeEx(frameworkTypeId) {
         override fun getIcon(): Icon = frameworkIcon
 
@@ -54,10 +56,12 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
         }
     }
 
-    override fun addSupport(module: Module,
-                            rootModel: ModifiableRootModel,
-                            modifiableModelsProvider: ModifiableModelsProvider,
-                            buildScriptData: BuildScriptDataBuilder) {
+    override fun addSupport(
+        module: Module,
+        rootModel: ModifiableRootModel,
+        modifiableModelsProvider: ModifiableModelsProvider,
+        buildScriptData: BuildScriptDataBuilder
+    ) {
         addSupport(buildScriptData, rootModel.sdk)
     }
 
@@ -89,10 +93,10 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
         }
         for (dependency in getTestDependencies()) {
             buildScriptData.addDependencyNotation(
-                    if (":" in dependency)
-                        "testCompile \"$dependency\""
-                    else
-                        KotlinWithGradleConfigurator.getGroovyDependencySnippet(dependency, "testCompile")
+                if (":" in dependency)
+                    "testCompile \"$dependency\""
+                else
+                    KotlinWithGradleConfigurator.getGroovyDependencySnippet(dependency, "testCompile")
             )
         }
         buildScriptData.addBuildscriptDependencyNotation(KotlinWithGradleConfigurator.CLASSPATH)
@@ -106,9 +110,10 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
     protected abstract fun getDescription(): String
 }
 
-open class GradleKotlinJavaFrameworkSupportProvider(frameworkTypeId: String = "KOTLIN",
-                                                    displayName: String = "Kotlin (Java)")
-    : GradleKotlinFrameworkSupportProvider(frameworkTypeId, displayName, KotlinIcons.SMALL_LOGO) {
+open class GradleKotlinJavaFrameworkSupportProvider(
+    frameworkTypeId: String = "KOTLIN",
+    displayName: String = "Kotlin (Java)"
+) : GradleKotlinFrameworkSupportProvider(frameworkTypeId, displayName, KotlinIcons.SMALL_LOGO) {
 
     override fun getPluginId() = KotlinGradleModuleConfigurator.KOTLIN
 
@@ -127,9 +132,10 @@ open class GradleKotlinJavaFrameworkSupportProvider(frameworkTypeId: String = "K
     override fun getDescription() = "A Kotlin library or application targeting the JVM"
 }
 
-open class GradleKotlinJSFrameworkSupportProvider(frameworkTypeId: String = "KOTLIN_JS",
-                                                  displayName: String = "Kotlin (JavaScript)")
-    : GradleKotlinFrameworkSupportProvider(frameworkTypeId, displayName, KotlinIcons.JS) {
+open class GradleKotlinJSFrameworkSupportProvider(
+    frameworkTypeId: String = "KOTLIN_JS",
+    displayName: String = "Kotlin (JavaScript)"
+) : GradleKotlinFrameworkSupportProvider(frameworkTypeId, displayName, KotlinIcons.JS) {
 
     override fun getPluginId() = KotlinJsGradleModuleConfigurator.KOTLIN_JS
 
@@ -141,7 +147,7 @@ open class GradleKotlinJSFrameworkSupportProvider(frameworkTypeId: String = "KOT
 }
 
 open class GradleKotlinMPPCommonFrameworkSupportProvider :
-        GradleKotlinFrameworkSupportProvider("KOTLIN_MPP_COMMON", "Kotlin (Multiplatform Common - Experimental)", KotlinIcons.MPP) {
+    GradleKotlinFrameworkSupportProvider("KOTLIN_MPP_COMMON", "Kotlin (Multiplatform Common - Experimental)", KotlinIcons.MPP) {
     override fun getPluginId() = "kotlin-platform-common"
 
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_COMMON_STDLIB_ID)

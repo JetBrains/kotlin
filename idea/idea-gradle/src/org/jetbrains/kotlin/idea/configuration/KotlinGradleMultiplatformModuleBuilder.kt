@@ -53,7 +53,9 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         super.createWizardSteps(wizardContext, modulesProvider)  // initializes GradleModuleBuilder.myWizardContext
         return arrayOf(
             KotlinGradleMultiplatformWizardStep(this, wizardContext),
-            ExternalModuleSettingsStep(wizardContext, this, GradleProjectSettingsControl(externalProjectSettings))
+            ExternalModuleSettingsStep(
+                wizardContext, this, GradleProjectSettingsControl(externalProjectSettings)
+            )
         )
     }
 
@@ -96,6 +98,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         extendScript: (BuildScriptDataBuilder, Sdk?) -> Unit = { _, _ -> }
     ) {
         if (childModuleName.isNullOrEmpty()) return
+
         val moduleDir = contentRoot.createChildDirectory(this, childModuleName!!)
         val buildGradle = moduleDir.createChildData(null, "build.gradle")
         val buildScriptData = BuildScriptDataBuilder(buildGradle)

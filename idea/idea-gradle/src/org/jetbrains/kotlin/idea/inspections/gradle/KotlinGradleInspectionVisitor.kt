@@ -45,7 +45,7 @@ abstract class KotlinGradleInspectionVisitor : BaseInspectionVisitor() {
 }
 
 fun getResolvedKotlinGradleVersion(file: PsiFile) =
-        ModuleUtilCore.findModuleForFile(file.virtualFile, file.project)?.let { getResolvedKotlinGradleVersion(it) }
+    ModuleUtilCore.findModuleForFile(file.virtualFile, file.project)?.let { getResolvedKotlinGradleVersion(it) }
 
 fun getResolvedKotlinGradleVersion(module: Module): String? {
     val projectStructureNode = findGradleProjectStructure(module) ?: return null
@@ -65,7 +65,7 @@ private val KOTLIN_PLUGIN_PATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID
 
 // Maven local repo path (example): ~/.m2/repository/org/jetbrains/kotlin/kotlin-runtime/<version>
 private val KOTLIN_PLUGIN_PATH_MARKER_FOR_MAVEN_LOCAL_REPO =
-        "${KotlinWithGradleConfigurator.GROUP_ID.replace('.', '/')}/${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}/"
+    "${KotlinWithGradleConfigurator.GROUP_ID.replace('.', '/')}/${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}/"
 
 internal fun findKotlinPluginVersion(classpathData: BuildScriptClasspathData): String? {
     for (classPathEntry in classpathData.classpathEntries.asReversed()) {
@@ -78,7 +78,8 @@ internal fun findKotlinPluginVersion(classpathData: BuildScriptClasspathData): S
                     return versionSubstring
                 }
             } else if (uniformedPath.contains(KOTLIN_PLUGIN_PATH_MARKER_FOR_MAVEN_LOCAL_REPO)) {
-                val versionSubstring = uniformedPath.substringAfter(KOTLIN_PLUGIN_PATH_MARKER_FOR_MAVEN_LOCAL_REPO).substringBefore('/', "<error>")
+                val versionSubstring =
+                    uniformedPath.substringAfter(KOTLIN_PLUGIN_PATH_MARKER_FOR_MAVEN_LOCAL_REPO).substringBefore('/', "<error>")
                 if (versionSubstring != "<error>") {
                     return versionSubstring
                 }
@@ -91,7 +92,7 @@ internal fun findKotlinPluginVersion(classpathData: BuildScriptClasspathData): S
 
 class NodeWithData<T>(val node: DataNode<*>, val data: T)
 
-fun <T: Any> DataNode<*>.findAll(key: Key<T>): List<NodeWithData<T>> {
+fun <T : Any> DataNode<*>.findAll(key: Key<T>): List<NodeWithData<T>> {
     val nodes = ExternalSystemApiUtil.findAll(this, key)
     return nodes.mapNotNull {
         val data = it.getData(key) ?: return@mapNotNull null
@@ -100,7 +101,7 @@ fun <T: Any> DataNode<*>.findAll(key: Key<T>): List<NodeWithData<T>> {
 }
 
 fun findGradleProjectStructure(file: PsiFile) =
-        ModuleUtilCore.findModuleForFile(file.virtualFile, file.project)?.let { findGradleProjectStructure(it) }
+    ModuleUtilCore.findModuleForFile(file.virtualFile, file.project)?.let { findGradleProjectStructure(it) }
 
 fun findGradleProjectStructure(module: Module): DataNode<ProjectData>? {
     val externalProjectPath = ExternalSystemApiUtil.getExternalProjectPath(module) ?: return null
