@@ -117,6 +117,9 @@ test {
 }
 
 processResources {
+    // We add konanVersion as a task input to avoid considering this task up-to-date when
+    // konanVersion is actually changed and should be updated in the plugin jar.
+    inputs.property("konanVersion", konanVersion)
     expand('konanVersion': konanVersion)
     from(file("$rootBuildDirectory/utilities/env_blacklist"))
 }
