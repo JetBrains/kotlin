@@ -35,7 +35,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 class KotlinStructureViewElement(
-    val element: NavigatablePsiElement,
+    element: NavigatablePsiElement,
     private val isInherited: Boolean = false
 ) : PsiTreeElementBase<NavigatablePsiElement>(element), Queryable {
 
@@ -74,6 +74,8 @@ class KotlinStructureViewElement(
     }
 
     override fun getChildrenBase(): Collection<StructureViewTreeElement> {
+        val element = element
+
         val children = when (element) {
             is KtFile -> element.declarations
             is KtClass -> element.getStructureDeclarations()
@@ -104,14 +106,18 @@ class KotlinStructureViewElement(
     private fun isPublic(descriptor: DeclarationDescriptor?) =
         (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
 
-    private fun countDescriptor(): DeclarationDescriptor? = when {
-        !element.isValid -> null
-        element !is KtDeclaration -> null
-        element is KtAnonymousInitializer -> null
-        else -> runReadAction {
-            if (!DumbService.isDumb(element.getProject())) {
-                element.resolveToDescriptorIfAny()
-            } else null
+    private fun countDescriptor(): DeclarationDescriptor? {
+        val element = element
+        return when {
+            element == null -> null
+            !element.isValid -> null
+            element !is KtDeclaration -> null
+            element is KtAnonymousInitializer -> null
+            else -> runReadAction {
+                if (!DumbService.isDumb(element.getProject())) {
+                    element.resolveToDescriptorIfAny()
+                } else null
+            }
         }
     }
 }
