@@ -9126,6 +9126,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("labeledReturn.kt")
+        public void testLabeledReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/redundantIf/labeledReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("negate.kt")
         public void testNegate() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/redundantIf/negate.kt");
